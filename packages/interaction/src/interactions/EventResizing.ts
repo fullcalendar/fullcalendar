@@ -67,11 +67,11 @@ export class EventResizing extends Interaction {
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
-    let { calendar, viewApi } = this.component.context
+    let { context } = this.component
     let eventRange = this.eventRange!
 
     this.relevantEvents = getRelevantEvents(
-      calendar.state.eventStore,
+      context.getCurrentState().eventStore,
       this.eventRange.instance!.instanceId
     )
 
@@ -79,12 +79,12 @@ export class EventResizing extends Interaction {
     this.draggingSegEl = segEl
     this.draggingSeg = getElSeg(segEl)
 
-    calendar.unselect()
-    calendar.emitter.trigger('eventResizeStart', {
+    context.calendarApi.unselect()
+    context.emitter.trigger('eventResizeStart', {
       el: segEl,
-      event: new EventApi(calendar, eventRange.def, eventRange.instance),
+      event: new EventApi(context, eventRange.def, eventRange.instance),
       jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-      view: viewApi
+      view: context.viewApi
     })
   }
 
@@ -113,7 +113,7 @@ export class EventResizing extends Interaction {
     }
 
     if (mutation) {
-      mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, context.calendar.state.eventUiBases, mutation, context)
+      mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, context.getCurrentState().eventUiBases, mutation, context)
       interaction.mutatedEvents = mutatedRelevantEvents
 
       if (!this.component.isInteractionValid(interaction)) {
@@ -152,48 +152,48 @@ export class EventResizing extends Interaction {
   }
 
   handleDragEnd = (ev: PointerDragEvent) => {
-    let { calendar, viewApi } = this.component.context
+    let { context } = this.component
     let eventDef = this.eventRange!.def
     let eventInstance = this.eventRange!.instance
-    let eventApi = new EventApi(calendar, eventDef, eventInstance)
+    let eventApi = new EventApi(context, eventDef, eventInstance)
     let relevantEvents = this.relevantEvents!
     let mutatedRelevantEvents = this.mutatedRelevantEvents!
 
-    calendar.emitter.trigger('eventResizeStop', {
+    context.emitter.trigger('eventResizeStop', {
       el: this.draggingSegEl,
       event: eventApi,
       jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-      view: viewApi
+      view: context.viewApi
     })
 
     if (this.validMutation) {
-      calendar.dispatch({
+      context.dispatch({
         type: 'MERGE_EVENTS',
         eventStore: mutatedRelevantEvents
       })
 
-      calendar.emitter.trigger('eventResize', {
+      context.emitter.trigger('eventResize', {
         el: this.draggingSegEl,
         startDelta: this.validMutation.startDelta || createDuration(0),
         endDelta: this.validMutation.endDelta || createDuration(0),
         prevEvent: eventApi,
         event: new EventApi( // the data AFTER the mutation
-          calendar,
+          context,
           mutatedRelevantEvents.defs[eventDef.defId],
           eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
         ),
         revert: function() {
-          calendar.dispatch({
+          context.dispatch({
             type: 'MERGE_EVENTS',
             eventStore: relevantEvents
           })
         },
         jsEvent: ev.origEvent,
-        view: viewApi
+        view: context.viewApi
       })
 
     } else {
-      calendar.emitter.trigger('_noEventResize')
+      context.emitter.trigger('_noEventResize')
     }
 
     // reset all internal state

@@ -3,11 +3,13 @@ import { applyAll } from '../util/misc'
 
 export class Emitter {
 
-  handlers: any = {}
-  options: any
+  private handlers: any = {}
+  private options: any
+  private thisContext: any = null
 
 
-  constructor(private thisContext = null) {
+  setThisContext(thisContext) {
+    this.thisContext = thisContext
   }
 
 

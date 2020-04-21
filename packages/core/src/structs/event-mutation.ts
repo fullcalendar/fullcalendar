@@ -6,6 +6,7 @@ import { startOfDay } from '../datelib/marker'
 import { EventUiHash, EventUi } from '../component/event-ui'
 import { compileEventUis } from '../component/event-rendering'
 import { ReducerContext } from '../reducers/ReducerContext'
+import { getDefaultEventEnd } from '../calendar-utils'
 
 /*
 A data structure for how to modify an EventDef/EventInstance within an EventStore
@@ -119,7 +120,7 @@ function applyMutationToEventInstance(
   if (clearEnd) {
     copy.range = {
       start: copy.range.start,
-      end: context.calendar.getDefaultEventEnd(eventDef.allDay, copy.range.start)
+      end: getDefaultEventEnd(eventDef.allDay, copy.range.start, context)
     }
   }
 
@@ -134,7 +135,7 @@ function applyMutationToEventInstance(
 
   // handle invalid durations
   if (copy.range.end < copy.range.start) {
-    copy.range.end = context.calendar.getDefaultEventEnd(eventDef.allDay, copy.range.start)
+    copy.range.end = getDefaultEventEnd(eventDef.allDay, copy.range.start, context)
   }
 
   return copy

@@ -38,27 +38,28 @@ export class UnselectAuto {
   onDocumentPointerUp = (pev: PointerDragEvent) => {
     let { context } = this
     let { documentPointer } = this
+    let calendarState = context.getCurrentState()
 
     // touch-scrolling should never unfocus any type of selection
     if (!documentPointer.wasTouchScroll) {
 
       if (
-        context.calendar.state.dateSelection && // an existing date selection?
+        calendarState.dateSelection && // an existing date selection?
         !this.isRecentPointerDateSelect // a new pointer-initiated date selection since last onDocumentPointerUp?
       ) {
         let unselectAuto = context.options.unselectAuto
         let unselectCancel = context.options.unselectCancel
 
         if (unselectAuto && (!unselectAuto || !elementClosest(documentPointer.downEl, unselectCancel))) {
-          context.calendar.unselect(pev)
+          context.calendarApi.unselect(pev)
         }
       }
 
       if (
-        context.calendar.state.eventSelection && // an existing event selected?
+        calendarState.eventSelection && // an existing event selected?
         !elementClosest(documentPointer.downEl, EventDragging.SELECTOR) // interaction DIDN'T start on an event
       ) {
-        context.calendar.dispatch({ type: 'UNSELECT_EVENT' })
+        context.dispatch({ type: 'UNSELECT_EVENT' })
       }
 
     }

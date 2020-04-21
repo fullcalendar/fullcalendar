@@ -1,25 +1,23 @@
-import { Calendar } from '../Calendar'
 import { EventSource } from '../structs/event-source'
+import { ReducerContext } from '../reducers/ReducerContext'
 
 export class EventSourceApi {
 
-  calendar: Calendar
-  internalEventSource: EventSource // rename?
-
-  constructor(calendar: Calendar, internalEventSource: EventSource) {
-    this.calendar = calendar
-    this.internalEventSource = internalEventSource
+  constructor(
+    private context: ReducerContext,
+    public internalEventSource: EventSource // rename?
+  ) {
   }
 
   remove() {
-    this.calendar.dispatch({
+    this.context.dispatch({
       type: 'REMOVE_EVENT_SOURCE',
       sourceId: this.internalEventSource.sourceId
     })
   }
 
   refetch() {
-    this.calendar.dispatch({
+    this.context.dispatch({
       type: 'FETCH_EVENT_SOURCES',
       sourceIds: [ this.internalEventSource.sourceId ]
     })

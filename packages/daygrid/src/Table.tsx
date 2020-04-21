@@ -177,14 +177,15 @@ export class Table extends DateComponent<TableProps, TableState> {
 
 
   handleMoreLinkClick = (arg: MoreLinkArg) => { // TODO: bad names "more link click" versus "more click"
-    let { calendar, viewApi, options, dateEnv } = this.context
-    let clickOption = options.moreLinkClick
+    let { context } = this
+    let { dateEnv } = context
+    let clickOption = context.options.moreLinkClick
 
     function segForPublic(seg: TableSeg) {
       let { def, instance, range } = seg.eventRange
 
       return {
-        event: new EventApi(calendar, def, instance),
+        event: new EventApi(context, def, instance),
         start: dateEnv.toDate(range.start),
         end: dateEnv.toDate(range.end),
         isStart: seg.isStart,
@@ -195,13 +196,13 @@ export class Table extends DateComponent<TableProps, TableState> {
     if (typeof clickOption === 'function') {
       // the returned value can be an atomic option
       // TODO: weird how we don't use the `clickOption`
-      clickOption = calendar.emitter.trigger('moreLinkClick', {
+      clickOption = context.emitter.trigger('moreLinkClick', {
         date: dateEnv.toDate(arg.date),
         allDay: true,
         allSegs: arg.allSegs.map(segForPublic),
         hiddenSegs: arg.hiddenSegs.map(segForPublic),
         jsEvent: arg.ev as MouseEvent, // TODO: better
-        view: viewApi
+        view: context.viewApi
       })
     }
 
@@ -214,7 +215,7 @@ export class Table extends DateComponent<TableProps, TableState> {
       })
 
     } else if (typeof clickOption === 'string') { // a view name
-      calendar.zoomTo(arg.date, clickOption)
+      context.calendarApi.zoomTo(arg.date, clickOption)
     }
   }
 

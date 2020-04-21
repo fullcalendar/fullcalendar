@@ -43,6 +43,6 @@ function handleEventSources(inputs, context: ReducerContext) {
   }
 
   for (let newInput of newInputs) {
-    context.calendar.addEventSource(newInput)
+    context.calendarApi.addEventSource(newInput)
   }
 }

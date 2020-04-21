@@ -10,9 +10,9 @@ export function toMoment(date: Date, calendar: Calendar): moment.Moment {
 
   return convertToMoment(
     date,
-    calendar.state.dateEnv.timeZone,
+    calendar.currentState.dateEnv.timeZone,
     null,
-    calendar.state.dateEnv.locale.codes[0]
+    calendar.currentState.dateEnv.locale.codes[0]
   )
 }
 

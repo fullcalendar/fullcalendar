@@ -22,7 +22,7 @@ export class EventClicking extends Interaction {
 
   handleSegClick = (ev: Event, segEl: HTMLElement) => {
     let { component } = this
-    let { calendar, viewApi } = component.context
+    let { context } = component
     let seg = getElSeg(segEl)
 
     if (
@@ -35,15 +35,15 @@ export class EventClicking extends Interaction {
       let hasUrlContainer = elementClosest(ev.target as HTMLElement, '.fc-event-forced-url')
       let url = hasUrlContainer ? (hasUrlContainer.querySelector('a[href]') as any).href : ''
 
-      calendar.emitter.trigger('eventClick', {
+      context.emitter.trigger('eventClick', {
         el: segEl,
         event: new EventApi(
-          component.context.calendar,
+          component.context,
           seg.eventRange.def,
           seg.eventRange.instance
         ),
         jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
-        view: viewApi
+        view: context.viewApi
       })
 
       if (url && !ev.defaultPrevented) {

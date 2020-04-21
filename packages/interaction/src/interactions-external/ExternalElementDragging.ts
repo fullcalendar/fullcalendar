@@ -15,7 +15,8 @@ import {
   ElementDragging,
   ViewApi,
   ReducerContext,
-  buildDatePointApiWithContext
+  buildDatePointApiWithContext,
+  getDefaultEventEnd
 } from '@fullcalendar/core'
 import { HitDragging } from '../interactions/HitDragging'
 import { __assign } from 'tslib'
@@ -155,7 +156,7 @@ export class ExternalElementDragging {
         receivingContext.emitter.trigger('eventReceive', {
           draggedEl: pev.subjectEl as HTMLElement,
           event: new EventApi(
-            receivingContext.calendar,
+            receivingContext,
             droppableEvent.def,
             droppableEvent.instance
           ),
@@ -228,7 +229,7 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, context
 
   let end = dragMeta.duration ?
     context.dateEnv.add(start, dragMeta.duration) :
-    context.calendar.getDefaultEventEnd(dateSpan.allDay, start)
+    getDefaultEventEnd(dateSpan.allDay, start, context)
 
   let instance = createEventInstance(def.defId, { start, end })
 

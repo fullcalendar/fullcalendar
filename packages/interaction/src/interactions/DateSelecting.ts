@@ -54,11 +54,11 @@ export class DateSelecting extends Interaction {
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
-    this.component.context.calendar.unselect(ev) // unselect previous selections
+    this.component.context.calendarApi.unselect(ev) // unselect previous selections
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean) => {
-    let { calendar, pluginHooks } = this.component.context
+    let { context } = this.component
     let dragSelection: DateSpan | null = null
     let isInvalid = false
 
@@ -66,7 +66,7 @@ export class DateSelecting extends Interaction {
       dragSelection = joinHitsIntoSelection(
         this.hitDragging.initialHit!,
         hit,
-        pluginHooks.dateSelectionTransformers
+        context.pluginHooks.dateSelectionTransformers
       )
 
       if (!dragSelection || !this.component.isDateSelectionValid(dragSelection)) {
@@ -76,9 +76,9 @@ export class DateSelecting extends Interaction {
     }
 
     if (dragSelection) {
-      calendar.dispatch({ type: 'SELECT_DATES', selection: dragSelection })
+      context.dispatch({ type: 'SELECT_DATES', selection: dragSelection })
     } else if (!isFinal) { // only unselect if moved away while dragging
-      calendar.dispatch({ type: 'UNSELECT_DATES' })
+      context.dispatch({ type: 'UNSELECT_DATES' })
     }
 
     if (!isInvalid) {

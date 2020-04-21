@@ -108,7 +108,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
       props.dispatch,
       props.getCurrentState,
       props.emitter,
-      props.calendar,
+      props.calendarApi,
       this.registerInteractiveComponent,
       this.unregisterInteractiveComponent
     )
@@ -201,7 +201,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
 
 
   _handleNavLinkClick(ev: UIEvent, anchorEl: HTMLElement) {
-    let { dateEnv, options, calendar } = this.props
+    let { dateEnv, options, calendarApi } = this.props
 
     let navLinkOptions: any = anchorEl.getAttribute('data-navlink')
     navLinkOptions = navLinkOptions ? JSON.parse(navLinkOptions) : {}
@@ -220,7 +220,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
         viewType = customAction
       }
 
-      calendar.zoomTo(dateMarker, viewType)
+      calendarApi.zoomTo(dateMarker, viewType)
     }
   }
 

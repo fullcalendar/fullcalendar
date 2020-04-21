@@ -34,7 +34,7 @@ export function isDateSelectionValid(dateSelection: DateSpan, context: ReducerCo
 
 
 function isNewPropsValid(newProps, context: ReducerContext) {
-  let calendarState = context.calendar.state
+  let calendarState = context.getCurrentState()
 
   let props = {
     businessHours: calendarState.businessHours,
@@ -69,7 +69,7 @@ export function isPropsValid(state: SplittableProps, context: ReducerContext, da
 // ------------------------------------------------------------------------------------------------------------------------
 
 function isInteractionPropsValid(state: SplittableProps, context: ReducerContext, dateSpanMeta: any, filterConfig): boolean {
-  let { calendar } = context
+  let currentState = context.getCurrentState()
   let interaction = state.eventDrag // HACK: the eventDrag props is used for ALL interactions
 
   let subjectEventStore = interaction.mutatedEvents
@@ -79,7 +79,7 @@ function isInteractionPropsValid(state: SplittableProps, context: ReducerContext
     subjectDefs,
     interaction.isEvent ?
       state.eventUiBases :
-      { '': calendar.state.selectionConfig } // if not a real event, validate as a selection
+      { '': currentState.selectionConfig } // if not a real event, validate as a selection
   )
 
   if (filterConfig) {
@@ -124,8 +124,8 @@ function isInteractionPropsValid(state: SplittableProps, context: ReducerContext
         }
 
         if (overlapFunc && !overlapFunc(
-          new EventApi(calendar, otherDefs[otherInstance.defId], otherInstance), // still event
-          new EventApi(calendar, subjectDef, subjectInstance) // moving event
+          new EventApi(context, otherDefs[otherInstance.defId], otherInstance), // still event
+          new EventApi(context, subjectDef, subjectInstance) // moving event
         )) {
           return false
         }
@@ -134,7 +134,7 @@ function isInteractionPropsValid(state: SplittableProps, context: ReducerContext
 
     // allow (a function)
 
-    let calendarEventStore = calendar.state.eventStore // need global-to-calendar, not local to component (splittable)state
+    let calendarEventStore = currentState.eventStore // need global-to-calendar, not local to component (splittable)state
 
     for (let subjectAllow of subjectConfig.allows) {
 
@@ -149,9 +149,10 @@ function isInteractionPropsValid(state: SplittableProps, context: ReducerContext
       let eventApi
 
       if (origDef) { // was previously in the calendar
-        eventApi = new EventApi(calendar, origDef, origInstance)
+        eventApi = new EventApi(context, origDef, origInstance)
+
       } else { // was an external event
-        eventApi = new EventApi(calendar, subjectDef) // no instance, because had no dates
+        eventApi = new EventApi(context, subjectDef) // no instance, because had no dates
       }
 
       if (!subjectAllow(
@@ -178,7 +179,7 @@ function isDateSelectionPropsValid(state: SplittableProps, context: ReducerConte
 
   let selection = state.dateSelection
   let selectionRange = selection.range
-  let { selectionConfig } = context.calendar.state
+  let { selectionConfig } = context.getCurrentState()
 
   if (filterConfig) {
     selectionConfig = filterConfig(selectionConfig)
@@ -205,7 +206,7 @@ function isDateSelectionPropsValid(state: SplittableProps, context: ReducerConte
       }
 
       if (overlapFunc && !overlapFunc(
-        new EventApi(context.calendar, relevantDefs[relevantInstance.defId], relevantInstance)
+        new EventApi(context, relevantDefs[relevantInstance.defId], relevantInstance)
       )) {
         return false
       }

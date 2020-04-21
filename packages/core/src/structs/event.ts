@@ -262,7 +262,7 @@ function computeIsDefaultAllDay(sourceId: string, context: ReducerContext): bool
   let res = null
 
   if (sourceId) {
-    let source = context.calendar.state.eventSources[sourceId]
+    let source = context.getCurrentState().eventSources[sourceId]
     res = source.defaultAllDay
   }
 

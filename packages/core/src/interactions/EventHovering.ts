@@ -24,12 +24,12 @@ export class EventHovering extends Interaction {
     )
 
     // how to make sure component already has context?
-    component.context.calendar.on('eventElRemove', this.handleEventElRemove)
+    component.context.emitter.on('eventElRemove', this.handleEventElRemove)
   }
 
   destroy() {
     this.removeHoverListeners()
-    this.component.context.calendar.off('eventElRemove', this.handleEventElRemove)
+    this.component.context.emitter.off('eventElRemove', this.handleEventElRemove)
   }
 
   // for simulating an eventMouseLeave when the event el is destroyed while mouse is over it
@@ -57,19 +57,19 @@ export class EventHovering extends Interaction {
 
   triggerEvent(publicEvName: 'eventMouseEnter' | 'eventMouseLeave', ev: Event | null, segEl: HTMLElement) {
     let { component } = this
-    let { calendar, viewApi } = component.context
+    let { context } = component
     let seg = getElSeg(segEl)!
 
     if (!ev || component.isValidSegDownEl(ev.target as HTMLElement)) {
-      calendar.emitter.trigger(publicEvName, {
+      context.emitter.trigger(publicEvName, {
         el: segEl,
         event: new EventApi(
-          calendar,
+          context,
           seg.eventRange.def,
           seg.eventRange.instance
         ),
         jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
-        view: viewApi
+        view: context.viewApi
       })
     }
   }

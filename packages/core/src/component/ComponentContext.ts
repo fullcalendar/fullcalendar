@@ -1,4 +1,4 @@
-import { Calendar } from '../Calendar'
+import { CalendarApi } from '../CalendarApi'
 import { ViewApi } from '../ViewApi'
 import { Theme } from '../theme/Theme'
 import { DateEnv } from '../datelib/env'
@@ -45,7 +45,7 @@ export function buildViewContext(
   dispatch: (action: Action) => void,
   getCurrentState: () => CalendarState,
   emitter: Emitter,
-  calendar: Calendar,
+  calendarApi: CalendarApi,
   registerInteractiveComponent: (component: DateComponent<any>, settingsInput: InteractionSettingsInput) => void,
   unregisterInteractiveComponent: (component: DateComponent<any>) => void
 ): ComponentContext {
@@ -57,7 +57,7 @@ export function buildViewContext(
     emitter,
     dispatch,
     getCurrentState,
-    calendar
+    calendarApi
   }
 
   return {

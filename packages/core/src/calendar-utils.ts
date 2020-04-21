@@ -3,6 +3,7 @@ import { buildDateSpanApi, DateSpanApi, DatePointApi, DateSpan, buildDatePointAp
 import { ReducerContext } from './reducers/ReducerContext'
 import { __assign } from 'tslib'
 import { ViewApi } from './ViewApi'
+import { DateMarker, startOfDay } from './datelib/marker'
 
 
 export interface DateClickApi extends DatePointApi {
@@ -30,7 +31,7 @@ export function triggerDateSelect(selection: DateSpan, pev: PointerDragEvent | n
   const arg = {
     ...buildDateSpanApiWithContext(selection, context),
     jsEvent: pev ? pev.origEvent as MouseEvent : null, // Is this always a mouse event? See #4655
-    view: context.viewApi || context.calendar.view
+    view: context.viewApi || context.calendarApi.view
   }
 
   context.emitter.trigger('select', arg)
@@ -40,7 +41,7 @@ export function triggerDateSelect(selection: DateSpan, pev: PointerDragEvent | n
 export function triggerDateUnselect(pev: PointerDragEvent | null, context: ReducerContext & { viewApi?: ViewApi }) {
   context.emitter.trigger('unselect', {
     jsEvent: pev ? pev.origEvent : null,
-    view: context.viewApi || context.calendar.view
+    view: context.viewApi || context.calendarApi.view
   })
 }
 
@@ -51,7 +52,7 @@ export function triggerDateClick(dateSpan: DateSpan, dayEl: HTMLElement, ev: UIE
     ...buildDatePointApiWithContext(dateSpan, context),
     dayEl,
     jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
-    view: context.viewApi || context.calendar.view
+    view: context.viewApi || context.calendarApi.view
   }
 
   context.emitter.trigger('dateClick', arg)
@@ -81,4 +82,21 @@ export function buildDateSpanApiWithContext(dateSpan: DateSpan, context: Reducer
   __assign(props, buildDateSpanApi(dateSpan, context.dateEnv))
 
   return props
+}
+
+
+// Given an event's allDay status and start date, return what its fallback end date should be.
+// TODO: rename to computeDefaultEventEnd
+export function getDefaultEventEnd(allDay: boolean, marker: DateMarker, context: ReducerContext): DateMarker {
+  let { dateEnv, computedOptions } = context
+  let end = marker
+
+  if (allDay) {
+    end = startOfDay(end)
+    end = dateEnv.add(end, computedOptions.defaultAllDayEventDuration)
+  } else {
+    end = dateEnv.add(end, computedOptions.defaultTimedEventDuration)
+  }
+
+  return end
 }

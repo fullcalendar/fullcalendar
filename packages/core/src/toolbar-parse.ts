@@ -1,7 +1,7 @@
 import { ViewSpec, ViewSpecHash } from './structs/view-spec'
-import { Calendar } from './Calendar'
 import { Theme } from './theme/Theme'
 import { mapHash } from './util/object'
+import { CalendarApi } from './CalendarApi'
 
 export interface ToolbarModel {
   [sectionName: string]: ToolbarWidget[][]
@@ -21,11 +21,11 @@ export function parseToolbars(
   optionOverrides: any,
   theme: Theme,
   viewSpecs: ViewSpecHash,
-  calendar: Calendar
+  calendarApi: CalendarApi
 ) {
   let viewsWithButtons: string[] = []
-  let headerToolbar = options.headerToolbar ? parseToolbar(options.headerToolbar, options, optionOverrides, theme, viewSpecs, calendar, viewsWithButtons) : null
-  let footerToolbar = options.footerToolbar ? parseToolbar(options.footerToolbar, options, optionOverrides, theme, viewSpecs, calendar, viewsWithButtons) : null
+  let headerToolbar = options.headerToolbar ? parseToolbar(options.headerToolbar, options, optionOverrides, theme, viewSpecs, calendarApi, viewsWithButtons) : null
+  let footerToolbar = options.footerToolbar ? parseToolbar(options.footerToolbar, options, optionOverrides, theme, viewSpecs, calendarApi, viewsWithButtons) : null
 
   return { headerToolbar, footerToolbar, viewsWithButtons }
 }
@@ -37,10 +37,10 @@ function parseToolbar(
   optionOverrides: any,
   theme: Theme,
   viewSpecs: ViewSpecHash,
-  calendar: Calendar,
+  calendarApi: CalendarApi,
   viewsWithButtons: string[] // dump side effects
 ) : ToolbarModel {
-  return mapHash(sectionStrHash, (sectionStr) => parseSection(sectionStr, options, optionOverrides, theme, viewSpecs, calendar, viewsWithButtons))
+  return mapHash(sectionStrHash, (sectionStr) => parseSection(sectionStr, options, optionOverrides, theme, viewSpecs, calendarApi, viewsWithButtons))
 }
 
 
@@ -53,7 +53,7 @@ function parseSection(
   optionOverrides: any,
   theme: Theme,
   viewSpecs: ViewSpecHash,
-  calendar: Calendar,
+  calendarApi: CalendarApi,
   viewsWithButtons: string[] // dump side effects
 ): ToolbarWidget[][] {
   let isRtl = options.direction === 'rtl'
@@ -89,15 +89,15 @@ function parseSection(
           viewsWithButtons.push(buttonName)
 
           buttonClick = function() {
-            calendar.changeView(buttonName)
+            calendarApi.changeView(buttonName)
           };
           (buttonText = viewSpec.buttonTextOverride) ||
           (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
           (buttonText = viewSpec.buttonTextDefault)
 
-        } else if (calendar[buttonName]) { // a calendar method
+        } else if (calendarApi[buttonName]) { // a calendarApi method
           buttonClick = function() {
-            calendar[buttonName]()
+            calendarApi[buttonName]()
           };
           (buttonText = calendarButtonTextOverrides[buttonName]) ||
           (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||

@@ -3,7 +3,7 @@ import { memoize, memoizeObjArg } from '../util/memoize'
 import { Action, CalendarState } from './types'
 import { PluginHooks, buildPluginHooks } from '../plugin-system'
 import { DateEnv } from '../datelib/env'
-import { Calendar } from '../Calendar'
+import { CalendarApi } from '../CalendarApi'
 import { StandardTheme } from '../theme/StandardTheme'
 import { EventSourceHash } from '../structs/event-source'
 import { buildViewSpecs, ViewSpec } from '../structs/view-spec'
@@ -30,6 +30,7 @@ import { createFormatter } from '../datelib/formatting'
 import { DateRange } from '../datelib/date-range'
 import { ViewApi } from '../ViewApi'
 import { parseBusinessHours } from '../structs/business-hours'
+import { TaskRunner } from '../util/runner'
 
 
 export class CalendarStateReducer {
@@ -52,8 +53,65 @@ export class CalendarStateReducer {
   private buildLocale = memoize(buildLocale)
   private parseContextBusinessHours = memoizeObjArg(parseContextBusinessHours)
 
+  public emitter = new Emitter()
+  private currentState: CalendarState = {} as any
+  private actionRunner = new TaskRunner<Action>(
+    this._handleAction.bind(this),
+    this._handleActionsDrained.bind(this)
+  )
 
-  reduce(state: CalendarState, action: Action, dispatch: (action: Action) => void, emitter: Emitter, getCurrentState: () => CalendarState, calendar: Calendar): CalendarState {
+  private calendarApi: CalendarApi
+  private onAction: (action: Action) => void
+  private onState: (state: CalendarState) => void
+
+
+  init(
+    optionOverrides,
+    calendarApi: CalendarApi,
+    onAction?: (action: Action) => void,
+    onState?: (state: CalendarState) => void
+  ) {
+    this.calendarApi = calendarApi
+    this.onAction = onAction
+    this.onState = onState
+
+    this.emitter.setThisContext(calendarApi)
+
+    this.dispatch({
+      type: 'INIT',
+      optionOverrides
+    })
+  }
+
+
+  dispatch = (action) => {
+    this.actionRunner.request(action)
+  }
+
+
+  getCurrentState = () => {
+    return this.currentState
+  }
+
+
+  private _handleAction(action: Action) {
+    this.currentState = this.reduce(this.currentState, action)
+
+    if (this.onAction) {
+      this.onAction(action)
+    }
+  }
+
+
+  private _handleActionsDrained() {
+    if (this.onState) {
+      this.onState(this.currentState)
+    }
+  }
+
+
+  private reduce(state: CalendarState, action: Action): CalendarState {
+    let { emitter } = this
     let optionOverrides = state.optionOverrides || {}
     let dynamicOptionOverrides = state.dynamicOptionOverrides || {}
 
@@ -143,9 +201,9 @@ export class CalendarStateReducer {
       computedOptions: this.buildComputedOptions(viewOptions),
       pluginHooks,
       emitter,
-      dispatch,
-      getCurrentState,
-      calendar
+      dispatch: this.dispatch,
+      getCurrentState: this.getCurrentState,
+      calendarApi: this.calendarApi
     }
 
     let currentDate = state.currentDate || getInitialDate(reducerContext) // weird how we do INIT
@@ -184,7 +242,7 @@ export class CalendarStateReducer {
     }
 
     let viewTitle = this.computeTitle(dateProfile, viewOptions, dateEnv)
-    let viewApi = this.buildViewApi(viewSpec.type, getCurrentState, dateEnv)
+    let viewApi = this.buildViewApi(viewSpec.type, this.getCurrentState, dateEnv)
 
     let nextState: CalendarState = {
       ...(state as object), // preserve previous state from plugin reducers. tho remove type to make sure all data is provided right now
@@ -211,7 +269,7 @@ export class CalendarStateReducer {
       eventSelection: reduceSelectedEvent(state.eventSelection, action),
       eventDrag: reduceEventDrag(state.eventDrag, action),
       eventResize: reduceEventResize(state.eventResize, action),
-      toolbarConfig: this.parseToolbars(viewOptions, optionOverrides, theme, viewSpecs, calendar),
+      toolbarConfig: this.parseToolbars(viewOptions, optionOverrides, theme, viewSpecs, this.calendarApi),
       viewSpec,
       viewTitle,
       viewApi
@@ -330,7 +388,7 @@ function parseContextBusinessHours(context: ReducerContext) {
 // -----------------------------------------------------------------------------------------------------------------
 
 
-// Computes what the title at the top of the calendar should be for this view
+// Computes what the title at the top of the calendarApi should be for this view
 function computeTitle(dateProfile, viewOptions, dateEnv: DateEnv) {
   let range: DateRange
 

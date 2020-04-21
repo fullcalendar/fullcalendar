@@ -1,72 +1,81 @@
-import { Emitter } from './common/Emitter'
 import { OptionsInput } from './types/input-types'
-import { DateInput } from './datelib/env'
-import { DateMarker, startOfDay } from './datelib/marker'
-import { createFormatter } from './datelib/formatting'
-import { createDuration, DurationInput } from './datelib/duration'
-import { parseDateSpan, DateSpanInput } from './structs/date-span'
-import { DateRangeInput } from './datelib/date-range'
-import { EventSourceInput, parseEventSource } from './structs/event-source'
-import { EventInput, parseEvent } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
-import { EventSourceApi } from './api/EventSourceApi'
-import { EventApi } from './api/EventApi'
-import { eventTupleToStore } from './structs/event-store'
-import { ViewSpec } from './structs/view-spec'
 import { CalendarComponent } from './CalendarComponent'
 import { __assign } from 'tslib'
-import { PointerDragEvent } from './interactions/pointer'
 import { render, h, flushToDom } from './vdom'
-import { TaskRunner, DelayedRunner } from './util/runner'
+import { DelayedRunner } from './util/runner'
 import { guid } from './util/misc'
 import { CssDimValue } from './scrollgrid/util'
 import { applyStyleProp } from './util/dom-manip'
 import { CalendarStateReducer } from './reducers/CalendarStateReducer'
-import { getNow } from './reducers/current-date'
-import { triggerDateSelect, triggerDateUnselect } from './calendar-utils'
+import { CalendarApi } from './CalendarApi'
 
 
-export class Calendar {
+export class Calendar extends CalendarApi {
 
-  state: CalendarState = {} as any
+  el: HTMLElement
   isRendering = false
   isRendered = false
-  emitter = new Emitter(this)
-  reducer: CalendarStateReducer
   renderRunner: DelayedRunner
-  actionRunner: TaskRunner<Action> // guards against nested action calls
-  el: HTMLElement
   currentClassNames: string[] = []
+  currentState: CalendarState
 
-  get view() { return this.state.viewApi } // for public API
+  get view() { return this.currentState.viewApi } // for public API
 
 
   constructor(el: HTMLElement, optionOverrides: OptionsInput = {}) {
+    super(new CalendarStateReducer())
+
     this.el = el
+    this.renderRunner = new DelayedRunner(this.handleRenderRequest)
 
-    this.reducer = new CalendarStateReducer()
-
-    let renderRunner = this.renderRunner = new DelayedRunner(
-      this.updateComponent.bind(this)
+    this.reducer.init(
+      optionOverrides,
+      this,
+      this.handleAction,
+      this.handleState
     )
-
-    this.actionRunner = new TaskRunner( // do we really need this in a runner?
-      this.runAction.bind(this),
-      () => {
-        renderRunner.request(this.state.options.rerenderDelay)
-      }
-    )
-
-    this.dispatch({
-      type: 'INIT',
-      optionOverrides
-    })
   }
 
 
+  handleAction = (action: Action) => {
+    // actions we know we want to render immediately
+    switch (action.type) {
+      case 'SET_EVENT_DRAG':
+      case 'SET_EVENT_RESIZE':
+        this.renderRunner.tryDrain()
+    }
+  }
 
-  // Public API for rendering
-  // -----------------------------------------------------------------------------------------------------------------
+
+  handleState = (state: CalendarState) => {
+    this.currentState = state
+    this.renderRunner.request(state.options.rerenderDelay)
+  }
+
+
+  handleRenderRequest = () => {
+
+    if (this.isRendering) {
+      this.isRendered = true
+
+      render(
+        <CalendarComponent
+          {...this.currentState}
+          onClassNameChange={this.handleClassNames}
+          onHeightChange={this.handleHeightChange}
+        />,
+        this.el
+      )
+
+    } else if (this.isRendered) {
+      this.isRendered = false
+
+      render(null, this.el)
+    }
+
+    flushToDom()
+  }
 
 
   render() {
@@ -88,34 +97,10 @@ export class Calendar {
   }
 
 
-  // Dispatcher
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  dispatch = (action: Action) => {
-    this.actionRunner.request(action)
-
-    // actions we know we want to render immediately. TODO: another param in dispatch instead?
-    switch (action.type) {
-      case 'SET_EVENT_DRAG':
-      case 'SET_EVENT_RESIZE':
-        this.renderRunner.tryDrain()
-    }
+  updateSize() {
+    super.updateSize()
+    flushToDom()
   }
-
-
-  runAction(action: Action) {
-    this.state = this.reducer.reduce(this.state, action, this.dispatch, this.emitter, this.getCurrentState, this)
-  }
-
-
-  getCurrentState = () => {
-    return this.state
-  }
-
-
-  // Rendering
-  // -----------------------------------------------------------------------------------------------------------------
 
 
   batchRendering(func) {
@@ -132,39 +117,6 @@ export class Calendar {
 
   resumeRendering() { // available to plugins
     this.renderRunner.resume('pauseRendering', true)
-  }
-
-
-  updateComponent() {
-    if (this.isRendering) {
-      this.renderComponent()
-      this.isRendered = true
-    } else {
-      if (this.isRendered) {
-        this.destroyComponent()
-        this.isRendered = false
-      }
-    }
-  }
-
-
-  renderComponent() {
-    let { state } = this
-
-    render(
-      <CalendarComponent
-        {...state}
-        onClassNameChange={this.handleClassNames}
-        onHeightChange={this.handleHeightChange}
-      />,
-      this.el
-    )
-    flushToDom()
-  }
-
-
-  destroyComponent() {
-    render(null, this.el)
   }
 
 
@@ -185,532 +137,6 @@ export class Calendar {
 
   handleHeightChange = (height: CssDimValue) => {
     applyStyleProp(this.el, 'height', height)
-  }
-
-
-  // Options
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  setOption(name: string, val) {
-    this.dispatch({
-      type: 'SET_OPTION',
-      optionName: name,
-      optionValue: val
-    })
-  }
-
-
-  getOption(name: string) { // getter, used externally
-    return this.state.calendarOptions[name]
-  }
-
-
-  /*
-  handles option changes (like a diff)
-  */
-  mutateOptions(updates, removals: string[] = [], isDynamic = false) {
-    let changeHandlers = this.state.pluginHooks.optionChangeHandlers
-    let normalUpdates = {}
-    let specialUpdates = {}
-
-    for (let name in updates) {
-      if (changeHandlers[name]) {
-        specialUpdates[name] = updates[name]
-      } else {
-        normalUpdates[name] = updates[name]
-      }
-    }
-
-    this.batchRendering(() => {
-
-      this.dispatch({
-        type: 'MUTATE_OPTIONS',
-        updates: normalUpdates,
-        removals,
-        isDynamic
-      })
-
-      // special updates
-      for (let name in specialUpdates) {
-        changeHandlers[name](specialUpdates[name], this.state)
-      }
-    })
-  }
-
-
-  getAvailableLocaleCodes() {
-    return Object.keys(this.state.availableRawLocales)
-  }
-
-
-  // Trigger
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  on(handlerName: string, handler) {
-    this.emitter.on(handlerName, handler)
-  }
-
-
-  off(handlerName: string, handler) {
-    this.emitter.off(handlerName, handler)
-  }
-
-
-  // View
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  changeView(viewType: string, dateOrRange?: DateRangeInput | DateInput) {
-    this.batchRendering(() => {
-      this.unselect()
-
-      if (dateOrRange) {
-
-        if ((dateOrRange as DateRangeInput).start && (dateOrRange as DateRangeInput).end) { // a range
-          this.dispatch({
-            type: 'CHANGE_VIEW_TYPE',
-            viewType,
-          })
-          this.dispatch({ // not very efficient to do two dispatches
-            type: 'SET_OPTION',
-            optionName: 'visibleRange',
-            optionValue: dateOrRange
-          })
-
-        } else {
-          this.dispatch({
-            type: 'CHANGE_VIEW_TYPE',
-            viewType,
-            dateMarker: this.state.dateEnv.createMarker(dateOrRange as DateInput)
-          })
-        }
-
-      } else {
-        this.dispatch({
-          type: 'CHANGE_VIEW_TYPE',
-          viewType
-        })
-      }
-    })
-  }
-
-
-  // Forces navigation to a view for the given date.
-  // `viewType` can be a specific view name or a generic one like "week" or "day".
-  // needs to change
-  zoomTo(dateMarker: DateMarker, viewType?: string) {
-    let spec
-
-    viewType = viewType || 'day' // day is default zoom
-    spec = this.state.viewSpecs[viewType] || this.getUnitViewSpec(viewType)
-
-    this.unselect()
-
-    if (spec) {
-      this.dispatch({
-        type: 'CHANGE_VIEW_TYPE',
-        viewType: spec.type,
-        dateMarker
-      })
-
-    } else {
-      this.dispatch({
-        type: 'CHANGE_DATE',
-        dateMarker
-      })
-    }
-  }
-
-
-  // Given a duration singular unit, like "week" or "day", finds a matching view spec.
-  // Preference is given to views that have corresponding buttons.
-  private getUnitViewSpec(unit: string): ViewSpec | null {
-    let { viewSpecs, toolbarConfig } = this.state
-    let viewTypes = [].concat(toolbarConfig.viewsWithButtons)
-    let i
-    let spec
-
-    for (let viewType in viewSpecs) {
-      viewTypes.push(viewType)
-    }
-
-    for (i = 0; i < viewTypes.length; i++) {
-      spec = viewSpecs[viewTypes[i]]
-      if (spec) {
-        if (spec.singleUnit === unit) {
-          return spec
-        }
-      }
-    }
-  }
-
-
-  // Current Date
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  prev() {
-    this.unselect()
-    this.dispatch({ type: 'PREV' })
-  }
-
-
-  next() {
-    this.unselect()
-    this.dispatch({ type: 'NEXT' })
-  }
-
-
-  prevYear() {
-    this.unselect()
-    this.dispatch({
-      type: 'CHANGE_DATE',
-      dateMarker: this.state.dateEnv.addYears(this.state.currentDate, -1)
-    })
-  }
-
-
-  nextYear() {
-    this.unselect()
-    this.dispatch({
-      type: 'CHANGE_DATE',
-      dateMarker: this.state.dateEnv.addYears(this.state.currentDate, 1)
-    })
-  }
-
-
-  today() {
-    this.unselect()
-    this.dispatch({
-      type: 'CHANGE_DATE',
-      dateMarker: getNow(this.state)
-    })
-  }
-
-
-  gotoDate(zonedDateInput) {
-    this.unselect()
-    this.dispatch({
-      type: 'CHANGE_DATE',
-      dateMarker: this.state.dateEnv.createMarker(zonedDateInput)
-    })
-  }
-
-
-  incrementDate(deltaInput) { // is public facing
-    let delta = createDuration(deltaInput)
-
-    if (delta) { // else, warn about invalid input?
-      this.unselect()
-      this.dispatch({
-        type: 'CHANGE_DATE',
-        dateMarker: this.state.dateEnv.add(this.state.currentDate, delta)
-      })
-    }
-  }
-
-
-  // for external API
-  getDate(): Date {
-    return this.state.dateEnv.toDate(this.state.currentDate)
-  }
-
-
-  // Date Formatting Utils
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  formatDate(d: DateInput, formatter): string {
-    let { dateEnv } = this.state
-
-    return dateEnv.format(
-      dateEnv.createMarker(d),
-      createFormatter(formatter)
-    )
-  }
-
-
-  // `settings` is for formatter AND isEndExclusive
-  formatRange(d0: DateInput, d1: DateInput, settings) {
-    let { dateEnv, options } = this.state
-
-    return dateEnv.formatRange(
-      dateEnv.createMarker(d0),
-      dateEnv.createMarker(d1),
-      createFormatter(settings, options.defaultRangeSeparator),
-      settings
-    )
-  }
-
-
-  formatIso(d: DateInput, omitTime?: boolean) {
-    let { dateEnv } = this.state
-
-    return dateEnv.formatIso(dateEnv.createMarker(d), { omitTime })
-  }
-
-
-  // Sizing
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  updateSize() { // public
-    this.emitter.trigger('_resize', true)
-    flushToDom()
-  }
-
-
-  // Date Selection / Event Selection / DayClick
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  // this public method receives start/end dates in any format, with any timezone
-  // NOTE: args were changed from v3
-  select(dateOrObj: DateInput | any, endDate?: DateInput) {
-    let selectionInput: DateSpanInput
-
-    if (endDate == null) {
-      if (dateOrObj.start != null) {
-        selectionInput = dateOrObj as DateSpanInput
-      } else {
-        selectionInput = {
-          start: dateOrObj,
-          end: null
-        }
-      }
-    } else {
-      selectionInput = {
-        start: dateOrObj,
-        end: endDate
-      } as DateSpanInput
-    }
-
-    let selection = parseDateSpan(
-      selectionInput,
-      this.state.dateEnv,
-      createDuration({ days: 1 }) // TODO: cache this?
-    )
-
-    if (selection) { // throw parse error otherwise?
-      this.dispatch({ type: 'SELECT_DATES', selection })
-      triggerDateSelect(selection, null, this.state)
-    }
-  }
-
-
-  // public method
-  unselect(pev?: PointerDragEvent) {
-    if (this.state.dateSelection) {
-      this.dispatch({ type: 'UNSELECT_DATES' })
-      triggerDateUnselect(pev, this.state)
-    }
-  }
-
-
-  // Event-Date Utilities
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  // Given an event's allDay status and start date, return what its fallback end date should be.
-  // TODO: rename to computeDefaultEventEnd
-  getDefaultEventEnd(allDay: boolean, marker: DateMarker): DateMarker {
-    let end = marker
-
-    if (allDay) {
-      end = startOfDay(end)
-      end = this.state.dateEnv.add(end, this.state.computedOptions.defaultAllDayEventDuration)
-    } else {
-      end = this.state.dateEnv.add(end, this.state.computedOptions.defaultTimedEventDuration)
-    }
-
-    return end
-  }
-
-
-  // Public Events API
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  addEvent(eventInput: EventInput, sourceInput?: EventSourceApi | string | number): EventApi | null {
-
-    if (eventInput instanceof EventApi) {
-      let def = eventInput._def
-      let instance = eventInput._instance
-
-      // not already present? don't want to add an old snapshot
-      if (!this.state.eventStore.defs[def.defId]) {
-        this.dispatch({
-          type: 'ADD_EVENTS',
-          eventStore: eventTupleToStore({ def, instance }) // TODO: better util for two args?
-        })
-      }
-
-      return eventInput
-    }
-
-    let sourceId
-    if (sourceInput instanceof EventSourceApi) {
-      sourceId = sourceInput.internalEventSource.sourceId
-    } else if (sourceInput != null) {
-      let sourceApi = this.getEventSourceById(sourceInput) // TODO: use an internal function
-
-      if (!sourceApi) {
-        console.warn('Could not find an event source with ID "' + sourceInput + '"') // TODO: test
-        return null
-      } else {
-        sourceId = sourceApi.internalEventSource.sourceId
-      }
-    }
-
-    let tuple = parseEvent(eventInput, sourceId, this.state)
-
-    if (tuple) {
-
-      this.dispatch({
-        type: 'ADD_EVENTS',
-        eventStore: eventTupleToStore(tuple)
-      })
-
-      return new EventApi(
-        this,
-        tuple.def,
-        tuple.def.recurringDef ? null : tuple.instance
-      )
-    }
-
-    return null
-  }
-
-
-  // TODO: optimize
-  getEventById(id: string): EventApi | null {
-    let { defs, instances } = this.state.eventStore
-
-    id = String(id)
-
-    for (let defId in defs) {
-      let def = defs[defId]
-
-      if (def.publicId === id) {
-
-        if (def.recurringDef) {
-          return new EventApi(this, def, null)
-        } else {
-
-          for (let instanceId in instances) {
-            let instance = instances[instanceId]
-
-            if (instance.defId === def.defId) {
-              return new EventApi(this, def, instance)
-            }
-          }
-        }
-      }
-    }
-
-    return null
-  }
-
-
-  getEvents(): EventApi[] {
-    let { defs, instances } = this.state.eventStore
-    let eventApis: EventApi[] = []
-
-    for (let id in instances) {
-      let instance = instances[id]
-      let def = defs[instance.defId]
-
-      eventApis.push(new EventApi(this, def, instance))
-    }
-
-    return eventApis
-  }
-
-
-  removeAllEvents() {
-    this.dispatch({ type: 'REMOVE_ALL_EVENTS' })
-  }
-
-
-  // Public Event Sources API
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  getEventSources(): EventSourceApi[] {
-    let sourceHash = this.state.eventSources
-    let sourceApis: EventSourceApi[] = []
-
-    for (let internalId in sourceHash) {
-      sourceApis.push(new EventSourceApi(this, sourceHash[internalId]))
-    }
-
-    return sourceApis
-  }
-
-
-  getEventSourceById(id: string | number): EventSourceApi | null {
-    let sourceHash = this.state.eventSources
-
-    id = String(id)
-
-    for (let sourceId in sourceHash) {
-      if (sourceHash[sourceId].publicId === id) {
-        return new EventSourceApi(this, sourceHash[sourceId])
-      }
-    }
-
-    return null
-  }
-
-
-  addEventSource(sourceInput: EventSourceInput): EventSourceApi {
-
-    if (sourceInput instanceof EventSourceApi) {
-
-      // not already present? don't want to add an old snapshot
-      if (!this.state.eventSources[sourceInput.internalEventSource.sourceId]) {
-        this.dispatch({
-          type: 'ADD_EVENT_SOURCES',
-          sources: [ sourceInput.internalEventSource ]
-        })
-      }
-
-      return sourceInput
-    }
-
-    let eventSource = parseEventSource(sourceInput, this.state)
-
-    if (eventSource) { // TODO: error otherwise?
-      this.dispatch({ type: 'ADD_EVENT_SOURCES', sources: [ eventSource ] })
-
-      return new EventSourceApi(this, eventSource)
-    }
-
-    return null
-  }
-
-
-  removeAllEventSources() {
-    this.dispatch({ type: 'REMOVE_ALL_EVENT_SOURCES' })
-  }
-
-
-  refetchEvents() {
-    this.dispatch({ type: 'FETCH_EVENT_SOURCES' })
-  }
-
-
-  // Scroll
-  // -----------------------------------------------------------------------------------------------------------------
-
-  scrollToTime(timeInput: DurationInput) {
-    let time = createDuration(timeInput)
-
-    if (time) {
-      this.emitter.trigger('_scrollRequest', { time })
-    }
   }
 
 }

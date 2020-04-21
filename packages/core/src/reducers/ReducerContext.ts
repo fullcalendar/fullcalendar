@@ -1,7 +1,7 @@
 import { Action } from './types'
 import { PluginHooks } from '../plugin-system'
 import { DateEnv } from '../datelib/env'
-import { Calendar } from '../Calendar'
+import { CalendarApi } from '../CalendarApi'
 import { Emitter } from '../common/Emitter'
 import { parseFieldSpecs } from '../util/misc'
 import { createDuration, Duration } from '../datelib/duration'
@@ -16,7 +16,7 @@ export interface ReducerContext {
   emitter: Emitter
   dispatch(action: Action): void
   getCurrentState(): CalendarState
-  calendar: Calendar
+  calendarApi: CalendarApi
 }
 
 export interface ComputedOptions {
