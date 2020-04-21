@@ -1,13 +1,14 @@
 const dts = require('rollup-plugin-dts').default
-const { isScssPath } = require('./rollup-util')
+const { isScssPath, isRelPath } = require('./rollup-util')
 const { pkgStructs } = require('./pkg-struct')
 const { mapHashViaPair } = require('./util')
+
 
 module.exports = function() {
   return {
     input: mapHashViaPair(pkgStructs, (pkgStruct) => [
       pkgStruct.distDir, // the key. the [name] in entryFileNames
-      pkgStruct.tscMain + '.d.ts' // the value
+      './' + pkgStruct.tscMain + '.d.ts' // the value
     ]),
     output: {
       format: 'es',
@@ -17,9 +18,12 @@ module.exports = function() {
     plugins: [
       dts(),
       {
-        resolveId(source) {
-          if (isScssPath(source)) {
+        resolveId(id) {
+          if (isScssPath(id)) {
             return false
+          }
+          if (!isRelPath(id)) {
+            return { id, external: true }
           }
           return null
         }
