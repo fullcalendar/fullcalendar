@@ -1,4 +1,4 @@
-import { formatDayString } from '../datelib/formatting'
+import { formatDayString } from '../datelib/formatting-utils'
 import { DateMarker } from '../datelib/marker'
 
 

@@ -1,4 +1,4 @@
-import { Constraint, AllowFunc, normalizeConstraint, ConstraintInput } from '../validation'
+import { Constraint, AllowFunc, normalizeConstraint, ConstraintInput } from '../structs/constraint'
 import { parseClassName } from '../util/html'
 import { refineProps, capitaliseFirstLetter } from '../util/misc'
 import { ReducerContext } from '../reducers/ReducerContext'

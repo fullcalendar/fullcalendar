@@ -1,7 +1,8 @@
 import { buildLocale, RawLocaleInfo, organizeRawLocales } from '../datelib/locale'
 import { memoize, memoizeObjArg } from '../util/memoize'
 import { Action, CalendarState } from './types'
-import { PluginHooks, buildPluginHooks } from '../plugin-system'
+import { buildPluginHooks } from '../plugin-system'
+import { PluginHooks } from '../plugin-system-struct'
 import { DateEnv } from '../datelib/env'
 import { CalendarApi } from '../CalendarApi'
 import { StandardTheme } from '../theme/StandardTheme'
@@ -31,6 +32,7 @@ import { DateRange } from '../datelib/date-range'
 import { ViewApi } from '../ViewApi'
 import { parseBusinessHours } from '../structs/business-hours'
 import { TaskRunner } from '../util/runner'
+import { globalPlugins } from '../global-plugins'
 
 
 export class CalendarStateReducer {
@@ -161,7 +163,9 @@ export class CalendarStateReducer {
       dynamicOptionOverrides
     )
 
-    let pluginHooks = this.buildPluginHooks(calendarOptions.plugins)
+    let pluginHooks = this.buildPluginHooks(
+      globalPlugins.concat(calendarOptions.plugins || [])
+    )
 
     let prevDateEnv = state ? state.dateEnv : null
     let dateEnv = this.buildDateEnv(

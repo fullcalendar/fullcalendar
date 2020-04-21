@@ -1,22 +1,16 @@
-import { EventStore, expandRecurring, filterEventStoreDefs, parseEvents } from './structs/event-store'
-import { DateSpan, DateSpanApi } from './structs/date-span'
+import { EventStore, filterEventStoreDefs } from './structs/event-store'
+import { DateSpan } from './structs/date-span'
 import { rangeContainsRange, rangesIntersect, DateRange, OpenDateRange } from './datelib/date-range'
 import { EventApi } from './api/EventApi'
 import { compileEventUis } from './component/event-rendering'
 import { excludeInstances } from './reducers/eventStore'
-import { EventInput } from './structs/event'
 import { EventInteractionState } from './interactions/event-interaction-state'
 import { SplittableProps } from './component/event-splitting'
 import { mapHash } from './util/object'
 import { ReducerContext } from './reducers/ReducerContext'
 import { buildDateSpanApiWithContext } from './calendar-utils'
-
-// TODO: rename to "criteria" ?
-export type ConstraintInput = 'businessHours' | string | EventInput | EventInput[]
-export type Constraint = 'businessHours' | string | EventStore | false // false means won't pass at all
-export type OverlapFunc = ((stillEvent: EventApi, movingEvent: EventApi | null) => boolean)
-export type AllowFunc = (span: DateSpanApi, movingEvent: EventApi | null) => boolean
-export type isPropsValidTester = (props: SplittableProps, context: ReducerContext) => boolean
+import { Constraint } from './structs/constraint'
+import { expandRecurring } from './structs/recurring-event'
 
 
 // high-level segmenting-aware tester functions
@@ -303,23 +297,4 @@ function anyRangesContainRange(outerRanges: DateRange[], innerRange: DateRange):
   }
 
   return false
-}
-
-
-// Parsing
-// ------------------------------------------------------------------------------------------------------------------------
-
-export function normalizeConstraint(input: ConstraintInput, context: ReducerContext): Constraint | null {
-  if (Array.isArray(input)) {
-    return parseEvents(input, '', context, true) // allowOpenRange=true
-
-  } else if (typeof input === 'object' && input) { // non-null object
-    return parseEvents([ input ], '', context, true) // allowOpenRange=true
-
-  } else if (input != null) {
-    return String(input)
-
-  } else {
-    return null
-  }
 }

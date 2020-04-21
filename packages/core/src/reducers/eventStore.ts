@@ -7,9 +7,7 @@ import {
   getRelevantEvents,
   createEmptyEventStore,
   filterEventStoreDefs,
-  parseEvents,
-  expandRecurring,
-  transformRawEvents
+  parseEvents
 } from '../structs/event-store'
 import { Action } from './types'
 import { EventSourceHash, EventSource } from '../structs/event-source'
@@ -18,6 +16,7 @@ import { DateProfile } from '../DateProfileGenerator'
 import { DateEnv } from '../datelib/env'
 import { EventUiHash } from '../component/event-ui'
 import { ReducerContext } from './ReducerContext'
+import { expandRecurring } from '../structs/recurring-event'
 
 
 export function reduceEventStore(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, prevDateEnv: DateEnv, context: ReducerContext): EventStore {
@@ -122,6 +121,45 @@ function receiveRawEvents(
   }
 
   return eventStore
+}
+
+
+function transformRawEvents(rawEvents, eventSource: EventSource, context: ReducerContext) {
+  let calEachTransform = context.options.eventDataTransform
+  let sourceEachTransform = eventSource ? eventSource.eventDataTransform : null
+
+  if (sourceEachTransform) {
+    rawEvents = transformEachRawEvent(rawEvents, sourceEachTransform)
+  }
+
+  if (calEachTransform) {
+    rawEvents = transformEachRawEvent(rawEvents, calEachTransform)
+  }
+
+  return rawEvents
+}
+
+
+function transformEachRawEvent(rawEvents, func) {
+  let refinedEvents
+
+  if (!func) {
+    refinedEvents = rawEvents
+  } else {
+    refinedEvents = []
+
+    for (let rawEvent of rawEvents) {
+      let refinedEvent = func(rawEvent)
+
+      if (refinedEvent) {
+        refinedEvents.push(refinedEvent)
+      } else if (refinedEvent == null) {
+        refinedEvents.push(rawEvent)
+      } // if a different falsy value, do nothing
+    }
+  }
+
+  return refinedEvents
 }
 
 

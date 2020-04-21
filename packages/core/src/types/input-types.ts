@@ -4,15 +4,16 @@ https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/fullcalenda
 */
 
 import { ViewApi } from '../ViewApi'
-import { EventSourceInput, EventInputTransformer } from '../structs/event-source'
+import { EventSourceInput } from '../structs/event-source-parse'
+import { EventInputTransformer } from '../structs/event'
 import { Duration, DurationInput } from '../datelib/duration'
 import { DateInput } from '../datelib/env'
 import { FormatterInput } from '../datelib/formatting'
 import { DateRangeInput } from '../datelib/date-range'
 import { BusinessHoursInput } from '../structs/business-hours'
 import { EventApi } from '../api/EventApi'
-import { AllowFunc, ConstraintInput, OverlapFunc } from '../validation'
-import { PluginDef } from '../plugin-system'
+import { AllowFunc, ConstraintInput, OverlapFunc } from '../structs/constraint'
+import { PluginDef } from '../plugin-system-struct'
 import { LocaleSingularArg, RawLocale } from '../datelib/locale'
 
 

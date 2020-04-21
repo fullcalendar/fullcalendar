@@ -1,7 +1,6 @@
-import {
-  DateFormatter, DateFormattingContext, ZonedMarker,
-  VerboseFormattingArg, createVerboseFormattingArg
-} from './formatting'
+import { DateFormatter, DateFormattingContext, createVerboseFormattingArg, VerboseFormattingArg } from './DateFormatter'
+import { ZonedMarker } from './zoned-marker'
+
 
 export type FuncFormatterFunc = (arg: VerboseFormattingArg) => string
 

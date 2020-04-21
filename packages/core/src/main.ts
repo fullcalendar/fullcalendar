@@ -22,16 +22,19 @@ export {
   compareByFieldSpecs,
   compareByFieldSpec,
   flexibleCompare,
-  computeVisibleDayRange,
   refineProps,
-  isMultiDayRange,
   preventSelection, allowSelection, preventContextMenu, allowContextMenu,
   compareNumbers, enableCursor, disableCursor,
-  diffDates,
   guid,
   computeSmallestCellWidth,
   OrderSpec
 } from './util/misc'
+
+export {
+  computeVisibleDayRange,
+  isMultiDayRange,
+  diffDates
+} from './util/date'
 
 export {
   removeExact,
@@ -110,16 +113,21 @@ export {
 export { DateEnv, DateMarkerMeta } from './datelib/env'
 
 export {
-  DateFormatter,
   createFormatter,
-  VerboseFormattingArg,
+} from './datelib/formatting'
+export {
+  DateFormatter,
+  VerboseFormattingArg
+} from './datelib/DateFormatter'
+export {
   formatIsoTimeString,
   formatDayString
-} from './datelib/formatting'
+} from './datelib/formatting-utils'
 export { NamedTimeZoneImpl } from './datelib/timezone'
 export { parse as parseMarker } from './datelib/parsing'
 
-export { EventSourceDef, EventSource, EventSourceHash } from './structs/event-source'
+export { EventSourceDef } from './structs/event-source-def'
+export { EventSource, EventSourceHash } from './structs/event-source'
 
 export { Interaction, InteractionSettings, interactionSettingsToStore, interactionSettingsStore, InteractionSettingsStore } from './interactions/interaction'
 export { PointerDragEvent } from './interactions/pointer'
@@ -137,7 +145,8 @@ export { RecurringType, ParsedRecurring } from './structs/recurring-event'
 
 export { DragMetaInput, DragMeta, parseDragMeta } from './structs/drag-meta'
 
-export { createPlugin, PluginDef, PluginDefInput, ViewPropsTransformer, ViewContainerAppend } from './plugin-system'
+export { PluginDef, PluginDefInput, ViewPropsTransformer, ViewContainerAppend } from './plugin-system-struct'
+export { createPlugin } from './plugin-system'
 export { reducerFunc, Action, CalendarState } from './reducers/types'
 export { ReducerContext } from './reducers/ReducerContext'
 export { CalendarComponentProps } from './CalendarComponent'
@@ -162,7 +171,8 @@ export { DayTableModel, DayTableSeg, DayTableCell } from './common/DayTableModel
 export { Slicer, SlicedProps } from './common/slicing-utils'
 
 export { EventMutation, applyMutationToEventStore } from './structs/event-mutation'
-export { Constraint, ConstraintInput, AllowFunc, isPropsValid, isInteractionValid } from './validation'
+export { Constraint, ConstraintInput, AllowFunc } from './structs/constraint'
+export { isPropsValid, isInteractionValid } from './validation'
 export { EventApi } from './api/EventApi'
 
 export { requestJson } from './util/requestJson'

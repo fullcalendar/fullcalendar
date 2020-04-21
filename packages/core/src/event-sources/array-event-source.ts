@@ -1,5 +1,5 @@
 import { createPlugin } from '../plugin-system'
-import { EventSourceDef } from '../structs/event-source'
+import { EventSourceDef } from '../structs/event-source-def'
 import { EventInput } from '../structs/event'
 
 let eventSourceDef: EventSourceDef = {

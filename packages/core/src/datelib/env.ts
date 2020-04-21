@@ -8,10 +8,10 @@ import { CalendarSystem, createCalendarSystem } from './calendar-system'
 import { Locale } from './locale'
 import { NamedTimeZoneImpl, NamedTimeZoneImplClass } from './timezone'
 import { Duration, asRoughYears, asRoughMonths, asRoughDays, asRoughMs } from './duration'
-import { DateFormatter, buildIsoString } from './formatting'
+import { DateFormatter, CmdFormatterFunc } from './DateFormatter'
+import { buildIsoString } from './formatting-utils'
 import { parse } from './parsing'
 import { isInt } from '../util/misc'
-import { CmdFormatterFunc } from './formatting-cmd'
 
 export interface DateEnvSettings {
   timeZone: string

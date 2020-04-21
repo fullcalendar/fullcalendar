@@ -1,6 +1,6 @@
 import { requestJson } from '../util/requestJson'
 import { ReducerContext } from '../reducers/ReducerContext'
-import { EventSourceDef } from '../structs/event-source'
+import { EventSourceDef } from '../structs/event-source-def'
 import { DateRange } from '../datelib/date-range'
 import { __assign } from 'tslib'
 import { createPlugin } from '../plugin-system'

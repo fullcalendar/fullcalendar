@@ -8,7 +8,7 @@ import { TableDateCell, TableDowCell } from './TableDateCell'
 import { NowTimer } from '../NowTimer'
 import { DateRange } from '../datelib/date-range'
 import { memoize } from '../util/memoize'
-import { DateProfile } from 'fullcalendar'
+import { DateProfile } from '../DateProfileGenerator'
 
 
 export interface DayHeaderProps {

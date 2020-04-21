@@ -2,7 +2,8 @@ import { DateMarker } from '../datelib/marker'
 import { Action } from './types'
 import { DateProfile } from '../DateProfileGenerator'
 import { rangeContainsMarker } from '../datelib/date-range'
-import { ReducerContext, DateEnv } from 'fullcalendar'
+import { DateEnv } from '../datelib/env'
+import { ReducerContext } from '../reducers/ReducerContext'
 
 
 export function reduceCurrentDate(currentDate: DateMarker, action: Action, dateProfile: DateProfile): DateMarker {

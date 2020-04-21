@@ -1,5 +1,5 @@
 import { DateEnv } from './datelib/env'
-import { CalendarState } from 'fullcalendar'
+import { CalendarState } from './reducers/types'
 
 
 export class ViewApi { // always represents the current view

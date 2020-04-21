@@ -1,5 +1,5 @@
 import { Action } from './types'
-import { PluginHooks } from '../plugin-system'
+import { PluginHooks } from '../plugin-system-struct'
 import { DateEnv } from '../datelib/env'
 import { CalendarApi } from '../CalendarApi'
 import { Emitter } from '../common/Emitter'

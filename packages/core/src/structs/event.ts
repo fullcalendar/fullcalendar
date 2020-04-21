@@ -30,6 +30,7 @@ export interface EventDateInput {
 }
 
 export type EventInput = EventNonDateInput & EventDateInput
+export type EventInputTransformer = (eventInput: EventInput) => EventInput | null
 
 export interface EventDef {
   defId: string

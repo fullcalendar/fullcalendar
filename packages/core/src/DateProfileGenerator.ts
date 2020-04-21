@@ -3,7 +3,7 @@ import { Duration, createDuration, getWeeksFromInput, asRoughDays, asRoughMs, gr
 import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, parseRange, rangesEqual } from './datelib/date-range'
 import { ViewSpec } from './structs/view-spec'
 import { DateEnv } from './datelib/env'
-import { computeVisibleDayRange } from './util/misc'
+import { computeVisibleDayRange } from './util/date'
 import { _getNow } from './reducers/current-date'
 
 

@@ -1,4 +1,5 @@
-import { EventSource, EventSourceHash, doesSourceNeedRange, parseEventSource } from '../structs/event-source'
+import { EventSource, EventSourceHash } from '../structs/event-source'
+import { parseEventSource } from '../structs/event-source-parse'
 import { arrayToHash, filterHash } from '../util/object'
 import { DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
@@ -242,4 +243,11 @@ function parseInitialSources(rawOptions, context: ReducerContext) {
   }
 
   return sources
+}
+
+
+function doesSourceNeedRange(eventSource: EventSource, context: ReducerContext) {
+  let defs = context.pluginHooks.eventSourceDefs
+
+  return !defs[eventSource.sourceDefId].ignoreRange
 }

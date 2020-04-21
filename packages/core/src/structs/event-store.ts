@@ -4,14 +4,10 @@ import {
   EventDefHash,
   EventInstance,
   EventInstanceHash,
-  createEventInstance,
   parseEvent,
   EventTuple
 } from './event'
-import { EventSource } from './event-source'
-import { expandRecurringRanges } from './recurring-event'
 import { filterHash } from '../util/object'
-import { DateRange } from '../datelib/date-range'
 import { ReducerContext } from '../reducers/ReducerContext'
 
 /*
@@ -54,43 +50,6 @@ export function eventTupleToStore(tuple: EventTuple, eventStore: EventStore = cr
   return eventStore
 }
 
-export function expandRecurring(eventStore: EventStore, framingRange: DateRange, context: ReducerContext): EventStore {
-  let { dateEnv, pluginHooks, computedOptions } = context
-  let { defs, instances } = eventStore
-
-  // remove existing recurring instances
-  // TODO: bad. always expand events as a second step
-  instances = filterHash(instances, function(instance: EventInstance) {
-    return !defs[instance.defId].recurringDef
-  })
-
-  for (let defId in defs) {
-    let def = defs[defId]
-
-    if (def.recurringDef) {
-      let duration = def.recurringDef.duration
-
-      if (!duration) {
-        duration = def.allDay ?
-          computedOptions.defaultAllDayEventDuration :
-          computedOptions.defaultTimedEventDuration
-      }
-
-      let starts = expandRecurringRanges(def, duration, framingRange, dateEnv, pluginHooks.recurringTypes)
-
-      for (let start of starts) {
-        let instance = createEventInstance(defId, {
-          start,
-          end: dateEnv.add(start, duration)
-        })
-        instances[instance.instanceId] = instance
-      }
-    }
-  }
-
-  return { defs, instances }
-}
-
 // retrieves events that have the same groupId as the instance specified by `instanceId`
 // or they are the same as the instance.
 // why might instanceId not be in the store? an event from another calendar?
@@ -118,43 +77,6 @@ export function getRelevantEvents(eventStore: EventStore, instanceId: string): E
 
 function isEventDefsGrouped(def0: EventDef, def1: EventDef): boolean {
   return Boolean(def0.groupId && def0.groupId === def1.groupId)
-}
-
-export function transformRawEvents(rawEvents, eventSource: EventSource, context: ReducerContext) {
-  let calEachTransform = context.options.eventDataTransform
-  let sourceEachTransform = eventSource ? eventSource.eventDataTransform : null
-
-  if (sourceEachTransform) {
-    rawEvents = transformEachRawEvent(rawEvents, sourceEachTransform)
-  }
-
-  if (calEachTransform) {
-    rawEvents = transformEachRawEvent(rawEvents, calEachTransform)
-  }
-
-  return rawEvents
-}
-
-function transformEachRawEvent(rawEvents, func) {
-  let refinedEvents
-
-  if (!func) {
-    refinedEvents = rawEvents
-  } else {
-    refinedEvents = []
-
-    for (let rawEvent of rawEvents) {
-      let refinedEvent = func(rawEvent)
-
-      if (refinedEvent) {
-        refinedEvents.push(refinedEvent)
-      } else if (refinedEvent == null) {
-        refinedEvents.push(rawEvent)
-      } // if a different falsy value, do nothing
-    }
-  }
-
-  return refinedEvents
 }
 
 export function createEmptyEventStore(): EventStore {

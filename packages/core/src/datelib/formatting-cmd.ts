@@ -1,9 +1,6 @@
-import {
-  DateFormatter, DateFormattingContext, ZonedMarker,
-  VerboseFormattingArg, createVerboseFormattingArg
-} from './formatting'
+import { DateFormatter, DateFormattingContext, createVerboseFormattingArg } from './DateFormatter'
+import { ZonedMarker } from './zoned-marker'
 
-export type CmdFormatterFunc = (cmd: string, arg: VerboseFormattingArg) => string
 
 /*
 TODO: fix the terminology of "formatter" vs "formatting func"

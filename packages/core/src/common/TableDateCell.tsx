@@ -4,12 +4,13 @@ import { DateMarker, addDays } from '../datelib/marker'
 import { ComponentContext } from '../component/ComponentContext'
 import { h } from '../vdom'
 import { __assign } from 'tslib'
-import { DateFormatter, formatDayString } from '../datelib/formatting'
+import { DateFormatter } from '../datelib/DateFormatter'
+import { formatDayString } from '../datelib/formatting-utils'
 import { BaseComponent } from '../vdom-util'
 import { RenderHook } from './render-hook'
 import { buildNavLinkData } from './nav-link'
 import { ViewApi } from '../ViewApi'
-import { DateProfile } from 'fullcalendar'
+import { DateProfile } from '../DateProfileGenerator'
 
 
 export interface TableDateCellProps {

@@ -1,7 +1,7 @@
 import { createPlugin } from './plugin-system'
 import { hashValuesToArray } from './util/object'
 import { EventSource } from './structs/event-source'
-import { ReducerContext } from 'fullcalendar'
+import { ReducerContext } from './reducers/ReducerContext'
 
 export const changeHandlerPlugin = createPlugin({
   optionChangeHandlers: {

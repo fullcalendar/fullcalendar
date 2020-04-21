@@ -2,7 +2,7 @@ import { EventDef, EventInstance, NON_DATE_PROPS, DATE_PROPS } from '../structs/
 import { UNSCOPED_EVENT_UI_PROPS } from '../component/event-ui'
 import { EventMutation } from '../structs/event-mutation'
 import { DateInput } from '../datelib/env'
-import { diffDates, computeAlignedDayRange } from '../util/misc'
+import { diffDates, computeAlignedDayRange } from '../util/date'
 import { DurationInput, createDuration, durationsEqual } from '../datelib/duration'
 import { createFormatter, FormatterInput } from '../datelib/formatting'
 import { EventSourceApi } from './EventSourceApi'

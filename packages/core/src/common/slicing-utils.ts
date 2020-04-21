@@ -1,5 +1,5 @@
 import { DateRange } from '../datelib/date-range'
-import { EventStore, expandRecurring } from '../structs/event-store'
+import { EventStore } from '../structs/event-store'
 import { EventUiHash } from '../component/event-ui'
 import { sliceEventStore, EventRenderRange } from '../component/event-rendering'
 import { DateProfile } from '../DateProfileGenerator'
@@ -10,6 +10,7 @@ import { Duration } from '../datelib/duration'
 import { memoize } from '../util/memoize'
 import { DateMarker, addMs, addDays } from '../datelib/marker'
 import { ReducerContext } from '../reducers/ReducerContext'
+import { expandRecurring } from '../structs/recurring-event'
 
 export interface SliceableProps {
   dateSelection: DateSpan

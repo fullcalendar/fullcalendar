@@ -1,4 +1,5 @@
-import { PluginDef, createPlugin } from './plugin-system'
+import { PluginDef } from './plugin-system-struct'
+import { createPlugin } from './plugin-system'
 import { arrayEventSourcePlugin } from './event-sources/array-event-source'
 import { funcEventSourcePlugin } from './event-sources/func-event-source'
 import { jsonFeedEventSourcePlugin } from './event-sources/json-feed-event-source'

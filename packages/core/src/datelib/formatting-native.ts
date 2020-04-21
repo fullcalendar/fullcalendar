@@ -1,7 +1,9 @@
 import { DateMarker, timeAsMs } from './marker'
 import { CalendarSystem } from './calendar-system'
 import { Locale } from './locale'
-import { DateFormatter, DateFormattingContext, ZonedMarker, formatTimeZoneOffset } from './formatting'
+import { DateFormatter, DateFormattingContext } from './DateFormatter'
+import { ZonedMarker } from './zoned-marker'
+import { formatTimeZoneOffset } from './formatting-utils'
 import { memoize } from '../util/memoize'
 
 const EXTENDED_SETTINGS_AND_SEVERITIES = {
