@@ -28,6 +28,11 @@ module.exports = function() {
           return null
         }
       }
-    ]
+    ],
+    //// uncomment to see all circular dependency warnings
+    // onwarn(warning, warn) {
+    //   console.log('WARNING', warning)
+    //   warn(warning)
+    // }
   }
 }
