@@ -49,10 +49,13 @@ function fixCode(code) {
   let replacements = {}
 
   code = code.replace(/import \{(.*?)\} from '@fullcalendar\/core';?/, function(m0, m1) {
-    let matches = m1.matchAll(/(\w+) as (\w+\$\d+)/g)
-    for (let match of matches) {
+    let re = /(\w+) as (\w+\$\d+)/g
+    let match
+
+    while ((match = re.exec(m1))) {
       replacements[match[2]] = match[1]
     }
+
     return ''
   })
 
