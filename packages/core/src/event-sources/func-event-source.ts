@@ -1,7 +1,7 @@
 import { unpromisify } from '../util/promise'
 import { EventSourceDef } from '../structs/event-source-def'
 import { EventSourceError } from '../structs/event-source'
-import { EventInput } from '../structs/event'
+import { EventInput } from '../structs/event-parse'
 import { createPlugin } from '../plugin-system'
 
 export type EventSourceFunc = (

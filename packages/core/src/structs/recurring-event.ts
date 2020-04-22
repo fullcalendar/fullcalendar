@@ -1,4 +1,5 @@
-import { EventInput, EventDef, EventInstance, createEventInstance } from './event'
+import { EventDef } from './event-def'
+import { EventInstance, createEventInstance } from './event-instance'
 import { DateRange } from '../datelib/date-range'
 import { DateEnv } from '../datelib/env'
 import { Duration } from '../datelib/duration'
@@ -19,13 +20,13 @@ export interface ParsedRecurring {
 }
 
 export interface RecurringType {
-  parse: (rawEvent: EventInput, leftoverProps: any, dateEnv: DateEnv) => ParsedRecurring | null
+  parse: (rawEvent: any, leftoverProps: any, dateEnv: DateEnv) => ParsedRecurring | null
   expand: (typeData: any, framingRange: DateRange, dateEnv: DateEnv) => DateMarker[]
 }
 
 
 export function parseRecurring(
-  eventInput: EventInput,
+  eventInput: any,
   defaultAllDay: boolean | null,
   dateEnv: DateEnv,
   recurringTypes: RecurringType[],
@@ -57,7 +58,6 @@ export function parseRecurring(
         typeData: parsed.typeData,
         typeId: i
       }
-
     }
   }
 

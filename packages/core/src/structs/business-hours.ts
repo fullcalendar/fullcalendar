@@ -1,4 +1,4 @@
-import { EventInput } from './event'
+import { EventInput } from './event-parse'
 import { EventStore, parseEvents } from './event-store'
 import { ReducerContext } from '../reducers/ReducerContext'
 

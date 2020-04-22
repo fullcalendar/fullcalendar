@@ -5,7 +5,7 @@ https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/fullcalenda
 
 import { ViewApi } from '../ViewApi'
 import { EventSourceInput } from '../structs/event-source-parse'
-import { EventInputTransformer } from '../structs/event'
+import { EventInputTransformer } from '../structs/event-parse'
 import { Duration, DurationInput } from '../datelib/duration'
 import { DateInput } from '../datelib/env'
 import { FormatterInput } from '../datelib/formatting'

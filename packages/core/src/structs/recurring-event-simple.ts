@@ -3,7 +3,7 @@ import { Duration, createDuration, subtractDurations } from '../datelib/duration
 import { arrayToHash } from '../util/object'
 import { refineProps } from '../util/misc'
 import { RecurringType, ParsedRecurring } from './recurring-event'
-import { EventInput } from './event'
+import { EventInput } from './event-parse'
 import { DateRange, intersectRanges } from '../datelib/date-range'
 import { DateEnv } from '../datelib/env'
 import { createPlugin } from '../plugin-system'

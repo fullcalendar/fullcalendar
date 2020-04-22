@@ -1,5 +1,5 @@
-import { reducerFunc } from './reducers/types'
-import { eventDefParserFunc } from './structs/event'
+import { ReducerFunc } from './reducers/CalendarStateReducer'
+import { eventDefParserFunc } from './structs/event-parse'
 import { eventDefMutationApplier } from './structs/event-mutation'
 import { DatePointTransform, DateSpanTransform, CalendarInteractionClass, OptionChangeHandlerMap } from './calendar-utils'
 import { ViewConfigInputHash } from './structs/view-config'
@@ -27,7 +27,7 @@ import { ContentTypeHandlers } from './common/render-hook'
 
 export interface PluginDefInput {
   deps?: PluginDef[]
-  reducers?: reducerFunc[]
+  reducers?: ReducerFunc[]
   eventDefParsers?: eventDefParserFunc[]
   isDraggableTransformers?: eventIsDraggableTransformer[]
   eventDragMutationMassagers?: eventDragMutationMassager[]
@@ -57,7 +57,7 @@ export interface PluginDefInput {
 }
 
 export interface PluginHooks {
-  reducers: reducerFunc[]
+  reducers: ReducerFunc[]
   eventDefParsers: eventDefParserFunc[]
   isDraggableTransformers: eventIsDraggableTransformer[]
   eventDragMutationMassagers: eventDragMutationMassager[]

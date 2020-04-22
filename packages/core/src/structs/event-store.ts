@@ -1,12 +1,6 @@
-import {
-  EventInput,
-  EventDef,
-  EventDefHash,
-  EventInstance,
-  EventInstanceHash,
-  parseEvent,
-  EventTuple
-} from './event'
+import { EventDef, EventDefHash } from './event-def'
+import { EventInstance, EventInstanceHash } from './event-instance'
+import { EventInput, parseEvent, EventTuple } from './event-parse'
 import { filterHash } from '../util/object'
 import { ReducerContext } from '../reducers/ReducerContext'
 
@@ -20,6 +14,7 @@ export interface EventStore {
   defs: EventDefHash
   instances: EventInstanceHash
 }
+
 
 export function parseEvents(
   rawEvents: EventInput[],
@@ -40,6 +35,7 @@ export function parseEvents(
   return eventStore
 }
 
+
 export function eventTupleToStore(tuple: EventTuple, eventStore: EventStore = createEmptyEventStore()) {
   eventStore.defs[tuple.def.defId] = tuple.def
 
@@ -49,6 +45,7 @@ export function eventTupleToStore(tuple: EventTuple, eventStore: EventStore = cr
 
   return eventStore
 }
+
 
 // retrieves events that have the same groupId as the instance specified by `instanceId`
 // or they are the same as the instance.
@@ -75,13 +72,16 @@ export function getRelevantEvents(eventStore: EventStore, instanceId: string): E
   return createEmptyEventStore()
 }
 
+
 function isEventDefsGrouped(def0: EventDef, def1: EventDef): boolean {
   return Boolean(def0.groupId && def0.groupId === def1.groupId)
 }
 
+
 export function createEmptyEventStore(): EventStore {
   return { defs: {}, instances: {} }
 }
+
 
 export function mergeEventStores(store0: EventStore, store1: EventStore): EventStore {
   return {
@@ -89,6 +89,7 @@ export function mergeEventStores(store0: EventStore, store1: EventStore): EventS
     instances: { ...store0.instances, ...store1.instances }
   }
 }
+
 
 export function filterEventStoreDefs(eventStore: EventStore, filterFunc: (eventDef: EventDef) => boolean): EventStore {
   let defs = filterHash(eventStore.defs, filterFunc)

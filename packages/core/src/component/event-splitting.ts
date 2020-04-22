@@ -1,5 +1,5 @@
 import { EventStore, createEmptyEventStore } from '../structs/event-store'
-import { EventDef } from '../structs/event'
+import { EventDef } from '../structs/event-def'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { mapHash } from '../util/object'
 import { memoize } from '../util/memoize'

@@ -1,5 +1,5 @@
 import { EventInteractionState } from '../interactions/event-interaction-state'
-import { Action } from './types'
+import { Action } from './Action'
 
 
 export function reduceEventResize(currentResize: EventInteractionState | null, action: Action): EventInteractionState | null {

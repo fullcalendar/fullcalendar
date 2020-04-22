@@ -1,5 +1,5 @@
 import { DateMarker } from '../datelib/marker'
-import { Action } from './types'
+import { Action } from './Action'
 import { DateProfile } from '../DateProfileGenerator'
 import { rangeContainsMarker } from '../datelib/date-range'
 import { DateEnv } from '../datelib/env'

@@ -7,10 +7,9 @@ export const version = '<%= version %>'
 
 // types
 export { OptionsInput } from './types/input-types'
-export {
-  EventInput, EventDef, EventDefHash, EventInstance, EventInstanceHash,
-  parseEventDef, createEventInstance, EventTuple
-} from './structs/event'
+export { EventDef, EventDefHash } from './structs/event-def'
+export { EventInstance, EventInstanceHash, createEventInstance } from './structs/event-instance'
+export { EventInput, parseEventDef, EventTuple } from './structs/event-parse'
 export { BusinessHoursInput, parseBusinessHours } from './structs/business-hours'
 
 export {
@@ -147,7 +146,9 @@ export { DragMetaInput, DragMeta, parseDragMeta } from './structs/drag-meta'
 
 export { PluginDef, PluginDefInput, ViewPropsTransformer, ViewContainerAppend } from './plugin-system-struct'
 export { createPlugin } from './plugin-system'
-export { reducerFunc, Action, CalendarState } from './reducers/types'
+export { ReducerFunc } from './reducers/CalendarStateReducer'
+export { CalendarState } from './reducers/CalendarState'
+export { Action } from './reducers/Action'
 export { ReducerContext } from './reducers/ReducerContext'
 export { CalendarComponentProps } from './CalendarComponent'
 

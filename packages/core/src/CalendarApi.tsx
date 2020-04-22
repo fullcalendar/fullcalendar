@@ -6,10 +6,12 @@ import { createDuration, DurationInput } from './datelib/duration'
 import { parseDateSpan, DateSpanInput } from './structs/date-span'
 import { DateRangeInput } from './datelib/date-range'
 import { EventSourceInput, parseEventSource } from './structs/event-source-parse'
-import { EventInput, parseEvent } from './structs/event'
-import { CalendarState, Action } from './reducers/types'
+import { EventInput, parseEvent } from './structs/event-parse'
+import { CalendarState } from './reducers/CalendarState'
+import { Action } from './reducers/Action'
 import { EventSourceApi } from './api/EventSourceApi'
 import { EventApi } from './api/EventApi'
+import { ViewApi } from './ViewApi'
 import { eventTupleToStore } from './structs/event-store'
 import { ViewSpec } from './structs/view-spec'
 import { __assign } from 'tslib'
@@ -26,7 +28,7 @@ export class CalendarApi {
   getCurrentState: () => CalendarState
   emitter: Emitter
 
-  get view() { return this.getCurrentState().viewApi } // for public API
+  get view(): ViewApi { return this.getCurrentState().viewApi } // for public API
 
 
   constructor(protected reducer: CalendarStateReducer) {

@@ -1,6 +1,6 @@
 import { createDuration, Duration, DurationInput } from '../datelib/duration'
 import { refineProps } from '../util/misc'
-import { EventNonDateInput } from '../structs/event'
+import { EventNonDateInput } from './event-parse'
 
 /*
 Information about what will happen when an external element is dragged-and-dropped

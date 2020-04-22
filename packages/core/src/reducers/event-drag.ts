@@ -1,4 +1,4 @@
-import { Action } from './types'
+import { Action } from './Action'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 
 

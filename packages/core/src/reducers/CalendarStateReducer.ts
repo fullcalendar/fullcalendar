@@ -1,6 +1,7 @@
 import { buildLocale, RawLocaleInfo, organizeRawLocales } from '../datelib/locale'
 import { memoize, memoizeObjArg } from '../util/memoize'
-import { Action, CalendarState } from './types'
+import { CalendarState } from './CalendarState'
+import { Action } from './Action'
 import { buildPluginHooks } from '../plugin-system'
 import { PluginHooks } from '../plugin-system-struct'
 import { DateEnv } from '../datelib/env'
@@ -22,7 +23,7 @@ import { reduceEventResize } from './event-resize'
 import { Emitter } from '../common/Emitter'
 import { ReducerContext, buildComputedOptions } from './ReducerContext'
 import { processScopedUiProps, EventUiHash, EventUi } from '../component/event-ui'
-import { EventDefHash } from '../structs/event'
+import { EventDefHash } from '../structs/event-def'
 import { parseToolbars } from '../toolbar-parse'
 import { firstDefined } from '../util/misc'
 import { globalDefaults, mergeOptions } from '../options'
@@ -33,6 +34,9 @@ import { ViewApi } from '../ViewApi'
 import { parseBusinessHours } from '../structs/business-hours'
 import { TaskRunner } from '../util/runner'
 import { globalPlugins } from '../global-plugins'
+
+
+export type ReducerFunc = (state: CalendarState, action: Action, context: ReducerContext) => CalendarState // for plugins
 
 
 export class CalendarStateReducer {

@@ -1,4 +1,4 @@
-import { Action } from './types'
+import { Action } from './Action'
 
 
 export function reduceViewType(viewType: string, action: Action, availableViewHash): string {

@@ -1,11 +1,11 @@
-import { Action } from './types'
 import { PluginHooks } from '../plugin-system-struct'
 import { DateEnv } from '../datelib/env'
 import { CalendarApi } from '../CalendarApi'
 import { Emitter } from '../common/Emitter'
 import { parseFieldSpecs } from '../util/misc'
 import { createDuration, Duration } from '../datelib/duration'
-import { CalendarState } from '../reducers/types'
+import { CalendarState } from './CalendarState'
+import { Action } from './Action'
 
 
 export interface ReducerContext {

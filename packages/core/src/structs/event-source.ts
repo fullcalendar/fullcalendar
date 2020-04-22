@@ -1,4 +1,4 @@
-import { EventInput, EventInputTransformer } from './event'
+import { EventInput, EventInputTransformer } from './event-parse'
 import { DateRange } from '../datelib/date-range'
 import { EventUi } from '../component/event-ui'
 import { ReducerContext } from '../reducers/ReducerContext'

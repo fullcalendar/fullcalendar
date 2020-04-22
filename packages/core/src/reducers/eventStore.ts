@@ -1,6 +1,8 @@
 import { filterHash, mapHash } from '../util/object'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
-import { EventDef, EventInstance, EventInput, EventInstanceHash } from '../structs/event'
+import { EventDef } from '../structs/event-def'
+import { EventInstance, EventInstanceHash } from '../structs/event-instance'
+import { EventInput } from '../structs/event-parse'
 import {
   EventStore,
   mergeEventStores,
@@ -9,7 +11,7 @@ import {
   filterEventStoreDefs,
   parseEvents
 } from '../structs/event-store'
-import { Action } from './types'
+import { Action } from './Action'
 import { EventSourceHash, EventSource } from '../structs/event-source'
 import { DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'

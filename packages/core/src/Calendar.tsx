@@ -1,5 +1,6 @@
 import { OptionsInput } from './types/input-types'
-import { CalendarState, Action } from './reducers/types'
+import { Action } from './reducers/Action'
+import { CalendarState } from './reducers/CalendarState'
 import { CalendarComponent } from './CalendarComponent'
 import { __assign } from 'tslib'
 import { render, h, flushToDom } from './vdom'

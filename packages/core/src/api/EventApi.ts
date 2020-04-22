@@ -1,4 +1,5 @@
-import { EventDef, EventInstance, NON_DATE_PROPS, DATE_PROPS } from '../structs/event'
+import { EventDef, NON_DATE_PROPS, DATE_PROPS } from '../structs/event-def'
+import { EventInstance } from '../structs/event-instance'
 import { UNSCOPED_EVENT_UI_PROPS } from '../component/event-ui'
 import { EventMutation } from '../structs/event-mutation'
 import { DateInput } from '../datelib/env'

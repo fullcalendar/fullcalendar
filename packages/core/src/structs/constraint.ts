@@ -1,5 +1,5 @@
 import { EventStore, parseEvents } from './event-store'
-import { EventInput } from './event'
+import { EventInput } from './event-parse'
 import { DateSpanApi } from './date-span'
 import { EventApi } from '../api/EventApi'
 import { SplittableProps } from '../component/event-splitting'

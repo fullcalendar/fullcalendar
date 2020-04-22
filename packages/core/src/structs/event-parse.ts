@@ -1,12 +1,12 @@
 import { refineProps, guid } from '../util/misc'
 import { DateInput } from '../datelib/env'
-import { DateRange } from '../datelib/date-range'
 import { startOfDay } from '../datelib/marker'
 import { parseRecurring } from './recurring-event'
-import { Duration } from '../datelib/duration'
-import { UnscopedEventUiInput, EventUi, processUnscopedUiProps } from '../component/event-ui'
+import { UnscopedEventUiInput, processUnscopedUiProps } from '../component/event-ui'
 import { __assign } from 'tslib'
 import { ReducerContext } from '../reducers/ReducerContext'
+import { EventDef, DATE_PROPS, NON_DATE_PROPS } from './event-def'
+import { EventInstance, createEventInstance } from './event-instance'
 
 /*
 Utils for parsing event-input data. Each util parses a subset of the event-input's data.
@@ -32,49 +32,9 @@ export interface EventDateInput {
 export type EventInput = EventNonDateInput & EventDateInput
 export type EventInputTransformer = (eventInput: EventInput) => EventInput | null
 
-export interface EventDef {
-  defId: string
-  sourceId: string
-  publicId: string
-  groupId: string
-  allDay: boolean
-  hasEnd: boolean
-  recurringDef: { typeId: number, typeData: any, duration: Duration | null } | null
-  title: string
-  url: string
-  ui: EventUi
-  extendedProps: any
-}
-
-export interface EventInstance {
-  instanceId: string
-  defId: string
-  range: DateRange
-  forcedStartTzo: number | null
-  forcedEndTzo: number | null
-}
-
 export interface EventTuple {
   def: EventDef
   instance: EventInstance | null
-}
-
-export type EventInstanceHash = { [instanceId: string]: EventInstance }
-export type EventDefHash = { [defId: string]: EventDef }
-
-export const NON_DATE_PROPS = { // ...that are NOT in the EventUi object
-  id: String,
-  groupId: String,
-  title: String,
-  url: String,
-  extendedProps: null
-}
-
-export const DATE_PROPS = {
-  start: null,
-  date: null, // alias for start
-  end: null,
-  allDay: null
 }
 
 
@@ -146,23 +106,6 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: 
 }
 
 export type eventDefParserFunc = (def: EventDef, props: any, leftovers: any) => void
-
-
-export function createEventInstance(
-  defId: string,
-  range: DateRange,
-  forcedStartTzo?: number,
-  forcedEndTzo?: number
-): EventInstance {
-  return {
-    instanceId: guid()
-,
-    defId,
-    range,
-    forcedStartTzo: forcedStartTzo == null ? null : forcedStartTzo,
-    forcedEndTzo: forcedEndTzo == null ? null : forcedEndTzo
-  }
-}
 
 
 function parseSingle(raw: EventInput, defaultAllDay: boolean | null, context: ReducerContext, leftovers?, allowOpenRange?: boolean) {

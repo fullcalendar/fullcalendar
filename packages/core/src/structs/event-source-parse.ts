@@ -1,4 +1,4 @@
-import { EventInput, EventInputTransformer } from './event'
+import { EventInput, EventInputTransformer } from './event-parse'
 import { EventSourceFunc } from '../event-sources/func-event-source'
 import { ConstraintInput, AllowFunc } from './constraint'
 import { EventSource, EventSourceSuccessResponseHandler, EventSourceErrorResponseHandler } from './event-source'

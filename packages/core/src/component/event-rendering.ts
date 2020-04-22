@@ -1,4 +1,5 @@
-import { EventDef, EventTuple, EventDefHash } from '../structs/event'
+import { EventDef, EventDefHash } from '../structs/event-def'
+import { EventTuple } from '../structs/event-parse'
 import { EventStore } from '../structs/event-store'
 import { DateRange, invertRanges, intersectRanges, rangeContainsMarker } from '../datelib/date-range'
 import { Duration } from '../datelib/duration'

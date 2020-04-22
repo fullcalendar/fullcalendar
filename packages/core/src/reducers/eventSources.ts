@@ -3,7 +3,7 @@ import { parseEventSource } from '../structs/event-source-parse'
 import { arrayToHash, filterHash } from '../util/object'
 import { DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
-import { Action } from './types'
+import { Action } from './Action'
 import { guid } from '../util/misc'
 import { ReducerContext } from './ReducerContext'
 
