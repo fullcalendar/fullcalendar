@@ -6,7 +6,13 @@
   "description": "Provides core functionality, including the Calendar class",
   "docs": "https://fullcalendar.io/docs/initialize-es6",
   "dependencies": {
-    "preact": "^10.0.5",
     "tslib": "^1.9.3"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.34",
+    "@types/react-dom": "^16.9.6",
+    "preact": "^10.0.5",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
   }
 }
