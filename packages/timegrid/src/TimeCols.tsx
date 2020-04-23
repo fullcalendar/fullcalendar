@@ -49,7 +49,7 @@ export interface TimeColsProps {
 }
 
 interface TimeColsState {
-  slatCoords?: TimeColsSlatsCoords
+  slatCoords: TimeColsSlatsCoords | null
 }
 
 
@@ -61,6 +61,10 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
   private processSlotOptions = memoize(processSlotOptions)
   private scrollResponder: ScrollResponder
   private colCoords: PositionCache
+
+  state = {
+    slatCoords: null
+  }
 
 
   render() {

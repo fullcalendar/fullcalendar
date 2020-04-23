@@ -69,6 +69,10 @@ export class Table extends DateComponent<TableProps, TableState> {
   private rowPositions: PositionCache
   private colPositions: PositionCache
 
+  state = {
+    morePopoverState: null
+  }
+
 
   render() {
     let { props } = this
