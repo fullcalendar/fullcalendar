@@ -1,6 +1,5 @@
 import {
-  h, ComponentChildren,
-  applyStyle, BaseComponent, ComponentContext, DelayedRunner, Ref, setRef
+  h, ComponentChildren, applyStyle, BaseComponent, DelayedRunner, Ref, setRef
 } from '@fullcalendar/core'
 
 
@@ -25,11 +24,12 @@ export class Popover extends BaseComponent<PopoverProps> {
   private repositioner = new DelayedRunner(this.updateSize.bind(this))
 
 
-  render(props: PopoverProps, state: {}, context: ComponentContext) {
-    let { theme } = context
+  render() {
+    let { theme } = this.context
+    let { props } = this
     let classNames = [
       'fc-popover',
-      context.theme.getClass('popover')
+      theme.getClass('popover')
     ].concat(
       props.extraClassNames || []
     )

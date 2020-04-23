@@ -5,7 +5,6 @@ import { createFormatter } from '../datelib/formatting'
 import { buildSegTimeText, EventMeta } from '../component/event-rendering'
 import { EventRoot, MinimalEventProps } from './EventRoot'
 import { Seg } from '../component/DateComponent'
-import { ComponentContext } from '../component/ComponentContext'
 
 
 export interface StandardEventProps extends MinimalEventProps {
@@ -22,16 +21,16 @@ export interface StandardEventProps extends MinimalEventProps {
 // should not be a purecomponent
 export class StandardEvent extends BaseComponent<StandardEventProps> {
 
-  render(props: StandardEventProps, state: {}, context: ComponentContext) {
-    let { options } = context
+  render() {
+    let { props, context } = this
 
     // TODO: avoid createFormatter, cache!!!
     // SOLUTION: require that props.defaultTimeFormat is a real formatter, a top-level const,
     // which will require that defaultRangeSeparator be part of the DateEnv (possible already?),
     // and have options.eventTimeFormat be preprocessed.
     let timeFormat = createFormatter(
-      options.eventTimeFormat || props.defaultTimeFormat,
-      options.defaultRangeSeparator
+      context.options.eventTimeFormat || props.defaultTimeFormat,
+      context.options.defaultRangeSeparator
     )
 
     let timeText = buildSegTimeText(props.seg, timeFormat, context, props.defaultDisplayEventTime, props.defaultDisplayEventEnd)

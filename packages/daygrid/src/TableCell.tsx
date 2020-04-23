@@ -4,7 +4,6 @@ import {
   h,
   DateMarker,
   DateComponent,
-  ComponentContext,
   CssDimValue,
   DateRange,
   buildNavLinkData,
@@ -76,8 +75,9 @@ const DEFAULT_WEEK_NUM_FORMAT = { week: 'narrow' }
 export class TableCell extends DateComponent<TableCellProps> {
 
 
-  render(props: TableCellProps, state: {}, context: ComponentContext) {
-    let { options } = context
+  render() {
+    let { options, viewApi } = this.context
+    let { props } = this
     let { date, dateProfile } = props
 
     return (
@@ -128,7 +128,7 @@ export class TableCell extends DateComponent<TableCellProps> {
                 {Boolean(props.moreCnt) &&
                   <div className='fc-daygrid-day-bottom' style={{ marginTop: props.moreMarginTop }}>
                     <RenderHook name='moreLink'
-                      hookProps={{ num: props.moreCnt, text: props.buildMoreLinkText(props.moreCnt), view: context.viewApi }}
+                      hookProps={{ num: props.moreCnt, text: props.buildMoreLinkText(props.moreCnt), view: viewApi }}
                       defaultContent={renderMoreLinkInner}
                     >
                       {(rootElRef, classNames, innerElRef, innerContent) => (
@@ -225,7 +225,9 @@ interface TableCellTopProps {
 
 class TableCellTop extends BaseComponent<TableCellTopProps> {
 
-  render(props: TableCellTopProps) {
+  render() {
+    let { props } = this
+
     return (
       <DayCellContent
         date={props.date}

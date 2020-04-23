@@ -26,10 +26,11 @@ export class Scroller extends BaseComponent<ScrollerProps> implements ScrollerLi
   private el: HTMLElement // TODO: just use this.base?
 
 
-  render(props: ScrollerProps) {
-    let className = [ 'fc-scroller' ]
+  render() {
+    let { props } = this
     let { liquid, liquidIsAbsolute } = props
     let isAbsolute = liquid && liquidIsAbsolute
+    let className = [ 'fc-scroller' ]
 
     if (liquid) {
       if (liquidIsAbsolute) {

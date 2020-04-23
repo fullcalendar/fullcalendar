@@ -48,7 +48,9 @@ export class DayCellRoot extends BaseComponent<DayCellRootProps> {
   buildClassNames = buildHookClassNameGenerator<DayCellHookProps>('dayCell')
 
 
-  render(props: DayCellRootProps, state: {}, context: ComponentContext) {
+  render() {
+    let { props, context } = this
+
     let hookPropsOrigin: DayCellHookPropOrigin = {
       date: props.date,
       dateProfile: props.dateProfile,
@@ -95,7 +97,9 @@ export interface DayCellContentProps {
 
 export class DayCellContent extends BaseComponent<DayCellContentProps> {
 
-  render(props: DayCellContentProps, state: {}, context: ComponentContext) {
+  render() {
+    let { props, context } = this
+
     let hookPropsOrigin: DayCellHookPropOrigin = {
       date: props.date,
       dateProfile: props.dateProfile,

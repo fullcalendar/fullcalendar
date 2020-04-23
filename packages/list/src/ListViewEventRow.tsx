@@ -13,14 +13,14 @@ const DEFAULT_TIME_FORMAT = {
 
 export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
 
-  render(props: MinimalEventProps, state: {}, context: ComponentContext) {
-    let { options } = context
+  render() {
+    let { props, context } = this
     let { seg } = props
 
     // TODO: avoid createFormatter, cache!!! see TODO in StandardEvent
     let timeFormat = createFormatter(
-      options.eventTimeFormat || DEFAULT_TIME_FORMAT,
-      options.defaultRangeSeparator
+      context.options.eventTimeFormat || DEFAULT_TIME_FORMAT,
+      context.options.defaultRangeSeparator
     )
 
     return (

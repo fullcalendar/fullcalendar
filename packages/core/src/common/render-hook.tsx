@@ -34,16 +34,18 @@ export class RenderHook<HookProps> extends Component<RenderHookProps<HookProps>>
   private rootElRef = createRef()
 
 
-  render(props: RenderHookProps<HookProps>, state: {}, context: ComponentContext) {
+  render() {
+    let { name, hookProps, options, defaultContent, children } = this.props
+
     return (
-      <MountHook name={props.name} hookProps={props.hookProps} options={props.options} elRef={this.handleRootEl}>
+      <MountHook name={name} hookProps={hookProps} options={options} elRef={this.handleRootEl}>
         {(rootElRef) => (
-          <ContentHook name={props.name} hookProps={props.hookProps} options={props.options} defaultContent={props.defaultContent} backupElRef={this.rootElRef}>
-            {(innerElRef, innerContent) => props.children(
+          <ContentHook name={name} hookProps={hookProps} options={options} defaultContent={defaultContent} backupElRef={this.rootElRef}>
+            {(innerElRef, innerContent) => children(
               rootElRef,
               normalizeClassNames(
-                (props.options || context.options)[props.name ? props.name + 'ClassNames' : 'classNames'],
-                props.hookProps
+                (options || this.context.options)[name ? name + 'ClassNames' : 'classNames'],
+                hookProps
               ),
               innerElRef,
               innerContent
@@ -91,8 +93,8 @@ export class ContentHook<HookProps> extends Component<ContentHookProps<HookProps
   }
 
 
-  render(props: ContentHookProps<HookProps>) {
-    return props.children(this.innerElRef, this.renderInnerContent())
+  render() {
+    return this.props.children(this.innerElRef, this.renderInnerContent())
   }
 
 
@@ -175,8 +177,8 @@ export class MountHook<HookProps> extends Component<MountHookProps<HookProps>> {
   rootEl: HTMLElement
 
 
-  render(props: MountHookProps<HookProps>) {
-    return props.children(this.handleRootEl)
+  render() {
+    return this.props.children(this.handleRootEl)
   }
 
 

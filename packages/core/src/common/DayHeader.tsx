@@ -1,5 +1,4 @@
 import { BaseComponent } from '../vdom-util'
-import { ComponentContext } from '../component/ComponentContext'
 import { DateMarker } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 import { computeFallbackHeaderFormat } from './table-utils'
@@ -24,8 +23,9 @@ export class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: rename t
   createDayHeaderFormatter = memoize(createDayHeaderFormatter)
 
 
-  render(props: DayHeaderProps, state: {}, context: ComponentContext) {
-    let { dates, dateProfile, datesRepDistinctDays } = props
+  render() {
+    let { context } = this
+    let { dates, dateProfile, datesRepDistinctDays, renderIntro } = this.props
 
     let dayHeaderFormat = this.createDayHeaderFormatter(
       context.options.dayHeaderFormat,
@@ -36,7 +36,7 @@ export class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: rename t
     return (
       <NowTimer unit='day' content={(nowDate: DateMarker, todayRange: DateRange) => (
         <tr>
-          {props.renderIntro && props.renderIntro()}
+          {renderIntro && renderIntro()}
           {dates.map((date) => (
             datesRepDistinctDays ?
               <TableDateCell

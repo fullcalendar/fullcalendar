@@ -8,7 +8,6 @@ import {
   mapHash,
   CssDimValue,
   DateRange,
-  ComponentContext,
   getSegMeta,
   DateProfile,
   Fragment,
@@ -71,7 +70,8 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   }
 
 
-  render(props: TableRowProps, state: TableRowState, context: ComponentContext) {
+  render() {
+    let { props, state, context } = this
     let colCnt = props.cells.length
 
     let businessHoursByCol = splitSegsByFirstCol(props.businessHourSegs, colCnt)

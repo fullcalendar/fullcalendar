@@ -1,7 +1,6 @@
 import { DateRange } from '../datelib/date-range'
 import { getDayClassNames, getDateMeta, DateMeta } from '../component/date-rendering'
 import { DateMarker, addDays } from '../datelib/marker'
-import { ComponentContext } from '../component/ComponentContext'
 import { h } from '../vdom'
 import { __assign } from 'tslib'
 import { DateFormatter } from '../datelib/DateFormatter'
@@ -37,13 +36,14 @@ const CLASS_NAME = 'fc-col-header-cell' // do the cushion too? no
 
 export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD name for this class now. used in the Header
 
-  render(props: TableDateCellProps, state: {}, context: ComponentContext) {
-    let { dateEnv, options } = context
+  render() {
+    let { dateEnv, options, theme, viewApi } = this.context
+    let { props } = this
     let { date, dateProfile } = props
     let dayMeta = getDateMeta(date, props.todayRange, null, dateProfile)
 
     let classNames = [ CLASS_NAME ].concat(
-      getDayClassNames(dayMeta, context.theme)
+      getDayClassNames(dayMeta, theme)
     )
     let text = dateEnv.format(date, props.dayHeaderFormat)
 
@@ -54,7 +54,7 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
 
     let hookProps: DateHeaderCellHookProps = {
       date: dateEnv.toDate(date),
-      view: context.viewApi,
+      view: viewApi,
       ...props.extraHookProps,
       text,
       ...dayMeta
@@ -103,14 +103,14 @@ export interface TableDowCellProps {
 
 export class TableDowCell extends BaseComponent<TableDowCellProps> {
 
-  render(props: TableDowCellProps, state: {}, context: ComponentContext) {
-    let { dow } = props
-    let { dateEnv } = context
+  render() {
+    let { props } = this
+    let { dateEnv, theme, viewApi } = this.context
 
-    let date = addDays(new Date(259200000), dow) // start with Sun, 04 Jan 1970 00:00:00 GMT
+    let date = addDays(new Date(259200000), props.dow) // start with Sun, 04 Jan 1970 00:00:00 GMT
 
     let dateMeta: DateMeta = {
-      dow,
+      dow: props.dow,
       isDisabled: false,
       isFuture: false,
       isPast: false,
@@ -119,7 +119,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
     }
 
     let classNames = [ CLASS_NAME ].concat(
-      getDayClassNames(dateMeta, context.theme),
+      getDayClassNames(dateMeta, theme),
       props.extraClassNames || []
     )
 
@@ -128,7 +128,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
     let hookProps: DateHeaderCellHookProps = {
       date,
       ...dateMeta,
-      view: context.viewApi,
+      view: viewApi,
       ...props.extraHookProps,
       text
     }

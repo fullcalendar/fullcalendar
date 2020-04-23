@@ -1,4 +1,4 @@
-import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getSegMeta, DateRange, Fragment, DayCellRoot, NowIndicatorRoot, DayCellContent, BgEvent, renderFill, DateProfile } from '@fullcalendar/core'
+import { Ref, DateMarker, BaseComponent, h, EventSegUiInteractionState, Seg, getSegMeta, DateRange, Fragment, DayCellRoot, NowIndicatorRoot, DayCellContent, BgEvent, renderFill, DateProfile } from '@fullcalendar/core'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { computeSegCoords, computeSegVerticals } from './event-placement'
@@ -28,13 +28,14 @@ export interface TimeColProps {
 export class TimeCol extends BaseComponent<TimeColProps> {
 
 
-  render(props: TimeColProps, state: {}, context: ComponentContext) {
-    let { options } = context
+  render() {
+    let { props, context } = this
+    let isSelectMirror = context.options.selectMirror
 
     let mirrorSegs: Seg[] = // yuck
       (props.eventDrag && props.eventDrag.segs) ||
       (props.eventResize && props.eventResize.segs) ||
-      (options.selectMirror && props.dateSelectionSegs) ||
+      (isSelectMirror && props.dateSelectionSegs) ||
       []
 
     let interactionAffectedInstances = // TODO: messy way to compute this
@@ -60,7 +61,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
                     {},
                     Boolean(props.eventDrag),
                     Boolean(props.eventResize),
-                    Boolean(options.selectMirror)
+                    Boolean(isSelectMirror)
                     // TODO: pass in left/right instead of using only computeSegTopBottomCss
                   )}
                 </Fragment>
@@ -244,7 +245,9 @@ interface TimeColMiscProps { // should be given nowDate too??
 
 class TimeColMisc extends BaseComponent<TimeColMiscProps> {
 
-  render(props: TimeColMiscProps) {
+  render() {
+    let { props } = this
+
     return (
       <DayCellContent date={props.date} dateProfile={props.dateProfile} todayRange={props.todayRange} extraHookProps={props.extraHookProps}>
         {(innerElRef, innerContent) => (

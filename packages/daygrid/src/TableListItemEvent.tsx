@@ -1,4 +1,4 @@
-import { h, BaseComponent, Seg, EventRoot, ComponentContext, createFormatter, buildSegTimeText, EventMeta, Fragment } from '@fullcalendar/core'
+import { h, BaseComponent, Seg, EventRoot, createFormatter, buildSegTimeText, EventMeta, Fragment } from '@fullcalendar/core'
 import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering'
 
 
@@ -14,16 +14,16 @@ export interface DotTableEventProps {
 
 export class TableListItemEvent extends BaseComponent<DotTableEventProps> {
 
-  render(props: DotTableEventProps, state: {}, context: ComponentContext) {
-    let { options } = context
+  render() {
+    let { props, context } = this
 
     // TODO: avoid createFormatter, cache!!!
     // SOLUTION: require that props.defaultTimeFormat is a real formatter, a top-level const,
     // which will require that defaultRangeSeparator be part of the DateEnv (possible already?),
     // and have options.eventTimeFormat be preprocessed.
     let timeFormat = createFormatter(
-      options.eventTimeFormat || DEFAULT_TABLE_EVENT_TIME_FORMAT,
-      options.defaultRangeSeparator
+      context.options.eventTimeFormat || DEFAULT_TABLE_EVENT_TIME_FORMAT,
+      context.options.defaultRangeSeparator
     )
 
     let timeText = buildSegTimeText(props.seg, timeFormat, context, true, props.defaultDisplayEventEnd)

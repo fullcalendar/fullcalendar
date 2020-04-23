@@ -60,7 +60,8 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
   /*
   renders INSIDE of an outer div
   */
-  render(props: CalendarComponentProps, state: CalendarComponentState) {
+  render() {
+    let { props, state } = this
     let { toolbarConfig, theme, options } = props
 
     let toolbarProps = this.buildToolbarProps(

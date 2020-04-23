@@ -7,7 +7,6 @@ import {
   RefMap,
   createRef,
   PositionCache,
-  ComponentContext,
   memoize,
   DateRange,
   NowIndicatorRoot,
@@ -55,7 +54,8 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
   private cellElRefs = new RefMap<HTMLTableCellElement>()
 
 
-  render(props: TimeColsContentProps, state: {}, context: ComponentContext) {
+  render() {
+    let { props, context } = this
     let nowIndicatorTop =
       context.options.nowIndicator &&
       props.slatCoords &&

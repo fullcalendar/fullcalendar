@@ -58,13 +58,13 @@ export class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
   private slatElRefs = new RefMap<HTMLTableRowElement>()
 
 
-  render(props: TimeColsSlatsProps, state: {}, context: ComponentContext) {
-    let { theme } = context
+  render() {
+    let { props, context } = this
 
     return (
       <div className='fc-timegrid-slots' ref={this.rootElRef}>
         <table
-          className={theme.getClass('table')}
+          className={context.theme.getClass('table')}
           style={{
             minWidth: props.tableMinWidth,
             width: props.clientWidth,
@@ -136,7 +136,8 @@ export interface TimeColsSlatsBodyProps {
 
 export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
 
-  render(props: TimeColsSlatsBodyProps, state: {}, context: ComponentContext) {
+  render() {
+    let { props, context } = this
     let { slatElRefs } = props
 
     return (

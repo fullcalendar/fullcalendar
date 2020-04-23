@@ -13,7 +13,6 @@ import {
   DateMarker,
   Slicer,
   Hit,
-  ComponentContext,
   NowTimer,
   CssDimValue,
   Duration
@@ -53,15 +52,17 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
   private timeColsRef = createRef<TimeCols>()
 
 
-  render(props: DayTimeColsProps, state: {}, context: ComponentContext) {
-    let { dateEnv, options } = context
+  render() {
+    let { props, context } = this
     let { dateProfile, dayTableModel } = props
-    let dayRanges = this.buildDayRanges(dayTableModel, dateProfile, dateEnv)
+
+    let isNowIndicator = context.options.nowIndicator
+    let dayRanges = this.buildDayRanges(dayTableModel, dateProfile, context.dateEnv)
 
     // give it the first row of cells
     return (
       <NowTimer // TODO: would move this further down hierarchy, but sliceNowDate needs it
-        unit={options.nowIndicator ? 'minute' : 'day'}
+        unit={isNowIndicator ? 'minute' : 'day'}
         content={(nowDate: DateMarker, todayRange: DateRange) => (
           <TimeCols
             ref={this.timeColsRef}
@@ -78,7 +79,7 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
             clientHeight={props.clientHeight}
             expandRows={props.expandRows}
             nowDate={nowDate}
-            nowIndicatorSegs={options.nowIndicator && this.slicer.sliceNowDate(nowDate, context, dayRanges)}
+            nowIndicatorSegs={isNowIndicator && this.slicer.sliceNowDate(nowDate, context, dayRanges)}
             todayRange={todayRange}
             onScrollTopRequest={props.onScrollTopRequest}
             forPrint={props.forPrint}

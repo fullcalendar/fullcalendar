@@ -10,10 +10,10 @@ const DEFAULT_TIME_FORMAT = {
 
 export class TimeColEvent extends BaseComponent<MinimalEventProps> {
 
-  render(props: MinimalEventProps) {
+  render() {
     return (
       <StandardEvent
-        {...props}
+        {...this.props}
         defaultTimeFormat={DEFAULT_TIME_FORMAT}
         extraClassNames={[ 'fc-timegrid-event', 'fc-v-event' ]}
       />

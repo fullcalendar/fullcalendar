@@ -11,7 +11,6 @@ import {
   addDays,
   RefMap,
   setRef,
-  ComponentContext,
   DateRange,
   NowTimer,
   DateMarker,
@@ -71,9 +70,10 @@ export class Table extends DateComponent<TableProps, TableState> {
   private colPositions: PositionCache
 
 
-  render(props: TableProps, state: TableState, context: ComponentContext) {
+  render() {
+    let { props } = this
     let { dateProfile, dayMaxEventRows, dayMaxEvents, expandRows } = props
-    let { morePopoverState } = state
+    let { morePopoverState } = this.state
     let rowCnt = props.cells.length
 
     let businessHourSegsByRow = this.splitBusinessHourSegs(props.businessHourSegs, rowCnt)
@@ -82,7 +82,7 @@ export class Table extends DateComponent<TableProps, TableState> {
     let dateSelectionSegsByRow = this.splitDateSelectionSegs(props.dateSelectionSegs, rowCnt)
     let eventDragByRow = this.splitEventDrag(props.eventDrag, rowCnt)
     let eventResizeByRow = this.splitEventResize(props.eventResize, rowCnt)
-    let buildMoreLinkText = this.buildBuildMoreLinkText(context.options.moreLinkText)
+    let buildMoreLinkText = this.buildBuildMoreLinkText(this.context.options.moreLinkText)
 
     let limitViaBalanced = dayMaxEvents === true || dayMaxEventRows === true
 
@@ -150,10 +150,10 @@ export class Table extends DateComponent<TableProps, TableState> {
           </table>,
           (morePopoverState && morePopoverState.currentFgEventSegs === props.fgEventSegs) && // clear popover on event mod
             <MorePopover
-              date={state.morePopoverState.date}
+              date={morePopoverState.date}
               dateProfile={dateProfile}
-              segs={state.morePopoverState.allSegs}
-              alignmentEl={state.morePopoverState.dayEl}
+              segs={morePopoverState.allSegs}
+              alignmentEl={morePopoverState.dayEl}
               topAlignmentEl={rowCnt === 1 ? props.headerAlignElRef.current : null}
               onCloseClick={this.handleMorePopoverClose}
               selectedInstanceId={props.eventSelection}

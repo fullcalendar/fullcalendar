@@ -1,10 +1,8 @@
 import {
   h, createRef,
   DayHeader,
-  ComponentContext,
   DateProfileGenerator,
   DateProfile,
-  ViewProps,
   memoize,
   DaySeriesModel,
   DayTableModel,
@@ -21,8 +19,9 @@ export class DayTableView extends TableView {
   private tableRef = createRef<DayTable>()
 
 
-  render(props: ViewProps, state: {}, context: ComponentContext) {
-    let { options, dateProfileGenerator } = context
+  render() {
+    let { options, computedOptions, dateProfileGenerator } = this.context
+    let { props } = this
     let dayTableModel = this.buildDayTableModel(props.dateProfile, dateProfileGenerator)
 
     let headerContent = options.dayHeaders &&
@@ -45,7 +44,7 @@ export class DayTableView extends TableView {
         eventSelection={props.eventSelection}
         eventDrag={props.eventDrag}
         eventResize={props.eventResize}
-        nextDayThreshold={context.computedOptions.nextDayThreshold}
+        nextDayThreshold={computedOptions.nextDayThreshold}
         colGroupNode={contentArg.tableColGroupNode}
         tableMinWidth={contentArg.tableMinWidth}
         dayMaxEvents={options.dayMaxEvents}

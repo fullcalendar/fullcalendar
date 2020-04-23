@@ -8,7 +8,6 @@ import {
   DateRange,
   intersectRanges,
   DateProfile,
-  ComponentContext,
   EventUiHash,
   EventRenderRange,
   sliceEventStore,
@@ -36,7 +35,9 @@ export class ListView extends DateComponent<ViewProps> {
   private eventStoreToSegs = memoize(this._eventStoreToSegs)
 
 
-  render(props: ViewProps, state: {}, context: ComponentContext) {
+  render() {
+    let { props, context } = this
+
     let extraClassNames = [
       'fc-list',
       context.theme.getClass('bordered'),

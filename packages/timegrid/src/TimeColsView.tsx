@@ -330,8 +330,8 @@ interface TimeBodyAxisProps {
 
 class TimeBodyAxis extends BaseComponent<TimeBodyAxisProps> {
 
-  render(props: TimeBodyAxisProps) {
-    return props.slatMetas.map((slatMeta: TimeSlatMeta) => (
+  render() {
+    return this.props.slatMetas.map((slatMeta: TimeSlatMeta) => (
       <tr>
         <TimeColsAxisCell {...slatMeta} />
       </tr>

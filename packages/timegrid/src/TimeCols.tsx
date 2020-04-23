@@ -63,7 +63,9 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
   private colCoords: PositionCache
 
 
-  render(props: TimeColsProps, state: TimeColsState) {
+  render() {
+    let { props, state } = this
+
     return (
       <div className='fc-timegrid-body' ref={props.rootElRef} style={{
         // these props are important to give this wrapper correct dimensions for interactions

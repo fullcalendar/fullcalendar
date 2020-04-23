@@ -16,18 +16,21 @@ export interface ViewContainerProps {
 // TODO: do function component?
 export class ViewContainer extends BaseComponent<ViewContainerProps> {
 
-  render(props: ViewContainerProps) {
+  render() {
+    let { props } = this
+    let { aspectRatio } = props
+
     let classNames = [
       'fc-view-harness',
-      (props.aspectRatio || props.liquid || props.height)
+      (aspectRatio || props.liquid || props.height)
         ? 'fc-view-harness-active' // harness controls the height
         : 'fc-view-harness-passive' // let the view do the height
     ]
     let height: CssDimValue = ''
     let paddingBottom: CssDimValue = ''
 
-    if (props.aspectRatio) {
-      paddingBottom = (1 / props.aspectRatio) * 100 + '%'
+    if (aspectRatio) {
+      paddingBottom = (1 / aspectRatio) * 100 + '%'
     } else {
       height = props.height || ''
     }

@@ -1,7 +1,6 @@
 import { h } from './vdom'
 import { BaseComponent } from './vdom-util'
 import { ToolbarModel, ToolbarWidget } from './toolbar-parse'
-import { ComponentContext } from './component/ComponentContext'
 
 
 export interface ToolbarProps extends ToolbarContent {
@@ -20,8 +19,8 @@ export interface ToolbarContent {
 
 export class Toolbar extends BaseComponent<ToolbarProps> {
 
-  render(props: ToolbarProps) {
-    let { model } = props
+  render() {
+    let { model, extraClassName } = this.props
     let forceLtr = false
     let startContent, endContent
     let centerContent = model.center
@@ -41,7 +40,7 @@ export class Toolbar extends BaseComponent<ToolbarProps> {
     }
 
     let classNames = [
-      props.extraClassName || '',
+      extraClassName || '',
       'fc-toolbar',
       forceLtr ? 'fc-toolbar-ltr' : ''
     ]
@@ -80,8 +79,9 @@ interface ToolbarSectionProps extends ToolbarContent {
 
 class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
 
-  render(props: ToolbarSectionProps, state: {}, context: ComponentContext) {
-    let { theme } = context
+  render() {
+    let { props } = this
+    let { theme } = this.context
 
     return (
       <div className='fc-toolbar-chunk'>

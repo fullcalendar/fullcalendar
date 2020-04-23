@@ -48,16 +48,16 @@ export class DayTable extends DateComponent<DayTableProps, ComponentContext> {
   private tableRef = createRef<Table>()
 
 
-  render(props: DayTableProps, state: {}, context: ComponentContext) {
-    let { dayTableModel } = props
+  render() {
+    let { props, context } = this
 
     return (
       <Table
         ref={this.tableRef}
         elRef={this.handleRootEl}
-        { ...this.slicer.sliceProps(props, props.dateProfile, props.nextDayThreshold, context, dayTableModel) }
+        { ...this.slicer.sliceProps(props, props.dateProfile, props.nextDayThreshold, context, props.dayTableModel) }
         dateProfile={props.dateProfile}
-        cells={dayTableModel.cells}
+        cells={props.dayTableModel.cells}
         colGroupNode={props.colGroupNode}
         tableMinWidth={props.tableMinWidth}
         renderRowIntro={props.renderRowIntro}

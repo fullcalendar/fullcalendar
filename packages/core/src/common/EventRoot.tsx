@@ -1,6 +1,5 @@
 import { Seg } from '../component/DateComponent'
 import { ComponentChildren, h, Ref, createRef } from '../vdom'
-import { ComponentContext } from '../component/ComponentContext'
 import { EventApi } from '../api/EventApi'
 import { computeSegDraggable, computeSegStartResizable, computeSegEndResizable, setElSeg } from '../component/event-rendering'
 import { EventMeta, getSkinCss, getEventClassNames } from '../component/event-rendering'
@@ -40,7 +39,8 @@ export class EventRoot extends BaseComponent<EventRootProps> {
   elRef = createRef<HTMLElement>()
 
 
-  render(props: EventRootProps, state: {}, context: ComponentContext) {
+  render() {
+    let { props, context } = this
     let { seg } = props
     let { eventRange } = seg
     let { ui } = eventRange

@@ -1,5 +1,4 @@
 import { VNode, h } from '../vdom'
-import { ComponentContext } from '../component/ComponentContext'
 import { BaseComponent, setRef } from '../vdom-util'
 import { Scroller, OverflowValue } from './Scroller'
 import { RefMap } from '../util/RefMap'
@@ -49,7 +48,8 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
   }
 
 
-  render(props: SimpleScrollGridProps, state: SimpleScrollGridState, context: ComponentContext) {
+  render() {
+    let { props, state, context } = this
     let sectionConfigs = props.sections || []
     let cols = this.processCols(props.cols)
 

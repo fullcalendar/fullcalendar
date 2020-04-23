@@ -1,12 +1,10 @@
 import {
   h,
   DateProfileGenerator, DateProfile,
-  ComponentContext,
   DayHeader,
   DaySeriesModel,
   DayTableModel,
   memoize,
-  ViewProps,
   ChunkContentCallbackArgs
 } from '@fullcalendar/core'
 import { DayTable } from '@fullcalendar/daygrid'
@@ -21,8 +19,9 @@ export class DayTimeColsView extends TimeColsView {
   private buildSlatMetas = memoize(buildSlatMetas)
 
 
-  render(props: ViewProps, state: {}, context: ComponentContext) {
-    let { options, computedOptions, dateEnv, dateProfileGenerator } = context
+  render() {
+    let { options, computedOptions, dateEnv, dateProfileGenerator } = this.context
+    let { props } = this
     let { dateProfile } = props
     let dayTableModel = this.buildTimeColsModel(dateProfile, dateProfileGenerator)
     let splitProps = this.allDaySplitter.splitProps(props)

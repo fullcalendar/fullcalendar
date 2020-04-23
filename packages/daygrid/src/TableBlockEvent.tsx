@@ -8,7 +8,9 @@ export interface TableBlockEventProps extends MinimalEventProps {
 
 export class TableBlockEvent extends BaseComponent<TableBlockEventProps> {
 
-  render(props: TableBlockEventProps) {
+  render() {
+    let { props } = this
+
     return (
       <StandardEvent
         {...props}

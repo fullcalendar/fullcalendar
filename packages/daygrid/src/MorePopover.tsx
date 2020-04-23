@@ -1,4 +1,4 @@
-import { DateComponent, DateMarker, h, EventInstanceHash, ComponentContext, createFormatter, Hit, addDays, DateRange, getSegMeta, DayCellRoot, DayCellContent, DateProfile } from '@fullcalendar/core'
+import { DateComponent, DateMarker, h, EventInstanceHash, createFormatter, Hit, addDays, DateRange, getSegMeta, DayCellRoot, DayCellContent, DateProfile } from '@fullcalendar/core'
 import { TableSeg } from './TableSeg'
 import { TableBlockEvent } from './TableBlockEvent'
 import { TableListItemEvent } from './TableListItemEvent'
@@ -24,9 +24,10 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
   private popoverEl: HTMLElement
 
 
-  render(props: MorePopoverProps, state: {}, context: ComponentContext) {
-    let { options, dateEnv } = context
-    let { date, hiddenInstances, todayRange, dateProfile } = props
+  render() {
+    let { options, dateEnv } = this.context
+    let { props } = this
+    let { date, hiddenInstances, todayRange, dateProfile, selectedInstanceId } = props
     let title = dateEnv.format(date, createFormatter(options.dayPopoverFormat)) // TODO: cache formatter
 
     return (
@@ -63,7 +64,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
                     <TableListItemEvent
                       seg={seg}
                       isDragging={false}
-                      isSelected={instanceId === props.selectedInstanceId}
+                      isSelected={instanceId === selectedInstanceId}
                       defaultDisplayEventEnd={false}
                       {...getSegMeta(seg, todayRange)}
                     /> :
@@ -72,7 +73,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
                       isDragging={false}
                       isResizing={false}
                       isDateSelecting={false}
-                      isSelected={instanceId === props.selectedInstanceId}
+                      isSelected={instanceId === selectedInstanceId}
                       defaultDisplayEventEnd={false}
                       {...getSegMeta(seg, todayRange)}
                     />

@@ -1,7 +1,6 @@
 import { ViewSpec } from '../structs/view-spec'
 import { MountHook, buildHookClassNameGenerator } from './render-hook'
 import { ComponentChildren, h, Ref } from '../vdom'
-import { ComponentContext } from '../component/ComponentContext'
 import { BaseComponent } from '../vdom-util'
 
 
@@ -17,7 +16,8 @@ export class ViewRoot extends BaseComponent<ViewRootProps> {
   buildClassNames = buildHookClassNameGenerator('view')
 
 
-  render(props: ViewRootProps, state: {}, context: ComponentContext) {
+  render() {
+    let { props, context } = this
     let hookProps = { view: context.viewApi }
     let customClassNames = this.buildClassNames(hookProps, context)
 

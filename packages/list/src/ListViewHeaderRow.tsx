@@ -1,5 +1,5 @@
 import {
-  BaseComponent, DateMarker, createFormatter, ComponentContext, h, DateRange, getDateMeta,
+  BaseComponent, DateMarker, createFormatter, h, DateRange, getDateMeta,
   RenderHook, buildNavLinkData, DateHeaderCellHookProps, getDayClassNames, formatDayString
 } from '@fullcalendar/core'
 
@@ -18,10 +18,11 @@ interface HookProps extends DateHeaderCellHookProps { // doesn't enforce much si
 export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
 
 
-  render(props: ListViewHeaderRowProps, state: {}, context: ComponentContext) {
-    let { theme, dateEnv, options } = context
-    let { dayDate } = props
-    let dayMeta = getDateMeta(dayDate, props.todayRange)
+  render() {
+    let { dayDate, todayRange } = this.props
+    let { theme, dateEnv, options, viewApi } = this.context
+
+    let dayMeta = getDateMeta(dayDate, todayRange)
     let mainFormat = createFormatter(options.listDayFormat) // TODO: cache
     let sideFormat = createFormatter(options.listDaySideFormat) // TODO: cache
     let text = mainFormat ? dateEnv.format(dayDate, mainFormat) : '' // will ever be falsy?
@@ -33,7 +34,7 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
 
     let hookProps: HookProps = {
       date: dateEnv.toDate(dayDate),
-      view: context.viewApi,
+      view: viewApi,
       text,
       sideText,
       navLinkData,
@@ -41,7 +42,7 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
     }
 
     let classNames = [ 'fc-list-day' ].concat(
-      getDayClassNames(dayMeta, context.theme)
+      getDayClassNames(dayMeta, theme)
     )
 
     // TODO: make a reusable HOC for dayHeader (used in daygrid/timegrid too)
