@@ -85,9 +85,7 @@ function buildConfig(options) {
         }
       }),
       commonjs({
-        // for fast-deep-equal import
         // also for react(-dom) hack, ALSO IN rollup-bundle.js
-        include: 'node_modules/**',
         namedExports: {
           'react': Object.keys(react),
           'react-dom': Object.keys(reactDom)
@@ -95,7 +93,7 @@ function buildConfig(options) {
       }),
       replace({ // for react. also in rollup-tests.js
         values: {
-          'process.env.NODE_ENV': '"development"'
+          'process.env.NODE_ENV': '"production"'
         }
       }),
       postCss({

@@ -55,7 +55,6 @@ function buildBundleConfig(pkgStruct, isDev) {
       nodeResolve(), // for requiring tslib. TODO: whitelist?
       commonjs({
         // this react(-dom) hack is also in rollup-tests.js
-        include: 'node_modules/**',
         namedExports: {
           'react': Object.keys(react),
           'react-dom': Object.keys(reactDom)
@@ -63,7 +62,7 @@ function buildBundleConfig(pkgStruct, isDev) {
       }),
       replace({ // for react. also in rollup-tests.js
         values: {
-          'process.env.NODE_ENV': '"development"'
+          'process.env.NODE_ENV': '"production"'
         }
       }),
       postCss({
