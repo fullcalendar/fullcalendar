@@ -17,15 +17,15 @@ export interface ToolbarWidget {
 
 // TODO: make separate parsing of headerToolbar/footerToolbar part of options-processing system
 export function parseToolbars(
-  options: any,
-  optionOverrides: any,
+  calendarOptions: any,
+  calendarOptionOverrides: any,
   theme: Theme,
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi
 ) {
   let viewsWithButtons: string[] = []
-  let headerToolbar = options.headerToolbar ? parseToolbar(options.headerToolbar, options, optionOverrides, theme, viewSpecs, calendarApi, viewsWithButtons) : null
-  let footerToolbar = options.footerToolbar ? parseToolbar(options.footerToolbar, options, optionOverrides, theme, viewSpecs, calendarApi, viewsWithButtons) : null
+  let headerToolbar = calendarOptions.headerToolbar ? parseToolbar(calendarOptions.headerToolbar, calendarOptions, calendarOptionOverrides, theme, viewSpecs, calendarApi, viewsWithButtons) : null
+  let footerToolbar = calendarOptions.footerToolbar ? parseToolbar(calendarOptions.footerToolbar, calendarOptions, calendarOptionOverrides, theme, viewSpecs, calendarApi, viewsWithButtons) : null
 
   return { headerToolbar, footerToolbar, viewsWithButtons }
 }
@@ -33,14 +33,14 @@ export function parseToolbars(
 
 function parseToolbar(
   sectionStrHash: { [sectionName: string]: string },
-  options: any,
-  optionOverrides: any,
+  calendarOptions: any,
+  calendarOptionOverrides: any,
   theme: Theme,
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi,
   viewsWithButtons: string[] // dump side effects
 ) : ToolbarModel {
-  return mapHash(sectionStrHash, (sectionStr) => parseSection(sectionStr, options, optionOverrides, theme, viewSpecs, calendarApi, viewsWithButtons))
+  return mapHash(sectionStrHash, (sectionStr) => parseSection(sectionStr, calendarOptions, calendarOptionOverrides, theme, viewSpecs, calendarApi, viewsWithButtons))
 }
 
 
@@ -49,17 +49,17 @@ BAD: querying icons and text here. should be done at render time
 */
 function parseSection(
   sectionStr: string,
-  options: any,
-  optionOverrides: any,
+  calendarOptions: any,
+  calendarOptionOverrides: any,
   theme: Theme,
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi,
   viewsWithButtons: string[] // dump side effects
 ): ToolbarWidget[][] {
-  let isRtl = options.direction === 'rtl'
-  let calendarCustomButtons = options.customButtons || {}
-  let calendarButtonTextOverrides = optionOverrides.buttonText || {}
-  let calendarButtonText = options.buttonText || {}
+  let isRtl = calendarOptions.direction === 'rtl'
+  let calendarCustomButtons = calendarOptions.customButtons || {}
+  let calendarButtonTextOverrides = calendarOptionOverrides.buttonText || {}
+  let calendarButtonText = calendarOptions.buttonText || {}
   let sectionSubstrs = sectionStr ? sectionStr.split(' ') : []
 
   return sectionSubstrs.map((buttonGroupStr, i): ToolbarWidget[] => {

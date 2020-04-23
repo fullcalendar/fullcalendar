@@ -118,8 +118,8 @@ export class CalendarStateReducer {
 
   private reduce(state: CalendarState, action: Action): CalendarState {
     let { emitter } = this
-    let optionOverrides = state.optionOverrides || {}
-    let dynamicOptionOverrides = state.dynamicOptionOverrides || {}
+    let optionOverrides = state.optionOverrides || {} // assumed to be calendar-specific, not view-specific
+    let dynamicOptionOverrides = state.dynamicOptionOverrides || {} // assumed to be calendar-specific, not view-specific
 
     switch (action.type) {
       case 'INIT':
@@ -276,7 +276,7 @@ export class CalendarStateReducer {
       eventSelection: reduceSelectedEvent(state.eventSelection, action),
       eventDrag: reduceEventDrag(state.eventDrag, action),
       eventResize: reduceEventResize(state.eventResize, action),
-      toolbarConfig: this.parseToolbars(viewOptions, optionOverrides, theme, viewSpecs, this.calendarApi),
+      toolbarConfig: this.parseToolbars(calendarOptions, optionOverrides, theme, viewSpecs, this.calendarApi),
       viewSpec,
       viewTitle,
       viewApi
