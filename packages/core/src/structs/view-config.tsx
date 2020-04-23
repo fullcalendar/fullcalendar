@@ -1,7 +1,7 @@
 import { ViewProps } from '../View'
 import { refineProps } from '../util/misc'
 import { mapHash } from '../util/object'
-import { ComponentType, Component, h } from '../vdom'
+import { ComponentType, Component, h, Ref } from '../vdom'
 import { ViewRoot } from '../common/ViewRoot'
 import { RenderHook } from '../common/render-hook'
 import { ComponentContext, ComponentContextType } from '../component/ComponentContext'
@@ -14,7 +14,9 @@ B) options to customize an existing view, in which case only provides options.
 
 export type ViewComponent = Component<ViewProps> // an instance
 
-export type ViewComponentType = ComponentType<ViewProps> // a class or a function
+export type ViewComponentType = ComponentType< // a class or a function
+  ViewProps & { ref?: Ref<any> } // shouldn't need to add ref, but @types/react needs it
+>
 
 export interface ViewConfigObjectInput { // not strict enough. will basically allow for anything :(
   type?: string

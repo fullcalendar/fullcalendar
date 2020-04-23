@@ -57,7 +57,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
                   className='fc-daygrid-event-harness'
                   key={instanceId}
                   style={{
-                    visibility: hiddenInstances[instanceId] ? 'hidden' : ''
+                    visibility: hiddenInstances[instanceId] ? 'hidden' : ('' as any)
                   }}
                 >
                   {hasListItemDisplay(eventRange) ?

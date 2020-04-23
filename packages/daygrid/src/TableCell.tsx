@@ -17,6 +17,9 @@ import {
   addDays,
   intersectRanges,
   DateProfile,
+  VDomUIEvent,
+  getNativeEvent,
+  setRef,
 } from '@fullcalendar/core'
 import { TableSeg } from './TableSeg'
 
@@ -74,6 +77,8 @@ const DEFAULT_WEEK_NUM_FORMAT = { week: 'narrow' }
 
 export class TableCell extends DateComponent<TableCellProps> {
 
+  private rootEl: HTMLElement
+
 
   render() {
     let { options, viewApi } = this.context
@@ -87,7 +92,7 @@ export class TableCell extends DateComponent<TableCellProps> {
         todayRange={props.todayRange}
         showDayNumber={props.showDayNumber}
         extraHookProps={props.extraHookProps}
-        elRef={props.elRef}
+        elRef={this.handleRootEl}
       >
         {(rootElRef, classNames, rootDataAttrs, isDisabled) => (
           <td
@@ -132,7 +137,7 @@ export class TableCell extends DateComponent<TableCellProps> {
                       defaultContent={renderMoreLinkInner}
                     >
                       {(rootElRef, classNames, innerElRef, innerContent) => (
-                        <a onClick={this.handleMoreLink} ref={rootElRef} className={[ 'fc-daygrid-more-link' ].concat(classNames).join(' ')}>
+                        <a onClick={this.handleMoreLinkClick} ref={rootElRef} className={[ 'fc-daygrid-more-link' ].concat(classNames).join(' ')}>
                           {innerContent}
                         </a>
                       )}
@@ -151,7 +156,14 @@ export class TableCell extends DateComponent<TableCellProps> {
   }
 
 
-  handleMoreLink = (ev: UIEvent) => {
+  handleRootEl = (el: HTMLElement) => {
+    this.rootEl = el
+
+    setRef(this.props.elRef, el)
+  }
+
+
+  handleMoreLinkClick = (ev: VDomUIEvent) => {
     let { props } = this
 
     if (props.onMoreClick) {
@@ -165,8 +177,8 @@ export class TableCell extends DateComponent<TableCellProps> {
         allSegs,
         hiddenSegs,
         moreCnt: props.moreCnt,
-        dayEl: this.base as HTMLElement, // TODO: bad pattern
-        ev
+        dayEl: this.rootEl,
+        ev: getNativeEvent(ev)
       })
     }
   }

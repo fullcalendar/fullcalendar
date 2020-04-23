@@ -3,6 +3,13 @@ export { Component, render, createRef, VNode, Fragment, ComponentChildren, creat
 import { Component, h, options, render } from 'preact'
 
 
+export type VDomUIEvent = UIEvent
+
+export function getNativeEvent(vdomEvent: VDomUIEvent) {
+  return vdomEvent as UIEvent
+}
+
+
 export function flushToDom() {
   let oldDebounceRendering = options.debounceRendering
   let callbackQ = []

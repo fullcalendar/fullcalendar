@@ -37,7 +37,8 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
   }
 
 
-  render(props: NowTimerProps, state: NowTimerState) {
+  render() {
+    let { props, state } = this
     return props.content(state.nowDate, state.todayRange)
   }
 

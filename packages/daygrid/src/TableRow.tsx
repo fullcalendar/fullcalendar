@@ -13,7 +13,8 @@ import {
   Fragment,
   BgEvent,
   renderFill,
-  isPropsEqual
+  isPropsEqual,
+  createRef
 } from '@fullcalendar/core'
 import { TableSeg, splitSegsByFirstCol } from './TableSeg'
 import { TableCell, TableCellModel, MoreLinkArg } from './TableCell'
@@ -61,6 +62,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   private cellInnerElRefs = new RefMap<HTMLElement>() // the fc-daygrid-day-frame
   private cellContentElRefs = new RefMap<HTMLDivElement>() // the fc-daygrid-day-events
   private segHarnessRefs = new RefMap<HTMLDivElement>()
+  private rootElRef = createRef<HTMLTableRowElement>()
 
   state: TableRowState = {
     cellInnerPositions: null,
@@ -95,7 +97,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
       {}
 
     return (
-      <tr>
+      <tr ref={this.rootElRef}>
         {props.renderIntro && props.renderIntro()}
         {props.cells.map((cell, col) => {
           let normalFgNodes = this.renderFgSegs(
@@ -211,7 +213,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     isDragging?: boolean,
     isResizing?: boolean,
     isDateSelecting?: boolean
-  ) {
+  ): VNode[] {
     let { context } = this
     let { eventSelection } = this.props
     let { cellInnerPositions, cellContentPositions } = this.state
@@ -255,7 +257,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
             key={instanceId}
             ref={isMirror ? null : this.segHarnessRefs.createRef(instanceId)}
             style={{
-              visibility: isInvisible ? 'hidden' : '',
+              visibility: isInvisible ? 'hidden' : ('' as any),
               marginTop: marginTop || '',
               top: top || '',
               left: left || '',
@@ -289,7 +291,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   }
 
 
-  renderFillSegs(segs: TableSeg[], fillType: string) {
+  renderFillSegs(segs: TableSeg[], fillType: string): VNode[] {
     let { isRtl } = this.context
     let { todayRange } = this.props
     let { cellInnerPositions } = this.state
@@ -340,7 +342,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
         let cellContentEls = props.cells.map((cell) => cellContentElRefs.currentMap[cell.key])
 
         if (cellContentEls.length) {
-          let originEl = this.base as HTMLElement // BAD
+          let originEl = this.rootElRef.current
 
           this.setState({ // will trigger isCellPositionsChanged...
             cellInnerPositions: new PositionCache(

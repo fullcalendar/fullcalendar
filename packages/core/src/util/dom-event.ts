@@ -1,4 +1,5 @@
 import { elementClosest } from './dom-manip'
+import { VDomUIEvent } from '../vdom'
 
 
 // Stops a mouse/touch event from doing it's native browser action
@@ -10,12 +11,11 @@ export function preventDefault(ev) {
 // Event Delegation
 // ----------------------------------------------------------------------------------------------------------------
 
-
-export function buildDelegationHandler(
+export function buildDelegationHandler<EventType extends (Event | VDomUIEvent)>(
   selector: string,
-  handler: (ev: Event, matchedTarget: HTMLElement) => void
+  handler: (ev: EventType, matchedTarget: HTMLElement) => void
 ) {
-  return function(ev: Event) {
+  return function(ev: EventType) {
     let matchedChild = elementClosest(ev.target as HTMLElement, selector)
 
     if (matchedChild) {

@@ -75,10 +75,9 @@ export class Popover extends BaseComponent<PopoverProps> {
   // Triggered when the user clicks *anywhere* in the document, for the autoHide feature
   handleDocumentMousedown = (ev) => {
     let { onClose } = this.props
-    let rootEl = this.base // bad
 
     // only hide the popover if the click happened outside the popover
-    if (onClose && !rootEl.contains(ev.target)) {
+    if (onClose && !this.rootEl.contains(ev.target)) {
       onClose()
     }
   }

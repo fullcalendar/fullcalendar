@@ -1,5 +1,5 @@
 import { SectionConfig, ChunkConfig, ColProps, CssDimValue } from './util'
-import { Component } from '../vdom'
+import { Component, Ref } from '../vdom'
 import { ComponentContext } from '../component/ComponentContext'
 
 
@@ -8,6 +8,7 @@ export interface ScrollGridProps {
   sections: ScrollGridSectionConfig[]
   liquid?: boolean
   forPrint?: boolean
+  elRef?: Ref<any>
 }
 
 export interface ScrollGridSectionConfig extends SectionConfig {
