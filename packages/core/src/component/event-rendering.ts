@@ -353,8 +353,8 @@ export function getEventClassNames(props: EventMeta) { // weird that we use this
 
 export function getSkinCss(ui: EventUi) {
   return {
-    'background-color': ui.backgroundColor,
-    'border-color': ui.borderColor,
+    backgroundColor: ui.backgroundColor,
+    borderColor: ui.borderColor,
     color: ui.textColor
   }
 }
