@@ -92,17 +92,17 @@ export class TableCell extends DateComponent<TableCellProps> {
         {(rootElRef, classNames, rootDataAttrs, isDisabled) => (
           <td
             ref={rootElRef}
-            class={[ 'fc-daygrid-day' ].concat(classNames, props.extraClassNames || []).join(' ')}
+            className={[ 'fc-daygrid-day' ].concat(classNames, props.extraClassNames || []).join(' ')}
             {...rootDataAttrs}
             {...props.extraDataAttrs}
           >
-            <div class='fc-daygrid-day-frame fc-scrollgrid-sync-inner' ref={props.innerElRef /* different from hook system! RENAME */}>
+            <div className='fc-daygrid-day-frame fc-scrollgrid-sync-inner' ref={props.innerElRef /* different from hook system! RENAME */}>
               {props.showWeekNumber &&
                 <WeekNumberRoot date={date} defaultFormat={DEFAULT_WEEK_NUM_FORMAT}>
                   {(rootElRef, classNames, innerElRef, innerContent) => (
                     <a
                       ref={rootElRef}
-                      class={[ 'fc-daygrid-week-number' ].concat(classNames).join(' ')}
+                      className={[ 'fc-daygrid-week-number' ].concat(classNames).join(' ')}
                       data-navlink={options.navLinks ? buildNavLinkData(date, 'week') : null}
                     >
                       {innerContent}
@@ -120,13 +120,13 @@ export class TableCell extends DateComponent<TableCellProps> {
                 />
               }
               <div
-                class='fc-daygrid-day-events'
+                className='fc-daygrid-day-events'
                 ref={props.fgContentElRef}
                 style={{ paddingBottom: props.fgPaddingBottom }}
               >
                 {props.fgContent}
                 {Boolean(props.moreCnt) &&
-                  <div class='fc-daygrid-day-bottom' style={{ marginTop: props.moreMarginTop }}>
+                  <div className='fc-daygrid-day-bottom' style={{ marginTop: props.moreMarginTop }}>
                     <RenderHook name='moreLink'
                       hookProps={{ num: props.moreCnt, text: props.buildMoreLinkText(props.moreCnt), view: context.viewApi }}
                       defaultContent={renderMoreLinkInner}
@@ -140,7 +140,7 @@ export class TableCell extends DateComponent<TableCellProps> {
                   </div>
                 }
               </div>
-              <div class='fc-daygrid-day-bg'>
+              <div className='fc-daygrid-day-bg'>
                 {props.bgContent}
               </div>
             </div>
@@ -237,7 +237,7 @@ class TableCellTop extends BaseComponent<TableCellTopProps> {
       >
         {(innerElRef, innerContent) => (
           innerContent &&
-            <div class='fc-daygrid-day-top' ref={innerElRef}>
+            <div className='fc-daygrid-day-top' ref={innerElRef}>
               <a
                 className='fc-daygrid-day-number'
                 data-navlink={this.context.options.navLinks ? buildNavLinkData(props.date) : null}

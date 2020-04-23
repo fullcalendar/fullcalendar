@@ -60,7 +60,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     let classNames = getScrollGridClassNames(props.liquid, context)
 
     return (
-      <table class={classNames.join(' ')} style={{ height: props.height }}>
+      <table className={classNames.join(' ')} style={{ height: props.height }}>
         <tbody>
           {sectionConfigs.map((sectionConfig, sectionI) => this.renderSection(sectionConfig, sectionI, microColGroupNode))}
         </tbody>
@@ -76,7 +76,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     }
 
     return (
-      <tr key={sectionConfig.key} class={getSectionClassNames(sectionConfig, this.props.liquid).join(' ')}>
+      <tr key={sectionConfig.key} className={getSectionClassNames(sectionConfig, this.props.liquid).join(' ')}>
         {this.renderChunkTd(sectionConfig, sectionI, microColGroupNode, sectionConfig.chunk)}
       </tr>
     )
@@ -116,7 +116,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
 
     return (
       <td ref={chunkConfig.elRef}>
-        <div class={'fc-scroller-harness' + (isLiquid ? ' fc-scroller-harness-liquid' : '')}>
+        <div className={'fc-scroller-harness' + (isLiquid ? ' fc-scroller-harness-liquid' : '')}>
           <Scroller
             ref={this.scrollerRefs.createRef(sectionI)}
             elRef={this.scrollerElRefs.createRef(sectionI)}

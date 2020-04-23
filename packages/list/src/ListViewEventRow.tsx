@@ -41,12 +41,12 @@ export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
         {(rootElRef, classNames, style, innerElRef, innerContent, hookProps) => (
           <tr className={[ 'fc-list-event', hookProps.event.url ? 'fc-event-forced-url' : '' ].concat(classNames).join(' ')} ref={rootElRef}>
             {buildTimeContent(seg, timeFormat, context)}
-            <td class='fc-list-event-graphic'>
-              <span class='fc-list-event-dot' style={{
+            <td className='fc-list-event-graphic'>
+              <span className='fc-list-event-dot' style={{
                 backgroundColor: hookProps.event.backgroundColor
               }} />
             </td>
-            <td class='fc-list-event-title' ref={innerElRef}>
+            <td className='fc-list-event-title' ref={innerElRef}>
               {innerContent}
             </td>
           </tr>
@@ -128,7 +128,7 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: Componen
       return (
         <RenderHook name='allDay' hookProps={hookProps} defaultContent={renderAllDayInner}>
           {(rootElRef, classNames, innerElRef, innerContent) => (
-            <td class={[ 'fc-list-event-time' ].concat(classNames).join(' ')} ref={rootElRef}>
+            <td className={[ 'fc-list-event-time' ].concat(classNames).join(' ')} ref={rootElRef}>
               {innerContent}
             </td>
           )}
@@ -137,7 +137,7 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: Componen
 
     } else {
       return (
-        <td class='fc-list-event-time'>
+        <td className='fc-list-event-time'>
           {timeText}
         </td>
       )

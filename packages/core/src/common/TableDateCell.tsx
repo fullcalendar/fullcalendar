@@ -73,7 +73,7 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
             {!dayMeta.isDisabled &&
               <a
                 data-navlink={navLinkData}
-                class={[
+                className={[
                   'fc-col-header-cell-cushion',
                   props.isSticky ? 'fc-sticky' : ''
                 ].join(' ')}
@@ -143,7 +143,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
             {...props.extraDataAttrs}
           >
             <a
-              class={[
+              className={[
                 'fc-col-header-cell-cushion',
                 props.isSticky ? 'fc-sticky' : ''
               ].join(' ')}

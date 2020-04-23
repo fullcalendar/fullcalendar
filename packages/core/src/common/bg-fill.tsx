@@ -6,7 +6,7 @@ import { EventMeta } from '../component/event-rendering'
 
 export function renderFill(fillType: string) {
   return (
-    <div class={`fc-${fillType}`} />
+    <div className={`fc-${fillType}`} />
   )
 }
 
@@ -45,6 +45,6 @@ function renderInnerContent(props: EventMeta) {
   let title = props.event.title
 
   return title && (
-    <div class='fc-event-title'>{props.event.title}</div>
+    <div className='fc-event-title'>{props.event.title}</div>
   )
 }

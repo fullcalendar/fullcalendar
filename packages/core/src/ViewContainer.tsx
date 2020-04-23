@@ -36,7 +36,7 @@ export class ViewContainer extends BaseComponent<ViewContainerProps> {
       <div
         ref={props.elRef}
         onClick={props.onClick}
-        class={classNames.join(' ')} style={{ height, paddingBottom }}
+        className={classNames.join(' ')} style={{ height, paddingBottom }}
       >{props.children}</div>
     )
   }

@@ -58,14 +58,14 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
             ref={rootElRef}
             {...getSegAnchorAttrs(props.seg)}
           >
-            <div class='fc-event-main' ref={innerElRef}>
+            <div className='fc-event-main' ref={innerElRef}>
               {innerContent}
             </div>
             {hookProps.isStartResizable &&
-              <div class='fc-event-resizer fc-event-resizer-start' />
+              <div className='fc-event-resizer fc-event-resizer-start' />
             }
             {hookProps.isEndResizable &&
-              <div class='fc-event-resizer fc-event-resizer-end' />
+              <div className='fc-event-resizer fc-event-resizer-end' />
             }
           </a>
         )}
@@ -79,9 +79,9 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
 function renderInnerContent(innerProps: EventMeta) {
   return [
     innerProps.timeText &&
-      <div class='fc-event-time'>{innerProps.timeText}</div>
+      <div className='fc-event-time'>{innerProps.timeText}</div>
     ,
-    <div class='fc-event-title'>
+    <div className='fc-event-title'>
       {innerProps.event.title || <Fragment>&nbsp;</Fragment>}
     </div>
   ]

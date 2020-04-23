@@ -65,7 +65,7 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
 
   render(props: TimeColsProps, state: TimeColsState) {
     return (
-      <div class='fc-timegrid-body' ref={props.rootElRef} style={{
+      <div className='fc-timegrid-body' ref={props.rootElRef} style={{
         // these props are important to give this wrapper correct dimensions for interactions
         // TODO: if we set it here, can we avoid giving to inner tables?
         width: props.clientWidth,

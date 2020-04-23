@@ -251,7 +251,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
         nodes.push(
           <div
-            class={'fc-daygrid-event-harness' + (isAbsolute ? ' fc-daygrid-event-harness-abs' : '')}
+            className={'fc-daygrid-event-harness' + (isAbsolute ? ' fc-daygrid-event-harness-abs' : '')}
             key={instanceId}
             ref={isMirror ? null : this.segHarnessRefs.createRef(instanceId)}
             style={{
@@ -312,7 +312,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
         let key = eventRange.instance ? eventRange.instance.instanceId : eventRange.def.defId
 
         nodes.push(
-          <div class='fc-daygrid-bg-harness' style={leftRightCss}>
+          <div className='fc-daygrid-bg-harness' style={leftRightCss}>
             {fillType === 'bg-event' ?
               <BgEvent
                 key={key}

@@ -47,7 +47,7 @@ export class Toolbar extends BaseComponent<ToolbarProps> {
     ]
 
     return (
-      <div class={classNames.join(' ')}>
+      <div className={classNames.join(' ')}>
         {this.renderSection(startContent || [])}
         {this.renderSection(centerContent || [])}
         {this.renderSection(endContent || [])}
@@ -84,7 +84,7 @@ class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
     let { theme } = context
 
     return (
-      <div class='fc-toolbar-chunk'>
+      <div className='fc-toolbar-chunk'>
         {props.widgetGroups.map((widgetGroup: ToolbarWidget[]) => {
           let children = []
           let isOnlyButtons = true
@@ -114,10 +114,10 @@ class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
               children.push(
                 <button
                   disabled={isDisabled}
-                  class={buttonClasses.join(' ')}
+                  className={buttonClasses.join(' ')}
                   onClick={buttonClick}
                   { ...ariaAttrs }
-                >{ buttonText || (buttonIcon ? <span class={buttonIcon} /> : '')}</button>
+                >{ buttonText || (buttonIcon ? <span className={buttonIcon} /> : '')}</button>
               )
             }
           }
@@ -125,7 +125,7 @@ class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
           if (children.length > 1) {
             let groupClasses = (isOnlyButtons && theme.getClass('buttonGroup')) || ''
 
-            return (<div class={groupClasses}>{children}</div>)
+            return (<div className={groupClasses}>{children}</div>)
           } else {
             return children[0]
           }

@@ -101,7 +101,7 @@ export class Table extends DateComponent<TableProps, TableState> {
     ]
 
     return (
-      <div class={classNames.join(' ')} ref={this.handleRootEl} style={{
+      <div className={classNames.join(' ')} ref={this.handleRootEl} style={{
         // these props are important to give this wrapper correct dimensions for interactions
         // TODO: if we set it here, can we avoid giving to inner tables?
         width: props.clientWidth,

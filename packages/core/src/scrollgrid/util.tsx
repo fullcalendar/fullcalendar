@@ -192,7 +192,7 @@ export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGr
 
 export function renderScrollShim(arg: ChunkContentCallbackArgs) {
   return (
-    <div class='fc-scrollgrid-sticky-shim' style={{
+    <div className='fc-scrollgrid-sticky-shim' style={{
       width: arg.clientWidth,
       minWidth: arg.tableMinWidth
     }} />

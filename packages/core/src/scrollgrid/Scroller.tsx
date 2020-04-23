@@ -40,7 +40,7 @@ export class Scroller extends BaseComponent<ScrollerProps> implements ScrollerLi
     }
 
     return (
-      <div ref={this.handleEl} class={className.join(' ')} style={{
+      <div ref={this.handleEl} className={className.join(' ')} style={{
         overflowX: props.overflowX,
         overflowY: props.overflowY,
         left: (isAbsolute && -(props.overcomeLeft || 0)) || '',

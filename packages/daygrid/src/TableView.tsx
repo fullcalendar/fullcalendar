@@ -55,7 +55,7 @@ export abstract class TableView<State={}> extends DateComponent<ViewProps, State
     return (
       <ViewRoot viewSpec={context.viewSpec}>
         {(rootElRef, classNames) => (
-          <div ref={rootElRef} class={[ 'fc-daygrid' ].concat(classNames).join(' ')}>
+          <div ref={rootElRef} className={[ 'fc-daygrid' ].concat(classNames).join(' ')}>
             <SimpleScrollGrid
               liquid={!props.isHeightAuto}
               forPrint={props.forPrint}
@@ -117,7 +117,7 @@ export abstract class TableView<State={}> extends DateComponent<ViewProps, State
     return (
       <ViewRoot viewSpec={context.viewSpec}>
         {(rootElRef, classNames) => (
-          <div ref={rootElRef} class={[ 'fc-daygrid' ].concat(classNames).join(' ')}>
+          <div ref={rootElRef} className={[ 'fc-daygrid' ].concat(classNames).join(' ')}>
             <ScrollGrid
               liquid={!props.isHeightAuto}
               forPrint={props.forPrint}

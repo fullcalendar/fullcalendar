@@ -49,7 +49,7 @@ export class ListView extends DateComponent<ViewProps> {
     return (
       <ViewRoot viewSpec={context.viewSpec} elRef={this.setRootEl}>
         {(rootElRef, classNames) => (
-          <div ref={rootElRef} class={extraClassNames.concat(classNames).join(' ')}>
+          <div ref={rootElRef} className={extraClassNames.concat(classNames).join(' ')}>
             <Scroller
               liquid={!props.isHeightAuto}
               overflowX={props.isHeightAuto ? 'visible' : 'hidden'}
@@ -138,7 +138,7 @@ export class ListView extends DateComponent<ViewProps> {
         }
 
         return (
-          <table class={'fc-list-table ' + theme.getClass('table')}>
+          <table className={'fc-list-table ' + theme.getClass('table')}>
             <tbody>{innerNodes}</tbody>
           </table>
         )

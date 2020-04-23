@@ -65,9 +65,9 @@ function renderInnerContent(innerProps: EventMeta) {
       style={{ backgroundColor: innerProps.backgroundColor || innerProps.borderColor }}
     />,
     innerProps.timeText &&
-      <div class='fc-event-time'>{innerProps.timeText}</div>
+      <div className='fc-event-time'>{innerProps.timeText}</div>
     ,
-    <div class='fc-event-title'>
+    <div className='fc-event-title'>
       {innerProps.event.title || <Fragment>&nbsp;</Fragment>}
     </div>
   ]

@@ -51,8 +51,8 @@ export class TimeCol extends BaseComponent<TimeColProps> {
             {...dataAttrs}
             {...props.extraDataAttrs}
           >
-            <div class='fc-timegrid-col-origin'>
-              <div class='fc-timegrid-col-events'>
+            <div className='fc-timegrid-col-origin'>
+              <div className='fc-timegrid-col-events'>
                 {/* the Fragments scope the keys */}
                 <Fragment>
                   {this.renderFgSegs(
@@ -71,7 +71,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
                   )}
                 </Fragment>
               </div>
-              <div class='fc-timegrid-col-bg'>
+              <div className='fc-timegrid-col-bg'>
                 <Fragment>{this.renderFillSegs(props.businessHourSegs, 'non-business')}</Fragment>
                 <Fragment>{this.renderFillSegs(props.bgEventSegs, 'bg-event')}</Fragment>
                 <Fragment>{this.renderFillSegs(props.dateSelectionSegs, 'highlight')}</Fragment>
@@ -118,7 +118,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
       return (
         <div
-          class={'fc-timegrid-event-harness' + (seg.level > 0 ? ' fc-timegrid-event-harness-inset' : '')}
+          className={'fc-timegrid-event-harness' + (seg.level > 0 ? ' fc-timegrid-event-harness-inset' : '')}
           key={instanceId}
           style={{
             visibility: segIsInvisible[instanceId] ? 'hidden' : '',
@@ -155,7 +155,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
       let key = eventRange.instance ? eventRange.instance.instanceId : eventRange.def.defId
 
       return (
-        <div class='fc-timegrid-bg-harness' style={this.computeSegTopBottomCss(seg)}>
+        <div className='fc-timegrid-bg-harness' style={this.computeSegTopBottomCss(seg)}>
           {fillType === 'bg-event' ?
             <BgEvent
               key={key}
@@ -180,7 +180,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
         {(rootElRef, classNames, innerElRef, innerContent) => (
           <div
             ref={rootElRef}
-            class={[ 'fc-timegrid-now-indicator-line' ].concat(classNames).join(' ')}
+            className={[ 'fc-timegrid-now-indicator-line' ].concat(classNames).join(' ')}
             style={{ top: slatCoords.computeDateTop(seg.start, date) }}
           >{innerContent}</div>
         )}
@@ -249,7 +249,7 @@ class TimeColMisc extends BaseComponent<TimeColMiscProps> {
       <DayCellContent date={props.date} dateProfile={props.dateProfile} todayRange={props.todayRange} extraHookProps={props.extraHookProps}>
         {(innerElRef, innerContent) => (
           innerContent &&
-            <div class='fc-timegrid-col-misc' ref={innerElRef}>{innerContent}</div>
+            <div className='fc-timegrid-col-misc' ref={innerElRef}>{innerContent}</div>
         )}
       </DayCellContent>
     )

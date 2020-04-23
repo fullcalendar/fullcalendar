@@ -73,9 +73,9 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
       })
       sections.push({
         outerContent: (
-          <tr class='fc-scrollgrid-section fc-scrollgrid-section-body'>
+          <tr className='fc-scrollgrid-section fc-scrollgrid-section-body'>
             <td
-              class={'fc-timegrid-divider fc-divider ' + context.theme.getClass('tableCellShaded')}
+              className={'fc-timegrid-divider fc-divider ' + context.theme.getClass('tableCellShaded')}
             />
           </tr>
         )
@@ -96,7 +96,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
     return (
       <ViewRoot viewSpec={context.viewSpec} elRef={this.rootElRef}>
         {(rootElRef, classNames) => (
-          <div class={[ 'fc-timegrid' ].concat(classNames).join(' ')} ref={rootElRef}>
+          <div className={[ 'fc-timegrid' ].concat(classNames).join(' ')} ref={rootElRef}>
             <SimpleScrollGrid
               forPrint={props.forPrint}
               liquid={!props.isHeightAuto}
@@ -164,10 +164,10 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
       })
       sections.push({
         outerContent: (
-          <tr class='fc-scrollgrid-section fc-scrollgrid-section-body'>
+          <tr className='fc-scrollgrid-section fc-scrollgrid-section-body'>
             <td
               colSpan={2}
-              class={'fc-timegrid-divider fc-divider ' + context.theme.getClass('tableCellShaded')}
+              className={'fc-timegrid-divider fc-divider ' + context.theme.getClass('tableCellShaded')}
             />
           </tr>
         )
@@ -205,7 +205,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
     return (
       <ViewRoot viewSpec={context.viewSpec} elRef={this.rootElRef}>
         {(rootElRef, classNames) => (
-          <div class={[ 'fc-timegrid' ].concat(classNames).join(' ')} ref={rootElRef}>
+          <div className={[ 'fc-timegrid' ].concat(classNames).join(' ')} ref={rootElRef}>
             <ScrollGrid
               forPrint={props.forPrint}
               liquid={!props.isHeightAuto}
@@ -261,12 +261,12 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
       return (
         <WeekNumberRoot date={range.start} defaultFormat={DEFAULT_WEEK_NUM_FORMAT}>
           {(rootElRef, classNames, innerElRef, innerContent) => (
-            <th ref={rootElRef} class={[
+            <th ref={rootElRef} className={[
               'fc-timegrid-axis',
               'fc-scrollgrid-shrink'
             ].concat(classNames).join(' ')}>
-              <div class='fc-timegrid-axis-frame fc-scrollgrid-shrink-frame fc-timegrid-axis-frame-liquid'>
-                <a class='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion' data-navlink={navLinkData} ref={innerElRef}>
+              <div className='fc-timegrid-axis-frame fc-scrollgrid-shrink-frame fc-timegrid-axis-frame-liquid'>
+                <a className='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion' data-navlink={navLinkData} ref={innerElRef}>
                   {innerContent}
                 </a>
               </div>
@@ -277,7 +277,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
     }
 
     return (
-      <th class='fc-timegrid-axis'></th>
+      <th className='fc-timegrid-axis'></th>
     )
   }
 
@@ -303,8 +303,8 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
             'fc-timegrid-axis',
             'fc-scrollgrid-shrink'
           ].concat(classNames).join(' ')}>
-            <div class={'fc-timegrid-axis-frame fc-scrollgrid-shrink-frame' + (rowHeight == null ? ' fc-timegrid-axis-frame-liquid' : '')} style={{ height: rowHeight }}>
-              <span class='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion' ref={innerElRef}>
+            <div className={'fc-timegrid-axis-frame fc-scrollgrid-shrink-frame' + (rowHeight == null ? ' fc-timegrid-axis-frame-liquid' : '')} style={{ height: rowHeight }}>
+              <span className='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion' ref={innerElRef}>
                 {innerContent}
               </span>
             </div>

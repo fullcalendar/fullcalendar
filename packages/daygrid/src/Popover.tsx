@@ -35,14 +35,14 @@ export class Popover extends BaseComponent<PopoverProps> {
     )
 
     return (
-      <div class={classNames.join(' ')} {...props.extraAttrs} ref={this.handleRootEl}>
-        <div class={'fc-popover-header ' + theme.getClass('popoverHeader')}>
-          <span class='fc-popover-title'>
+      <div className={classNames.join(' ')} {...props.extraAttrs} ref={this.handleRootEl}>
+        <div className={'fc-popover-header ' + theme.getClass('popoverHeader')}>
+          <span className='fc-popover-title'>
             {props.title}
           </span>
-          <span class={'fc-popover-close ' + theme.getIconClass('close')} onClick={this.handleCloseClick}></span>
+          <span className={'fc-popover-close ' + theme.getIconClass('close')} onClick={this.handleCloseClick}></span>
         </div>
-        <div class={'fc-popover-body ' + theme.getClass('popoverContent')}>
+        <div className={'fc-popover-body ' + theme.getClass('popoverContent')}>
           {props.children}
         </div>
       </div>

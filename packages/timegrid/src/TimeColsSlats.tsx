@@ -62,9 +62,9 @@ export class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
     let { theme } = context
 
     return (
-      <div class='fc-timegrid-slots' ref={this.rootElRef}>
+      <div className='fc-timegrid-slots' ref={this.rootElRef}>
         <table
-          class={theme.getClass('table')}
+          className={theme.getClass('table')}
           style={{
             minWidth: props.tableMinWidth,
             width: props.clientWidth,
@@ -216,8 +216,8 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
           return (
             <RenderHook name='slotLabel' hookProps={hookProps} defaultContent={renderInnerContent}>
               {(rootElRef, customClassNames, innerElRef, innerContent) => (
-                <td ref={rootElRef} class={classNames.concat(customClassNames).join(' ')} data-time={props.isoTimeStr}>
-                  <div class='fc-timegrid-slot-label-frame fc-scrollgrid-shrink-frame'>
+                <td ref={rootElRef} className={classNames.concat(customClassNames).join(' ')} data-time={props.isoTimeStr}>
+                  <div className='fc-timegrid-slot-label-frame fc-scrollgrid-shrink-frame'>
                     <span className='fc-timegrid-slot-label-cushion fc-scrollgrid-shrink-cushion' ref={innerElRef}>
                       {innerContent}
                     </span>

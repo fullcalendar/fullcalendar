@@ -71,7 +71,7 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
     let eventResizeByRow = this.splitEventResize(props.eventResize, colCnt)
 
     return (
-      <div class='fc-timegrid-cols' ref={this.rootElRef}>
+      <div className='fc-timegrid-cols' ref={this.rootElRef}>
         <table style={{
           minWidth: props.tableMinWidth,
           width: props.clientWidth
@@ -80,7 +80,7 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
           <tbody>
             <tr>
               {props.axis &&
-                <td class='fc-timegrid-axis' />
+                <td className='fc-timegrid-axis' />
               }
               {props.cells.map((cell, i) => (
                 <TimeCol
@@ -112,7 +112,7 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
             {(rootElRef, classNames, innerElRef, innerContent) => (
               <div
                 ref={rootElRef}
-                class={[ 'fc-timegrid-now-indicator-arrow' ].concat(classNames).join(' ')}
+                className={[ 'fc-timegrid-now-indicator-arrow' ].concat(classNames).join(' ')}
                 style={{ top: nowIndicatorTop }}
               >{innerContent}</div>
             )}

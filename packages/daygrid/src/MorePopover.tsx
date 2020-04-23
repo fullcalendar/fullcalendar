@@ -44,7 +44,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
             <DayCellContent date={date} dateProfile={dateProfile} todayRange={todayRange}>
               {(innerElRef, innerContent) => (
                 innerContent &&
-                  <div class='fc-more-popover-misc' ref={innerElRef}>{innerContent}</div>
+                  <div className='fc-more-popover-misc' ref={innerElRef}>{innerContent}</div>
               )}
             </DayCellContent>
             {props.segs.map((seg) => {
