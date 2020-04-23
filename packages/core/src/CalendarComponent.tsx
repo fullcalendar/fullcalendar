@@ -16,7 +16,6 @@ import { ViewContainer } from './ViewContainer'
 import { CssDimValue } from './scrollgrid/util'
 import { Theme } from './theme/Theme'
 import { getCanVGrowWithinCell } from './util/table-styling'
-import { ViewComponent } from './structs/view-config'
 import { Interaction, InteractionSettingsInput, InteractionClass, parseInteractionSettings, interactionSettingsStore } from './interactions/interaction'
 import { DateComponent } from './component/DateComponent'
 import { EventClicking } from './interactions/EventClicking'
@@ -48,7 +47,6 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
   private handleNavLinkClick = buildDelegationHandler('a[data-navlink]', this._handleNavLinkClick.bind(this))
   private headerRef = createRef<Toolbar>()
   private footerRef = createRef<Toolbar>()
-  private viewRef = createRef<ViewComponent>()
   private interactionsStore: { [componentUid: string]: Interaction[] } = {}
   private calendarInteractions: CalendarInteraction[]
 
@@ -264,10 +262,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
     let ViewComponent = viewSpec.component
 
     return (
-      <ViewComponent
-        ref={this.viewRef}
-        { ...viewProps }
-      />
+      <ViewComponent {...viewProps} />
     )
   }
 
