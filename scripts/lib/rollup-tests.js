@@ -6,6 +6,9 @@ const commonjs = require('rollup-plugin-commonjs')
 const sourcemaps = require('rollup-plugin-sourcemaps')
 const postCss = require('rollup-plugin-postcss')
 const { WATCH_OPTIONS, onwarn, isStylePath, isRelPath } = require('./rollup-util')
+const replace = require('rollup-plugin-replace')
+const react = require('react')
+const reactDom = require('react-dom')
 
 
 module.exports = function() {
@@ -81,7 +84,20 @@ function buildConfig(options) {
           paths: nodeModulesDirs
         }
       }),
-      commonjs(), // for fast-deep-equal import
+      commonjs({
+        // for fast-deep-equal import
+        // also for react(-dom) hack, ALSO IN rollup-bundle.js
+        include: 'node_modules/**',
+        namedExports: {
+          'react': Object.keys(react),
+          'react-dom': Object.keys(reactDom)
+        }
+      }),
+      replace({ // for react. also in rollup-tests.js
+        values: {
+          'process.env.NODE_ENV': '"development"'
+        }
+      }),
       postCss({
         extract: true // to separate .css file
       }),

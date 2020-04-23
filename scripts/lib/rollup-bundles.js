@@ -1,10 +1,14 @@
 const path = require('path')
 const glob = require('glob')
+const commonjs = require('rollup-plugin-commonjs')
 const nodeResolve = require('rollup-plugin-node-resolve')
 const postCss = require('rollup-plugin-postcss')
 const { renderBanner, isRelPath, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, onwarn, isScssPath } = require('./rollup-util')
 const { pkgStructs, pkgStructHash, getCorePkgStruct, getNonPremiumBundle } = require('./pkg-struct')
 const alias = require('rollup-plugin-alias')
+const replace = require('rollup-plugin-replace')
+const react = require('react')
+const reactDom = require('react-dom')
 
 
 module.exports = function(isDev) {
@@ -49,6 +53,19 @@ function buildBundleConfig(pkgStruct, isDev) {
     plugins: [
       alias(buildAliasMap()),
       nodeResolve(), // for requiring tslib. TODO: whitelist?
+      commonjs({
+        // this react(-dom) hack is also in rollup-tests.js
+        include: 'node_modules/**',
+        namedExports: {
+          'react': Object.keys(react),
+          'react-dom': Object.keys(reactDom)
+        }
+      }),
+      replace({ // for react. also in rollup-tests.js
+        values: {
+          'process.env.NODE_ENV': '"development"'
+        }
+      }),
       postCss({
         extract: true // to separate file
       }),
