@@ -47,19 +47,20 @@ export class Toolbar extends BaseComponent<ToolbarProps> {
 
     return (
       <div className={classNames.join(' ')}>
-        {this.renderSection(startContent || [])}
-        {this.renderSection(centerContent || [])}
-        {this.renderSection(endContent || [])}
+        {this.renderSection('start', startContent || [])}
+        {this.renderSection('center', centerContent || [])}
+        {this.renderSection('end', endContent || [])}
       </div>
     )
   }
 
 
-  renderSection(widgetGroups: ToolbarWidget[][]) {
+  renderSection(key: string, widgetGroups: ToolbarWidget[][]) {
     let { props } = this
 
     return (
       <ToolbarSection
+        key={key}
         widgetGroups={widgetGroups}
         title={props.title}
         activeButton={props.activeButton}
