@@ -16,8 +16,6 @@ export abstract class BaseComponent<Props={}, State={}> extends Component<Props,
   stateEquality: EqualityFuncs<State>
   debug: boolean
 
-  abstract render(props: Props, state: State, context: ComponentContext) // why aren't arg types being enforced!?
-
   shouldComponentUpdate(nextProps: Props, nextState: State, nextContext: ComponentContext) {
 
     if (this.debug) {
@@ -54,6 +52,7 @@ export function setRef<RefType>(ref: Ref<RefType> | void, current: RefType) {
   if (typeof ref === 'function') {
     ref(current)
   } else if (ref) {
-    ref.current = current
+    // see https://github.com/facebook/react/issues/13029
+    (ref as any).current = current
   }
 }
