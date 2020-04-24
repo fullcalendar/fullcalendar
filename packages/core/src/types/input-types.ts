@@ -112,7 +112,7 @@ export interface OptionsInputBase {
   initialDate?: DateInput
   nowIndicator?: boolean
   visibleRange?: ((currentDate: Date) => DateRangeInput) | DateRangeInput
-  validRange?: DateRangeInput
+  validRange?: ((currentDate: Date) => DateRangeInput) | DateRangeInput
   dateIncrement?: DurationInput
   dateAlignment?: string
   duration?: DurationInput
