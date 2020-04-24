@@ -12,7 +12,7 @@ export type EventSourceFunc = (
     endStr: string
     timeZone: string
   },
-  successCallback: (events: EventInput[]) => void,
+  successCallback: (events: any[]) => void,
   failureCallback: (error: EventSourceError) => void
 ) => (void | PromiseLike<EventInput[]>)
 
