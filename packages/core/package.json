@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "@fullcalendar/preact",
+  "name": "@fullcalendar/core",
   "version": "5.0.0-beta.2",
   "dependencies": {
     "preact": "^10.0.5",
