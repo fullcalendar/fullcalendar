@@ -1,4 +1,4 @@
-import { createPlugin, sliceEvents } from '@fullcalendar/core'
+import { createPlugin, sliceEvents } from '@fullcalendar/preact'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 describe('custom view class', function() { // TODO: rename file

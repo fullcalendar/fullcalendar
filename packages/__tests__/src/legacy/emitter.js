@@ -1,4 +1,4 @@
-import { Emitter } from '@fullcalendar/core'
+import { Emitter } from '@fullcalendar/preact'
 
 describe('emitter', function() {
 

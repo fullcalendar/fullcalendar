@@ -1,5 +1,5 @@
 import { drag } from '../lib/EventDragUtils'
-import { parseMarker, addMs } from '@fullcalendar/core'
+import { parseMarker, addMs } from '@fullcalendar/preact'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { intersectRects } from '../lib/geom'
 

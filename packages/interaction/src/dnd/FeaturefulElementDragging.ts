@@ -1,4 +1,4 @@
-import { PointerDragEvent, preventSelection, allowSelection, preventContextMenu, allowContextMenu, ElementDragging } from '@fullcalendar/core'
+import { PointerDragEvent, preventSelection, allowSelection, preventContextMenu, allowContextMenu, ElementDragging } from '@fullcalendar/common'
 import { PointerDragging } from './PointerDragging'
 import { ElementMirror } from './ElementMirror'
 import { AutoScroller } from './AutoScroller'

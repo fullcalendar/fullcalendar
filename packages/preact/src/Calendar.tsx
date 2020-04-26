@@ -1,5 +1,5 @@
 import { __assign } from 'tslib'
-import { OptionsInput, Action, CalendarState, CalendarComponent, render, h, DelayedRunner, guid, CssDimValue, applyStyleProp, CalendarStateReducer, CalendarApi } from '@fullcalendar/core'
+import { OptionsInput, Action, CalendarState, CalendarComponent, render, h, DelayedRunner, guid, CssDimValue, applyStyleProp, CalendarStateReducer, CalendarApi } from '@fullcalendar/common'
 import { flushToDom } from './utils'
 
 

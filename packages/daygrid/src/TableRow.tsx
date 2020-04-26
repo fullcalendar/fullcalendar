@@ -15,7 +15,7 @@ import {
   renderFill,
   isPropsEqual,
   createRef
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 import { TableSeg, splitSegsByFirstCol } from './TableSeg'
 import { TableCell, TableCellModel, MoreLinkArg } from './TableCell'
 import { TableListItemEvent } from './TableListItemEvent'

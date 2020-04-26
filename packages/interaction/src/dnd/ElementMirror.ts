@@ -1,4 +1,4 @@
-import { removeElement, applyStyle, whenTransitionDone, Rect } from '@fullcalendar/core'
+import { removeElement, applyStyle, whenTransitionDone, Rect } from '@fullcalendar/common'
 
 /*
 An effect in which an element follows the movement of a pointer across the screen.

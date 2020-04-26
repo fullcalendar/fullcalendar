@@ -1,4 +1,4 @@
-import { DateComponent, DateMarker, h, EventInstanceHash, createFormatter, Hit, addDays, DateRange, getSegMeta, DayCellRoot, DayCellContent, DateProfile } from '@fullcalendar/core'
+import { DateComponent, DateMarker, h, EventInstanceHash, createFormatter, Hit, addDays, DateRange, getSegMeta, DayCellRoot, DayCellContent, DateProfile } from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
 import { TableBlockEvent } from './TableBlockEvent'
 import { TableListItemEvent } from './TableListItemEvent'

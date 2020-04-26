@@ -127,16 +127,14 @@ function buildNonBundleConfig(pkgStruct, bundleDistDir, isDev) {
       TEMPLATE_PLUGIN,
       ...(isDev ? SOURCEMAP_PLUGINS : []),
       {
-        // use the resolvedId hook to rename the import of @fullcalendar/core -> fullcalendar.
+        // use the resolvedId hook to rename the import of @fullcalendar/common -> fullcalendar.
         // otherwise, we could have used the exernals config option all the way.
         // nodeResolve seems to take precedence (thus the tslib hack). PUT THIS FIRST?s
         resolveId(id) {
           if (id === inputFile) { return inputFile }
           if (id === 'tslib') { return { id, external: false } }
-          if (
-            id === '@fullcalendar/core' ||
-            id === '@fullcalendar/preact'
-          ) { return { id: 'fullcalendar', external: true } } // TODO: shouldn't this be 'fullcalendar-scheduler' in some cases?
+          // TODO: shouldn't this be 'fullcalendar-scheduler' in some cases?
+          if (id === '@fullcalendar/common') { return { id: 'fullcalendar', external: true } }
           if (isNamedPkg(id)) { return { id, external: true } }
           return null
         }

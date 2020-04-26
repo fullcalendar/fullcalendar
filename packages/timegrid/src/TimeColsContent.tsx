@@ -11,7 +11,7 @@ import {
   DateRange,
   NowIndicatorRoot,
   DateProfile
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 import { TableCellModel } from '@fullcalendar/daygrid' // TODO: good to use this interface?
 import { TimeColsSeg, splitSegsByCol, splitInteractionByCol } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'

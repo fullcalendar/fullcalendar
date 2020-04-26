@@ -12,7 +12,7 @@ import {
   EventInteractionState,
   EventResizeJoinTransforms,
   Interaction, InteractionSettings, interactionSettingsToStore
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
 import { __assign } from 'tslib'

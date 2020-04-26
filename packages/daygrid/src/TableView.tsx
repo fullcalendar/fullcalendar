@@ -12,7 +12,7 @@ import {
   renderScrollShim,
   getStickyHeaderDates,
   getStickyFooterScrollbar
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 
 
 /* An abstract class for the daygrid views, as well as month view. Renders one or more rows of day cells.

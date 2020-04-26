@@ -16,7 +16,7 @@ import {
   DateMarker,
   EventApi,
   DateProfile
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg'
 import { TableRow } from './TableRow'
 import { TableCellModel, MoreLinkArg } from './TableCell'

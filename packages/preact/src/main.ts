@@ -5,4 +5,4 @@ import './vdom'
 export { Calendar } from './Calendar'
 export { flushToDom } from './utils' // tests need this
 
-export * from '@fullcalendar/core'
+export * from '@fullcalendar/common'

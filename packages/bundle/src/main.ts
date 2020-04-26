@@ -6,7 +6,7 @@ export * from '@fullcalendar/timegrid'
 export * from '@fullcalendar/list'
 export * from '@fullcalendar/bootstrap'
 
-import { globalPlugins } from '@fullcalendar/core'
+import { globalPlugins } from '@fullcalendar/preact'
 import interactionPlugin from '@fullcalendar/interaction'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'

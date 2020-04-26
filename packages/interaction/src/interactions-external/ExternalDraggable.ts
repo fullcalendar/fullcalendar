@@ -1,4 +1,4 @@
-import { globalDefaults, PointerDragEvent } from '@fullcalendar/core'
+import { globalDefaults, PointerDragEvent } from '@fullcalendar/common'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
 import { ExternalElementDragging, DragMetaGenerator } from './ExternalElementDragging'
 

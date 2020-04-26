@@ -1,4 +1,4 @@
-import { createPlugin } from '@fullcalendar/core'
+import { createPlugin } from '@fullcalendar/preact'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
 describe('view-specific options', function() {

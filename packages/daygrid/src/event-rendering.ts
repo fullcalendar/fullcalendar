@@ -1,4 +1,4 @@
-import { EventRenderRange, diffDays } from '@fullcalendar/core'
+import { EventRenderRange, diffDays } from '@fullcalendar/common'
 
 
 export const DEFAULT_TABLE_EVENT_TIME_FORMAT = {

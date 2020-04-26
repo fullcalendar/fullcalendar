@@ -1,6 +1,6 @@
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
-import arLocale from '@fullcalendar/core/locales/ar'
+import arLocale from '@fullcalendar/common/locales/ar'
 
 describe('weekNumberCalculation', function() {
   pushOptions({

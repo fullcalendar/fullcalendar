@@ -25,8 +25,8 @@
     "paths": {
       "fullcalendar": [ "packages/bundle/src/main" ],
       "@fullcalendar/preact": [ "packages/preact/src/main" ],
-      "@fullcalendar/core": [ "packages/core/src/main" ],
-      "@fullcalendar/core/*": [ "packages/core/src/*" ],
+      "@fullcalendar/common": [ "packages/core/src/main" ],
+      "@fullcalendar/common/*": [ "packages/core/src/*" ],
       "@fullcalendar/interaction": [ "packages/interaction/src/main" ],
       "@fullcalendar/daygrid": [ "packages/daygrid/src/main" ],
       "@fullcalendar/timegrid": [ "packages/timegrid/src/main" ],

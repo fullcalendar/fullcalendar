@@ -1,6 +1,6 @@
 import {
   Seg, DateMarker, buildSegCompareObj, compareByFieldSpecs, sortEventSegs
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
 

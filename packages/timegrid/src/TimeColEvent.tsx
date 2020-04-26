@@ -1,4 +1,4 @@
-import { h, StandardEvent, BaseComponent, MinimalEventProps } from '@fullcalendar/core'
+import { h, StandardEvent, BaseComponent, MinimalEventProps } from '@fullcalendar/common'
 
 
 const DEFAULT_TIME_FORMAT = {

@@ -6,7 +6,7 @@ import {
   DayTableModel,
   memoize,
   ChunkContentCallbackArgs
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 import { DayTable } from '@fullcalendar/daygrid'
 import { TimeColsView } from './TimeColsView'
 import { DayTimeCols } from './DayTimeCols'

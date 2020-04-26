@@ -1,4 +1,4 @@
-import { PositionCache, DateMarker, startOfDay, createDuration, asRoughMs, DateProfile, Duration, rangeContainsMarker } from '@fullcalendar/core'
+import { PositionCache, DateMarker, startOfDay, createDuration, asRoughMs, DateProfile, Duration, rangeContainsMarker } from '@fullcalendar/common'
 import { TimeSlatMeta } from './TimeColsSlats'
 
 

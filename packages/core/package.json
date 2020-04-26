@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "@fullcalendar/core",
+  "name": "@fullcalendar/common",
   "version": "5.0.0-beta.2",
   "title": "FullCalendar Core Package",
   "description": "Provides core functionality, including the Calendar class",

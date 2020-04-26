@@ -9,11 +9,11 @@
     "tslib": "^1.9.3"
   },
   "peerDependencies": {
-    "@fullcalendar/core": "5.0.0-beta.2",
+    "@fullcalendar/common": "5.0.0-beta.2",
     "luxon": "^1.12.1"
   },
   "devDependencies": {
-    "@fullcalendar/core": "5.0.0-beta.2",
+    "@fullcalendar/common": "5.0.0-beta.2",
     "luxon": "^1.12.1"
   }
 }

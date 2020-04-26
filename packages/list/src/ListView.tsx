@@ -21,7 +21,7 @@ import {
   ViewRoot,
   RenderHook,
   DateComponent
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 import { ListViewHeaderRow } from './ListViewHeaderRow'
 import { ListViewEventRow } from './ListViewEventRow'
 

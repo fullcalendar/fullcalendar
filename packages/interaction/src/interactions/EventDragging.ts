@@ -14,7 +14,7 @@ import {
   EventDropTransformers,
   ReducerContext,
   buildDatePointApiWithContext
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
 import { __assign } from 'tslib'

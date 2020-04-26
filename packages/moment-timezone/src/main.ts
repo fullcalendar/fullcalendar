@@ -5,7 +5,7 @@ import moment from 'moment'
 // the file we are importing is pre-built to have the lib + timezone data.
 import 'moment-timezone/builds/moment-timezone-with-data'
 
-import { NamedTimeZoneImpl, createPlugin } from '@fullcalendar/core'
+import { NamedTimeZoneImpl, createPlugin } from '@fullcalendar/common'
 
 
 class MomentNamedTimeZone extends NamedTimeZoneImpl {

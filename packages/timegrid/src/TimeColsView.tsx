@@ -17,7 +17,7 @@ import {
   renderScrollShim,
   getStickyHeaderDates,
   getStickyFooterScrollbar
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 import { AllDaySplitter } from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
 

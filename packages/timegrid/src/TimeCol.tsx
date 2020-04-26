@@ -1,4 +1,4 @@
-import { Ref, DateMarker, BaseComponent, h, EventSegUiInteractionState, Seg, getSegMeta, DateRange, Fragment, DayCellRoot, NowIndicatorRoot, DayCellContent, BgEvent, renderFill, DateProfile } from '@fullcalendar/core'
+import { Ref, DateMarker, BaseComponent, h, EventSegUiInteractionState, Seg, getSegMeta, DateRange, Fragment, DayCellRoot, NowIndicatorRoot, DayCellContent, BgEvent, renderFill, DateProfile } from '@fullcalendar/common'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { computeSegCoords, computeSegVerticals } from './event-placement'

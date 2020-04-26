@@ -1,4 +1,4 @@
-import { h, StandardEvent, BaseComponent, MinimalEventProps } from '@fullcalendar/core'
+import { h, StandardEvent, BaseComponent, MinimalEventProps } from '@fullcalendar/common'
 import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering'
 
 

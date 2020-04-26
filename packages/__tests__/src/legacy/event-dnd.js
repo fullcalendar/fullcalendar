@@ -1,4 +1,4 @@
-import { createDuration } from '@fullcalendar/core'
+import { createDuration } from '@fullcalendar/preact'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { waitEventDrag2 } from '../lib/wrappers/interaction-util'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'

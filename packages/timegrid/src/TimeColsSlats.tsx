@@ -18,7 +18,7 @@ import {
   ComponentContextType,
   RenderHook,
   DateProfile
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
 

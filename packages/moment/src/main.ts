@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { Duration, VerboseFormattingArg, createPlugin } from '@fullcalendar/core'
+import { Duration, VerboseFormattingArg, createPlugin } from '@fullcalendar/common'
 import { Calendar } from '@fullcalendar/preact'
 
 

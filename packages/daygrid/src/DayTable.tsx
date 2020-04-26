@@ -14,7 +14,7 @@ import {
   CssDimValue,
   Hit,
   DateProfile
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 import { Table } from './Table'
 import { TableSeg } from './TableSeg'
 

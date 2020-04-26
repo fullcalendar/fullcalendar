@@ -1,5 +1,5 @@
 import { getStockScrollbarWidths } from '../lib/dom-misc'
-import { computeInnerRect } from '@fullcalendar/core'
+import { computeInnerRect } from '@fullcalendar/preact'
 
 describe('computeInnerRect', function() {
   var INNER_WIDTH = 150

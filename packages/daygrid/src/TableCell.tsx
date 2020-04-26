@@ -19,7 +19,7 @@ import {
   DateProfile,
   VUIEvent,
   setRef,
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
 
 

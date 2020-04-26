@@ -1,6 +1,6 @@
 import {
   h, ComponentChildren, applyStyle, BaseComponent, DelayedRunner, Ref, setRef
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 
 
 export interface PopoverProps {

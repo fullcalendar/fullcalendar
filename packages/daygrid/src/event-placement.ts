@@ -1,5 +1,5 @@
 import { TableSeg } from './TableSeg'
-import { sortEventSegs } from '@fullcalendar/core'
+import { sortEventSegs } from '@fullcalendar/common'
 
 
 interface TableSegPlacement {

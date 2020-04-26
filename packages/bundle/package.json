@@ -3,7 +3,7 @@
   "name": "fullcalendar",
   "version": "5.0.0-beta.2",
   "devDependencies": {
-    "@fullcalendar/core": "5.0.0-beta.2",
+    "@fullcalendar/preact": "5.0.0-beta.2",
     "@fullcalendar/interaction": "5.0.0-beta.2",
     "@fullcalendar/daygrid": "5.0.0-beta.2",
     "@fullcalendar/timegrid": "5.0.0-beta.2",

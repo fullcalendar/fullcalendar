@@ -17,7 +17,7 @@ import {
   ReducerContext,
   buildDatePointApiWithContext,
   getDefaultEventEnd
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 import { HitDragging } from '../interactions/HitDragging'
 import { __assign } from 'tslib'
 

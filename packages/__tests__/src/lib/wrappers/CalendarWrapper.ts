@@ -1,4 +1,4 @@
-import { findElements } from '@fullcalendar/core'
+import { findElements } from '@fullcalendar/preact'
 import { Calendar } from '@fullcalendar/preact'
 import { ToolbarWrapper } from './ToolbarWrapper'
 

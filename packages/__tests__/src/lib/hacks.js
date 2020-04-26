@@ -1,4 +1,4 @@
-import { config } from '@fullcalendar/core'
+import { config } from '@fullcalendar/preact'
 
 beforeEach(function() {
 

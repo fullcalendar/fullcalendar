@@ -7,7 +7,7 @@ import {
   DaySeriesModel,
   DayTableModel,
   ChunkContentCallbackArgs
-} from '@fullcalendar/core'
+} from '@fullcalendar/common'
 import { TableView } from './TableView'
 import { DayTable } from './DayTable'
 
