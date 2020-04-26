@@ -1,5 +1,6 @@
 import moment from 'moment'
-import { Calendar, Duration, VerboseFormattingArg, createPlugin } from '@fullcalendar/core'
+import { Duration, VerboseFormattingArg, createPlugin } from '@fullcalendar/core'
+import { Calendar } from '@fullcalendar/preact'
 
 
 export function toMoment(date: Date, calendar: Calendar): moment.Moment {

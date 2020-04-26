@@ -205,7 +205,7 @@ export class Table extends DateComponent<TableProps, TableState> {
         allDay: true,
         allSegs: arg.allSegs.map(segForPublic),
         hiddenSegs: arg.hiddenSegs.map(segForPublic),
-        jsEvent: arg.ev as MouseEvent, // TODO: better
+        jsEvent: arg.ev,
         view: context.viewApi
       })
     }

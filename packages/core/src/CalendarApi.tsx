@@ -43,7 +43,6 @@ export class CalendarApi {
   }
 
 
-  // TODO: subclasses should have updateSize() call flushToDom
   updateSize() { // public
     this.emitter.trigger('_resize', true)
   }

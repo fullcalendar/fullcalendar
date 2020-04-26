@@ -13,8 +13,7 @@ import {
   Interaction, InteractionSettings, interactionSettingsStore,
   EventDropTransformers,
   ReducerContext,
-  buildDatePointApiWithContext,
-  Calendar
+  buildDatePointApiWithContext
 } from '@fullcalendar/core'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
@@ -86,7 +85,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
         getComponentTouchDelay(component) :
         null
 
-    mirror.parentNode = (initialContext.calendarApi as Calendar).el // BAD. will break DnD
+    mirror.parentNode = (initialContext.calendarApi as any).el // BAD. will break DnD
     mirror.revertDuration = options.dragRevertDuration
 
     let isValid =

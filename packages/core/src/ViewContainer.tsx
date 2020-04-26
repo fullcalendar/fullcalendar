@@ -1,5 +1,5 @@
 import { BaseComponent } from './vdom-util'
-import { ComponentChildren, Ref, h, VDomUIEvent } from './vdom'
+import { ComponentChildren, Ref, h, VUIEvent } from './vdom'
 import { CssDimValue } from './scrollgrid/util'
 
 
@@ -7,7 +7,7 @@ export interface ViewContainerProps {
   liquid?: boolean
   height?: CssDimValue
   aspectRatio?: number
-  onClick?: (ev: VDomUIEvent) => void
+  onClick?: (ev: VUIEvent) => void
   elRef?: Ref<HTMLDivElement>
   children?: ComponentChildren
 }

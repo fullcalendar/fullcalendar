@@ -1,5 +1,5 @@
 import { elementClosest } from './dom-manip'
-import { VDomUIEvent } from '../vdom'
+import { VUIEvent } from '../vdom'
 
 
 // Stops a mouse/touch event from doing it's native browser action
@@ -11,7 +11,7 @@ export function preventDefault(ev) {
 // Event Delegation
 // ----------------------------------------------------------------------------------------------------------------
 
-export function buildDelegationHandler<EventType extends (Event | VDomUIEvent)>(
+export function buildDelegationHandler<EventType extends (Event | VUIEvent)>(
   selector: string,
   handler: (ev: EventType, matchedTarget: HTMLElement) => void
 ) {

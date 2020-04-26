@@ -9,7 +9,7 @@ import { DateMarker } from './datelib/marker'
 import { CalendarState } from './reducers/CalendarState'
 import { ViewPropsTransformerClass } from './plugin-system-struct'
 import { __assign } from 'tslib'
-import { h, createRef, Component, VDomUIEvent } from './vdom'
+import { h, createRef, Component, VUIEvent } from './vdom'
 import { buildDelegationHandler } from './util/dom-event'
 import { capitaliseFirstLetter } from './util/misc'
 import { ViewContainer } from './ViewContainer'
@@ -199,7 +199,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
   }
 
 
-  _handleNavLinkClick(ev: VDomUIEvent, anchorEl: HTMLElement) {
+  _handleNavLinkClick(ev: VUIEvent, anchorEl: HTMLElement) {
     let { dateEnv, options, calendarApi } = this.props
 
     let navLinkOptions: any = anchorEl.getAttribute('data-navlink')

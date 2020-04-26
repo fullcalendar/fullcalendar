@@ -3,7 +3,7 @@ import './main.scss'
 // exports
 // --------------------------------------------------------------------------------------------------
 
-export const version = '<%= version %>'
+export const version: string = '<%= version %>' // important to type it, so .d.ts has generic string
 
 // types
 export { OptionsInput } from './types/input-types'
@@ -145,7 +145,7 @@ export { DragMetaInput, DragMeta, parseDragMeta } from './structs/drag-meta'
 
 export { PluginDef, PluginDefInput, ViewPropsTransformer, ViewContainerAppend } from './plugin-system-struct'
 export { createPlugin } from './plugin-system'
-export { ReducerFunc } from './reducers/CalendarStateReducer'
+export { ReducerFunc, CalendarStateReducer } from './reducers/CalendarStateReducer'
 export { CalendarState } from './reducers/CalendarState'
 export { Action } from './reducers/Action'
 export { ReducerContext } from './reducers/ReducerContext'
@@ -213,3 +213,4 @@ export { WeekNumberRoot, WeekNumberRootProps } from './common/WeekNumberRoot'
 
 export { ViewRoot, ViewRootProps } from './common/ViewRoot'
 export { triggerDateSelect, triggerDateClick, buildDatePointApiWithContext, DatePointTransform, DateSpanTransform, DateSelectionApi, getDefaultEventEnd } from './calendar-utils'
+export { CalendarComponent } from './CalendarComponent'

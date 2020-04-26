@@ -17,8 +17,7 @@ import {
   addDays,
   intersectRanges,
   DateProfile,
-  VDomUIEvent,
-  getNativeEvent,
+  VUIEvent,
   setRef,
 } from '@fullcalendar/core'
 import { TableSeg } from './TableSeg'
@@ -62,7 +61,7 @@ export interface MoreLinkArg {
   hiddenSegs: TableSeg[]
   moreCnt: number
   dayEl: HTMLElement
-  ev: UIEvent
+  ev: VUIEvent
 }
 
 export interface HookProps {
@@ -163,7 +162,7 @@ export class TableCell extends DateComponent<TableCellProps> {
   }
 
 
-  handleMoreLinkClick = (ev: VDomUIEvent) => {
+  handleMoreLinkClick = (ev: VUIEvent) => {
     let { props } = this
 
     if (props.onMoreClick) {
@@ -178,7 +177,7 @@ export class TableCell extends DateComponent<TableCellProps> {
         hiddenSegs,
         moreCnt: props.moreCnt,
         dayEl: this.rootEl,
-        ev: getNativeEvent(ev)
+        ev
       })
     }
   }
