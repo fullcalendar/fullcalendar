@@ -1,5 +1,5 @@
 
-export * from '@fullcalendar/core'
+export * from '@fullcalendar/preact'
 export * from '@fullcalendar/interaction'
 export * from '@fullcalendar/daygrid'
 export * from '@fullcalendar/timegrid'

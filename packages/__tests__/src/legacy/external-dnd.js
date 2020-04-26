@@ -1,5 +1,5 @@
 import { ListenerCounter } from '../lib/ListenerCounter'
-import { Calendar } from '@fullcalendar/core'
+import { Calendar } from '@fullcalendar/preact'
 import interactionPlugin, { ThirdPartyDraggable } from '@fullcalendar/interaction'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'

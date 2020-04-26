@@ -1,4 +1,4 @@
-import { Calendar } from '@fullcalendar/core'
+import { Calendar } from '@fullcalendar/preact'
 import esLocale from '@fullcalendar/core/locales/es'
 import luxonPlugin, { toLuxonDateTime, toLuxonDuration } from '@fullcalendar/luxon'
 import dayGridPlugin from '@fullcalendar/daygrid'

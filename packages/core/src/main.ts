@@ -92,7 +92,6 @@ export { ScrollController, ElementScrollController, WindowScrollController } fro
 export { Theme } from './theme/Theme'
 export { ComponentContext, ComponentContextType } from './component/ComponentContext'
 export { DateComponent, Seg, EventSegUiInteractionState } from './component/DateComponent'
-export { Calendar } from './Calendar'
 export { CalendarApi } from './CalendarApi'
 export { ViewProps, sliceEvents } from './View'
 export { ViewApi } from './ViewApi'
