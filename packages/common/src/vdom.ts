@@ -3,6 +3,7 @@ export import Ref = FullCalendarVDom.Ref
 export import RefObject = FullCalendarVDom.RefObject
 export import ComponentType = FullCalendarVDom.ComponentType
 export import VNode = FullCalendarVDom.VNode
+export import Context = FullCalendarVDom.Context
 export import Component = FullCalendarVDom.Component
 export import ComponentChild = FullCalendarVDom.ComponentChild
 export import ComponentChildren = FullCalendarVDom.ComponentChildren

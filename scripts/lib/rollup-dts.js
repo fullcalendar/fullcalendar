@@ -1,9 +1,11 @@
+const path = require('path')
 const dts = require('rollup-plugin-dts').default
 const { isScssPath, isNamedPkg } = require('./rollup-util')
-const { pkgStructs } = require('./pkg-struct')
-const { mapHashViaPair, copyFile } = require('./util')
+const { pkgStructs, pkgStructHash } = require('./pkg-struct')
+const { arrayToHash, copyFile } = require('./util')
 
 
+// TODO: wait for tsc to finish!
 // rollup-plugin-dts can't handle either of these
 copyFile( // promise :(
   'tmp/tsc-output/packages/core/src/vdom.d.ts',
@@ -15,10 +17,13 @@ copyFile( // promise :(
 )
 
 
-let hash = mapHashViaPair(pkgStructs, (pkgStruct) => [
+let hash = arrayToHash(pkgStructs, (pkgStruct) => [
   pkgStruct.distDir, // the key. the [name] in entryFileNames
   './' + pkgStruct.tscMain + '.d.ts' // the value
 ])
+
+let ROOT_DIR = process.cwd()
+
 
 module.exports = function() {
   return {
@@ -30,13 +35,21 @@ module.exports = function() {
     },
     plugins: [
       {
-        resolveId(id) { // not DRY
-          if (id.match(/vdom$/)) {
+        resolveId(id, source) {
+          // vdom is in a separate file.
+          // also, (p)react gets imported because tsc traces ambient declaration to (p)react package. reference from vdom module.
+          if (id.match(/vdom$/) || id.match(/^p?react$/)) {
             return { id: './vdom', external: true }
+          }
+
+          // sometimes tsc writes .d.ts files weird when there are implicit imports. imports from the publicly-named root of own package.
+          let pkgStruct = pkgStructHash[id]
+          if (pkgStruct && source.indexOf(path.join(ROOT_DIR, pkgStruct.tscDir, '/')) === 0) {
+            return path.join(ROOT_DIR, pkgStruct.tscMain + '.ts')
           }
         }
       },
-      dts(),
+      dts(), // we we combine the before/after resolveId?
       {
         resolveId(id, source) {
           if (isScssPath(id)) {
@@ -46,12 +59,6 @@ module.exports = function() {
             return { id, external: true }
           }
           return null
-        },
-        renderChunk(code, chunk) {
-          if (chunk.fileName === 'packages/common/dist/main.d.ts') {
-            code = fixCode(code)
-          }
-          return code
         }
       }
     ],
@@ -61,29 +68,4 @@ module.exports = function() {
     //   warn(warning)
     // }
   }
-}
-
-
-// for a problem like this: https://github.com/Swatinem/rollup-plugin-dts/issues/39
-function fixCode(code) {
-  let replacements = {}
-
-  code = code.replace(/import \{(.*?)\} from '@fullcalendar\/common';?/, function(m0, m1) {
-    let re = /(\w+) as (\w+\$\d+)/g
-    let match
-
-    while ((match = re.exec(m1))) {
-      replacements[match[2]] = match[1]
-    }
-
-    return ''
-  })
-
-  for (let find in replacements) {
-    let replacement = replacements[find]
-    find = find.replace('$', '\\$') // escape for regexp
-    code = code.replace(new RegExp(find, 'g'), replacement)
-  }
-
-  return code
 }

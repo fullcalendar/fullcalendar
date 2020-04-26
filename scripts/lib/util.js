@@ -111,3 +111,14 @@ exports.mapHashViaPair = function(input, func) {
 
   return output
 }
+
+exports.arrayToHash = function(a, func) {
+  let output = {}
+
+  for (let i = 0; i < a.length; i++) {
+    let pair = func(a[i], i)
+    output[pair[0]] = pair[1]
+  }
+
+  return output
+}

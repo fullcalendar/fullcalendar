@@ -5,13 +5,14 @@ const { pkgStructs } = require('./pkg-struct')
 const { copyFile } = require('./util')
 
 
+// TODO: wait for tsc to finish!!!
 // needed to have this in separate file because rollup wasn't understanding that it has side effects and needed to go before the @fullcalendar/core import
 // added bonuses:
 // - the import statement doesn't import any vars, which will maybe hint to the build env that there are side effects
 // - rollup-plugin-dts needed to handle the .d.ts files separately anyway
 copyFile( // promise :(
-  'tmp/tsc-output/packages/preact/src/vdom.js',
-  'packages/preact/dist/vdom.js'
+  'tmp/tsc-output/packages/core/src/vdom.js',
+  'packages/core/dist/vdom.js'
 )
 
 
@@ -40,7 +41,7 @@ function buildPkgConfig(pkgStruct, isDev) {
     plugins: [
       {
         resolveId(id, source) {
-          if (id.match(/vdom$/) && source.match('packages/preact')) {
+          if (id.match(/vdom$/) && source.match('packages/core')) {
             return { id, external: true }
           }
         }

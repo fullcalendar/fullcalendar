@@ -5,7 +5,8 @@ declare global {
     export import Ref = preact.Ref
     export import RefObject = preact.RefObject
     export import ComponentType = preact.ComponentType
-    export import VNode = preact.VNode
+    export type VNode = preact.VNode // will NOT forward the props type
+    export import Context = preact.Context
     export import Component = preact.Component
     export import ComponentChild = preact.ComponentChild
     export import ComponentChildren = preact.ComponentChildren
