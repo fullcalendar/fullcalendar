@@ -1,4 +1,4 @@
-import frLocale from '@fullcalendar/common/locales/fr'
+import frLocale from '@fullcalendar/core/locales/fr'
 import { createPlugin } from '@fullcalendar/core' // View
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'

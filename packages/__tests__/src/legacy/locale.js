@@ -1,6 +1,6 @@
-import esLocale from '@fullcalendar/common/locales/es'
-import frLocale from '@fullcalendar/common/locales/fr'
-import arLocale from '@fullcalendar/common/locales/ar'
+import esLocale from '@fullcalendar/core/locales/es'
+import frLocale from '@fullcalendar/core/locales/fr'
+import arLocale from '@fullcalendar/core/locales/ar'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
