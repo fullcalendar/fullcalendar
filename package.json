@@ -53,6 +53,7 @@
     "@types/luxon": "^1.12.0",
     "@types/node": "^12.12.14",
     "@types/react": "^16.9.34",
+    "@types/react-dom": "^16.9.6",
     "bootstrap": "^3.4.1",
     "chokidar": "^2.1.5",
     "components-jqueryui": "github:components/jqueryui",
