@@ -26,7 +26,7 @@ function copyLocalesFromTsc() { // to core's dist dir
 
 
 async function generateLocalesAll() {
-  let templateText = await readFile(path.join(corePkg.dir, 'locales-all.js.tpl'))
+  let templateText = await readFile('packages/common/locales-all.js.tpl') // todo. used path.join( , corePkg.dir)
   let template = handleBars.compile(templateText)
 
   let localePaths = glob.sync('./' + LOCALES_GLOB, { cwd: corePkg.srcDir }) // starting ./ for import statements

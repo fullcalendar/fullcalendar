@@ -6,12 +6,12 @@ const { mapHashViaPair, copyFile } = require('./util')
 
 // rollup-plugin-dts can't handle either of these
 copyFile( // promise :(
-  'tmp/tsc-output/packages/preact/src/vdom.d.ts',
-  'packages/preact/dist/vdom.d.ts'
-)
-copyFile( // promise :(
   'tmp/tsc-output/packages/core/src/vdom.d.ts',
   'packages/core/dist/vdom.d.ts'
+)
+copyFile( // promise :(
+  'tmp/tsc-output/packages/common/src/vdom.d.ts',
+  'packages/common/dist/vdom.d.ts'
 )
 
 
@@ -48,7 +48,7 @@ module.exports = function() {
           return null
         },
         renderChunk(code, chunk) {
-          if (chunk.fileName === 'packages/core/dist/main.d.ts') {
+          if (chunk.fileName === 'packages/common/dist/main.d.ts') {
             code = fixCode(code)
           }
           return code
@@ -68,7 +68,7 @@ module.exports = function() {
 function fixCode(code) {
   let replacements = {}
 
-  code = code.replace(/import \{(.*?)\} from '@fullcalendar\/core';?/, function(m0, m1) {
+  code = code.replace(/import \{(.*?)\} from '@fullcalendar\/common';?/, function(m0, m1) {
     let re = /(\w+) as (\w+\$\d+)/g
     let match
 

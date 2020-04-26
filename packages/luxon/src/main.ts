@@ -1,28 +1,31 @@
 import { DateTime as LuxonDateTime, Duration as LuxonDuration } from 'luxon'
-import { Duration, NamedTimeZoneImpl, VerboseFormattingArg, createPlugin } from '@fullcalendar/common'
-import { Calendar } from '@fullcalendar/core'
+import { Duration, NamedTimeZoneImpl, VerboseFormattingArg, createPlugin, CalendarApi } from '@fullcalendar/common'
 
-export function toLuxonDateTime(date: Date, calendar: Calendar): LuxonDateTime {
+export function toLuxonDateTime(date: Date, calendar: CalendarApi): LuxonDateTime {
 
-  if (!(calendar instanceof Calendar)) {
-    throw new Error('must supply a Calendar instance')
+  if (!(calendar instanceof CalendarApi)) {
+    throw new Error('must supply a CalendarApi instance')
   }
 
+  let { dateEnv } = calendar.getCurrentState()
+
   return LuxonDateTime.fromJSDate(date, {
-    zone: calendar.currentState.dateEnv.timeZone,
-    locale: calendar.currentState.dateEnv.locale.codes[0]
+    zone: dateEnv.timeZone,
+    locale: dateEnv.locale.codes[0]
   })
 }
 
-export function toLuxonDuration(duration: Duration, calendar: Calendar): LuxonDuration {
+export function toLuxonDuration(duration: Duration, calendar: CalendarApi): LuxonDuration {
 
-  if (!(calendar instanceof Calendar)) {
-    throw new Error('must supply a Calendar instance')
+  if (!(calendar instanceof CalendarApi)) {
+    throw new Error('must supply a CalendarApi instance')
   }
+
+  let { dateEnv } = calendar.getCurrentState()
 
   return LuxonDuration.fromObject({
     ...duration,
-    locale: calendar.currentState.dateEnv.locale.codes[0]
+    locale: dateEnv.locale.codes[0]
   })
 }
 

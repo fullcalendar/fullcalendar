@@ -53,7 +53,7 @@
   "include": [
     "packages*/*/src/**/main.ts",
     "packages*/__tests__/src/**/*",
-    "packages/core/src/locales/*"
+    "packages/common/src/locales/*"
   ],
   "exclude": [
     "packages-contrib",

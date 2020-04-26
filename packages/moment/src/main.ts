@@ -1,19 +1,20 @@
 import moment from 'moment'
-import { Duration, VerboseFormattingArg, createPlugin } from '@fullcalendar/common'
-import { Calendar } from '@fullcalendar/core'
+import { Duration, VerboseFormattingArg, createPlugin, CalendarApi } from '@fullcalendar/common'
 
 
-export function toMoment(date: Date, calendar: Calendar): moment.Moment {
+export function toMoment(date: Date, calendar: CalendarApi): moment.Moment {
 
-  if (!(calendar instanceof Calendar)) {
-    throw new Error('must supply a Calendar instance')
+  if (!(calendar instanceof CalendarApi)) {
+    throw new Error('must supply a CalendarApi instance')
   }
+
+  let { dateEnv } = calendar.getCurrentState()
 
   return convertToMoment(
     date,
-    calendar.currentState.dateEnv.timeZone,
+    dateEnv.timeZone,
     null,
-    calendar.currentState.dateEnv.locale.codes[0]
+    dateEnv.locale.codes[0]
   )
 }
 
