@@ -1,6 +1,6 @@
 import { ViewWrapper } from './ViewWrapper'
-import { findElements } from '@fullcalendar/preact'
-import { Calendar } from '@fullcalendar/preact'
+import { findElements } from '@fullcalendar/core'
+import { Calendar } from '@fullcalendar/core'
 import { formatIsoDay } from '../datelib-utils'
 
 

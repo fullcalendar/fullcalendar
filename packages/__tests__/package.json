@@ -1,7 +1,7 @@
 {
   "private": true,
   "dependencies": {
-    "@fullcalendar/preact": "*",
+    "@fullcalendar/core": "*",
     "@fullcalendar/common": "*",
     "@fullcalendar/interaction": "*",
     "@fullcalendar/daygrid": "*",

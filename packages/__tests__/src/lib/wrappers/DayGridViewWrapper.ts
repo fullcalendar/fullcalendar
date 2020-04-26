@@ -1,4 +1,4 @@
-import { Calendar } from '@fullcalendar/preact'
+import { Calendar } from '@fullcalendar/core'
 import { ViewWrapper } from './ViewWrapper'
 import { DayGridWrapper } from './DayGridWrapper'
 import { DayHeaderWrapper } from './DayHeaderWrapper'

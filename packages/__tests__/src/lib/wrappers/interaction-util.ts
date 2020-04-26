@@ -1,4 +1,4 @@
-import { Calendar } from '@fullcalendar/preact'
+import { Calendar } from '@fullcalendar/core'
 
 
 export function waitEventDrag(calendar: Calendar, dragging: Promise<any>) {

@@ -1,5 +1,5 @@
 import { removeLtrCharCodes } from '../lib/string'
-import { addDays } from '@fullcalendar/preact'
+import { addDays } from '@fullcalendar/core'
 import { parseUtcDate } from '../lib/date-parsing'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'

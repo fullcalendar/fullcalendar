@@ -1,4 +1,4 @@
-import { addDays } from '@fullcalendar/preact'
+import { addDays } from '@fullcalendar/core'
 import { parseUtcDate } from '../lib/date-parsing'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 

@@ -1,5 +1,5 @@
-import { findElements } from '@fullcalendar/preact'
-import { Calendar } from '@fullcalendar/preact'
+import { findElements } from '@fullcalendar/core'
+import { Calendar } from '@fullcalendar/core'
 import { ToolbarWrapper } from './ToolbarWrapper'
 
 export class CalendarWrapper {

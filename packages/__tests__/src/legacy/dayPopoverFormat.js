@@ -1,6 +1,6 @@
 import frLocale from '@fullcalendar/common/locales/fr'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { flushToDom } from '@fullcalendar/preact'
+import { flushToDom } from '@fullcalendar/core'
 
 
 describe('dayPopoverFormat', function() {

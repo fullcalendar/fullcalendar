@@ -1,4 +1,4 @@
-import { findElements } from '@fullcalendar/preact'
+import { findElements } from '@fullcalendar/core'
 import { formatIsoDay } from '../datelib-utils'
 import { getRectCenter, intersectRects, addPoints, subtractPoints } from '../geom'
 import { CalendarWrapper } from './CalendarWrapper'

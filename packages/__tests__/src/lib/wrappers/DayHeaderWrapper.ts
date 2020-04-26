@@ -1,4 +1,4 @@
-import { findElements } from '@fullcalendar/preact'
+import { findElements } from '@fullcalendar/core'
 import { parseIsoAsUtc, formatIsoDay } from '../datelib-utils'
 import { parseUtcDate } from '../date-parsing'
 import { CalendarWrapper } from './CalendarWrapper'

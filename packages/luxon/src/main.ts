@@ -1,6 +1,6 @@
 import { DateTime as LuxonDateTime, Duration as LuxonDuration } from 'luxon'
 import { Duration, NamedTimeZoneImpl, VerboseFormattingArg, createPlugin } from '@fullcalendar/common'
-import { Calendar } from '@fullcalendar/preact'
+import { Calendar } from '@fullcalendar/core'
 
 export function toLuxonDateTime(date: Date, calendar: Calendar): LuxonDateTime {
 

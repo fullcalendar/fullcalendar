@@ -1,5 +1,5 @@
 import { formatIsoDay } from './datelib-utils'
-import { addDays } from '@fullcalendar/preact'
+import { addDays } from '@fullcalendar/core'
 import { CalendarWrapper } from './wrappers/CalendarWrapper'
 
 

@@ -1,7 +1,7 @@
 
 /// <reference path="./global-defs.d.ts" />
 
-import { Calendar } from '@fullcalendar/preact'
+import { Calendar } from '@fullcalendar/core'
 import { __assign } from 'tslib'
 import { parseLocalDate, parseUtcDate } from './date-parsing'
 
