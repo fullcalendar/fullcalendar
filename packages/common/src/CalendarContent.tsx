@@ -24,9 +24,7 @@ import { CalendarInteraction } from './calendar-utils'
 import { DelayedRunner } from './util/runner'
 
 
-export interface CalendarContentProps extends CalendarState {
-  onHeightChange?: (height: CssDimValue) => void // will be fired with '' on cleanup
-}
+export type CalendarContentProps = CalendarState
 
 interface CalendarContentState {
   forPrint: boolean
@@ -165,10 +163,6 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
 
     for (let interaction of this.calendarInteractions) {
       interaction.destroy()
-    }
-
-    if (this.props.onHeightChange) {
-      this.props.onHeightChange('')
     }
 
     this.props.emitter.trigger('_destroyed')

@@ -65,9 +65,9 @@ export class Calendar extends CalendarApi {
 
     } else if (this.isRendered) {
       this.isRendered = false
+      render(null, this.el)
       this.setClassNames([])
       this.setHeight('')
-      render(null, this.el)
     }
 
     flushToDom()
