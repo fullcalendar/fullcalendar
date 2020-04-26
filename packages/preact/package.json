@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "name": "@fullcalendar/preact",
+  "version": "5.0.0-beta.2",
+  "dependencies": {
+    "preact": "^10.0.5",
+    "tslib": "^1.9.3"
+  },
+  "peerDependencies": {
+    "@fullcalendar/core": "5.0.0-beta.2"
+  },
+  "devDependencies": {
+    "@fullcalendar/core": "5.0.0-beta.2"
+  }
+}

@@ -24,6 +24,7 @@
     "strictBindCallApply": true,
     "paths": {
       "fullcalendar": [ "packages/bundle/src/main" ],
+      "@fullcalendar/preact": [ "packages/preact/src/main" ],
       "@fullcalendar/core": [ "packages/core/src/main" ],
       "@fullcalendar/core/*": [ "packages/core/src/*" ],
       "@fullcalendar/interaction": [ "packages/interaction/src/main" ],
