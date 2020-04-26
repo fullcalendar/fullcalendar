@@ -3,7 +3,7 @@ const glob = require('glob')
 const commonjs = require('rollup-plugin-commonjs')
 const nodeResolve = require('rollup-plugin-node-resolve')
 const postCss = require('rollup-plugin-postcss')
-const { renderBanner, isRelPath, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, onwarn, isScssPath } = require('./rollup-util')
+const { renderBanner, isRelPath, isNamedPkg, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, onwarn, isScssPath } = require('./rollup-util')
 const { pkgStructs, pkgStructHash, getCorePkgStruct, getNonPremiumBundle } = require('./pkg-struct')
 const alias = require('rollup-plugin-alias')
 const replace = require('rollup-plugin-replace')
@@ -133,8 +133,11 @@ function buildNonBundleConfig(pkgStruct, bundleDistDir, isDev) {
         resolveId(id) {
           if (id === inputFile) { return inputFile }
           if (id === 'tslib') { return { id, external: false } }
-          if (id === '@fullcalendar/core') { return { id: 'fullcalendar', external: true } } // TODO: shouldn't this be 'fullcalendar-scheduler' in some cases?
-          if (!isRelPath(id)) { return { id, external: true } }
+          if (
+            id === '@fullcalendar/core' ||
+            id === '@fullcalendar/preact'
+          ) { return { id: 'fullcalendar', external: true } } // TODO: shouldn't this be 'fullcalendar-scheduler' in some cases?
+          if (isNamedPkg(id)) { return { id, external: true } }
           return null
         }
       }

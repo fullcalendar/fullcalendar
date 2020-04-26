@@ -1,13 +1,25 @@
 const path = require('path')
-const { readFileSync } = require('fs')
 const nodeResolve = require('rollup-plugin-node-resolve')
-const { renderBanner, isRelPath, isScssPath, TEMPLATE_PLUGIN, SOURCEMAP_PLUGINS, WATCH_OPTIONS, onwarn } = require('./rollup-util')
-const { pkgStructs, getCorePkgStruct } = require('./pkg-struct')
+const { renderBanner, isRelPath, isNamedPkg, isScssPath, TEMPLATE_PLUGIN, SOURCEMAP_PLUGINS, WATCH_OPTIONS, onwarn } = require('./rollup-util')
+const { pkgStructs } = require('./pkg-struct')
+const { copyFile } = require('./util')
+
+
+// needed to have this in separate file because rollup wasn't understanding that it has side effects and needed to go before the @fullcalendar/core import
+// added bonuses:
+// - the import statement doesn't import any vars, which will maybe hint to the build env that there are side effects
+// - rollup-plugin-dts needed to handle the .d.ts files separately anyway
+copyFile( // promise :(
+  'tmp/tsc-output/packages/preact/src/vdom.js',
+  'packages/preact/dist/vdom.js'
+)
 
 
 module.exports = function(isDev) {
-  return pkgStructs.filter((pkgStruct) => !pkgStruct.isBundle)
+  let configs = pkgStructs.filter((pkgStruct) => !pkgStruct.isBundle)
     .map((pkgStruct) => buildPkgConfig(pkgStruct, isDev))
+
+  return configs
 }
 
 
@@ -23,9 +35,16 @@ function buildPkgConfig(pkgStruct, isDev) {
       sourcemap: isDev
     },
     external(id) {
-      return !isRelPath(id)
+      return isNamedPkg(id)
     },
     plugins: [
+      {
+        resolveId(id, source) {
+          if (id.match(/vdom$/) && source.match('packages/preact')) {
+            return { id, external: true }
+          }
+        }
+      },
       nodeResolve(),
       TEMPLATE_PLUGIN,
       ...(isDev ? SOURCEMAP_PLUGINS : []),

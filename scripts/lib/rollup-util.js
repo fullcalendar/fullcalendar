@@ -55,7 +55,7 @@ exports.renderBanner = handleBars.compile(
 )
 
 
-const REL_PATH_RE = /^[/.]/
+const REL_PATH_RE = /^\./
 const SCSS_PATH_RE = /\.scss$/i
 const TILDE_PATH_RE = /^~/
 
@@ -70,6 +70,16 @@ exports.onwarn = function(warning, warn) {
 
 exports.isRelPath = function(path) {
   return REL_PATH_RE.test(path)
+}
+
+
+exports.isAbsPath = function(path) { // not x-OS-friendly
+  return /^\//.test(path)
+}
+
+
+exports.isNamedPkg = function(path) {
+  return !exports.isRelPath(path) && !exports.isAbsPath(path)
 }
 
 

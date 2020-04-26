@@ -35,7 +35,6 @@ module.exports = function() {
   return configs
 }
 
-
 function buildConfig(options) {
   let nodeModulesDirs = [
     'packages/__tests__/node_modules',
@@ -51,13 +50,23 @@ function buildConfig(options) {
     },
     plugins: [
       {
-        resolveId(id, importer) { // TODO: not really DRY
+        resolveId(id, importer) {
+
+          // contrib files are not processed by tsc and not in tmp/
+          if (isRelPath(id)) {
+            let m = id.match(/(packages-contrib\/.*)$/)
+            if (m) {
+              return { id: m[1].replace('/src/', '/dist/') + '.js' }
+            }
+          }
+
           if (isStylePath(id) && isRelPath(id) && importer.match('/tmp/tsc-output/')) {
             let resourcePath = importer.replace('/tmp/tsc-output/', '/')
             resourcePath = path.dirname(resourcePath)
             resourcePath = path.join(resourcePath, id)
             return { id: resourcePath, external: false }
           }
+
           return null
         }
       },
@@ -85,7 +94,7 @@ function buildConfig(options) {
         }
       }),
       commonjs({
-        // also for react(-dom) hack, ALSO IN rollup-bundle.js
+        // for react(-dom) hack, ALSO IN rollup-bundle.js
         namedExports: {
           'react': Object.keys(react),
           'react-dom': Object.keys(reactDom)

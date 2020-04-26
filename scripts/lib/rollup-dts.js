@@ -1,35 +1,55 @@
 const dts = require('rollup-plugin-dts').default
-const { isScssPath, isRelPath } = require('./rollup-util')
+const { isScssPath, isNamedPkg } = require('./rollup-util')
 const { pkgStructs } = require('./pkg-struct')
-const { mapHashViaPair } = require('./util')
+const { mapHashViaPair, copyFile } = require('./util')
 
+
+// rollup-plugin-dts can't handle either of these
+copyFile( // promise :(
+  'tmp/tsc-output/packages/preact/src/vdom.d.ts',
+  'packages/preact/dist/vdom.d.ts'
+)
+copyFile( // promise :(
+  'tmp/tsc-output/packages/core/src/vdom.d.ts',
+  'packages/core/dist/vdom.d.ts'
+)
+
+
+let hash = mapHashViaPair(pkgStructs, (pkgStruct) => [
+  pkgStruct.distDir, // the key. the [name] in entryFileNames
+  './' + pkgStruct.tscMain + '.d.ts' // the value
+])
 
 module.exports = function() {
   return {
-    input: mapHashViaPair(pkgStructs, (pkgStruct) => [
-      pkgStruct.distDir, // the key. the [name] in entryFileNames
-      './' + pkgStruct.tscMain + '.d.ts' // the value
-    ]),
+    input: hash,
     output: {
       format: 'es',
       dir: '.',
       entryFileNames: '[name]/main.d.ts'
     },
     plugins: [
+      {
+        resolveId(id) { // not DRY
+          if (id.match(/vdom$/)) {
+            return { id: './vdom', external: true }
+          }
+        }
+      },
       dts(),
       {
         resolveId(id, source) {
           if (isScssPath(id)) {
             return false
           }
-          if (!isRelPath(id)) {
+          if (isNamedPkg(id)) {
             return { id, external: true }
           }
           return null
         },
         renderChunk(code, chunk) {
           if (chunk.fileName === 'packages/core/dist/main.d.ts') {
-            return fixCode(code)
+            code = fixCode(code)
           }
           return code
         }
