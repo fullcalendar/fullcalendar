@@ -13,12 +13,11 @@ const STANDARD_PROPS = { // for event source parsing
 
 
 declare module '@fullcalendar/common' {
+
   interface OptionsInput {
     googleCalendarApiKey?: string
   }
-}
 
-declare module '@fullcalendar/common/structs/event-source' {
   interface ExtendedEventSourceInput {
     googleCalendarApiKey?: string
     googleCalendarId?: string
