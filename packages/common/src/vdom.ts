@@ -1,4 +1,10 @@
 
+if (typeof FullCalendarVDom === 'undefined') {
+  throw new Error(
+    'Please import the top-level fullcalendar lib before attempting to import a plugin.'
+  )
+}
+
 export import Ref = FullCalendarVDom.Ref
 export import RefObject = FullCalendarVDom.RefObject
 export import ComponentType = FullCalendarVDom.ComponentType
