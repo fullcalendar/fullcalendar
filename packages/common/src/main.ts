@@ -149,7 +149,7 @@ export { ReducerFunc, CalendarStateReducer } from './reducers/CalendarStateReduc
 export { CalendarState } from './reducers/CalendarState'
 export { Action } from './reducers/Action'
 export { ReducerContext } from './reducers/ReducerContext'
-export { CalendarComponentProps } from './CalendarComponent'
+export { CalendarContentProps, CalendarContent, computeCalendarClassNames, computeCalendarHeight } from './CalendarContent'
 
 export { DayHeader } from './common/DayHeader'
 export { computeFallbackHeaderFormat } from './common/table-utils'
@@ -213,4 +213,3 @@ export { WeekNumberRoot, WeekNumberRootProps } from './common/WeekNumberRoot'
 
 export { ViewRoot, ViewRootProps } from './common/ViewRoot'
 export { triggerDateSelect, triggerDateClick, buildDatePointApiWithContext, DatePointTransform, DateSpanTransform, DateSelectionApi, getDefaultEventEnd } from './calendar-utils'
-export { CalendarComponent } from './CalendarComponent'

@@ -5,7 +5,7 @@ import { DatePointTransform, DateSpanTransform, CalendarInteractionClass, Option
 import { ViewConfigInputHash } from './structs/view-config'
 import { ViewSpec } from './structs/view-spec'
 import { ViewProps } from './View'
-import { CalendarComponentProps } from './CalendarComponent'
+import { CalendarContentProps } from './CalendarContent'
 import { ReducerContext } from './reducers/ReducerContext'
 import { isPropsValidTester } from './structs/constraint'
 import { eventDragMutationMassager, eventIsDraggableTransformer, EventDropTransformers } from './interactions/event-dragging'
@@ -94,7 +94,7 @@ export interface PluginDef extends PluginHooks {
 export type ViewPropsTransformerClass = new() => ViewPropsTransformer
 
 export interface ViewPropsTransformer {
-  transform(viewProps: ViewProps, viewSpec: ViewSpec, calendarProps: CalendarComponentProps, allOptions: any): any
+  transform(viewProps: ViewProps, viewSpec: ViewSpec, calendarProps: CalendarContentProps, allOptions: any): any
 }
 
 export type ViewContainerAppend = (context: ReducerContext) => ComponentChildren

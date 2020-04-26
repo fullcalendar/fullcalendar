@@ -14,7 +14,6 @@ import { buildDelegationHandler } from './util/dom-event'
 import { capitaliseFirstLetter } from './util/misc'
 import { ViewContainer } from './ViewContainer'
 import { CssDimValue } from './scrollgrid/util'
-import { Theme } from './theme/Theme'
 import { getCanVGrowWithinCell } from './util/table-styling'
 import { Interaction, InteractionSettingsInput, InteractionClass, parseInteractionSettings, interactionSettingsStore } from './interactions/interaction'
 import { DateComponent } from './component/DateComponent'
@@ -25,25 +24,22 @@ import { CalendarInteraction } from './calendar-utils'
 import { DelayedRunner } from './util/runner'
 
 
-export interface CalendarComponentProps extends CalendarState {
-  onClassNameChange?: (classNameHash) => void // will be fired with [] on cleanup
+export interface CalendarContentProps extends CalendarState {
   onHeightChange?: (height: CssDimValue) => void // will be fired with '' on cleanup
 }
 
-interface CalendarComponentState {
+interface CalendarContentState {
   forPrint: boolean
 }
 
 
-export class CalendarComponent extends Component<CalendarComponentProps, CalendarComponentState> {
+export class CalendarContent extends Component<CalendarContentProps, CalendarContentState> {
 
   context: never
 
   private buildViewContext = memoize(buildViewContext)
   private buildViewPropTransformers = memoize(buildViewPropTransformers)
   private buildToolbarProps = memoize(buildToolbarProps)
-  private reportClassNames = memoize(reportClassNames)
-  private reportHeight = memoize(reportHeight)
   private handleNavLinkClick = buildDelegationHandler('a[data-navlink]', this._handleNavLinkClick.bind(this))
   private headerRef = createRef<Toolbar>()
   private footerRef = createRef<Toolbar>()
@@ -59,8 +55,8 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
   renders INSIDE of an outer div
   */
   render() {
-    let { props, state } = this
-    let { toolbarConfig, theme, options } = props
+    let { props } = this
+    let { toolbarConfig, options } = props
 
     let toolbarProps = this.buildToolbarProps(
       props.viewSpec,
@@ -71,28 +67,21 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
       props.viewTitle
     )
 
-    let calendarHeight: string | number = ''
     let viewVGrow = false
     let viewHeight: string | number = ''
     let viewAspectRatio: number | undefined
 
     if (isHeightAuto(options)) {
       viewHeight = ''
+
     } else if (options.height != null) {
-      calendarHeight = options.height
       viewVGrow = true
+
     } else if (options.contentHeight != null) {
       viewHeight = options.contentHeight
+
     } else {
       viewAspectRatio = Math.max(options.aspectRatio, 0.5) // prevent from getting too tall
-    }
-
-    if (props.onClassNameChange) {
-      this.reportClassNames(props.onClassNameChange, state.forPrint, options.direction, theme)
-    }
-
-    if (props.onHeightChange) {
-      this.reportHeight(props.onHeightChange, calendarHeight)
     }
 
     let viewContext = this.buildViewContext(
@@ -160,7 +149,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
   }
 
 
-  componentDidUpdate(prevProps: CalendarComponentProps) {
+  componentDidUpdate(prevProps: CalendarContentProps) {
     if (prevProps.dateProfile !== this.props.dateProfile) {
       this.props.emitter.trigger('datesDidUpdate')
     }
@@ -176,10 +165,6 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
 
     for (let interaction of this.calendarInteractions) {
       interaction.destroy()
-    }
-
-    if (this.props.onClassNameChange) {
-      this.props.onClassNameChange([])
     }
 
     if (this.props.onHeightChange) {
@@ -233,7 +218,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
   }
 
 
-  renderView(props: CalendarComponentProps) {
+  renderView(props: CalendarContentProps) {
     let { pluginHooks, options } = props
     let { viewSpec } = props
 
@@ -356,18 +341,12 @@ function isHeightAuto(options) {
 // -----------------------------------------------------------------------------------------------------------------
 
 
-function reportClassNames(onClassNameChange, forPrint: boolean, direction: string, theme: Theme) {
-  onClassNameChange(computeClassNames(forPrint, direction, theme))
-}
-
-
-// NOTE: can't have any empty! caller gets confused
-function computeClassNames(forPrint: boolean, direction: string, theme: Theme) {
+export function computeCalendarClassNames(props: CalendarState) {
   let classNames: string[] = [
     'fc',
-    forPrint ? 'fc-media-print' : 'fc-media-screen',
-    'fc-direction-' + direction,
-    theme.getClass('root')
+    'fc-media-screen', // 'fc-media-print'
+    'fc-direction-' + props.options.direction,
+    props.theme.getClass('root')
   ]
 
   if (!getCanVGrowWithinCell()) {
@@ -378,8 +357,15 @@ function computeClassNames(forPrint: boolean, direction: string, theme: Theme) {
 }
 
 
-function reportHeight(onHeightChange, height: CssDimValue) {
-  onHeightChange(height)
+// NOTE: consult view-height-computation in render()
+export function computeCalendarHeight(props: CalendarState): CssDimValue {
+  let { options } = props
+
+  if (!isHeightAuto(options) && options.height != null) {
+    return options.height
+  }
+
+  return ''
 }
 
 

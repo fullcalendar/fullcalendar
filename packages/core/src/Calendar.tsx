@@ -1,5 +1,8 @@
 import { __assign } from 'tslib'
-import { OptionsInput, Action, CalendarState, CalendarComponent, render, h, DelayedRunner, guid, CssDimValue, applyStyleProp, CalendarStateReducer, CalendarApi } from '@fullcalendar/common'
+import {
+  OptionsInput, Action, CalendarState, CalendarContent, render, h, DelayedRunner, guid, CssDimValue, applyStyleProp,
+  CalendarStateReducer, CalendarApi, computeCalendarClassNames, computeCalendarHeight, isArraysEqual
+ } from '@fullcalendar/common'
 import { flushToDom } from './utils'
 
 
@@ -51,18 +54,19 @@ export class Calendar extends CalendarApi {
     if (this.isRendering) {
       this.isRendered = true
 
+      let state = this.currentState
+      this.setClassNames(computeCalendarClassNames(state))
+      this.setHeight(computeCalendarHeight(state))
+
       render(
-        <CalendarComponent
-          {...this.currentState}
-          onClassNameChange={this.handleClassNames}
-          onHeightChange={this.handleHeightChange}
-        />,
+        <CalendarContent {...state} />,
         this.el
       )
 
     } else if (this.isRendered) {
       this.isRendered = false
-
+      this.setClassNames([])
+      this.setHeight('')
       render(null, this.el)
     }
 
@@ -112,22 +116,24 @@ export class Calendar extends CalendarApi {
   }
 
 
-  handleClassNames = (classNames: string[]) => {
-    let { classList } = this.el
+  setClassNames(classNames: string[]) {
+    if (!isArraysEqual(classNames, this.currentClassNames)) {
+      let { classList } = this.el
 
-    for (let className of this.currentClassNames) {
-      classList.remove(className)
+      for (let className of this.currentClassNames) {
+        classList.remove(className)
+      }
+
+      for (let className of classNames) {
+        classList.add(className)
+      }
+
+      this.currentClassNames = classNames
     }
-
-    for (let className of classNames) {
-      classList.add(className)
-    }
-
-    this.currentClassNames = classNames
   }
 
 
-  handleHeightChange = (height: CssDimValue) => {
+  setHeight(height: CssDimValue) {
     applyStyleProp(this.el, 'height', height)
   }
 
