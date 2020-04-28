@@ -9,7 +9,7 @@ import { StandardTheme } from '../theme/StandardTheme'
 import { EventSourceHash } from '../structs/event-source'
 import { buildViewSpecs } from '../structs/view-spec'
 import { mapHash, isPropsEqual } from '../util/object'
-import { DateProfileGenerator, DateProfileGeneratorProps, DateProfile } from '../DateProfileGenerator'
+import { DateProfileGenerator, DateProfileGeneratorProps } from '../DateProfileGenerator'
 import { reduceViewType } from './view-type'
 import { getInitialDate } from './current-date'
 import { reduceDynamicOptionOverrides } from './options'
@@ -26,9 +26,7 @@ import { EventDefHash } from '../structs/event-def'
 import { parseToolbars } from '../toolbar-parse'
 import { firstDefined } from '../util/misc'
 import { globalDefaults, mergeOptions } from '../options'
-import { diffWholeDays } from '../datelib/marker'
-import { createFormatter } from '../datelib/formatting'
-import { DateRange, constrainMarkerToRange } from '../datelib/date-range'
+import { constrainMarkerToRange } from '../datelib/date-range'
 import { ViewApi } from '../ViewApi'
 import { parseBusinessHours } from '../structs/business-hours'
 import { globalPlugins } from '../global-plugins'
@@ -38,6 +36,7 @@ import { buildComputedOptions } from '../ComputedOptions'
 import { CalendarDataProviderState, CalendarOptionsData, CalendarCurrentViewData, CalendarData } from './data-types'
 import { __assign } from 'tslib'
 import { TaskRunner } from '../util/runner'
+import { buildTitle } from './title-formatting'
 
 
 export interface CalendarDataProviderProps {
@@ -481,56 +480,4 @@ function computeLoadingLevel(eventSources: EventSourceHash): number {
   }
 
   return cnt
-}
-
-
-// Title and Date Formatting
-// -----------------------------------------------------------------------------------------------------------------
-
-
-// Computes what the title at the top of the calendarApi should be for this view
-function buildTitle(dateProfile: DateProfile, viewOptions, dateEnv: DateEnv) {
-  let range: DateRange
-
-  // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
-  if (/^(year|month)$/.test(dateProfile.currentRangeUnit)) {
-    range = dateProfile.currentRange
-  } else { // for day units or smaller, use the actual day range
-    range = dateProfile.activeRange
-  }
-
-  return dateEnv.formatRange(
-    range.start,
-    range.end,
-    createFormatter(
-      viewOptions.titleFormat || buildTitleFormat(dateProfile),
-      viewOptions.titleRangeSeparator
-    ),
-    { isEndExclusive: dateProfile.isRangeAllDay }
-  )
-}
-
-
-// Generates the format string that should be used to generate the title for the current date range.
-// Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
-function buildTitleFormat(dateProfile: DateProfile) {
-  let currentRangeUnit = dateProfile.currentRangeUnit
-
-  if (currentRangeUnit === 'year') {
-    return { year: 'numeric' }
-  } else if (currentRangeUnit === 'month') {
-    return { year: 'numeric', month: 'long' } // like "September 2014"
-  } else {
-    let days = diffWholeDays(
-      dateProfile.currentRange.start,
-      dateProfile.currentRange.end
-    )
-    if (days !== null && days > 1) {
-      // multi-day range. shorter, like "Sep 9 - 10 2014"
-      return { year: 'numeric', month: 'short', day: 'numeric' }
-    } else {
-      // one day. longer, like "September 9 2014"
-      return { year: 'numeric', month: 'long', day: 'numeric' }
-    }
-  }
 }
