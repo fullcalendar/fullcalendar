@@ -1,6 +1,6 @@
-import { Component, Ref, createRef, ComponentChildren, h, RefObject } from '../vdom'
-import { ViewContext, ViewContextType } from '../ViewContext'
-import { setRef } from '../vdom-util'
+import { Ref, createRef, ComponentChildren, h, RefObject } from '../vdom'
+import { ViewContext } from '../ViewContext'
+import { setRef, BaseComponent } from '../vdom-util'
 import { isPropsEqual } from '../util/object'
 
 
@@ -27,9 +27,7 @@ export interface ContentTypeHandlers {
 // TODO: use capitalizeFirstLetter util
 
 
-export class RenderHook<HookProps> extends Component<RenderHookProps<HookProps>> {
-
-  static contextType = ViewContextType
+export class RenderHook<HookProps> extends BaseComponent<RenderHookProps<HookProps>> {
 
   private rootElRef = createRef()
 
@@ -80,10 +78,7 @@ export interface ContentHookProps<HookProps> {
   ) => ComponentChildren
 }
 
-export class ContentHook<HookProps> extends Component<ContentHookProps<HookProps>> {
-
-  static contextType = ViewContextType
-  context: ViewContext
+export class ContentHook<HookProps> extends BaseComponent<ContentHookProps<HookProps>> {
 
   private innerElRef = createRef()
   private customContentInfo: {
@@ -170,9 +165,7 @@ export interface MountHookProps<HookProps> {
   children: (rootElRef: Ref<any>) => ComponentChildren
 }
 
-export class MountHook<HookProps> extends Component<MountHookProps<HookProps>> {
-
-  static contextType = ViewContextType
+export class MountHook<HookProps> extends BaseComponent<MountHookProps<HookProps>> {
 
   rootEl: HTMLElement
 
