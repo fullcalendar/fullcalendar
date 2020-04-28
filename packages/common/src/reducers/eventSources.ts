@@ -76,6 +76,19 @@ export function reduceEventSourcesNewTimeZone(eventSources: EventSourceHash, dat
 }
 
 
+export function computeEventSourceLoadingLevel(eventSources: EventSourceHash): number {
+  let cnt = 0
+
+  for (let sourceId in eventSources) {
+    if (eventSources[sourceId].isFetching) {
+      cnt++
+    }
+  }
+
+  return cnt
+}
+
+
 function addSources(eventSourceHash: EventSourceHash, sources: EventSource[], fetchRange: DateRange | null, context: CalendarContext): EventSourceHash {
   let hash: EventSourceHash = {}
 

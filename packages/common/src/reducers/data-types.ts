@@ -35,6 +35,7 @@ export interface CalendarDataProviderState {
 }
 
 export interface CalendarOptionsData {
+  localeDefaults: any
   calendarOptions: any
   computedCalendarOptions: ComputedOptions
   toolbarConfig: any

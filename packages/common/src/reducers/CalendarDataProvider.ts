@@ -14,7 +14,7 @@ import { reduceViewType } from './view-type'
 import { getInitialDate } from './current-date'
 import { reduceDynamicOptionOverrides } from './options'
 import { reduceDateProfile } from './date-profile'
-import { reduceEventSources, initEventSources, reduceEventSourcesNewTimeZone } from './eventSources'
+import { reduceEventSources, initEventSources, reduceEventSourcesNewTimeZone, computeEventSourceLoadingLevel } from './eventSources'
 import { reduceEventStore, rezoneEventStoreDates } from './eventStore'
 import { reduceDateSelection } from './date-selection'
 import { reduceSelectedEvent } from './selected-event'
@@ -85,6 +85,7 @@ export class CalendarDataProvider {
 
   constructor(props: CalendarDataProviderProps) {
     this.props = props
+    this.actionRunner.pause()
 
     let dynamicOptionOverrides = {}
     let optionsData = this.computeOptionsData(
@@ -97,7 +98,8 @@ export class CalendarDataProvider {
     let currentViewData = this.computeCurrentViewData(
       optionsData,
       currentViewType,
-      props.calendarApi
+      props.optionOverrides,
+      dynamicOptionOverrides
     )
 
     let currentDate = getInitialDate(optionsData.calendarOptions, optionsData.dateEnv)
@@ -140,6 +142,7 @@ export class CalendarDataProvider {
 
     this.state = initialState
     this.updateData()
+    this.actionRunner.resume()
   }
 
 
@@ -155,7 +158,9 @@ export class CalendarDataProvider {
 
   resetOptions(optionOverrides) {
     this.props.optionOverrides = optionOverrides
+    this.actionRunner.pause('resetOptions')
     this.updateData()
+    this.actionRunner.resume('resetOptions')
   }
 
 
@@ -175,9 +180,11 @@ export class CalendarDataProvider {
     let currentViewData = this.computeCurrentViewData(
       optionsData,
       currentViewType,
-      props.calendarApi
+      props.optionOverrides,
+      dynamicOptionOverrides
     )
 
+    emitter.setThisContext(props.calendarApi)
     emitter.setOptions(currentViewData.options)
 
     let calendarContext: CalendarContext = {
@@ -196,7 +203,7 @@ export class CalendarDataProvider {
     currentDate = constrainMarkerToRange(currentDate, dateProfile.currentRange)
 
     let eventSources = reduceEventSources(state.eventSources, action, dateProfile, calendarContext)
-    let eventSourceLoadingLevel = computeLoadingLevel(eventSources)
+    let eventSourceLoadingLevel = computeEventSourceLoadingLevel(eventSources)
     let eventStore = reduceEventStore(state.eventStore, action, eventSources, dateProfile, calendarContext)
 
     let renderableEventStore =
@@ -209,7 +216,7 @@ export class CalendarDataProvider {
     let eventUiBases = this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
 
     let prevLoadingLevel = state.loadingLevel || 0
-    let loadingLevel = computeLoadingLevel(eventSources)
+    let loadingLevel = eventSourceLoadingLevel
 
     let newState: CalendarDataProviderState = {
       dynamicOptionOverrides,
@@ -261,7 +268,8 @@ export class CalendarDataProvider {
     let currentViewData = this.computeCurrentViewData(
       optionsData,
       state.currentViewType,
-      props.calendarApi
+      props.optionOverrides,
+      state.dynamicOptionOverrides
     )
 
     let data: CalendarData = this.data = {
@@ -276,10 +284,10 @@ export class CalendarDataProvider {
     }
 
     let changeHandlers = optionsData.pluginHooks.optionChangeHandlers
-    let oldCalendarOptions = oldData.calendarOptions
+    let oldCalendarOptions = oldData && oldData.calendarOptions
     let newCalendarOptions = optionsData.calendarOptions
 
-    if (oldCalendarOptions !== newCalendarOptions) {
+    if (oldCalendarOptions && oldCalendarOptions !== newCalendarOptions) {
 
       if (oldCalendarOptions.timeZone !== newCalendarOptions.timeZone) {
         data.eventSources = reduceEventSourcesNewTimeZone(data.eventSources, state.dateProfile, data)
@@ -323,8 +331,6 @@ export class CalendarDataProvider {
       dynamicOptionOverrides
     )
 
-    let computedCalendarOptions = this.buildComputedCalendarOptions(calendarOptions)
-
     let pluginHooks = this.buildPluginHooks(calendarOptions.plugins, globalPlugins)
     let dateEnv = this.buildDateEnv(
       calendarOptions.timeZone,
@@ -335,15 +341,27 @@ export class CalendarDataProvider {
       pluginHooks,
       availableLocaleData
     )
-    let theme = this.buildTheme(calendarOptions, pluginHooks)
-    let viewSpecs = this.buildViewSpecs(pluginHooks.views, optionOverrides, dynamicOptionOverrides, localeDefaults)
-    let toolbarConfig = this.parseToolbars(calendarOptions, optionOverrides, theme, viewSpecs, calendarApi)
 
-    return { calendarOptions, computedCalendarOptions, availableRawLocales, pluginHooks, dateEnv, theme, viewSpecs, toolbarConfig }
+    let viewSpecs = this.buildViewSpecs(pluginHooks.views, optionOverrides, dynamicOptionOverrides, localeDefaults)
+    let theme = this.buildTheme(calendarOptions, pluginHooks)
+    let toolbarConfig = this.parseToolbars(calendarOptions, optionOverrides, theme, viewSpecs, calendarApi)
+    let computedCalendarOptions = this.buildComputedCalendarOptions(calendarOptions)
+
+    return {
+      calendarOptions,
+      computedCalendarOptions,
+      availableRawLocales,
+      pluginHooks,
+      dateEnv,
+      viewSpecs,
+      theme,
+      toolbarConfig,
+      localeDefaults
+    }
   }
 
 
-  _computeCurrentViewData(optionsData, dateEnv, currentViewType): CalendarCurrentViewData {
+  _computeCurrentViewData(optionsData: CalendarOptionsData, currentViewType: string, optionOverrides, dynamicOptionOverrides): CalendarCurrentViewData {
     let viewSpec = optionsData.viewSpecs[currentViewType]
 
     if (!viewSpec) {
@@ -354,16 +372,16 @@ export class CalendarDataProvider {
       globalDefaults,
       viewSpec.optionDefaults,
       optionsData.localeDefaults,
-      optionsData.optionOverrides,
+      optionOverrides,
       viewSpec.optionOverrides,
-      optionsData.dynamicOptionOverrides
+      dynamicOptionOverrides
     )
 
     let computedOptions = this.buildComputedViewOptions(options)
 
     let dateProfileGenerator = this.buildDateProfileGenerator({
       viewSpec,
-      dateEnv,
+      dateEnv: optionsData.dateEnv,
       slotMinTime: options.slotMinTime,
       slotMaxTime: options.slotMaxTime,
       showNonCurrentDates: options.showNonCurrentDates,
@@ -379,7 +397,7 @@ export class CalendarDataProvider {
       fixedWeekCount: options.fixedWeekCount
     })
 
-    let viewApi = this.buildViewApi(currentViewType, this.getCurrentData, dateEnv)
+    let viewApi = this.buildViewApi(currentViewType, this.getCurrentData, optionsData.dateEnv)
 
     return { viewSpec, options, computedOptions, dateProfileGenerator, viewApi }
   }
@@ -467,17 +485,4 @@ function buildViewUiProps(calendarContext: CalendarContext) {
 
 function parseContextBusinessHours(calendarContext: CalendarContext) {
   return parseBusinessHours(calendarContext.options.businessHours, calendarContext)
-}
-
-
-function computeLoadingLevel(eventSources: EventSourceHash): number {
-  let cnt = 0
-
-  for (let sourceId in eventSources) {
-    if (eventSources[sourceId].isFetching) {
-      cnt++
-    }
-  }
-
-  return cnt
 }
