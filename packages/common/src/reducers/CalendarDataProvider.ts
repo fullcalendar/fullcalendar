@@ -317,7 +317,7 @@ export class CalendarDataProvider {
     let availableRawLocales = availableLocaleData.map
     let localeDefaults = this.buildLocale(locale || availableLocaleData.defaultCode, availableRawLocales).options
     let calendarOptions = this.buildCalendarOptions( // NOTE: use viewOptions mostly instead
-      globalDefaults, // global defaults
+      globalDefaults,
       localeDefaults,
       optionOverrides,
       dynamicOptionOverrides
@@ -351,7 +351,7 @@ export class CalendarDataProvider {
     }
 
     let options = this.buildViewOptions( // merge defaults and overrides. lowest to highest precedence
-      globalDefaults, // global defaults
+      globalDefaults,
       viewSpec.optionDefaults,
       optionsData.localeDefaults,
       optionsData.optionOverrides,
@@ -361,7 +361,7 @@ export class CalendarDataProvider {
 
     let computedOptions = this.buildComputedViewOptions(options)
 
-    let dateProfileGenerator = this.buildDateProfileGenerator({ // TODO: pluck based on DATE_PROFILE_OPTIONS?
+    let dateProfileGenerator = this.buildDateProfileGenerator({
       viewSpec,
       dateEnv,
       slotMinTime: options.slotMinTime,
