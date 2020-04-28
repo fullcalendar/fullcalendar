@@ -20,6 +20,10 @@ export abstract class BaseComponent<Props={}, State={}> extends Component<Props,
 
     if (this.debug) {
       console.log(getUnequalProps(nextProps, this.props), getUnequalProps(nextState, this.state))
+
+      if (this.context !== nextContext) {
+        console.log('context is different')
+      }
     }
 
     return !compareObjs(this.props, nextProps, this.propEquality) ||
