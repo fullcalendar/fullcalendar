@@ -211,12 +211,6 @@ export class CalendarDataProvider {
     let prevLoadingLevel = state.loadingLevel || 0
     let loadingLevel = computeLoadingLevel(eventSources)
 
-    if (!prevLoadingLevel && loadingLevel) {
-      emitter.trigger('loading', true)
-    } else if (prevLoadingLevel && !loadingLevel) {
-      emitter.trigger('loading', false)
-    }
-
     let newState: CalendarDataProviderState = {
       dynamicOptionOverrides,
       currentViewType,
@@ -238,6 +232,12 @@ export class CalendarDataProvider {
 
     for (let reducer of optionsData.pluginHooks.reducers) {
       __assign(newState, reducer(state, action, contextAndState)) // give the OLD state, for old value
+    }
+
+    if (!prevLoadingLevel && loadingLevel) {
+      emitter.trigger('loading', true)
+    } else if (prevLoadingLevel && !loadingLevel) {
+      emitter.trigger('loading', false)
     }
 
     this.state = newState
