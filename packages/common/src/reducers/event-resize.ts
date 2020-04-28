@@ -4,7 +4,6 @@ import { Action } from './Action'
 
 export function reduceEventResize(currentResize: EventInteractionState | null, action: Action): EventInteractionState | null {
   switch (action.type) {
-    case 'INIT':
     case 'UNSET_EVENT_RESIZE':
       return null
 

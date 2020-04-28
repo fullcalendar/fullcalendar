@@ -198,7 +198,7 @@ export interface OptionsInputBase {
   drop?(arg: { date: Date, dateStr: string, allDay: boolean, draggedEl: HTMLElement, jsEvent: MouseEvent, view: ViewApi }): void
   eventReceive?(arg: { event: EventApi, draggedEl: HTMLElement, view: ViewApi }): void
   eventLeave?(arg: { draggedEl: HTMLElement, event: EventApi, view: ViewApi }): void
-  _destroyed?(): void
+  _destroy?(): void
   _init?(): void
   _noEventDrop?(): void
   _noEventResize?(): void

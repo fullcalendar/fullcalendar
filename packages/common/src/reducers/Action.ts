@@ -9,10 +9,7 @@ import { DateSpan } from '../structs/date-span'
 import { DateMarker } from '../datelib/marker'
 
 export type Action =
-
-  { type: 'INIT', optionOverrides: object } | // wont it create another rerender?
-
-  { type: 'SET_OPTION', optionName: string, optionValue: any, isDynamic: boolean } | // TODO: more strictly type
+  { type: 'SET_OPTION', optionName: string, optionValue: any } |
 
   { type: 'PREV' } |
   { type: 'NEXT' } |

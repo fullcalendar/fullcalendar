@@ -7,7 +7,7 @@ import { excludeInstances } from './reducers/eventStore'
 import { EventInteractionState } from './interactions/event-interaction-state'
 import { SplittableProps } from './component/event-splitting'
 import { mapHash } from './util/object'
-import { ReducerContext } from './reducers/ReducerContext'
+import { CalendarContext } from './CalendarContext'
 import { buildDateSpanApiWithContext } from './calendar-utils'
 import { Constraint } from './structs/constraint'
 import { expandRecurring } from './structs/recurring-event'
@@ -17,18 +17,18 @@ import { expandRecurring } from './structs/recurring-event'
 // ------------------------------------------------------------------------------------------------------------------------
 
 
-export function isInteractionValid(interaction: EventInteractionState, context: ReducerContext) {
+export function isInteractionValid(interaction: EventInteractionState, context: CalendarContext) {
   return isNewPropsValid({ eventDrag: interaction }, context) // HACK: the eventDrag props is used for ALL interactions
 }
 
 
-export function isDateSelectionValid(dateSelection: DateSpan, context: ReducerContext) {
+export function isDateSelectionValid(dateSelection: DateSpan, context: CalendarContext) {
   return isNewPropsValid({ dateSelection }, context)
 }
 
 
-function isNewPropsValid(newProps, context: ReducerContext) {
-  let calendarState = context.getCurrentState()
+function isNewPropsValid(newProps, context: CalendarContext) {
+  let calendarState = context.getCurrentData()
 
   let props = {
     businessHours: calendarState.businessHours,
@@ -45,7 +45,7 @@ function isNewPropsValid(newProps, context: ReducerContext) {
 }
 
 
-export function isPropsValid(state: SplittableProps, context: ReducerContext, dateSpanMeta = {}, filterConfig?): boolean {
+export function isPropsValid(state: SplittableProps, context: CalendarContext, dateSpanMeta = {}, filterConfig?): boolean {
 
   if (state.eventDrag && !isInteractionPropsValid(state, context, dateSpanMeta, filterConfig)) {
     return false
@@ -62,8 +62,8 @@ export function isPropsValid(state: SplittableProps, context: ReducerContext, da
 // Moving Event Validation
 // ------------------------------------------------------------------------------------------------------------------------
 
-function isInteractionPropsValid(state: SplittableProps, context: ReducerContext, dateSpanMeta: any, filterConfig): boolean {
-  let currentState = context.getCurrentState()
+function isInteractionPropsValid(state: SplittableProps, context: CalendarContext, dateSpanMeta: any, filterConfig): boolean {
+  let currentState = context.getCurrentData()
   let interaction = state.eventDrag // HACK: the eventDrag props is used for ALL interactions
 
   let subjectEventStore = interaction.mutatedEvents
@@ -166,14 +166,14 @@ function isInteractionPropsValid(state: SplittableProps, context: ReducerContext
 // Date Selection Validation
 // ------------------------------------------------------------------------------------------------------------------------
 
-function isDateSelectionPropsValid(state: SplittableProps, context: ReducerContext, dateSpanMeta: any, filterConfig): boolean {
+function isDateSelectionPropsValid(state: SplittableProps, context: CalendarContext, dateSpanMeta: any, filterConfig): boolean {
   let relevantEventStore = state.eventStore
   let relevantDefs = relevantEventStore.defs
   let relevantInstances = relevantEventStore.instances
 
   let selection = state.dateSelection
   let selectionRange = selection.range
-  let { selectionConfig } = context.getCurrentState()
+  let { selectionConfig } = context.getCurrentData()
 
   if (filterConfig) {
     selectionConfig = filterConfig(selectionConfig)
@@ -232,7 +232,7 @@ function allConstraintsPass(
   subjectRange: DateRange,
   otherEventStore: EventStore,
   businessHoursUnexpanded: EventStore,
-  context: ReducerContext
+  context: CalendarContext
 ): boolean {
   for (let constraint of constraints) {
     if (!anyRangesContainRange(
@@ -251,7 +251,7 @@ function constraintToRanges(
   subjectRange: DateRange, // for expanding a recurring constraint, or expanding business hours
   otherEventStore: EventStore, // for if constraint is an even group ID
   businessHoursUnexpanded: EventStore, // for if constraint is 'businessHours'
-  context: ReducerContext // for expanding businesshours
+  context: CalendarContext // for expanding businesshours
 ): OpenDateRange[] {
 
   if (constraint === 'businessHours') {

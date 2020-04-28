@@ -1,35 +1,36 @@
 import { __assign } from 'tslib'
 import {
-  OptionsInput, Action, CalendarState, CalendarContent, render, h, DelayedRunner, guid, CssDimValue, applyStyleProp,
-  CalendarStateReducer, CalendarApi, computeCalendarClassNames, computeCalendarHeight, isArraysEqual
+  OptionsInput, Action, CalendarContent, render, h, DelayedRunner, guid, CssDimValue, applyStyleProp,
+  CalendarApi, computeCalendarClassNames, computeCalendarHeight, isArraysEqual, CalendarDataProvider, CalendarData
  } from '@fullcalendar/common'
 import { flushToDom } from './utils'
 
 
 export class Calendar extends CalendarApi {
 
+  data: CalendarData
+  renderRunner: DelayedRunner
   el: HTMLElement
   isRendering = false
   isRendered = false
-  renderRunner: DelayedRunner
   currentClassNames: string[] = []
-  currentState: CalendarState
 
-  get view() { return this.currentState.viewApi } // for public API
-
+  get view() { return this.data.viewApi } // for public API
 
   constructor(el: HTMLElement, optionOverrides: OptionsInput = {}) {
-    super(new CalendarStateReducer())
+    super()
 
     this.el = el
     this.renderRunner = new DelayedRunner(this.handleRenderRequest)
 
-    this.reducer.init(
+    new CalendarDataProvider({
       optionOverrides,
-      this,
-      this.handleAction,
-      this.handleState
-    )
+      calendarApi: this,
+      onAction: this.handleAction,
+      onData: this.handleData
+    })
+
+    this.trigger('_init')
   }
 
 
@@ -43,9 +44,9 @@ export class Calendar extends CalendarApi {
   }
 
 
-  handleState = (state: CalendarState) => {
-    this.currentState = state
-    this.renderRunner.request(state.options.rerenderDelay)
+  handleData = (data: CalendarData) => {
+    this.data = data
+    this.renderRunner.request(data.options.rerenderDelay)
   }
 
 
@@ -54,12 +55,12 @@ export class Calendar extends CalendarApi {
     if (this.isRendering) {
       this.isRendered = true
 
-      let state = this.currentState
-      this.setClassNames(computeCalendarClassNames(state))
-      this.setHeight(computeCalendarHeight(state))
+      let { data } = this
+      this.setClassNames(computeCalendarClassNames(data))
+      this.setHeight(computeCalendarHeight(data))
 
       render(
-        <CalendarContent {...state} />,
+        <CalendarContent {...data} />,
         this.el
       )
 
@@ -89,6 +90,7 @@ export class Calendar extends CalendarApi {
     if (this.isRendering) {
       this.isRendering = false
       this.renderRunner.request()
+      this.trigger('_destroy')
     }
   }
 
@@ -113,6 +115,11 @@ export class Calendar extends CalendarApi {
 
   resumeRendering() { // available to plugins
     this.renderRunner.resume('pauseRendering', true)
+  }
+
+
+  resetOptions(optionOverrides) {
+    this._dataProvider.resetOptions(optionOverrides)
   }
 
 

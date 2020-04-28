@@ -17,14 +17,12 @@ import { DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
 import { DateEnv } from '../datelib/env'
 import { EventUiHash } from '../component/event-ui'
-import { ReducerContext } from './ReducerContext'
+import { CalendarContext } from '../CalendarContext'
 import { expandRecurring } from '../structs/recurring-event'
 
 
-export function reduceEventStore(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, prevDateEnv: DateEnv, context: ReducerContext): EventStore {
+export function reduceEventStore(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, context: CalendarContext): EventStore {
   switch (action.type) {
-    case 'INIT':
-      return createEmptyEventStore()
 
     case 'RECEIVE_EVENTS': // raw
       return receiveRawEvents(
@@ -53,13 +51,6 @@ export function reduceEventStore(eventStore: EventStore, action: Action, eventSo
     case 'CHANGE_VIEW_TYPE':
       if (dateProfile) {
         return expandRecurring(eventStore, dateProfile.activeRange, context)
-      } else {
-        return eventStore
-      }
-
-    case 'SET_OPTION':
-      if (action.optionName === 'timeZone') {
-        return rezoneDates(eventStore, prevDateEnv, context.dateEnv)
       } else {
         return eventStore
       }
@@ -98,7 +89,7 @@ function receiveRawEvents(
   fetchId: string,
   fetchRange: DateRange | null,
   rawEvents: EventInput[],
-  context: ReducerContext
+  context: CalendarContext
 ): EventStore {
 
   if (
@@ -126,7 +117,7 @@ function receiveRawEvents(
 }
 
 
-function transformRawEvents(rawEvents, eventSource: EventSource, context: ReducerContext) {
+function transformRawEvents(rawEvents, eventSource: EventSource, context: CalendarContext) {
   let calEachTransform = context.options.eventDataTransform
   let sourceEachTransform = eventSource ? eventSource.eventDataTransform : null
 
@@ -165,7 +156,7 @@ function transformEachRawEvent(rawEvents, func) {
 }
 
 
-function addEvent(eventStore: EventStore, subset: EventStore, expandRange: DateRange | null, context: ReducerContext): EventStore {
+function addEvent(eventStore: EventStore, subset: EventStore, expandRange: DateRange | null, context: CalendarContext): EventStore {
 
   if (expandRange) {
     subset = expandRecurring(subset, expandRange, context)
@@ -175,7 +166,7 @@ function addEvent(eventStore: EventStore, subset: EventStore, expandRange: DateR
 }
 
 
-function rezoneDates(eventStore: EventStore, oldDateEnv: DateEnv, newDateEnv: DateEnv): EventStore {
+export function rezoneEventStoreDates(eventStore: EventStore, oldDateEnv: DateEnv, newDateEnv: DateEnv): EventStore {
   let defs = eventStore.defs
 
   let instances = mapHash(eventStore.instances, function(instance: EventInstance): EventInstance {
@@ -200,7 +191,7 @@ function rezoneDates(eventStore: EventStore, oldDateEnv: DateEnv, newDateEnv: Da
 }
 
 
-function applyMutationToRelated(eventStore: EventStore, instanceId: string, mutation: EventMutation, fromApi: boolean, context: ReducerContext): EventStore {
+function applyMutationToRelated(eventStore: EventStore, instanceId: string, mutation: EventMutation, fromApi: boolean, context: CalendarContext): EventStore {
   let relevant = getRelevantEvents(eventStore, instanceId)
   let eventConfigBase = fromApi ?
     { '': { // HACK. always allow API to mutate events
@@ -215,7 +206,7 @@ function applyMutationToRelated(eventStore: EventStore, instanceId: string, muta
       textColor: '',
       classNames: []
     } } as EventUiHash :
-    context.getCurrentState().eventUiBases
+    context.getCurrentData().eventUiBases
 
 
   relevant = applyMutationToEventStore(relevant, eventConfigBase, mutation, context)

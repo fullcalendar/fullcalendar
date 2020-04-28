@@ -12,7 +12,7 @@ import {
   eventDragMutationMassager,
   Interaction, InteractionSettings, interactionSettingsStore,
   EventDropTransformers,
-  ReducerContext,
+  CalendarContext,
   buildDatePointApiWithContext
 } from '@fullcalendar/common'
 import { HitDragging, isHitsEqual } from './HitDragging'
@@ -35,7 +35,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
   isDragging: boolean = false
   eventRange: EventRenderRange | null = null
   relevantEvents: EventStore | null = null // the events being dragged
-  receivingContext: ReducerContext | null = null
+  receivingContext: CalendarContext | null = null
   validMutation: EventMutation | null = null
   mutatedRelevantEvents: EventStore | null = null
 
@@ -74,7 +74,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
     let eventInstanceId = eventRange.instance!.instanceId
 
     this.relevantEvents = getRelevantEvents(
-      initialContext.getCurrentState().eventStore,
+      initialContext.getCurrentData().eventStore,
       eventInstanceId
     )
 
@@ -137,7 +137,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
     let initialContext = this.component.context
 
     // states based on new hit
-    let receivingContext: ReducerContext | null = null
+    let receivingContext: CalendarContext | null = null
     let mutation: EventMutation | null = null
     let mutatedRelevantEvents: EventStore | null = null
     let isInvalid = false
@@ -156,10 +156,10 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
         initialContext === receivingContext ||
         receivingOptions.editable && receivingOptions.droppable
       ) {
-        mutation = computeEventMutation(initialHit, hit, receivingContext.getCurrentState().pluginHooks.eventDragMutationMassagers)
+        mutation = computeEventMutation(initialHit, hit, receivingContext.getCurrentData().pluginHooks.eventDragMutationMassagers)
 
         if (mutation) {
-          mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, receivingContext.getCurrentState().eventUiBases, mutation, receivingContext)
+          mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, receivingContext.getCurrentData().eventUiBases, mutation, receivingContext)
           interaction.mutatedEvents = mutatedRelevantEvents
 
           if (!receivingComponent.isInteractionValid(interaction)) {
@@ -247,7 +247,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
           let transformed: ReturnType<EventDropTransformers> = {}
 
-          for (let transformer of initialContext.getCurrentState().pluginHooks.eventDropTransformers) {
+          for (let transformer of initialContext.getCurrentData().pluginHooks.eventDropTransformers) {
             __assign(transformed, transformer(validMutation, initialContext))
           }
 
@@ -326,7 +326,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
   }
 
   // render a drag state on the next receivingCalendar
-  displayDrag(nextContext: ReducerContext | null, state: EventInteractionState) {
+  displayDrag(nextContext: CalendarContext | null, state: EventInteractionState) {
     let initialContext = this.component.context
     let prevContext = this.receivingContext
 

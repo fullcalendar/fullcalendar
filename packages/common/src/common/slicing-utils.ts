@@ -9,7 +9,7 @@ import { EventInteractionState } from '../interactions/event-interaction-state'
 import { Duration } from '../datelib/duration'
 import { memoize } from '../util/memoize'
 import { DateMarker, addMs, addDays } from '../datelib/marker'
-import { ReducerContext } from '../reducers/ReducerContext'
+import { CalendarContext } from '../CalendarContext'
 import { expandRecurring } from '../structs/recurring-event'
 
 export interface SliceableProps {
@@ -47,7 +47,7 @@ export abstract class Slicer<SegType extends Seg, ExtraArgs extends any[] = []> 
     props: SliceableProps,
     dateProfile: DateProfile,
     nextDayThreshold: Duration | null,
-    context: ReducerContext,
+    context: CalendarContext,
     ...extraArgs: ExtraArgs
   ): SlicedProps<SegType> {
     let { eventUiBases } = props
@@ -66,7 +66,7 @@ export abstract class Slicer<SegType extends Seg, ExtraArgs extends any[] = []> 
 
   sliceNowDate( // does not memoize
     date: DateMarker,
-    context: ReducerContext,
+    context: CalendarContext,
     ...extraArgs: ExtraArgs
   ): SegType[] {
     return this._sliceDateSpan(
@@ -81,7 +81,7 @@ export abstract class Slicer<SegType extends Seg, ExtraArgs extends any[] = []> 
     businessHours: EventStore,
     dateProfile: DateProfile,
     nextDayThreshold: Duration | null,
-    context: ReducerContext,
+    context: CalendarContext,
     ...extraArgs: ExtraArgs
   ): SegType[] {
     if (!businessHours) {
@@ -154,7 +154,7 @@ export abstract class Slicer<SegType extends Seg, ExtraArgs extends any[] = []> 
   private _sliceDateSpan(
     dateSpan: DateSpan,
     eventUiBases: EventUiHash,
-    context: ReducerContext,
+    context: CalendarContext,
     ...extraArgs: ExtraArgs
   ): SegType[] {
     if (!dateSpan) {

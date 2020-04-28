@@ -4,7 +4,7 @@ import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rang
 import { ViewSpec } from './structs/view-spec'
 import { DateEnv, DateInput } from './datelib/env'
 import { computeVisibleDayRange } from './util/date'
-import { _getNow } from './reducers/current-date'
+import { getNow } from './reducers/current-date'
 
 
 export interface DateProfile {
@@ -34,27 +34,11 @@ export interface DateProfileOptions {
   dateIncrement?: DurationInput
   hiddenDays?: number[]
   weekends?: boolean
-  now?: DateInput // for _getNow
+  now?: DateInput // for getNow
   validRange?: OpenDateRange // for getRangeOption
   visibleRange?: OpenDateRange // for getRangeOption
   monthMode?: boolean
   fixedWeekCount?: number
-}
-
-export const DATE_PROFILE_OPTIONS: { [T in keyof DateProfileOptions]-?: boolean } = {
-  slotMinTime: true,
-  slotMaxTime: true,
-  showNonCurrentDates: true,
-  dayCount: true,
-  dateAlignment: true,
-  dateIncrement: true,
-  hiddenDays: true,
-  weekends: true,
-  now: true,
-  validRange: true,
-  visibleRange: true,
-  monthMode: true,
-  fixedWeekCount: true
 }
 
 
@@ -69,7 +53,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
   constructor(protected props: DateProfileGeneratorProps) {
     this.slotMinTime = createDuration(props.slotMinTime)
     this.slotMaxTime = createDuration(props.slotMaxTime)
-    this.nowDate = _getNow(props, props.dateEnv) // uses props.now. bad system
+    this.nowDate = getNow(props, props.dateEnv) // uses props.now. bad system
     this.initHiddenDays()
   }
 

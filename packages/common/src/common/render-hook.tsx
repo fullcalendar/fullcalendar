@@ -1,5 +1,5 @@
 import { Component, Ref, createRef, ComponentChildren, h, RefObject } from '../vdom'
-import { ComponentContext, ComponentContextType } from '../component/ComponentContext'
+import { ViewContext, ViewContextType } from '../ViewContext'
 import { setRef } from '../vdom-util'
 import { isPropsEqual } from '../util/object'
 
@@ -29,7 +29,7 @@ export interface ContentTypeHandlers {
 
 export class RenderHook<HookProps> extends Component<RenderHookProps<HookProps>> {
 
-  static contextType = ComponentContextType
+  static contextType = ViewContextType
 
   private rootElRef = createRef()
 
@@ -82,8 +82,8 @@ export interface ContentHookProps<HookProps> {
 
 export class ContentHook<HookProps> extends Component<ContentHookProps<HookProps>> {
 
-  static contextType = ComponentContextType
-  context: ComponentContext
+  static contextType = ViewContextType
+  context: ViewContext
 
   private innerElRef = createRef()
   private customContentInfo: {
@@ -172,7 +172,7 @@ export interface MountHookProps<HookProps> {
 
 export class MountHook<HookProps> extends Component<MountHookProps<HookProps>> {
 
-  static contextType = ComponentContextType
+  static contextType = ViewContextType
 
   rootEl: HTMLElement
 
@@ -222,7 +222,7 @@ export function buildHookClassNameGenerator<HookProps>(hookName: string) {
   let currentCacheBuster
   let currentClassNames: string[]
 
-  return function(hookProps: HookProps, context: ComponentContext, optionsOverride?: object, cacheBusterOverride?: object) {
+  return function(hookProps: HookProps, context: ViewContext, optionsOverride?: object, cacheBusterOverride?: object) {
     let rawGenerator = (optionsOverride || context.options)[hookName ? hookName + 'ClassNames' : 'classNames']
     let cacheBuster = cacheBusterOverride || hookProps
 

@@ -9,7 +9,7 @@ import { Seg } from './DateComponent'
 import { EventApi } from '../api/EventApi'
 import { EventUi, EventUiHash, combineEventUis } from './event-ui'
 import { mapHash } from '../util/object'
-import { ComponentContext } from './ComponentContext'
+import { ViewContext } from '../ViewContext'
 import { DateFormatter } from '../datelib/DateFormatter'
 import { DateMarker } from '../datelib/marker'
 import { ViewApi } from '../ViewApi'
@@ -226,7 +226,7 @@ export interface EventMeta { // for *Content handlers
 }
 
 
-export function computeSegDraggable(seg: Seg, context: ComponentContext) {
+export function computeSegDraggable(seg: Seg, context: ViewContext) {
   let { pluginHooks } = context
   let transformers = pluginHooks.isDraggableTransformers
   let { def, ui } = seg.eventRange
@@ -240,12 +240,12 @@ export function computeSegDraggable(seg: Seg, context: ComponentContext) {
 }
 
 
-export function computeSegStartResizable(seg: Seg, context: ComponentContext) {
+export function computeSegStartResizable(seg: Seg, context: ViewContext) {
   return seg.isStart && seg.eventRange.ui.durationEditable && context.options.eventResizableFromStart
 }
 
 
-export function computeSegEndResizable(seg: Seg, context: ComponentContext) {
+export function computeSegEndResizable(seg: Seg, context: ViewContext) {
   return seg.isEnd && seg.eventRange.ui.durationEditable
 }
 
@@ -253,7 +253,7 @@ export function computeSegEndResizable(seg: Seg, context: ComponentContext) {
 export function buildSegTimeText(
   seg: Seg,
   timeFormat: DateFormatter,
-  context: ComponentContext,
+  context: ViewContext,
   defaultDisplayEventTime?: boolean, // defaults to true
   defaultDisplayEventEnd?: boolean, // defaults to true
   startOverride?: DateMarker,

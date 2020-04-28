@@ -1,6 +1,6 @@
 import { VNode, h, Ref } from '../vdom'
 import { findElements } from '../util/dom-manip'
-import { ComponentContext } from '../component/ComponentContext'
+import { ViewContext } from '../ViewContext'
 import { computeSmallestCellWidth } from '../util/misc'
 import { isPropsEqual } from '../util/object'
 import { isArraysEqual } from '../util/array'
@@ -157,7 +157,7 @@ export function hasShrinkWidth(cols: ColProps[]) {
 }
 
 
-export function getScrollGridClassNames(liquid: boolean, context: ComponentContext) {
+export function getScrollGridClassNames(liquid: boolean, context: ViewContext) {
   let classNames = [
     'fc-scrollgrid',
     context.theme.getClass('table')

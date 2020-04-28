@@ -1,7 +1,7 @@
 import { Ref, ComponentChildren, h } from '../vdom'
 import { DateMarker } from '../datelib/marker'
 import { DateRange } from '../datelib/date-range'
-import { ComponentContext } from '../component/ComponentContext'
+import { ViewContext } from '../ViewContext'
 import { getDateMeta, getDayClassNames, DateMeta } from '../component/date-rendering'
 import { createFormatter } from '../datelib/formatting'
 import { formatDayString } from '../datelib/formatting-utils'
@@ -121,7 +121,7 @@ export class DayCellContent extends BaseComponent<DayCellContentProps> {
 }
 
 
-function massageHooksProps(input: DayCellHookPropOrigin, context: ComponentContext): DayCellHookProps {
+function massageHooksProps(input: DayCellHookPropOrigin, context: ViewContext): DayCellHookProps {
   let { dateEnv } = context
   let { date } = input
   let dayMeta = getDateMeta(date, input.todayRange, null, input.dateProfile)

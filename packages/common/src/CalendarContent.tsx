@@ -1,4 +1,4 @@
-import { ComponentContextType, buildViewContext } from './component/ComponentContext'
+import { ViewContextType, buildViewContext } from './ViewContext'
 import { ViewSpec } from './structs/view-spec'
 import { ViewProps } from './View'
 import { Toolbar } from './Toolbar'
@@ -6,7 +6,7 @@ import { DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 import { rangeContainsMarker } from './datelib/date-range'
 import { memoize } from './util/memoize'
 import { DateMarker } from './datelib/marker'
-import { CalendarState } from './reducers/CalendarState'
+import { CalendarData } from './reducers/data-types'
 import { ViewPropsTransformerClass } from './plugin-system-struct'
 import { __assign } from 'tslib'
 import { h, createRef, Component, VUIEvent } from './vdom'
@@ -24,7 +24,7 @@ import { CalendarInteraction } from './calendar-utils'
 import { DelayedRunner } from './util/runner'
 
 
-export type CalendarContentProps = CalendarState
+export type CalendarContentProps = CalendarData
 
 interface CalendarContentState {
   forPrint: boolean
@@ -61,7 +61,7 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
       props.dateProfile,
       props.dateProfileGenerator,
       props.currentDate,
-      getNow(props), // TODO: use NowTimer????
+      getNow(props.options, props.dateEnv), // TODO: use NowTimer????
       props.viewTitle
     )
 
@@ -92,7 +92,7 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
       props.theme,
       props.pluginHooks,
       props.dispatch,
-      props.getCurrentState,
+      props.getCurrentData,
       props.emitter,
       props.calendarApi,
       this.registerInteractiveComponent,
@@ -100,7 +100,7 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
     )
 
     return (
-      <ComponentContextType.Provider value={viewContext}>
+      <ViewContextType.Provider value={viewContext}>
         {toolbarConfig.headerToolbar &&
           <Toolbar
             ref={this.headerRef}
@@ -126,7 +126,7 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
             { ...toolbarProps }
           />
         }
-      </ComponentContextType.Provider>
+      </ViewContextType.Provider>
     )
   }
 
@@ -164,8 +164,6 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
     for (let interaction of this.calendarInteractions) {
       interaction.destroy()
     }
-
-    this.props.emitter.trigger('_destroyed')
   }
 
 
@@ -335,7 +333,7 @@ function isHeightAuto(options) {
 // -----------------------------------------------------------------------------------------------------------------
 
 
-export function computeCalendarClassNames(props: CalendarState) {
+export function computeCalendarClassNames(props: CalendarData) {
   let classNames: string[] = [
     'fc',
     'fc-media-screen', // 'fc-media-print'
@@ -352,7 +350,7 @@ export function computeCalendarClassNames(props: CalendarState) {
 
 
 // NOTE: consult view-height-computation in render()
-export function computeCalendarHeight(props: CalendarState): CssDimValue {
+export function computeCalendarHeight(props: CalendarData): CssDimValue {
   let { options } = props
 
   if (!isHeightAuto(options) && options.height != null) {

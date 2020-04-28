@@ -6,7 +6,7 @@ import { createEventInstance } from './event-instance'
 import { parseEventDef } from './event-parse'
 import { EventRenderRange, compileEventUi } from '../component/event-rendering'
 import { EventUiHash } from '../component/event-ui'
-import { ReducerContext } from '../reducers/ReducerContext'
+import { CalendarContext } from '../CalendarContext'
 
 /*
 A data-structure for a date-range that will be visually displayed.
@@ -148,7 +148,7 @@ export function buildDatePointApi(span: DateSpan, dateEnv: DateEnv): DatePointAp
   }
 }
 
-export function fabricateEventRange(dateSpan: DateSpan, eventUiBases: EventUiHash, context: ReducerContext): EventRenderRange {
+export function fabricateEventRange(dateSpan: DateSpan, eventUiBases: EventUiHash, context: CalendarContext): EventRenderRange {
   let def = parseEventDef(
     { editable: false },
     '', // sourceId

@@ -1,6 +1,6 @@
-import { Duration, createDuration } from './datelib/duration'
-import { ReducerContext } from './reducers/ReducerContext'
+import { Duration } from './datelib/duration'
 import { __assign } from 'tslib'
+import { Emitter } from './common/Emitter'
 
 
 export interface ScrollRequest {
@@ -17,16 +17,17 @@ export class ScrollResponder {
 
 
   constructor(
-    public execFunc: ScrollRequestHandler,
-    private context: ReducerContext
+    private execFunc: ScrollRequestHandler,
+    private emitter: Emitter,
+    private scrollTime: Duration
   ) {
-    context.emitter.on('_scrollRequest', this.handleScrollRequest)
+    emitter.on('_scrollRequest', this.handleScrollRequest)
     this.fireInitialScroll()
   }
 
 
   detach() {
-    this.context.emitter.off('_scrollRequest', this.handleScrollRequest)
+    this.emitter.off('_scrollRequest', this.handleScrollRequest)
   }
 
 
@@ -41,7 +42,7 @@ export class ScrollResponder {
 
   private fireInitialScroll() {
     this.handleScrollRequest({
-      time: createDuration(this.context.options.scrollTime)
+      time: this.scrollTime
     })
   }
 

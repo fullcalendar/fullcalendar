@@ -1,4 +1,4 @@
-import { ReducerFunc } from './reducers/CalendarStateReducer'
+import { ReducerFunc } from './reducers/CalendarDataProvider'
 import { eventDefParserFunc } from './structs/event-parse'
 import { eventDefMutationApplier } from './structs/event-mutation'
 import { DatePointTransform, DateSpanTransform, CalendarInteractionClass, OptionChangeHandlerMap } from './calendar-utils'
@@ -6,7 +6,7 @@ import { ViewConfigInputHash } from './structs/view-config'
 import { ViewSpec } from './structs/view-spec'
 import { ViewProps } from './View'
 import { CalendarContentProps } from './CalendarContent'
-import { ReducerContext } from './reducers/ReducerContext'
+import { CalendarContext } from './CalendarContext'
 import { isPropsValidTester } from './structs/constraint'
 import { eventDragMutationMassager, eventIsDraggableTransformer, EventDropTransformers } from './interactions/event-dragging'
 import { dateSelectionJoinTransformer } from './interactions/date-selecting'
@@ -97,4 +97,4 @@ export interface ViewPropsTransformer {
   transform(viewProps: ViewProps, viewSpec: ViewSpec, calendarProps: CalendarContentProps, allOptions: any): any
 }
 
-export type ViewContainerAppend = (context: ReducerContext) => ComponentChildren
+export type ViewContainerAppend = (context: CalendarContext) => ComponentChildren

@@ -8,7 +8,7 @@ export function toMoment(date: Date, calendar: CalendarApi): moment.Moment {
     throw new Error('must supply a CalendarApi instance')
   }
 
-  let { dateEnv } = calendar.getCurrentState()
+  let { dateEnv } = calendar.getCurrentData()
 
   return convertToMoment(
     date,

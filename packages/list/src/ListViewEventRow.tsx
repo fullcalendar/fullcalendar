@@ -1,5 +1,5 @@
 import {
-  MinimalEventProps, BaseComponent, ComponentContext, h,
+  MinimalEventProps, BaseComponent, ViewContext, h,
   Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventMeta, EventRoot, ComponentChildren, RenderHook
 } from "@fullcalendar/common"
 
@@ -71,7 +71,7 @@ function renderEventInnerContent(props: EventMeta) {
 }
 
 
-function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ComponentContext): ComponentChildren {
+function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewContext): ComponentChildren {
   let { displayEventTime } = context.options
 
   if (displayEventTime !== false) {

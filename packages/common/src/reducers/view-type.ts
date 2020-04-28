@@ -1,16 +1,11 @@
 import { Action } from './Action'
 
 
-export function reduceViewType(viewType: string, action: Action, availableViewHash): string {
-  // for INIT, viewType will have already been set
+export function reduceViewType(viewType: string, action: Action): string {
 
   switch (action.type) {
     case 'CHANGE_VIEW_TYPE':
       return viewType = action.viewType
-  }
-
-  if (!availableViewHash[viewType]) {
-    throw new Error(`viewType "${viewType}" is not available. Please make sure you've loaded all neccessary plugins`)
   }
 
   return viewType

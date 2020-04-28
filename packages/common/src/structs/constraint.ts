@@ -3,7 +3,7 @@ import { EventInput } from './event-parse'
 import { DateSpanApi } from './date-span'
 import { EventApi } from '../api/EventApi'
 import { SplittableProps } from '../component/event-splitting'
-import { ReducerContext } from '../reducers/ReducerContext'
+import { CalendarContext } from '../CalendarContext'
 
 
 // TODO: rename to "criteria" ?
@@ -11,10 +11,10 @@ export type ConstraintInput = 'businessHours' | string | EventInput | EventInput
 export type Constraint = 'businessHours' | string | EventStore | false // false means won't pass at all
 export type OverlapFunc = ((stillEvent: EventApi, movingEvent: EventApi | null) => boolean)
 export type AllowFunc = (span: DateSpanApi, movingEvent: EventApi | null) => boolean
-export type isPropsValidTester = (props: SplittableProps, context: ReducerContext) => boolean
+export type isPropsValidTester = (props: SplittableProps, context: CalendarContext) => boolean
 
 
-export function normalizeConstraint(input: ConstraintInput, context: ReducerContext): Constraint | null {
+export function normalizeConstraint(input: ConstraintInput, context: CalendarContext): Constraint | null {
   if (Array.isArray(input)) {
     return parseEvents(input, '', context, true) // allowOpenRange=true
 

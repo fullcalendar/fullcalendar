@@ -1,5 +1,5 @@
 import { requestJson } from '../util/requestJson'
-import { ReducerContext } from '../reducers/ReducerContext'
+import { CalendarContext } from '../CalendarContext'
 import { EventSourceDef } from '../structs/event-source-def'
 import { DateRange } from '../datelib/date-range'
 import { __assign } from 'tslib'
@@ -54,7 +54,7 @@ export const jsonFeedEventSourcePlugin = createPlugin({
   eventSourceDefs: [ eventSourceDef ]
 })
 
-function buildRequestParams(meta: JsonFeedMeta, range: DateRange, context: ReducerContext) {
+function buildRequestParams(meta: JsonFeedMeta, range: DateRange, context: CalendarContext) {
   let { dateEnv, options } = context
   let startParam
   let endParam

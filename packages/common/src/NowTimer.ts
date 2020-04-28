@@ -1,6 +1,6 @@
 import { DateMarker, addMs, startOfDay, addDays } from './datelib/marker'
 import { createDuration } from './datelib/duration'
-import { ComponentContext, ComponentContextType } from './component/ComponentContext'
+import { ViewContext, ViewContextType } from './ViewContext'
 import { ComponentChildren, Component } from './vdom'
 import { DateRange } from './datelib/date-range'
 import { getNow } from './reducers/current-date'
@@ -19,18 +19,18 @@ interface NowTimerState {
 
 export class NowTimer extends Component<NowTimerProps, NowTimerState> {
 
-  static contextType = ComponentContextType
-  context: ComponentContext // do this for all components that use the context!!!
+  static contextType = ViewContextType
+  context: ViewContext // do this for all components that use the context!!!
 
   initialNowDate: DateMarker
   initialNowQueriedMs: number
   timeoutId: any
 
 
-  constructor(props: NowTimerProps, context: ComponentContext) {
+  constructor(props: NowTimerProps, context: ViewContext) {
     super(props, context)
 
-    this.initialNowDate = getNow(context)
+    this.initialNowDate = getNow(context.options, context.dateEnv)
     this.initialNowQueriedMs = new Date().valueOf()
 
     this.state = this.computeTiming().currentState

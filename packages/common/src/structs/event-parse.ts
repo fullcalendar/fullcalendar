@@ -4,7 +4,7 @@ import { startOfDay } from '../datelib/marker'
 import { parseRecurring } from './recurring-event'
 import { UnscopedEventUiInput, processUnscopedUiProps } from '../component/event-ui'
 import { __assign } from 'tslib'
-import { ReducerContext } from '../reducers/ReducerContext'
+import { CalendarContext } from '../CalendarContext'
 import { EventDef, DATE_PROPS, NON_DATE_PROPS } from './event-def'
 import { EventInstance, createEventInstance } from './event-instance'
 
@@ -38,7 +38,7 @@ export interface EventTuple {
 }
 
 
-export function parseEvent(raw: EventInput, sourceId: string, context: ReducerContext, allowOpenRange?: boolean): EventTuple | null {
+export function parseEvent(raw: EventInput, sourceId: string, context: CalendarContext, allowOpenRange?: boolean): EventTuple | null {
   let defaultAllDay = computeIsDefaultAllDay(sourceId, context)
   let leftovers0 = {}
   let recurringRes = parseRecurring(
@@ -81,7 +81,7 @@ Will NOT populate extendedProps with the leftover properties.
 Will NOT populate date-related props.
 The EventNonDateInput has been normalized (id => publicId, etc).
 */
-export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: boolean, hasEnd: boolean, context: ReducerContext): EventDef {
+export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: boolean, hasEnd: boolean, context: CalendarContext): EventDef {
   let leftovers = {}
   let def = pluckNonDateProps(raw, context, leftovers) as EventDef
 
@@ -108,7 +108,7 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: 
 export type eventDefParserFunc = (def: EventDef, props: any, leftovers: any) => void
 
 
-function parseSingle(raw: EventInput, defaultAllDay: boolean | null, context: ReducerContext, leftovers?, allowOpenRange?: boolean) {
+function parseSingle(raw: EventInput, defaultAllDay: boolean | null, context: CalendarContext, leftovers?, allowOpenRange?: boolean) {
   let props = pluckDateProps(raw, leftovers)
   let allDay = props.allDay
   let startMeta
@@ -188,7 +188,7 @@ function pluckDateProps(raw: EventInput, leftovers: any) {
 }
 
 
-function pluckNonDateProps(raw: EventInput, context: ReducerContext, leftovers?) {
+function pluckNonDateProps(raw: EventInput, context: CalendarContext, leftovers?) {
   let preLeftovers = {}
   let props = refineProps(raw, NON_DATE_PROPS, {}, preLeftovers)
   let ui = processUnscopedUiProps(preLeftovers, context, leftovers)
@@ -202,11 +202,11 @@ function pluckNonDateProps(raw: EventInput, context: ReducerContext, leftovers?)
 }
 
 
-function computeIsDefaultAllDay(sourceId: string, context: ReducerContext): boolean | null {
+function computeIsDefaultAllDay(sourceId: string, context: CalendarContext): boolean | null {
   let res = null
 
   if (sourceId) {
-    let source = context.getCurrentState().eventSources[sourceId]
+    let source = context.getCurrentData().eventSources[sourceId]
     res = source.defaultAllDay
   }
 

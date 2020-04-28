@@ -2,7 +2,7 @@ import { EventInput, EventInputTransformer } from './event-parse'
 import { EventSourceFunc } from '../event-sources/func-event-source'
 import { ConstraintInput, AllowFunc } from './constraint'
 import { EventSource, EventSourceSuccessResponseHandler, EventSourceErrorResponseHandler } from './event-source'
-import { ReducerContext } from '../reducers/ReducerContext'
+import { CalendarContext } from '../CalendarContext'
 import { refineProps, guid } from '../util/misc'
 import { processUnscopedUiProps } from '../component/event-ui'
 
@@ -59,7 +59,7 @@ const SIMPLE_SOURCE_PROPS = {
 }
 
 
-export function parseEventSource(raw: EventSourceInput, context: ReducerContext): EventSource | null {
+export function parseEventSource(raw: EventSourceInput, context: CalendarContext): EventSource | null {
   let defs = context.pluginHooks.eventSourceDefs
 
   for (let i = defs.length - 1; i >= 0; i--) { // later-added plugins take precedence
@@ -83,7 +83,7 @@ export function parseEventSource(raw: EventSourceInput, context: ReducerContext)
 }
 
 
-function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sourceDefId: number, context: ReducerContext): EventSource {
+function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sourceDefId: number, context: CalendarContext): EventSource {
   let leftovers0 = {}
   let props = refineProps(raw, SIMPLE_SOURCE_PROPS, {}, leftovers0)
   let leftovers1 = {}

@@ -1,7 +1,7 @@
 import { createPlugin } from './plugin-system'
 import { hashValuesToArray } from './util/object'
 import { EventSource } from './structs/event-source'
-import { ReducerContext } from './reducers/ReducerContext'
+import { CalendarContext } from './CalendarContext'
 
 export const changeHandlerPlugin = createPlugin({
   optionChangeHandlers: {
@@ -15,8 +15,8 @@ export const changeHandlerPlugin = createPlugin({
 /*
 BUG: if `event` was supplied, all previously-given `eventSources` will be wiped out
 */
-function handleEventSources(inputs, context: ReducerContext) {
-  let unfoundSources: EventSource[] = hashValuesToArray(context.getCurrentState().eventSources)
+function handleEventSources(inputs, context: CalendarContext) {
+  let unfoundSources: EventSource[] = hashValuesToArray(context.getCurrentData().eventSources)
   let newInputs = []
 
   for (let input of inputs) {

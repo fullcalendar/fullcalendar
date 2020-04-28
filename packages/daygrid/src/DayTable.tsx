@@ -9,7 +9,7 @@ import {
   DateComponent,
   DateRange,
   Slicer,
-  ComponentContext,
+  ViewContext,
   RefObject,
   CssDimValue,
   Hit,
@@ -42,7 +42,7 @@ export interface DayTableProps {
   clientHeight: number | null
 }
 
-export class DayTable extends DateComponent<DayTableProps, ComponentContext> {
+export class DayTable extends DateComponent<DayTableProps, ViewContext> {
 
   private slicer = new DayTableSlicer()
   private tableRef = createRef<Table>()

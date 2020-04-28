@@ -7,7 +7,7 @@ export function toLuxonDateTime(date: Date, calendar: CalendarApi): LuxonDateTim
     throw new Error('must supply a CalendarApi instance')
   }
 
-  let { dateEnv } = calendar.getCurrentState()
+  let { dateEnv } = calendar.getCurrentData()
 
   return LuxonDateTime.fromJSDate(date, {
     zone: dateEnv.timeZone,
@@ -21,7 +21,7 @@ export function toLuxonDuration(duration: Duration, calendar: CalendarApi): Luxo
     throw new Error('must supply a CalendarApi instance')
   }
 
-  let { dateEnv } = calendar.getCurrentState()
+  let { dateEnv } = calendar.getCurrentData()
 
   return LuxonDuration.fromObject({
     ...duration,

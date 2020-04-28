@@ -1,5 +1,5 @@
 import { createFormatter, FormatterInput } from '../datelib/formatting'
-import { ComponentContext, ComponentContextType } from '../component/ComponentContext'
+import { ViewContext, ViewContextType } from '../ViewContext'
 import { DateMarker } from '../datelib/marker'
 import { RenderHook, RenderHookPropsChildren } from './render-hook'
 import { h } from '../vdom'
@@ -13,8 +13,8 @@ export interface WeekNumberRootProps {
 
 
 export const WeekNumberRoot = (props: WeekNumberRootProps) => (
-  <ComponentContextType.Consumer>
-    {(context: ComponentContext) => {
+  <ViewContextType.Consumer>
+    {(context: ViewContext) => {
       let { date } = props
       let format = createFormatter(context.options.weekNumberFormat || props.defaultFormat) // TODO: precompute
       let num = context.dateEnv.computeWeekNumber(date) // TODO: somehow use for formatting as well?
@@ -27,7 +27,7 @@ export const WeekNumberRoot = (props: WeekNumberRootProps) => (
         </RenderHook>
       )
     }}
-  </ComponentContextType.Consumer>
+  </ViewContextType.Consumer>
 )
 
 

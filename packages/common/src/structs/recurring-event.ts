@@ -6,7 +6,7 @@ import { Duration } from '../datelib/duration'
 import { DateMarker, startOfDay } from '../datelib/marker'
 import { __assign } from 'tslib'
 import { EventStore } from './event-store'
-import { ReducerContext } from '../reducers/ReducerContext'
+import { CalendarContext } from '../CalendarContext'
 import { filterHash } from '../util/object'
 
 /*
@@ -65,7 +65,7 @@ export function parseRecurring(
 }
 
 
-export function expandRecurring(eventStore: EventStore, framingRange: DateRange, context: ReducerContext): EventStore {
+export function expandRecurring(eventStore: EventStore, framingRange: DateRange, context: CalendarContext): EventStore {
   let { dateEnv, pluginHooks, computedOptions } = context
   let { defs, instances } = eventStore
 

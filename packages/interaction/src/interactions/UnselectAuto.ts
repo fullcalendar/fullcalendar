@@ -2,7 +2,7 @@ import {
   DateSelectionApi,
   PointerDragEvent,
   elementClosest,
-  ReducerContext
+  CalendarContext
 } from '@fullcalendar/common'
 import { PointerDragging } from '../dnd/PointerDragging'
 import { EventDragging } from './EventDragging'
@@ -12,7 +12,7 @@ export class UnselectAuto {
   documentPointer: PointerDragging // for unfocusing
   isRecentPointerDateSelect = false // wish we could use a selector to detect date selection, but uses hit system
 
-  constructor(private context: ReducerContext) {
+  constructor(private context: CalendarContext) {
     let documentPointer = this.documentPointer = new PointerDragging(document)
     documentPointer.shouldIgnoreMove = true
     documentPointer.shouldWatchScroll = false
@@ -38,7 +38,7 @@ export class UnselectAuto {
   onDocumentPointerUp = (pev: PointerDragEvent) => {
     let { context } = this
     let { documentPointer } = this
-    let calendarState = context.getCurrentState()
+    let calendarState = context.getCurrentData()
 
     // touch-scrolling should never unfocus any type of selection
     if (!documentPointer.wasTouchScroll) {

@@ -1,26 +1,24 @@
-import { CalendarApi } from '../CalendarApi'
-import { ViewApi } from '../ViewApi'
-import { Theme } from '../theme/Theme'
-import { DateEnv } from '../datelib/env'
-import { PluginHooks } from '../plugin-system-struct'
-import { createContext } from '../vdom'
-import { ScrollResponder, ScrollRequestHandler } from '../ScrollResponder'
-import { DateProfileGenerator } from '../DateProfileGenerator'
-import { ViewSpec } from '../structs/view-spec'
-import { ReducerContext } from '../reducers/ReducerContext'
-import { Action } from '../reducers/Action'
-import { Emitter } from '../common/Emitter'
-import { CalendarState } from '../reducers/CalendarState'
-import { InteractionSettingsInput } from '../interactions/interaction'
-import { DateComponent } from './DateComponent'
+import { CalendarApi } from './CalendarApi'
+import { ViewApi } from './ViewApi'
+import { Theme } from './theme/Theme'
+import { DateEnv } from './datelib/env'
+import { PluginHooks } from './plugin-system-struct'
+import { createContext } from './vdom'
+import { ScrollResponder, ScrollRequestHandler } from './ScrollResponder'
+import { DateProfileGenerator } from './DateProfileGenerator'
+import { ViewSpec } from './structs/view-spec'
+import { CalendarData } from './reducers/data-types'
+import { Action } from './reducers/Action'
+import { Emitter } from './common/Emitter'
+import { InteractionSettingsInput } from './interactions/interaction'
+import { DateComponent } from './component/DateComponent'
+import { CalendarContext } from './CalendarContext'
+import { createDuration } from './datelib/duration'
 
-export const ComponentContextType = createContext<ComponentContext>({} as any) // for Components
+export const ViewContextType = createContext<ViewContext>({} as any) // for Components
 export type ResizeHandler = (force: boolean) => void
 
-// TODO: rename file
-// TODO: rename to ViewContext
-
-export interface ComponentContext extends ReducerContext {
+export interface ViewContext extends CalendarContext {
   theme: Theme
   isRtl: boolean
   dateProfileGenerator: DateProfileGenerator
@@ -36,37 +34,33 @@ export interface ComponentContext extends ReducerContext {
 export function buildViewContext(
   viewSpec: ViewSpec,
   viewApi: ViewApi,
-  options: any,
-  computedOptions: any,
+  viewOptions: any,
+  computedViewOptions: any,
   dateProfileGenerator: DateProfileGenerator,
   dateEnv: DateEnv,
   theme: Theme,
   pluginHooks: PluginHooks,
   dispatch: (action: Action) => void,
-  getCurrentState: () => CalendarState,
+  getCurrentData: () => CalendarData,
   emitter: Emitter,
   calendarApi: CalendarApi,
   registerInteractiveComponent: (component: DateComponent<any>, settingsInput: InteractionSettingsInput) => void,
   unregisterInteractiveComponent: (component: DateComponent<any>) => void
-): ComponentContext {
-  let reducerContext: ReducerContext = {
+): ViewContext {
+  return {
     dateEnv,
-    options,
-    computedOptions,
+    options: viewOptions,
+    computedOptions: computedViewOptions,
     pluginHooks,
     emitter,
     dispatch,
-    getCurrentState,
-    calendarApi
-  }
-
-  return {
-    ...reducerContext,
+    getCurrentData,
+    calendarApi,
     viewSpec,
     viewApi,
     dateProfileGenerator,
     theme,
-    isRtl: options.direction === 'rtl',
+    isRtl: viewOptions.direction === 'rtl',
     addResizeHandler(handler: ResizeHandler) {
       emitter.on('_resize', handler)
     },
@@ -74,7 +68,11 @@ export function buildViewContext(
       emitter.off('_resize', handler)
     },
     createScrollResponder(execFunc: ScrollRequestHandler) {
-      return new ScrollResponder(execFunc, reducerContext)
+      return new ScrollResponder(
+        execFunc,
+        emitter,
+        createDuration(viewOptions.scrollTime)
+      )
     },
     registerInteractiveComponent,
     unregisterInteractiveComponent

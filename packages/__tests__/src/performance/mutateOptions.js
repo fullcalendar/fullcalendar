@@ -17,7 +17,7 @@ function buildOptions() {
   }
 }
 
-describe('mutateOptions', function() {
+describe('mutateOptions', function() { // TODO: rename file
   let $calendarEl
   let calendar
 
@@ -41,7 +41,7 @@ describe('mutateOptions', function() {
     let scrollTop = scrollEl.scrollTop
     expect(scrollTop).toBeGreaterThan(0)
 
-    calendar.mutateOptions({ allDaySlot: false })
+    calendar.resetOptions({ allDaySlot: false })
 
     expect(calendar.getOption('allDaySlot')).toBe(false)
     expect(viewWrapper.dayGrid).toBeFalsy()
@@ -55,7 +55,7 @@ describe('mutateOptions', function() {
     let calendarWrapper = new CalendarWrapper(calendar)
     let dateEl = calendarWrapper.getFirstDateEl()
 
-    calendar.mutateOptions({
+    calendar.resetOptions({
       events: [
         { start: '2019-04-01T00:00:00' }
       ]
@@ -72,7 +72,7 @@ describe('mutateOptions', function() {
     let calendarWrapper = new CalendarWrapper(calendar)
     let dateEl = calendarWrapper.getFirstDateEl()
 
-    calendar.mutateOptions({
+    calendar.resetOptions({
       initialView: 'timeGridDay'
     })
 

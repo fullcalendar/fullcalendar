@@ -90,8 +90,8 @@ describe('luxon plugin', function() {
       })
 
       // hacky way to have a duration parsed
-      let timedDuration = toLuxonDuration(calendar.currentState.computedOptions.defaultTimedEventDuration, calendar)
-      let allDayDuration = toLuxonDuration(calendar.currentState.computedOptions.defaultAllDayEventDuration, calendar)
+      let timedDuration = toLuxonDuration(calendar.getCurrentData().computedOptions.defaultTimedEventDuration, calendar)
+      let allDayDuration = toLuxonDuration(calendar.getCurrentData().computedOptions.defaultAllDayEventDuration, calendar)
 
       expect(timedDuration.as('hours')).toBe(5)
       expect(allDayDuration.as('days')).toBe(3)
@@ -105,7 +105,7 @@ describe('luxon plugin', function() {
       })
 
       // hacky way to have a duration parsed
-      let timedDuration = toLuxonDuration(calendar.currentState.computedOptions.defaultTimedEventDuration, calendar)
+      let timedDuration = toLuxonDuration(calendar.getCurrentData().computedOptions.defaultTimedEventDuration, calendar)
 
       expect(timedDuration.locale).toBe('es')
     })

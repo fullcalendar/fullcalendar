@@ -4,7 +4,6 @@ import { Action } from './Action'
 
 export function reduceDateSelection(currentSelection: DateSpan | null, action: Action) {
   switch (action.type) {
-    case 'INIT':
     case 'UNSELECT_DATES':
       return null
 

@@ -6,7 +6,7 @@ import { computeAlignedDayRange } from '../util/date'
 import { startOfDay } from '../datelib/marker'
 import { EventUiHash, EventUi } from '../component/event-ui'
 import { compileEventUis } from '../component/event-rendering'
-import { ReducerContext } from '../reducers/ReducerContext'
+import { CalendarContext } from '../CalendarContext'
 import { getDefaultEventEnd } from '../calendar-utils'
 
 /*
@@ -22,7 +22,7 @@ export interface EventMutation {
 }
 
 // applies the mutation to ALL defs/instances within the event store
-export function applyMutationToEventStore(eventStore: EventStore, eventConfigBase: EventUiHash, mutation: EventMutation, context: ReducerContext): EventStore {
+export function applyMutationToEventStore(eventStore: EventStore, eventConfigBase: EventUiHash, mutation: EventMutation, context: CalendarContext): EventStore {
   let eventConfigs = compileEventUis(eventStore.defs, eventConfigBase)
   let dest = createEmptyEventStore()
 
@@ -42,10 +42,10 @@ export function applyMutationToEventStore(eventStore: EventStore, eventConfigBas
   return dest
 }
 
-export type eventDefMutationApplier = (eventDef: EventDef, mutation: EventMutation, context: ReducerContext) => void
+export type eventDefMutationApplier = (eventDef: EventDef, mutation: EventMutation, context: CalendarContext) => void
 
 
-function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutation: EventMutation, context: ReducerContext): EventDef {
+function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutation: EventMutation, context: CalendarContext): EventDef {
   let standardProps = mutation.standardProps || {}
 
   // if hasEnd has not been specified, guess a good value based on deltas.
@@ -86,7 +86,7 @@ function applyMutationToEventInstance(
   eventDef: EventDef, // must first be modified by applyMutationToEventDef
   eventConfig: EventUi,
   mutation: EventMutation,
-  context: ReducerContext
+  context: CalendarContext
 ): EventInstance {
   let { dateEnv } = context
   let forceAllDay = mutation.standardProps && mutation.standardProps.allDay === true

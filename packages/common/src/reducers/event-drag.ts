@@ -4,7 +4,6 @@ import { EventInteractionState } from '../interactions/event-interaction-state'
 
 export function reduceEventDrag(currentDrag: EventInteractionState | null, action: Action): EventInteractionState | null {
   switch (action.type) {
-    case 'INIT':
     case 'UNSET_EVENT_DRAG':
       return null
 

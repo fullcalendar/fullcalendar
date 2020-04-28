@@ -4,7 +4,7 @@ import { mapHash } from '../util/object'
 import { ComponentType, Component, h } from '../vdom'
 import { ViewRoot } from '../common/ViewRoot'
 import { RenderHook } from '../common/render-hook'
-import { ComponentContext, ComponentContextType } from '../component/ComponentContext'
+import { ViewContext, ViewContextType } from '../ViewContext'
 
 /*
 A view-config represents information for either:
@@ -68,8 +68,8 @@ function parseViewConfig(input: ViewConfigInput): ViewConfig {
 function createViewHookComponent(options) {
   return function(viewProps: ViewProps) {
     return (
-      <ComponentContextType.Consumer>
-        {(context: ComponentContext) => (
+      <ViewContextType.Consumer>
+        {(context: ViewContext) => (
           <ViewRoot viewSpec={context.viewSpec}>
             {(rootElRef, viewClassNames) => {
               let hookProps = { ...viewProps, nextDayThreshold: context.computedOptions.nextDayThreshold }
@@ -85,7 +85,7 @@ function createViewHookComponent(options) {
             }}
           </ViewRoot>
         )}
-      </ComponentContextType.Consumer>
+      </ViewContextType.Consumer>
     )
   }
 }

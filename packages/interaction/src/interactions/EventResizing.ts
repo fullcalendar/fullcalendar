@@ -71,7 +71,7 @@ export class EventResizing extends Interaction {
     let eventRange = this.eventRange!
 
     this.relevantEvents = getRelevantEvents(
-      context.getCurrentState().eventStore,
+      context.getCurrentData().eventStore,
       this.eventRange.instance!.instanceId
     )
 
@@ -113,7 +113,7 @@ export class EventResizing extends Interaction {
     }
 
     if (mutation) {
-      mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, context.getCurrentState().eventUiBases, mutation, context)
+      mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, context.getCurrentData().eventUiBases, mutation, context)
       interaction.mutatedEvents = mutatedRelevantEvents
 
       if (!this.component.isInteractionValid(interaction)) {

@@ -182,7 +182,7 @@ export class HitDragging {
           positionTop >= 0 && positionTop < height
         ) {
           let hit = component.queryHit(positionLeft, positionTop, width, height)
-          let dateProfile = component.context.getCurrentState().dateProfile
+          let dateProfile = component.context.getCurrentData().dateProfile
 
           if (
             hit &&

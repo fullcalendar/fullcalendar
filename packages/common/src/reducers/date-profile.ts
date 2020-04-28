@@ -1,4 +1,4 @@
-import { DateProfile, DateProfileGenerator, DATE_PROFILE_OPTIONS } from '../DateProfileGenerator'
+import { DateProfile, DateProfileGenerator } from '../DateProfileGenerator'
 import { Action } from './Action'
 import { DateMarker } from '../datelib/marker'
 import { rangeContainsMarker } from '../datelib/date-range'
@@ -6,8 +6,6 @@ import { rangeContainsMarker } from '../datelib/date-range'
 
 export function reduceDateProfile(currentDateProfile: DateProfile | null, action: Action, currentDate: DateMarker, dateProfileGenerator: DateProfileGenerator): DateProfile {
   switch (action.type) {
-    case 'INIT':
-      return dateProfileGenerator.build(currentDate)
 
     case 'CHANGE_VIEW_TYPE':
       return dateProfileGenerator.build(action.dateMarker || currentDate)
@@ -32,12 +30,6 @@ export function reduceDateProfile(currentDateProfile: DateProfile | null, action
       let dp1 = dateProfileGenerator.buildNext(currentDateProfile, currentDate)
       if (dp1.isValid) {
         return dp1
-      }
-      break
-
-    case 'SET_OPTION':
-      if (DATE_PROFILE_OPTIONS[action.optionName]) {
-        return dateProfileGenerator.build(currentDate) // dateProfileGenerator will be newly-created
       }
       break
   }

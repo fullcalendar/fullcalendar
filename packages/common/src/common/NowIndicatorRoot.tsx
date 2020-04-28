@@ -1,6 +1,6 @@
 import { RenderHook, RenderHookPropsChildren } from './render-hook'
 import { DateMarker } from '../datelib/marker'
-import { ComponentContext, ComponentContextType } from '../component/ComponentContext'
+import { ViewContext, ViewContextType } from '../ViewContext'
 import { h } from '../vdom'
 
 
@@ -12,8 +12,8 @@ export interface NowIndicatorRootProps {
 
 
 export const NowIndicatorRoot = (props: NowIndicatorRootProps) => (
-  <ComponentContextType.Consumer>
-    {(context: ComponentContext) => {
+  <ViewContextType.Consumer>
+    {(context: ViewContext) => {
       let hookProps = {
         isAxis: props.isAxis,
         date: context.dateEnv.toDate(props.date),
@@ -26,5 +26,5 @@ export const NowIndicatorRoot = (props: NowIndicatorRootProps) => (
         </RenderHook>
       )
     }}
-  </ComponentContextType.Consumer>
+  </ViewContextType.Consumer>
 )

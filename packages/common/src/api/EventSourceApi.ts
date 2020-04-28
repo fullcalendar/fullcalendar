@@ -1,10 +1,10 @@
 import { EventSource } from '../structs/event-source'
-import { ReducerContext } from '../reducers/ReducerContext'
+import { CalendarContext } from '../CalendarContext'
 
 export class EventSourceApi {
 
   constructor(
-    private context: ReducerContext,
+    private context: CalendarContext,
     public internalEventSource: EventSource // rename?
   ) {
   }

@@ -1,5 +1,5 @@
 import { Component, Ref } from './vdom'
-import { ComponentContext, ComponentContextType } from './component/ComponentContext'
+import { ViewContext, ViewContextType } from './ViewContext'
 import { __assign } from 'tslib'
 import { compareObjs, EqualityFuncs, getUnequalProps } from './util/object'
 
@@ -9,14 +9,14 @@ export abstract class BaseComponent<Props={}, State={}> extends Component<Props,
 
   static addPropsEquality = addPropsEquality
   static addStateEquality = addStateEquality
-  static contextType = ComponentContextType
+  static contextType = ViewContextType
 
-  context: ComponentContext
+  context: ViewContext
   propEquality: EqualityFuncs<Props>
   stateEquality: EqualityFuncs<State>
   debug: boolean
 
-  shouldComponentUpdate(nextProps: Props, nextState: State, nextContext: ComponentContext) {
+  shouldComponentUpdate(nextProps: Props, nextState: State, nextContext: ViewContext) {
 
     if (this.debug) {
       console.log(getUnequalProps(nextProps, this.props), getUnequalProps(nextState, this.state))

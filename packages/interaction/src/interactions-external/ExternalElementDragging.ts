@@ -14,7 +14,7 @@ import {
   isInteractionValid,
   ElementDragging,
   ViewApi,
-  ReducerContext,
+  CalendarContext,
   buildDatePointApiWithContext,
   getDefaultEventEnd
 } from '@fullcalendar/common'
@@ -38,7 +38,7 @@ of a calendar onto a calendar.
 export class ExternalElementDragging {
 
   hitDragging: HitDragging
-  receivingContext: ReducerContext | null = null
+  receivingContext: CalendarContext | null = null
   droppableEvent: EventTuple | null = null // will exist for all drags, even if create:false
   suppliedDragMeta: DragMetaGenerator | null = null
   dragMeta: DragMeta | null = null
@@ -70,7 +70,7 @@ export class ExternalElementDragging {
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
     let { dragging } = this.hitDragging
-    let receivingContext: ReducerContext | null = null
+    let receivingContext: CalendarContext | null = null
     let droppableEvent: EventTuple | null = null
     let isInvalid = false
     let interaction: EventInteractionState = {
@@ -169,7 +169,7 @@ export class ExternalElementDragging {
     this.droppableEvent = null
   }
 
-  displayDrag(nextContext: ReducerContext | null, state: EventInteractionState) {
+  displayDrag(nextContext: CalendarContext | null, state: EventInteractionState) {
     let prevContext = this.receivingContext
 
     if (prevContext && prevContext !== nextContext) {
@@ -187,7 +187,7 @@ export class ExternalElementDragging {
     }
   }
 
-  canDropElOnCalendar(el: HTMLElement, receivingContext: ReducerContext): boolean {
+  canDropElOnCalendar(el: HTMLElement, receivingContext: CalendarContext): boolean {
     let dropAccept = receivingContext.options.dropAccept
 
     if (typeof dropAccept === 'function') {
@@ -204,7 +204,7 @@ export class ExternalElementDragging {
 // Utils for computing event store from the DragMeta
 // ----------------------------------------------------------------------------------------------------
 
-function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, context: ReducerContext): EventTuple {
+function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, context: CalendarContext): EventTuple {
   let defProps = { ...dragMeta.leftoverProps }
 
   for (let transform of context.pluginHooks.externalDefTransforms) {

@@ -5,20 +5,25 @@ import { DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
 import { Action } from './Action'
 import { guid } from '../util/misc'
-import { ReducerContext } from './ReducerContext'
+import { CalendarContext } from '../CalendarContext'
 
 
-export function reduceEventSources(eventSources: EventSourceHash, action: Action, dateProfile: DateProfile | null, context: ReducerContext): EventSourceHash {
+export function initEventSources(calendarOptions, dateProfile: DateProfile, context: CalendarContext) {
   let activeRange = dateProfile ? dateProfile.activeRange : null
 
+  return addSources(
+    {},
+    parseInitialSources(calendarOptions, context),
+    activeRange,
+    context
+  )
+}
+
+
+export function reduceEventSources(eventSources: EventSourceHash, action: Action, dateProfile: DateProfile, context: CalendarContext): EventSourceHash {
+  let activeRange = dateProfile ? dateProfile.activeRange : null // need this check?
+
   switch (action.type) {
-    case 'INIT':
-      return addSources(
-        eventSources,
-        parseInitialSources(action.optionOverrides, context),
-        activeRange,
-        context
-      )
 
     case 'ADD_EVENT_SOURCES': // already parsed
       return addSources(eventSources, action.sources, activeRange, context)
@@ -46,18 +51,6 @@ export function reduceEventSources(eventSources: EventSourceHash, action: Action
         context
       )
 
-    case 'SET_OPTION':
-      if (action.optionName === 'timeZone') {
-        return fetchSourcesByIds(
-          eventSources,
-          excludeStaticSources(eventSources, context),
-          activeRange,
-          context
-        )
-      } else {
-        return eventSources
-      }
-
     case 'RECEIVE_EVENTS':
     case 'RECEIVE_EVENT_ERROR':
       return receiveResponse(eventSources, action.sourceId, action.fetchId, action.fetchRange)
@@ -71,7 +64,19 @@ export function reduceEventSources(eventSources: EventSourceHash, action: Action
 }
 
 
-function addSources(eventSourceHash: EventSourceHash, sources: EventSource[], fetchRange: DateRange | null, context: ReducerContext): EventSourceHash {
+export function reduceEventSourcesNewTimeZone(eventSources: EventSourceHash, dateProfile: DateProfile, context: CalendarContext) {
+  let activeRange = dateProfile ? dateProfile.activeRange : null // need this check?
+
+  return fetchSourcesByIds(
+    eventSources,
+    excludeStaticSources(eventSources, context),
+    activeRange,
+    context
+  )
+}
+
+
+function addSources(eventSourceHash: EventSourceHash, sources: EventSource[], fetchRange: DateRange | null, context: CalendarContext): EventSourceHash {
   let hash: EventSourceHash = {}
 
   for (let source of sources) {
@@ -93,7 +98,7 @@ function removeSource(eventSourceHash: EventSourceHash, sourceId: string): Event
 }
 
 
-function fetchDirtySources(sourceHash: EventSourceHash, fetchRange: DateRange, context: ReducerContext): EventSourceHash {
+function fetchDirtySources(sourceHash: EventSourceHash, fetchRange: DateRange, context: CalendarContext): EventSourceHash {
   return fetchSourcesByIds(
     sourceHash,
     filterHash(sourceHash, function(eventSource) {
@@ -105,7 +110,7 @@ function fetchDirtySources(sourceHash: EventSourceHash, fetchRange: DateRange, c
 }
 
 
-function isSourceDirty(eventSource: EventSource, fetchRange: DateRange, context: ReducerContext) {
+function isSourceDirty(eventSource: EventSource, fetchRange: DateRange, context: CalendarContext) {
 
   if (!doesSourceNeedRange(eventSource, context)) {
     return !eventSource.latestFetchId
@@ -124,7 +129,7 @@ function fetchSourcesByIds(
   prevSources: EventSourceHash,
   sourceIdHash: { [sourceId: string]: any },
   fetchRange: DateRange,
-  context: ReducerContext
+  context: CalendarContext
 ): EventSourceHash {
   let nextSources: EventSourceHash = {}
 
@@ -142,7 +147,7 @@ function fetchSourcesByIds(
 }
 
 
-function fetchSource(eventSource: EventSource, fetchRange: DateRange, context: ReducerContext) {
+function fetchSource(eventSource: EventSource, fetchRange: DateRange, context: CalendarContext) {
   let sourceDef = context.pluginHooks.eventSourceDefs[eventSource.sourceDefId]
   let fetchId = guid()
 
@@ -219,14 +224,14 @@ function receiveResponse(sourceHash: EventSourceHash, sourceId: string, fetchId:
 }
 
 
-function excludeStaticSources(eventSources: EventSourceHash, context: ReducerContext): EventSourceHash {
+function excludeStaticSources(eventSources: EventSourceHash, context: CalendarContext): EventSourceHash {
   return filterHash(eventSources, function(eventSource) {
     return doesSourceNeedRange(eventSource, context)
   })
 }
 
 
-function parseInitialSources(rawOptions, context: ReducerContext) {
+function parseInitialSources(rawOptions, context: CalendarContext) {
   let rawSources = rawOptions.eventSources || []
   let singleRawSource = rawOptions.events
   let sources = [] // parsed
@@ -246,7 +251,7 @@ function parseInitialSources(rawOptions, context: ReducerContext) {
 }
 
 
-function doesSourceNeedRange(eventSource: EventSource, context: ReducerContext) {
+function doesSourceNeedRange(eventSource: EventSource, context: CalendarContext) {
   let defs = context.pluginHooks.eventSourceDefs
 
   return !defs[eventSource.sourceDefId].ignoreRange

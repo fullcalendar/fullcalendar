@@ -1,7 +1,7 @@
 import {
   h, VNode,
   BaseComponent,
-  ComponentContext,
+  ViewContext,
   createDuration,
   asRoughMs,
   formatIsoTimeString,
@@ -15,7 +15,7 @@ import {
   PositionCache,
   DateMarker,
   DateEnv,
-  ComponentContextType,
+  ViewContextType,
   RenderHook,
   DateProfile
 } from '@fullcalendar/common'
@@ -196,8 +196,8 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
   ]
 
   return (
-    <ComponentContextType.Consumer>
-      {(context: ComponentContext) => {
+    <ViewContextType.Consumer>
+      {(context: ViewContext) => {
 
         if (!props.isLabeled) {
           return (
@@ -229,7 +229,7 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
           )
         }
       }}
-    </ComponentContextType.Consumer>
+    </ViewContextType.Consumer>
   )
 }
 

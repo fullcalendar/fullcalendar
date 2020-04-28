@@ -2,7 +2,7 @@ import { EventDef, EventDefHash } from './event-def'
 import { EventInstance, EventInstanceHash } from './event-instance'
 import { EventInput, parseEvent, EventTuple } from './event-parse'
 import { filterHash } from '../util/object'
-import { ReducerContext } from '../reducers/ReducerContext'
+import { CalendarContext } from '../CalendarContext'
 
 /*
 A data structure that encapsulates EventDefs and EventInstances.
@@ -19,7 +19,7 @@ export interface EventStore {
 export function parseEvents(
   rawEvents: EventInput[],
   sourceId: string,
-  context: ReducerContext,
+  context: CalendarContext,
   allowOpenRange?: boolean
 ): EventStore {
   let eventStore = createEmptyEventStore()

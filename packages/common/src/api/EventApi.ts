@@ -7,15 +7,15 @@ import { diffDates, computeAlignedDayRange } from '../util/date'
 import { DurationInput, createDuration, durationsEqual } from '../datelib/duration'
 import { createFormatter, FormatterInput } from '../datelib/formatting'
 import { EventSourceApi } from './EventSourceApi'
-import { ReducerContext } from '../reducers/ReducerContext'
+import { CalendarContext } from '../CalendarContext'
 
 export class EventApi {
 
-  _context: ReducerContext
+  _context: CalendarContext
   _def: EventDef
   _instance: EventInstance | null
 
-  constructor(context: ReducerContext, def: EventDef, instance?: EventInstance) {
+  constructor(context: CalendarContext, def: EventDef, instance?: EventInstance) {
     this._context = context
     this._def = def
     this._instance = instance || null
@@ -219,7 +219,7 @@ export class EventApi {
         fromApi: true
       })
 
-      let { eventStore } = this._context.getCurrentState()
+      let { eventStore } = this._context.getCurrentData()
       this._def = eventStore.defs[def.defId]
       this._instance = eventStore.instances[instance.instanceId]
     }
@@ -238,7 +238,7 @@ export class EventApi {
     if (sourceId) {
       return new EventSourceApi(
         this._context,
-        this._context.getCurrentState().eventSources[sourceId]
+        this._context.getCurrentData().eventSources[sourceId]
       )
     }
     return null

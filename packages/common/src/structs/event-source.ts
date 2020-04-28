@@ -1,7 +1,7 @@
 import { EventInput, EventInputTransformer } from './event-parse'
 import { DateRange } from '../datelib/date-range'
 import { EventUi } from '../component/event-ui'
-import { ReducerContext } from '../reducers/ReducerContext'
+import { CalendarContext } from '../CalendarContext'
 
 /*
 TODO: "EventSource" is the same name as a built-in type in TypeScript. Rethink.
@@ -43,7 +43,7 @@ export type EventSourceFetcher = (
   arg: {
     eventSource: EventSource
     range: DateRange
-    context: ReducerContext
+    context: CalendarContext
   },
   success: (res: { rawEvents: EventInput[], xhr?: XMLHttpRequest }) => void,
   failure: (error: EventSourceError) => void

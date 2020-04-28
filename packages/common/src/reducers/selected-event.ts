@@ -3,7 +3,6 @@ import { Action } from './Action'
 
 export function reduceSelectedEvent(currentInstanceId: string, action: Action): string {
   switch (action.type) {
-    case 'INIT':
     case 'UNSELECT_EVENT':
       return ''
 
