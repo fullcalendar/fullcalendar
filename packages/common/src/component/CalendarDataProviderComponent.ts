@@ -17,7 +17,7 @@ export class CalendarDataProviderComponent extends Component<CalendarDataProvide
 
 
   constructor(props: CalendarDataProviderComponentProps) {
-    super()
+    super(props)
 
     this.dataProvider = new CalendarDataProvider({
       optionOverrides: props.optionOverrides,
