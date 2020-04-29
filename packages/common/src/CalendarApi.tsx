@@ -21,14 +21,14 @@ import { Action } from './reducers/Action'
 
 export class CalendarApi {
 
-  _dataProvider?: CalendarDataProvider // will be set by CalendarDataProvider
+  currentDataProvider?: CalendarDataProvider // will be set by CalendarDataProvider
 
   getCurrentData() {
-    return this._dataProvider!.getCurrentData()
+    return this.currentDataProvider!.getCurrentData()
   }
 
   dispatch(action: Action) {
-    return this._dataProvider!.dispatch(action)
+    return this.currentDataProvider!.dispatch(action)
   }
 
   get view(): ViewApi { return this.getCurrentData().viewApi } // for public API
@@ -72,17 +72,17 @@ export class CalendarApi {
 
 
   on(handlerName: string, handler) {
-    this._dataProvider!.emitter.on(handlerName, handler)
+    this.currentDataProvider!.emitter.on(handlerName, handler)
   }
 
 
   off(handlerName: string, handler) {
-    this._dataProvider!.emitter.off(handlerName, handler)
+    this.currentDataProvider!.emitter.off(handlerName, handler)
   }
 
 
   protected trigger(handlerName, ...args) {
-    this._dataProvider!.emitter.trigger(handlerName, ...args)
+    this.currentDataProvider!.emitter.trigger(handlerName, ...args)
   }
 
 

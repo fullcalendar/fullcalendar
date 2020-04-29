@@ -46,11 +46,15 @@ export interface CalendarDataProviderProps {
   onData?: (data: CalendarData) => void
 }
 
-export type ReducerFunc = ( // TODO: rename to CalendarDataInjector
+export type ReducerFunc = ( // TODO: rename to CalendarDataInjector. move view-props-manip hook here as well?
   currentState: object | null,
   action: Action | null,
   context: CalendarContext & CalendarDataProviderState // more than just context
 ) => object
+
+
+// in future refactor, do the redux-style function(state=initial) for initial-state
+// also, whatever is happening in constructor, have it happen in action queue too
 
 
 export class CalendarDataProvider {
@@ -101,6 +105,12 @@ export class CalendarDataProvider {
       props.optionOverrides,
       dynamicOptionOverrides
     )
+
+    // wire things up
+    // TODO: not DRY
+    props.calendarApi.currentDataProvider = this
+    this.emitter.setThisContext(props.calendarApi)
+    this.emitter.setOptions(currentViewData.options)
 
     let currentDate = getInitialDate(optionsData.calendarOptions, optionsData.dateEnv)
     let dateProfile = currentViewData.dateProfileGenerator.build(currentDate)
@@ -172,8 +182,6 @@ export class CalendarDataProvider {
   _handleAction(action: Action) {
     let { props, state, emitter } = this
 
-    props.calendarApi._dataProvider = this
-
     let dynamicOptionOverrides = reduceDynamicOptionOverrides(state.dynamicOptionOverrides, action)
     let optionsData = this.computeOptionsData(
       props.optionOverrides,
@@ -189,6 +197,9 @@ export class CalendarDataProvider {
       dynamicOptionOverrides
     )
 
+    // wire things up
+    // TODO: not DRY
+    props.calendarApi.currentDataProvider = this
     emitter.setThisContext(props.calendarApi)
     emitter.setOptions(currentViewData.options)
 
