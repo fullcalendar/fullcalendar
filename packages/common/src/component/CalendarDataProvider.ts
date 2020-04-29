@@ -4,19 +4,19 @@ import { CalendarApi } from '../CalendarApi'
 import { CalendarData } from '../reducers/data-types'
 
 
-export interface CalendarDataProviderComponentProps {
+export interface CalendarDataProviderProps {
   optionOverrides: any
   calendarApi: CalendarApi
   children?: (data: CalendarData) => ComponentChildren
 }
 
 
-export class CalendarDataProviderComponent extends Component<CalendarDataProviderComponentProps, CalendarData> {
+export class CalendarDataProvider extends Component<CalendarDataProviderProps, CalendarData> {
 
   dataManager: CalendarDataManager
 
 
-  constructor(props: CalendarDataProviderComponentProps) {
+  constructor(props: CalendarDataProviderProps) {
     super(props)
 
     this.dataManager = new CalendarDataManager({
