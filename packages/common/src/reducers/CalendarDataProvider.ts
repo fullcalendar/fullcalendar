@@ -26,7 +26,7 @@ import { EventDefHash } from '../structs/event-def'
 import { parseToolbars } from '../toolbar-parse'
 import { firstDefined } from '../util/misc'
 import { globalDefaults, mergeOptions } from '../options'
-import { constrainMarkerToRange } from '../datelib/date-range'
+import { rangeContainsMarker } from '../datelib/date-range'
 import { ViewApi } from '../ViewApi'
 import { parseBusinessHours } from '../structs/business-hours'
 import { globalPlugins } from '../global-plugins'
@@ -114,7 +114,10 @@ export class CalendarDataProvider {
 
     let currentDate = getInitialDate(optionsData.calendarOptions, optionsData.dateEnv)
     let dateProfile = currentViewData.dateProfileGenerator.build(currentDate)
-    currentDate = constrainMarkerToRange(currentDate, dateProfile.activeRange)
+
+    if (!rangeContainsMarker(dateProfile.activeRange, currentDate)) {
+      currentDate = dateProfile.currentRange.start
+    }
 
     let calendarContext: CalendarContext = {
       dateEnv: optionsData.dateEnv,
@@ -127,15 +130,18 @@ export class CalendarDataProvider {
       getCurrentData: this.getCurrentData
     }
 
+    // NOT DRY
+    let eventSources = initEventSources(optionsData.calendarOptions, dateProfile, calendarContext)
+
     let initialState: CalendarDataProviderState = {
       dynamicOptionOverrides,
       currentViewType,
       currentDate,
       dateProfile,
-      businessHours: createEmptyEventStore(),
-      eventSources: initEventSources(optionsData.calendarOptions, dateProfile, calendarContext),
+      businessHours: this.parseContextBusinessHours(calendarContext), // weird to have this in state
+      eventSources,
       eventUiBases: {},
-      loadingLevel: 0,
+      loadingLevel: computeEventSourceLoadingLevel(eventSources),
       eventStore: createEmptyEventStore(),
       renderableEventStore: createEmptyEventStore(),
       dateSelection: null,
@@ -148,6 +154,10 @@ export class CalendarDataProvider {
 
     for (let reducer of optionsData.pluginHooks.reducers) {
       __assign(initialState, reducer(null, null, contextAndState))
+    }
+
+    if (initialState.loadingLevel) {
+      this.emitter.trigger('loading', true) // NOT DRY
     }
 
     this.state = initialState
@@ -215,8 +225,17 @@ export class CalendarDataProvider {
     }
 
     let currentDate = state.currentDate
-    let dateProfile = reduceDateProfile(state.dateProfile, action, currentDate, currentViewData.dateProfileGenerator)
-    currentDate = constrainMarkerToRange(currentDate, dateProfile.currentRange)
+    let dateProfile = state.dateProfile
+
+    if (this.data && this.data.dateProfileGenerator !== currentViewData.dateProfileGenerator) { // hack
+      dateProfile = currentViewData.dateProfileGenerator.build(currentDate)
+    }
+
+    dateProfile = reduceDateProfile(dateProfile, action, currentDate, currentViewData.dateProfileGenerator)
+
+    if (!rangeContainsMarker(dateProfile.currentRange, currentDate)) {
+      currentDate = dateProfile.currentRange.start
+    }
 
     let eventSources = reduceEventSources(state.eventSources, action, dateProfile, calendarContext)
     let eventSourceLoadingLevel = computeEventSourceLoadingLevel(eventSources)
