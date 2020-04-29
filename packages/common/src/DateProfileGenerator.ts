@@ -51,7 +51,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
 
 
   constructor(protected props: DateProfileGeneratorProps) {
-    this.slotMinTime = createDuration(props.slotMinTime)
+    this.slotMinTime = createDuration(props.slotMinTime) // TODO: use parsed. but need better options system
     this.slotMaxTime = createDuration(props.slotMaxTime)
     this.nowDate = getNow(props, props.dateEnv) // uses props.now. bad system
     this.initHiddenDays()

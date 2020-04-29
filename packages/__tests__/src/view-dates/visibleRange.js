@@ -190,7 +190,7 @@ describe('visibleRange', function() {
         expectActiveRange('2017-06-26', '2017-06-27')
       })
 
-      it('constrains a later the current date to the start of visibleRange', function() {
+      it('constrains a later current date to the start of visibleRange', function() {
         initCalendar({
           initialDate: '2017-07-01',
           visibleRange: {
