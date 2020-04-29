@@ -11,7 +11,7 @@ import { buildViewSpecs } from '../structs/view-spec'
 import { mapHash, isPropsEqual } from '../util/object'
 import { DateProfileGenerator, DateProfileGeneratorProps } from '../DateProfileGenerator'
 import { reduceViewType } from './view-type'
-import { getInitialDate } from './current-date'
+import { getInitialDate, reduceCurrentDate } from './current-date'
 import { reduceDynamicOptionOverrides } from './options'
 import { reduceDateProfile } from './date-profile'
 import { reduceEventSources, initEventSources, reduceEventSourcesNewTimeZone, computeEventSourceLoadingLevel } from './eventSources'
@@ -231,6 +231,7 @@ export class CalendarDataProvider {
       dateProfile = currentViewData.dateProfileGenerator.build(currentDate)
     }
 
+    currentDate = reduceCurrentDate(currentDate, action)
     dateProfile = reduceDateProfile(dateProfile, action, currentDate, currentViewData.dateProfileGenerator)
 
     if (!rangeContainsMarker(dateProfile.currentRange, currentDate)) {

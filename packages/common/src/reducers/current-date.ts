@@ -1,10 +1,19 @@
 import { DateEnv } from '../datelib/env'
+import { DateMarker } from '../datelib/marker'
+import { Action } from './Action'
 
 
-// not a lot of reducing happening in here
+export function reduceCurrentDate(currentDate: DateMarker, action: Action) {
+  switch (action.type) {
+    case 'CHANGE_DATE':
+      return action.dateMarker
+    default:
+      return currentDate
+  }
+}
 
 
-export function getInitialDate(options, dateEnv: DateEnv) { // NOT used in this reducer. TODO: do INIT in reducer
+export function getInitialDate(options, dateEnv: DateEnv) {
   let initialDateInput = options.initialDate
 
   // compute the initial ambig-timezone date
