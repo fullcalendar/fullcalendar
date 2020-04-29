@@ -33,13 +33,13 @@ import { globalPlugins } from '../global-plugins'
 import { createEmptyEventStore } from '../structs/event-store'
 import { CalendarContext } from '../CalendarContext'
 import { buildComputedOptions } from '../ComputedOptions'
-import { CalendarDataProviderState, CalendarOptionsData, CalendarCurrentViewData, CalendarData } from './data-types'
+import { CalendarDataManagerState, CalendarOptionsData, CalendarCurrentViewData, CalendarData } from './data-types'
 import { __assign } from 'tslib'
 import { TaskRunner } from '../util/runner'
 import { buildTitle } from './title-formatting'
 
 
-export interface CalendarDataProviderProps {
+export interface CalendarDataManagerProps {
   optionOverrides: any
   calendarApi: CalendarApi
   onAction?: (action: Action) => void
@@ -49,7 +49,7 @@ export interface CalendarDataProviderProps {
 export type ReducerFunc = ( // TODO: rename to CalendarDataInjector. move view-props-manip hook here as well?
   currentState: object | null,
   action: Action | null,
-  context: CalendarContext & CalendarDataProviderState // more than just context
+  context: CalendarContext & CalendarDataManagerState // more than just context
 ) => object
 
 
@@ -57,7 +57,7 @@ export type ReducerFunc = ( // TODO: rename to CalendarDataInjector. move view-p
 // also, whatever is happening in constructor, have it happen in action queue too
 
 
-export class CalendarDataProvider {
+export class CalendarDataManager {
 
   private computeOptionsData = memoize(this._computeOptionsData)
   private computeCurrentViewData = memoize(this._computeCurrentViewData)
@@ -82,12 +82,12 @@ export class CalendarDataProvider {
 
   public emitter = new Emitter()
   private actionRunner = new TaskRunner(this._handleAction.bind(this), this.updateData.bind(this))
-  private props: CalendarDataProviderProps
-  private state: CalendarDataProviderState
+  private props: CalendarDataManagerProps
+  private state: CalendarDataManagerState
   private data: CalendarData
 
 
-  constructor(props: CalendarDataProviderProps) {
+  constructor(props: CalendarDataManagerProps) {
     this.props = props
     this.actionRunner.pause()
 
@@ -108,7 +108,7 @@ export class CalendarDataProvider {
 
     // wire things up
     // TODO: not DRY
-    props.calendarApi.currentDataProvider = this
+    props.calendarApi.currentDataManager = this
     this.emitter.setThisContext(props.calendarApi)
     this.emitter.setOptions(currentViewData.options)
 
@@ -133,7 +133,7 @@ export class CalendarDataProvider {
     // NOT DRY
     let eventSources = initEventSources(optionsData.calendarOptions, dateProfile, calendarContext)
 
-    let initialState: CalendarDataProviderState = {
+    let initialState: CalendarDataManagerState = {
       dynamicOptionOverrides,
       currentViewType,
       currentDate,
@@ -209,7 +209,7 @@ export class CalendarDataProvider {
 
     // wire things up
     // TODO: not DRY
-    props.calendarApi.currentDataProvider = this
+    props.calendarApi.currentDataManager = this
     emitter.setThisContext(props.calendarApi)
     emitter.setOptions(currentViewData.options)
 
@@ -254,7 +254,7 @@ export class CalendarDataProvider {
     let prevLoadingLevel = state.loadingLevel || 0
     let loadingLevel = eventSourceLoadingLevel
 
-    let newState: CalendarDataProviderState = {
+    let newState: CalendarDataManagerState = {
       dynamicOptionOverrides,
       currentViewType,
       currentDate,

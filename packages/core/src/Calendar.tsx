@@ -1,7 +1,7 @@
 import { __assign } from 'tslib'
 import {
   OptionsInput, Action, CalendarContent, render, h, DelayedRunner, CssDimValue, applyStyleProp,
-  CalendarApi, computeCalendarClassNames, computeCalendarHeight, isArraysEqual, CalendarDataProvider, CalendarData,
+  CalendarApi, computeCalendarClassNames, computeCalendarHeight, isArraysEqual, CalendarDataManager, CalendarData,
   CustomContentRenderContext
  } from '@fullcalendar/common'
 import { flushToDom } from './vdom'
@@ -26,7 +26,7 @@ export class Calendar extends CalendarApi {
     this.el = el
     this.renderRunner = new DelayedRunner(this.handleRenderRequest)
 
-    new CalendarDataProvider({
+    new CalendarDataManager({
       optionOverrides,
       calendarApi: this,
       onAction: this.handleAction,
@@ -123,7 +123,7 @@ export class Calendar extends CalendarApi {
 
 
   resetOptions(optionOverrides, append?) {
-    this.currentDataProvider.resetOptions(optionOverrides, append)
+    this.currentDataManager.resetOptions(optionOverrides, append)
   }
 
 

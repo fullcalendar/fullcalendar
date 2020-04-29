@@ -15,21 +15,21 @@ import { __assign } from 'tslib'
 import { PointerDragEvent } from './interactions/pointer'
 import { getNow } from './reducers/current-date'
 import { triggerDateSelect, triggerDateUnselect } from './calendar-utils'
-import { CalendarDataProvider } from './reducers/CalendarDataProvider'
+import { CalendarDataManager } from './reducers/CalendarDataManager'
 import { Action } from './reducers/Action'
 import { EventSource } from './structs/event-source'
 
 
 export class CalendarApi {
 
-  currentDataProvider?: CalendarDataProvider // will be set by CalendarDataProvider
+  currentDataManager?: CalendarDataManager // will be set by CalendarDataManager
 
   getCurrentData() {
-    return this.currentDataProvider!.getCurrentData()
+    return this.currentDataManager!.getCurrentData()
   }
 
   dispatch(action: Action) {
-    return this.currentDataProvider!.dispatch(action)
+    return this.currentDataManager!.dispatch(action)
   }
 
   get view(): ViewApi { return this.getCurrentData().viewApi } // for public API
@@ -73,17 +73,17 @@ export class CalendarApi {
 
 
   on(handlerName: string, handler) {
-    this.currentDataProvider!.emitter.on(handlerName, handler)
+    this.currentDataManager!.emitter.on(handlerName, handler)
   }
 
 
   off(handlerName: string, handler) {
-    this.currentDataProvider!.emitter.off(handlerName, handler)
+    this.currentDataManager!.emitter.off(handlerName, handler)
   }
 
 
   protected trigger(handlerName, ...args) {
-    this.currentDataProvider!.emitter.trigger(handlerName, ...args)
+    this.currentDataManager!.emitter.trigger(handlerName, ...args)
   }
 
 

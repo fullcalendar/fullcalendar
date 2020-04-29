@@ -1,5 +1,5 @@
 import { Component, ComponentChildren } from '../vdom'
-import { CalendarDataProvider } from '../reducers/CalendarDataProvider'
+import { CalendarDataManager } from '../reducers/CalendarDataManager'
 import { CalendarApi } from '../CalendarApi'
 import { CalendarData } from '../reducers/data-types'
 
@@ -13,13 +13,13 @@ export interface CalendarDataProviderComponentProps {
 
 export class CalendarDataProviderComponent extends Component<CalendarDataProviderComponentProps, CalendarData> {
 
-  dataProvider: CalendarDataProvider
+  dataManager: CalendarDataManager
 
 
   constructor(props: CalendarDataProviderComponentProps) {
     super(props)
 
-    this.dataProvider = new CalendarDataProvider({
+    this.dataManager = new CalendarDataManager({
       optionOverrides: props.optionOverrides,
       calendarApi: props.calendarApi,
       onData: this.handleData
@@ -42,7 +42,7 @@ export class CalendarDataProviderComponent extends Component<CalendarDataProvide
 
 
   componentDidUpdate() {
-    this.dataProvider.resetOptions(this.props.optionOverrides)
+    this.dataManager.resetOptions(this.props.optionOverrides)
   }
 
 }

@@ -16,7 +16,7 @@ import { EventInteractionState } from '../interactions/event-interaction-state'
 import { ComputedOptions } from '../ComputedOptions'
 
 
-export interface CalendarDataProviderState {
+export interface CalendarDataManagerState {
   dynamicOptionOverrides: object // raw
   currentViewType: string
   currentDate: DateMarker
@@ -55,7 +55,7 @@ export interface CalendarCurrentViewData {
 }
 
 
-type CalendarDataBase = CalendarOptionsData & CalendarCurrentViewData & CalendarDataProviderState
+type CalendarDataBase = CalendarOptionsData & CalendarCurrentViewData & CalendarDataManagerState
 
 // needs to be an interface so we can ambient-extend
 // is a superset of CalendarContext
