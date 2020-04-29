@@ -156,8 +156,13 @@ export class CalendarDataProvider {
   }
 
 
-  resetOptions(optionOverrides) {
-    this.props.optionOverrides = optionOverrides
+  resetOptions(optionOverrides, append?: boolean) {
+    let { props } = this
+
+    props.optionOverrides = append
+      ? { ...props.optionOverrides, ...optionOverrides }
+      : optionOverrides
+
     this.actionRunner.pause('resetOptions')
     this.updateData()
     this.actionRunner.resume('resetOptions')

@@ -41,7 +41,7 @@ describe('mutateOptions', function() { // TODO: rename file
     let scrollTop = scrollEl.scrollTop
     expect(scrollTop).toBeGreaterThan(0)
 
-    calendar.resetOptions({ allDaySlot: false })
+    calendar.resetOptions({ allDaySlot: false }, true)
 
     expect(calendar.getOption('allDaySlot')).toBe(false)
     expect(viewWrapper.dayGrid).toBeFalsy()
@@ -59,7 +59,7 @@ describe('mutateOptions', function() { // TODO: rename file
       events: [
         { start: '2019-04-01T00:00:00' }
       ]
-    })
+    }, true)
 
     expect(calendarWrapper.getEventEls().length).toBe(1)
     expect(calendarWrapper.getFirstDateEl()).toBe(dateEl)
@@ -74,7 +74,7 @@ describe('mutateOptions', function() { // TODO: rename file
 
     calendar.resetOptions({
       initialView: 'timeGridDay'
-    })
+    }, true)
 
     expect(calendar.view.type).toBe('timeGridWeek')
     expect(calendarWrapper.getFirstDateEl()).toBe(dateEl)

@@ -118,8 +118,8 @@ export class Calendar extends CalendarApi {
   }
 
 
-  resetOptions(optionOverrides) {
-    this._dataProvider.resetOptions(optionOverrides)
+  resetOptions(optionOverrides, append?) {
+    this.currentDataProvider.resetOptions(optionOverrides, append)
   }
 
 
