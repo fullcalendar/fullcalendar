@@ -87,7 +87,7 @@
     "mkdirp": "^0.5.1",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
-    "preact": "^10.0.5",
+    "preact": "^10.4.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "rollup": "^1.28.0",

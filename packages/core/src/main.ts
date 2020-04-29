@@ -1,8 +1,4 @@
 
-import './vdom'
-// import '../../../packages-contrib/react/src/vdom'
-
+export { flushToDom } from './vdom' // for tests. does SIDE EFFECTS
 export { Calendar } from './Calendar'
-export { flushToDom } from './utils' // tests need this
-
 export * from '@fullcalendar/common'

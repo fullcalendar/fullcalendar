@@ -3,7 +3,7 @@ import {
   OptionsInput, Action, CalendarContent, render, h, DelayedRunner, guid, CssDimValue, applyStyleProp,
   CalendarApi, computeCalendarClassNames, computeCalendarHeight, isArraysEqual, CalendarDataProvider, CalendarData
  } from '@fullcalendar/common'
-import { flushToDom } from './utils'
+import { flushToDom } from './vdom'
 
 
 export class Calendar extends CalendarApi {
