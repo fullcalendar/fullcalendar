@@ -7,6 +7,7 @@ import { __assign } from 'tslib'
 import { CalendarContext } from '../CalendarContext'
 import { EventDef, DATE_PROPS, NON_DATE_PROPS } from './event-def'
 import { EventInstance, createEventInstance } from './event-instance'
+import { EventSource } from './event-source'
 
 /*
 Utils for parsing event-input data. Each util parses a subset of the event-input's data.
@@ -38,8 +39,8 @@ export interface EventTuple {
 }
 
 
-export function parseEvent(raw: EventInput, sourceId: string, context: CalendarContext, allowOpenRange?: boolean): EventTuple | null {
-  let defaultAllDay = computeIsDefaultAllDay(sourceId, context)
+export function parseEvent(raw: EventInput, eventSource: EventSource | null, context: CalendarContext, allowOpenRange?: boolean): EventTuple | null {
+  let defaultAllDay = computeIsDefaultAllDay(eventSource, context)
   let leftovers0 = {}
   let recurringRes = parseRecurring(
     raw, // raw, but with single-event stuff stripped out
@@ -50,7 +51,7 @@ export function parseEvent(raw: EventInput, sourceId: string, context: CalendarC
   )
 
   if (recurringRes) {
-    let def = parseEventDef(leftovers0, sourceId, recurringRes.allDay, Boolean(recurringRes.duration), context)
+    let def = parseEventDef(leftovers0, eventSource.sourceId, recurringRes.allDay, Boolean(recurringRes.duration), context)
 
     def.recurringDef = { // don't want all the props from recurringRes. TODO: more efficient way to do this
       typeId: recurringRes.typeId,
@@ -65,7 +66,7 @@ export function parseEvent(raw: EventInput, sourceId: string, context: CalendarC
     let singleRes = parseSingle(raw, defaultAllDay, context, leftovers1, allowOpenRange)
 
     if (singleRes) {
-      let def = parseEventDef(leftovers1, sourceId, singleRes.allDay, singleRes.hasEnd, context)
+      let def = parseEventDef(leftovers1, eventSource.sourceId, singleRes.allDay, singleRes.hasEnd, context)
       let instance = createEventInstance(def.defId, singleRes.range, singleRes.forcedStartTzo, singleRes.forcedEndTzo)
 
       return { def, instance }
@@ -202,12 +203,11 @@ function pluckNonDateProps(raw: EventInput, context: CalendarContext, leftovers?
 }
 
 
-function computeIsDefaultAllDay(sourceId: string, context: CalendarContext): boolean | null {
+function computeIsDefaultAllDay(eventSource: EventSource | null, context: CalendarContext): boolean | null {
   let res = null
 
-  if (sourceId) {
-    let source = context.getCurrentData().eventSources[sourceId]
-    res = source.defaultAllDay
+  if (eventSource) {
+    res = eventSource.defaultAllDay
   }
 
   if (res == null) {

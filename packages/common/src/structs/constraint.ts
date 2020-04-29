@@ -16,10 +16,10 @@ export type isPropsValidTester = (props: SplittableProps, context: CalendarConte
 
 export function normalizeConstraint(input: ConstraintInput, context: CalendarContext): Constraint | null {
   if (Array.isArray(input)) {
-    return parseEvents(input, '', context, true) // allowOpenRange=true
+    return parseEvents(input, null, context, true) // allowOpenRange=true
 
   } else if (typeof input === 'object' && input) { // non-null object
-    return parseEvents([ input ], '', context, true) // allowOpenRange=true
+    return parseEvents([ input ], null, context, true) // allowOpenRange=true
 
   } else if (input != null) {
     return String(input)

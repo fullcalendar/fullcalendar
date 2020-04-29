@@ -24,7 +24,7 @@ TODO: pass around as EventDefHash!!!
 export function parseBusinessHours(input: BusinessHoursInput, context: CalendarContext): EventStore {
   return parseEvents(
     refineInputs(input),
-    '',
+    null,
     context
   )
 }

@@ -99,7 +99,7 @@ function receiveRawEvents(
 
     let subset = parseEvents(
       transformRawEvents(rawEvents, eventSource, context),
-      eventSource.sourceId,
+      eventSource,
       context
     )
 
