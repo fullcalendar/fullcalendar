@@ -203,7 +203,7 @@ export { getIsRtlScrollbarOnLeft } from './util/scrollbar-side'
 export { NowTimer } from './NowTimer'
 export { ScrollResponder, ScrollRequest } from './ScrollResponder'
 export { globalPlugins } from './global-plugins'
-export { RenderHook, RenderHookProps, RenderHookPropsChildren, MountHook, MountHookProps, buildHookClassNameGenerator, ContentHook } from './common/render-hook'
+export { RenderHook, RenderHookProps, RenderHookPropsChildren, MountHook, MountHookProps, buildHookClassNameGenerator, ContentHook, CustomContentRenderContext } from './common/render-hook'
 export { StandardEvent, StandardEventProps } from './common/StandardEvent'
 export { NowIndicatorRoot, NowIndicatorRootProps } from './common/NowIndicatorRoot'
 

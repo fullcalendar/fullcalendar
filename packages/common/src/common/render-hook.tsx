@@ -1,4 +1,4 @@
-import { Ref, createRef, ComponentChildren, h, RefObject } from '../vdom'
+import { Ref, createRef, ComponentChildren, h, RefObject, createContext } from '../vdom'
 import { ViewContext } from '../ViewContext'
 import { setRef, BaseComponent } from '../vdom-util'
 import { isPropsEqual } from '../util/object'
@@ -66,6 +66,9 @@ export class RenderHook<HookProps> extends BaseComponent<RenderHookProps<HookPro
 }
 
 
+// for forcing rerender of components that use the ContentHook
+export const CustomContentRenderContext = createContext<number>(0)
+
 export interface ContentHookProps<HookProps> {
   name: string
   hookProps: HookProps
@@ -89,7 +92,13 @@ export class ContentHook<HookProps> extends BaseComponent<ContentHookProps<HookP
 
 
   render() {
-    return this.props.children(this.innerElRef, this.renderInnerContent())
+    return (
+      <CustomContentRenderContext.Consumer>
+        {() => (
+          this.props.children(this.innerElRef, this.renderInnerContent())
+        )}
+      </CustomContentRenderContext.Consumer>
+    )
   }
 
 

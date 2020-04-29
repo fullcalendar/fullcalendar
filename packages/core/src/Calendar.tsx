@@ -1,7 +1,8 @@
 import { __assign } from 'tslib'
 import {
-  OptionsInput, Action, CalendarContent, render, h, DelayedRunner, guid, CssDimValue, applyStyleProp,
-  CalendarApi, computeCalendarClassNames, computeCalendarHeight, isArraysEqual, CalendarDataProvider, CalendarData
+  OptionsInput, Action, CalendarContent, render, h, DelayedRunner, CssDimValue, applyStyleProp,
+  CalendarApi, computeCalendarClassNames, computeCalendarHeight, isArraysEqual, CalendarDataProvider, CalendarData,
+  CustomContentRenderContext
  } from '@fullcalendar/common'
 import { flushToDom } from './vdom'
 
@@ -13,6 +14,7 @@ export class Calendar extends CalendarApi {
   el: HTMLElement
   isRendering = false
   isRendered = false
+  customContentRenderId = 0
   currentClassNames: string[] = []
 
   get view() { return this.data.viewApi } // for public API
@@ -60,7 +62,9 @@ export class Calendar extends CalendarApi {
       this.setHeight(computeCalendarHeight(data))
 
       render(
-        <CalendarContent {...data} />,
+        <CustomContentRenderContext.Provider value={this.customContentRenderId}>
+          <CalendarContent {...data} />
+        </CustomContentRenderContext.Provider>,
         this.el
       )
 
@@ -78,11 +82,10 @@ export class Calendar extends CalendarApi {
   render() {
     if (!this.isRendering) {
       this.isRendering = true
-      this.renderRunner.request()
     } else {
-      // hack for RERENDERING
-      this.setOption('renderId', guid())
+      this.customContentRenderId++
     }
+    this.renderRunner.request()
   }
 
 
