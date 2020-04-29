@@ -9,15 +9,16 @@ import { flushToDom } from './vdom'
 
 export class Calendar extends CalendarApi {
 
-  data: CalendarData
+  currentData: CalendarData
   renderRunner: DelayedRunner
   el: HTMLElement
   isRendering = false
   isRendered = false
-  customContentRenderId = 0
   currentClassNames: string[] = []
+  customContentRenderId = 0 // will affect custom generated classNames?
 
-  get view() { return this.data.viewApi } // for public API
+  get view() { return this.currentData.viewApi } // for public API
+
 
   constructor(el: HTMLElement, optionOverrides: OptionsInput = {}) {
     super()
@@ -47,7 +48,7 @@ export class Calendar extends CalendarApi {
 
 
   handleData = (data: CalendarData) => {
-    this.data = data
+    this.currentData = data
     this.renderRunner.request(data.options.rerenderDelay)
   }
 
@@ -57,13 +58,13 @@ export class Calendar extends CalendarApi {
     if (this.isRendering) {
       this.isRendered = true
 
-      let { data } = this
-      this.setClassNames(computeCalendarClassNames(data))
-      this.setHeight(computeCalendarHeight(data))
+      let { currentData } = this
+      this.setClassNames(computeCalendarClassNames(currentData))
+      this.setHeight(computeCalendarHeight(currentData))
 
       render(
         <CustomContentRenderContext.Provider value={this.customContentRenderId}>
-          <CalendarContent {...data} />
+          <CalendarContent {...currentData} />
         </CustomContentRenderContext.Provider>,
         this.el
       )
