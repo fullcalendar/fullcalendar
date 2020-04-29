@@ -18,6 +18,10 @@ import { createDuration } from './datelib/duration'
 export const ViewContextType = createContext<ViewContext>({} as any) // for Components
 export type ResizeHandler = (force: boolean) => void
 
+/*
+it's important that ViewContext extends CalendarContext so that components that subscribe to ViewContext
+can pass in their ViewContext to util functions that accept CalendarContext.
+*/
 export interface ViewContext extends CalendarContext {
   theme: Theme
   isRtl: boolean

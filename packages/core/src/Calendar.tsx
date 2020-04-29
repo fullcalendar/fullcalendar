@@ -49,7 +49,7 @@ export class Calendar extends CalendarApi {
 
   handleData = (data: CalendarData) => {
     this.currentData = data
-    this.renderRunner.request(data.options.rerenderDelay)
+    this.renderRunner.request(data.calendarOptions.rerenderDelay)
   }
 
 
