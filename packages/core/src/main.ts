@@ -1,4 +1,4 @@
 
-export { flushToDom } from './vdom' // for tests. does SIDE EFFECTS
+import './vdom'
 export { Calendar } from './Calendar'
 export * from '@fullcalendar/common'
