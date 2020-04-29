@@ -51,7 +51,7 @@ export function parseEvent(raw: EventInput, eventSource: EventSource | null, con
   )
 
   if (recurringRes) {
-    let def = parseEventDef(leftovers0, eventSource.sourceId, recurringRes.allDay, Boolean(recurringRes.duration), context)
+    let def = parseEventDef(leftovers0, eventSource ? eventSource.sourceId : '', recurringRes.allDay, Boolean(recurringRes.duration), context)
 
     def.recurringDef = { // don't want all the props from recurringRes. TODO: more efficient way to do this
       typeId: recurringRes.typeId,
@@ -66,7 +66,7 @@ export function parseEvent(raw: EventInput, eventSource: EventSource | null, con
     let singleRes = parseSingle(raw, defaultAllDay, context, leftovers1, allowOpenRange)
 
     if (singleRes) {
-      let def = parseEventDef(leftovers1, eventSource.sourceId, singleRes.allDay, singleRes.hasEnd, context)
+      let def = parseEventDef(leftovers1, eventSource ? eventSource.sourceId : '', singleRes.allDay, singleRes.hasEnd, context)
       let instance = createEventInstance(def.defId, singleRes.range, singleRes.forcedStartTzo, singleRes.forcedEndTzo)
 
       return { def, instance }

@@ -17,6 +17,7 @@ import { getNow } from './reducers/current-date'
 import { triggerDateSelect, triggerDateUnselect } from './calendar-utils'
 import { CalendarDataProvider } from './reducers/CalendarDataProvider'
 import { Action } from './reducers/Action'
+import { EventSource } from './structs/event-source'
 
 
 export class CalendarApi {
@@ -364,9 +365,11 @@ export class CalendarApi {
       return eventInput
     }
 
-    let sourceId
+    let eventSource: EventSource
+
     if (sourceInput instanceof EventSourceApi) {
-      sourceId = sourceInput.internalEventSource.sourceId
+      eventSource = sourceInput.internalEventSource
+
     } else if (sourceInput != null) {
       let sourceApi = this.getEventSourceById(sourceInput) // TODO: use an internal function
 
@@ -374,12 +377,12 @@ export class CalendarApi {
         console.warn('Could not find an event source with ID "' + sourceInput + '"') // TODO: test
         return null
       } else {
-        sourceId = sourceApi.internalEventSource.sourceId
+        eventSource = sourceApi.internalEventSource
       }
     }
 
     let state = this.getCurrentData()
-    let tuple = parseEvent(eventInput, sourceId, state)
+    let tuple = parseEvent(eventInput, eventSource, state)
 
     if (tuple) {
 
