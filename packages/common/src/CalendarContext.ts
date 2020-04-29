@@ -3,7 +3,7 @@ import { ComputedOptions } from './ComputedOptions'
 import { PluginHooks } from './plugin-system-struct'
 import { Emitter } from './common/Emitter'
 import { Action } from './reducers/Action'
-import { CalendarApi } from 'fullcalendar'
+import { CalendarApi } from './CalendarApi'
 import { CalendarData } from './reducers/data-types'
 
 export interface CalendarContext {

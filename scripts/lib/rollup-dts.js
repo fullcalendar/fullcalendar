@@ -59,6 +59,17 @@ module.exports = function() {
             return { id, external: true }
           }
           return null
+        },
+        renderChunk(code) {
+          // HACK. TODO: file bug
+          return code.replace(/import\(([^)]*)\)\./, function(m0, m1) {
+            let importStr = JSON.parse(m1) // parse the quoted string
+            if (importStr === './ViewContext') {
+              return ''
+            } else {
+              throw new Error(`Unknown import('${importStr}'). Could not massage.`)
+            }
+          })
         }
       }
     ],
