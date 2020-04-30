@@ -5,10 +5,11 @@ const { pkgStructs, pkgStructHash } = require('./pkg-struct')
 const { arrayToHash, copyFile } = require('./util')
 
 
+
 // TODO: wait for tsc to finish!
 // rollup-plugin-dts can't handle either of these
 copyFile( // promise :(
-  'tmp/tsc-output/packages/core/src/vdom.d.ts',
+  'tmp/tsc-output/packages/core/src/vdom-preact.d.ts', // notice the difference :|
   'packages/core/dist/vdom.d.ts'
 )
 copyFile( // promise :(
