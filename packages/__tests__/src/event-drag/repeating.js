@@ -48,7 +48,7 @@ describe('event dragging on repeating events', function() {
       eventDragStart() {
         setTimeout(function() { // try go execute DURING the drag
           let visibleEventEls = filterVisibleEls(calendarWrapper.getEventEls())
-          expect(visibleEventEls.length).toBe(1)
+          expect(visibleEventEls.length).toBe(0)
         }, 0)
       },
 
@@ -84,7 +84,7 @@ describe('event dragging on repeating events', function() {
       eventDragStart() {
         setTimeout(function() { // try go execute DURING the drag
           let visibleEventEls = filterVisibleEls(calendarWrapper.getEventEls())
-          expect(visibleEventEls.length).toBe(2) // the dragging event AND the other regular event
+          expect(visibleEventEls.length).toBe(1) // the dragging event AND the other regular event
         }, 0)
       },
 
