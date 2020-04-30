@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "@fullcalendar/luxon",
   "version": "5.0.0-beta.2",
   "title": "FullCalendar Luxon Plugin",
@@ -15,5 +14,7 @@
   "devDependencies": {
     "@fullcalendar/common": "5.0.0-beta.2",
     "luxon": "^1.12.1"
-  }
+  },
+  "module": "main.js",
+  "types": "main.d.ts"
 }

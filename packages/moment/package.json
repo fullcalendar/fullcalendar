@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "@fullcalendar/moment",
   "version": "5.0.0-beta.2",
   "title": "FullCalendar Moment Plugin",
@@ -16,5 +15,7 @@
     "@fullcalendar/common": "5.0.0-beta.2",
     "@types/moment": "^2.13.0",
     "moment": "^2.24.0"
-  }
+  },
+  "module": "main.js",
+  "types": "main.d.ts"
 }

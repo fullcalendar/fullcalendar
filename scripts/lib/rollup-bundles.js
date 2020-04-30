@@ -19,7 +19,7 @@ module.exports = function(isDev) {
       let bundleConfig = buildBundleConfig(pkgStruct, isDev)
       let nonBundleNames = require(path.join(process.cwd(), pkgStruct.dir, 'non-bundled-plugins.json'))
       let nonBundleConfigs = nonBundleNames.map((name) => (
-        buildNonBundleConfig(pkgStructHash[name], pkgStruct.distDir, isDev)
+        buildNonBundleConfig(pkgStructHash[name], pkgStruct.dir, isDev)
       ))
 
       configs.push(
@@ -45,7 +45,7 @@ function buildBundleConfig(pkgStruct, isDev) {
     input: path.join('tmp/tsc-output', pkgStruct.srcDir, 'main.js'), // TODO: use tscMain
     output: {
       format: 'umd',
-      file: path.join(pkgStruct.distDir, 'main.js'),
+      file: path.join(pkgStruct.dir, 'main.js'),
       name: EXTERNAL_BROWSER_GLOBALS['fullcalendar'], // TODO: make it a separarate const???
       banner,
       sourcemap: isDev
@@ -74,7 +74,7 @@ function buildBundleConfig(pkgStruct, isDev) {
           if (isScssPath(id) && isRelPath(id) && importer.match('/tmp/tsc-output/')) {
             let resourcePath = importer.replace('/tmp/tsc-output/', '/')
             resourcePath = path.dirname(resourcePath) // the directory of the file
-            resourcePath = resourcePath.replace(/\/src(\/|$)/, '/dist$1')
+            resourcePath = resourcePath.replace(/\/src(\/|$)/, '$1')
             resourcePath = path.join(resourcePath, id.replace('.scss', '.css'))
             return { id: resourcePath, external: false }
           }
@@ -159,7 +159,7 @@ function buildLocaleConfigs() { // for EACH
       output: {
         format: 'umd',
         name: 'FullCalendarLocales.' + localeCode, // code isn't used, but needs to be unique
-        file: path.join(bundleStruct.distDir, localePath)
+        file: path.join(bundleStruct.dir, localePath)
       }
     }
   })
@@ -171,11 +171,11 @@ function buildLocalesAllConfig() {
   let bundleStruct = getNonPremiumBundle()
 
   return {
-    input: path.join(corePkgStruct.distDir, 'locales-all.js'),
+    input: path.join(corePkgStruct.dir, 'locales-all.js'),
     output: {
       format: 'umd',
       name: 'FullCalendarLocales',
-      file: path.join(bundleStruct.distDir, 'locales-all.js'),
+      file: path.join(bundleStruct.dir, 'locales-all.js'),
     },
     watch: WATCH_OPTIONS,
     onwarn

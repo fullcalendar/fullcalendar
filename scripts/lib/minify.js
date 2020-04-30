@@ -10,7 +10,7 @@ exports.minifyCss = minifyCss
 
 function minifyJs() {
   return src([
-    'packages?(-premium)/bundle/dist/*.js',
+    'packages?(-premium)/bundle/*.js',
     '!**/*.min.js' // avoid double minify
   ], { base: '.' })
     .pipe(
@@ -31,7 +31,7 @@ function minifyJs() {
 
 function minifyCss() {
   return src([
-    'packages?(-premium)/bundle/dist/*.css',
+    'packages?(-premium)/bundle/*.css',
     '!**/*.min.css' // avoid double minify
   ], { base: '.' })
     .pipe(

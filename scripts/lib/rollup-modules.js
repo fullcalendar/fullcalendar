@@ -16,7 +16,7 @@ module.exports = function(isDev) {
   configs.push({
     input: 'tmp/tsc-output/packages/core/src/vdom.js',
     output: {
-      file: 'packages/core/dist/vdom.js',
+      file: 'packages/core/vdom.js', // TODO: use pkgStruct to know this
       format: 'esm',
       sourcemap: isDev
     },
@@ -35,7 +35,7 @@ function buildPkgConfig(pkgStruct, isDev) {
   return {
     input: path.join('tmp/tsc-output', pkgStruct.srcDir, 'main.js'),
     output: {
-      file: path.join(pkgStruct.distDir, 'main.js'),
+      file: path.join(pkgStruct.dir, 'main.js'),
       format: 'esm',
       banner,
       sourcemap: isDev

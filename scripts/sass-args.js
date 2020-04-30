@@ -8,7 +8,7 @@ let pairs = []
 
 for (let pkgStruct of pkgStructs) {
   let srcDirAbs = path.join(process.cwd(), pkgStruct.srcDir) // TODO: dont rely on us being at root
-  let distDirAbs = path.join(process.cwd(), pkgStruct.distDir)
+  let dirAbs = path.join(process.cwd(), pkgStruct.dir)
 
   let scssFilesnames = glob.sync('*.scss', { // .scss files in the root
     cwd: srcDirAbs,
@@ -21,7 +21,7 @@ for (let pkgStruct of pkgStructs) {
     pairs.push(
       path.join(srcDirAbs, scssFilesname) +
       ':' +
-      path.join(distDirAbs, scssFilesname.replace('.scss', '.css')) // TODO: more robust replacement
+      path.join(dirAbs, scssFilesname.replace('.scss', '.css')) // TODO: more robust replacement
     )
   }
 }

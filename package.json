@@ -25,11 +25,10 @@
   },
   "copyright": "2019 Adam Shaw",
   "scripts": {
-    "install": "monorepo install",
     "build": "gulp build",
     "watch": "gulp watch",
     "lint": "gulp lint && ./scripts/check-dts.js",
-    "clean": "rm -rf tmp archives && monorepo exec rm -rf dist && monorepo run clean",
+    "clean": "./scripts/clean.sh",
     "tsc": "tsc -p tsconfig.json",
     "tsc:watch": "./scripts/check-dts.js && tsc -p tsconfig.json --sourceMap --watch",
     "sass": "sass --no-source-map `./scripts/sass-args.js`",
@@ -42,11 +41,10 @@
     "archive": "gulp archive",
     "preversion": "./scripts/update-example-dates.sh && npm run clean",
     "version": "npm run ci && npm run archive",
-    "postversion": "monorepo publish && echo 'EXEC: git push --recurse-submodules=on-demand' && echo 'STILL NEED TO PUSH ALL TAGS'"
+    "postversion": "echo 'EXEC: git push --recurse-submodules=on-demand' && echo 'STILL NEED TO PUSH ALL TAGS'"
   },
   "devDependencies": {
     "@arshaw/dts-bundle": "^0.7.3-fork.1",
-    "@arshaw/monorepo-tool": "0.0.2",
     "@types/jasmine": "^3.3.12",
     "@types/jasmine-jquery": "^1.5.33",
     "@types/jquery": "^3.3.29",

@@ -21,7 +21,7 @@ exports.watchLocales = watchLocales
 
 function copyLocalesFromTsc() { // to core's dist dir
   return src(LOCALES_GLOB, { cwd: corePkg.tscDir, base: corePkg.tscDir })
-    .pipe(dest(corePkg.distDir))
+    .pipe(dest(corePkg.dir))
 }
 
 
@@ -35,7 +35,7 @@ async function generateLocalesAll() {
   })
 
   return writeFile(
-    path.join(corePkg.distDir, 'locales-all.js'),
+    path.join(corePkg.dir, 'locales-all.js'),
     jsText
   )
 }

@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "@fullcalendar/timegrid",
   "version": "5.0.0-beta.2",
   "title": "FullCalendar Time Grid Plugin",
@@ -14,5 +13,7 @@
   },
   "devDependencies": {
     "@fullcalendar/common": "5.0.0-beta.2"
-  }
+  },
+  "module": "main.js",
+  "types": "main.d.ts"
 }

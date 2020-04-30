@@ -53,6 +53,7 @@ function buildConfig(options) {
         resolveId(id, importer) {
 
           // contrib files are not processed by tsc and not in tmp/
+          // for vdom-react i think. yuck
           if (isRelPath(id)) {
             let m = id.match(/(packages-contrib\/.*)$/)
             if (m) {

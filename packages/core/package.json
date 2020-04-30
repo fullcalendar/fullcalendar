@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "@fullcalendar/core",
   "version": "5.0.0-beta.2",
   "dependencies": {
@@ -11,5 +10,7 @@
   },
   "devDependencies": {
     "@fullcalendar/common": "5.0.0-beta.2"
-  }
+  },
+  "module": "main.js",
+  "types": "main.d.ts"
 }

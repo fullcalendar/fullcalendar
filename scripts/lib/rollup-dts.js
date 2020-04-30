@@ -10,16 +10,16 @@ const { arrayToHash, copyFile } = require('./util')
 // rollup-plugin-dts can't handle either of these
 copyFile( // promise :(
   'tmp/tsc-output/packages/core/src/vdom-preact.d.ts', // notice the difference :|
-  'packages/core/dist/vdom.d.ts'
+  'packages/core/vdom.d.ts'
 )
 copyFile( // promise :(
   'tmp/tsc-output/packages/common/src/vdom.d.ts',
-  'packages/common/dist/vdom.d.ts'
+  'packages/common/vdom.d.ts'
 )
 
 
 let hash = arrayToHash(pkgStructs, (pkgStruct) => [
-  pkgStruct.distDir, // the key. the [name] in entryFileNames
+  pkgStruct.dir, // the key. the [name] in entryFileNames
   './' + pkgStruct.tscMain + '.d.ts' // the value
 ])
 

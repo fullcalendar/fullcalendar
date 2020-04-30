@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "fullcalendar",
   "version": "5.0.0-beta.2",
   "devDependencies": {
@@ -14,5 +13,7 @@
     "@fullcalendar/moment-timezone": "5.0.0-beta.2",
     "@fullcalendar/luxon": "5.0.0-beta.2",
     "@fullcalendar/google-calendar": "5.0.0-beta.2"
-  }
+  },
+  "main": "main.js",
+  "types": "main.d.ts"
 }

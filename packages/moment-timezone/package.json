@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "@fullcalendar/moment-timezone",
   "version": "5.0.0-beta.2",
   "title": "FullCalendar Moment Timezone Plugin",
@@ -18,5 +17,7 @@
     "@fullcalendar/common": "5.0.0-beta.2",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.25"
-  }
+  },
+  "module": "main.js",
+  "types": "main.d.ts"
 }

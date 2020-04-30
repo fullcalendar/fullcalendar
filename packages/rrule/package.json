@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "@fullcalendar/rrule",
   "version": "5.0.0-beta.2",
   "title": "FullCalendar RRule Plugin",
@@ -15,5 +14,7 @@
   "devDependencies": {
     "@fullcalendar/common": "5.0.0-beta.2",
     "rrule": "^2.6.0"
-  }
+  },
+  "module": "main.js",
+  "types": "main.d.ts"
 }

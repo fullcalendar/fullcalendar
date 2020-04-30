@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "@fullcalendar/common",
   "version": "5.0.0-beta.2",
   "title": "FullCalendar Core Package",
@@ -7,5 +6,7 @@
   "docs": "https://fullcalendar.io/docs/initialize-es6",
   "dependencies": {
     "tslib": "^1.9.3"
-  }
+  },
+  "module": "main.js",
+  "types": "main.d.ts"
 }
