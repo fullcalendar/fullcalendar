@@ -11,6 +11,7 @@ export interface CalendarDataProviderProps {
 }
 
 
+// TODO: move this to react plugin?
 export class CalendarDataProvider extends Component<CalendarDataProviderProps, CalendarData> {
 
   dataManager: CalendarDataManager
@@ -28,8 +29,8 @@ export class CalendarDataProvider extends Component<CalendarDataProviderProps, C
 
 
   handleData = (data: CalendarData) => {
-    if (!this.state) {
-      this.state = data // first time, from constructor
+    if (!this.dataManager) { // still within initial run, before assignment in constructor
+      this.state = data // can't use setState yet
     } else {
       this.setState(data)
     }
@@ -41,8 +42,12 @@ export class CalendarDataProvider extends Component<CalendarDataProviderProps, C
   }
 
 
-  componentDidUpdate() {
-    this.dataManager.resetOptions(this.props.optionOverrides)
+  componentDidUpdate(prevProps: CalendarDataProviderProps) {
+    let newOptionOverrides = this.props.optionOverrides
+
+    if (newOptionOverrides !== prevProps.optionOverrides) { // prevent recursive handleData
+      this.dataManager.resetOptions(newOptionOverrides)
+    }
   }
 
 }

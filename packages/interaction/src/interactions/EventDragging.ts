@@ -85,7 +85,6 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
         getComponentTouchDelay(component) :
         null
 
-    mirror.parentNode = (initialContext.calendarApi as any).el // BAD. will break DnD
     mirror.revertDuration = options.dragRevertDuration
 
     let isValid =
