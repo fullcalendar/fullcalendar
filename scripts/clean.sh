@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+set -e # always immediately exit upon error
+cd "`dirname $0`/.." # always start in project root
+
+
 # make sure this list mirrors what's in .gitignore
 
 rm -rf tmp archives

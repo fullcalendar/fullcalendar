@@ -27,13 +27,11 @@
   "workspaces": [
     "packages/*",
     "packages-premium/*",
-    "packages-contrib/react",
-    "packages-contrib/vue",
-    "packages-contrib/angular/dist/fullcalendar",
+    "packages-contrib/*",
     "example-projects/*"
   ],
   "scripts": {
-    "preinstall": "./packages-contrib/angular/scripts/monorepo-preinstall.sh",
+    "postinstall": "./scripts/postinstall.sh",
     "build": "gulp build",
     "watch": "gulp watch",
     "lint": "gulp lint && ./scripts/check-dts.js",
