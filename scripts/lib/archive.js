@@ -77,11 +77,10 @@ function writeArchive(options) {
 
 
 function writeArchiveFiles(options) {
-  let bundleDistDir = path.join(options.bundleDir, 'dist')
   let tmpDir = path.join('tmp/archives', options.archiveName)
 
   let writingPkgs = promisifyVinyl(
-    src('**', { cwd: bundleDistDir, base: bundleDistDir }).pipe(
+    src('**/*.+(js|css)', { cwd: options.bundleDir, base: options.bundleDir }).pipe(
       dest(path.join(tmpDir, 'lib'))
     )
   )
