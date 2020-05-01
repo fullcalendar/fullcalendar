@@ -9,13 +9,12 @@
   },
   "peerDependencies": {
     "@fullcalendar/common": "5.0.0-beta.2",
-    "moment": "^2.24.0",
+    "moment": "2.24.0",
     "moment-timezone": "^0.5.25"
   },
   "devDependencies": {
-    "@types/moment": "^2.13.0",
     "@fullcalendar/common": "5.0.0-beta.2",
-    "moment": "^2.24.0",
+    "moment": "2.24.0",
     "moment-timezone": "^0.5.25"
   },
   "module": "main.js",

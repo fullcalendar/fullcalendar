@@ -10,7 +10,6 @@
       "scripthost"
     ],
     "incremental": true,
-    "allowSyntheticDefaultImports": true,
     "noUnusedLocals": true,
     "noImplicitUseStrict": true,
     "importHelpers": true,
