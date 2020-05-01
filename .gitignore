@@ -13,11 +13,7 @@
 
 # continued in packages-premium/.gitignore
 
-
-# npm
 node_modules
-npm-debug.log
-package-lock.json
 
 # sometimes rollup-plugin-dts outputs these temp files when circ dependency
 /*.d.ts
