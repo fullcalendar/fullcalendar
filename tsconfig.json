@@ -50,7 +50,7 @@
     "outDir": "tmp/tsc-output"
   },
   "include": [
-    "packages*/*/src/**/main.ts",
+    "packages*/*/src/main.ts",
     "packages*/__tests__/src/**/*",
     "packages/core/src/locales/*"
   ],
