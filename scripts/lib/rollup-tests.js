@@ -57,7 +57,7 @@ function buildConfig(options) {
           if (isRelPath(id)) {
             let m = id.match(/(packages-contrib\/.*)$/)
             if (m) {
-              return { id: m[1].replace('/src/', '/dist/') + '.js' }
+              return { id: m[1].replace('/src/', '/dist/') + '.js' } // @fullcalendar/react has a dist dir
             }
           }
 

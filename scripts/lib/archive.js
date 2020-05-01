@@ -128,7 +128,7 @@ function writeExampleHtmlAndVendor(exampleHtmlFiles, tmpDir) {
   function transformResourcePath(resourcePath) {
 
     resourcePath = resourcePath.replace(
-      /^\.\.\/packages(-premium)?\/bundle\/dist\b/,
+      /^\.\.\/packages(-premium)?\/bundle\b/,
       '../lib'
     )
 

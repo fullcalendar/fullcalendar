@@ -19,7 +19,7 @@ ONLY checks two things:
 */
 function lintBuiltJs() {
   return src([
-    'package?(-premium)/*/dist/**/*.js',
+    'package?(-premium)/*/*.js',
     '!**/*.esm.js', // ESM has non-browser syntax. doing only the UMD is sufficient
     '!**/*.min.js'
   ])
