@@ -3,7 +3,7 @@ const path = require('path')
 const glob = require('glob')
 const cleanup = require('rollup-plugin-cleanup')
 const sourcemaps = require('rollup-plugin-sourcemaps')
-const replace = require('rollup-plugin-replace')
+const replace = require('@rollup/plugin-replace')
 const handleBars = require('handlebars')
 const rootPkgJsonData = require('../../package.json')
 

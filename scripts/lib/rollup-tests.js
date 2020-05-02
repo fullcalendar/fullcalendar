@@ -1,12 +1,12 @@
 const path = require('path')
 const glob = require('glob')
-const nodeResolve = require('rollup-plugin-node-resolve')
-const alias = require('rollup-plugin-alias')
-const commonjs = require('rollup-plugin-commonjs')
+const nodeResolve = require('@rollup/plugin-node-resolve')
+const alias = require('@rollup/plugin-alias')
+const commonjs = require('@rollup/plugin-commonjs')
 const sourcemaps = require('rollup-plugin-sourcemaps')
 const postCss = require('rollup-plugin-postcss')
 const { WATCH_OPTIONS, onwarn, isStylePath, isRelPath } = require('./rollup-util')
-const replace = require('rollup-plugin-replace')
+const replace = require('@rollup/plugin-replace')
 const react = require('react')
 const reactDom = require('react-dom')
 
@@ -72,22 +72,23 @@ function buildConfig(options) {
         }
       },
       alias({ // needs to go before node-resolve/commonjs so that alias resolution takes precedence
+        entries: {
+          // the alias to the non-premium tests. must be absolute
+          'standard-tests': path.join(process.cwd(), 'tmp/tsc-output/packages/__tests__'),
+          'premium-tests': path.join(process.cwd(), 'tmp/tsc-output/packages-premium/__tests__'),
 
-        // the alias to the non-premium tests. must be absolute
-        'standard-tests': path.join(process.cwd(), 'tmp/tsc-output/packages/__tests__'),
-        'premium-tests': path.join(process.cwd(), 'tmp/tsc-output/packages-premium/__tests__'),
+          // despite using rollup/node for compilation, we want to bundle builds that runs in a real browser
+          // also for HACK below
+          'xhr-mock': path.join(process.cwd(), './node_modules/xhr-mock/dist/xhr-mock.js'),
+          'luxon': path.join(process.cwd(), 'node_modules/luxon/build/cjs-browser/luxon.js'),
 
-        // despite using rollup/node for compilation, we want to bundle builds that runs in a real browser
-        // also for HACK below
-        'xhr-mock': path.join(process.cwd(), './node_modules/xhr-mock/dist/xhr-mock.js'),
-        'luxon': path.join(process.cwd(), 'node_modules/luxon/build/cjs-browser/luxon.js'),
-
-        // HACK
-        // because the monorepo-tool doesn't support hoisting, it's likely we'll get multiple version of 3rd party packages.
-        // explicitly map some references to top-level packages.
-        'moment/locale/es': path.join(process.cwd(), 'node_modules/moment/locale/es.js'), // needs to go before moment
-        'moment': path.join(process.cwd(), 'node_modules/moment/moment.js'),
-        'moment-timezone/builds/moment-timezone-with-data': path.join(process.cwd(), 'node_modules/moment-timezone/builds/moment-timezone-with-data.js'),
+          // HACK
+          // because the monorepo-tool doesn't support hoisting, it's likely we'll get multiple version of 3rd party packages.
+          // explicitly map some references to top-level packages.
+          'moment/locale/es': path.join(process.cwd(), 'node_modules/moment/locale/es.js'), // needs to go before moment
+          'moment': path.join(process.cwd(), 'node_modules/moment/moment.js'),
+          'moment-timezone/builds/moment-timezone-with-data': path.join(process.cwd(), 'node_modules/moment-timezone/builds/moment-timezone-with-data.js'),
+        }
       }),
       nodeResolve({
         customResolveOptions: {

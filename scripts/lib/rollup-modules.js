@@ -1,5 +1,5 @@
 const path = require('path')
-const nodeResolve = require('rollup-plugin-node-resolve')
+const nodeResolve = require('@rollup/plugin-node-resolve')
 const { renderBanner, isRelPath, isNamedPkg, isScssPath, TEMPLATE_PLUGIN, SOURCEMAP_PLUGINS, WATCH_OPTIONS, onwarn } = require('./rollup-util')
 const { pkgStructs } = require('./pkg-struct')
 const { copyFile } = require('./util')

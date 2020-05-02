@@ -1,12 +1,12 @@
 const path = require('path')
 const glob = require('glob')
-const commonjs = require('rollup-plugin-commonjs')
-const nodeResolve = require('rollup-plugin-node-resolve')
+const commonjs = require('@rollup/plugin-commonjs')
+const nodeResolve = require('@rollup/plugin-node-resolve')
 const postCss = require('rollup-plugin-postcss')
 const { renderBanner, isRelPath, isNamedPkg, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, onwarn, isScssPath } = require('./rollup-util')
 const { pkgStructs, pkgStructHash, getCorePkgStruct, getNonPremiumBundle } = require('./pkg-struct')
-const alias = require('rollup-plugin-alias')
-const replace = require('rollup-plugin-replace')
+const alias = require('@rollup/plugin-alias')
+const replace = require('@rollup/plugin-replace')
 const react = require('react')
 const reactDom = require('react-dom')
 
@@ -51,7 +51,9 @@ function buildBundleConfig(pkgStruct, isDev) {
       sourcemap: isDev
     },
     plugins: [
-      alias(buildAliasMap()),
+      alias({
+        entries: buildAliasMap()
+      }),
       nodeResolve(), // for requiring tslib. TODO: whitelist?
       commonjs({
         // this react(-dom) hack is also in rollup-tests.js
@@ -122,23 +124,16 @@ function buildNonBundleConfig(pkgStruct, bundleDistDir, isDev) {
       sourcemap: isDev
     },
     plugins: [
-      // if we don't provide this whitelist, all external packages get resolved and included :(
-      nodeResolve({ only: [ 'tslib' ] }),
-      TEMPLATE_PLUGIN,
-      ...(isDev ? SOURCEMAP_PLUGINS : []),
       {
-        // use the resolvedId hook to rename the import of @fullcalendar/common -> fullcalendar.
-        // otherwise, we could have used the exernals config option all the way.
-        // nodeResolve seems to take precedence (thus the tslib hack). PUT THIS FIRST?s
         resolveId(id) {
           if (id === inputFile) { return inputFile }
-          if (id === 'tslib') { return { id, external: false } }
-          // TODO: shouldn't this be 'fullcalendar-scheduler' in some cases?
-          if (id === '@fullcalendar/common') { return { id: 'fullcalendar', external: true } }
-          if (isNamedPkg(id)) { return { id, external: true } }
-          return null
+          if (id === '@fullcalendar/common') { return { id: 'fullcalendar', external: true } } // TODO: shouldn't this be 'fullcalendar-scheduler' in some cases?
+          if (isNamedPkg(id) && id !== 'tslib') { return { id, external: true } }
         }
-      }
+      },
+      nodeResolve(),
+      TEMPLATE_PLUGIN,
+      ...(isDev ? SOURCEMAP_PLUGINS : [])
     ],
     watch: WATCH_OPTIONS,
     onwarn
@@ -184,7 +179,6 @@ function buildLocalesAllConfig() {
 
 
 // TODO: use elsewhere
-// NOTE: can't use `entries` because rollup-plugin-alias is an old version
 function buildAliasMap() {
   let map = {}
 
