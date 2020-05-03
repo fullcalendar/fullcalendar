@@ -39,7 +39,7 @@ export default class Toolbar {
       el.append(this.renderSection('left'))
         .append(this.renderSection('right'))
         .append(this.renderSection('center'))
-        .append('<div class="fc-clear"/>')
+        .append('<div class="fc-clear"></div>')
     } else {
       this.removeElement()
     }

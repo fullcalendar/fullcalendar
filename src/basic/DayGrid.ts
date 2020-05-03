@@ -230,7 +230,7 @@ export default class DayGrid extends InteractiveDateComponent {
 
     if (!isDayNumberVisible && !this.cellWeekNumbersVisible) {
       // no numbers in day cell (week number must be along the side)
-      return '<td/>' //  will create an empty space above events :(
+      return '<td></td>' //  will create an empty space above events :(
     }
 
     classes = this.getDayClasses(date)
@@ -702,7 +702,7 @@ export default class DayGrid extends InteractiveDateComponent {
         '<span class="fc-title">' +
           htmlEscape(title) +
         '</span>' +
-        '<div class="fc-clear"/>' +
+        '<div class="fc-clear"></div>' +
       '</div>' +
       '<div class="fc-body ' + theme.getClass('popoverContent') + '">' +
         '<div class="fc-event-container"></div>' +

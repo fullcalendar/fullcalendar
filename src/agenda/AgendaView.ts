@@ -131,8 +131,8 @@ export default class AgendaView extends View {
           '<tr>' +
             '<td class="' + theme.getClass('widgetContent') + '">' +
               (this.dayGrid ?
-                '<div class="fc-day-grid"/>' +
-                '<hr class="fc-divider ' + theme.getClass('widgetHeader') + '"/>' :
+                '<div class="fc-day-grid"></div>' +
+                '<hr class="fc-divider ' + theme.getClass('widgetHeader') + '"></hr>' :
                 ''
                 ) +
             '</td>' +
