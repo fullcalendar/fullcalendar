@@ -40,7 +40,7 @@ module.exports = function() {
           // vdom is in a separate file.
           // also, (p)react gets imported because tsc traces ambient declaration to (p)react package. reference from vdom module.
           if (id.match(/vdom$/) || id.match(/^p?react$/)) {
-            return { id: './vdom', external: true }
+            return { id: './vdom', external: true, moduleSideEffects: true }
           }
 
           // sometimes tsc writes .d.ts files weird when there are implicit imports. imports from the publicly-named root of own package.

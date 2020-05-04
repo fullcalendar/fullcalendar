@@ -24,12 +24,18 @@
     "url": "http://arshaw.com/"
   },
   "copyright": "2019 Adam Shaw",
-  "workspaces": [
-    "packages/*",
-    "packages-premium/*",
-    "packages-contrib/*",
-    "example-projects/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "packages-premium/*",
+      "packages-contrib/*",
+      "example-projects/*"
+    ],
+    "nohoist": [
+      "**/codelyzer",
+      "**/karma-sourcemap-loader"
+    ]
+  },
   "scripts": {
     "postinstall": "./scripts/postinstall.sh",
     "build": "gulp build",

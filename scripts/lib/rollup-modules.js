@@ -31,22 +31,26 @@ module.exports = function(isDev) {
 
 function buildPkgConfig(pkgStruct, isDev) {
   let banner = renderBanner(pkgStruct.jsonObj)
+  let input = path.join('tmp/tsc-output', pkgStruct.srcDir, 'main.js')
 
   return {
-    input: path.join('tmp/tsc-output', pkgStruct.srcDir, 'main.js'),
+    input,
     output: {
       file: path.join(pkgStruct.dir, 'main.js'),
       format: 'esm',
       banner,
       sourcemap: isDev
     },
-    external(id) {
-      return isNamedPkg(id)
-    },
     plugins: [
       {
         resolveId(id, source) {
-          if (id.match(/vdom$/) && source.match('packages/core')) {
+          if (id === input) {
+            return null
+          }
+          else if (id.match(/vdom$/) && source.match('packages/core')) {
+            return { id, external: true, moduleSideEffects: true }
+          }
+          else if (isNamedPkg(id)) {
             return { id, external: true }
           }
         }
