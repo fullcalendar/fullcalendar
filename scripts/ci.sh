@@ -5,7 +5,7 @@ cd "`dirname $0`/.." # always start in project root
 
 npm run clean
 npm run build
-# npm run test:ci
+npm run test:ci
 # npm run lint # for v5!!!
 
 ./scripts/packages-contrib-ci.js
