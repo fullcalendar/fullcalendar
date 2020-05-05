@@ -109,7 +109,7 @@
     "shelljs": "^0.8.3",
     "tslint": "^5.16.0",
     "tslint-config-standard": "^8.0.1",
-    "typescript": "^3.8.3",
+    "typescript": "~3.8.3",
     "xhr-mock": "^2.5.1",
     "yarn": "1.18.0"
   }

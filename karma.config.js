@@ -32,7 +32,7 @@ module.exports = function(config) {
       'node_modules/jasmine-jquery/lib/jasmine-jquery.js', // weird this/root reference confuses rollup
 
       'tmp/tests-compiled/config.js', // a way to dump variables into the test environment
-      'tmp/tests-compiled/main.js',
+      { pattern: 'tmp/tests-compiled/main.js', nocache: true },
       { pattern: 'tmp/tests-compiled/main.css', watched: false  }, // let the JS cause the refresh
       { pattern: 'tmp/tests-compiled/*.map', included: false, nocache: true, watched: false }
     ],

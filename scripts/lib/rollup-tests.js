@@ -88,6 +88,9 @@ function buildConfig(options) {
           'moment/locale/es': path.join(process.cwd(), 'node_modules/moment/locale/es.js'), // needs to go before moment
           'moment': path.join(process.cwd(), 'node_modules/moment/moment.js'),
           'moment-timezone/builds/moment-timezone-with-data': path.join(process.cwd(), 'node_modules/moment-timezone/builds/moment-timezone-with-data.js'),
+
+          // the default esm version of rrule has a weird dynamic import that rollup chokes on. use the umd version
+          'rrule': path.join(process.cwd(), 'node_modules/rrule/dist/es5/rrule.js')
         }
       }),
       nodeResolve({
@@ -99,7 +102,8 @@ function buildConfig(options) {
         // for react(-dom) hack, ALSO IN rollup-bundle.js
         namedExports: {
           'react': Object.keys(react),
-          'react-dom': Object.keys(reactDom)
+          'react-dom': Object.keys(reactDom),
+          'rrule': [ 'RRule', 'rrulestr' ]
         }
       }),
       replace({ // for react. also in rollup-tests.js
