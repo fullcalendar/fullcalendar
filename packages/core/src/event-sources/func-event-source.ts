@@ -3,12 +3,16 @@ import { EventSourceError, EventSourceDef } from '../structs/event-source'
 import { EventInput } from '../structs/event'
 import { createPlugin } from '../plugin-system'
 
+export interface FetchInfo {
+  start: Date
+  end: Date
+  startStr: string
+  endStr: string
+  timeZone: string
+}
+
 export type EventSourceFunc = (
-  arg: {
-    start: Date
-    end: Date
-    timeZone: string
-  },
+  arg: FetchInfo,
   successCallback: (events: EventInput[]) => void,
   failureCallback: (error: EventSourceError) => void
 ) => (void | PromiseLike<EventInput[]>)
