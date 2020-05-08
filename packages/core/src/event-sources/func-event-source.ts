@@ -12,7 +12,7 @@ export interface FetchInfo {
 }
 
 export type EventSourceFunc = (
-  arg: FetchInfo,
+  fetchInfo: FetchInfo,
   successCallback: (events: EventInput[]) => void,
   failureCallback: (error: EventSourceError) => void
 ) => (void | PromiseLike<EventInput[]>)
