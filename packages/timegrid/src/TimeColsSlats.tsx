@@ -17,7 +17,9 @@ import {
   DateEnv,
   ViewContextType,
   RenderHook,
-  DateProfile
+  DateProfile,
+  SlotLabelHookProps,
+  SlotLaneHookProps
 } from '@fullcalendar/common'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
@@ -138,16 +140,18 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
 
   render() {
     let { props, context } = this
+    let { options } = context
     let { slatElRefs } = props
 
     return (
       <tbody>
         {props.slatMetas.map((slatMeta, i) => {
-          let hookProps = {
+          let hookProps: SlotLaneHookProps = {
             time: slatMeta.time,
             date: context.dateEnv.toDate(slatMeta.date),
             view: context.viewApi
           }
+
           let classNames = [
             'fc-timegrid-slot',
             'fc-timegrid-slot-lane',
@@ -162,7 +166,13 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
               {props.axis &&
                 <TimeColsAxisCell {...slatMeta} />
               }
-              <RenderHook name='slotLane' hookProps={hookProps}>
+              <RenderHook
+                hookProps={hookProps}
+                classNames={options.slotLaneClassNames}
+                content={options.slotLaneContent}
+                didMount={options.slotLaneDidMount}
+                willUnmount={options.slotLaneWillUnmount}
+              >
                 {(rootElRef, customClassNames, innerElRef, innerContent) => (
                   <td
                     ref={rootElRef}
@@ -181,12 +191,12 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
 }
 
 
-const DEFAULT_SLAT_LABEL_FORMAT = {
+const DEFAULT_SLAT_LABEL_FORMAT = createFormatter({
   hour: 'numeric',
   minute: '2-digit',
   omitZeroMinute: true,
   meridiem: 'short'
-}
+})
 
 export function TimeColsAxisCell(props: TimeSlatMeta) {
   let classNames = [
@@ -206,8 +216,8 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
 
         } else {
           let { dateEnv, options, viewApi } = context
-          let labelFormat = createFormatter(options.slotLabelFormat || DEFAULT_SLAT_LABEL_FORMAT) // TODO: optimize!!!
-          let hookProps = {
+          let labelFormat = options.slotLabelFormat || DEFAULT_SLAT_LABEL_FORMAT
+          let hookProps: SlotLabelHookProps = {
             time: props.time,
             date: dateEnv.toDate(props.date),
             view: viewApi,
@@ -215,7 +225,14 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
           }
 
           return (
-            <RenderHook name='slotLabel' hookProps={hookProps} defaultContent={renderInnerContent}>
+            <RenderHook<SlotLabelHookProps> // needed?
+              hookProps={hookProps}
+              classNames={options.slotLabelClassNames}
+              content={options.slotLabelContent}
+              defaultContent={renderInnerContent}
+              didMount={options.slotLabelDidMount}
+              willUnmount={options.slotLabelWillUnmount}
+            >
               {(rootElRef, customClassNames, innerElRef, innerContent) => (
                 <td ref={rootElRef} className={classNames.concat(customClassNames).join(' ')} data-time={props.isoTimeStr}>
                   <div className='fc-timegrid-slot-label-frame fc-scrollgrid-shrink-frame'>
@@ -247,11 +264,11 @@ export interface TimeSlatMeta {
   isLabeled: boolean
 }
 
-export function buildSlatMetas(slotMinTime: Duration, slotMaxTime: Duration, labelIntervalInput, slotDuration: Duration, dateEnv: DateEnv) {
+export function buildSlatMetas(slotMinTime: Duration, slotMaxTime: Duration, explicitLabelInterval: Duration | null, slotDuration: Duration, dateEnv: DateEnv) {
   let dayStart = new Date(0)
   let slatTime = slotMinTime
   let slatIterator = createDuration(0)
-  let labelInterval = getLabelInterval(labelIntervalInput, slotDuration)
+  let labelInterval = explicitLabelInterval || computeLabelInterval(slotDuration)
   let metas: TimeSlatMeta[] = []
 
   while (asRoughMs(slatTime) < asRoughMs(slotMaxTime)) {
@@ -271,20 +288,6 @@ export function buildSlatMetas(slotMinTime: Duration, slotMaxTime: Duration, lab
   }
 
   return metas
-}
-
-
-function getLabelInterval(optionInput, slotDuration: Duration) {
-
-  // might be an array value (for TimelineView).
-  // if so, getting the most granular entry (the last one probably).
-  if (Array.isArray(optionInput)) {
-    optionInput = optionInput[optionInput.length - 1]
-  }
-
-  return optionInput ?
-    createDuration(optionInput) :
-    computeLabelInterval(slotDuration)
 }
 
 

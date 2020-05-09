@@ -1,4 +1,4 @@
-import { buildLocale, RawLocaleInfo, organizeRawLocales } from '../datelib/locale'
+import { buildLocale, RawLocaleInfo, organizeRawLocales, LocaleSingularArg } from '../datelib/locale'
 import { memoize, memoizeObjArg } from '../util/memoize'
 import { Action } from './Action'
 import { buildPluginHooks } from '../plugin-system'
@@ -7,7 +7,7 @@ import { DateEnv } from '../datelib/env'
 import { CalendarApi } from '../CalendarApi'
 import { StandardTheme } from '../theme/StandardTheme'
 import { EventSourceHash } from '../structs/event-source'
-import { buildViewSpecs } from '../structs/view-spec'
+import { buildViewSpecs, ViewSpec } from '../structs/view-spec'
 import { mapHash, isPropsEqual } from '../util/object'
 import { DateProfileGenerator, DateProfileGeneratorProps } from '../DateProfileGenerator'
 import { reduceViewType } from './view-type'
@@ -21,18 +21,16 @@ import { reduceSelectedEvent } from './selected-event'
 import { reduceEventDrag } from './event-drag'
 import { reduceEventResize } from './event-resize'
 import { Emitter } from '../common/Emitter'
-import { processScopedUiProps, EventUiHash, EventUi } from '../component/event-ui'
+import { EventUiHash, EventUi, processUiProps } from '../component/event-ui'
 import { EventDefHash } from '../structs/event-def'
 import { parseToolbars } from '../toolbar-parse'
-import { firstDefined } from '../util/misc'
-import { globalDefaults, mergeOptions } from '../options'
+import { RefinedCalendarOptions, RefinedBaseOptions, RawCalendarOptions, CALENDAR_OPTION_REFINERS, RawViewOptions, RefinedViewOptions, RAW_BASE_DEFAULTS, mergeRawOptions } from '../options'
 import { rangeContainsMarker } from '../datelib/date-range'
 import { ViewApi } from '../ViewApi'
 import { parseBusinessHours } from '../structs/business-hours'
 import { globalPlugins } from '../global-plugins'
 import { createEmptyEventStore } from '../structs/event-store'
 import { CalendarContext } from '../CalendarContext'
-import { buildComputedOptions } from '../ComputedOptions'
 import { CalendarDataManagerState, CalendarOptionsData, CalendarCurrentViewData, CalendarData } from './data-types'
 import { __assign } from 'tslib'
 import { TaskRunner } from '../util/runner'
@@ -40,7 +38,7 @@ import { buildTitle } from './title-formatting'
 
 
 export interface CalendarDataManagerProps {
-  optionOverrides: any
+  optionOverrides: RawCalendarOptions
   calendarApi: CalendarApi
   onAction?: (action: Action) => void
   onData?: (data: CalendarData) => void
@@ -62,16 +60,12 @@ export class CalendarDataManager {
   private computeOptionsData = memoize(this._computeOptionsData)
   private computeCurrentViewData = memoize(this._computeCurrentViewData)
   private organizeRawLocales = memoize(organizeRawLocales)
-  private buildCalendarOptions = memoize(mergeOptionSets)
-  private buildComputedCalendarOptions = memoize(buildComputedOptions)
   private buildLocale = memoize(buildLocale)
   private buildPluginHooks = memoize(buildPluginHooks)
   private buildDateEnv = memoize(buildDateEnv)
   private buildTheme = memoize(buildTheme)
   private parseToolbars = memoize(parseToolbars)
   private buildViewSpecs = memoize(buildViewSpecs)
-  private buildViewOptions = memoize(mergeOptionSets)
-  private buildComputedViewOptions = memoize(buildComputedOptions)
   private buildDateProfileGenerator = memoizeObjArg(buildDateProfileGenerator)
   private buildViewApi = memoize(buildViewApi)
   private buildViewUiProps = memoizeObjArg(buildViewUiProps)
@@ -80,18 +74,23 @@ export class CalendarDataManager {
   private parseContextBusinessHours = memoizeObjArg(parseContextBusinessHours)
   private buildTitle = memoize(buildTitle)
 
-  public emitter = new Emitter()
+  public emitter = new Emitter<RefinedCalendarOptions>()
   private actionRunner = new TaskRunner(this._handleAction.bind(this), this.updateData.bind(this))
   private props: CalendarDataManagerProps
   private state: CalendarDataManagerState
   private data: CalendarData
+
+  public currentRawCalendarOptions: RawCalendarOptions = {}
+  private currentRefinedCalendarOptions: RefinedCalendarOptions = ({} as any)
+  private currentRawViewOptions: RawViewOptions = {}
+  private currentRefinedViewOptions: RefinedViewOptions = ({} as any)
 
 
   constructor(props: CalendarDataManagerProps) {
     this.props = props
     this.actionRunner.pause()
 
-    let dynamicOptionOverrides = {}
+    let dynamicOptionOverrides: RawCalendarOptions = {}
     let optionsData = this.computeOptionsData(
       props.optionOverrides,
       dynamicOptionOverrides,
@@ -100,8 +99,8 @@ export class CalendarDataManager {
 
     let currentViewType = optionsData.calendarOptions.initialView || optionsData.pluginHooks.initialView
     let currentViewData = this.computeCurrentViewData(
-      optionsData,
       currentViewType,
+      optionsData,
       props.optionOverrides,
       dynamicOptionOverrides
     )
@@ -122,7 +121,6 @@ export class CalendarDataManager {
     let calendarContext: CalendarContext = {
       dateEnv: optionsData.dateEnv,
       options: optionsData.calendarOptions,
-      computedOptions: optionsData.computedCalendarOptions,
       pluginHooks: optionsData.pluginHooks,
       calendarApi: props.calendarApi,
       dispatch: this.dispatch,
@@ -176,7 +174,7 @@ export class CalendarDataManager {
   }
 
 
-  resetOptions(optionOverrides, append?: boolean) {
+  resetOptions(optionOverrides: RawCalendarOptions, append?: boolean) {
     let { props } = this
 
     props.optionOverrides = append
@@ -201,8 +199,8 @@ export class CalendarDataManager {
 
     let currentViewType = reduceViewType(state.currentViewType, action)
     let currentViewData = this.computeCurrentViewData(
-      optionsData,
       currentViewType,
+      optionsData,
       props.optionOverrides,
       dynamicOptionOverrides
     )
@@ -216,7 +214,6 @@ export class CalendarDataManager {
     let calendarContext: CalendarContext = {
       dateEnv: optionsData.dateEnv,
       options: optionsData.calendarOptions,
-      computedOptions: optionsData.computedCalendarOptions,
       pluginHooks: optionsData.pluginHooks,
       calendarApi: props.calendarApi,
       dispatch: this.dispatch,
@@ -302,8 +299,8 @@ export class CalendarDataManager {
     )
 
     let currentViewData = this.computeCurrentViewData(
-      optionsData,
       state.currentViewType,
+      optionsData,
       props.optionOverrides,
       state.dynamicOptionOverrides
     )
@@ -343,117 +340,203 @@ export class CalendarDataManager {
   }
 
 
-  _computeOptionsData(optionOverrides, dynamicOptionOverrides, calendarApi: CalendarApi): CalendarOptionsData {
+  _computeOptionsData(optionOverrides: Partial<RefinedCalendarOptions>, dynamicOptionOverrides: Partial<RefinedCalendarOptions>, calendarApi: CalendarApi): CalendarOptionsData {
     // TODO: blacklist options that are handled by optionChangeHandlers
 
-    let locales = firstDefined( // explicit locale option given?
-      dynamicOptionOverrides.locales,
-      optionOverrides.locales,
-      globalDefaults.locales
-    )
-    let locale = firstDefined( // explicit locales option given?
-      dynamicOptionOverrides.locale,
-      optionOverrides.locale,
-      globalDefaults.locale
-    )
+    let {
+      refinedOptions, pluginHooks, localeDefaults, availableLocaleData, refiners, extra
+    } = this.processRawCalendarOptions(optionOverrides, dynamicOptionOverrides)
 
-    let availableLocaleData = this.organizeRawLocales(locales)
-    let availableRawLocales = availableLocaleData.map
-    let localeDefaults = this.buildLocale(locale || availableLocaleData.defaultCode, availableRawLocales).options
-    let calendarOptions = this.buildCalendarOptions( // NOTE: use viewOptions mostly instead
-      globalDefaults,
-      localeDefaults,
-      optionOverrides,
-      dynamicOptionOverrides
-    )
+    warnUnknownOptions(extra)
 
-    let pluginHooks = this.buildPluginHooks(calendarOptions.plugins, globalPlugins)
     let dateEnv = this.buildDateEnv(
-      calendarOptions.timeZone,
-      calendarOptions.locale,
-      calendarOptions.weekNumberCalculation,
-      calendarOptions.firstDay,
-      calendarOptions.weekText,
+      refinedOptions.timeZone,
+      refinedOptions.locale,
+      refinedOptions.weekNumberCalculation,
+      refinedOptions.firstDay,
+      refinedOptions.weekText,
       pluginHooks,
-      availableLocaleData
+      availableLocaleData,
+      refinedOptions.defaultRangeSeparator
     )
 
     let viewSpecs = this.buildViewSpecs(pluginHooks.views, optionOverrides, dynamicOptionOverrides, localeDefaults)
-    let theme = this.buildTheme(calendarOptions, pluginHooks)
-    let toolbarConfig = this.parseToolbars(calendarOptions, optionOverrides, theme, viewSpecs, calendarApi)
-    let computedCalendarOptions = this.buildComputedCalendarOptions(calendarOptions)
+    let theme = this.buildTheme(refinedOptions, pluginHooks)
+    let toolbarConfig = this.parseToolbars(refinedOptions, optionOverrides, theme, viewSpecs, calendarApi)
 
     return {
-      calendarOptions,
-      computedCalendarOptions,
-      availableRawLocales,
+      calendarOptions: refinedOptions,
       pluginHooks,
       dateEnv,
       viewSpecs,
       theme,
       toolbarConfig,
-      localeDefaults
+      localeDefaults,
+      refiners,
+      availableRawLocales: availableLocaleData.map
     }
   }
 
 
-  _computeCurrentViewData(optionsData: CalendarOptionsData, currentViewType: string, optionOverrides, dynamicOptionOverrides): CalendarCurrentViewData {
-    let viewSpec = optionsData.viewSpecs[currentViewType]
+  // always called from behind a memoizer
+  processRawCalendarOptions(optionOverrides: RawCalendarOptions, dynamicOptionOverrides: RawCalendarOptions) {
+    let { locales, locale } = mergeRawOptions([
+      RAW_BASE_DEFAULTS,
+      optionOverrides,
+      dynamicOptionOverrides
+    ])
+    let availableLocaleData = this.organizeRawLocales(locales)
+    let availableRawLocales = availableLocaleData.map
+    let localeDefaults = this.buildLocale(locale || availableLocaleData.defaultCode, availableRawLocales).options
+    let pluginHooks = this.buildPluginHooks(optionOverrides.plugins || [], globalPlugins)
+    let refiners = { ...CALENDAR_OPTION_REFINERS, ...pluginHooks.optionRefiners }
+    let extra = {}
 
-    if (!viewSpec) {
-      throw new Error(`viewType "${currentViewType}" is not available. Please make sure you've loaded all neccessary plugins`)
+    let raw = mergeRawOptions([
+      RAW_BASE_DEFAULTS,
+      localeDefaults,
+      optionOverrides,
+      dynamicOptionOverrides
+    ])
+    let refined: Partial<RefinedCalendarOptions> = {}
+    let currentRaw = this.currentRawCalendarOptions
+    let currentRefined = this.currentRefinedCalendarOptions
+    let anyChanges = false
+
+    for (let optionName in raw) {
+
+      if (raw[optionName] === currentRaw[optionName]) {
+        refined[optionName] = currentRefined[optionName]
+
+      } else if (refiners[optionName]) {
+        refined[optionName] = refiners[optionName](raw[optionName])
+        anyChanges = true
+
+      } else {
+        extra[optionName] = currentRaw[optionName]
+      }
     }
 
-    let options = this.buildViewOptions( // merge defaults and overrides. lowest to highest precedence
-      globalDefaults,
-      viewSpec.optionDefaults,
+    if (anyChanges) {
+      this.currentRawCalendarOptions = raw
+      this.currentRefinedCalendarOptions = refined as RefinedCalendarOptions
+    }
+
+    return {
+      rawOptions: this.currentRawCalendarOptions,
+      refinedOptions: this.currentRefinedCalendarOptions,
+      refiners,
+      pluginHooks,
+      availableLocaleData,
+      localeDefaults,
+      extra
+    }
+  }
+
+
+  _computeCurrentViewData(viewType: string, optionsData: CalendarOptionsData, optionOverrides: Partial<RefinedBaseOptions>, dynamicOptionOverrides: Partial<RefinedBaseOptions>): CalendarCurrentViewData {
+    let viewSpec = optionsData.viewSpecs[viewType]
+
+    if (!viewSpec) {
+      throw new Error(`viewType "${viewType}" is not available. Please make sure you've loaded all neccessary plugins`)
+    }
+
+    let { refinedOptions, extra } = this.processRawViewOptions(
+      viewSpec,
+      optionsData.refiners,
       optionsData.localeDefaults,
       optionOverrides,
-      viewSpec.optionOverrides,
       dynamicOptionOverrides
     )
 
-    let computedOptions = this.buildComputedViewOptions(options)
+    warnUnknownOptions(extra)
 
     let dateProfileGenerator = this.buildDateProfileGenerator({
       viewSpec,
       dateEnv: optionsData.dateEnv,
-      slotMinTime: options.slotMinTime,
-      slotMaxTime: options.slotMaxTime,
-      showNonCurrentDates: options.showNonCurrentDates,
-      dayCount: options.dayCount,
-      dateAlignment: options.dateAlignment,
-      dateIncrement: options.dateIncrement,
-      hiddenDays: options.hiddenDays,
-      weekends: options.weekends,
-      now: options.now,
-      validRange: options.validRange,
-      visibleRange: options.visibleRange,
-      monthMode: options.monthMode,
-      fixedWeekCount: options.fixedWeekCount
+      slotMinTime: refinedOptions.slotMinTime,
+      slotMaxTime: refinedOptions.slotMaxTime,
+      showNonCurrentDates: refinedOptions.showNonCurrentDates,
+      dayCount: refinedOptions.dayCount,
+      dateAlignment: refinedOptions.dateAlignment,
+      dateIncrement: refinedOptions.dateIncrement,
+      hiddenDays: refinedOptions.hiddenDays,
+      weekends: refinedOptions.weekends,
+      nowInput: refinedOptions.now,
+      validRangeInput: refinedOptions.validRange,
+      visibleRangeInput: refinedOptions.visibleRange,
+      monthMode: refinedOptions.monthMode,
+      fixedWeekCount: refinedOptions.fixedWeekCount
     })
 
-    let viewApi = this.buildViewApi(currentViewType, this.getCurrentData, optionsData.dateEnv)
+    let viewApi = this.buildViewApi(viewType, this.getCurrentData, optionsData.dateEnv)
 
-    return { viewSpec, options, computedOptions, dateProfileGenerator, viewApi }
+    return { viewSpec, options: refinedOptions, dateProfileGenerator, viewApi }
   }
 
-}
 
+  processRawViewOptions(viewSpec: ViewSpec, refiners, localeDefaults: RawCalendarOptions, optionOverrides: RawCalendarOptions, dynamicOptionOverrides: RawCalendarOptions) {
+    let raw = mergeRawOptions([
+      RAW_BASE_DEFAULTS,
+      viewSpec.optionDefaults,
+      localeDefaults,
+      optionOverrides,
+      viewSpec.optionOverrides,
+      dynamicOptionOverrides
+    ])
+    let refined: Partial<RefinedViewOptions> = {}
+    let currentRaw = this.currentRawViewOptions
+    let currentRefined = this.currentRefinedViewOptions
+    let anyChanges = false
+    let extra = {}
 
-function mergeOptionSets(...optionSets: any[]) {
-  return mergeOptions(optionSets)
+    for (let optionName in raw) {
+
+      if (raw[optionName] === currentRaw[optionName]) {
+        refined[optionName] = currentRefined[optionName]
+
+      } else {
+        if (raw[optionName] === this.currentRawCalendarOptions[optionName]) {
+
+          if (optionName in this.currentRefinedCalendarOptions) {  // might be an "extra" prop
+            refined[optionName] = this.currentRefinedCalendarOptions[optionName]
+          }
+
+        } else if (refiners[optionName]) {
+          refined[optionName] = refiners[optionName](raw[optionName])
+
+        } else {
+          extra[optionName] = raw[optionName]
+        }
+
+        anyChanges = true
+      }
+    }
+
+    if (anyChanges) {
+      this.currentRawViewOptions = raw
+      this.currentRefinedViewOptions = refined as RefinedViewOptions
+    }
+
+    return {
+      rawOptions: this.currentRawViewOptions,
+      refinedOptions: this.currentRefinedViewOptions,
+      extra
+    }
+  }
+
 }
 
 
 function buildDateEnv(
   timeZone: string,
-  explicitLocale: string,
+  explicitLocale: LocaleSingularArg,
   weekNumberCalculation,
   firstDay,
   weekText,
   pluginHooks: PluginHooks,
-  availableLocaleData: RawLocaleInfo
+  availableLocaleData: RawLocaleInfo,
+  defaultSeparator: string
 ) {
   let locale = buildLocale(explicitLocale || availableLocaleData.defaultCode, availableLocaleData.map)
 
@@ -465,15 +548,16 @@ function buildDateEnv(
     weekNumberCalculation,
     firstDay,
     weekText,
-    cmdFormatter: pluginHooks.cmdFormatter
+    cmdFormatter: pluginHooks.cmdFormatter,
+    defaultSeparator
   })
 }
 
 
-function buildTheme(optionOverrides, pluginHooks: PluginHooks) {
-  let ThemeClass = pluginHooks.themeClasses[optionOverrides.themeSystem] || StandardTheme
+function buildTheme(options: RefinedCalendarOptions, pluginHooks: PluginHooks) {
+  let ThemeClass = pluginHooks.themeClasses[options.themeSystem] || StandardTheme
 
-  return new ThemeClass(optionOverrides)
+  return new ThemeClass(options)
 }
 
 
@@ -512,13 +596,42 @@ function buildEventUiBases(eventDefs: EventDefHash, eventUiSingleBase: EventUi, 
 
 
 function buildViewUiProps(calendarContext: CalendarContext) {
+  let { options } = calendarContext
+
   return {
-    eventUiSingleBase: processScopedUiProps('event', calendarContext.options, calendarContext),
-    selectionConfig: processScopedUiProps('select', calendarContext.options, calendarContext)
+    eventUiSingleBase: processUiProps({
+      display: options.eventDisplay,
+      editable: options.editable, // without "event" at start
+      startEditable: options.eventStartEditable,
+      durationEditable: options.eventDurationEditable,
+      constraint: options.eventConstraint,
+      // overlap: options.eventOverlap, // validation system uses this directly, b/c might be a func
+      allow: options.eventAllow,
+      backgroundColor: options.eventBackgroundColor,
+      borderColor: options.eventBorderColor,
+      textColor: options.eventTextColor,
+      // classNames: options.eventClassNames // render hook will handle this
+    }, calendarContext),
+
+    selectionConfig: processUiProps({
+      constraint: options.selectConstraint,
+      // overlap: options.selectOverlap, // validation system uses this directly, b/c might be a func
+      allow: options.selectAllow
+    }, calendarContext)
   }
 }
 
 
 function parseContextBusinessHours(calendarContext: CalendarContext) {
   return parseBusinessHours(calendarContext.options.businessHours, calendarContext)
+}
+
+
+function warnUnknownOptions(options: any, viewName?: string) {
+  for (let optionName in options) {
+    console.warn(
+      `Unknown option '${optionName}'` +
+      (viewName ? ` (in '${viewName}' view)` : '')
+    )
+  }
 }

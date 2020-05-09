@@ -1,23 +1,27 @@
 import { Ref, ComponentChildren, h } from '../vdom'
 import { DateMarker } from '../datelib/marker'
 import { DateRange } from '../datelib/date-range'
-import { ViewContext } from '../ViewContext'
 import { getDateMeta, getDayClassNames, DateMeta } from '../component/date-rendering'
 import { createFormatter } from '../datelib/formatting'
 import { formatDayString } from '../datelib/formatting-utils'
-import { buildHookClassNameGenerator, MountHook, ContentHook } from './render-hook'
+import { buildClassNameNormalizer, MountHook, ContentHook } from './render-hook'
 import { ViewApi } from '../ViewApi'
 import { BaseComponent } from '../vdom-util'
 import { DateProfile } from '../DateProfileGenerator'
+import { memoizeObjArg } from '../util/memoize'
+import { DateEnv } from '../datelib/env'
 
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 
-interface DayCellHookPropOrigin {
+interface RawDayCellHookProps {
   date: DateMarker // generic
   dateProfile: DateProfile
   todayRange: DateRange
+  dateEnv: DateEnv
+  viewApi: ViewApi
   showDayNumber?: boolean // defaults to false
+  extraProps?: object // so can include a resource
 }
 
 export interface DayCellHookProps extends DateMeta {
@@ -45,27 +49,27 @@ export interface DayCellRootProps {
 
 export class DayCellRoot extends BaseComponent<DayCellRootProps> {
 
-  buildClassNames = buildHookClassNameGenerator<DayCellHookProps>('dayCell')
+  refineHookProps = memoizeObjArg(refineHookProps)
+  normalizeClassNames = buildClassNameNormalizer<DayCellHookProps>()
 
 
   render() {
     let { props, context } = this
-
-    let hookPropsOrigin: DayCellHookPropOrigin = {
+    let { options } = context
+    let hookProps = this.refineHookProps({
       date: props.date,
       dateProfile: props.dateProfile,
       todayRange: props.todayRange,
-      showDayNumber: props.showDayNumber
-    }
-    let hookProps = { // it's weird to rely on this internally so much (isDisabled)
-      ...massageHooksProps(hookPropsOrigin, context),
-      ...props.extraHookProps
-    }
+      showDayNumber: props.showDayNumber,
+      extraProps: props.extraHookProps,
+      viewApi: context.viewApi,
+      dateEnv: context.dateEnv
+    })
 
     let classNames = getDayClassNames(hookProps, context.theme).concat(
       hookProps.isDisabled
-        ? [] // don't use custom classNames if disalbed
-        : this.buildClassNames(hookProps, context, null, hookPropsOrigin) // cacheBuster=hookPropsOrigin
+        ? [] // don't use custom classNames if disabled
+        : this.normalizeClassNames(options.dayCellClassNames, hookProps)
     )
 
     let dataAttrs = hookProps.isDisabled ? {} : {
@@ -73,7 +77,12 @@ export class DayCellRoot extends BaseComponent<DayCellRootProps> {
     }
 
     return (
-      <MountHook name='dayCell' hookProps={hookProps} elRef={props.elRef}>
+      <MountHook
+        hookProps={hookProps}
+        didMount={options.dayCellDidMount}
+        willUnmount={options.dayCellWillUnmount}
+        elRef={props.elRef}
+      >
         {(rootElRef) => props.children(rootElRef, classNames, dataAttrs, hookProps.isDisabled)}
       </MountHook>
     )
@@ -99,20 +108,23 @@ export class DayCellContent extends BaseComponent<DayCellContentProps> {
 
   render() {
     let { props, context } = this
-
-    let hookPropsOrigin: DayCellHookPropOrigin = {
+    let { options } = context
+    let hookProps = refineHookProps({
       date: props.date,
       dateProfile: props.dateProfile,
       todayRange: props.todayRange,
-      showDayNumber: props.showDayNumber
-    }
-    let hookProps = {
-      ...massageHooksProps(hookPropsOrigin, context),
-      ...props.extraHookProps
-    }
+      showDayNumber: props.showDayNumber,
+      extraProps: props.extraHookProps,
+      viewApi: context.viewApi,
+      dateEnv: context.dateEnv
+    })
 
     return (
-      <ContentHook name='dayCell' hookProps={hookProps} defaultContent={props.defaultContent}>
+      <ContentHook
+        hookProps={hookProps}
+        content={options.dayCellContent}
+        defaultContent={props.defaultContent}
+      >
         {props.children}
       </ContentHook>
     )
@@ -121,15 +133,15 @@ export class DayCellContent extends BaseComponent<DayCellContentProps> {
 }
 
 
-function massageHooksProps(input: DayCellHookPropOrigin, context: ViewContext): DayCellHookProps {
-  let { dateEnv } = context
-  let { date } = input
-  let dayMeta = getDateMeta(date, input.todayRange, null, input.dateProfile)
+function refineHookProps(raw: RawDayCellHookProps): DayCellHookProps {
+  let { date, dateEnv } = raw
+  let dayMeta = getDateMeta(date, raw.todayRange, null, raw.dateProfile)
 
   return {
     date: dateEnv.toDate(date),
-    view: context.viewApi,
+    view: raw.viewApi,
     ...dayMeta,
-    dayNumberText: input.showDayNumber ? dateEnv.format(date, DAY_NUM_FORMAT) : ''
+    dayNumberText: raw.showDayNumber ? dateEnv.format(date, DAY_NUM_FORMAT) : '',
+    ...raw.extraProps
   }
 }

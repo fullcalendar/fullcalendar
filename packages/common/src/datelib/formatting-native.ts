@@ -99,7 +99,7 @@ export class NativeFormatter implements DateFormatter {
     let partial1 = partialFormattingFunc(end)
 
     let insertion = findCommonInsertion(full0, partial0, full1, partial1)
-    let separator = extendedSettings.separator || ''
+    let separator = extendedSettings.separator || context.defaultSeparator || ''
 
     if (insertion) {
       return insertion.before + partial0 + separator + partial1 + insertion.after
@@ -289,7 +289,7 @@ function formatWeekNumber(num: number, weekText: string, locale: Locale, display
 
   parts.push(locale.simpleNumberFormat.format(num))
 
-  if (locale.options.isRtl) { // TODO: use control characters instead?
+  if (locale.options.direction === 'rtl') { // TODO: use control characters instead?
     parts.reverse()
   }
 

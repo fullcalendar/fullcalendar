@@ -32,7 +32,7 @@ BootstrapTheme.prototype.rtlIconClasses = {
   nextYear: 'fa-angle-double-left'
 }
 
-BootstrapTheme.prototype.iconOverrideOption = 'bootstrapFontAwesome'
+BootstrapTheme.prototype.iconOverrideOption = 'bootstrapFontAwesome' // TODO: make TS-friendly. move the option-processing into this plugin
 BootstrapTheme.prototype.iconOverrideCustomButtonOption = 'bootstrapFontAwesome'
 BootstrapTheme.prototype.iconOverridePrefix = 'fa-'
 

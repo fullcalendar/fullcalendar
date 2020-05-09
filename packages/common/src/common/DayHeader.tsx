@@ -1,6 +1,5 @@
 import { BaseComponent } from '../vdom-util'
 import { DateMarker } from '../datelib/marker'
-import { createFormatter } from '../datelib/formatting'
 import { computeFallbackHeaderFormat } from './table-utils'
 import { VNode, h } from '../vdom'
 import { TableDateCell, TableDowCell } from './TableDateCell'
@@ -8,6 +7,7 @@ import { NowTimer } from '../NowTimer'
 import { DateRange } from '../datelib/date-range'
 import { memoize } from '../util/memoize'
 import { DateProfile } from '../DateProfileGenerator'
+import { DateFormatter } from '../datelib/DateFormatter'
 
 
 export interface DayHeaderProps {
@@ -61,9 +61,6 @@ export class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: rename t
 }
 
 
-function createDayHeaderFormatter(input, datesRepDistinctDays, dateCnt) {
-  return createFormatter(
-    input ||
-    computeFallbackHeaderFormat(datesRepDistinctDays, dateCnt)
-  )
+function createDayHeaderFormatter(explicitFormat: DateFormatter, datesRepDistinctDays, dateCnt) {
+  return explicitFormat || computeFallbackHeaderFormat(datesRepDistinctDays, dateCnt)
 }

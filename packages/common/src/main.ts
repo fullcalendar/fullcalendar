@@ -6,7 +6,6 @@ import './main.scss'
 export const version: string = '<%= version %>' // important to type it, so .d.ts has generic string
 
 // types
-export { OptionsInput } from './types/input-types'
 export { EventDef, EventDefHash } from './structs/event-def'
 export { EventInstance, EventInstanceHash, createEventInstance } from './structs/event-instance'
 export { EventInput, parseEventDef, EventTuple } from './structs/event-parse'
@@ -16,7 +15,6 @@ export {
   applyAll,
   padStart,
   isInt,
-  capitaliseFirstLetter,
   parseFieldSpecs,
   compareByFieldSpecs,
   compareByFieldSpec,
@@ -40,7 +38,7 @@ export {
   isArraysEqual
 } from './util/array'
 
-export { memoize, memoizeArraylike, memoizeHashlike } from './util/memoize'
+export { memoize, memoizeObjArg, memoizeArraylike, memoizeHashlike } from './util/memoize'
 
 export {
   intersectRects,
@@ -64,7 +62,7 @@ export {
 } from './util/dom-manip'
 
 export { EventStore, filterEventStoreDefs, createEmptyEventStore, mergeEventStores, getRelevantEvents, eventTupleToStore } from './structs/event-store'
-export { EventUiHash, EventUi, processScopedUiProps, combineEventUis } from './component/event-ui'
+export { EventUiHash, EventUi, EVENT_SCOPED_RAW_UI_PROPS, processUiProps, combineEventUis } from './component/event-ui'
 export { Splitter, SplittableProps } from './component/event-splitting'
 export { getDayClassNames, getDateMeta, DateMeta, getSlotClassNames } from './component/date-rendering'
 export { buildNavLinkData } from './common/nav-link'
@@ -115,6 +113,7 @@ export { DateEnv, DateMarkerMeta } from './datelib/env'
 
 export {
   createFormatter,
+  FormatterInput
 } from './datelib/formatting'
 export {
   DateFormatter,
@@ -140,7 +139,14 @@ export { ElementDragging } from './interactions/ElementDragging'
 
 export { formatDate, formatRange } from './formatting-api'
 
-export { globalDefaults, config } from './options'
+export {
+  RAW_BASE_DEFAULTS, identity, Identity, DayHeaderHookProps,
+  SlotLaneHookProps, SlotLabelHookProps, AllDayHookProps,
+  BaseOptionRefiners, RawBaseOptions, RefinedBaseOptions,
+  CalendarOptionRefiners, RawCalendarOptions, RefinedCalendarOptions,
+  ViewOptionRefiners, RawViewOptions, RefinedViewOptions
+} from './options'
+export { config } from './global-config'
 
 export { RecurringType, ParsedRecurring } from './structs/recurring-event'
 
@@ -154,7 +160,7 @@ export { CalendarContentProps, CalendarContent, computeCalendarClassNames, compu
 
 export { DayHeader } from './common/DayHeader'
 export { computeFallbackHeaderFormat } from './common/table-utils'
-export { TableDateCell, TableDowCell, DateHeaderCellHookProps } from './common/TableDateCell'
+export { TableDateCell, TableDowCell } from './common/TableDateCell'
 
 export { DaySeriesModel } from './common/DaySeriesModel'
 
@@ -203,7 +209,10 @@ export { getIsRtlScrollbarOnLeft } from './util/scrollbar-side'
 export { NowTimer } from './NowTimer'
 export { ScrollResponder, ScrollRequest } from './ScrollResponder'
 export { globalPlugins } from './global-plugins'
-export { RenderHook, RenderHookProps, RenderHookPropsChildren, MountHook, MountHookProps, buildHookClassNameGenerator, ContentHook, CustomContentRenderContext } from './common/render-hook'
+export {
+  RenderHook, RenderHookProps, RenderHookPropsChildren, MountHook, MountHookProps, buildClassNameNormalizer, ContentHook, CustomContentRenderContext,
+  ClassNameGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler
+} from './common/render-hook'
 export { StandardEvent, StandardEventProps } from './common/StandardEvent'
 export { NowIndicatorRoot, NowIndicatorRootProps } from './common/NowIndicatorRoot'
 

@@ -183,7 +183,7 @@ export class Table extends DateComponent<TableProps, TableState> {
   handleMoreLinkClick = (arg: MoreLinkArg) => { // TODO: bad names "more link click" versus "more click"
     let { context } = this
     let { dateEnv } = context
-    let clickOption = context.options.moreLinkClick
+    let clickOption = context.options.moreLinkClick || 'popover' // TODO: define the default elsewhere
 
     function segForPublic(seg: TableSeg) {
       let { def, instance, range } = seg.eventRange

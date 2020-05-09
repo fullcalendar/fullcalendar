@@ -1,10 +1,11 @@
 import { ViewProps } from '../View'
-import { refineProps } from '../util/misc'
 import { mapHash } from '../util/object'
 import { ComponentType, Component, h } from '../vdom'
 import { ViewRoot } from '../common/ViewRoot'
 import { RenderHook } from '../common/render-hook'
 import { ViewContext, ViewContextType } from '../ViewContext'
+import { RawViewOptions } from '../options'
+import { Duration } from '../datelib/duration'
 
 /*
 A view-config represents information for either:
@@ -15,19 +16,13 @@ B) options to customize an existing view, in which case only provides options.
 export type ViewComponent = Component<ViewProps> // an instance
 export type ViewComponentType = ComponentType<ViewProps>
 
-export interface ViewConfigObjectInput { // not strict enough. will basically allow for anything :(
-  type?: string
-  component?: ViewComponentType
-  [optionName: string]: any
-}
-
-export type ViewConfigInput = ViewComponentType | ViewConfigObjectInput
+export type ViewConfigInput = ViewComponentType | RawViewOptions
 export type ViewConfigInputHash = { [viewType: string]: ViewConfigInput }
 
 export interface ViewConfig {
   superType: string
   component: ViewComponentType | null
-  options: any
+  rawOptions: RawViewOptions
 }
 
 export type ViewConfigHash = { [viewType: string]: ViewConfig }
@@ -38,43 +33,51 @@ export function parseViewConfigs(inputs: ViewConfigInputHash): ViewConfigHash {
 }
 
 
-const VIEW_DEF_PROPS = {
-  type: String,
-  component: null
-}
-
 function parseViewConfig(input: ViewConfigInput): ViewConfig {
-  if (typeof input === 'function') {
-    input = { component: input }
-  }
+  let rawOptions: RawViewOptions = typeof input === 'function' ?
+    { component: input } :
+    input
+  let component = rawOptions.component
 
-  let options = {} as any
-  let props = refineProps(input, VIEW_DEF_PROPS, {}, options)
-  let component = props.component
-
-  if (options.content) {
-    component = createViewHookComponent(options)
+  if (rawOptions.content) {
+    component = createViewHookComponent(rawOptions)
     // TODO: remove content/classNames/didMount/etc from options?
   }
 
   return {
-    superType: props.type,
+    superType: rawOptions.type,
     component,
-    options
+    rawOptions // includes type and component too :(
   }
 }
 
 
-function createViewHookComponent(options) {
+export interface ViewHookProps extends ViewProps {
+  nextDayThreshold: Duration
+}
+
+
+function createViewHookComponent(options: RawViewOptions) {
   return function(viewProps: ViewProps) {
     return (
       <ViewContextType.Consumer>
         {(context: ViewContext) => (
           <ViewRoot viewSpec={context.viewSpec}>
             {(rootElRef, viewClassNames) => {
-              let hookProps = { ...viewProps, nextDayThreshold: context.computedOptions.nextDayThreshold }
+              let hookProps: ViewHookProps = {
+                ...viewProps,
+                nextDayThreshold: context.options.nextDayThreshold
+              }
+
               return (
-                <RenderHook name='' options={options} hookProps={hookProps} elRef={rootElRef}>
+                <RenderHook
+                  hookProps={hookProps}
+                  classNames={options.classNames}
+                  content={options.content}
+                  didMount={options.didMount}
+                  willUnmount={options.willUnmount}
+                  elRef={rootElRef}
+                >
                   {(rootElRef, customClassNames, innerElRef, innerContent) => (
                     <div className={viewClassNames.concat(customClassNames).join(' ')} ref={rootElRef}>
                       {innerContent}

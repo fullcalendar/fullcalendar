@@ -1,7 +1,7 @@
 import { ViewDef, compileViewDefs } from './view-def'
 import { Duration, createDuration, greatestDurationDenominator, getWeeksFromInput } from '../datelib/duration'
 import { mapHash } from '../util/object'
-import { globalDefaults } from '../options'
+import { RawViewOptions, RawCalendarOptions, RAW_BASE_DEFAULTS } from '../options'
 import { ViewConfigInputHash, parseViewConfigs, ViewConfigHash, ViewComponentType } from './view-config'
 
 /*
@@ -18,8 +18,8 @@ export interface ViewSpec {
   duration: Duration
   durationUnit: string
   singleUnit: string
-  optionDefaults: any
-  optionOverrides: any
+  optionDefaults: RawViewOptions
+  optionOverrides: RawViewOptions
   buttonTextOverride: string
   buttonTextDefault: string
 }
@@ -27,7 +27,7 @@ export interface ViewSpec {
 export type ViewSpecHash = { [viewType: string]: ViewSpec }
 
 
-export function buildViewSpecs(defaultInputs: ViewConfigInputHash, optionOverrides, dynamicOptionOverrides, localeDefaults): ViewSpecHash {
+export function buildViewSpecs(defaultInputs: ViewConfigInputHash, optionOverrides: RawCalendarOptions, dynamicOptionOverrides: RawCalendarOptions, localeDefaults): ViewSpecHash {
   let defaultConfigs = parseViewConfigs(defaultInputs)
   let overrideConfigs = parseViewConfigs(optionOverrides.views)
   let viewDefs = compileViewDefs(defaultConfigs, overrideConfigs)
@@ -38,7 +38,7 @@ export function buildViewSpecs(defaultInputs: ViewConfigInputHash, optionOverrid
 }
 
 
-function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, optionOverrides, dynamicOptionOverrides, localeDefaults): ViewSpec {
+function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, optionOverrides: RawCalendarOptions, dynamicOptionOverrides: RawCalendarOptions, localeDefaults): ViewSpec {
   let durationInput =
     viewDef.overrides.duration ||
     viewDef.defaults.duration ||
@@ -48,7 +48,7 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
   let duration = null
   let durationUnit = ''
   let singleUnit = ''
-  let singleUnitOverrides = {}
+  let singleUnitOverrides: RawViewOptions = {}
 
   if (durationInput) {
     duration = createDuration(durationInput)
@@ -63,7 +63,7 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
 
       if (denom.value === 1) {
         singleUnit = durationUnit
-        singleUnitOverrides = overrideConfigs[durationUnit] ? overrideConfigs[durationUnit].options : {}
+        singleUnitOverrides = overrideConfigs[durationUnit] ? overrideConfigs[durationUnit].rawOptions : {}
       }
     }
   }
@@ -102,7 +102,7 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
     buttonTextDefault:
       queryButtonText(localeDefaults) ||
       viewDef.defaults.buttonText ||
-      queryButtonText(globalDefaults) ||
+      queryButtonText(RAW_BASE_DEFAULTS) ||
       viewDef.type // fall back to given view name
   }
 }

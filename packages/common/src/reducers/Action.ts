@@ -9,7 +9,7 @@ import { DateSpan } from '../structs/date-span'
 import { DateMarker } from '../datelib/marker'
 
 export type Action =
-  { type: 'SET_OPTION', optionName: string, optionValue: any } |
+  { type: 'SET_OPTION', optionName: string, rawOptionValue: any } | // TODO: how to link this to RawCalendarOptions?
 
   { type: 'PREV' } |
   { type: 'NEXT' } |

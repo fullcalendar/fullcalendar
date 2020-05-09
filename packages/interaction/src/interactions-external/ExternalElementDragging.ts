@@ -192,6 +192,7 @@ export class ExternalElementDragging {
 
     if (typeof dropAccept === 'function') {
       return dropAccept(el)
+
     } else if (typeof dropAccept === 'string' && dropAccept) {
       return Boolean(elementMatches(el, dropAccept))
     }

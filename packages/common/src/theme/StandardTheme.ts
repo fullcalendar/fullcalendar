@@ -25,6 +25,6 @@ StandardTheme.prototype.rtlIconClasses = {
   nextYear: 'fc-icon-chevrons-left'
 }
 
-StandardTheme.prototype.iconOverrideOption = 'buttonIcons'
+StandardTheme.prototype.iconOverrideOption = 'buttonIcons' // TODO: make TS-friendly
 StandardTheme.prototype.iconOverrideCustomButtonOption = 'icon'
 StandardTheme.prototype.iconOverridePrefix = 'fc-icon-'

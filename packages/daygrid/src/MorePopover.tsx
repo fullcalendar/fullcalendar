@@ -1,4 +1,4 @@
-import { DateComponent, DateMarker, h, EventInstanceHash, createFormatter, Hit, addDays, DateRange, getSegMeta, DayCellRoot, DayCellContent, DateProfile } from '@fullcalendar/common'
+import { DateComponent, DateMarker, h, EventInstanceHash, Hit, addDays, DateRange, getSegMeta, DayCellRoot, DayCellContent, DateProfile } from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
 import { TableBlockEvent } from './TableBlockEvent'
 import { TableListItemEvent } from './TableListItemEvent'
@@ -28,7 +28,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
     let { options, dateEnv } = this.context
     let { props } = this
     let { date, hiddenInstances, todayRange, dateProfile, selectedInstanceId } = props
-    let title = dateEnv.format(date, createFormatter(options.dayPopoverFormat)) // TODO: cache formatter
+    let title = dateEnv.format(date, options.dayPopoverFormat)
 
     return (
       <DayCellRoot date={date} dateProfile={dateProfile} todayRange={todayRange} elRef={this.handlePopoverEl}>

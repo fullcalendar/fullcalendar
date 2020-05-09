@@ -30,7 +30,7 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
   constructor(props: NowTimerProps, context: ViewContext) {
     super(props, context)
 
-    this.initialNowDate = getNow(context.options, context.dateEnv)
+    this.initialNowDate = getNow(context.options.now, context.dateEnv)
     this.initialNowQueriedMs = new Date().valueOf()
 
     this.state = this.computeTiming().currentState

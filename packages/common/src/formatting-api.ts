@@ -1,7 +1,7 @@
 import { DateEnv, DateInput } from './datelib/env'
 import { createFormatter } from './datelib/formatting'
 import { organizeRawLocales, buildLocale } from './datelib/locale'
-import { globalDefaults } from './options'
+import { RAW_BASE_DEFAULTS } from './options'
 
 export function formatDate(dateInput: DateInput, settings = {}) {
   let dateEnv = buildDateEnv(settings)
@@ -23,7 +23,7 @@ export function formatRange(
   settings // mixture of env and formatter settings
 ) {
   let dateEnv = buildDateEnv(typeof settings === 'object' && settings ? settings : {}) // pass in if non-null object
-  let formatter = createFormatter(settings, globalDefaults.defaultRangeSeparator)
+  let formatter = createFormatter(settings, RAW_BASE_DEFAULTS.defaultRangeSeparator)
   let startMeta = dateEnv.createMarkerMeta(startInput)
   let endMeta = dateEnv.createMarkerMeta(endInput)
 
@@ -44,7 +44,7 @@ function buildDateEnv(settings) {
 
   // ensure required settings
   settings = {
-    timeZone: globalDefaults.timeZone,
+    timeZone: RAW_BASE_DEFAULTS.timeZone,
     calendarSystem: 'gregory',
     ...settings,
     locale

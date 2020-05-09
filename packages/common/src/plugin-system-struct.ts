@@ -22,6 +22,7 @@ import { ElementDraggingClass } from './interactions/ElementDragging'
 import { ComponentChildren } from './vdom'
 import { ScrollGridImpl } from './scrollgrid/ScrollGridImpl'
 import { ContentTypeHandlers } from './common/render-hook'
+import { GenericRefiners } from './options'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -54,6 +55,7 @@ export interface PluginDefInput {
   optionChangeHandlers?: OptionChangeHandlerMap
   scrollGridImpl?: ScrollGridImpl
   contentTypeHandlers?: ContentTypeHandlers
+  optionRefiners?: GenericRefiners
 }
 
 export interface PluginHooks {
@@ -84,6 +86,7 @@ export interface PluginHooks {
   optionChangeHandlers: OptionChangeHandlerMap
   scrollGridImpl: ScrollGridImpl | null
   contentTypeHandlers: ContentTypeHandlers
+  optionRefiners: GenericRefiners
 }
 
 export interface PluginDef extends PluginHooks {

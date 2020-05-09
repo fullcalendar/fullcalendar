@@ -18,6 +18,7 @@ import { triggerDateSelect, triggerDateUnselect } from './calendar-utils'
 import { CalendarDataManager } from './reducers/CalendarDataManager'
 import { Action } from './reducers/Action'
 import { EventSource } from './structs/event-source'
+import { RawCalendarOptions, CalendarListeners } from './options'
 
 
 export class CalendarApi {
@@ -49,17 +50,17 @@ export class CalendarApi {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  setOption(name: string, val) {
+  setOption<OptionName extends keyof RawCalendarOptions>(name: OptionName, val: RawCalendarOptions[OptionName]) {
     this.dispatch({
       type: 'SET_OPTION',
       optionName: name,
-      optionValue: val
+      rawOptionValue: val
     })
   }
 
 
-  getOption(name: string) { // getter, used externally
-    return this.getCurrentData().calendarOptions[name]
+  getOption(name: keyof RawCalendarOptions) { // getter, used externally
+    return this.currentDataManager!.currentRawCalendarOptions[name]
   }
 
 
@@ -72,17 +73,17 @@ export class CalendarApi {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  on(handlerName: string, handler) {
+  on<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, handler: CalendarListeners[ListenerName]) {
     this.currentDataManager!.emitter.on(handlerName, handler)
   }
 
 
-  off(handlerName: string, handler) {
+  off<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, handler: CalendarListeners[ListenerName]) {
     this.currentDataManager!.emitter.off(handlerName, handler)
   }
 
 
-  protected trigger(handlerName, ...args) {
+  protected trigger<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, ...args: Parameters<CalendarListeners[ListenerName]>) {
     this.currentDataManager!.emitter.trigger(handlerName, ...args)
   }
 
@@ -105,7 +106,7 @@ export class CalendarApi {
           this.dispatch({ // not very efficient to do two dispatches
             type: 'SET_OPTION',
             optionName: 'visibleRange',
-            optionValue: dateOrRange
+            rawOptionValue: dateOrRange
           })
 
         } else {
@@ -222,7 +223,7 @@ export class CalendarApi {
     this.unselect()
     this.dispatch({
       type: 'CHANGE_DATE',
-      dateMarker: getNow(state.calendarOptions, state.dateEnv)
+      dateMarker: getNow(state.calendarOptions.now, state.dateEnv)
     })
   }
 

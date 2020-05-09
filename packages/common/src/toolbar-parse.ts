@@ -2,6 +2,7 @@ import { ViewSpec, ViewSpecHash } from './structs/view-spec'
 import { Theme } from './theme/Theme'
 import { mapHash } from './util/object'
 import { CalendarApi } from './CalendarApi'
+import { RefinedCalendarOptions } from './options'
 
 export interface ToolbarModel {
   [sectionName: string]: ToolbarWidget[][]
@@ -14,11 +15,18 @@ export interface ToolbarWidget {
   buttonText?: any
 }
 
+export interface ToolbarInput {
+  left?: string
+  center?: string
+  right?: string
+  start?: string
+  end?: string
+}
 
-// TODO: make separate parsing of headerToolbar/footerToolbar part of options-processing system
+
 export function parseToolbars(
-  calendarOptions: any,
-  calendarOptionOverrides: any,
+  calendarOptions: RefinedCalendarOptions,
+  calendarOptionOverrides: Partial<RefinedCalendarOptions>,
   theme: Theme,
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi
@@ -32,15 +40,18 @@ export function parseToolbars(
 
 
 function parseToolbar(
-  sectionStrHash: { [sectionName: string]: string },
-  calendarOptions: any,
-  calendarOptionOverrides: any,
+  sectionStrHash: ToolbarInput,
+  calendarOptions: RefinedCalendarOptions,
+  calendarOptionOverrides: Partial<RefinedCalendarOptions>,
   theme: Theme,
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi,
   viewsWithButtons: string[] // dump side effects
 ) : ToolbarModel {
-  return mapHash(sectionStrHash, (sectionStr) => parseSection(sectionStr, calendarOptions, calendarOptionOverrides, theme, viewSpecs, calendarApi, viewsWithButtons))
+  return mapHash(
+    sectionStrHash as { [section: string]: string },
+    (sectionStr) => parseSection(sectionStr, calendarOptions, calendarOptionOverrides, theme, viewSpecs, calendarApi, viewsWithButtons)
+  )
 }
 
 
@@ -49,8 +60,8 @@ BAD: querying icons and text here. should be done at render time
 */
 function parseSection(
   sectionStr: string,
-  calendarOptions: any,
-  calendarOptionOverrides: any,
+  calendarOptions: RefinedCalendarOptions,
+  calendarOptionOverrides: Partial<RefinedCalendarOptions>,
   theme: Theme,
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi,

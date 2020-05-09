@@ -1,5 +1,5 @@
 import { DateEnv } from './datelib/env'
-import { ComputedOptions } from './ComputedOptions'
+import { RefinedBaseOptions } from './options'
 import { PluginHooks } from './plugin-system-struct'
 import { Emitter } from './common/Emitter'
 import { Action } from './reducers/Action'
@@ -8,8 +8,7 @@ import { CalendarData } from './reducers/data-types'
 
 export interface CalendarContext {
   dateEnv: DateEnv
-  options: any
-  computedOptions: ComputedOptions
+  options: RefinedBaseOptions // does not have calendar-specific properties. aims to be compatible with RefinedViewOptions
   pluginHooks: PluginHooks
   emitter: Emitter
   dispatch(action: Action): void

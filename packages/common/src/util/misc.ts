@@ -141,11 +141,6 @@ export function flexibleCompare(a, b) {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 
-export function capitaliseFirstLetter(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
-
-
 export function padStart(val, len) { // doesn't work with total length more than 3
   let s = String(val)
   return '000'.substr(0, len - s.length) + s
@@ -198,10 +193,11 @@ export function firstDefined(...args) {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 
-export type GenericHash = { [key: string]: any }
+export type GenericHash = { [key: string]: any } // already did this somewhere
 
 // Number and Boolean are only types that defaults or not computed for
 // TODO: write more comments
+// TODO: will kill
 export function refineProps(rawProps: GenericHash, processors: GenericHash, defaults: GenericHash = {}, leftoverProps?: GenericHash): GenericHash {
   let refined: GenericHash = {}
 

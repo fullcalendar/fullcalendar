@@ -3,6 +3,7 @@ import { TimeColsView } from './TimeColsView'
 import { DayTimeColsView, buildTimeColsModel } from './DayTimeColsView'
 import { TimeColsSeg } from './TimeColsSeg'
 import { DayTimeCols, DayTimeColsSlicer, buildDayRanges } from './DayTimeCols'
+import { OPTION_REFINERS } from './options'
 import './main.scss'
 
 export { DayTimeCols, DayTimeColsView, TimeColsView, buildTimeColsModel, buildDayRanges, DayTimeColsSlicer, TimeColsSeg }
@@ -12,6 +13,7 @@ export { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
 export default createPlugin({
   initialView: 'timeGridWeek',
+  optionRefiners: OPTION_REFINERS,
   views: {
 
     timeGrid: {

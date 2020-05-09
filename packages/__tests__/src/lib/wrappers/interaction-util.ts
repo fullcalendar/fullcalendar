@@ -3,7 +3,7 @@ import { Calendar } from '@fullcalendar/core'
 
 export function waitEventDrag(calendar: Calendar, dragging: Promise<any>) {
   return new Promise<any>((resolve) => {
-    let modifiedEvent = false
+    let modifiedEvent: any = false
 
     calendar.on('eventDrop', function(arg) {
       modifiedEvent = arg.event
@@ -24,7 +24,7 @@ export function waitEventDrag(calendar: Calendar, dragging: Promise<any>) {
 
 export function waitEventDrag2(calendar: Calendar, dragging: Promise<any>) {
   return new Promise<any>((resolve) => {
-    let theArg = false
+    let theArg: any = false
 
     calendar.on('eventDrop', function(arg) {
       theArg = arg
@@ -45,7 +45,7 @@ export function waitEventDrag2(calendar: Calendar, dragging: Promise<any>) {
 
 export function waitEventResize(calendar: Calendar, dragging: Promise<any>) {
   return new Promise<any>((resolve) => {
-    let modifiedEvent = false
+    let modifiedEvent: any = false
 
     calendar.on('eventResize', function(arg) {
       modifiedEvent = arg.event
@@ -62,7 +62,7 @@ export function waitEventResize(calendar: Calendar, dragging: Promise<any>) {
 
 export function waitEventResize2(calendar: Calendar, dragging: Promise<any>) {
   return new Promise<any>((resolve) => {
-    let theArg = false
+    let theArg: any = false
 
     calendar.on('eventResize', function(arg) {
       theArg = arg

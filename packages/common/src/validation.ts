@@ -98,8 +98,8 @@ function isInteractionPropsValid(state: SplittableProps, context: CalendarContex
 
     // overlap
 
-    let overlapFunc = context.options.eventOverlap
-    if (typeof overlapFunc !== 'function') { overlapFunc = null }
+    let { eventOverlap } = context.options
+    let eventOverlapFunc = typeof eventOverlap === 'function' ? eventOverlap : null
 
     for (let otherInstanceId in otherInstances) {
       let otherInstance = otherInstances[otherInstanceId]
@@ -117,7 +117,7 @@ function isInteractionPropsValid(state: SplittableProps, context: CalendarContex
           return false
         }
 
-        if (overlapFunc && !overlapFunc(
+        if (eventOverlapFunc && !eventOverlapFunc(
           new EventApi(context, otherDefs[otherInstance.defId], otherInstance), // still event
           new EventApi(context, subjectDef, subjectInstance) // moving event
         )) {
@@ -186,8 +186,8 @@ function isDateSelectionPropsValid(state: SplittableProps, context: CalendarCont
 
   // overlap
 
-  let overlapFunc = context.options.selectOverlap
-  if (typeof overlapFunc !== 'function') { overlapFunc = null }
+  let { selectOverlap } = context.options
+  let selectOverlapFunc = typeof selectOverlap === 'function' ? selectOverlap : null
 
   for (let relevantInstanceId in relevantInstances) {
     let relevantInstance = relevantInstances[relevantInstanceId]
@@ -199,8 +199,9 @@ function isDateSelectionPropsValid(state: SplittableProps, context: CalendarCont
         return false
       }
 
-      if (overlapFunc && !overlapFunc(
-        new EventApi(context, relevantDefs[relevantInstance.defId], relevantInstance)
+      if (selectOverlapFunc && !selectOverlapFunc(
+        new EventApi(context, relevantDefs[relevantInstance.defId], relevantInstance),
+        null
       )) {
         return false
       }

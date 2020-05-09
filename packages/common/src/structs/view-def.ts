@@ -1,4 +1,5 @@
 import { ViewConfigHash, ViewComponentType } from './view-config'
+import { RawViewOptions } from '../options'
 
 /*
 Represents information for an instantiatable View class along with settings
@@ -7,8 +8,8 @@ that are specific to that view. No other settings, like calendar-wide settings, 
 export interface ViewDef {
   type: string
   component: ViewComponentType
-  overrides: any
-  defaults: any
+  overrides: RawViewOptions
+  defaults: RawViewOptions
 }
 
 export type ViewDefHash = { [viewType: string]: ViewDef }
@@ -77,11 +78,11 @@ function buildViewDef(viewType: string, hash: ViewDefHash, defaultConfigs: ViewC
     component: theComponent,
     defaults: {
       ...(superDef ? superDef.defaults : {}),
-      ...(defaultConfig ? defaultConfig.options : {})
+      ...(defaultConfig ? defaultConfig.rawOptions : {})
     },
     overrides: {
       ...(superDef ? superDef.overrides : {}),
-      ...(overrideConfig ? overrideConfig.options : {})
+      ...(overrideConfig ? overrideConfig.rawOptions : {})
     }
   }
 }

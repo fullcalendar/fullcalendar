@@ -22,6 +22,7 @@ export interface DateEnvSettings {
   firstDay?: any,
   weekText?: string,
   cmdFormatter?: CmdFormatterFunc
+  defaultSeparator?: string
 }
 
 export type DateInput = Date | string | number | number[]
@@ -46,6 +47,7 @@ export class DateEnv {
   weekNumberFunc: any
   weekText: string // DON'T LIKE how options are confused with local
   cmdFormatter?: CmdFormatterFunc
+  defaultSeparator: string
 
 
   constructor(settings: DateEnvSettings) {
@@ -79,6 +81,7 @@ export class DateEnv {
     this.weekText = settings.weekText != null ? settings.weekText : settings.locale.options.weekText
 
     this.cmdFormatter = settings.cmdFormatter
+    this.defaultSeparator = settings.defaultSeparator
   }
 
 
@@ -367,7 +370,12 @@ export class DateEnv {
     )
   }
 
-  formatRange(start: DateMarker, end: DateMarker, formatter: DateFormatter, dateOptions: { forcedStartTzo?: number, forcedEndTzo?: number, isEndExclusive?: boolean } = {}) {
+  formatRange(
+    start: DateMarker,
+    end: DateMarker,
+    formatter: DateFormatter,
+    dateOptions: { forcedStartTzo?: number, forcedEndTzo?: number, isEndExclusive?: boolean } = {}
+  ) {
 
     if (dateOptions.isEndExclusive) {
       end = addMs(end, -1)

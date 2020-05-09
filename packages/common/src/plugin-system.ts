@@ -35,7 +35,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     elementDraggingImpl: input.elementDraggingImpl,
     optionChangeHandlers: input.optionChangeHandlers || {},
     scrollGridImpl: input.scrollGridImpl || null,
-    contentTypeHandlers: input.contentTypeHandlers || {}
+    contentTypeHandlers: input.contentTypeHandlers || {},
+    optionRefiners: input.optionRefiners || {}
   }
 }
 
@@ -69,7 +70,8 @@ export function buildPluginHooks(pluginDefs: PluginDef[] | null, globalDefs: Plu
     elementDraggingImpl: null,
     optionChangeHandlers: {},
     scrollGridImpl: null,
-    contentTypeHandlers: {}
+    contentTypeHandlers: {},
+    optionRefiners: {}
   }
 
   function addDefs(defs: PluginDef[]) {
@@ -120,6 +122,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     elementDraggingImpl: hooks0.elementDraggingImpl || hooks1.elementDraggingImpl, // "
     optionChangeHandlers: { ...hooks0.optionChangeHandlers, ...hooks1.optionChangeHandlers },
     scrollGridImpl: hooks1.scrollGridImpl || hooks0.scrollGridImpl,
-    contentTypeHandlers: { ...hooks0.contentTypeHandlers, ...hooks1.contentTypeHandlers }
+    contentTypeHandlers: { ...hooks0.contentTypeHandlers, ...hooks1.contentTypeHandlers },
+    optionRefiners: { ...hooks0.optionRefiners, ...hooks1.optionRefiners },
   }
 }

@@ -41,6 +41,7 @@ export class EventRoot extends BaseComponent<EventRootProps> {
 
   render() {
     let { props, context } = this
+    let { options } = context
     let { seg } = props
     let { eventRange } = seg
     let { ui } = eventRange
@@ -71,9 +72,12 @@ export class EventRoot extends BaseComponent<EventRootProps> {
 
     return (
       <RenderHook
-        name='event'
         hookProps={hookProps}
+        classNames={options.eventClassNames}
+        content={options.eventContent}
         defaultContent={props.defaultContent}
+        didMount={options.eventDidMount}
+        willUnmount={options.eventWillUnmount}
         elRef={this.elRef}
       >
         {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(

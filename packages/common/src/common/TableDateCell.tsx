@@ -8,8 +8,8 @@ import { formatDayString } from '../datelib/formatting-utils'
 import { BaseComponent } from '../vdom-util'
 import { RenderHook } from './render-hook'
 import { buildNavLinkData } from './nav-link'
-import { ViewApi } from '../ViewApi'
 import { DateProfile } from '../DateProfileGenerator'
+import { DayHeaderHookProps } from '../options'
 
 
 export interface TableDateCellProps {
@@ -22,13 +22,6 @@ export interface TableDateCellProps {
   isSticky?: boolean // TODO: get this outta here somehow
   extraDataAttrs?: object
   extraHookProps?: object
-}
-
-export interface DateHeaderCellHookProps extends DateMeta { // is used publicly as the standard header cell. TODO: move
-  date: Date
-  view: ViewApi
-  text: string
-  [otherProp: string]: any
 }
 
 const CLASS_NAME = 'fc-col-header-cell' // do the cushion too? no
@@ -52,7 +45,7 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
       ? buildNavLinkData(date)
       : null
 
-    let hookProps: DateHeaderCellHookProps = {
+    let hookProps: DayHeaderHookProps = {
       date: dateEnv.toDate(date),
       view: viewApi,
       ...props.extraHookProps,
@@ -61,7 +54,14 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
     }
 
     return (
-      <RenderHook name='dayHeader' hookProps={hookProps} defaultContent={renderInner}>
+      <RenderHook
+        hookProps={hookProps}
+        classNames={options.dayHeaderClassNames}
+        content={options.dayHeaderContent}
+        defaultContent={renderInner}
+        didMount={options.dayHeaderDidMount}
+        willUnmount={options.dayHeaderWillUnmount}
+      >
         {(rootElRef, customClassNames, innerElRef, innerContent) => (
           <th
             ref={rootElRef}
@@ -105,7 +105,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
 
   render() {
     let { props } = this
-    let { dateEnv, theme, viewApi } = this.context
+    let { dateEnv, theme, viewApi, options } = this.context
 
     let date = addDays(new Date(259200000), props.dow) // start with Sun, 04 Jan 1970 00:00:00 GMT
 
@@ -125,7 +125,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
 
     let text = dateEnv.format(date, props.dayHeaderFormat)
 
-    let hookProps: DateHeaderCellHookProps = {
+    let hookProps: DayHeaderHookProps = {
       date,
       ...dateMeta,
       view: viewApi,
@@ -134,7 +134,14 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
     }
 
     return (
-      <RenderHook name='dayHeader' hookProps={hookProps} defaultContent={renderInner}>
+      <RenderHook
+        hookProps={hookProps}
+        classNames={options.dayHeaderClassNames}
+        content={options.dayHeaderContent}
+        defaultContent={renderInner}
+        didMount={options.dayHeaderDidMount}
+        willUnmount={options.dayHeaderWillUnmount}
+      >
         {(rootElRef, customClassNames, innerElRef, innerContent) => (
           <th
             ref={rootElRef}
@@ -160,6 +167,6 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
 }
 
 
-function renderInner(hookProps: DateHeaderCellHookProps) {
+function renderInner(hookProps: DayHeaderHookProps) {
   return hookProps.text
 }

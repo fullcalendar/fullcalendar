@@ -20,10 +20,17 @@ import {
   NowTimer,
   ViewRoot,
   RenderHook,
-  DateComponent
+  DateComponent,
+  ViewApi
 } from '@fullcalendar/common'
 import { ListViewHeaderRow } from './ListViewHeaderRow'
 import { ListViewEventRow } from './ListViewEventRow'
+
+
+export interface NoEventsHookProps {
+  text: string
+  view: ViewApi
+}
 
 
 /*
@@ -80,14 +87,21 @@ export class ListView extends DateComponent<ViewProps> {
 
 
   renderEmptyMessage() {
-    let { context } = this
-    let hookProps = {
-      text: context.options.noEventsText,
-      view: context.viewApi
+    let { options, viewApi } = this.context
+    let hookProps: NoEventsHookProps = {
+      text: options.noEventsText,
+      view: viewApi
     }
 
     return (
-      <RenderHook name='noEvents' hookProps={hookProps} defaultContent={renderNoEventsInner}>
+      <RenderHook<NoEventsHookProps> // needed???
+        hookProps={hookProps}
+        classNames={options.noEventsClassNames}
+        content={options.noEventsContent}
+        defaultContent={renderNoEventsInner}
+        didMount={options.noEventsDidMount}
+        willUnmount={options.noEventsWillUnmount}
+      >
         {(rootElRef, classNames, innerElRef, innerContent) => (
           <div className={[ 'fc-list-empty' ].concat(classNames).join(' ')} ref={rootElRef}>
             <div className='fc-list-empty-cushion' ref={innerElRef}>
@@ -101,7 +115,7 @@ export class ListView extends DateComponent<ViewProps> {
 
 
   renderSegList(allSegs: Seg[], dayDates: DateMarker[]) {
-    let { theme, computedOptions } = this.context
+    let { theme, options } = this.context
     let segsByDay = groupSegsByDay(allSegs) // sparse array
 
     return (
@@ -121,7 +135,7 @@ export class ListView extends DateComponent<ViewProps> {
               />
             )
 
-            daySegs = sortEventSegs(daySegs, computedOptions.eventOrderSpecs)
+            daySegs = sortEventSegs(daySegs, options.eventOrderSpecs)
 
             for (let seg of daySegs) {
               innerNodes.push(
@@ -154,7 +168,7 @@ export class ListView extends DateComponent<ViewProps> {
         eventStore,
         eventUiBases,
         this.props.dateProfile.activeRange,
-        this.context.computedOptions.nextDayThreshold
+        this.context.options.nextDayThreshold
       ).fg,
       dayRanges
     )
@@ -174,7 +188,7 @@ export class ListView extends DateComponent<ViewProps> {
 
   eventRangeToSegs(eventRange: EventRenderRange, dayRanges: DateRange[]) {
     let { dateEnv } = this.context
-    let { nextDayThreshold } = this.context.computedOptions
+    let { nextDayThreshold } = this.context.options
     let range = eventRange.range
     let allDay = eventRange.def.allDay
     let dayIndex

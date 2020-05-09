@@ -1,15 +1,15 @@
 
 import { ComponentChildren, h, Fragment } from '../vdom'
 import { BaseComponent } from '../vdom-util'
-import { createFormatter } from '../datelib/formatting'
 import { buildSegTimeText, EventMeta } from '../component/event-rendering'
 import { EventRoot, MinimalEventProps } from './EventRoot'
 import { Seg } from '../component/DateComponent'
+import { DateFormatter } from '../datelib/DateFormatter'
 
 
 export interface StandardEventProps extends MinimalEventProps {
   extraClassNames: string[]
-  defaultTimeFormat: any // date-formatter INPUT
+  defaultTimeFormat: DateFormatter
   defaultDisplayEventTime?: boolean // default true
   defaultDisplayEventEnd?: boolean // default true
   disableDragging?: boolean // default false
@@ -24,15 +24,7 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
   render() {
     let { props, context } = this
 
-    // TODO: avoid createFormatter, cache!!!
-    // SOLUTION: require that props.defaultTimeFormat is a real formatter, a top-level const,
-    // which will require that defaultRangeSeparator be part of the DateEnv (possible already?),
-    // and have options.eventTimeFormat be preprocessed.
-    let timeFormat = createFormatter(
-      context.options.eventTimeFormat || props.defaultTimeFormat,
-      context.options.defaultRangeSeparator
-    )
-
+    let timeFormat = context.options.eventTimeFormat || props.defaultTimeFormat
     let timeText = buildSegTimeText(props.seg, timeFormat, context, props.defaultDisplayEventTime, props.defaultDisplayEventEnd)
 
     return (

@@ -20,7 +20,7 @@ export class DayTableView extends TableView {
 
 
   render() {
-    let { options, computedOptions, dateProfileGenerator } = this.context
+    let { options, dateProfileGenerator } = this.context
     let { props } = this
     let dayTableModel = this.buildDayTableModel(props.dateProfile, dateProfileGenerator)
 
@@ -44,7 +44,7 @@ export class DayTableView extends TableView {
         eventSelection={props.eventSelection}
         eventDrag={props.eventDrag}
         eventResize={props.eventResize}
-        nextDayThreshold={computedOptions.nextDayThreshold}
+        nextDayThreshold={options.nextDayThreshold}
         colGroupNode={contentArg.tableColGroupNode}
         tableMinWidth={contentArg.tableMinWidth}
         dayMaxEvents={options.dayMaxEvents}

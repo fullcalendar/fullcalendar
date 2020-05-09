@@ -158,11 +158,11 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
 
 
   positionToHit(positionLeft, positionTop) {
-    let { dateEnv, computedOptions } = this.context
+    let { dateEnv, options } = this.context
     let { colCoords } = this
     let { dateProfile } = this.props
     let { slatCoords } = this.state
-    let { snapDuration, snapsPerSlot } = this.processSlotOptions(this.props.slotDuration, computedOptions.snapDuration)
+    let { snapDuration, snapsPerSlot } = this.processSlotOptions(this.props.slotDuration, options.snapDuration)
 
     let colIndex = colCoords.leftToIndex(positionLeft)
     let slatIndex = slatCoords.positions.topToIndex(positionTop)

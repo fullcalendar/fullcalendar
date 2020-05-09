@@ -66,7 +66,7 @@ export function parseRecurring(
 
 
 export function expandRecurring(eventStore: EventStore, framingRange: DateRange, context: CalendarContext): EventStore {
-  let { dateEnv, pluginHooks, computedOptions } = context
+  let { dateEnv, pluginHooks, options } = context
   let { defs, instances } = eventStore
 
   // remove existing recurring instances
@@ -83,8 +83,8 @@ export function expandRecurring(eventStore: EventStore, framingRange: DateRange,
 
       if (!duration) {
         duration = def.allDay ?
-          computedOptions.defaultAllDayEventDuration :
-          computedOptions.defaultTimedEventDuration
+          options.defaultAllDayEventDuration :
+          options.defaultTimedEventDuration
       }
 
       let starts = expandRecurringRanges(def, duration, framingRange, dateEnv, pluginHooks.recurringTypes)

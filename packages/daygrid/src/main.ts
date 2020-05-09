@@ -2,6 +2,7 @@ import { createPlugin } from '@fullcalendar/common'
 import { DayTableView } from './DayTableView'
 import './main.scss'
 import { TableDateProfileGenerator } from './TableDateProfileGenerator'
+import { OPTION_REFINERS } from './options'
 
 export { DayTable, DayTableSlicer } from './DayTable'
 export { Table } from './Table'
@@ -13,6 +14,7 @@ export { DayTableView as DayGridView } // export as old name!
 
 export default createPlugin({
   initialView: 'dayGridMonth',
+  optionRefiners: OPTION_REFINERS,
   views: {
 
     dayGrid: {

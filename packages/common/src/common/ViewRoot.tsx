@@ -1,7 +1,8 @@
 import { ViewSpec } from '../structs/view-spec'
-import { MountHook, buildHookClassNameGenerator } from './render-hook'
+import { MountHook, buildClassNameNormalizer } from './render-hook'
 import { ComponentChildren, h, Ref } from '../vdom'
 import { BaseComponent } from '../vdom-util'
+import { ViewApi } from '../ViewApi'
 
 
 export interface ViewRootProps {
@@ -10,19 +11,29 @@ export interface ViewRootProps {
   elRef?: Ref<any>
 }
 
+export interface ViewRootHookProps {
+  view: ViewApi
+}
+
 
 export class ViewRoot extends BaseComponent<ViewRootProps> {
 
-  buildClassNames = buildHookClassNameGenerator('view')
+  normalizeClassNames = buildClassNameNormalizer<ViewRootHookProps>()
 
 
   render() {
     let { props, context } = this
-    let hookProps = { view: context.viewApi }
-    let customClassNames = this.buildClassNames(hookProps, context)
+    let { options } = context
+    let hookProps: ViewRootHookProps = { view: context.viewApi }
+    let customClassNames = this.normalizeClassNames(options.viewClassNames, hookProps)
 
     return (
-      <MountHook name='view' hookProps={hookProps} elRef={props.elRef}>
+      <MountHook
+        hookProps={hookProps}
+        didMount={options.viewDidMount}
+        willUnmount={options.viewWillUnmount}
+        elRef={props.elRef}
+      >
         {(rootElRef) => props.children(
           rootElRef,
           [ `fc-${props.viewSpec.type}-view`, 'fc-view' ].concat(customClassNames)

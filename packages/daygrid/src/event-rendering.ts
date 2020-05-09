@@ -1,12 +1,12 @@
-import { EventRenderRange, diffDays } from '@fullcalendar/common'
+import { EventRenderRange, diffDays, createFormatter } from '@fullcalendar/common'
 
 
-export const DEFAULT_TABLE_EVENT_TIME_FORMAT = {
+export const DEFAULT_TABLE_EVENT_TIME_FORMAT = createFormatter({
   hour: 'numeric',
   minute: '2-digit',
   omitZeroMinute: true,
   meridiem: 'narrow'
-}
+})
 
 
 export function hasListItemDisplay(eventRange: EventRenderRange) {

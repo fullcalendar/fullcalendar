@@ -1,12 +1,13 @@
 import { DateProfile } from '../DateProfileGenerator'
 import { diffWholeDays } from '../datelib/marker'
-import { createFormatter } from '../datelib/formatting'
+import { createFormatter, FormatterInput } from '../datelib/formatting'
 import { DateRange } from '../datelib/date-range'
 import { DateEnv } from '../datelib/env'
+import { RefinedCalendarOptions } from '../options'
 
 
 // Computes what the title at the top of the calendarApi should be for this view
-export function buildTitle(dateProfile: DateProfile, viewOptions, dateEnv: DateEnv) {
+export function buildTitle(dateProfile: DateProfile, viewOptions: RefinedCalendarOptions, dateEnv: DateEnv) {
   let range: DateRange
 
   // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
@@ -30,7 +31,7 @@ export function buildTitle(dateProfile: DateProfile, viewOptions, dateEnv: DateE
 
 // Generates the format string that should be used to generate the title for the current date range.
 // Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
-function buildTitleFormat(dateProfile: DateProfile) {
+function buildTitleFormat(dateProfile: DateProfile): FormatterInput {
   let currentRangeUnit = dateProfile.currentRangeUnit
 
   if (currentRangeUnit === 'year') {

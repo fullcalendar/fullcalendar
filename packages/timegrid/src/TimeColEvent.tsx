@@ -1,11 +1,11 @@
-import { h, StandardEvent, BaseComponent, MinimalEventProps } from '@fullcalendar/common'
+import { h, StandardEvent, BaseComponent, MinimalEventProps, createFormatter } from '@fullcalendar/common'
 
 
-const DEFAULT_TIME_FORMAT = {
+const DEFAULT_TIME_FORMAT = createFormatter({
   hour: 'numeric',
   minute: '2-digit',
   meridiem: false
-}
+})
 
 
 export class TimeColEvent extends BaseComponent<MinimalEventProps> {

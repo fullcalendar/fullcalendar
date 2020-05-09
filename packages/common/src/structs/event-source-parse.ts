@@ -4,7 +4,7 @@ import { ConstraintInput, AllowFunc } from './constraint'
 import { EventSource, EventSourceSuccessResponseHandler, EventSourceErrorResponseHandler } from './event-source'
 import { CalendarContext } from '../CalendarContext'
 import { refineProps, guid } from '../util/misc'
-import { processUnscopedUiProps } from '../component/event-ui'
+import { processUiProps } from '../component/event-ui'
 
 
 export interface ExtendedEventSourceInput {
@@ -87,7 +87,7 @@ function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sour
   let leftovers0 = {}
   let props = refineProps(raw, SIMPLE_SOURCE_PROPS, {}, leftovers0)
   let leftovers1 = {}
-  let ui = processUnscopedUiProps(leftovers0, context, leftovers1)
+  let ui = processUiProps(leftovers0, context, leftovers1)
 
   props.isFetching = false
   props.latestFetchId = ''

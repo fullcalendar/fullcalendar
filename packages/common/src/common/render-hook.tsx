@@ -1,14 +1,15 @@
 import { Ref, createRef, ComponentChildren, h, RefObject, createContext } from '../vdom'
-import { ViewContext } from '../ViewContext'
 import { setRef, BaseComponent } from '../vdom-util'
 import { isPropsEqual } from '../util/object'
 
 
 export interface RenderHookProps<HookProps> {
-  name: string
   hookProps: HookProps
-  defaultContent?: (hookProps: HookProps) => ComponentChildren
-  options?: object // for using another root object for the options. RENAME
+  classNames: ClassNameGenerator<HookProps>
+  content: CustomContentGenerator<HookProps>
+  defaultContent?: DefaultContentGenerator<HookProps>
+  didMount: DidMountHandler<HookProps>
+  willUnmount: WillUnmountHandler<HookProps>
   children: RenderHookPropsChildren
   elRef?: Ref<any>
 }
@@ -24,27 +25,24 @@ export interface ContentTypeHandlers {
   [contentKey: string]: () => (el: HTMLElement, contentVal: any) => void
 }
 
-// TODO: use capitalizeFirstLetter util
 
-
+// NOTE: in JSX, you should always use this class with <HookProps> arg. otherwise, will default to any???
 export class RenderHook<HookProps> extends BaseComponent<RenderHookProps<HookProps>> {
 
   private rootElRef = createRef()
 
 
   render() {
-    let { name, hookProps, options, defaultContent, children } = this.props
+    let { props } = this
+    let { hookProps } = props
 
     return (
-      <MountHook name={name} hookProps={hookProps} options={options} elRef={this.handleRootEl}>
+      <MountHook hookProps={hookProps} didMount={props.didMount} willUnmount={props.willUnmount} elRef={this.handleRootEl}>
         {(rootElRef) => (
-          <ContentHook name={name} hookProps={hookProps} options={options} defaultContent={defaultContent} backupElRef={this.rootElRef}>
-            {(innerElRef, innerContent) => children(
+          <ContentHook hookProps={hookProps} content={props.content} defaultContent={props.defaultContent} backupElRef={this.rootElRef}>
+            {(innerElRef, innerContent) => props.children(
               rootElRef,
-              normalizeClassNames(
-                (options || this.context.options)[name ? name + 'ClassNames' : 'classNames'],
-                hookProps
-              ),
+              normalizeClassNames(props.classNames, hookProps),
               innerElRef,
               innerContent
             )}
@@ -66,22 +64,32 @@ export class RenderHook<HookProps> extends BaseComponent<RenderHookProps<HookPro
 }
 
 
+
+export interface ObjCustomContent {
+  html: string
+  domNodes: any[]
+  [custom: string]: any // TODO: expose hook for plugins to add!
+}
+
+export type CustomContent = ComponentChildren | ObjCustomContent
+export type CustomContentGenerator<HookProps> = CustomContent | ((hookProps: HookProps) => CustomContent)
+export type DefaultContentGenerator<HookProps> = (hookProps: HookProps) => ComponentChildren
+
 // for forcing rerender of components that use the ContentHook
 export const CustomContentRenderContext = createContext<number>(0)
 
 export interface ContentHookProps<HookProps> {
-  name: string
   hookProps: HookProps
-  options?: object // will use instead of context. RENAME
-  backupElRef?: RefObject<any>
-  defaultContent?: (hookProps: HookProps) => ComponentChildren
+  content: CustomContentGenerator<HookProps>
+  defaultContent?: DefaultContentGenerator<HookProps>
   children: (
     innerElRef: Ref<any>,
     innerContent: ComponentChildren // if falsy, means it wasn't specified
   ) => ComponentChildren
+  backupElRef?: RefObject<any>
 }
 
-export class ContentHook<HookProps> extends BaseComponent<ContentHookProps<HookProps>> {
+export class ContentHook<HookProps> extends BaseComponent<ContentHookProps<HookProps>> { // TODO: rename to CustomContentHook?
 
   private innerElRef = createRef()
   private customContentInfo: {
@@ -115,7 +123,7 @@ export class ContentHook<HookProps> extends BaseComponent<ContentHookProps<HookP
   private renderInnerContent() {
     let { contentTypeHandlers } = this.context.pluginHooks
     let { props, customContentInfo } = this
-    let rawVal = (this.props.options || this.context.options)[props.name ? props.name + 'Content' : 'content']
+    let rawVal = props.content
     let innerContent = normalizeContent(rawVal, props.hookProps)
     let innerContentVDom: ComponentChildren = null
 
@@ -166,12 +174,18 @@ export class ContentHook<HookProps> extends BaseComponent<ContentHookProps<HookP
 }
 
 
+
+
+export type HookPropsWithEl<HookProps> = HookProps & { el: HTMLElement }
+export type DidMountHandler<HookProps> = (hookProps: HookPropsWithEl<HookProps>) => void
+export type WillUnmountHandler<HookProps> = (hookProps: HookPropsWithEl<HookProps>) => void
+
 export interface MountHookProps<HookProps> {
-  name: string
-  elRef?: Ref<any> // maybe get rid of once we have better API for caller to combine refs
   hookProps: HookProps
-  options?: object // will use instead of context
+  didMount: DidMountHandler<HookProps>
+  willUnmount: WillUnmountHandler<HookProps>
   children: (rootElRef: Ref<any>) => ComponentChildren
+  elRef?: Ref<any> // maybe get rid of once we have better API for caller to combine refs
 }
 
 export class MountHook<HookProps> extends BaseComponent<MountHookProps<HookProps>> {
@@ -185,12 +199,12 @@ export class MountHook<HookProps> extends BaseComponent<MountHookProps<HookProps
 
 
   componentDidMount() {
-    this.triggerMountHandler('DidMount', 'didMount')
+    this.props.didMount({ ...this.props.hookProps, el: this.rootEl })
   }
 
 
   componentWillUnmount() {
-    this.triggerMountHandler('WillUnmount', 'willUnmount')
+    this.props.willUnmount({ ...this.props.hookProps, el: this.rootEl })
   }
 
 
@@ -202,41 +216,19 @@ export class MountHook<HookProps> extends BaseComponent<MountHookProps<HookProps
     }
   }
 
-
-  private triggerMountHandler(postfix: string, simplePostfix: string) {
-    let { name } = this.props
-    let handler = (this.props.options || this.context.options)[name ? name + postfix : simplePostfix]
-
-    if (handler) {
-      handler({ // TODO: make a better type for this
-        ...this.props.hookProps,
-        el: this.rootEl
-      })
-    }
-  }
-
 }
 
 
-export function buildHookClassNameGenerator<HookProps>(hookName: string) {
-  let currentRawGenerator
-  let currentContext: object
-  let currentCacheBuster
-  let currentClassNames: string[]
+export function buildClassNameNormalizer<HookProps>() { // TODO: general deep-memoizer?
+  let currentGenerator: ClassNameGenerator<HookProps>
+  let currentHookProps: HookProps
+  let currentClassNames: string[] = []
 
-  return function(hookProps: HookProps, context: ViewContext, optionsOverride?: object, cacheBusterOverride?: object) {
-    let rawGenerator = (optionsOverride || context.options)[hookName ? hookName + 'ClassNames' : 'classNames']
-    let cacheBuster = cacheBusterOverride || hookProps
-
-    if (
-      currentRawGenerator !== rawGenerator ||
-      currentContext !== context ||
-      (!currentCacheBuster || !isPropsEqual(currentCacheBuster, cacheBuster))
-    ) {
-      currentClassNames = normalizeClassNames(rawGenerator, hookProps)
-      currentRawGenerator = rawGenerator
-      currentContext = context
-      currentCacheBuster = cacheBuster
+  return function(generator: ClassNameGenerator<HookProps>, hookProps: HookProps) {
+    if (!currentHookProps || !isPropsEqual(currentHookProps, hookProps) || generator !== currentGenerator) {
+      currentGenerator = generator
+      currentHookProps = hookProps
+      currentClassNames = normalizeClassNames(generator, hookProps)
     }
 
     return currentClassNames
@@ -244,7 +236,11 @@ export function buildHookClassNameGenerator<HookProps>(hookName: string) {
 }
 
 
-function normalizeClassNames(classNames, hookProps) {
+export type RawClassNames = string | string[] // also somewhere else? a util for parsing classname string/array?
+export type ClassNameGenerator<HookProps> = RawClassNames | ((hookProps: HookProps) => RawClassNames)
+
+
+function normalizeClassNames<HookProps>(classNames: ClassNameGenerator<HookProps>, hookProps: HookProps): string[] {
 
   if (typeof classNames === 'function') {
     classNames = classNames(hookProps)

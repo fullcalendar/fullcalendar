@@ -16,13 +16,15 @@ import {
   RefObject,
   renderScrollShim,
   getStickyHeaderDates,
-  getStickyFooterScrollbar
+  getStickyFooterScrollbar,
+  createFormatter,
+  AllDayHookProps
 } from '@fullcalendar/common'
 import { AllDaySplitter } from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
 
 
-const DEFAULT_WEEK_NUM_FORMAT = { week: 'short' }
+const DEFAULT_WEEK_NUM_FORMAT = createFormatter({ week: 'short' })
 const AUTO_ALL_DAY_MAX_EVENT_ROWS = 5
 
 
@@ -289,15 +291,22 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
   // only a one-way height sync. we don't send the axis inner-content height to the DayGrid,
   // but DayGrid still needs to have classNames on inner elements in order to measure.
   renderTableRowAxis = (rowHeight?: number) => {
-    let { context } = this
-    let hookProps = {
-      text: context.options.allDayText,
-      view: context.viewApi
+    let { options, viewApi } = this.context
+    let hookProps: AllDayHookProps = {
+      text: options.allDayText,
+      view: viewApi
     }
 
     return (
       // TODO: make reusable hook. used in list view too
-      <RenderHook name='allDay' hookProps={hookProps} defaultContent={renderAllDayInner}>
+      <RenderHook<AllDayHookProps>
+        hookProps={hookProps}
+        classNames={options.allDayClassNames}
+        content={options.allDayContent}
+        defaultContent={renderAllDayInner}
+        didMount={options.allDayDidMount}
+        willUnmount={options.allDayWillUnmount}
+      >
         {(rootElRef, classNames, innerElRef, innerContent) => (
           <td ref={rootElRef} className={[
             'fc-timegrid-axis',

@@ -88,14 +88,14 @@ export function buildDateSpanApiWithContext(dateSpan: DateSpan, context: Calenda
 // Given an event's allDay status and start date, return what its fallback end date should be.
 // TODO: rename to computeDefaultEventEnd
 export function getDefaultEventEnd(allDay: boolean, marker: DateMarker, context: CalendarContext): DateMarker {
-  let { dateEnv, computedOptions } = context
+  let { dateEnv, options } = context
   let end = marker
 
   if (allDay) {
     end = startOfDay(end)
-    end = dateEnv.add(end, computedOptions.defaultAllDayEventDuration)
+    end = dateEnv.add(end, options.defaultAllDayEventDuration)
   } else {
-    end = dateEnv.add(end, computedOptions.defaultTimedEventDuration)
+    end = dateEnv.add(end, options.defaultTimedEventDuration)
   }
 
   return end

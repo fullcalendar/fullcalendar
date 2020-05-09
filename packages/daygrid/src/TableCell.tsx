@@ -19,6 +19,8 @@ import {
   DateProfile,
   VUIEvent,
   setRef,
+  createFormatter,
+  ViewApi,
 } from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
 
@@ -71,7 +73,13 @@ export interface HookProps {
   isToday: boolean
 }
 
-const DEFAULT_WEEK_NUM_FORMAT = { week: 'narrow' }
+export interface MoreLinkHookProps {
+  num: number
+  text: string
+  view: ViewApi
+}
+
+const DEFAULT_WEEK_NUM_FORMAT = createFormatter({ week: 'narrow' })
 
 
 export class TableCell extends DateComponent<TableCellProps> {
@@ -83,6 +91,12 @@ export class TableCell extends DateComponent<TableCellProps> {
     let { options, viewApi } = this.context
     let { props } = this
     let { date, dateProfile } = props
+
+    let hookProps: MoreLinkHookProps = {
+      num: props.moreCnt,
+      text: props.buildMoreLinkText(props.moreCnt),
+      view: viewApi
+    }
 
     return (
       <DayCellRoot
@@ -131,9 +145,13 @@ export class TableCell extends DateComponent<TableCellProps> {
                 {props.fgContent}
                 {Boolean(props.moreCnt) &&
                   <div className='fc-daygrid-day-bottom' style={{ marginTop: props.moreMarginTop }}>
-                    <RenderHook name='moreLink'
-                      hookProps={{ num: props.moreCnt, text: props.buildMoreLinkText(props.moreCnt), view: viewApi }}
+                    <RenderHook<MoreLinkHookProps> // needed?
+                      hookProps={hookProps}
+                      classNames={options.moreLinkClassNames}
+                      content={options.moreLinkContent}
                       defaultContent={renderMoreLinkInner}
+                      didMount={options.moreLinkDidMount}
+                      willUnmount={options.moreLinkWillUnmount}
                     >
                       {(rootElRef, classNames, innerElRef, innerContent) => (
                         <a onClick={this.handleMoreLinkClick} ref={rootElRef} className={[ 'fc-daygrid-more-link' ].concat(classNames).join(' ')}>

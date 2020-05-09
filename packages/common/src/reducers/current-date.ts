@@ -1,6 +1,7 @@
-import { DateEnv } from '../datelib/env'
+import { DateEnv, DateInput } from '../datelib/env'
 import { DateMarker } from '../datelib/marker'
 import { Action } from './Action'
+import { RefinedBaseOptions } from '../options'
 
 
 export function reduceCurrentDate(currentDate: DateMarker, action: Action) {
@@ -13,28 +14,27 @@ export function reduceCurrentDate(currentDate: DateMarker, action: Action) {
 }
 
 
-export function getInitialDate(options, dateEnv: DateEnv) {
+export function getInitialDate(options: RefinedBaseOptions, dateEnv: DateEnv) {
   let initialDateInput = options.initialDate
 
   // compute the initial ambig-timezone date
   if (initialDateInput != null) {
     return dateEnv.createMarker(initialDateInput)
   } else {
-    return getNow(options, dateEnv) // getNow already returns unzoned
+    return getNow(options.now, dateEnv) // getNow already returns unzoned
   }
 }
 
 
-export function getNow(options, dateEnv: DateEnv) {
-  let now = options.now
+export function getNow(nowInput: DateInput | (() => DateInput), dateEnv: DateEnv) {
 
-  if (typeof now === 'function') {
-    now = now()
+  if (typeof nowInput === 'function') {
+    nowInput = nowInput()
   }
 
-  if (now == null) {
+  if (nowInput == null) {
     return dateEnv.createNowMarker()
   }
 
-  return dateEnv.createMarker(now)
+  return dateEnv.createMarker(nowInput)
 }

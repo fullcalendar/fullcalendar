@@ -1,14 +1,14 @@
 import {
-  MinimalEventProps, BaseComponent, ViewContext, h,
+  MinimalEventProps, BaseComponent, ViewContext, h, AllDayHookProps,
   Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventMeta, EventRoot, ComponentChildren, RenderHook
 } from "@fullcalendar/common"
 
 
-const DEFAULT_TIME_FORMAT = {
+const DEFAULT_TIME_FORMAT = createFormatter({
   hour: 'numeric',
   minute: '2-digit',
   meridiem: 'short'
-}
+})
 
 
 export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
@@ -17,11 +17,7 @@ export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
     let { props, context } = this
     let { seg } = props
 
-    // TODO: avoid createFormatter, cache!!! see TODO in StandardEvent
-    let timeFormat = createFormatter(
-      context.options.eventTimeFormat || DEFAULT_TIME_FORMAT,
-      context.options.defaultRangeSeparator
-    )
+    let timeFormat = context.options.eventTimeFormat || DEFAULT_TIME_FORMAT
 
     return (
       <EventRoot
@@ -72,9 +68,9 @@ function renderEventInnerContent(props: EventMeta) {
 
 
 function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewContext): ComponentChildren {
-  let { displayEventTime } = context.options
+  let { options } = context
 
-  if (displayEventTime !== false) {
+  if (options.displayEventTime !== false) {
     let eventDef = seg.eventRange.def
     let eventInstance = seg.eventRange.instance
     let doAllDay = false
@@ -120,13 +116,20 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewCont
     }
 
     if (doAllDay) {
-      let hookProps = {
+      let hookProps: AllDayHookProps = {
         text: context.options.allDayText,
         view: context.viewApi
       }
 
       return (
-        <RenderHook name='allDay' hookProps={hookProps} defaultContent={renderAllDayInner}>
+        <RenderHook<AllDayHookProps> // needed?
+          hookProps={hookProps}
+          classNames={options.allDayClassNames}
+          content={options.allDayContent}
+          defaultContent={renderAllDayInner}
+          didMount={options.allDayDidMount}
+          willUnmount={options.allDayWillUnmount}
+        >
           {(rootElRef, classNames, innerElRef, innerContent) => (
             <td className={[ 'fc-list-event-time' ].concat(classNames).join(' ')} ref={rootElRef}>
               {innerContent}

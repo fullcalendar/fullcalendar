@@ -1,6 +1,6 @@
 import { DateMarker, startOfDay, addDays } from './datelib/marker'
-import { Duration, createDuration, getWeeksFromInput, asRoughDays, asRoughMs, greatestDurationDenominator, DurationInput } from './datelib/duration'
-import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, parseRange } from './datelib/date-range'
+import { Duration, createDuration, getWeeksFromInput, asRoughDays, asRoughMs, greatestDurationDenominator } from './datelib/duration'
+import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, parseRange, DateRangeInput } from './datelib/date-range'
 import { ViewSpec } from './structs/view-spec'
 import { DateEnv, DateInput } from './datelib/env'
 import { computeVisibleDayRange } from './util/date'
@@ -26,34 +26,30 @@ export interface DateProfileGeneratorProps extends DateProfileOptions {
 }
 
 export interface DateProfileOptions {
-  slotMinTime: DurationInput
-  slotMaxTime: DurationInput
+  slotMinTime: Duration
+  slotMaxTime: Duration
   showNonCurrentDates?: boolean
   dayCount?: number
   dateAlignment?: string
-  dateIncrement?: DurationInput
+  dateIncrement?: Duration
   hiddenDays?: number[]
   weekends?: boolean
-  now?: DateInput // for getNow
-  validRange?: OpenDateRange // for getRangeOption
-  visibleRange?: OpenDateRange // for getRangeOption
+  nowInput?: DateInput | (() => DateInput)
+  validRangeInput?: DateRangeInput | ((nowDate: Date) => DateRangeInput)
+  visibleRangeInput?: DateRangeInput | ((nowDate: Date) => DateRangeInput)
   monthMode?: boolean
-  fixedWeekCount?: number
+  fixedWeekCount?: boolean
 }
 
 
 export class DateProfileGenerator { // only publicly used for isHiddenDay :(
 
-  slotMinTime: Duration
-  slotMaxTime: Duration
   nowDate: DateMarker
   isHiddenDayHash: boolean[]
 
 
   constructor(protected props: DateProfileGeneratorProps) {
-    this.slotMinTime = createDuration(props.slotMinTime) // TODO: use parsed. but need better options system
-    this.slotMaxTime = createDuration(props.slotMaxTime)
-    this.nowDate = getNow(props, props.dateEnv) // uses props.now. bad system
+    this.nowDate = getNow(props.nowInput, props.dateEnv)
     this.initHiddenDays()
   }
 
@@ -92,6 +88,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
   // Optional direction param indicates whether the date is being incremented/decremented
   // from its previous value. decremented = -1, incremented = 1 (default).
   build(currentDate: DateMarker, direction?, forceToValid = true): DateProfile {
+    let { props } = this
     let validRange: DateRange
     let currentInfo
     let isRangeAllDay
@@ -116,7 +113,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     renderRange = this.trimHiddenDays(renderRange)
     activeRange = renderRange
 
-    if (!this.props.showNonCurrentDates) {
+    if (!props.showNonCurrentDates) {
       activeRange = intersectRanges(activeRange, currentInfo.range)
     }
 
@@ -150,10 +147,10 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
       renderRange,
 
       // Duration object that denotes the first visible time of any given day
-      slotMinTime: this.slotMinTime,
+      slotMinTime: props.slotMinTime,
 
       // Duration object that denotes the exclusive visible end time of any given day
-      slotMaxTime: this.slotMaxTime,
+      slotMaxTime: props.slotMaxTime,
 
       isValid,
 
@@ -168,7 +165,12 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
   // Indicates the minimum/maximum dates to display.
   // not responsible for trimming hidden days.
   buildValidRange(): OpenDateRange {
-    return this.getRangeOption('validRange', this.nowDate) ||
+    let input = this.props.validRangeInput
+    let simpleInput = typeof input === 'function'
+      ? input(this.nowDate)
+      : input
+
+    return this.refineRange(simpleInput) ||
       { start: null, end: null } // completely open-ended
   }
 
@@ -211,8 +213,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
   // Returns a new activeRange to have time values (un-ambiguate)
   // slotMinTime or slotMaxTime causes the range to expand.
   adjustActiveRange(range: DateRange) {
-    let { dateEnv, viewSpec } = this.props
-    let { slotMinTime, slotMaxTime } = this
+    let { dateEnv, viewSpec, slotMinTime, slotMaxTime } = this.props
     let start = range.start
     let end = range.end
 
@@ -322,14 +323,19 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
   // Builds a normalized range object for the "visible" range,
   // which is a way to define the currentRange and activeRange at the same time.
   buildCustomVisibleRange(date: DateMarker) {
-    let { dateEnv } = this.props
-    let visibleRange = this.getRangeOption('visibleRange', dateEnv.toDate(date))
+    let { props } = this
+    let input = props.visibleRangeInput
+    let simpleInput = typeof input === 'function'
+      ? input(props.dateEnv.toDate(date))
+      : input
 
-    if (visibleRange && (visibleRange.start == null || visibleRange.end == null)) {
+    let range = this.refineRange(simpleInput)
+
+    if (range && (range.start == null || range.end == null)) {
       return null
     }
 
-    return visibleRange
+    return range
   }
 
 
@@ -359,25 +365,18 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
   }
 
 
-  // Arguments after name will be forwarded to a hypothetical function value
-  // WARNING: passed-in arguments will be given to generator functions as-is and can cause side-effects.
-  // Always clone your objects if you fear mutation.
-  getRangeOption(name, ...otherArgs): OpenDateRange {
-    let val = this.props[name]
+  refineRange(rangeInput: DateRangeInput | undefined): DateRange | null {
+    if (rangeInput) {
+      let range = parseRange(rangeInput, this.props.dateEnv)
 
-    if (typeof val === 'function') {
-      val = val.apply(null, otherArgs)
+      if (range) {
+        range = computeVisibleDayRange(range)
+      }
+
+      return range
     }
 
-    if (val) {
-      val = parseRange(val, this.props.dateEnv)
-    }
-
-    if (val) {
-      val = computeVisibleDayRange(val)
-    }
-
-    return val
+    return null
   }
 
 

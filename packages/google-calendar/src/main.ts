@@ -1,4 +1,5 @@
 import { createPlugin, EventSourceDef, refineProps, addDays, DateEnv, requestJson } from '@fullcalendar/common'
+import { OPTION_REFINERS } from './options'
 
 // TODO: expose somehow
 const API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'
@@ -11,14 +12,8 @@ const STANDARD_PROPS = { // for event source parsing
   data: null
 }
 
-
 declare module '@fullcalendar/common' {
-
-  interface OptionsInput {
-    googleCalendarApiKey?: string
-  }
-
-  interface ExtendedEventSourceInput {
+  interface ExtendedEventSourceInput { // add this to refiner system somehow
     googleCalendarApiKey?: string
     googleCalendarId?: string
     googleCalendarApiBase?: string
@@ -190,5 +185,6 @@ function injectQsComponent(url, component) {
 }
 
 export default createPlugin({
-  eventSourceDefs: [ eventSourceDef ]
+  eventSourceDefs: [ eventSourceDef ],
+  optionRefiners: OPTION_REFINERS
 })

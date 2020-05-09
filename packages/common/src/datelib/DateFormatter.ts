@@ -35,9 +35,10 @@ export interface DateFormattingContext {
   computeWeekNumber: (d: DateMarker) => number
   weekText: string
   cmdFormatter?: CmdFormatterFunc
+  defaultSeparator: string
 }
 
 export interface DateFormatter {
   format(date: ZonedMarker, context: DateFormattingContext): string
-  formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext): string
+  formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext, separatorOverride?: string): string
 }

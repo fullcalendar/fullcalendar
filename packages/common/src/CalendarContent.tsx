@@ -11,7 +11,6 @@ import { ViewPropsTransformerClass } from './plugin-system-struct'
 import { __assign } from 'tslib'
 import { h, createRef, Component, VUIEvent } from './vdom'
 import { buildDelegationHandler } from './util/dom-event'
-import { capitaliseFirstLetter } from './util/misc'
 import { ViewContainer } from './ViewContainer'
 import { CssDimValue } from './scrollgrid/util'
 import { getCanVGrowWithinCell } from './util/table-styling'
@@ -61,7 +60,7 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
       props.dateProfile,
       props.dateProfileGenerator,
       props.currentDate,
-      getNow(props.options, props.dateEnv), // TODO: use NowTimer????
+      getNow(props.options.now, props.dateEnv), // TODO: use NowTimer????
       props.viewTitle
     )
 
@@ -86,7 +85,6 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
       props.viewSpec,
       props.viewApi,
       props.options,
-      props.computedOptions,
       props.dateProfileGenerator,
       props.dateEnv,
       props.theme,
@@ -185,8 +183,9 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
     let dateMarker = dateEnv.createMarker(navLinkOptions.date)
     let viewType = navLinkOptions.type
 
-    // property like "navLinkDayClick". might be a string or a function
-    let customAction = options['navLink' + capitaliseFirstLetter(viewType) + 'Click']
+    let customAction =
+      viewType === 'day' ? options.navLinkDayClick :
+      viewType === 'week' ? options.navLinkWeekClick : null
 
     if (typeof customAction === 'function') {
       customAction(dateEnv.toDate(dateMarker), ev)

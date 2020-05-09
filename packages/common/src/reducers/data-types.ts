@@ -13,11 +13,11 @@ import { Theme } from '../theme/Theme'
 import { EventStore } from '../structs/event-store'
 import { DateSpan } from '../structs/date-span'
 import { EventInteractionState } from '../interactions/event-interaction-state'
-import { ComputedOptions } from '../ComputedOptions'
+import { RefinedCalendarOptions, RefinedViewOptions, GenericRefiners, RawCalendarOptions } from '../options'
 
 
 export interface CalendarDataManagerState {
-  dynamicOptionOverrides: object // raw
+  dynamicOptionOverrides: RawCalendarOptions
   currentViewType: string
   currentDate: DateMarker
   dateProfile: DateProfile
@@ -35,11 +35,11 @@ export interface CalendarDataManagerState {
 }
 
 export interface CalendarOptionsData {
-  localeDefaults: any
-  calendarOptions: any
-  computedCalendarOptions: ComputedOptions
+  localeDefaults: RawCalendarOptions
+  calendarOptions: RefinedCalendarOptions
   toolbarConfig: any
   availableRawLocales: any
+  refiners: GenericRefiners
   dateEnv: DateEnv
   theme: Theme
   pluginHooks: PluginHooks
@@ -48,8 +48,7 @@ export interface CalendarOptionsData {
 
 export interface CalendarCurrentViewData {
   viewSpec: ViewSpec
-  options: any // is VIEW-SPECIFIC
-  computedOptions: ComputedOptions // is VIEW-SPECIFIC
+  options: RefinedViewOptions
   viewApi: ViewApi
   dateProfileGenerator: DateProfileGenerator
 }

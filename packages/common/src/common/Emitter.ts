@@ -1,10 +1,10 @@
 import { applyAll } from '../util/misc'
 
 
-export class Emitter {
+export class Emitter<Options = {}> {
 
   private handlers: any = {}
-  private options: any
+  private options: Options
   private thisContext: any = null
 
 
@@ -13,7 +13,7 @@ export class Emitter {
   }
 
 
-  setOptions(options) {
+  setOptions(options: Options) {
     this.options = options
   }
 

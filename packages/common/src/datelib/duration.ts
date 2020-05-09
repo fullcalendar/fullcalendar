@@ -81,8 +81,8 @@ function normalizeObject(obj: DurationObjectInput): Duration {
   }
 }
 
-export function getWeeksFromInput(obj: DurationObjectInput) {
-  return obj.weeks || obj.week || 0
+export function getWeeksFromInput(input: DurationInput) {
+  return typeof input === 'object' && (input.weeks || input.week || 0)
 }
 
 

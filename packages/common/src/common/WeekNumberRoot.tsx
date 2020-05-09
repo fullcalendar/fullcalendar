@@ -1,28 +1,42 @@
-import { createFormatter, FormatterInput } from '../datelib/formatting'
 import { ViewContext, ViewContextType } from '../ViewContext'
 import { DateMarker } from '../datelib/marker'
 import { RenderHook, RenderHookPropsChildren } from './render-hook'
 import { h } from '../vdom'
+import { DateFormatter } from '../datelib/DateFormatter'
 
 
 export interface WeekNumberRootProps {
   date: DateMarker
-  defaultFormat: FormatterInput
+  defaultFormat: DateFormatter
   children: RenderHookPropsChildren
+}
+
+export interface WeekNumberHookProps {
+  num: number
+  text: string
+  date: Date
 }
 
 
 export const WeekNumberRoot = (props: WeekNumberRootProps) => (
   <ViewContextType.Consumer>
     {(context: ViewContext) => {
+      let { dateEnv, options } = context
       let { date } = props
-      let format = createFormatter(context.options.weekNumberFormat || props.defaultFormat) // TODO: precompute
-      let num = context.dateEnv.computeWeekNumber(date) // TODO: somehow use for formatting as well?
-      let text = context.dateEnv.format(date, format)
-      let hookProps = { num, text, date }
+      let format = options.weekNumberFormat || props.defaultFormat
+      let num = dateEnv.computeWeekNumber(date) // TODO: somehow use for formatting as well?
+      let text = dateEnv.format(date, format)
+      let hookProps: WeekNumberHookProps = { num, text, date }
 
       return (
-        <RenderHook name='weekNumber' hookProps={hookProps} defaultContent={renderInner}>
+        <RenderHook<WeekNumberHookProps> // why isn't WeekNumberHookProps being auto-detected?
+          hookProps={hookProps}
+          classNames={options.weekNumberClassNames}
+          content={options.weekNumberContent}
+          defaultContent={renderInner}
+          didMount={options.weekNumberDidMount}
+          willUnmount={options.weekNumberWillUnmount}
+        >
           {props.children}
         </RenderHook>
       )

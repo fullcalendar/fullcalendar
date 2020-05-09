@@ -2,7 +2,7 @@ import { refineProps, guid } from '../util/misc'
 import { DateInput } from '../datelib/env'
 import { startOfDay } from '../datelib/marker'
 import { parseRecurring } from './recurring-event'
-import { UnscopedEventUiInput, processUnscopedUiProps } from '../component/event-ui'
+import { RawEventUi, processUiProps } from '../component/event-ui'
 import { __assign } from 'tslib'
 import { CalendarContext } from '../CalendarContext'
 import { EventDef, DATE_PROPS, NON_DATE_PROPS } from './event-def'
@@ -14,7 +14,7 @@ Utils for parsing event-input data. Each util parses a subset of the event-input
 It's up to the caller to stitch them together into an aggregate object like an EventStore.
 */
 
-export interface EventNonDateInput extends UnscopedEventUiInput {
+export interface EventNonDateInput extends RawEventUi {
   id?: string | number
   groupId?: string | number
   title?: string
@@ -164,8 +164,8 @@ function parseSingle(raw: EventInput, defaultAllDay: boolean | null, context: Ca
     endMarker = context.dateEnv.add(
       startMarker,
       allDay ?
-        context.computedOptions.defaultAllDayEventDuration :
-        context.computedOptions.defaultTimedEventDuration
+        context.options.defaultAllDayEventDuration :
+        context.options.defaultTimedEventDuration
     )
   }
 
@@ -192,7 +192,7 @@ function pluckDateProps(raw: EventInput, leftovers: any) {
 function pluckNonDateProps(raw: EventInput, context: CalendarContext, leftovers?) {
   let preLeftovers = {}
   let props = refineProps(raw, NON_DATE_PROPS, {}, preLeftovers)
-  let ui = processUnscopedUiProps(preLeftovers, context, leftovers)
+  let ui = processUiProps(preLeftovers, context, leftovers)
 
   props.publicId = props.id
   delete props.id

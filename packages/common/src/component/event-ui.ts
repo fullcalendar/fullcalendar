@@ -1,13 +1,15 @@
 import { Constraint, AllowFunc, normalizeConstraint, ConstraintInput } from '../structs/constraint'
-import { parseClassName } from '../util/html'
-import { refineProps, capitaliseFirstLetter } from '../util/misc'
+import { parseClassNames } from '../util/html'
+import { refineProps } from '../util/misc'
 import { CalendarContext } from '../CalendarContext'
+import { identity } from '../options'
 
 // TODO: better called "EventSettings" or "EventConfig"
 // TODO: move this file into structs
 // TODO: separate constraint/overlap/allow, because selection uses only that, not other props
 
-export interface UnscopedEventUiInput {
+export interface RawEventUi {
+  display?: string
   editable?: boolean
   startEditable?: boolean
   durationEditable?: boolean
@@ -28,7 +30,7 @@ export interface EventUi {
   durationEditable: boolean | null
   constraints: Constraint[]
   overlap: boolean | null
-  allows: AllowFunc[]
+  allows: AllowFunc[] // crappy name to indicate plural
   backgroundColor: string
   borderColor: string
   textColor: string,
@@ -37,63 +39,33 @@ export interface EventUi {
 
 export type EventUiHash = { [defId: string]: EventUi }
 
-export const UNSCOPED_EVENT_UI_PROPS = {
-  display: null, // TODO: string?
+export const UI_PROPS_REFINERS = {
+  display: identity, // TODO: string?
   editable: Boolean,
   startEditable: Boolean,
   durationEditable: Boolean,
-  constraint: null,
-  overlap: null,
-  allow: null,
-  className: parseClassName,
-  classNames: parseClassName,
+  constraint: identity,
+  overlap: identity,
+  allow: identity,
+  classNames: parseClassNames,
   color: String,
   backgroundColor: String,
   borderColor: String,
   textColor: String
 }
 
-export function processUnscopedUiProps(rawProps: UnscopedEventUiInput, context: CalendarContext, leftovers?): EventUi {
-  let props = refineProps(rawProps, UNSCOPED_EVENT_UI_PROPS, {}, leftovers)
-  let constraint = normalizeConstraint(props.constraint, context)
-
-  return {
-    display: props.display,
-    startEditable: props.startEditable != null ? props.startEditable : props.editable,
-    durationEditable: props.durationEditable != null ? props.durationEditable : props.editable,
-    constraints: constraint != null ? [ constraint ] : [],
-    overlap: props.overlap,
-    allows: props.allow != null ? [ props.allow ] : [],
-    backgroundColor: props.backgroundColor || props.color,
-    borderColor: props.borderColor || props.color,
-    textColor: props.textColor,
-    classNames: props.classNames.concat(props.className)
-  }
-}
-
-export function processScopedUiProps(prefix: string, rawScoped: any, context: CalendarContext, leftovers?): EventUi {
-  let rawUnscoped = {} as any
-  let wasFound = {} as any
-
-  for (let key in UNSCOPED_EVENT_UI_PROPS) {
-    let scopedKey = prefix + capitaliseFirstLetter(key)
-    rawUnscoped[key] = rawScoped[scopedKey]
-    wasFound[scopedKey] = true
-  }
-
-  if (prefix === 'event') {
-    rawUnscoped.editable = rawScoped.editable // special case. there is no 'eventEditable', just 'editable'
-  }
-
-  if (leftovers) {
-    for (let key in rawScoped) {
-      if (!wasFound[key]) {
-        leftovers[key] = rawScoped[key]
-      }
-    }
-  }
-
-  return processUnscopedUiProps(rawUnscoped, context)
+export const EVENT_SCOPED_RAW_UI_PROPS = {
+  eventDisplay: true,
+  editable: true,
+  eventStartEditable: true,
+  eventDurationEditable: true,
+  eventConstraint: true,
+  eventOverlap: true,
+  eventAllow: true,
+  eventBackgroundColor: true,
+  eventBorderColor: true,
+  eventTextColor: true,
+  eventClassNames: true
 }
 
 const EMPTY_EVENT_UI: EventUi = {
@@ -109,10 +81,31 @@ const EMPTY_EVENT_UI: EventUi = {
   classNames: []
 }
 
+
+export function processUiProps(rawProps: RawEventUi, context: CalendarContext, leftovers?): EventUi {
+  let props = refineProps(rawProps, UI_PROPS_REFINERS, {}, leftovers)
+  let constraint = normalizeConstraint(props.constraint, context)
+
+  return {
+    display: props.display,
+    startEditable: props.startEditable != null ? props.startEditable : props.editable,
+    durationEditable: props.durationEditable != null ? props.durationEditable : props.editable,
+    constraints: constraint != null ? [ constraint ] : [],
+    overlap: props.overlap,
+    allows: props.allow != null ? [ props.allow ] : [],
+    backgroundColor: props.backgroundColor || props.color,
+    borderColor: props.borderColor || props.color,
+    textColor: props.textColor,
+    classNames: props.classNames
+  }
+}
+
+
 // prevent against problems with <2 args!
 export function combineEventUis(uis: EventUi[]): EventUi {
   return uis.reduce(combineTwoEventUis, EMPTY_EVENT_UI)
 }
+
 
 function combineTwoEventUis(item0: EventUi, item1: EventUi): EventUi { // hash1 has higher precedence
   return {

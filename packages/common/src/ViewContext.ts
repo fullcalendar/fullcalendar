@@ -14,6 +14,7 @@ import { InteractionSettingsInput } from './interactions/interaction'
 import { DateComponent } from './component/DateComponent'
 import { CalendarContext } from './CalendarContext'
 import { createDuration } from './datelib/duration'
+import { RefinedViewOptions } from './options'
 
 export const ViewContextType = createContext<ViewContext>({} as any) // for Components
 export type ResizeHandler = (force: boolean) => void
@@ -23,6 +24,7 @@ it's important that ViewContext extends CalendarContext so that components that 
 can pass in their ViewContext to util functions that accept CalendarContext.
 */
 export interface ViewContext extends CalendarContext {
+  options: RefinedViewOptions // more specific than RefinedBaseOptions
   theme: Theme
   isRtl: boolean
   dateProfileGenerator: DateProfileGenerator
@@ -38,8 +40,7 @@ export interface ViewContext extends CalendarContext {
 export function buildViewContext(
   viewSpec: ViewSpec,
   viewApi: ViewApi,
-  viewOptions: any,
-  computedViewOptions: any,
+  viewOptions: RefinedViewOptions,
   dateProfileGenerator: DateProfileGenerator,
   dateEnv: DateEnv,
   theme: Theme,
@@ -54,7 +55,6 @@ export function buildViewContext(
   return {
     dateEnv,
     options: viewOptions,
-    computedOptions: computedViewOptions,
     pluginHooks,
     emitter,
     dispatch,

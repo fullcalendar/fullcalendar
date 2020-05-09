@@ -1,3 +1,4 @@
+import { RefinedCalendarOptions } from '../options'
 
 export class Theme {
 
@@ -11,7 +12,7 @@ export class Theme {
   iconOverridePrefix: string
 
 
-  constructor(calendarOptions) {
+  constructor(calendarOptions: RefinedCalendarOptions) {
     if (this.iconOverrideOption) {
       this.setIconOverride(
         calendarOptions[this.iconOverrideOption]

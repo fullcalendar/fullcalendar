@@ -1,6 +1,6 @@
 import {
-  BaseComponent, DateMarker, createFormatter, h, DateRange, getDateMeta,
-  RenderHook, buildNavLinkData, DateHeaderCellHookProps, getDayClassNames, formatDayString
+  BaseComponent, DateMarker, h, DateRange, getDateMeta,
+  RenderHook, buildNavLinkData, DayHeaderHookProps, getDayClassNames, formatDayString
 } from '@fullcalendar/common'
 
 
@@ -9,7 +9,7 @@ export interface ListViewHeaderRowProps {
   todayRange: DateRange
 }
 
-interface HookProps extends DateHeaderCellHookProps { // doesn't enforce much since DayCellHookProps allow extra props
+interface HookProps extends DayHeaderHookProps { // doesn't enforce much since DayCellHookProps allow extra props
   text: string
   sideText: string
 }
@@ -23,10 +23,8 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
     let { theme, dateEnv, options, viewApi } = this.context
 
     let dayMeta = getDateMeta(dayDate, todayRange)
-    let mainFormat = createFormatter(options.listDayFormat) // TODO: cache
-    let sideFormat = createFormatter(options.listDaySideFormat) // TODO: cache
-    let text = mainFormat ? dateEnv.format(dayDate, mainFormat) : '' // will ever be falsy?
-    let sideText = sideFormat ? dateEnv.format(dayDate, sideFormat) : '' // will ever be falsy? also, BAD NAME "alt"
+    let text = options.listDayFormat ? dateEnv.format(dayDate, options.listDayFormat) : '' // will ever be falsy?
+    let sideText = options.listDaySideFormat ? dateEnv.format(dayDate, options.listDaySideFormat) : '' // will ever be falsy? also, BAD NAME "alt"
 
     let navLinkData = options.navLinks
       ? buildNavLinkData(dayDate)
@@ -47,7 +45,14 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
 
     // TODO: make a reusable HOC for dayHeader (used in daygrid/timegrid too)
     return (
-      <RenderHook name='dayHeader' hookProps={hookProps} defaultContent={renderInnerContent}>
+      <RenderHook<HookProps>
+        hookProps={hookProps}
+        classNames={options.dayHeaderClassNames}
+        content={options.dayHeaderContent}
+        defaultContent={renderInnerContent}
+        didMount={options.dayHeaderDidMount}
+        willUnmount={options.dayHeaderWillUnmount}
+      >
         {(rootElRef, customClassNames, innerElRef, innerContent) => (
           <tr
             ref={rootElRef}

@@ -1,6 +1,7 @@
 import { mergeProps } from '../util/object'
 import { getGlobalRawLocales } from '../global-locales' // weird to be importing this
 import { __assign } from 'tslib'
+import { RawCalendarOptions, RefinedCalendarOptions } from '../options'
 
 export type LocaleCodeArg = string | string[]
 export type LocaleSingularArg = LocaleCodeArg | RawLocale
@@ -10,12 +11,11 @@ export interface Locale {
   codes: string[]
   week: { dow: number, doy: number }
   simpleNumberFormat: Intl.NumberFormat
-  options: any
+  options: RefinedCalendarOptions
 }
 
-export interface RawLocale {
+export interface RawLocale extends RawCalendarOptions {
   code: string
-  [otherProp: string]: any
 }
 
 export type RawLocaleMap = { [code: string]: RawLocale }
@@ -31,7 +31,7 @@ const RAW_EN_LOCALE = {
     dow: 0, // Sunday is the first day of the week
     doy: 4 // 4 days need to be within the year to be considered the first week
   },
-  direction: 'ltr',
+  direction: 'ltr' as ('ltr' | 'rtl'), // TODO: make a real type for this
   buttonText: {
     prev: 'prev',
     next: 'next',
@@ -55,7 +55,7 @@ export function organizeRawLocales(explicitRawLocales: RawLocale[]): RawLocaleIn
   let defaultCode = explicitRawLocales.length > 0 ? explicitRawLocales[0].code : 'en'
   let globalRawLocales = getGlobalRawLocales()
   let allRawLocales = globalRawLocales.concat(explicitRawLocales)
-  let rawLocaleMap = {
+  let rawLocaleMap: RawLocaleMap = {
     en: RAW_EN_LOCALE // necessary?
   }
 
@@ -111,7 +111,6 @@ function parseLocale(codeArg: LocaleCodeArg, codes: string[], raw: RawLocale): L
   let merged = mergeProps([ RAW_EN_LOCALE, raw ], [ 'buttonText' ])
 
   delete merged.code // don't want this part of the options
-
   let week = merged.week
   delete merged.week
 
