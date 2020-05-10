@@ -14,7 +14,6 @@ export class EventHovering extends Interaction {
 
   constructor(settings: InteractionSettings) {
     super(settings)
-    let { component } = settings
 
     this.removeHoverListeners = listenToHoverBySelector(
       settings.el,
@@ -22,14 +21,10 @@ export class EventHovering extends Interaction {
       this.handleSegEnter,
       this.handleSegLeave
     )
-
-    // how to make sure component already has context?
-    component.context.emitter.on('eventElRemove', this.handleEventElRemove)
   }
 
   destroy() {
     this.removeHoverListeners()
-    this.component.context.emitter.off('eventElRemove', this.handleEventElRemove)
   }
 
   // for simulating an eventMouseLeave when the event el is destroyed while mouse is over it

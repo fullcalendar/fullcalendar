@@ -24,7 +24,7 @@ import { Emitter } from '../common/Emitter'
 import { EventUiHash, EventUi, processUiProps } from '../component/event-ui'
 import { EventDefHash } from '../structs/event-def'
 import { parseToolbars } from '../toolbar-parse'
-import { RefinedCalendarOptions, RefinedBaseOptions, RawCalendarOptions, CALENDAR_OPTION_REFINERS, RawViewOptions, RefinedViewOptions, RAW_BASE_DEFAULTS, mergeRawOptions, BASE_OPTION_REFINERS, VIEW_OPTION_REFINERS } from '../options'
+import { RefinedCalendarOptions, RefinedBaseOptions, RawCalendarOptions, CALENDAR_OPTION_REFINERS, RawViewOptions, RefinedViewOptions, RAW_BASE_DEFAULTS, mergeRawOptions, BASE_OPTION_REFINERS, VIEW_OPTION_REFINERS, CalendarListeners } from '../options'
 import { rangeContainsMarker } from '../datelib/date-range'
 import { ViewApi } from '../ViewApi'
 import { parseBusinessHours } from '../structs/business-hours'
@@ -74,7 +74,7 @@ export class CalendarDataManager {
   private parseContextBusinessHours = memoizeObjArg(parseContextBusinessHours)
   private buildTitle = memoize(buildTitle)
 
-  public emitter = new Emitter<RefinedCalendarOptions>()
+  public emitter = new Emitter<CalendarListeners>()
   private actionRunner = new TaskRunner(this._handleAction.bind(this), this.updateData.bind(this))
   private props: CalendarDataManagerProps
   private state: CalendarDataManagerState

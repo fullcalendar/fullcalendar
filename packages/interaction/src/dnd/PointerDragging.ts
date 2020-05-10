@@ -24,7 +24,7 @@ export class PointerDragging {
   containerEl: EventTarget
   subjectEl: HTMLElement | null = null
   downEl: HTMLElement | null = null
-  emitter: Emitter
+  emitter: Emitter<any>
 
   // options that can be directly assigned by caller
   selector: string = '' // will cause subjectEl in all emitted events to be this element

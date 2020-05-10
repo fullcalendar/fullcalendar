@@ -28,7 +28,7 @@ export class HitDragging {
 
   droppableStore: InteractionSettingsStore
   dragging: ElementDragging
-  emitter: Emitter
+  emitter: Emitter<any>
 
   // options that can be set by caller
   useSubjectCenter: boolean = false

@@ -13,7 +13,7 @@ import { Theme } from '../theme/Theme'
 import { EventStore } from '../structs/event-store'
 import { DateSpan } from '../structs/date-span'
 import { EventInteractionState } from '../interactions/event-interaction-state'
-import { RefinedCalendarOptions, RefinedViewOptions, RawCalendarOptions } from '../options'
+import { RefinedCalendarOptions, RefinedViewOptions, RawCalendarOptions, CalendarListeners } from '../options'
 
 
 export interface CalendarDataManagerState {
@@ -61,6 +61,6 @@ export interface CalendarData extends CalendarDataBase {
   viewTitle: string // based on current date
   calendarApi: CalendarApi // TODO: try to remove this
   dispatch: (action: Action) => void
-  emitter: Emitter
+  emitter: Emitter<CalendarListeners>
   getCurrentData(): CalendarData // TODO: try to remove
 }

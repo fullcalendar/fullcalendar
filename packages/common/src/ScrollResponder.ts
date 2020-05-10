@@ -1,6 +1,7 @@
 import { Duration } from './datelib/duration'
 import { __assign } from 'tslib'
 import { Emitter } from './common/Emitter'
+import { CalendarListeners } from './options'
 
 
 export interface ScrollRequest {
@@ -18,7 +19,7 @@ export class ScrollResponder {
 
   constructor(
     private execFunc: ScrollRequestHandler,
-    private emitter: Emitter,
+    private emitter: Emitter<CalendarListeners>,
     private scrollTime: Duration
   ) {
     emitter.on('_scrollRequest', this.handleScrollRequest)

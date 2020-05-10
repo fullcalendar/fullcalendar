@@ -14,7 +14,7 @@ import { InteractionSettingsInput } from './interactions/interaction'
 import { DateComponent } from './component/DateComponent'
 import { CalendarContext } from './CalendarContext'
 import { createDuration } from './datelib/duration'
-import { RefinedViewOptions } from './options'
+import { RefinedViewOptions, CalendarListeners } from './options'
 
 export const ViewContextType = createContext<ViewContext>({} as any) // for Components
 export type ResizeHandler = (force: boolean) => void
@@ -47,7 +47,7 @@ export function buildViewContext(
   pluginHooks: PluginHooks,
   dispatch: (action: Action) => void,
   getCurrentData: () => CalendarData,
-  emitter: Emitter,
+  emitter: Emitter<CalendarListeners>,
   calendarApi: CalendarApi,
   registerInteractiveComponent: (component: DateComponent<any>, settingsInput: InteractionSettingsInput) => void,
   unregisterInteractiveComponent: (component: DateComponent<any>) => void

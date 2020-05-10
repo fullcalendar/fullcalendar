@@ -15,12 +15,20 @@ export interface EventSegment {
   isEnd: boolean
 }
 
-export type MoreLinkClickHandler = 'popover' | 'week' | 'day' | 'timeGridWeek' | 'timeGridDay' | string |
-  ((arg: { date: Date, allDay: boolean, allSegs: EventSegment[], hiddenSegs: EventSegment[], jsEvent: MouseEvent, view: ViewApi }) => void)
+export type MoreLinkAction = MoreLinkSimpleAction | MoreLinkHandler
+export type MoreLinkSimpleAction = 'popover' | 'week' | 'day' | 'timeGridWeek' | 'timeGridDay' | string
+export type MoreLinkHandler = (arg: {
+  date: Date,
+  allDay: boolean,
+  allSegs: EventSegment[],
+  hiddenSegs: EventSegment[],
+  jsEvent: UIEvent,
+  view: ViewApi
+}) => MoreLinkSimpleAction
 
 
 export const OPTION_REFINERS = {
-  moreLinkClick: identity as Identity<MoreLinkClickHandler>,
+  moreLinkClick: identity as Identity<MoreLinkAction>,
   moreLinkClassNames: identity as Identity<ClassNameGenerator<MoreLinkHookProps>>,
   moreLinkContent: identity as Identity<CustomContentGenerator<MoreLinkHookProps>>,
   moreLinkDidMount: identity as Identity<DidMountHandler<MoreLinkHookProps>>,

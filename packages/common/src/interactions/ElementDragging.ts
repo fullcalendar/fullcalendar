@@ -15,7 +15,7 @@ subclasses must emit:
 */
 export abstract class ElementDragging { // TODO: rename to *Interface?
 
-  emitter: Emitter
+  emitter: Emitter<any>
 
   constructor(el: HTMLElement) {
     this.emitter = new Emitter()

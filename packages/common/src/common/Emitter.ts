@@ -1,10 +1,10 @@
 import { applyAll } from '../util/misc'
 
 
-export class Emitter<Options = {}> {
+export class Emitter<HandlerFuncs extends { [eventName: string]: (...args: any[]) => any }> {
 
-  private handlers: any = {}
-  private options: Options
+  private handlers: { [Prop in keyof HandlerFuncs]?: HandlerFuncs[Prop][] } = {}
+  private options: HandlerFuncs
   private thisContext: any = null
 
 
@@ -13,22 +13,22 @@ export class Emitter<Options = {}> {
   }
 
 
-  setOptions(options: Options) {
+  setOptions(options: HandlerFuncs) {
     this.options = options
   }
 
 
-  on(type, handler) {
+  on<Prop extends keyof HandlerFuncs>(type: Prop, handler: HandlerFuncs[Prop]) {
     addToHash(this.handlers, type, handler)
   }
 
 
-  off(type, handler?) {
+  off<Prop extends keyof HandlerFuncs>(type: Prop, handler?: HandlerFuncs[Prop]) {
     removeFromHash(this.handlers, type, handler)
   }
 
 
-  trigger(type, ...args) {
+  trigger<Prop extends keyof HandlerFuncs>(type: Prop, ...args: Parameters<HandlerFuncs[Prop]>) {
     let res = applyAll(this.handlers[type], this.thisContext, args)
 
     let handlerFromOptions = this.options && this.options[type]
@@ -40,7 +40,7 @@ export class Emitter<Options = {}> {
   }
 
 
-  hasHandlers(type) {
+  hasHandlers(type: keyof HandlerFuncs) {
     return this.handlers[type] && this.handlers[type].length
   }
 

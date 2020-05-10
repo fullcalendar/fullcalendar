@@ -271,8 +271,11 @@ export const CALENDAR_OPTION_REFINERS = { // does not include base
   events: identity as Identity<EventSourceInput>,
   eventSources: identity as Identity<EventSourceInput[]>,
 
+  datesDidUpdate: identity as Identity<
+    () => void
+  >,
   windowResize: identity as Identity<
-    (view: ViewApi) => void
+    (arg: { view: ViewApi }) => void
   >,
 
   _destroy: identity as Identity<() => void>,
@@ -486,3 +489,5 @@ export interface DayHeaderHookProps extends DateMeta {
   text: string
   [otherProp: string]: any
 }
+
+// TODO: do rtl/ltr

@@ -198,9 +198,7 @@ export class Table extends DateComponent<TableProps, TableState> {
     }
 
     if (typeof clickOption === 'function') {
-      // the returned value can be an atomic option
-      // TODO: weird how we don't use the `clickOption`
-      clickOption = context.emitter.trigger('moreLinkClick', {
+      clickOption = clickOption({
         date: dateEnv.toDate(arg.date),
         allDay: true,
         allSegs: arg.allSegs.map(segForPublic),
