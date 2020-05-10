@@ -13,7 +13,7 @@ import { Theme } from '../theme/Theme'
 import { EventStore } from '../structs/event-store'
 import { DateSpan } from '../structs/date-span'
 import { EventInteractionState } from '../interactions/event-interaction-state'
-import { RefinedCalendarOptions, RefinedViewOptions, GenericRefiners, RawCalendarOptions } from '../options'
+import { RefinedCalendarOptions, RefinedViewOptions, RawCalendarOptions } from '../options'
 
 
 export interface CalendarDataManagerState {
@@ -39,7 +39,6 @@ export interface CalendarOptionsData {
   calendarOptions: RefinedCalendarOptions
   toolbarConfig: any
   availableRawLocales: any
-  refiners: GenericRefiners
   dateEnv: DateEnv
   theme: Theme
   pluginHooks: PluginHooks

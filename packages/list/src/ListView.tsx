@@ -135,7 +135,7 @@ export class ListView extends DateComponent<ViewProps> {
               />
             )
 
-            daySegs = sortEventSegs(daySegs, options.eventOrderSpecs)
+            daySegs = sortEventSegs(daySegs, options.eventOrder)
 
             for (let seg of daySegs) {
               innerNodes.push(

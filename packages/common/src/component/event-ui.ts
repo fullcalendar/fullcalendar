@@ -2,7 +2,6 @@ import { Constraint, AllowFunc, normalizeConstraint, ConstraintInput } from '../
 import { parseClassNames } from '../util/html'
 import { refineProps } from '../util/misc'
 import { CalendarContext } from '../CalendarContext'
-import { identity } from '../options'
 
 // TODO: better called "EventSettings" or "EventConfig"
 // TODO: move this file into structs
@@ -40,13 +39,13 @@ export interface EventUi {
 export type EventUiHash = { [defId: string]: EventUi }
 
 export const UI_PROPS_REFINERS = {
-  display: identity, // TODO: string?
+  display: null, // TODO: string?
   editable: Boolean,
   startEditable: Boolean,
   durationEditable: Boolean,
-  constraint: identity,
-  overlap: identity,
-  allow: identity,
+  constraint: null,
+  overlap: null,
+  allow: null,
   classNames: parseClassNames,
   color: String,
   backgroundColor: String,

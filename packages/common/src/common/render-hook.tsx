@@ -199,12 +199,14 @@ export class MountHook<HookProps> extends BaseComponent<MountHookProps<HookProps
 
 
   componentDidMount() {
-    this.props.didMount({ ...this.props.hookProps, el: this.rootEl })
+    let callback = this.props.didMount
+    callback && callback({ ...this.props.hookProps, el: this.rootEl })
   }
 
 
   componentWillUnmount() {
-    this.props.willUnmount({ ...this.props.hookProps, el: this.rootEl })
+    let callback = this.props.willUnmount
+    callback && callback({ ...this.props.hookProps, el: this.rootEl })
   }
 
 

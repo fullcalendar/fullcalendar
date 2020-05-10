@@ -3,7 +3,7 @@ import { EventTuple } from '../structs/event-parse'
 import { EventStore } from '../structs/event-store'
 import { DateRange, invertRanges, intersectRanges, rangeContainsMarker } from '../datelib/date-range'
 import { Duration } from '../datelib/duration'
-import { compareByFieldSpecs } from '../util/misc'
+import { compareByFieldSpecs, OrderSpec } from '../util/misc'
 import { computeVisibleDayRange } from '../util/date'
 import { Seg } from './DateComponent'
 import { EventApi } from '../api/EventApi'
@@ -167,7 +167,7 @@ export function compileEventUi(eventDef: EventDef, eventUiBases: EventUiHash) {
 }
 
 
-export function sortEventSegs(segs, eventOrderSpecs): Seg[] {
+export function sortEventSegs(segs, eventOrderSpecs: OrderSpec[]): Seg[] {
   let objs = segs.map(buildSegCompareObj)
 
   objs.sort(function(obj0, obj1) {

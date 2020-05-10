@@ -27,7 +27,7 @@ import { ViewRootHookProps } from './common/ViewRoot'
 // base options
 // ------------
 
-const BASE_OPTION_REFINERS = {
+export const BASE_OPTION_REFINERS = {
   navLinkDayClick: identity as Identity<string | ((date: Date, jsEvent: Event) => void)>,
   navLinkWeekClick: identity as Identity<string | ((weekStart: Date, jsEvent: Event) => void)>,
   duration: createDuration,
@@ -41,7 +41,6 @@ const BASE_OPTION_REFINERS = {
   slotMinTime: createDuration,
   slotMaxTime: createDuration,
   dayPopoverFormat: createFormatter,
-  eventOrderSpecs: parseFieldSpecs,
   slotDuration: createDuration,
   snapDuration: createDuration,
   headerToolbar: identity as Identity<ToolbarInput | false>,
@@ -99,7 +98,7 @@ const BASE_OPTION_REFINERS = {
   allDayMaintainDuration: Boolean,
   unselectAuto: Boolean,
   dropAccept: identity as Identity<string | ((draggable: any) => boolean)>, // TODO: type draggable
-  eventOrder: identity as Identity<string | Array<((a: EventApi, b: EventApi) => number) | (string | ((a: EventApi, b: EventApi) => number))>>,
+  eventOrder: parseFieldSpecs,
 
   handleWindowResize: Boolean,
   windowResizeDelay: Number,

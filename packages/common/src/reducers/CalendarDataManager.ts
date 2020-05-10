@@ -24,7 +24,7 @@ import { Emitter } from '../common/Emitter'
 import { EventUiHash, EventUi, processUiProps } from '../component/event-ui'
 import { EventDefHash } from '../structs/event-def'
 import { parseToolbars } from '../toolbar-parse'
-import { RefinedCalendarOptions, RefinedBaseOptions, RawCalendarOptions, CALENDAR_OPTION_REFINERS, RawViewOptions, RefinedViewOptions, RAW_BASE_DEFAULTS, mergeRawOptions } from '../options'
+import { RefinedCalendarOptions, RefinedBaseOptions, RawCalendarOptions, CALENDAR_OPTION_REFINERS, RawViewOptions, RefinedViewOptions, RAW_BASE_DEFAULTS, mergeRawOptions, BASE_OPTION_REFINERS, VIEW_OPTION_REFINERS } from '../options'
 import { rangeContainsMarker } from '../datelib/date-range'
 import { ViewApi } from '../ViewApi'
 import { parseBusinessHours } from '../structs/business-hours'
@@ -344,7 +344,7 @@ export class CalendarDataManager {
     // TODO: blacklist options that are handled by optionChangeHandlers
 
     let {
-      refinedOptions, pluginHooks, localeDefaults, availableLocaleData, refiners, extra
+      refinedOptions, pluginHooks, localeDefaults, availableLocaleData, extra
     } = this.processRawCalendarOptions(optionOverrides, dynamicOptionOverrides)
 
     warnUnknownOptions(extra)
@@ -372,7 +372,6 @@ export class CalendarDataManager {
       theme,
       toolbarConfig,
       localeDefaults,
-      refiners,
       availableRawLocales: availableLocaleData.map
     }
   }
@@ -389,7 +388,7 @@ export class CalendarDataManager {
     let availableRawLocales = availableLocaleData.map
     let localeDefaults = this.buildLocale(locale || availableLocaleData.defaultCode, availableRawLocales).options
     let pluginHooks = this.buildPluginHooks(optionOverrides.plugins || [], globalPlugins)
-    let refiners = { ...CALENDAR_OPTION_REFINERS, ...pluginHooks.optionRefiners }
+    let refiners = { ...BASE_OPTION_REFINERS, ...CALENDAR_OPTION_REFINERS, ...pluginHooks.optionRefiners }
     let extra = {}
 
     let raw = mergeRawOptions([
@@ -443,7 +442,7 @@ export class CalendarDataManager {
 
     let { refinedOptions, extra } = this.processRawViewOptions(
       viewSpec,
-      optionsData.refiners,
+      optionsData.pluginHooks,
       optionsData.localeDefaults,
       optionOverrides,
       dynamicOptionOverrides
@@ -475,7 +474,7 @@ export class CalendarDataManager {
   }
 
 
-  processRawViewOptions(viewSpec: ViewSpec, refiners, localeDefaults: RawCalendarOptions, optionOverrides: RawCalendarOptions, dynamicOptionOverrides: RawCalendarOptions) {
+  processRawViewOptions(viewSpec: ViewSpec, pluginHooks: PluginHooks, localeDefaults: RawCalendarOptions, optionOverrides: RawCalendarOptions, dynamicOptionOverrides: RawCalendarOptions) {
     let raw = mergeRawOptions([
       RAW_BASE_DEFAULTS,
       viewSpec.optionDefaults,
@@ -484,6 +483,7 @@ export class CalendarDataManager {
       viewSpec.optionOverrides,
       dynamicOptionOverrides
     ])
+    let refiners = { ...BASE_OPTION_REFINERS, ...CALENDAR_OPTION_REFINERS, ...VIEW_OPTION_REFINERS, ...pluginHooks.optionRefiners }
     let refined: Partial<RefinedViewOptions> = {}
     let currentRaw = this.currentRawViewOptions
     let currentRefined = this.currentRefinedViewOptions

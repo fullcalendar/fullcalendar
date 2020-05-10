@@ -62,7 +62,7 @@ export {
 } from './util/dom-manip'
 
 export { EventStore, filterEventStoreDefs, createEmptyEventStore, mergeEventStores, getRelevantEvents, eventTupleToStore } from './structs/event-store'
-export { EventUiHash, EventUi, EVENT_SCOPED_RAW_UI_PROPS, processUiProps, combineEventUis } from './component/event-ui'
+export { EventUiHash, EventUi, UI_PROPS_REFINERS, processUiProps, combineEventUis } from './component/event-ui'
 export { Splitter, SplittableProps } from './component/event-splitting'
 export { getDayClassNames, getDateMeta, DateMeta, getSlotClassNames } from './component/date-rendering'
 export { buildNavLinkData } from './common/nav-link'

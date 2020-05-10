@@ -41,7 +41,9 @@ export class EventApi {
     } else if (name in UI_PROPS_REFINERS) {
       let ui
 
-      val = UI_PROPS_REFINERS[name](val)
+      if (UI_PROPS_REFINERS[name]) {
+        val = UI_PROPS_REFINERS[name](val)
+      }
 
       if (name === 'color') {
         ui = { backgroundColor: val, borderColor: val }

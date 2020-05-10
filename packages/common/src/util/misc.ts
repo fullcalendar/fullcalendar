@@ -1,4 +1,5 @@
 import { preventDefault } from './dom-event'
+import { EventApi } from '../api/EventApi'
 
 
 let guidNumber = 0
@@ -63,7 +64,7 @@ export interface OrderSpec {
   func?: (a, b) => boolean
 }
 
-export function parseFieldSpecs(input) {
+export function parseFieldSpecs(input: string | Array<((a: EventApi, b: EventApi) => number) | (string | ((a: EventApi, b: EventApi) => number))>) {
   let specs: OrderSpec[] = []
   let tokens = []
   let i
