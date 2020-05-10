@@ -34,10 +34,3 @@ export const OPTION_REFINERS = {
   moreLinkDidMount: identity as Identity<DidMountHandler<MoreLinkHookProps>>,
   moreLinkWillUnmount: identity as Identity<WillUnmountHandler<MoreLinkHookProps>>,
 }
-
-
-// add types
-type ExtraOptionRefiners = typeof OPTION_REFINERS
-declare module '@fullcalendar/common' {
-  interface BaseOptionRefiners extends ExtraOptionRefiners {}
-}

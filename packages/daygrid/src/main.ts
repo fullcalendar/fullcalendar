@@ -3,6 +3,7 @@ import { DayTableView } from './DayTableView'
 import './main.scss'
 import { TableDateProfileGenerator } from './TableDateProfileGenerator'
 import { OPTION_REFINERS } from './options'
+import './options-declare'
 
 export { DayTable, DayTableSlicer } from './DayTable'
 export { Table } from './Table'

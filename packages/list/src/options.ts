@@ -16,10 +16,3 @@ export const OPTION_REFINERS = {
 function createFalsableFormatter(input: FormatterInput | false) {
   return input === false ? null : createFormatter(input)
 }
-
-
-// add types
-type ExtraOptionRefiners = typeof OPTION_REFINERS
-declare module '@fullcalendar/common' {
-  interface BaseOptionRefiners extends ExtraOptionRefiners {}
-}

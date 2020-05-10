@@ -1,5 +1,6 @@
 import { createPlugin, EventSourceDef, refineProps, addDays, DateEnv, requestJson } from '@fullcalendar/common'
 import { OPTION_REFINERS } from './options'
+import './options-declare'
 
 // TODO: expose somehow
 const API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'
