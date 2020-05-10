@@ -11962,7 +11962,14 @@ rollup@2.7.5:
   optionalDependencies:
     fsevents "~2.1.2"
 
-rollup@^1.28.0, rollup@^1.31.0:
+rollup@^1.20.0||^2.0.0:
+  version "2.8.2"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.8.2.tgz#08427a8eb118e6e4ac8d80eba22774bc1d059c81"
+  integrity sha512-LRzMcB8V1M69pSvf6uCbR+W9OPCy5FuxcIwqioWg5RKidrrqKbzjJF9pEGXceaMVkbptNFZgIVJlUokCU0sfng==
+  optionalDependencies:
+    fsevents "~2.1.2"
+
+rollup@^1.31.0:
   version "1.32.1"
   resolved "https://registry.yarnpkg.com/rollup/-/rollup-1.32.1.tgz#4480e52d9d9e2ae4b46ba0d9ddeaf3163940f9c4"
   integrity sha512-/2HA0Ec70TvQnXdzynFffkjA6XN+1e2pEv/uKS5Ulca40g2L7KuOE3riasHoNVHOsFD5KKZgDsMk1CP3Tw9s+A==
