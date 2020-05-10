@@ -1,6 +1,6 @@
 const path = require('path')
 const dts = require('rollup-plugin-dts').default
-const { isScssPath, isNamedPkg } = require('./rollup-util')
+const { isScssPath, isNamedPkg, isRelPath } = require('./rollup-util')
 const { pkgStructs, pkgStructHash } = require('./pkg-struct')
 const { arrayToHash, copyFile } = require('./util')
 
@@ -63,12 +63,16 @@ module.exports = function() {
         },
         renderChunk(code) {
           // HACK. TODO: file bug
-          return code.replace(/import\(([^)]*)\)\./, function(m0, m1) {
+          // for weird non-transformed import() statements in dts file
+          return code.replace(/import\(([^)]*)\)\./g, function(m0, m1) {
             let importStr = JSON.parse(m1) // parse the quoted string
-            if (importStr === './ViewContext') {
+            if (
+              isRelPath(importStr) ||
+              importStr === '@fullcalendar/common'
+            ) {
               return ''
             } else {
-              throw new Error(`Unknown import('${importStr}'). Could not massage.`)
+              throw new Error(`Unknown import('${importStr}') for hack. Could not massage.`)
             }
           })
         }
