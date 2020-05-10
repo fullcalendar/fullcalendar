@@ -13,11 +13,35 @@ import {
   Interaction, InteractionSettings, interactionSettingsStore,
   EventDropTransformers,
   CalendarContext,
-  buildDatePointApiWithContext
+  ViewApi,
+  Duration
 } from '@fullcalendar/common'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
 import { __assign } from 'tslib'
+import { buildDatePointApiWithContext } from '../utils'
+
+
+export type EventDragStopArg = EventDragArg
+export type EventDragStartArg = EventDragArg
+
+export interface EventDragArg {
+  el: HTMLElement
+  event: EventApi
+  jsEvent: MouseEvent
+  view: ViewApi
+}
+
+export interface EventDropArg {
+  el: HTMLElement
+  delta: Duration
+  oldEvent: EventApi
+  event: EventApi
+  revert: () => void
+  jsEvent: MouseEvent,
+  view: ViewApi
+  // and other "transformed" things
+}
 
 
 export class EventDragging extends Interaction { // TODO: rename to EventSelectingAndDragging
@@ -121,7 +145,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
         event: new EventApi(initialContext, eventRange.def, eventRange.instance),
         jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
         view: initialContext.viewApi
-      })
+      } as EventDragStartArg)
     }
   }
 
@@ -232,7 +256,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
         event: eventApi,
         jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
         view: initialView
-      })
+      } as EventDragStopArg)
 
       if (validMutation) {
 
@@ -250,7 +274,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             __assign(transformed, transformer(validMutation, initialContext))
           }
 
-          const eventDropArg = {
+          const eventDropArg: EventDropArg = {
             ...transformed, // don't use __assign here because it's not type-safe
             el: ev.subjectEl as HTMLElement,
             delta: validMutation.datesDelta!,

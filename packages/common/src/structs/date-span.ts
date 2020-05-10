@@ -140,14 +140,6 @@ export function buildDateSpanApi(span: DateSpan, dateEnv: DateEnv): DateSpanApi 
   }
 }
 
-export function buildDatePointApi(span: DateSpan, dateEnv: DateEnv): DatePointApi {
-  return {
-    date: dateEnv.toDate(span.range.start),
-    dateStr: dateEnv.formatIso(span.range.start, { omitTime: span.allDay }),
-    allDay: span.allDay
-  }
-}
-
 export function fabricateEventRange(dateSpan: DateSpan, eventUiBases: EventUiHash, context: CalendarContext): EventRenderRange {
   let def = parseEventDef(
     { editable: false },

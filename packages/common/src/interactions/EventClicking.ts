@@ -3,6 +3,14 @@ import { EventApi } from '../api/EventApi'
 import { elementClosest } from '../util/dom-manip'
 import { getElSeg } from '../component/event-rendering'
 import { Interaction, InteractionSettings } from './interaction'
+import { ViewApi } from '../ViewApi'
+
+export interface EventClickArg {
+  el: HTMLElement
+  event: EventApi
+  jsEvent: MouseEvent
+  view: ViewApi
+}
 
 /*
 Detects when the user clicks on an event within a DateComponent
@@ -44,7 +52,7 @@ export class EventClicking extends Interaction {
         ),
         jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
         view: context.viewApi
-      })
+      } as EventClickArg)
 
       if (url && !ev.defaultPrevented) {
         window.location.href = url

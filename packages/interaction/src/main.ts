@@ -5,11 +5,13 @@ import { EventDragging } from './interactions/EventDragging'
 import { EventResizing } from './interactions/EventResizing'
 import { UnselectAuto } from './interactions/UnselectAuto'
 import { FeaturefulElementDragging } from './dnd/FeaturefulElementDragging'
+import { OPTION_REFINERS } from './options'
 
 export default createPlugin({
   componentInteractions: [ DateClicking, DateSelecting, EventDragging, EventResizing ],
   calendarInteractions: [ UnselectAuto ],
-  elementDraggingImpl: FeaturefulElementDragging
+  elementDraggingImpl: FeaturefulElementDragging,
+  optionRefiners: OPTION_REFINERS
 })
 
 export { FeaturefulElementDragging }

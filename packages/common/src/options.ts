@@ -1,4 +1,4 @@
-import { createDuration, Duration } from './datelib/duration'
+import { createDuration } from './datelib/duration'
 import { mergeProps } from './util/object'
 import { ToolbarInput, CustomButtonInput, ButtonIconsInput, ButtonTextCompoundInput } from './toolbar-parse'
 import { createFormatter, FormatterInput } from './datelib/formatting'
@@ -11,7 +11,6 @@ import { BusinessHoursInput } from './structs/business-hours'
 import { ViewApi } from './ViewApi'
 import { LocaleSingularArg, RawLocale } from './datelib/locale'
 import { OverlapFunc, ConstraintInput, AllowFunc } from './structs/constraint'
-import { EventApi } from './api/EventApi'
 import { EventInputTransformer } from './structs/event-parse'
 import { PluginDef } from './plugin-system-struct'
 import { EventSourceInput } from './structs/event-source-parse'
@@ -23,6 +22,9 @@ import { WeekNumberHookProps } from './common/WeekNumberRoot'
 import { SlotLaneHookProps, SlotLabelHookProps, AllDayHookProps, DayHeaderHookProps } from './render-hook-misc'
 import { DayCellHookProps } from './common/DayCellRoot'
 import { ViewRootHookProps } from './common/ViewRoot'
+import { EventClickArg } from './interactions/EventClicking'
+import { EventHoveringArg } from './interactions/EventHovering'
+import { DateSelectArg, DateUnselectArg } from './calendar-utils'
 
 
 // base options
@@ -272,69 +274,23 @@ export const CALENDAR_OPTION_REFINERS = { // does not include base
   events: identity as Identity<EventSourceInput>,
   eventSources: identity as Identity<EventSourceInput[]>,
 
-  datesDidUpdate: identity as Identity<
-    () => void
-  >,
-  windowResize: identity as Identity<
-    (arg: { view: ViewApi }) => void
-  >,
+  // handlers
+  datesDidUpdate: identity as Identity<() => void>,
+  windowResize: identity as Identity<(arg: { view: ViewApi }) => void>,
+  eventClick: identity as Identity<(arg: EventClickArg) => void>, // TODO: resource for scheduler????
+  eventMouseEnter: identity as Identity<(arg: EventHoveringArg) => void>,
+  eventMouseLeave: identity as Identity<(arg: EventHoveringArg) => void>,
+  select: identity as Identity<(arg: DateSelectArg) => void>, // resource for scheduler????
+  unselect: identity as Identity<(arg: DateUnselectArg) => void>,
+  loading: identity as Identity<(isLoading: boolean) => void>,
 
+  // internal handlers
   _destroy: identity as Identity<() => void>,
   _init: identity as Identity<() => void>,
   _noEventDrop: identity as Identity<() => void>,
   _noEventResize: identity as Identity<() => void>,
   _resize: identity as Identity<(forced: boolean) => void>,
-  _scrollRequest: identity as Identity<(arg: any) => void>,
-
-  // TODO: move a lot of these to interaction plugin?
-  dateClick: identity as Identity< // resource for Scheduler
-    (arg: { date: Date, dateStr: string, allDay: boolean, resource?: any, dayEl: HTMLElement, jsEvent: MouseEvent, view: ViewApi }) => void
-  >,
-  eventClick: identity as Identity<
-    (arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: ViewApi }) => boolean | void
-  >,
-  eventMouseEnter: identity as Identity<
-    (arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: ViewApi }) => void
-  >,
-  eventMouseLeave: identity as Identity<
-    (arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: ViewApi }) => void
-  >,
-  select: identity as Identity< // resource for Scheduler
-    (arg: { start: Date, end: Date, startStr: string, endStr: string, allDay: boolean, resource?: any, jsEvent: MouseEvent, view: ViewApi }) => void
-  >,
-  unselect: identity as Identity<
-    (arg: { view: ViewApi, jsEvent: Event }) => void
-  >,
-  loading: identity as Identity<
-    (isLoading: boolean) => void
-  >,
-  eventDragStart: identity as Identity<
-    (arg: { event: EventApi, el: HTMLElement, jsEvent: MouseEvent, view: ViewApi }) => void
-  >,
-  eventDragStop: identity as Identity<
-    (arg: { event: EventApi, el: HTMLElement, jsEvent: MouseEvent, view: ViewApi }) => void
-  >,
-  eventDrop: identity as Identity<
-    (arg: { el: HTMLElement, event: EventApi, oldEvent: EventApi, delta: Duration, revert: () => void, jsEvent: Event, view: ViewApi }) => void
-  >,
-  eventResizeStart: identity as Identity<
-    (arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: ViewApi }) => void
-  >,
-  eventResizeStop: identity as Identity<
-    (arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: ViewApi }) => void
-  >,
-  eventResize: identity as Identity<
-    (arg: { el: HTMLElement, startDelta: Duration, endDelta: Duration, prevEvent: EventApi, event: EventApi, revert: () => void, jsEvent: Event, view: ViewApi }) => void
-  >,
-  drop: identity as Identity<
-    (arg: { date: Date, dateStr: string, allDay: boolean, draggedEl: HTMLElement, jsEvent: MouseEvent, view: ViewApi }) => void
-  >,
-  eventReceive: identity as Identity<
-    (arg: { event: EventApi, draggedEl: HTMLElement, view: ViewApi }) => void
-  >,
-  eventLeave: identity as Identity<
-    (arg: { draggedEl: HTMLElement, event: EventApi, view: ViewApi }) => void
-  >
+  _scrollRequest: identity as Identity<(arg: any) => void>
 }
 
 type BuiltInCalendarOptionRefiners = typeof CALENDAR_OPTION_REFINERS

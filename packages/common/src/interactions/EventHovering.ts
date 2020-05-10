@@ -2,6 +2,14 @@ import { listenToHoverBySelector } from '../util/dom-event'
 import { EventApi } from '../api/EventApi'
 import { getElSeg } from '../component/event-rendering'
 import { Interaction, InteractionSettings } from './interaction'
+import { ViewApi } from '../ViewApi'
+
+export interface EventHoveringArg {
+  el: HTMLElement
+  event: EventApi
+  jsEvent: MouseEvent
+  view: ViewApi
+}
 
 /*
 Triggers events and adds/removes core classNames when the user's pointer
@@ -65,7 +73,7 @@ export class EventHovering extends Interaction {
         ),
         jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
         view: context.viewApi
-      })
+      } as EventHoveringArg)
     }
   }
 

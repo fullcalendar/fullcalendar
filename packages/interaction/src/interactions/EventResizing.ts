@@ -11,11 +11,33 @@ import {
   createDuration,
   EventInteractionState,
   EventResizeJoinTransforms,
-  Interaction, InteractionSettings, interactionSettingsToStore
+  Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration
 } from '@fullcalendar/common'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
 import { __assign } from 'tslib'
+
+
+export type EventResizeStartArg = EventResizeStartStopArg
+export type EventResizeStopArg = EventResizeStartStopArg
+
+export interface EventResizeStartStopArg {
+  el: HTMLElement
+  event: EventApi
+  jsEvent: MouseEvent
+  view: ViewApi
+}
+
+export interface EventResizeDoneArg {
+  el: HTMLElement
+  startDelta: Duration
+  endDelta: Duration
+  prevEvent: EventApi
+  event: EventApi
+  revert: () => void
+  jsEvent: MouseEvent
+  view: ViewApi
+}
 
 
 export class EventResizing extends Interaction {
@@ -85,7 +107,7 @@ export class EventResizing extends Interaction {
       event: new EventApi(context, eventRange.def, eventRange.instance),
       jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
       view: context.viewApi
-    })
+    } as EventResizeStartArg)
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
@@ -164,7 +186,7 @@ export class EventResizing extends Interaction {
       event: eventApi,
       jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
       view: context.viewApi
-    })
+    } as EventResizeStopArg)
 
     if (this.validMutation) {
       context.dispatch({
@@ -190,7 +212,7 @@ export class EventResizing extends Interaction {
         },
         jsEvent: ev.origEvent,
         view: context.viewApi
-      })
+      } as EventResizeDoneArg)
 
     } else {
       context.emitter.trigger('_noEventResize')

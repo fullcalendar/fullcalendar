@@ -1,6 +1,18 @@
-import { PointerDragEvent, Interaction, InteractionSettings, interactionSettingsToStore, triggerDateClick } from '@fullcalendar/common'
+import {
+  PointerDragEvent, Interaction, InteractionSettings, interactionSettingsToStore,
+  DatePointApi,
+  ViewApi
+} from '@fullcalendar/common'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
 import { HitDragging, isHitsEqual } from './HitDragging'
+import { buildDatePointApiWithContext } from '../utils'
+
+
+export interface DateClickArg extends DatePointApi {
+  dayEl: HTMLElement
+  jsEvent: MouseEvent
+  view: ViewApi
+}
 
 /*
 Monitors when the user clicks on a specific date/time of a component.
@@ -45,12 +57,15 @@ export class DateClicking extends Interaction {
       let { initialHit, finalHit } = this.hitDragging
 
       if (initialHit && finalHit && isHitsEqual(initialHit, finalHit)) {
-        triggerDateClick(
-          initialHit.dateSpan,
-          initialHit.dayEl,
-          ev.origEvent,
-          component.context
-        )
+        let { context } = component
+        let arg: DateClickArg = {
+          ...buildDatePointApiWithContext(initialHit.dateSpan, context),
+          dayEl: initialHit.dayEl,
+          jsEvent: ev.origEvent as MouseEvent,
+          view: context.viewApi || context.calendarApi.view
+        }
+
+        context.emitter.trigger('dateClick', arg)
       }
     }
   }

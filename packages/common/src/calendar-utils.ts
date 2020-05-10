@@ -1,5 +1,5 @@
 import { PointerDragEvent } from './interactions/pointer'
-import { buildDateSpanApi, DateSpanApi, DatePointApi, DateSpan, buildDatePointApi } from './structs/date-span'
+import { buildDateSpanApi, DateSpanApi, DatePointApi, DateSpan } from './structs/date-span'
 import { CalendarContext } from './CalendarContext'
 import { __assign } from 'tslib'
 import { ViewApi } from './ViewApi'
@@ -27,49 +27,34 @@ export type OptionChangeHandler = (propValue: any, context: CalendarContext) => 
 export type OptionChangeHandlerMap = { [propName: string]: OptionChangeHandler }
 
 
+
+export interface DateSelectArg extends DateSpanApi {
+  jsEvent: MouseEvent | null
+  view: ViewApi
+}
+
 export function triggerDateSelect(selection: DateSpan, pev: PointerDragEvent | null, context: CalendarContext & { viewApi?: ViewApi }) {
-  const arg = {
+  context.emitter.trigger('select', {
     ...buildDateSpanApiWithContext(selection, context),
     jsEvent: pev ? pev.origEvent as MouseEvent : null, // Is this always a mouse event? See #4655
     view: context.viewApi || context.calendarApi.view
-  }
-
-  context.emitter.trigger('select', arg)
+  } as DateSelectArg)
 }
 
+
+
+export interface DateUnselectArg {
+  jsEvent: MouseEvent
+  view: ViewApi
+}
 
 export function triggerDateUnselect(pev: PointerDragEvent | null, context: CalendarContext & { viewApi?: ViewApi }) {
   context.emitter.trigger('unselect', {
     jsEvent: pev ? pev.origEvent : null,
     view: context.viewApi || context.calendarApi.view
-  })
+  } as DateUnselectArg)
 }
 
-
-// TODO: receive pev?
-export function triggerDateClick(dateSpan: DateSpan, dayEl: HTMLElement, ev: UIEvent, context: CalendarContext & { viewApi?: ViewApi }) {
-  const arg = {
-    ...buildDatePointApiWithContext(dateSpan, context),
-    dayEl,
-    jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
-    view: context.viewApi || context.calendarApi.view
-  }
-
-  context.emitter.trigger('dateClick', arg)
-}
-
-
-export function buildDatePointApiWithContext(dateSpan: DateSpan, context: CalendarContext) {
-  let props = {} as DatePointApi
-
-  for (let transform of context.pluginHooks.datePointTransforms) {
-    __assign(props, transform(dateSpan, context))
-  }
-
-  __assign(props, buildDatePointApi(dateSpan, context.dateEnv))
-
-  return props
-}
 
 
 export function buildDateSpanApiWithContext(dateSpan: DateSpan, context: CalendarContext) {
@@ -83,6 +68,7 @@ export function buildDateSpanApiWithContext(dateSpan: DateSpan, context: Calenda
 
   return props
 }
+
 
 
 // Given an event's allDay status and start date, return what its fallback end date should be.
