@@ -62,9 +62,11 @@ module.exports = function() {
           return null
         },
         renderChunk(code) {
+
           // HACK. TODO: file bug
           // for weird non-transformed import() statements in dts file
-          return code.replace(/import\(([^)]*)\)\./g, function(m0, m1) {
+          // maybe this problem is related to the workaround above?
+          code = code.replace(/import\(([^)]*)\)\./g, function(m0, m1) {
             let importStr = JSON.parse(m1) // parse the quoted string
             if (
               isRelPath(importStr) ||
@@ -75,6 +77,15 @@ module.exports = function() {
               throw new Error(`Unknown import('${importStr}') for hack. Could not massage.`)
             }
           })
+
+          // HACK
+          // tsc wrongfully inlines some declarations. we depend on them being real b/c they are abiently extended
+          // https://github.com/microsoft/TypeScript/issues/37151
+          code = code.replace(/emitter:\s*Emitter<Pick<[^>]*>>/, 'emitter: Emitter<CalendarListeners>')
+
+          // TODO: we should check these types after
+
+          return code
         }
       }
     ],
