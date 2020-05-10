@@ -140,12 +140,16 @@ export { ElementDragging } from './interactions/ElementDragging'
 export { formatDate, formatRange } from './formatting-api'
 
 export {
-  RAW_BASE_DEFAULTS, identity, Identity, DayHeaderHookProps,
-  SlotLaneHookProps, SlotLabelHookProps, AllDayHookProps,
+  DayHeaderHookProps, SlotLaneHookProps, SlotLabelHookProps, AllDayHookProps,
+} from './render-hook-misc'
+
+export {
+  RAW_BASE_DEFAULTS, identity, Identity,
   BaseOptionRefiners, RawBaseOptions, RefinedBaseOptions,
   CalendarOptionRefiners, RawCalendarOptions, RefinedCalendarOptions,
   ViewOptionRefiners, RawViewOptions, RefinedViewOptions
 } from './options'
+
 export { config } from './global-config'
 
 export { RecurringType, ParsedRecurring } from './structs/recurring-event'

@@ -9,7 +9,7 @@ import { BaseComponent } from '../vdom-util'
 import { RenderHook } from './render-hook'
 import { buildNavLinkData } from './nav-link'
 import { DateProfile } from '../DateProfileGenerator'
-import { DayHeaderHookProps } from '../options'
+import { DayHeaderHookProps } from '../render-hook-misc'
 
 
 export interface TableDateCellProps {

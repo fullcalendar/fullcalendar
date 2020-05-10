@@ -13,12 +13,15 @@ import { buildIsoString } from './formatting-utils'
 import { parse } from './parsing'
 import { isInt } from '../util/misc'
 
+
+export type WeekNumberCalculation = 'local' | 'ISO' | ((m: Date) => number)
+
 export interface DateEnvSettings {
   timeZone: string
   namedTimeZoneImpl?: NamedTimeZoneImplClass
   calendarSystem: string
   locale: Locale
-  weekNumberCalculation?: any
+  weekNumberCalculation?: WeekNumberCalculation
   firstDay?: any,
   weekText?: string,
   cmdFormatter?: CmdFormatterFunc

@@ -1,7 +1,8 @@
 import { createDuration, Duration } from './datelib/duration'
 import { mergeProps } from './util/object'
-import { ToolbarInput } from './toolbar-parse'
+import { ToolbarInput, CustomButtonInput, ButtonIconsInput, ButtonTextCompoundInput } from './toolbar-parse'
 import { createFormatter, FormatterInput } from './datelib/formatting'
+import { WeekNumberCalculation } from './datelib/env'
 import { parseFieldSpecs } from './util/misc'
 import { CssDimValue } from './scrollgrid/util'
 import { DateInput } from './datelib/env'
@@ -19,7 +20,7 @@ import { EventMeta } from './component/event-rendering'
 import { ClassNameGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler } from './common/render-hook'
 import { NowIndicatorHookProps } from './common/NowIndicatorRoot'
 import { WeekNumberHookProps } from './common/WeekNumberRoot'
-import { DateMeta } from './component/date-rendering'
+import { SlotLaneHookProps, SlotLabelHookProps, AllDayHookProps, DayHeaderHookProps } from './render-hook-misc'
 import { DayCellHookProps } from './common/DayCellRoot'
 import { ViewRootHookProps } from './common/ViewRoot'
 
@@ -429,65 +430,3 @@ export type Identity<T = any> = (raw: T) => T
 export function identity<T>(raw: T): T {
   return raw
 }
-
-
-
-// random crap we need to put into other files
-// -------------------------------------------
-
-export interface SlotLaneHookProps extends Partial<DateMeta> { // TODO: move?
-  time?: Duration
-  date?: Date
-  view: ViewApi
-  // this interface is for date-specific slots AND time-general slots. make an OR?
-}
-
-export interface SlotLabelHookProps { // TODO: move?
-  time: Duration
-  date: Date
-  view: ViewApi
-  text: string
-}
-
-export interface AllDayHookProps {
-  text: string
-  view: ViewApi
-}
-
-export interface CustomButtonInput {
-  text: string
-  icon?: string
-  themeIcon?: string
-  bootstrapFontAwesome?: string,
-  click(element: HTMLElement): void
-}
-
-export interface ButtonIconsInput {
-  prev?: string
-  next?: string
-  prevYear?: string
-  nextYear?: string
-}
-
-export interface ButtonTextCompoundInput {
-  prev?: string
-  next?: string
-  prevYear?: string // derive these somehow?
-  nextYear?: string
-  today?: string
-  month?: string
-  week?: string
-  day?: string
-  [viewId: string]: string | undefined // needed b/c of other optional types ... make extendable???
-}
-
-export type WeekNumberCalculation = 'local' | 'ISO' | ((m: Date) => number)
-
-export interface DayHeaderHookProps extends DateMeta {
-  date: Date
-  view: ViewApi
-  text: string
-  [otherProp: string]: any
-}
-
-// TODO: do rtl/ltr
