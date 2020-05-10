@@ -1,6 +1,6 @@
 const path = require('path')
 const glob = require('glob')
-const commonjs = require('@rollup/plugin-commonjs')
+const commonjs = require('rollup-plugin-commonjs') // need this old version because new doesn't support rollup v1, only v2
 const nodeResolve = require('@rollup/plugin-node-resolve')
 const postCss = require('rollup-plugin-postcss')
 const { renderBanner, isRelPath, isNamedPkg, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, onwarn, isScssPath } = require('./rollup-util')
