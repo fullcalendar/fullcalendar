@@ -5,7 +5,7 @@ import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 // HACK: in our CI setup, requests to the google-calendar api were failing for some reason
 // (requests to other services were working however)
-const SKIP_GCAL = karmaConfig.isCi
+const SKIP_GCAL = window.karmaConfig.isCi
 if (SKIP_GCAL) {
   console.log('skipping google-calendar')
 }

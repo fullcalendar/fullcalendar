@@ -106,9 +106,7 @@ describe('navLinks', function() {
 
         it('moves to week', function() {
           let dateClickSpy = spyOnCalendarCallback('dateClick')
-          let calendar = initCalendar({
-            weekNumbersWithinDays: true
-          })
+          let calendar = initCalendar()
           let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
           $.simulateMouseClick(dayGridWrapper.getWeekNavLinkEls()[1])

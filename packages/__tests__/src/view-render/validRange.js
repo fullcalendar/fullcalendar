@@ -1,6 +1,5 @@
 import { expectDayRange } from '../lib/ViewRenderUtils'
 
-
 describe('validRange rendering', function() {
 
   describe('with hardcoded start constraint', function() {

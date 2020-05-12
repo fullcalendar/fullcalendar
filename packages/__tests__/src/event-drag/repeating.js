@@ -10,12 +10,12 @@ describe('event dragging on repeating events', function() {
     editable: true,
     events: [
       {
-        groupId: 999,
+        groupId: '999',
         title: 'Repeating Event',
         start: '2017-02-09T16:00:00'
       },
       {
-        groupId: 999,
+        groupId: '999',
         title: 'Repeating Event',
         start: '2017-02-16T16:00:00'
       }

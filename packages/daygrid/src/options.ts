@@ -24,7 +24,7 @@ export type MoreLinkHandler = (arg: {
   hiddenSegs: EventSegment[],
   jsEvent: UIEvent,
   view: ViewApi
-}) => MoreLinkSimpleAction
+}) => MoreLinkSimpleAction | void
 
 
 export const OPTION_REFINERS = {

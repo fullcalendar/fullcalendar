@@ -21,6 +21,7 @@ import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg'
 import { TableRow } from './TableRow'
 import { TableCellModel, MoreLinkArg } from './TableCell'
 import { MorePopover } from './MorePopover'
+import { MoreLinkAction } from './options'
 
 
 export interface TableProps {
@@ -183,7 +184,7 @@ export class Table extends DateComponent<TableProps, TableState> {
   handleMoreLinkClick = (arg: MoreLinkArg) => { // TODO: bad names "more link click" versus "more click"
     let { context } = this
     let { dateEnv } = context
-    let clickOption = context.options.moreLinkClick || 'popover' // TODO: define the default elsewhere
+    let clickOption = context.options.moreLinkClick
 
     function segForPublic(seg: TableSeg) {
       let { def, instance, range } = seg.eventRange
@@ -205,10 +206,10 @@ export class Table extends DateComponent<TableProps, TableState> {
         hiddenSegs: arg.hiddenSegs.map(segForPublic),
         jsEvent: arg.ev,
         view: context.viewApi
-      })
+      }) as (MoreLinkAction | undefined) // hack to handle void
     }
 
-    if (clickOption === 'popover') {
+    if (!clickOption || clickOption === 'popover') {
       this.setState({
         morePopoverState: {
           ...arg,

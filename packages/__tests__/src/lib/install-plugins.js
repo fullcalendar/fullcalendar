@@ -11,5 +11,5 @@ export const DEFAULT_PLUGINS = [
 ]
 
 pushOptions({
-  DEFAULT_PLUGINS
+  plugins: DEFAULT_PLUGINS
 })

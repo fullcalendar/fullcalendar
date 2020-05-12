@@ -19,11 +19,11 @@ export interface ToolbarInput {
 }
 
 export interface CustomButtonInput {
-  text: string
+  text?: string
   icon?: string
   themeIcon?: string
-  bootstrapFontAwesome?: string,
-  click(element: HTMLElement): void
+  bootstrapFontAwesome?: string
+  click?(element: HTMLElement): void
 }
 
 export interface ButtonIconsInput {

@@ -28,7 +28,7 @@ describe('external event dragging', function() {
   describe('with forceEventDuration', function() {
     pushOptions({
       forceEventDuration: true,
-      defaultEventDuration: '1:30'
+      defaultTimedEventDuration: '1:30'
     })
 
     // https://github.com/fullcalendar/fullcalendar/issues/4597
@@ -69,6 +69,7 @@ describe('external event dragging', function() {
         expect(draggedEvent.start).toBe(null)
         expect(draggedEvent.end).toBe(null)
         called = true
+        return true
       }
     })
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid

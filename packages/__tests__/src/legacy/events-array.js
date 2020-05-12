@@ -27,7 +27,7 @@ describe('events as an array', function() {
     initCalendar({
       eventSources: [
         {
-          className: 'customeventclass',
+          classNames: 'customeventclass',
           events: getEventArray()
         }
       ],

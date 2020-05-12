@@ -2,11 +2,10 @@ import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { queryEventElInfo } from '../lib/wrappers/TimeGridWrapper'
 
-xdescribe('short event rendering with timeGridEventMinHeight', function() {
+xdescribe('short event rendering with timeGridEventMinHeight', function() { // rename this file? kill it?
   pushOptions({
     initialView: 'timeGridWeek',
-    initialDate: '2017-08-10',
-    timeGridEventMinHeight: 25
+    initialDate: '2017-08-10'
   })
 
   describe('we we have an isolated short event', function() {

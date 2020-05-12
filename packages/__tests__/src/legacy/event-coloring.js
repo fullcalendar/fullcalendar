@@ -65,7 +65,7 @@ describe('event coloring', function() {
         textColor: 'red'
       })
       initCalendar({
-        textColor: 'blue', // even when there's a more general setting
+        eventTextColor: 'blue', // even when there's a more general setting
         events: [ eventInput ]
       })
       expect(getEventCss('color')).toMatch(RED_REGEX)

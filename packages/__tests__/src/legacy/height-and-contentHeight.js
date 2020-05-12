@@ -5,7 +5,7 @@ import '../lib/dom-misc'
 
 (function() {
 
-  [ 'height', 'contentHeight' ].forEach(function(heightProp) {
+  [ 'height', 'contentHeight' ].forEach(function(/** @type any */ heightProp) {
     describe(heightProp, function() {
       var $calendarEl
       var heightEl // HTMLElement

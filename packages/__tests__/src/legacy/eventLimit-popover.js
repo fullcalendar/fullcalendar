@@ -18,7 +18,6 @@ describe('more-link popover', function() { // TODO: rename file
     dayMaxEventRows: 3,
     events: testEvents,
     dragScroll: false, // don't do autoscrolling while dragging. close quarters in PhantomJS
-    popoverViewportConstrain: false, // because PhantomJS window is small, don't do smart repositioning
     handleWindowResize: false // because showing the popover causes scrollbars and fires resize
   })
 

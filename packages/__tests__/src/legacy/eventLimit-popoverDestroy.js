@@ -11,7 +11,6 @@ describe('more-link popover', function() { // TODO: rename file
       { title: 'event3', start: '2014-07-29', className: 'event3' },
       { title: 'event4', start: '2014-07-29', className: 'event4' }
     ],
-    popoverViewportConstrain: false, // because PhantomJS window is small, don't do smart repositioning
     handleWindowResize: false // because showing the popover causes scrollbars and fires resize
   })
 
@@ -23,12 +22,12 @@ describe('more-link popover', function() { // TODO: rename file
     let calendar = initCalendar({
       eventDidMount: function(arg) {
         if (activated) {
-          eventsRendered[arg.title] = true
+          eventsRendered[arg.event.title] = true
           ++renderCount
         }
       },
       eventWillUnmount: function(arg) {
-        delete eventsRendered[arg.title]
+        delete eventsRendered[arg.event.title]
         --renderCount
       }
     })
@@ -59,12 +58,12 @@ describe('more-link popover', function() { // TODO: rename file
     let calendar = initCalendar({
       eventDidMount: function(arg) {
         if (activated) {
-          eventsRendered[arg.title] = true
+          eventsRendered[arg.event.title] = true
           ++renderCount
         }
       },
       eventWillUnmount: function(arg) {
-        delete eventsRendered[arg.title]
+        delete eventsRendered[arg.event.title]
         --renderCount
       }
     })

@@ -1,7 +1,4 @@
-
-/// <reference path="./global-defs.d.ts" />
-
-import { Calendar } from '@fullcalendar/core'
+import { Calendar, CalendarOptions } from '@fullcalendar/core'
 import { __assign } from 'tslib'
 import { parseLocalDate, parseUtcDate } from './date-parsing'
 
@@ -19,9 +16,9 @@ beforeEach(function() {
 afterEach(function() {
   optionsStack = null
 
-  if (window['currentCalendar']) {
-    window['currentCalendar'].destroy()
-    window['currentCalendar'] = null
+  if (window.currentCalendar) {
+    window.currentCalendar.destroy()
+    window.currentCalendar = null
   }
 
   $('#calendar').remove()
@@ -31,7 +28,7 @@ afterEach(function() {
 // Calendar Options and Initialization
 // ---------------------------------------------------------------------------------------------------------------------
 
-function pushOptions(options) {
+function pushOptions(options: CalendarOptions) {
   beforeEach(function() {
     return optionsStack.push(options)
   })
@@ -40,9 +37,7 @@ function pushOptions(options) {
 // called within an `it`
 // needs to be called *before* initCalendar
 function spyOnCalendarCallback(name, func = function(){}) {
-
-  /** @type {any} */
-  var options = {}
+  var options = {} as any
 
   options[name] = func
   spyOn(options, name).and.callThrough()
@@ -52,7 +47,7 @@ function spyOnCalendarCallback(name, func = function(){}) {
   return options[name]
 }
 
-function initCalendar(moreOptions, el) {
+function initCalendar(moreOptions?: CalendarOptions, el?) {
   var $el
 
   if (moreOptions) {
@@ -65,8 +60,8 @@ function initCalendar(moreOptions, el) {
     $el = $('<div id="calendar">').appendTo('body')
   }
 
-  if (window['currentCalendar']) {
-    window['currentCalendar'].destroy()
+  if (window.currentCalendar) {
+    window.currentCalendar.destroy()
   }
 
   var options = getCurrentOptions()
@@ -75,12 +70,12 @@ function initCalendar(moreOptions, el) {
   var newCalendar = null
 
   options._init = function() {
-    newCalendar = window['currentCalendar'] = this
+    newCalendar = window.currentCalendar = this
   }
 
   var cool = new Calendar($el[0], options)
 
-  if (newCalendar === window['currentCalendar']) {
+  if (newCalendar === window.currentCalendar) {
     newCalendar.render()
   } else {
     newCalendar.destroy()
@@ -90,9 +85,7 @@ function initCalendar(moreOptions, el) {
 }
 
 function getCurrentOptions() {
-  /** @type {any} */
-  let args = [ {} ].concat(optionsStack)
-
+  let args = [ {} ].concat(optionsStack) as any
   return $.extend.apply($, args)
 }
 
@@ -104,7 +97,7 @@ function getCurrentOptions() {
 describeOptions(optionName, descriptionAndValueHash, callback)
 describeOptions(descriptionAndOptionsHash, callback)
  */
-function describeOptions(optName, hash, callback) {
+function describeOptions(optName, hash?, callback?) {
   if ($.type(optName) === 'object') {
     callback = hash
     hash = optName
@@ -113,9 +106,6 @@ function describeOptions(optName, hash, callback) {
 
   $.each(
     hash,
-    /**
-     * @param desc {string}
-     */
     function(desc, val) {
       var opts
 
@@ -127,7 +117,7 @@ function describeOptions(optName, hash, callback) {
       }
       opts = $.extend(true, {}, opts)
 
-      describe(desc, function() {
+      describe(desc as string, function() {
         pushOptions(opts)
         callback(val)
       })
@@ -142,7 +132,7 @@ function describeValues(hash, callback) {
      * @param desc {string}
      */
     function(desc, val) {
-      describe(desc, function() {
+      describe(desc as string, function() {
         callback(val)
       })
     }
@@ -226,7 +216,7 @@ function spyOnMethod(Class, methodName, dontCallThrough) {
 }
 
 // wraps an existing function in a spy, calling through to the function
-function spyCall(func) {
+function spyCall(func?) {
   func = func || function() {}
   const obj = { func }
   spyOn(obj, 'func').and.callThrough()
@@ -234,9 +224,80 @@ function spyCall(func) {
 }
 
 
+type spyOnCalendarCallbackType = typeof spyOnCalendarCallback
+type pushOptionsType = typeof pushOptions
+type initCalendarType = typeof initCalendar
+type getCurrentOptionsType = typeof getCurrentOptions
+type describeOptionsType = typeof describeOptions
+type describeValuesType = typeof describeValues
+type describeTimeZonesType = typeof describeTimeZones
+type describeTimeZoneType = typeof describeTimeZone
+type oneCallType = typeof oneCall
+type spyOnMethodType = typeof spyOnMethod
+type spyCallType = typeof spyCall
+
+declare global {
+
+  let currentCalendar: Calendar
+  let spyOnCalendarCallback: spyOnCalendarCallbackType
+  let pushOptions: pushOptionsType
+  let initCalendar: initCalendarType
+  let getCurrentOptions: getCurrentOptionsType
+  let describeOptions: describeOptionsType
+  let describeValues: describeValuesType
+  let describeTimeZones: describeTimeZonesType
+  let describeTimeZone: describeTimeZoneType
+  let oneCall: oneCallType
+  let spyOnMethod: spyOnMethodType
+  let spyCall: spyCallType
+
+  interface Window { // how to unify this with the above let statements?
+    currentCalendar: Calendar
+    karmaConfig: any
+  }
+
+  interface Function {
+    calls: any // for jasmine spies
+  }
+
+  interface JQueryStatic {
+    simulate: any
+    simulateMouseClick: any
+    simulateTouchClick: any
+    simulateByPoint: any
+    _data: any
+  }
+
+  interface JQuery {
+    simulate: any
+    draggable: any
+    sortable: any
+  }
+
+  namespace jasmine {
+    interface Matchers<T> {
+      toEqualDate: any
+      toEqualLocalDate: any
+      toEqualNow: any
+      toBeBoundedBy: any
+      toIntersectWith: any
+      toBeAbove: any
+      toBeBelow: any
+      toBeRightOf: any
+      toBeLeftOf: any
+      toHaveScrollbars: any
+      toBeMostlyHBoundedBy: any
+      toBeMostlyAbove: any
+      toBeMostlyLeftOf: any
+      toBeMostlyRightOf: any
+    }
+  }
+
+}
+
 __assign(window, {
-  pushOptions,
   spyOnCalendarCallback,
+  pushOptions,
   initCalendar,
   getCurrentOptions,
   describeOptions,

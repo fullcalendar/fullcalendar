@@ -226,7 +226,7 @@ describe('rrule plugin', function() {
     let events = currentCalendar.getEvents()
 
     events.sort(function(eventA, eventB) {
-      return eventA._instance.range.start - eventB._instance.range.start // faster than .start
+      return eventA.start.valueOf() - eventB.start.valueOf()
     })
 
     return events

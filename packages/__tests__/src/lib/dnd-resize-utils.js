@@ -154,7 +154,7 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
         var successfulDrop
 
         if (eventClassName) {
-          eventObj = calendar.getEvents(function(o) {
+          eventObj = calendar.getEvents().filter(function(o) {
             return o.classNames.join(' ') === eventClassName
           })[0]
         } else {

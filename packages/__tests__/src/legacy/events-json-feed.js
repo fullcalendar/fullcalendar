@@ -92,7 +92,7 @@ describe('events as a json feed', function() {
     initCalendar({
       eventSources: [ {
         url: 'my-feed.php',
-        className: 'customeventclass'
+        classNames: 'customeventclass'
       } ],
       timeZone: 'America/Chicago',
       eventDidMount(arg) {

@@ -6,17 +6,17 @@ describe('getEventSources', function() {
     eventSources: [
       {
         events: [
-          { id: 1, start: '2015-08-07T02:00:00', end: '2015-08-07T03:00:00', title: 'event A' }
+          { id: '1', start: '2015-08-07T02:00:00', end: '2015-08-07T03:00:00', title: 'event A' }
         ]
       },
       {
         events: [
-          { id: 2, start: '2015-08-07T03:00:00', end: '2015-08-07T04:00:00', title: 'event B' }
+          { id: '2', start: '2015-08-07T03:00:00', end: '2015-08-07T04:00:00', title: 'event B' }
         ]
       },
       {
         events: [
-          { id: 3, start: '2015-08-07T04:00:00', end: '2015-08-07T05:00:00', title: 'event C' }
+          { id: '3', start: '2015-08-07T04:00:00', end: '2015-08-07T05:00:00', title: 'event C' }
         ]
       }
     ]

@@ -3,7 +3,7 @@ describe('Event Object parsing', function() {
 
   it('records _id as an extended prop', function() {
     initCalendar({
-      currentDate: '2017-09-05',
+      initialDate: '2017-09-05',
       initialView: 'dayGridMonth',
       events: [
         { _id: 'a', start: '2017-09-05' }
