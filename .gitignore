@@ -15,6 +15,3 @@
 
 node_modules
 yarn-error.log
-
-# sometimes rollup-plugin-dts outputs these temp files when circ dependency
-/*.d.ts

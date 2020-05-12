@@ -68,6 +68,6 @@ function buildPkgConfig(pkgStruct, isDev) {
       }
     ],
     watch: WATCH_OPTIONS,
-    onwarn
+    // onwarn
   }
 }
