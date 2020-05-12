@@ -22,7 +22,7 @@ export interface DateEnvSettings {
   calendarSystem: string
   locale: Locale
   weekNumberCalculation?: WeekNumberCalculation
-  firstDay?: any,
+  firstDay?: number, // will override what the locale wants
   weekText?: string,
   cmdFormatter?: CmdFormatterFunc
   defaultSeparator?: string

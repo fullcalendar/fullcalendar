@@ -27,6 +27,7 @@ export interface Duration {
   months: number
   days: number
   milliseconds: number
+  specifiedWeeks?: boolean
 }
 
 const INTERNAL_UNITS = [ 'years', 'months', 'days', 'milliseconds' ]
@@ -39,9 +40,9 @@ export function createDuration(input: DurationInput, unit?: string): Duration | 
   if (typeof input === 'string') {
     return parseString(input)
   } else if (typeof input === 'object' && input) { // non-null object
-    return normalizeObject(input)
+    return parseObject(input)
   } else if (typeof input === 'number') {
-    return normalizeObject({ [unit || 'milliseconds']: input })
+    return parseObject({ [unit || 'milliseconds']: input })
   } else {
     return null
   }
@@ -66,23 +67,25 @@ function parseString(s: string): Duration {
   return null
 }
 
-function normalizeObject(obj: DurationObjectInput): Duration {
-  return {
+function parseObject(obj: DurationObjectInput): Duration {
+  let duration: Duration = {
     years: obj.years || obj.year || 0,
     months: obj.months || obj.month || 0,
-    days:
-      (obj.days || obj.day || 0) +
-      getWeeksFromInput(obj) * 7,
+    days: obj.days || obj.day || 0,
     milliseconds:
       (obj.hours || obj.hour || 0) * 60 * 60 * 1000 + // hours
       (obj.minutes || obj.minute || 0) * 60 * 1000 + // minutes
       (obj.seconds || obj.second || 0) * 1000 + // seconds
       (obj.milliseconds || obj.millisecond || obj.ms || 0) // ms
   }
-}
 
-export function getWeeksFromInput(input: DurationInput) {
-  return typeof input === 'object' && (input.weeks || input.week || 0)
+  let weeks = obj.weeks || obj.week
+  if (weeks) {
+    duration.days += weeks * 7
+    duration.specifiedWeeks = true
+  }
+
+  return duration
 }
 
 
@@ -191,7 +194,7 @@ export function wholeDivideDurations(numerator: Duration, denominator: Duration)
   return res
 }
 
-export function greatestDurationDenominator(dur: Duration, dontReturnWeeks?: boolean) {
+export function greatestDurationDenominator(dur: Duration) {
   let ms = dur.milliseconds
   if (ms) {
     if (ms % 1000 !== 0) {
@@ -208,7 +211,7 @@ export function greatestDurationDenominator(dur: Duration, dontReturnWeeks?: boo
     }
   }
   if (dur.days) {
-    if (!dontReturnWeeks && dur.days % 7 === 0) {
+    if (dur.specifiedWeeks && dur.days % 7 === 0) {
       return { unit: 'week', value: dur.days / 7 }
     }
     return { unit: 'day', value: dur.days }

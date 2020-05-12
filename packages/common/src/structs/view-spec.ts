@@ -1,5 +1,5 @@
 import { ViewDef, compileViewDefs } from './view-def'
-import { Duration, createDuration, greatestDurationDenominator, getWeeksFromInput } from '../datelib/duration'
+import { Duration, createDuration, greatestDurationDenominator } from '../datelib/duration'
 import { mapHash } from '../util/object'
 import { ViewOptions, CalendarOptions, BASE_OPTION_DEFAULTS } from '../options'
 import { ViewConfigInputHash, parseViewConfigs, ViewConfigHash, ViewComponentType } from './view-config'
@@ -54,11 +54,7 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
     duration = createDuration(durationInput)
 
     if (duration) { // valid?
-      let denom = greatestDurationDenominator(
-        duration,
-        !getWeeksFromInput(durationInput)
-      )
-
+      let denom = greatestDurationDenominator(duration)
       durationUnit = denom.unit
 
       if (denom.value === 1) {

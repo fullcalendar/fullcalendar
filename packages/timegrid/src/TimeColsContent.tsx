@@ -59,7 +59,7 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
     let nowIndicatorTop =
       context.options.nowIndicator &&
       props.slatCoords &&
-      props.slatCoords.safeComputeTop(props.nowDate)
+      props.slatCoords.safeComputeTop(props.nowDate) // might return void
 
     let colCnt = props.cells.length
     let fgEventSegsByRow = this.splitFgEventSegs(props.fgEventSegs, colCnt)
@@ -107,7 +107,7 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
             </tr>
           </tbody>
         </table>
-        {nowIndicatorTop != null &&
+        {typeof nowIndicatorTop === 'number' &&
           <NowIndicatorRoot isAxis={true} date={props.nowDate}>
             {(rootElRef, classNames, innerElRef, innerContent) => (
               <div

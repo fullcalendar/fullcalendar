@@ -42,7 +42,7 @@ export class TimeColsSlatsCoords {
   // Computes the top coordinate, relative to the bounds of the grid, of the given time (a Duration).
   // This is a makeshify way to compute the time-top. Assumes all slatMetas dates are uniform.
   // Eventually allow computation with arbirary slat dates.
-  computeTimeTop(duration: Duration) {
+  computeTimeTop(duration: Duration): number {
     let { positions, dateProfile, slatMetas } = this
     let len = positions.els.length
     let slotDurationMs = slatMetas[1].date.valueOf() - slatMetas[0].date.valueOf() // we assume dates are uniform

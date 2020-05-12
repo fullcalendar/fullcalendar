@@ -199,6 +199,9 @@ export const BASE_OPTION_REFINERS = {
   validRange: identity as Identity<DateRangeInput | ((this: CalendarApi, nowDate: Date) => DateRangeInput)>, // `this` works?
   visibleRange: identity as Identity<DateRangeInput | ((this: CalendarApi, currentDate: Date) => DateRangeInput)>, // `this` works?
   titleFormat: identity as Identity<FormatterInput>, // DONT parse just yet. we need to inject titleSeparator
+
+  // only used by list-view, but languages define the value, so we need it in base options
+  noEventsText: String
 }
 
 type BuiltInBaseOptionRefiners = typeof BASE_OPTION_REFINERS
@@ -258,8 +261,7 @@ export const BASE_OPTION_DEFAULTS = {
   eventDragMinDistance: 5, // only applies to mouse
   expandRows: false,
   navLinks: false,
-  selectable: false,
-  firstDay: 0
+  selectable: false
 }
 
 export type BaseOptionsRefined = DefaultedRefinedOptions<

@@ -1,5 +1,5 @@
 import { DateMarker, startOfDay, addDays } from './datelib/marker'
-import { Duration, createDuration, getWeeksFromInput, asRoughDays, asRoughMs, greatestDurationDenominator } from './datelib/duration'
+import { Duration, createDuration, asRoughDays, asRoughMs, greatestDurationDenominator } from './datelib/duration'
 import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, parseRange, DateRangeInput } from './datelib/date-range'
 import { ViewSpec } from './structs/view-spec'
 import { DateEnv, DateInput } from './datelib/env'
@@ -247,25 +247,18 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
   // `unit` is the already-computed greatestDurationDenominator unit of duration.
   buildRangeFromDuration(date: DateMarker, direction, duration: Duration, unit) {
     let { dateEnv, dateAlignment } = this.props
-    let dateIncrementInput
-    let dateIncrementDuration
     let start: DateMarker
     let end: DateMarker
     let res
 
     // compute what the alignment should be
     if (!dateAlignment) {
-      dateIncrementInput = this.props.dateIncrement
+      let { dateIncrement } = this.props
 
-      if (dateIncrementInput) {
-        dateIncrementDuration = createDuration(dateIncrementInput)
-
+      if (dateIncrement) {
         // use the smaller of the two units
-        if (asRoughMs(dateIncrementDuration) < asRoughMs(duration)) {
-          dateAlignment = greatestDurationDenominator(
-            dateIncrementDuration,
-            !getWeeksFromInput(dateIncrementInput)
-          ).unit
+        if (asRoughMs(dateIncrement) < asRoughMs(duration)) {
+          dateAlignment = greatestDurationDenominator(dateIncrement).unit
         } else {
           dateAlignment = unit
         }
@@ -356,15 +349,18 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
   // Compute the duration value that should be added/substracted to the current date
   // when a prev/next operation happens.
   buildDateIncrement(fallback): Duration {
-    let dateIncrementInput = this.props.dateIncrement
+    let { dateIncrement } = this.props
     let customAlignment
 
-    if (dateIncrementInput) {
-      return createDuration(dateIncrementInput)
+    if (dateIncrement) {
+      return dateIncrement
+
     } else if ((customAlignment = this.props.dateAlignment)) {
       return createDuration(1, customAlignment)
+
     } else if (fallback) {
       return fallback
+
     } else {
       return createDuration({ days: 1 })
     }

@@ -16,6 +16,7 @@ export const EVENT_UI_REFINERS = {
   constraint: identity as Identity<ConstraintInput>,
   overlap: identity as Identity<boolean>,
   allow: identity as Identity<AllowFunc>,
+  className: parseClassNames,
   classNames: parseClassNames,
   color: String,
   backgroundColor: String,
@@ -61,7 +62,7 @@ export function createEventUi(refined: EventUiRefined, context: CalendarContext)
     backgroundColor: refined.backgroundColor || refined.color || '',
     borderColor: refined.borderColor || refined.color || '',
     textColor: refined.textColor || '',
-    classNames: refined.classNames || []
+    classNames: (refined.className || []).concat(refined.classNames || []) // join singular and plural
   }
 }
 

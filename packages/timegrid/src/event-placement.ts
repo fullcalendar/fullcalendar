@@ -223,8 +223,8 @@ function sortForwardSegs(forwardSegs: Seg[], eventOrderSpecs) {
 }
 
 
-function buildTimeGridSegCompareObj(seg: Seg) {
-  let obj = buildSegCompareObj(seg)
+function buildTimeGridSegCompareObj(seg: Seg): any {
+  let obj = buildSegCompareObj(seg) as any
 
   obj.forwardPressure = seg.forwardPressure
   obj.backwardCoord = seg.backwardCoord

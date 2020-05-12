@@ -145,7 +145,7 @@ export {
 } from './render-hook-misc'
 
 export {
-  BASE_OPTION_DEFAULTS, identity, Identity,
+  BASE_OPTION_DEFAULTS, BASE_OPTION_REFINERS, identity, Identity,
   BaseOptionRefiners, BaseOptionsRefined,
   CalendarOptionRefiners, CalendarOptions, CalendarOptionsRefined, GenericObject,
   ViewOptionRefiners, ViewOptions, ViewOptionsRefined, RawOptionsFromRefiners, RefinedOptionsFromRefiners, refineProps,

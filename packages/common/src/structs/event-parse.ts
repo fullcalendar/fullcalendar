@@ -115,10 +115,10 @@ Will NOT populate date-related props.
 */
 export function parseEventDef(refined: EventRefined, extra: GenericObject, sourceId: string, allDay: boolean, hasEnd: boolean, context: CalendarContext): EventDef {
   let def: EventDef = {
-    title: refined.title,
-    groupId: refined.groupId,
-    publicId: refined.id,
-    url: refined.url,
+    title: refined.title || '',
+    groupId: refined.groupId || '',
+    publicId: refined.id || '',
+    url: refined.url || '',
     recurringDef: null,
     defId: guid(),
     sourceId,
@@ -143,7 +143,7 @@ export function parseEventDef(refined: EventRefined, extra: GenericObject, sourc
 }
 
 
-function parseSingle(refined: EventRefined, defaultAllDay: boolean | null, context: CalendarContext, leftovers?, allowOpenRange?: boolean) {
+function parseSingle(refined: EventRefined, defaultAllDay: boolean | null, context: CalendarContext, allowOpenRange?: boolean) {
   let allDay = refined.allDay
   let startMeta
   let startMarker = null

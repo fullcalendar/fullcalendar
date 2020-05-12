@@ -6,6 +6,11 @@
   right: 0;
   bottom: 0;
 
+  // prevents now indicator arrow from bleeding out and causing more scrolling
+  // bad if we want to do sticky-titles on events in timegrid
+  // TODO: move now indicator arrow into own container, that does its own overflow
+  overflow: hidden;
+
   & > table {
     height: 100% !important;
   }

@@ -2,15 +2,15 @@ import { identity, Identity, ClassNamesGenerator, CustomContentGenerator, DidMou
 import { NoEventsHookProps } from './ListView'
 
 export const OPTION_REFINERS = {
-  noEventsText: String,
+  listDayFormat: createFalsableFormatter, // defaults specified in list plugins
+  listDaySideFormat: createFalsableFormatter, // "
 
   noEventsClassNames: identity as Identity<ClassNamesGenerator<NoEventsHookProps>>,
   noEventsContent: identity as Identity<CustomContentGenerator<NoEventsHookProps>>,
   noEventsDidMount: identity as Identity<DidMountHandler<NoEventsHookProps>>,
-  noEventsWillUnmount: identity as Identity<WillUnmountHandler<NoEventsHookProps>>,
+  noEventsWillUnmount: identity as Identity<WillUnmountHandler<NoEventsHookProps>>
 
-  listDayFormat: createFalsableFormatter, // defaults specified in list plugins
-  listDaySideFormat: createFalsableFormatter, // "
+  // noEventsText is defined in base options
 }
 
 function createFalsableFormatter(input: FormatterInput | false) {

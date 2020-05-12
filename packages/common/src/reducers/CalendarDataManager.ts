@@ -546,7 +546,7 @@ function buildDateEnv(
   timeZone: string,
   explicitLocale: LocaleSingularArg,
   weekNumberCalculation,
-  firstDay,
+  firstDay: number | undefined,
   weekText,
   pluginHooks: PluginHooks,
   availableLocaleData: RawLocaleInfo,
@@ -619,7 +619,7 @@ function buildViewUiProps(calendarContext: CalendarContext) {
       startEditable: options.eventStartEditable,
       durationEditable: options.eventDurationEditable,
       constraint: options.eventConstraint,
-      // overlap: options.eventOverlap, // validation system uses this directly, b/c might be a func
+      overlap: typeof options.eventOverlap === 'boolean' ? options.eventOverlap : undefined,
       allow: options.eventAllow,
       backgroundColor: options.eventBackgroundColor,
       borderColor: options.eventBorderColor,
@@ -630,7 +630,7 @@ function buildViewUiProps(calendarContext: CalendarContext) {
 
     selectionConfig: createEventUi({
       constraint: options.selectConstraint,
-      // overlap: options.selectOverlap, // validation system uses this directly, b/c might be a func
+      overlap: typeof options.selectOverlap === 'boolean' ? options.selectOverlap : undefined,
       allow: options.selectAllow
     }, calendarContext)
   }
