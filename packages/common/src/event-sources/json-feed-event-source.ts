@@ -29,7 +29,8 @@ let eventSourceDef: EventSourceDef = {
       extraParams: raw.extraParams,
       startParam: raw.startParam,
       endParam: raw.endParam,
-      timeZoneParam: raw.timeZoneParam
+      timeZoneParam: raw.timeZoneParam,
+      objKey: raw.objKey
     }
   },
 
@@ -40,6 +41,9 @@ let eventSourceDef: EventSourceDef = {
     requestJson(
       meta.method, meta.url, requestParams,
       function(rawEvents, xhr) {
+        if (meta.objKey) {
+          rawEvents = rawEvents[meta.objKey];
+        }
         success({ rawEvents, xhr })
       },
       function(errorMessage, xhr) {

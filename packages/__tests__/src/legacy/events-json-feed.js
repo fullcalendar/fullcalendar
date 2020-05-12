@@ -200,4 +200,26 @@ describe('events as a json feed', function() {
     expect(currentCalendar.getEventSources()[0].url).toBe('my-feed.php')
   })
 
+  it('accepts an object of objKey is set', function() {
+
+    XHRMock.get(/^my-feed\.php/, function(req, res) {
+      return res.status(200).header('content-type', 'application/json').body(
+        JSON.stringify({
+          'events': [
+            {
+              title: 'my event',
+              start: '2014-05-21'
+            }
+          ]
+        })
+      )
+    })
+
+    initCalendar({
+      events: { url: 'my-feed.php', objKey: 'events' }
+    })
+
+    expect(currentCalendar.getEvent()[0].title).toBe('my event')
+  })
+
 })
