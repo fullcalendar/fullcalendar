@@ -10,7 +10,9 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     id: guid(),
     deps: input.deps || [],
     reducers: input.reducers || [],
-    eventDefParsers: input.eventDefParsers || [],
+    eventRefiners: input.eventRefiners || {},
+    eventDefMemberAdders: input.eventDefMemberAdders || [],
+    eventSourceRefiners: input.eventSourceRefiners || {},
     isDraggableTransformers: input.isDraggableTransformers || [],
     eventDragMutationMassagers: input.eventDragMutationMassagers || [],
     eventDefMutationAppliers: input.eventDefMutationAppliers || [],
@@ -36,6 +38,7 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     optionChangeHandlers: input.optionChangeHandlers || {},
     scrollGridImpl: input.scrollGridImpl || null,
     contentTypeHandlers: input.contentTypeHandlers || {},
+    listenerRefiners: input.listenerRefiners || {},
     optionRefiners: input.optionRefiners || {}
   }
 }
@@ -45,7 +48,9 @@ export function buildPluginHooks(pluginDefs: PluginDef[] | null, globalDefs: Plu
   let isAdded: { [pluginId: string]: boolean } = {}
   let hooks: PluginHooks = {
     reducers: [],
-    eventDefParsers: [],
+    eventRefiners: {},
+    eventDefMemberAdders: [],
+    eventSourceRefiners: {},
     isDraggableTransformers: [],
     eventDragMutationMassagers: [],
     eventDefMutationAppliers: [],
@@ -71,6 +76,7 @@ export function buildPluginHooks(pluginDefs: PluginDef[] | null, globalDefs: Plu
     optionChangeHandlers: {},
     scrollGridImpl: null,
     contentTypeHandlers: {},
+    listenerRefiners: {},
     optionRefiners: {}
   }
 
@@ -97,7 +103,9 @@ export function buildPluginHooks(pluginDefs: PluginDef[] | null, globalDefs: Plu
 function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
   return {
     reducers: hooks0.reducers.concat(hooks1.reducers),
-    eventDefParsers: hooks0.eventDefParsers.concat(hooks1.eventDefParsers),
+    eventRefiners: { ...hooks0.eventRefiners, ...hooks1.eventRefiners },
+    eventDefMemberAdders: hooks0.eventDefMemberAdders.concat(hooks1.eventDefMemberAdders),
+    eventSourceRefiners: { ...hooks0.eventSourceRefiners, ...hooks1.eventSourceRefiners },
     isDraggableTransformers: hooks0.isDraggableTransformers.concat(hooks1.isDraggableTransformers),
     eventDragMutationMassagers: hooks0.eventDragMutationMassagers.concat(hooks1.eventDragMutationMassagers),
     eventDefMutationAppliers: hooks0.eventDefMutationAppliers.concat(hooks1.eventDefMutationAppliers),
@@ -123,6 +131,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     optionChangeHandlers: { ...hooks0.optionChangeHandlers, ...hooks1.optionChangeHandlers },
     scrollGridImpl: hooks1.scrollGridImpl || hooks0.scrollGridImpl,
     contentTypeHandlers: { ...hooks0.contentTypeHandlers, ...hooks1.contentTypeHandlers },
+    listenerRefiners: { ...hooks0.listenerRefiners, ...hooks1.listenerRefiners },
     optionRefiners: { ...hooks0.optionRefiners, ...hooks1.optionRefiners },
   }
 }

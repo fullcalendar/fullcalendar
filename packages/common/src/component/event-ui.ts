@@ -1,27 +1,36 @@
 import { Constraint, AllowFunc, normalizeConstraint, ConstraintInput } from '../structs/constraint'
 import { parseClassNames } from '../util/html'
-import { refineProps } from '../util/misc'
 import { CalendarContext } from '../CalendarContext'
+import { RawOptionsFromRefiners, RefinedOptionsFromRefiners, identity, Identity } from '../options'
+
 
 // TODO: better called "EventSettings" or "EventConfig"
 // TODO: move this file into structs
 // TODO: separate constraint/overlap/allow, because selection uses only that, not other props
 
-export interface RawEventUi {
-  display?: string
-  editable?: boolean
-  startEditable?: boolean
-  durationEditable?: boolean
-  constraint?: ConstraintInput
-  overlap?: boolean
-  allow?: AllowFunc
-  className?: string[] | string
-  classNames?: string[] | string
-  backgroundColor?: string
-  borderColor?: string
-  textColor?: string
-  color?: string
+export const EVENT_UI_REFINERS = {
+  display: String,
+  editable: Boolean,
+  startEditable: Boolean,
+  durationEditable: Boolean,
+  constraint: identity as Identity<ConstraintInput>,
+  overlap: identity as Identity<boolean>,
+  allow: identity as Identity<AllowFunc>,
+  classNames: parseClassNames,
+  color: String,
+  backgroundColor: String,
+  borderColor: String,
+  textColor: String
 }
+
+type BuiltInEventUiRefiners = typeof EVENT_UI_REFINERS
+
+interface EventUiRefiners extends BuiltInEventUiRefiners {
+  // to prevent circular reference (and give is the option for ambient modification for later)
+}
+
+export type EventUiInput = RawOptionsFromRefiners<Required<EventUiRefiners>> // Required hack
+export type EventUiRefined = RefinedOptionsFromRefiners<Required<EventUiRefiners>> // Required hack
 
 export interface EventUi {
   display: string
@@ -38,69 +47,26 @@ export interface EventUi {
 
 export type EventUiHash = { [defId: string]: EventUi }
 
-export const UI_PROPS_REFINERS = {
-  display: null, // TODO: string?
-  editable: Boolean,
-  startEditable: Boolean,
-  durationEditable: Boolean,
-  constraint: null,
-  overlap: null,
-  allow: null,
-  classNames: parseClassNames,
-  color: String,
-  backgroundColor: String,
-  borderColor: String,
-  textColor: String
-}
 
-export const EVENT_SCOPED_RAW_UI_PROPS = {
-  eventDisplay: true,
-  editable: true,
-  eventStartEditable: true,
-  eventDurationEditable: true,
-  eventConstraint: true,
-  eventOverlap: true,
-  eventAllow: true,
-  eventBackgroundColor: true,
-  eventBorderColor: true,
-  eventTextColor: true,
-  eventClassNames: true
-}
-
-const EMPTY_EVENT_UI: EventUi = {
-  display: null,
-  startEditable: null,
-  durationEditable: null,
-  constraints: [],
-  overlap: null,
-  allows: [],
-  backgroundColor: '',
-  borderColor: '',
-  textColor: '',
-  classNames: []
-}
-
-
-export function processUiProps(rawProps: RawEventUi, context: CalendarContext, leftovers?): EventUi {
-  let props = refineProps(rawProps, UI_PROPS_REFINERS, {}, leftovers)
-  let constraint = normalizeConstraint(props.constraint, context)
+export function createEventUi(refined: EventUiRefined, context: CalendarContext): EventUi {
+  let constraint = normalizeConstraint(refined.constraint, context)
 
   return {
-    display: props.display,
-    startEditable: props.startEditable != null ? props.startEditable : props.editable,
-    durationEditable: props.durationEditable != null ? props.durationEditable : props.editable,
+    display: refined.display,
+    startEditable: refined.startEditable != null ? refined.startEditable : refined.editable,
+    durationEditable: refined.durationEditable != null ? refined.durationEditable : refined.editable,
     constraints: constraint != null ? [ constraint ] : [],
-    overlap: props.overlap,
-    allows: props.allow != null ? [ props.allow ] : [],
-    backgroundColor: props.backgroundColor || props.color,
-    borderColor: props.borderColor || props.color,
-    textColor: props.textColor,
-    classNames: props.classNames
+    overlap: refined.overlap,
+    allows: refined.allow != null ? [ refined.allow ] : [],
+    backgroundColor: refined.backgroundColor || refined.color,
+    borderColor: refined.borderColor || refined.color,
+    textColor: refined.textColor,
+    classNames: refined.classNames
   }
 }
 
 
-// prevent against problems with <2 args!
+// TODO: prevent against problems with <2 args!
 export function combineEventUis(uis: EventUi[]): EventUi {
   return uis.reduce(combineTwoEventUis, EMPTY_EVENT_UI)
 }
@@ -119,4 +85,18 @@ function combineTwoEventUis(item0: EventUi, item1: EventUi): EventUi { // hash1 
     textColor: item1.textColor || item0.textColor,
     classNames: item0.classNames.concat(item1.classNames)
   }
+}
+
+
+const EMPTY_EVENT_UI: EventUi = {
+  display: null,
+  startEditable: null,
+  durationEditable: null,
+  constraints: [],
+  overlap: null,
+  allows: [],
+  backgroundColor: '',
+  borderColor: '',
+  textColor: '',
+  classNames: []
 }

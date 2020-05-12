@@ -1,7 +1,7 @@
 import { mergeProps } from '../util/object'
 import { getGlobalRawLocales } from '../global-locales' // weird to be importing this
 import { __assign } from 'tslib'
-import { RawCalendarOptions, RefinedCalendarOptions } from '../options'
+import { CalendarOptions, CalendarOptionsRefined } from '../options'
 
 export type LocaleCodeArg = string | string[]
 export type LocaleSingularArg = LocaleCodeArg | RawLocale
@@ -11,10 +11,10 @@ export interface Locale {
   codes: string[]
   week: { dow: number, doy: number }
   simpleNumberFormat: Intl.NumberFormat
-  options: RefinedCalendarOptions
+  options: CalendarOptionsRefined
 }
 
-export interface RawLocale extends RawCalendarOptions {
+export interface RawLocale extends CalendarOptions {
   code: string
 }
 

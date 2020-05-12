@@ -167,7 +167,7 @@ export function compileEventUi(eventDef: EventDef, eventUiBases: EventUiHash) {
 }
 
 
-export function sortEventSegs(segs, eventOrderSpecs: OrderSpec[]): Seg[] {
+export function sortEventSegs(segs, eventOrderSpecs: OrderSpec<EventApi>[]): Seg[] {
   let objs = segs.map(buildSegCompareObj)
 
   objs.sort(function(obj0, obj1) {

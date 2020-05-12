@@ -1,7 +1,8 @@
 
-export type ClassNameInput = string | string[]
+export type ClassNamesInput = string | string[]
 
-export function parseClassNames(raw: ClassNameInput) {
+
+export function parseClassNames(raw: ClassNamesInput) {
   if (Array.isArray(raw)) {
     return raw
   } else if (typeof raw === 'string') {

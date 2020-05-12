@@ -1,5 +1,5 @@
 import { TableSeg } from './TableSeg'
-import { sortEventSegs, OrderSpec } from '@fullcalendar/common'
+import { sortEventSegs, OrderSpec, EventApi } from '@fullcalendar/common'
 
 
 interface TableSegPlacement {
@@ -16,7 +16,7 @@ export function computeFgSegPlacement( // for one row. TODO: print mode?
   eventHeights: { [instanceId: string]: number },
   maxContentHeight: number | null,
   colCnt: number,
-  eventOrderSpecs: OrderSpec[]
+  eventOrderSpecs: OrderSpec<EventApi>[]
 ) {
   let colPlacements: TableSegPlacement[][] = [] // if event spans multiple cols, its present in each col
   let moreCnts: number[] = [] // by-col

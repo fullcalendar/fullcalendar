@@ -1,7 +1,7 @@
 import { Duration } from '../datelib/duration'
 import { EventUi } from '../component/event-ui'
 
-export interface EventDef {
+export interface EventDef { // TODO: add recurring type here?
   defId: string
   sourceId: string
   publicId: string
@@ -16,18 +16,3 @@ export interface EventDef {
 }
 
 export type EventDefHash = { [defId: string]: EventDef }
-
-export const NON_DATE_PROPS = { // ...that are NOT in the EventUi object
-  id: String,
-  groupId: String,
-  title: String,
-  url: String,
-  extendedProps: null
-}
-
-export const DATE_PROPS = {
-  start: null,
-  date: null, // alias for start
-  end: null,
-  allDay: null
-}

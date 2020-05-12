@@ -9,7 +9,7 @@ import { DateSpan } from '../structs/date-span'
 import { DateMarker } from '../datelib/marker'
 
 export type Action =
-  { type: 'SET_OPTION', optionName: string, rawOptionValue: any } | // TODO: how to link this to RawCalendarOptions?
+  { type: 'SET_OPTION', optionName: string, rawOptionValue: any } | // TODO: how to link this to CalendarOptions?
 
   { type: 'PREV' } |
   { type: 'NEXT' } |
@@ -28,7 +28,7 @@ export type Action =
   { type: 'SET_EVENT_RESIZE', state: EventInteractionState } |
   { type: 'UNSET_EVENT_RESIZE' } |
 
-  { type: 'ADD_EVENT_SOURCES', sources: EventSource[] } |
+  { type: 'ADD_EVENT_SOURCES', sources: EventSource<any>[] } |
   { type: 'REMOVE_EVENT_SOURCE', sourceId: string } |
   { type: 'REMOVE_ALL_EVENT_SOURCES' } |
 

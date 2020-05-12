@@ -1,6 +1,6 @@
 import { EventDef, EventDefHash } from './event-def'
 import { EventInstance, EventInstanceHash } from './event-instance'
-import { EventInput, parseEvent, EventTuple } from './event-parse'
+import { EventInput, parseEvent, EventTuple, buildEventRefiners } from './event-parse'
 import { filterHash } from '../util/object'
 import { CalendarContext } from '../CalendarContext'
 import { EventSource } from './event-source'
@@ -19,14 +19,15 @@ export interface EventStore {
 
 export function parseEvents(
   rawEvents: EventInput[],
-  eventSource: EventSource | null,
+  eventSource: EventSource<any> | null,
   context: CalendarContext,
   allowOpenRange?: boolean
 ): EventStore {
   let eventStore = createEmptyEventStore()
+  let eventRefiners = buildEventRefiners(context)
 
   for (let rawEvent of rawEvents) {
-    let tuple = parseEvent(rawEvent, eventSource, context, allowOpenRange)
+    let tuple = parseEvent(rawEvent, eventSource, context, allowOpenRange, eventRefiners)
 
     if (tuple) {
       eventTupleToStore(tuple, eventStore)

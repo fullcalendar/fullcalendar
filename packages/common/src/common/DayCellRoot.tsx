@@ -14,7 +14,7 @@ import { DateEnv } from '../datelib/env'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 
-interface RawDayCellHookProps {
+interface DayCellHookPropsInput {
   date: DateMarker // generic
   dateProfile: DateProfile
   todayRange: DateRange
@@ -133,7 +133,7 @@ export class DayCellContent extends BaseComponent<DayCellContentProps> {
 }
 
 
-function refineHookProps(raw: RawDayCellHookProps): DayCellHookProps {
+function refineHookProps(raw: DayCellHookPropsInput): DayCellHookProps {
   let { date, dateEnv } = raw
   let dayMeta = getDateMeta(date, raw.todayRange, null, raw.dateProfile)
 

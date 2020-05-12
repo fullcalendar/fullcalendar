@@ -8,38 +8,36 @@ import { __assign } from 'tslib'
 import { EventStore } from './event-store'
 import { CalendarContext } from '../CalendarContext'
 import { filterHash } from '../util/object'
+import { EventRefined } from './event-parse'
 
 /*
 The plugin system for defining how a recurring event is expanded into individual instances.
 */
 
-export interface ParsedRecurring {
-  typeData: any
+export interface ParsedRecurring<RecurringData> {
+  typeData: RecurringData
   allDayGuess: boolean | null
   duration: Duration | null // signals hasEnd
 }
 
-export interface RecurringType {
-  parse: (rawEvent: any, leftoverProps: any, dateEnv: DateEnv) => ParsedRecurring | null
+export interface RecurringType<RecurringData> {
+  parse: (refined: EventRefined, dateEnv: DateEnv) => ParsedRecurring<RecurringData> | null // TODO: rename to post-process or something
   expand: (typeData: any, framingRange: DateRange, dateEnv: DateEnv) => DateMarker[]
 }
 
 
 export function parseRecurring(
-  eventInput: any,
+  refined: EventRefined,
   defaultAllDay: boolean | null,
   dateEnv: DateEnv,
-  recurringTypes: RecurringType[],
-  leftovers: any
+  recurringTypes: RecurringType<any>[]
 ) {
   for (let i = 0; i < recurringTypes.length; i++) {
-    let localLeftovers = {} as any
-    let parsed = recurringTypes[i].parse(eventInput, localLeftovers, dateEnv) as ParsedRecurring
+    let parsed = recurringTypes[i].parse(refined, dateEnv)
 
     if (parsed) {
 
-      let allDay = localLeftovers.allDay
-      delete localLeftovers.allDay // remove from leftovers
+      let allDay = refined.allDay
       if (allDay == null) {
         allDay = defaultAllDay
         if (allDay == null) {
@@ -49,8 +47,6 @@ export function parseRecurring(
           }
         }
       }
-
-      __assign(leftovers, localLeftovers)
 
       return {
         allDay,
@@ -111,7 +107,7 @@ function expandRecurringRanges(
   duration: Duration,
   framingRange: DateRange,
   dateEnv: DateEnv,
-  recurringTypes: RecurringType[]
+  recurringTypes: RecurringType<any>[]
 ): DateMarker[] {
   let typeDef = recurringTypes[eventDef.recurringDef.typeId]
   let markers = typeDef.expand(

@@ -5,7 +5,7 @@ export class EventSourceApi {
 
   constructor(
     private context: CalendarContext,
-    public internalEventSource: EventSource // rename?
+    public internalEventSource: EventSource<any> // rename?
   ) {
   }
 

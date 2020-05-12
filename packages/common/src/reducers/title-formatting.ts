@@ -3,11 +3,11 @@ import { diffWholeDays } from '../datelib/marker'
 import { createFormatter, FormatterInput } from '../datelib/formatting'
 import { DateRange } from '../datelib/date-range'
 import { DateEnv } from '../datelib/env'
-import { RefinedCalendarOptions } from '../options'
+import { CalendarOptionsRefined } from '../options'
 
 
 // Computes what the title at the top of the calendarApi should be for this view
-export function buildTitle(dateProfile: DateProfile, viewOptions: RefinedCalendarOptions, dateEnv: DateEnv) {
+export function buildTitle(dateProfile: DateProfile, viewOptions: CalendarOptionsRefined, dateEnv: DateEnv) {
   let range: DateRange
 
   // for views that span a large unit of time, show the proper interval, ignoring stray days before and after

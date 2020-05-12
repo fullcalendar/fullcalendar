@@ -1,8 +1,8 @@
 import { EventSourceFetcher } from './event-source'
+import { EventSourceRefined } from './event-source-parse'
 
-
-export interface EventSourceDef {
+export interface EventSourceDef<Meta> {
   ignoreRange?: boolean
-  parseMeta: (raw: any) => object | null
-  fetch: EventSourceFetcher
+  parseMeta: (refined: EventSourceRefined) => Meta | null
+  fetch: EventSourceFetcher<Meta>
 }

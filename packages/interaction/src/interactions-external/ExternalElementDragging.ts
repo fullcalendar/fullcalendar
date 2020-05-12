@@ -15,7 +15,8 @@ import {
   ElementDragging,
   ViewApi,
   CalendarContext,
-  getDefaultEventEnd
+  getDefaultEventEnd,
+  refinedEventDef
 } from '@fullcalendar/common'
 import { HitDragging } from '../interactions/HitDragging'
 import { __assign } from 'tslib'
@@ -191,7 +192,7 @@ export class ExternalElementDragging {
     let dropAccept = receivingContext.options.dropAccept
 
     if (typeof dropAccept === 'function') {
-      return dropAccept(el)
+      return dropAccept.call(receivingContext.calendarApi, el)
 
     } else if (typeof dropAccept === 'string' && dropAccept) {
       return Boolean(elementMatches(el, dropAccept))
@@ -212,8 +213,10 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, context
     __assign(defProps, transform(dateSpan, dragMeta))
   }
 
+  let { refined, extra } = refinedEventDef(defProps, context)
   let def = parseEventDef(
-    defProps,
+    refined,
+    extra,
     dragMeta.sourceId,
     dateSpan.allDay,
     context.options.forceEventDuration || Boolean(dragMeta.duration), // hasEnd

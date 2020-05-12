@@ -1,37 +1,28 @@
 import { RRule, rrulestr } from 'rrule'
 import {
   RecurringType,
-  ParsedRecurring,
-  EventInput,
-  refineProps,
+  EventRefined,
   DateEnv,
   DateRange,
   DateMarker,
-  createDuration,
   createPlugin
 } from '@fullcalendar/common'
+import { RRULE_EVENT_REFINERS } from './event-refiners'
+import './event-declare'
 
-interface RRuleParsedRecurring extends ParsedRecurring {
-  typeData: RRule
-}
 
-const EVENT_DEF_PROPS = {
-  rrule: null,
-  duration: createDuration
-}
+let recurring: RecurringType<RRule> = {
 
-let recurring: RecurringType = {
+  parse(refined: EventRefined, dateEnv: DateEnv) {
 
-  parse(rawEvent: EventInput, leftoverProps: any, dateEnv: DateEnv): RRuleParsedRecurring | null {
-    if (rawEvent.rrule != null) {
-      let props = refineProps(rawEvent, EVENT_DEF_PROPS, {}, leftoverProps)
-      let parsed = parseRRule(props.rrule, dateEnv)
+    if (refined.rrule != null) {
+      let parsed = parseRRule(refined.rrule, dateEnv)
 
       if (parsed) {
         return {
           typeData: parsed.rrule,
           allDayGuess: parsed.allDayGuess,
-          duration: props.duration
+          duration: refined.duration
         }
       }
     }
@@ -53,7 +44,8 @@ let recurring: RecurringType = {
 
 
 export default createPlugin({
-  recurringTypes: [ recurring ]
+  recurringTypes: [ recurring ],
+  eventRefiners: RRULE_EVENT_REFINERS
 })
 
 

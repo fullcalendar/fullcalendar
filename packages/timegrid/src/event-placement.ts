@@ -1,5 +1,5 @@
 import {
-  Seg, DateMarker, buildSegCompareObj, compareByFieldSpecs, sortEventSegs, OrderSpec
+  Seg, DateMarker, buildSegCompareObj, compareByFieldSpecs, sortEventSegs, OrderSpec, EventApi
 } from '@fullcalendar/common'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
@@ -8,7 +8,7 @@ import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 // TODO: return hash (by instanceId) of results
 
 
-export function computeSegCoords(segs: Seg[], dayDate: DateMarker, slatCoords: TimeColsSlatsCoords, eventMinHeight: number, eventOrderSpecs: OrderSpec[]) {
+export function computeSegCoords(segs: Seg[], dayDate: DateMarker, slatCoords: TimeColsSlatsCoords, eventMinHeight: number, eventOrderSpecs: OrderSpec<EventApi>[]) {
   computeSegVerticals(segs, dayDate, slatCoords, eventMinHeight)
   return computeSegHorizontals(segs, eventOrderSpecs) // requires top/bottom from computeSegVerticals
 }
@@ -29,7 +29,7 @@ export function computeSegVerticals(segs: Seg[], dayDate: DateMarker, slatCoords
 // Given an array of segments that are all in the same column, sets the backwardCoord and forwardCoord on each.
 // Assumed the segs are already ordered.
 // NOTE: Also reorders the given array by date!
-function computeSegHorizontals(segs: Seg[], eventOrderSpecs: OrderSpec[]) {
+function computeSegHorizontals(segs: Seg[], eventOrderSpecs: OrderSpec<EventApi>[]) {
 
   // IMPORTANT TO CLEAR OLD RESULTS :(
   for (let seg of segs) {

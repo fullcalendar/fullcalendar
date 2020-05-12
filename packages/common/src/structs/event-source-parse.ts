@@ -1,81 +1,83 @@
 import { EventInput, EventInputTransformer } from './event-parse'
 import { EventSourceFunc } from '../event-sources/func-event-source'
-import { ConstraintInput, AllowFunc } from './constraint'
 import { EventSource, EventSourceSuccessResponseHandler, EventSourceErrorResponseHandler } from './event-source'
 import { CalendarContext } from '../CalendarContext'
-import { refineProps, guid } from '../util/misc'
-import { processUiProps } from '../component/event-ui'
+import { guid } from '../util/misc'
+import { EVENT_UI_REFINERS, createEventUi, EventUiInput, EventUiRefined } from '../component/event-ui'
+import { identity, Identity, RawOptionsFromRefiners, refineProps, RefinedOptionsFromRefiners } from '../options'
 
 
-export interface ExtendedEventSourceInput {
-  id?: string | number // only accept number?
-  defaultAllDay?: boolean
-  eventDataTransform?: EventInputTransformer
-
-  // array or function (TODO: move this to array-event-source/func-event-source?)
-  events?: EventInput[] | EventSourceFunc
-
-  // json feed (TODO: how to move this to json-feed-event-source?)
-  url?: string
-  method?: string
-  extraParams?: object | (() => object)
-  startParam?: string
-  endParam?: string
-  timeZoneParam?: string
+const EVENT_SOURCE_REFINERS = { // does NOT include EVENT_UI_REFINERS
+  id: String,
+  defaultAllDay: Boolean,
+  url: String,
+  events: identity as Identity<EventInput[] | EventSourceFunc>, // array or function
+  eventDataTransform: identity as Identity<EventInputTransformer>,
 
   // for any network-related sources
-  success?: EventSourceSuccessResponseHandler
-  failure?: EventSourceErrorResponseHandler
-
-  editable?: boolean
-  startEditable?: boolean
-  durationEditable?: boolean
-  constraint?: ConstraintInput
-  overlap?: boolean
-  allow?: AllowFunc
-  className?: string[] | string
-  classNames?: string[] | string
-  backgroundColor?: string
-  borderColor?: string
-  textColor?: string
-  color?: string
-
-  [otherProp: string]: any // in case plugins want more props
+  success: identity as Identity<EventSourceSuccessResponseHandler>,
+  failure: identity as Identity<EventSourceErrorResponseHandler>,
 }
 
+type BuiltInEventSourceRefiners = typeof EVENT_SOURCE_REFINERS
+
+export interface EventSourceRefiners extends BuiltInEventSourceRefiners {
+  // for extending
+}
+
+export type EventSourceInputObject =
+  EventUiInput &
+  RawOptionsFromRefiners<Required<EventSourceRefiners>> // Required hack
 
 export type EventSourceInput =
-  ExtendedEventSourceInput | // object in extended form
+  EventSourceInputObject | // object in extended form
+  EventInput[] |
   EventSourceFunc | // just a function
   string // a URL for a JSON feed
 
-
-const SIMPLE_SOURCE_PROPS = {
-  id: String,
-  defaultAllDay: Boolean,
-  eventDataTransform: Function,
-  success: Function,
-  failure: Function
-}
+export type EventSourceRefined =
+  EventUiRefined &
+  RefinedOptionsFromRefiners<Required<EventSourceRefiners>> // Required hack
 
 
-export function parseEventSource(raw: EventSourceInput, context: CalendarContext): EventSource | null {
-  let defs = context.pluginHooks.eventSourceDefs
+export function parseEventSource(
+  raw: EventSourceInput,
+  context: CalendarContext,
+  refiners = buildEventSourceRefiners(context)
+): EventSource<any> | null {
+  let rawObj: EventSourceInputObject
 
-  for (let i = defs.length - 1; i >= 0; i--) { // later-added plugins take precedence
-    let def = defs[i]
-    let meta = def.parseMeta(raw)
+  if (typeof raw === 'string') {
+    rawObj = { url: raw }
 
-    if (meta) {
-      let res = parseEventSourceProps(
-        typeof raw === 'object' ? raw : {},
-        meta,
-        i,
-        context
-      )
+  } else if (typeof raw === 'function' || Array.isArray(raw)) {
+    rawObj = { events: raw }
 
-      res._raw = raw
-      return res
+  } else if (typeof raw === 'object' && raw) { // not null
+    rawObj = raw
+  }
+
+  if (rawObj) {
+    let { refined, extra } = refineProps(rawObj, refiners)
+    let metaRes = buildEventSourceMeta(refined, context)
+
+    if (metaRes) {
+      return {
+        _raw: raw,
+        isFetching: false,
+        latestFetchId: '',
+        fetchRange: null,
+        defaultAllDay: refined.defaultAllDay,
+        eventDataTransform: refined.eventDataTransform,
+        success: refined.success,
+        failure: refined.failure,
+        publicId: refined.id || '',
+        sourceId: guid(),
+        sourceDefId: metaRes.sourceDefId,
+        meta: metaRes.meta,
+        ui: createEventUi(refined, context),
+        extendedProps: extra
+      }
     }
   }
 
@@ -83,21 +85,22 @@ export function parseEventSource(raw: EventSourceInput, context: CalendarContext
 }
 
 
-function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sourceDefId: number, context: CalendarContext): EventSource {
-  let leftovers0 = {}
-  let props = refineProps(raw, SIMPLE_SOURCE_PROPS, {}, leftovers0)
-  let leftovers1 = {}
-  let ui = processUiProps(leftovers0, context, leftovers1)
+export function buildEventSourceRefiners(context: CalendarContext) {
+  return { ...EVENT_UI_REFINERS, ...EVENT_SOURCE_REFINERS, ...context.pluginHooks.eventSourceRefiners }
+}
 
-  props.isFetching = false
-  props.latestFetchId = ''
-  props.fetchRange = null
-  props.publicId = String(raw.id || '')
-  props.sourceId = guid()
-  props.sourceDefId = sourceDefId
-  props.meta = meta
-  props.ui = ui
-  props.extendedProps = leftovers1
 
-  return props as EventSource
+function buildEventSourceMeta(raw: EventSourceRefined, context: CalendarContext) {
+  let defs = context.pluginHooks.eventSourceDefs
+
+  for (let i = defs.length - 1; i >= 0; i--) { // later-added plugins take precedence
+    let def = defs[i]
+    let meta = def.parseMeta(raw)
+
+    if (meta) {
+      return { sourceDefId: i, meta }
+    }
+  }
+
+  return null
 }

@@ -18,7 +18,7 @@ import { triggerDateSelect, triggerDateUnselect } from './calendar-utils'
 import { CalendarDataManager } from './reducers/CalendarDataManager'
 import { Action } from './reducers/Action'
 import { EventSource } from './structs/event-source'
-import { RawCalendarOptions, CalendarListeners } from './options'
+import { CalendarOptions, CalendarListeners } from './options'
 
 
 export class CalendarApi {
@@ -50,7 +50,7 @@ export class CalendarApi {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  setOption<OptionName extends keyof RawCalendarOptions>(name: OptionName, val: RawCalendarOptions[OptionName]) {
+  setOption<OptionName extends keyof CalendarOptions>(name: OptionName, val: CalendarOptions[OptionName]) {
     this.dispatch({
       type: 'SET_OPTION',
       optionName: name,
@@ -59,8 +59,8 @@ export class CalendarApi {
   }
 
 
-  getOption(name: keyof RawCalendarOptions) { // getter, used externally
-    return this.currentDataManager!.currentRawCalendarOptions[name]
+  getOption(name: keyof CalendarOptions) { // getter, used externally
+    return this.currentDataManager!.currentCalendarOptionsInput[name]
   }
 
 
@@ -366,7 +366,7 @@ export class CalendarApi {
       return eventInput
     }
 
-    let eventSource: EventSource
+    let eventSource: EventSource<any>
 
     if (sourceInput instanceof EventSourceApi) {
       eventSource = sourceInput.internalEventSource
@@ -383,7 +383,7 @@ export class CalendarApi {
     }
 
     let state = this.getCurrentData()
-    let tuple = parseEvent(eventInput, eventSource, state)
+    let tuple = parseEvent(eventInput, eventSource, state, false)
 
     if (tuple) {
 

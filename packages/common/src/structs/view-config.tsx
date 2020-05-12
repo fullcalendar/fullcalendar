@@ -4,7 +4,7 @@ import { ComponentType, Component, h } from '../vdom'
 import { ViewRoot } from '../common/ViewRoot'
 import { RenderHook } from '../common/render-hook'
 import { ViewContext, ViewContextType } from '../ViewContext'
-import { RawViewOptions } from '../options'
+import { ViewOptions } from '../options'
 import { Duration } from '../datelib/duration'
 
 /*
@@ -16,13 +16,13 @@ B) options to customize an existing view, in which case only provides options.
 export type ViewComponent = Component<ViewProps> // an instance
 export type ViewComponentType = ComponentType<ViewProps>
 
-export type ViewConfigInput = ViewComponentType | RawViewOptions
+export type ViewConfigInput = ViewComponentType | ViewOptions
 export type ViewConfigInputHash = { [viewType: string]: ViewConfigInput }
 
 export interface ViewConfig {
   superType: string
   component: ViewComponentType | null
-  rawOptions: RawViewOptions
+  rawOptions: ViewOptions
 }
 
 export type ViewConfigHash = { [viewType: string]: ViewConfig }
@@ -34,7 +34,7 @@ export function parseViewConfigs(inputs: ViewConfigInputHash): ViewConfigHash {
 
 
 function parseViewConfig(input: ViewConfigInput): ViewConfig {
-  let rawOptions: RawViewOptions = typeof input === 'function' ?
+  let rawOptions: ViewOptions = typeof input === 'function' ?
     { component: input } :
     input
   let component = rawOptions.component
@@ -57,7 +57,7 @@ export interface ViewHookProps extends ViewProps {
 }
 
 
-function createViewHookComponent(options: RawViewOptions) {
+function createViewHookComponent(options: ViewOptions) {
   return function(viewProps: ViewProps) {
     return (
       <ViewContextType.Consumer>

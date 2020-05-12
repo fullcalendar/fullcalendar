@@ -1,5 +1,5 @@
 import { ViewConfigHash, ViewComponentType } from './view-config'
-import { RawViewOptions } from '../options'
+import { ViewOptions } from '../options'
 
 /*
 Represents information for an instantiatable View class along with settings
@@ -8,8 +8,8 @@ that are specific to that view. No other settings, like calendar-wide settings, 
 export interface ViewDef {
   type: string
   component: ViewComponentType
-  overrides: RawViewOptions
-  defaults: RawViewOptions
+  overrides: ViewOptions
+  defaults: ViewOptions
 }
 
 export type ViewDefHash = { [viewType: string]: ViewDef }

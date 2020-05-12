@@ -188,7 +188,7 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
       viewType === 'week' ? options.navLinkWeekClick : null
 
     if (typeof customAction === 'function') {
-      customAction(dateEnv.toDate(dateMarker), ev)
+      customAction.call(calendarApi, dateEnv.toDate(dateMarker), ev)
 
     } else {
       if (typeof customAction === 'string') {

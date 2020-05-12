@@ -1,5 +1,3 @@
-import { applyAll } from '../util/misc'
-
 
 export class Emitter<HandlerFuncs extends { [eventName: string]: (...args: any[]) => any }> {
 
@@ -29,14 +27,13 @@ export class Emitter<HandlerFuncs extends { [eventName: string]: (...args: any[]
 
 
   trigger<Prop extends keyof HandlerFuncs>(type: Prop, ...args: Parameters<HandlerFuncs[Prop]>) {
-    let res = applyAll(this.handlers[type], this.thisContext, args)
+    let attachedHandlers = this.handlers[type] || []
+    let optionHandler = this.options && this.options[type]
+    let handlers = [].concat(optionHandler || [], attachedHandlers)
 
-    let handlerFromOptions = this.options && this.options[type]
-    if (handlerFromOptions) {
-      res = handlerFromOptions.apply(this.thisContext, args) || res // will keep first result
+    for (let handler of handlers) {
+      handler.apply(this.thisContext, args)
     }
-
-    return res
   }
 
 

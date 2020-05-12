@@ -2,21 +2,19 @@ import { createPlugin } from '../plugin-system'
 import { EventSourceDef } from '../structs/event-source-def'
 import { EventInput } from '../structs/event-parse'
 
-let eventSourceDef: EventSourceDef = {
+let eventSourceDef: EventSourceDef<EventInput[]> = {
   ignoreRange: true,
 
-  parseMeta(raw: any): EventInput[] | null {
-    if (Array.isArray(raw)) { // short form
-      return raw
-    } else if (Array.isArray(raw.events)) {
-      return raw.events
+  parseMeta(refined) {
+    if (Array.isArray(refined.events)) {
+      return refined.events
     }
     return null
   },
 
   fetch(arg, success) {
     success({
-      rawEvents: arg.eventSource.meta as EventInput[]
+      rawEvents: arg.eventSource.meta
     })
   }
 }

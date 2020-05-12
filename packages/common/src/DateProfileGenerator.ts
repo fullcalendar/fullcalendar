@@ -5,6 +5,7 @@ import { ViewSpec } from './structs/view-spec'
 import { DateEnv, DateInput } from './datelib/env'
 import { computeVisibleDayRange } from './util/date'
 import { getNow } from './reducers/current-date'
+import { CalendarApi } from './CalendarApi'
 
 
 export interface DateProfile {
@@ -23,6 +24,7 @@ export interface DateProfile {
 export interface DateProfileGeneratorProps extends DateProfileOptions {
   viewSpec: ViewSpec
   dateEnv: DateEnv
+  calendarApi: CalendarApi
 }
 
 export interface DateProfileOptions {
@@ -35,10 +37,14 @@ export interface DateProfileOptions {
   hiddenDays?: number[]
   weekends?: boolean
   nowInput?: DateInput | (() => DateInput)
-  validRangeInput?: DateRangeInput | ((nowDate: Date) => DateRangeInput)
-  visibleRangeInput?: DateRangeInput | ((nowDate: Date) => DateRangeInput)
+  validRangeInput?: DateRangeInput | ((this: CalendarApi, nowDate: Date) => DateRangeInput)
+  visibleRangeInput?: DateRangeInput | ((this: CalendarApi, nowDate: Date) => DateRangeInput)
   monthMode?: boolean
   fixedWeekCount?: boolean
+}
+
+export type DateProfileGeneratorClass = {
+  new(props: DateProfileGeneratorProps): DateProfileGenerator
 }
 
 
@@ -167,7 +173,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
   buildValidRange(): OpenDateRange {
     let input = this.props.validRangeInput
     let simpleInput = typeof input === 'function'
-      ? input(this.nowDate)
+      ? input.call(this.props.calendarApi, this.nowDate)
       : input
 
     return this.refineRange(simpleInput) ||
@@ -326,7 +332,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     let { props } = this
     let input = props.visibleRangeInput
     let simpleInput = typeof input === 'function'
-      ? input(props.dateEnv.toDate(date))
+      ? input.call(props.calendarApi, props.dateEnv.toDate(date))
       : input
 
     let range = this.refineRange(simpleInput)

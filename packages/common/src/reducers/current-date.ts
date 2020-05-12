@@ -1,7 +1,7 @@
 import { DateEnv, DateInput } from '../datelib/env'
 import { DateMarker } from '../datelib/marker'
 import { Action } from './Action'
-import { RefinedBaseOptions } from '../options'
+import { BaseOptionsRefined } from '../options'
 
 
 export function reduceCurrentDate(currentDate: DateMarker, action: Action) {
@@ -14,7 +14,7 @@ export function reduceCurrentDate(currentDate: DateMarker, action: Action) {
 }
 
 
-export function getInitialDate(options: RefinedBaseOptions, dateEnv: DateEnv) {
+export function getInitialDate(options: BaseOptionsRefined, dateEnv: DateEnv) {
   let initialDateInput = options.initialDate
 
   // compute the initial ambig-timezone date

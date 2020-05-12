@@ -11,12 +11,12 @@ import { BusinessHoursInput } from './structs/business-hours'
 import { ViewApi } from './ViewApi'
 import { LocaleSingularArg, RawLocale } from './datelib/locale'
 import { OverlapFunc, ConstraintInput, AllowFunc } from './structs/constraint'
-import { EventInputTransformer } from './structs/event-parse'
+import { EventInputTransformer, EventInput } from './structs/event-parse'
 import { PluginDef } from './plugin-system-struct'
 import { EventSourceInput } from './structs/event-source-parse'
 import { ViewComponentType, ViewHookProps } from './structs/view-config'
 import { EventMeta } from './component/event-rendering'
-import { ClassNameGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler } from './common/render-hook'
+import { ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler } from './common/render-hook'
 import { NowIndicatorHookProps } from './common/NowIndicatorRoot'
 import { WeekNumberHookProps } from './common/WeekNumberRoot'
 import { SlotLaneHookProps, SlotLabelHookProps, AllDayHookProps, DayHeaderHookProps } from './render-hook-misc'
@@ -25,14 +25,16 @@ import { ViewRootHookProps } from './common/ViewRoot'
 import { EventClickArg } from './interactions/EventClicking'
 import { EventHoveringArg } from './interactions/EventHovering'
 import { DateSelectArg, DateUnselectArg } from './calendar-utils'
+import { CalendarApi } from './CalendarApi'
+import { DateProfileGeneratorClass } from './DateProfileGenerator'
 
 
 // base options
 // ------------
 
 export const BASE_OPTION_REFINERS = {
-  navLinkDayClick: identity as Identity<string | ((date: Date, jsEvent: Event) => void)>,
-  navLinkWeekClick: identity as Identity<string | ((weekStart: Date, jsEvent: Event) => void)>,
+  navLinkDayClick: identity as Identity<string | ((this: CalendarApi, date: Date, jsEvent: Event) => void)>,
+  navLinkWeekClick: identity as Identity<string | ((this: CalendarApi, weekStart: Date, jsEvent: Event) => void)>,
   duration: createDuration,
   bootstrapFontAwesome: identity as Identity<ButtonIconsInput | false>, // TODO: move to bootstrap plugin
   buttonIcons: identity as Identity<ButtonIconsInput | false>,
@@ -54,12 +56,12 @@ export const BASE_OPTION_REFINERS = {
 
   dayHeaders: Boolean,
   dayHeaderFormat: createFormatter,
-  dayHeaderClassNames: identity as Identity<ClassNameGenerator<DayHeaderHookProps>>,
+  dayHeaderClassNames: identity as Identity<ClassNamesGenerator<DayHeaderHookProps>>,
   dayHeaderContent: identity as Identity<CustomContentGenerator<DayHeaderHookProps>>,
   dayHeaderDidMount: identity as Identity<DidMountHandler<DayHeaderHookProps>>,
   dayHeaderWillUnmount: identity as Identity<WillUnmountHandler<DayHeaderHookProps>>,
 
-  dayCellClassNames: identity as Identity<ClassNameGenerator<DayCellHookProps>>,
+  dayCellClassNames: identity as Identity<ClassNamesGenerator<DayCellHookProps>>,
   dayCellContent: identity as Identity<CustomContentGenerator<DayCellHookProps>>,
   dayCellDidMount: identity as Identity<DidMountHandler<DayCellHookProps>>,
   dayCellWillUnmount: identity as Identity<WillUnmountHandler<DayCellHookProps>>,
@@ -70,19 +72,19 @@ export const BASE_OPTION_REFINERS = {
 
   weekNumberCalculation: identity as Identity<WeekNumberCalculation>,
   weekNumbers: Boolean,
-  weekNumberClassNames: identity as Identity<ClassNameGenerator<WeekNumberHookProps>>,
+  weekNumberClassNames: identity as Identity<ClassNamesGenerator<WeekNumberHookProps>>,
   weekNumberContent: identity as Identity<CustomContentGenerator<WeekNumberHookProps>>,
   weekNumberDidMount: identity as Identity<DidMountHandler<WeekNumberHookProps>>,
   weekNumberWillUnmount: identity as Identity<WillUnmountHandler<WeekNumberHookProps>>,
 
   editable: Boolean,
 
-  viewClassNames: identity as Identity<ClassNameGenerator<ViewRootHookProps>>,
+  viewClassNames: identity as Identity<ClassNamesGenerator<ViewRootHookProps>>,
   viewDidMount: identity as Identity<DidMountHandler<ViewRootHookProps>>,
   viewWillUnmount: identity as Identity<WillUnmountHandler<ViewRootHookProps>>,
 
   nowIndicator: Boolean,
-  nowIndicatorClassNames: identity as Identity<ClassNameGenerator<NowIndicatorHookProps>>,
+  nowIndicatorClassNames: identity as Identity<ClassNamesGenerator<NowIndicatorHookProps>>,
   nowIndicatorContent: identity as Identity<CustomContentGenerator<NowIndicatorHookProps>>,
   nowIndicatorDidMount: identity as Identity<DidMountHandler<NowIndicatorHookProps>>,
   nowIndicatorWillUnmount: identity as Identity<WillUnmountHandler<NowIndicatorHookProps>>,
@@ -100,7 +102,7 @@ export const BASE_OPTION_REFINERS = {
   dragScroll: Boolean,
   allDayMaintainDuration: Boolean,
   unselectAuto: Boolean,
-  dropAccept: identity as Identity<string | ((draggable: any) => boolean)>, // TODO: type draggable
+  dropAccept: identity as Identity<string | ((this: CalendarApi, draggable: any) => boolean)>, // TODO: type draggable
   eventOrder: parseFieldSpecs,
 
   handleWindowResize: Boolean,
@@ -117,16 +119,16 @@ export const BASE_OPTION_REFINERS = {
   displayEventEnd: Boolean,
   weekText: String,
   progressiveEventRendering: Boolean,
-  businessHours: identity as Identity<BusinessHoursInput>, // ???
+  businessHours: identity as Identity<BusinessHoursInput>,
   initialDate: identity as Identity<DateInput>,
-  now: identity as Identity<DateInput | (() => DateInput)>,
+  now: identity as Identity<DateInput | ((this: CalendarApi) => DateInput)>,
   eventDataTransform: identity as Identity<EventInputTransformer>,
   stickyHeaderDates: identity as Identity<boolean | 'auto'>,
   stickyFooterScrollbar: identity as Identity<boolean | 'auto'>,
   viewHeight: identity as Identity<CssDimValue>,
   defaultAllDay: Boolean,
-  eventSourceFailure: identity as Identity<any>, // TODO: should be Listeners?
-  eventSourceSuccess: identity as Identity<any>, //
+  eventSourceFailure: identity as Identity<(this: CalendarApi, error: any) => void>,
+  eventSourceSuccess: identity as Identity<(this: CalendarApi, eventsInput: EventInput[], xhr?: XMLHttpRequest) => EventInput[] | void>,
 
   eventDisplay: String, // TODO: give more specific
   eventStartEditable: Boolean,
@@ -138,7 +140,7 @@ export const BASE_OPTION_REFINERS = {
   eventBorderColor: String,
   eventTextColor: String,
   eventColor: String,
-  eventClassNames: identity as Identity<ClassNameGenerator<EventMeta>>,
+  eventClassNames: identity as Identity<ClassNamesGenerator<EventMeta>>,
   eventContent: identity as Identity<CustomContentGenerator<EventMeta>>,
   eventDidMount: identity as Identity<DidMountHandler<EventMeta>>,
   eventWillUnmount: identity as Identity<WillUnmountHandler<EventMeta>>,
@@ -152,12 +154,12 @@ export const BASE_OPTION_REFINERS = {
 
   slotLabelFormat: createFormatter,
 
-  slotLaneClassNames: identity as Identity<ClassNameGenerator<SlotLaneHookProps>>,
+  slotLaneClassNames: identity as Identity<ClassNamesGenerator<SlotLaneHookProps>>,
   slotLaneContent: identity as Identity<CustomContentGenerator<SlotLaneHookProps>>,
   slotLaneDidMount: identity as Identity<DidMountHandler<SlotLaneHookProps>>,
   slotLaneWillUnmount: identity as Identity<WillUnmountHandler<SlotLaneHookProps>>,
 
-  slotLabelClassNames: identity as Identity<ClassNameGenerator<SlotLabelHookProps>>,
+  slotLabelClassNames: identity as Identity<ClassNamesGenerator<SlotLabelHookProps>>,
   slotLabelContent: identity as Identity<CustomContentGenerator<SlotLabelHookProps>>,
   slotLabelDidMount: identity as Identity<DidMountHandler<SlotLabelHookProps>>,
   slotLabelWillUnmount: identity as Identity<WillUnmountHandler<SlotLabelHookProps>>,
@@ -168,7 +170,7 @@ export const BASE_OPTION_REFINERS = {
   slotLabelInterval: createDuration,
 
   allDayText: String,
-  allDayClassNames: identity as Identity<ClassNameGenerator<AllDayHookProps>>,
+  allDayClassNames: identity as Identity<ClassNamesGenerator<AllDayHookProps>>,
   allDayContent: identity as Identity<CustomContentGenerator<AllDayHookProps>>,
   allDayDidMount: identity as Identity<DidMountHandler<AllDayHookProps>>,
   allDayWillUnmount: identity as Identity<WillUnmountHandler<AllDayHookProps>>,
@@ -177,7 +179,7 @@ export const BASE_OPTION_REFINERS = {
   navLinks: Boolean,
   eventTimeFormat: createFormatter,
   rerenderDelay: Number, // TODO: move to @fullcalendar/core right? nah keep here
-  moreLinkText: identity as Identity<string | ((num: number) => string)>,
+  moreLinkText: identity as Identity<string | ((this: CalendarApi, num: number) => string)>, // this not enforced :( check others too
   selectMinDistance: Number,
   selectable: Boolean,
   selectLongPressDelay: Number,
@@ -194,8 +196,8 @@ export const BASE_OPTION_REFINERS = {
   hiddenDays: identity as Identity<number[]>,
   monthMode: Boolean,
   fixedWeekCount: Boolean,
-  validRange: identity as Identity<DateRangeInput | ((nowDate: Date) => DateRangeInput)>,
-  visibleRange: identity as Identity<DateRangeInput | ((currentDate: Date) => DateRangeInput)>,
+  validRange: identity as Identity<DateRangeInput | ((this: CalendarApi, nowDate: Date) => DateRangeInput)>, // `this` works?
+  visibleRange: identity as Identity<DateRangeInput | ((this: CalendarApi, currentDate: Date) => DateRangeInput)>, // `this` works?
   titleFormat: identity as Identity<FormatterInput>, // DONT parse just yet. we need to inject titleSeparator
 }
 
@@ -205,11 +207,13 @@ export interface BaseOptionRefiners extends BuiltInBaseOptionRefiners {
   // for ambient-extending
 }
 
-export type RawBaseOptions = RawOptionsFromRefiners< // as RawOptions
+type BaseOptions = RawOptionsFromRefiners< // as RawOptions
   Required<BaseOptionRefiners> // Required is a hack for "Index signature is missing"
 >
 
-export const RAW_BASE_DEFAULTS = { // do NOT give a type here. need `typeof RAW_BASE_DEFAULTS` to give real results
+// do NOT give a type here. need `typeof BASE_OPTION_DEFAULTS` to give real results.
+// raw values.
+export const BASE_OPTION_DEFAULTS = {
   defaultRangeSeparator: ' - ',
   titleRangeSeparator: ' \u2013 ', // en dash
   defaultTimedEventDuration: '01:00:00',
@@ -258,23 +262,16 @@ export const RAW_BASE_DEFAULTS = { // do NOT give a type here. need `typeof RAW_
   firstDay: 0
 }
 
-export type RefinedBaseOptions = DefaultedRefinedOptions<
+export type BaseOptionsRefined = DefaultedRefinedOptions<
   RefinedOptionsFromRefiners<Required<BaseOptionRefiners>>, // Required is a hack for "Index signature is missing"
-  keyof typeof RAW_BASE_DEFAULTS
+  keyof typeof BASE_OPTION_DEFAULTS
 >
 
 
-// calendar-specific options
-// -------------------------
+// calendar listeners
+// ------------------
 
-export const CALENDAR_OPTION_REFINERS = { // does not include base
-  buttonText: identity as Identity<ButtonTextCompoundInput>,
-  views: identity as Identity<{ [viewId: string]: RawViewOptions }>,
-  plugins: identity as Identity<PluginDef[]>,
-  events: identity as Identity<EventSourceInput>,
-  eventSources: identity as Identity<EventSourceInput[]>,
-
-  // handlers
+export const CALENDAR_LISTENER_REFINERS = {
   datesDidUpdate: identity as Identity<() => void>,
   windowResize: identity as Identity<(arg: { view: ViewApi }) => void>,
   eventClick: identity as Identity<(arg: EventClickArg) => void>, // TODO: resource for scheduler????
@@ -284,7 +281,7 @@ export const CALENDAR_OPTION_REFINERS = { // does not include base
   unselect: identity as Identity<(arg: DateUnselectArg) => void>,
   loading: identity as Identity<(isLoading: boolean) => void>,
 
-  // internal handlers
+  // internal
   _destroy: identity as Identity<() => void>,
   _init: identity as Identity<() => void>,
   _noEventDrop: identity as Identity<() => void>,
@@ -293,17 +290,44 @@ export const CALENDAR_OPTION_REFINERS = { // does not include base
   _scrollRequest: identity as Identity<(arg: any) => void>
 }
 
+type BuiltInCalendarListenerRefiners = typeof CALENDAR_LISTENER_REFINERS
+
+export interface CalendarListenerRefiners extends BuiltInCalendarListenerRefiners {
+  // for ambient extending
+}
+
+export type CalendarListeners = RefinedOptionsFromRefiners<Required<CalendarListenerRefiners>> // Required hack
+
+
+
+// calendar-specific options
+// -------------------------
+
+export const CALENDAR_OPTION_REFINERS = { // does not include base nor calendar listeners
+  buttonText: identity as Identity<ButtonTextCompoundInput>,
+  views: identity as Identity<{ [viewId: string]: ViewOptions }>,
+  plugins: identity as Identity<PluginDef[]>,
+  events: identity as Identity<EventSourceInput>,
+  eventSources: identity as Identity<EventSourceInput[]>
+}
+
 type BuiltInCalendarOptionRefiners = typeof CALENDAR_OPTION_REFINERS
 
 export interface CalendarOptionRefiners extends BuiltInCalendarOptionRefiners {
   // for ambient-extending
 }
 
-export type RawCalendarOptions = RawBaseOptions & RawOptionsFromRefiners<Required<CalendarOptionRefiners>> // aaaaa https://github.com/microsoft/TypeScript/issues/15300
-export type RefinedCalendarOptions = RefinedBaseOptions & RefinedOptionsFromRefiners<Required<CalendarOptionRefiners>> // aaaaaa
-export type CalendarListeners = FilteredPropValues<RefinedCalendarOptions, (...args: any[]) => void>
+export type CalendarOptions =
+  BaseOptions &
+  CalendarListeners &
+  RawOptionsFromRefiners<Required<CalendarOptionRefiners>> // Required hack https://github.com/microsoft/TypeScript/issues/15300
 
-const COMPLEX_CALENDAR_OPTIONS: (keyof RawCalendarOptions)[] = [
+export type CalendarOptionsRefined =
+  BaseOptionsRefined &
+  CalendarListeners &
+  RefinedOptionsFromRefiners<Required<CalendarOptionRefiners>> // Required hack
+
+const COMPLEX_CALENDAR_OPTIONS: (keyof CalendarOptions)[] = [
   'headerToolbar',
   'footerToolbar',
   'buttonText',
@@ -320,9 +344,9 @@ export const VIEW_OPTION_REFINERS = {
   component: identity as Identity<ViewComponentType>,
   buttonText: String,
   buttonTextKey: String, // internal only
-  dateProfileGeneratorClass: identity as Identity<any>, // internal only
+  dateProfileGeneratorClass: identity as Identity<DateProfileGeneratorClass>,
   usesMinMaxTime: Boolean, // internal only
-  classNames: identity as Identity<ClassNameGenerator<ViewHookProps>>,
+  classNames: identity as Identity<ClassNamesGenerator<ViewHookProps>>,
   content: identity as Identity<CustomContentGenerator<ViewHookProps>>,
   didMount: identity as Identity<DidMountHandler<ViewHookProps>>,
   willUnmount: identity as Identity<WillUnmountHandler<ViewHookProps>>
@@ -334,8 +358,15 @@ export interface ViewOptionRefiners extends BuiltInViewOptionRefiners {
   // for ambient-extending
 }
 
-export type RawViewOptions = RawBaseOptions & RawOptionsFromRefiners<typeof VIEW_OPTION_REFINERS>
-export type RefinedViewOptions = RefinedBaseOptions & RefinedOptionsFromRefiners<typeof VIEW_OPTION_REFINERS>
+export type ViewOptions =
+  BaseOptions &
+  CalendarListeners &
+  RawOptionsFromRefiners<Required<ViewOptionRefiners>> // Required hack
+
+export type ViewOptionsRefined =
+  BaseOptionsRefined &
+  CalendarListeners &
+  RefinedOptionsFromRefiners<Required<ViewOptionRefiners>> // Required hack
 
 
 
@@ -348,6 +379,26 @@ export function mergeRawOptions(optionSets: GenericObject[]) {
 }
 
 
+export function refineProps<Refiners extends GenericRefiners, Raw extends RawOptionsFromRefiners<Refiners>>(input: Raw, refiners: Refiners): { refined: RefinedOptionsFromRefiners<Refiners>, extra: GenericObject } {
+  let refined = {} as any
+  let extra = {} as any
+
+  for (let propName in refiners) {
+    if (propName in input) {
+      refined[propName] = refiners[propName](input[propName])
+    }
+  }
+
+  for (let propName in input) {
+    if (!(propName in refiners)) {
+      extra[propName] = input[propName]
+    }
+  }
+
+  return { refined, extra }
+}
+
+
 
 // definition utils
 // ----------------------------------------------------------------------------------------------------
@@ -357,29 +408,28 @@ export type GenericRefiners = {
   [propName: string]: (input: any) => any
 }
 
-type RawOptionsFromRefiners<Refiners extends GenericRefiners> = {
+export type GenericListenerRefiners = {
+  [listenerName: string]: Identity<(this: CalendarApi, ...args: any[]) => void>
+}
+
+export type RawOptionsFromRefiners<Refiners extends GenericRefiners> = {
   [Prop in keyof Refiners]?: // all optional
     Refiners[Prop] extends ((input: infer RawType) => infer RefinedType)
       ? (any extends RawType ? RefinedType : RawType) // if input type `any`, use output (for Boolean/Number/String)
       : never
 }
 
-type RefinedOptionsFromRefiners<Refiners extends GenericRefiners> = {
+export type RefinedOptionsFromRefiners<Refiners extends GenericRefiners> = {
   [Prop in keyof Refiners]?: // all optional
     Refiners[Prop] extends ((input: any) => infer RefinedType) ? RefinedType : never
 }
 
-type DefaultedRefinedOptions<RefinedOptions extends GenericObject, DefaultKey extends keyof RefinedOptions> =
+export type DefaultedRefinedOptions<RefinedOptions extends GenericObject, DefaultKey extends keyof RefinedOptions> =
   Required<Pick<RefinedOptions, DefaultKey>> &
   Partial<Omit<RefinedOptions, DefaultKey>>
 
 
-
-type GenericObject = { [prop: string]: any } // TODO: Partial<{}>
-
-// https://stackoverflow.com/a/49397693/96342
-type FilteredPropKeys<T, Match> = ({ [P in keyof T]: T[P] extends Match ? P : never })[keyof T]
-type FilteredPropValues<T, Match> = Pick<T, FilteredPropKeys<T, Match>>
+export type GenericObject = { [prop: string]: any } // TODO: Partial<{}>
 
 export type Identity<T = any> = (raw: T) => T
 

@@ -1,12 +1,12 @@
 import { DateRange, rangesEqual, OpenDateRange } from '../datelib/date-range'
 import { DateInput, DateEnv } from '../datelib/env'
-import { refineProps } from '../util/misc'
 import { Duration } from '../datelib/duration'
 import { createEventInstance } from './event-instance'
-import { parseEventDef } from './event-parse'
+import { parseEventDef, refinedEventDef } from './event-parse'
 import { EventRenderRange, compileEventUi } from '../component/event-rendering'
 import { EventUiHash } from '../component/event-ui'
 import { CalendarContext } from '../CalendarContext'
+import { refineProps, identity, Identity } from '../options'
 
 /*
 A data-structure for a date-range that will be visually displayed.
@@ -52,8 +52,8 @@ export interface DatePointApi {
 }
 
 const STANDARD_PROPS = {
-  start: null,
-  end: null,
+  start: identity as Identity<DateInput>,
+  end: identity as Identity<DateInput>,
   allDay: Boolean
 }
 
@@ -81,8 +81,7 @@ TODO: somehow combine with parseRange?
 Will return null if the start/end props were present but parsed invalidly.
 */
 export function parseOpenDateSpan(raw: OpenDateSpanInput, dateEnv: DateEnv): OpenDateSpan | null {
-  let leftovers = {} as DateSpan
-  let standardProps = refineProps(raw, STANDARD_PROPS, {}, leftovers)
+  let { refined: standardProps, extra } = refineProps(raw, STANDARD_PROPS)
   let startMeta = standardProps.start ? dateEnv.createMarkerMeta(standardProps.start) : null
   let endMeta = standardProps.end ? dateEnv.createMarkerMeta(standardProps.end) : null
   let allDay = standardProps.allDay
@@ -92,14 +91,14 @@ export function parseOpenDateSpan(raw: OpenDateSpanInput, dateEnv: DateEnv): Ope
       (!endMeta || endMeta.isTimeUnspecified)
   }
 
-  // use this leftover object as the selection object
-  leftovers.range = {
-    start: startMeta ? startMeta.marker : null,
-    end: endMeta ? endMeta.marker : null
+  return {
+    range: {
+      start: startMeta ? startMeta.marker : null,
+      end: endMeta ? endMeta.marker : null,
+    },
+    allDay,
+    ...extra
   }
-  leftovers.allDay = allDay
-
-  return leftovers
 }
 
 export function isDateSpansEqual(span0: DateSpan, span1: DateSpan): boolean {
@@ -141,8 +140,10 @@ export function buildDateSpanApi(span: DateSpan, dateEnv: DateEnv): DateSpanApi 
 }
 
 export function fabricateEventRange(dateSpan: DateSpan, eventUiBases: EventUiHash, context: CalendarContext): EventRenderRange {
+  let res = refinedEventDef({ editable: false }, context)
   let def = parseEventDef(
-    { editable: false },
+    res.refined,
+    res.extra,
     '', // sourceId
     dateSpan.allDay,
     true, // hasEnd

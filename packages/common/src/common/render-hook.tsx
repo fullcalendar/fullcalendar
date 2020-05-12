@@ -1,11 +1,12 @@
 import { Ref, createRef, ComponentChildren, h, RefObject, createContext } from '../vdom'
 import { setRef, BaseComponent } from '../vdom-util'
 import { isPropsEqual } from '../util/object'
+import { parseClassNames, ClassNamesInput } from '../util/html'
 
 
 export interface RenderHookProps<HookProps> {
   hookProps: HookProps
-  classNames: ClassNameGenerator<HookProps>
+  classNames: ClassNamesGenerator<HookProps>
   content: CustomContentGenerator<HookProps>
   defaultContent?: DefaultContentGenerator<HookProps>
   didMount: DidMountHandler<HookProps>
@@ -222,11 +223,11 @@ export class MountHook<HookProps> extends BaseComponent<MountHookProps<HookProps
 
 
 export function buildClassNameNormalizer<HookProps>() { // TODO: general deep-memoizer?
-  let currentGenerator: ClassNameGenerator<HookProps>
+  let currentGenerator: ClassNamesGenerator<HookProps>
   let currentHookProps: HookProps
   let currentClassNames: string[] = []
 
-  return function(generator: ClassNameGenerator<HookProps>, hookProps: HookProps) {
+  return function(generator: ClassNamesGenerator<HookProps>, hookProps: HookProps) {
     if (!currentHookProps || !isPropsEqual(currentHookProps, hookProps) || generator !== currentGenerator) {
       currentGenerator = generator
       currentHookProps = hookProps
@@ -238,25 +239,16 @@ export function buildClassNameNormalizer<HookProps>() { // TODO: general deep-me
 }
 
 
-export type RawClassNames = string | string[] // also somewhere else? a util for parsing classname string/array?
-export type ClassNameGenerator<HookProps> = RawClassNames | ((hookProps: HookProps) => RawClassNames)
+export type ClassNamesGenerator<HookProps> = ClassNamesInput | ((hookProps: HookProps) => ClassNamesInput)
 
 
-function normalizeClassNames<HookProps>(classNames: ClassNameGenerator<HookProps>, hookProps: HookProps): string[] {
+function normalizeClassNames<HookProps>(classNames: ClassNamesGenerator<HookProps>, hookProps: HookProps): string[] {
 
   if (typeof classNames === 'function') {
     classNames = classNames(hookProps)
   }
 
-  if (Array.isArray(classNames)) {
-    return classNames
-
-  } else if (typeof classNames === 'string') {
-    return classNames.split(' ')
-
-  } else {
-    return []
-  }
+  return parseClassNames(classNames)
 }
 
 

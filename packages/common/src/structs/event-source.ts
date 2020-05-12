@@ -2,6 +2,7 @@ import { EventInput, EventInputTransformer } from './event-parse'
 import { DateRange } from '../datelib/date-range'
 import { EventUi } from '../component/event-ui'
 import { CalendarContext } from '../CalendarContext'
+import { CalendarApi } from '../CalendarApi'
 
 /*
 TODO: "EventSource" is the same name as a built-in type in TypeScript. Rethink.
@@ -14,21 +15,21 @@ export type EventSourceError = {
 }
 
 
-export type EventSourceSuccessResponseHandler = (rawData: any, response: any) => EventInput[] | void
+export type EventSourceSuccessResponseHandler = (this: CalendarApi, rawData: any, response: any) => EventInput[] | void
 export type EventSourceErrorResponseHandler = (error: EventSourceError) => void
 
 
-export interface EventSource {
+export interface EventSource<Meta> {
   _raw: any
   sourceId: string
   sourceDefId: number // one of the few IDs that's a NUMBER not a string
-  meta: any
+  meta: Meta
   publicId: string
   isFetching: boolean
   latestFetchId: string
   fetchRange: DateRange | null
   defaultAllDay: boolean | null
-  eventDataTransform: EventInputTransformer
+  eventDataTransform: EventInputTransformer // best to have this here?
   ui: EventUi
   success: EventSourceSuccessResponseHandler | null
   failure: EventSourceErrorResponseHandler | null
@@ -36,12 +37,12 @@ export interface EventSource {
 }
 
 
-export type EventSourceHash = { [sourceId: string]: EventSource }
+export type EventSourceHash = { [sourceId: string]: EventSource<any> }
 
 
-export type EventSourceFetcher = (
+export type EventSourceFetcher<Meta> = (
   arg: {
-    eventSource: EventSource
+    eventSource: EventSource<Meta>
     range: DateRange
     context: CalendarContext
   },

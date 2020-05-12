@@ -4,7 +4,7 @@ import { EventDragStartArg, EventDragStopArg, EventDropArg } from './interaction
 import { EventResizeStartArg, EventResizeStopArg, EventResizeDoneArg } from './interactions/EventResizing'
 import { DropArg, EventReceiveArg, EventLeaveArg } from './utils'
 
-export const OPTION_REFINERS = {
+export const LISTENER_REFINERS = {
   dateClick: identity as Identity<(arg: DateClickArg) => void>,
   eventDragStart: identity as Identity<(arg: EventDragStartArg) => void>,
   eventDragStop: identity as Identity<(arg: EventDragStopArg) => void>,
@@ -14,5 +14,5 @@ export const OPTION_REFINERS = {
   eventResize: identity as Identity<(arg: EventResizeDoneArg) => void>,
   drop: identity as Identity<(arg: DropArg) => void>,
   eventReceive: identity as Identity<(arg: EventReceiveArg) => void>,
-  eventLeave: identity as Identity<(arg: EventLeaveArg) => void>,
+  eventLeave: identity as Identity<(arg: EventLeaveArg) => void>
 }

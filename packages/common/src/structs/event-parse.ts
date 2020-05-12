@@ -1,37 +1,50 @@
-import { refineProps, guid } from '../util/misc'
+import { guid } from '../util/misc'
 import { DateInput } from '../datelib/env'
 import { startOfDay } from '../datelib/marker'
 import { parseRecurring } from './recurring-event'
-import { RawEventUi, processUiProps } from '../component/event-ui'
 import { __assign } from 'tslib'
 import { CalendarContext } from '../CalendarContext'
-import { EventDef, DATE_PROPS, NON_DATE_PROPS } from './event-def'
-import { EventInstance, createEventInstance } from './event-instance'
+import { EventDef } from './event-def'
+import { createEventInstance, EventInstance } from './event-instance'
 import { EventSource } from './event-source'
+import { RefinedOptionsFromRefiners, RawOptionsFromRefiners, identity, Identity, GenericObject, refineProps } from '../options'
+import { EVENT_UI_REFINERS, createEventUi, EventUiInput, EventUiRefined } from '../component/event-ui'
 
-/*
-Utils for parsing event-input data. Each util parses a subset of the event-input's data.
-It's up to the caller to stitch them together into an aggregate object like an EventStore.
-*/
 
-export interface EventNonDateInput extends RawEventUi {
-  id?: string | number
-  groupId?: string | number
-  title?: string
-  url?: string
-  extendedProps?: object
-  [extendedProp: string]: any
+export const EVENT_NON_DATE_REFINERS = {
+  id: String,
+  groupId: String,
+  title: String,
+  url: String
 }
 
-export interface EventDateInput {
-  start?: DateInput
-  end?: DateInput
-  date?: DateInput
-  allDay?: boolean
+export const EVENT_DATE_REFINERS = {
+  start: identity as Identity<DateInput>,
+  end: identity as Identity<DateInput>,
+  date: identity as Identity<DateInput>,
+  allDay: Boolean
 }
 
-export type EventInput = EventNonDateInput & EventDateInput
-export type EventInputTransformer = (eventInput: EventInput) => EventInput | null
+const EVENT_REFINERS = { // does NOT include EVENT_UI_REFINERS
+  ...EVENT_NON_DATE_REFINERS,
+  ...EVENT_DATE_REFINERS,
+  extendedProps: identity as Identity<GenericObject>
+}
+
+type BuiltInEventRefiners = typeof EVENT_REFINERS
+
+export interface EventRefiners extends BuiltInEventRefiners {
+  // for ambient
+}
+
+export type EventInput =
+  EventUiInput &
+  RawOptionsFromRefiners<Required<EventRefiners>> & // Required hack
+  { [extendedProp: string]: any }
+
+export type EventRefined =
+  EventUiRefined &
+  RefinedOptionsFromRefiners<Required<EventRefiners>> // Required hack
 
 export interface EventTuple {
   def: EventDef
@@ -39,19 +52,29 @@ export interface EventTuple {
 }
 
 
-export function parseEvent(raw: EventInput, eventSource: EventSource | null, context: CalendarContext, allowOpenRange?: boolean): EventTuple | null {
+export type EventInputTransformer = (input: EventInput) => EventInput
+export type EventDefMemberAdder = (refined: EventRefined) => Partial<EventDef>
+
+
+export function parseEvent(
+  raw: EventInput,
+  eventSource: EventSource<any> | null,
+  context: CalendarContext,
+  allowOpenRange: boolean,
+  refiners = buildEventRefiners(context)
+): EventTuple | null {
+  let { refined, extra } = refinedEventDef(raw, context)
+
   let defaultAllDay = computeIsDefaultAllDay(eventSource, context)
-  let leftovers0 = {}
   let recurringRes = parseRecurring(
-    raw, // raw, but with single-event stuff stripped out
+    refined,
     defaultAllDay,
     context.dateEnv,
-    context.pluginHooks.recurringTypes,
-    leftovers0 // will populate with non-recurring props
+    context.pluginHooks.recurringTypes
   )
 
   if (recurringRes) {
-    let def = parseEventDef(leftovers0, eventSource ? eventSource.sourceId : '', recurringRes.allDay, Boolean(recurringRes.duration), context)
+    let def = parseEventDef(refined, extra, eventSource ? eventSource.sourceId : '', recurringRes.allDay, Boolean(recurringRes.duration), context)
 
     def.recurringDef = { // don't want all the props from recurringRes. TODO: more efficient way to do this
       typeId: recurringRes.typeId,
@@ -62,11 +85,10 @@ export function parseEvent(raw: EventInput, eventSource: EventSource | null, con
     return { def, instance: null }
 
   } else {
-    let leftovers1 = {}
-    let singleRes = parseSingle(raw, defaultAllDay, context, leftovers1, allowOpenRange)
+    let singleRes = parseSingle(refined, defaultAllDay, context, allowOpenRange)
 
     if (singleRes) {
-      let def = parseEventDef(leftovers1, eventSource ? eventSource.sourceId : '', singleRes.allDay, singleRes.hasEnd, context)
+      let def = parseEventDef(refined, extra, eventSource ? eventSource.sourceId : '', singleRes.allDay, singleRes.hasEnd, context)
       let instance = createEventInstance(def.defId, singleRes.range, singleRes.forcedStartTzo, singleRes.forcedEndTzo)
 
       return { def, instance }
@@ -77,48 +99,56 @@ export function parseEvent(raw: EventInput, eventSource: EventSource | null, con
 }
 
 
+export function refinedEventDef(raw: EventInput, context: CalendarContext, refiners = buildEventRefiners(context)) {
+  return refineProps(raw, refiners)
+}
+
+
+export function buildEventRefiners(context: CalendarContext) {
+  return { ...EVENT_UI_REFINERS, ...EVENT_REFINERS, ...context.pluginHooks.eventRefiners }
+}
+
+
 /*
 Will NOT populate extendedProps with the leftover properties.
 Will NOT populate date-related props.
-The EventNonDateInput has been normalized (id => publicId, etc).
 */
-export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: boolean, hasEnd: boolean, context: CalendarContext): EventDef {
-  let leftovers = {}
-  let def = pluckNonDateProps(raw, context, leftovers) as EventDef
+export function parseEventDef(refined: EventRefined, extra: GenericObject, sourceId: string, allDay: boolean, hasEnd: boolean, context: CalendarContext): EventDef {
+  let def: Partial<EventDef> = {}
 
+  def.publicId = refined.id
   def.defId = guid()
   def.sourceId = sourceId
   def.allDay = allDay
   def.hasEnd = hasEnd
-
-  for (let eventDefParser of context.pluginHooks.eventDefParsers) {
-    let newLeftovers = {}
-    eventDefParser(def, leftovers, newLeftovers)
-    leftovers = newLeftovers
+  def.ui = createEventUi(refined, context)
+  def.extendedProps = {
+    ...(refined.extendedProps || {}),
+    ...extra
   }
 
-  def.extendedProps = __assign(leftovers, def.extendedProps || {})
+  for (let memberAdder of context.pluginHooks.eventDefMemberAdders) {
+    __assign(def, memberAdder(refined))
+  }
 
   // help out EventApi from having user modify props
   Object.freeze(def.ui.classNames)
   Object.freeze(def.extendedProps)
 
-  return def
+  return def as EventDef
 }
 
-export type eventDefParserFunc = (def: EventDef, props: any, leftovers: any) => void
 
-
-function parseSingle(raw: EventInput, defaultAllDay: boolean | null, context: CalendarContext, leftovers?, allowOpenRange?: boolean) {
-  let props = pluckDateProps(raw, leftovers)
-  let allDay = props.allDay
+function parseSingle(refined: EventRefined, defaultAllDay: boolean | null, context: CalendarContext, leftovers?, allowOpenRange?: boolean) {
+  let allDay = refined.allDay
   let startMeta
   let startMarker = null
   let hasEnd = false
   let endMeta
   let endMarker = null
 
-  startMeta = context.dateEnv.createMarkerMeta(props.start)
+  let startInput = refined.start != null ? refined.start : refined.date
+  startMeta = context.dateEnv.createMarkerMeta(startInput)
 
   if (startMeta) {
     startMarker = startMeta.marker
@@ -126,8 +156,8 @@ function parseSingle(raw: EventInput, defaultAllDay: boolean | null, context: Ca
     return null
   }
 
-  if (props.end != null) {
-    endMeta = context.dateEnv.createMarkerMeta(props.end)
+  if (refined.end != null) {
+    endMeta = context.dateEnv.createMarkerMeta(refined.end)
   }
 
   if (allDay == null) {
@@ -179,31 +209,7 @@ function parseSingle(raw: EventInput, defaultAllDay: boolean | null, context: Ca
 }
 
 
-function pluckDateProps(raw: EventInput, leftovers: any) {
-  let props = refineProps(raw, DATE_PROPS, {}, leftovers)
-
-  props.start = (props.start !== null) ? props.start : props.date
-  delete props.date
-
-  return props
-}
-
-
-function pluckNonDateProps(raw: EventInput, context: CalendarContext, leftovers?) {
-  let preLeftovers = {}
-  let props = refineProps(raw, NON_DATE_PROPS, {}, preLeftovers)
-  let ui = processUiProps(preLeftovers, context, leftovers)
-
-  props.publicId = props.id
-  delete props.id
-
-  props.ui = ui
-
-  return props
-}
-
-
-function computeIsDefaultAllDay(eventSource: EventSource | null, context: CalendarContext): boolean | null {
+function computeIsDefaultAllDay(eventSource: EventSource<any> | null, context: CalendarContext): boolean | null {
   let res = null
 
   if (eventSource) {

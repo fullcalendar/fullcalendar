@@ -1,6 +1,6 @@
 import { __assign } from 'tslib'
 import {
-  RawCalendarOptions, Action, CalendarContent, render, h, DelayedRunner, CssDimValue, applyStyleProp,
+  CalendarOptions, Action, CalendarContent, render, h, DelayedRunner, CssDimValue, applyStyleProp,
   CalendarApi, computeCalendarClassNames, computeCalendarHeight, isArraysEqual, CalendarDataManager, CalendarData,
   CustomContentRenderContext
  } from '@fullcalendar/common'
@@ -20,7 +20,7 @@ export class Calendar extends CalendarApi {
   get view() { return this.currentData.viewApi } // for public API
 
 
-  constructor(el: HTMLElement, optionOverrides: RawCalendarOptions = {}) {
+  constructor(el: HTMLElement, optionOverrides: CalendarOptions = {}) {
     super()
 
     this.el = el

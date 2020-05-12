@@ -2,7 +2,7 @@ import { ViewSpec, ViewSpecHash } from './structs/view-spec'
 import { Theme } from './theme/Theme'
 import { mapHash } from './util/object'
 import { CalendarApi } from './CalendarApi'
-import { RefinedCalendarOptions } from './options'
+import { CalendarOptionsRefined } from './options'
 
 export interface ToolbarModel {
   [sectionName: string]: ToolbarWidget[][]
@@ -52,8 +52,8 @@ export interface ButtonTextCompoundInput {
 
 
 export function parseToolbars(
-  calendarOptions: RefinedCalendarOptions,
-  calendarOptionOverrides: Partial<RefinedCalendarOptions>,
+  calendarOptions: CalendarOptionsRefined,
+  calendarOptionOverrides: Partial<CalendarOptionsRefined>,
   theme: Theme,
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi
@@ -68,8 +68,8 @@ export function parseToolbars(
 
 function parseToolbar(
   sectionStrHash: ToolbarInput,
-  calendarOptions: RefinedCalendarOptions,
-  calendarOptionOverrides: Partial<RefinedCalendarOptions>,
+  calendarOptions: CalendarOptionsRefined,
+  calendarOptionOverrides: Partial<CalendarOptionsRefined>,
   theme: Theme,
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi,
@@ -87,8 +87,8 @@ BAD: querying icons and text here. should be done at render time
 */
 function parseSection(
   sectionStr: string,
-  calendarOptions: RefinedCalendarOptions,
-  calendarOptionOverrides: Partial<RefinedCalendarOptions>,
+  calendarOptions: CalendarOptionsRefined,
+  calendarOptionOverrides: Partial<CalendarOptionsRefined>,
   theme: Theme,
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi,

@@ -1,4 +1,4 @@
-import { RAW_BASE_DEFAULTS, PointerDragEvent } from '@fullcalendar/common'
+import { BASE_OPTION_DEFAULTS, PointerDragEvent } from '@fullcalendar/common'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
 import { ExternalElementDragging, DragMetaGenerator } from './ExternalElementDragging'
 
@@ -47,11 +47,11 @@ export class ExternalDraggable {
     dragging.minDistance =
       minDistance != null ?
         minDistance :
-        (ev.isTouch ? 0 : RAW_BASE_DEFAULTS.eventDragMinDistance)
+        (ev.isTouch ? 0 : BASE_OPTION_DEFAULTS.eventDragMinDistance)
 
     dragging.delay =
       ev.isTouch ? // TODO: eventually read eventLongPressDelay instead vvv
-        (longPressDelay != null ? longPressDelay : RAW_BASE_DEFAULTS.longPressDelay) :
+        (longPressDelay != null ? longPressDelay : BASE_OPTION_DEFAULTS.longPressDelay) :
         0
   }
 

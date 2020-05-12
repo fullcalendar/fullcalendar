@@ -1,12 +1,14 @@
 import { startOfDay, addDays, DateMarker } from '../datelib/marker'
-import { Duration, createDuration, subtractDurations } from '../datelib/duration'
+import { Duration, subtractDurations } from '../datelib/duration'
 import { arrayToHash } from '../util/object'
-import { refineProps } from '../util/misc'
-import { RecurringType, ParsedRecurring } from './recurring-event'
-import { EventInput } from './event-parse'
+import { RecurringType } from './recurring-event'
+import { EventRefined } from './event-parse'
 import { DateRange, intersectRanges } from '../datelib/date-range'
 import { DateEnv } from '../datelib/env'
 import { createPlugin } from '../plugin-system'
+import { SIMPLE_RECURRING_REFINERS } from './recurring-event-simple-refiners'
+import './recurring-event-simple-declare'
+
 
 /*
 An implementation of recurring events that only supports every-day or weekly recurrences.
@@ -20,47 +22,33 @@ interface SimpleRecurringData {
   endRecur: DateMarker | null
 }
 
-interface SimpleParsedRecurring extends ParsedRecurring {
-  typeData: SimpleRecurringData // the whole point is to make this more specific
-}
 
-let recurring: RecurringType = {
+let recurring: RecurringType<SimpleRecurringData> = {
 
-  parse(rawEvent: EventInput, leftoverProps: any, dateEnv: DateEnv): SimpleParsedRecurring | null {
-    let createMarker = dateEnv.createMarker.bind(dateEnv)
-    let processors = {
-      daysOfWeek: null,
-      startTime: createDuration,
-      endTime: createDuration,
-      startRecur: createMarker,
-      endRecur: createMarker
-    }
+  parse(refined: EventRefined, dateEnv: DateEnv) {
 
-    let props = refineProps(rawEvent, processors, {}, leftoverProps) as SimpleRecurringData
-    let anyValid = false
-
-    for (let propName in props) {
-      if (props[propName] != null) {
-        anyValid = true
-        break
+    if (refined.daysOfWeek || refined.startTime || refined.endTime || refined.startRecur || refined.endRecur) {
+      let recurringData: SimpleRecurringData = {
+        daysOfWeek: refined.daysOfWeek || null,
+        startTime: refined.startTime || null,
+        endTime: refined.endTime || null,
+        startRecur: refined.startRecur ? dateEnv.createMarker(refined.startRecur) : null,
+        endRecur: refined.endRecur ? dateEnv.createMarker(refined.endRecur) : null
       }
-    }
 
-    if (anyValid) {
-      let duration: Duration = null
+      let duration: Duration
 
-      if ('duration' in leftoverProps) {
-        duration = createDuration(leftoverProps.duration)
-        delete leftoverProps.duration
+      if (refined.duration) {
+        duration = refined.duration
       }
-      if (!duration && props.startTime && props.endTime) {
-        duration = subtractDurations(props.endTime, props.startTime)
+      if (!duration && refined.startTime && refined.endTime) {
+        duration = subtractDurations(refined.endTime, refined.startTime)
       }
 
       return {
-        allDayGuess: Boolean(!props.startTime && !props.endTime),
+        allDayGuess: Boolean(!refined.startTime && !refined.endTime),
         duration,
-        typeData: props // doesn't need endTime anymore but oh well
+        typeData: recurringData // doesn't need endTime anymore but oh well
       }
     }
 
@@ -87,9 +75,12 @@ let recurring: RecurringType = {
 
 }
 
+
 export const simpleRecurringEventsPlugin = createPlugin({
-  recurringTypes: [ recurring ]
+  recurringTypes: [ recurring ],
+  eventRefiners: SIMPLE_RECURRING_REFINERS
 })
+
 
 function expandRanges(
   daysOfWeek: number[] | null,

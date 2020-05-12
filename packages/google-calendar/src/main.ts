@@ -1,45 +1,36 @@
-import { createPlugin, EventSourceDef, refineProps, addDays, DateEnv, requestJson } from '@fullcalendar/common'
-import { OPTION_REFINERS } from './options'
+import { createPlugin, EventSourceDef, addDays, DateEnv, requestJson, GenericObject } from '@fullcalendar/common'
+import { OPTION_REFINERS } from './options-refiners'
 import './options-declare'
+import { EVENT_SOURCE_REFINERS } from './event-source-refiners'
+import './event-source-declare'
+
 
 // TODO: expose somehow
 const API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'
 
-const STANDARD_PROPS = { // for event source parsing
-  url: String,
-  googleCalendarApiKey: String, // TODO: rename with no prefix?
-  googleCalendarId: String,
-  googleCalendarApiBase: String,
-  data: null
-}
-
-declare module '@fullcalendar/common' {
-  interface ExtendedEventSourceInput { // add this to refiner system somehow
-    googleCalendarApiKey?: string
-    googleCalendarId?: string
-    googleCalendarApiBase?: string
-  }
+interface GCalMeta {
+  googleCalendarId: string
+  googleCalendarApiKey?: string
+  googleCalendarApiBase?: string,
+  extraParams?: object | (() => object)
 }
 
 
-let eventSourceDef: EventSourceDef = {
+let eventSourceDef: EventSourceDef<GCalMeta> = {
 
-  parseMeta(raw) {
-    if (typeof raw === 'string') {
-      raw = { url: raw }
+  parseMeta(refined): GCalMeta | null {
+    let { googleCalendarId } = refined
+
+    if (!googleCalendarId && refined.url) {
+      googleCalendarId = parseGoogleCalendarId(refined.url)
     }
 
-    if (typeof raw === 'object') {
-      let standardProps = refineProps(raw, STANDARD_PROPS)
-
-      if (!standardProps.googleCalendarId && standardProps.url) {
-        standardProps.googleCalendarId = parseGoogleCalendarId(standardProps.url)
-      }
-
-      delete standardProps.url
-
-      if (standardProps.googleCalendarId) {
-        return standardProps
+    if (googleCalendarId) {
+      return {
+        googleCalendarId,
+        googleCalendarApiKey: refined.googleCalendarApiKey,
+        googleCalendarApiBase: refined.googleCalendarApiBase,
+        extraParams: refined.extraParams
       }
     }
 
@@ -48,7 +39,7 @@ let eventSourceDef: EventSourceDef = {
 
   fetch(arg, onSuccess, onFailure) {
     let { dateEnv, options } = arg.context
-    let meta = arg.eventSource.meta
+    let meta: GCalMeta = arg.eventSource.meta
     let apiKey = meta.googleCalendarApiKey || options.googleCalendarApiKey
 
     if (!apiKey) {
@@ -57,10 +48,15 @@ let eventSourceDef: EventSourceDef = {
       })
     } else {
       let url = buildUrl(meta)
+
+      // TODO: make DRY with json-feed-event-source
+      let { extraParams } = meta
+      let extraParamsObj = typeof extraParams === 'function' ? extraParams() : extraParams
+
       let requestParams = buildRequestParams(
         arg.range,
         apiKey,
-        meta.data,
+        extraParamsObj,
         dateEnv
       )
 
@@ -115,7 +111,7 @@ function buildUrl(meta) {
 }
 
 
-function buildRequestParams(range, apiKey: string, extraParams, dateEnv: DateEnv) {
+function buildRequestParams(range, apiKey: string, extraParams: GenericObject, dateEnv: DateEnv) {
   let params
   let startStr
   let endStr
@@ -187,5 +183,6 @@ function injectQsComponent(url, component) {
 
 export default createPlugin({
   eventSourceDefs: [ eventSourceDef ],
-  optionRefiners: OPTION_REFINERS
+  optionRefiners: OPTION_REFINERS,
+  eventSourceRefiners: EVENT_SOURCE_REFINERS
 })

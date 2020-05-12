@@ -1,5 +1,7 @@
 import { preventDefault } from './dom-event'
-import { EventApi } from '../api/EventApi'
+
+
+export type GenericHash = { [key: string]: any } // already did this somewhere
 
 
 let guidNumber = 0
@@ -58,14 +60,18 @@ export function allowContextMenu(el: HTMLElement) {
 /* Object Ordering by Field
 ----------------------------------------------------------------------------------------------------------------------*/
 
-export interface OrderSpec {
+export interface OrderSpec<Subject> {
   field?: string
   order?: number
-  func?: (a, b) => boolean
+  func?: FieldSpecInputFunc<Subject>
 }
 
-export function parseFieldSpecs(input: string | Array<((a: EventApi, b: EventApi) => number) | (string | ((a: EventApi, b: EventApi) => number))>) {
-  let specs: OrderSpec[] = []
+
+export type FieldSpecInput<Subject> = string | string[] | FieldSpecInputFunc<Subject> | FieldSpecInputFunc<Subject>[]
+export type FieldSpecInputFunc<Subject> = (a: Subject, b: Subject) => number
+
+export function parseFieldSpecs<Subject>(input: FieldSpecInput<Subject>): OrderSpec<Subject>[] {
+  let specs: OrderSpec<Subject>[] = []
   let tokens = []
   let i
   let token
@@ -96,7 +102,7 @@ export function parseFieldSpecs(input: string | Array<((a: EventApi, b: EventApi
 }
 
 
-export function compareByFieldSpecs(obj0, obj1, fieldSpecs: OrderSpec[]) {
+export function compareByFieldSpecs<Subject>(obj0: Subject, obj1: Subject, fieldSpecs: OrderSpec<Subject>[]): number {
   let i
   let cmp
 
@@ -111,7 +117,7 @@ export function compareByFieldSpecs(obj0, obj1, fieldSpecs: OrderSpec[]) {
 }
 
 
-export function compareByFieldSpec(obj0, obj1, fieldSpec: OrderSpec) {
+export function compareByFieldSpec<Subject>(obj0: Subject, obj1: Subject, fieldSpec: OrderSpec<Subject>): number {
   if (fieldSpec.func) {
     return fieldSpec.func(obj0, obj1)
   }
@@ -166,78 +172,12 @@ export function isInt(n) {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 
-export function applyAll(functions, thisObj, args) {
-  if (typeof functions === 'function') { // supplied a single function
-    functions = [ functions ]
-  }
-  if (functions) {
-    let i
-    let ret
-    for (i = 0; i < functions.length; i++) {
-      ret = functions[i].apply(thisObj, args) || ret // will keep first results
-    }
-    return ret
-  }
-}
-
-
 export function firstDefined(...args) {
   for (let i = 0; i < args.length; i++) {
     if (args[i] !== undefined) {
       return args[i]
     }
   }
-}
-
-
-/* Object Parsing
-----------------------------------------------------------------------------------------------------------------------*/
-
-
-export type GenericHash = { [key: string]: any } // already did this somewhere
-
-// Number and Boolean are only types that defaults or not computed for
-// TODO: write more comments
-// TODO: will kill
-export function refineProps(rawProps: GenericHash, processors: GenericHash, defaults: GenericHash = {}, leftoverProps?: GenericHash): GenericHash {
-  let refined: GenericHash = {}
-
-  for (let key in processors) {
-    let processor = processors[key]
-
-    if (rawProps[key] !== undefined) {
-      // found
-      if (processor === Function) {
-        refined[key] = typeof rawProps[key] === 'function' ? rawProps[key] : null
-      } else if (processor) { // a refining function?
-        refined[key] = processor(rawProps[key])
-      } else {
-        refined[key] = rawProps[key]
-      }
-    } else if (defaults[key] !== undefined) {
-      // there's an explicit default
-      refined[key] = defaults[key]
-    } else {
-      // must compute a default
-      if (processor === String) {
-        refined[key] = '' // empty string is default for String
-      } else if (!processor || processor === Number || processor === Boolean || processor === Function) {
-        refined[key] = null // assign null for other non-custom processor funcs
-      } else {
-        refined[key] = processor(null) // run the custom processor func
-      }
-    }
-  }
-
-  if (leftoverProps) {
-    for (let key in rawProps) {
-      if (processors[key] === undefined) {
-        leftoverProps[key] = rawProps[key]
-      }
-    }
-  }
-
-  return refined
 }
 
 

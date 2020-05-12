@@ -8,18 +8,16 @@ export const version: string = '<%= version %>' // important to type it, so .d.t
 // types
 export { EventDef, EventDefHash } from './structs/event-def'
 export { EventInstance, EventInstanceHash, createEventInstance } from './structs/event-instance'
-export { EventInput, parseEventDef, EventTuple } from './structs/event-parse'
+export { EventInput, EventRefined, parseEventDef, EventTuple, EventRefiners, refinedEventDef } from './structs/event-parse'
 export { BusinessHoursInput, parseBusinessHours } from './structs/business-hours'
 
 export {
-  applyAll,
   padStart,
   isInt,
   parseFieldSpecs,
   compareByFieldSpecs,
   compareByFieldSpec,
   flexibleCompare,
-  refineProps,
   preventSelection, allowSelection, preventContextMenu, allowContextMenu,
   compareNumbers, enableCursor, disableCursor,
   guid,
@@ -60,9 +58,10 @@ export {
   elementMatches,
   elementClosest
 } from './util/dom-manip'
+export { parseClassNames } from './util/html'
 
 export { EventStore, filterEventStoreDefs, createEmptyEventStore, mergeEventStores, getRelevantEvents, eventTupleToStore } from './structs/event-store'
-export { EventUiHash, EventUi, UI_PROPS_REFINERS, processUiProps, combineEventUis } from './component/event-ui'
+export { EventUiHash, EventUi, combineEventUis } from './component/event-ui'
 export { Splitter, SplittableProps } from './component/event-splitting'
 export { getDayClassNames, getDateMeta, DateMeta, getSlotClassNames } from './component/date-rendering'
 export { buildNavLinkData } from './common/nav-link'
@@ -128,6 +127,7 @@ export { parse as parseMarker } from './datelib/parsing'
 
 export { EventSourceDef } from './structs/event-source-def'
 export { EventSource, EventSourceHash } from './structs/event-source'
+export { EventSourceRefiners, EventSourceRefined } from './structs/event-source-parse'
 
 export { Interaction, InteractionSettings, interactionSettingsToStore, interactionSettingsStore, InteractionSettingsStore } from './interactions/interaction'
 export { PointerDragEvent } from './interactions/pointer'
@@ -144,10 +144,11 @@ export {
 } from './render-hook-misc'
 
 export {
-  RAW_BASE_DEFAULTS, identity, Identity,
-  BaseOptionRefiners, RawBaseOptions, RefinedBaseOptions,
-  CalendarOptionRefiners, RawCalendarOptions, RefinedCalendarOptions,
-  ViewOptionRefiners, RawViewOptions, RefinedViewOptions
+  BASE_OPTION_DEFAULTS, identity, Identity,
+  BaseOptionRefiners, BaseOptionsRefined,
+  CalendarOptionRefiners, CalendarOptions, CalendarOptionsRefined, GenericObject,
+  ViewOptionRefiners, ViewOptions, ViewOptionsRefined, RawOptionsFromRefiners, RefinedOptionsFromRefiners, refineProps,
+  CalendarListenerRefiners
 } from './options'
 
 export { config } from './global-config'
@@ -215,7 +216,7 @@ export { ScrollResponder, ScrollRequest } from './ScrollResponder'
 export { globalPlugins } from './global-plugins'
 export {
   RenderHook, RenderHookProps, RenderHookPropsChildren, MountHook, MountHookProps, buildClassNameNormalizer, ContentHook, CustomContentRenderContext,
-  ClassNameGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler
+  ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler
 } from './common/render-hook'
 export { StandardEvent, StandardEventProps } from './common/StandardEvent'
 export { NowIndicatorRoot, NowIndicatorRootProps } from './common/NowIndicatorRoot'

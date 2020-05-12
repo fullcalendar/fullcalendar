@@ -16,7 +16,7 @@ export const changeHandlerPlugin = createPlugin({
 BUG: if `event` was supplied, all previously-given `eventSources` will be wiped out
 */
 function handleEventSources(inputs, context: CalendarContext) {
-  let unfoundSources: EventSource[] = hashValuesToArray(context.getCurrentData().eventSources)
+  let unfoundSources: EventSource<any>[] = hashValuesToArray(context.getCurrentData().eventSources)
   let newInputs = []
 
   for (let input of inputs) {

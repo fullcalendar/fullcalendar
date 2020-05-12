@@ -1,5 +1,5 @@
 import { ReducerFunc } from './reducers/CalendarDataManager'
-import { eventDefParserFunc } from './structs/event-parse'
+import { EventDefMemberAdder } from './structs/event-parse'
 import { eventDefMutationApplier } from './structs/event-mutation'
 import { DatePointTransform, DateSpanTransform, CalendarInteractionClass, OptionChangeHandlerMap } from './calendar-utils'
 import { ViewConfigInputHash } from './structs/view-config'
@@ -22,14 +22,16 @@ import { ElementDraggingClass } from './interactions/ElementDragging'
 import { ComponentChildren } from './vdom'
 import { ScrollGridImpl } from './scrollgrid/ScrollGridImpl'
 import { ContentTypeHandlers } from './common/render-hook'
-import { GenericRefiners } from './options'
+import { GenericRefiners, GenericListenerRefiners } from './options'
 
 // TODO: easier way to add new hooks? need to update a million things
 
 export interface PluginDefInput {
   deps?: PluginDef[]
   reducers?: ReducerFunc[]
-  eventDefParsers?: eventDefParserFunc[]
+  eventRefiners?: GenericRefiners
+  eventDefMemberAdders?: EventDefMemberAdder[]
+  eventSourceRefiners?: GenericRefiners
   isDraggableTransformers?: eventIsDraggableTransformer[]
   eventDragMutationMassagers?: eventDragMutationMassager[]
   eventDefMutationAppliers?: eventDefMutationApplier[]
@@ -46,21 +48,24 @@ export interface PluginDefInput {
   componentInteractions?: InteractionClass[]
   calendarInteractions?: CalendarInteractionClass[]
   themeClasses?: { [themeSystemName: string]: ThemeClass }
-  eventSourceDefs?: EventSourceDef[]
+  eventSourceDefs?: EventSourceDef<any>[]
   cmdFormatter?: CmdFormatterFunc
-  recurringTypes?: RecurringType[]
+  recurringTypes?: RecurringType<any>[]
   namedTimeZonedImpl?: NamedTimeZoneImplClass
   initialView?: string
   elementDraggingImpl?: ElementDraggingClass
   optionChangeHandlers?: OptionChangeHandlerMap
   scrollGridImpl?: ScrollGridImpl
   contentTypeHandlers?: ContentTypeHandlers
+  listenerRefiners?: GenericListenerRefiners
   optionRefiners?: GenericRefiners
 }
 
 export interface PluginHooks {
   reducers: ReducerFunc[]
-  eventDefParsers: eventDefParserFunc[]
+  eventRefiners: GenericRefiners
+  eventDefMemberAdders: EventDefMemberAdder[]
+  eventSourceRefiners: GenericRefiners
   isDraggableTransformers: eventIsDraggableTransformer[]
   eventDragMutationMassagers: eventDragMutationMassager[]
   eventDefMutationAppliers: eventDefMutationApplier[]
@@ -77,15 +82,16 @@ export interface PluginHooks {
   componentInteractions: InteractionClass[]
   calendarInteractions: CalendarInteractionClass[]
   themeClasses: { [themeSystemName: string]: ThemeClass }
-  eventSourceDefs: EventSourceDef[]
+  eventSourceDefs: EventSourceDef<any>[]
   cmdFormatter?: CmdFormatterFunc
-  recurringTypes: RecurringType[]
+  recurringTypes: RecurringType<any>[]
   namedTimeZonedImpl?: NamedTimeZoneImplClass
   initialView: string
   elementDraggingImpl?: ElementDraggingClass
   optionChangeHandlers: OptionChangeHandlerMap
   scrollGridImpl: ScrollGridImpl | null
   contentTypeHandlers: ContentTypeHandlers
+  listenerRefiners: GenericListenerRefiners
   optionRefiners: GenericRefiners
 }
 

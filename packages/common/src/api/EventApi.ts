@@ -1,6 +1,7 @@
-import { EventDef, NON_DATE_PROPS, DATE_PROPS } from '../structs/event-def'
+import { EventDef } from '../structs/event-def'
+import { EVENT_NON_DATE_REFINERS, EVENT_DATE_REFINERS } from '../structs/event-parse'
 import { EventInstance } from '../structs/event-instance'
-import { UI_PROPS_REFINERS } from '../component/event-ui'
+import { EVENT_UI_REFINERS } from '../component/event-ui'
 import { EventMutation } from '../structs/event-mutation'
 import { DateInput } from '../datelib/env'
 import { diffDates, computeAlignedDayRange } from '../util/date'
@@ -25,25 +26,19 @@ export class EventApi {
   TODO: make event struct more responsible for this
   */
   setProp(name: string, val: string) {
-    if (name in DATE_PROPS) {
-      // error. date-related props need other methods
 
-    } else if (name in NON_DATE_PROPS) {
+    if (name in EVENT_DATE_REFINERS) {
+      console.warn(`Could not set date-related prop 'name'. Use one of the date-related methods instead.`)
 
-      if (typeof NON_DATE_PROPS[name] === 'function') {
-        val = NON_DATE_PROPS[name](val)
-      }
+    } else if (name in EVENT_NON_DATE_REFINERS) {
+      val = EVENT_NON_DATE_REFINERS[name](val)
 
       this.mutate({
         standardProps: { [name]: val }
       })
 
-    } else if (name in UI_PROPS_REFINERS) {
-      let ui
-
-      if (UI_PROPS_REFINERS[name]) {
-        val = UI_PROPS_REFINERS[name](val)
-      }
+    } else if (name in EVENT_UI_REFINERS) {
+      let ui = EVENT_UI_REFINERS[name](val)
 
       if (name === 'color') {
         ui = { backgroundColor: val, borderColor: val }
@@ -58,7 +53,7 @@ export class EventApi {
       })
 
     } else {
-      // error
+      console.warn(`Could not set prop '${name}'. Use setExtendedProp instead.`)
     }
   }
 
@@ -258,23 +253,23 @@ export class EventApi {
 
   // computable props that all access the def
   // TODO: find a TypeScript-compatible way to do this at scale
-  get id(): string { return this._def.publicId }
-  get groupId(): string { return this._def.groupId }
-  get allDay(): boolean { return this._def.allDay }
-  get title(): string { return this._def.title }
-  get url(): string { return this._def.url }
-  get display(): string { return this._def.ui.display || 'auto' } // bad. just normalize the type earlier
-  get startEditable(): boolean { return this._def.ui.startEditable }
-  get durationEditable(): boolean { return this._def.ui.durationEditable }
-  get constraint(): any { return this._def.ui.constraints[0] || null }
-  get overlap(): any { return this._def.ui.overlap }
-  get allow(): any { return this._def.ui.allows[0] || null }
-  get backgroundColor(): string { return this._def.ui.backgroundColor }
-  get borderColor(): string { return this._def.ui.borderColor }
-  get textColor(): string { return this._def.ui.textColor }
+  get id() { return this._def.publicId }
+  get groupId() { return this._def.groupId }
+  get allDay() { return this._def.allDay }
+  get title() { return this._def.title }
+  get url() { return this._def.url }
+  get display() { return this._def.ui.display || 'auto' } // bad. just normalize the type earlier
+  get startEditable() { return this._def.ui.startEditable }
+  get durationEditable() { return this._def.ui.durationEditable }
+  get constraint() { return this._def.ui.constraints[0] || null }
+  get overlap() { return this._def.ui.overlap }
+  get allow() { return this._def.ui.allows[0] || null }
+  get backgroundColor() { return this._def.ui.backgroundColor }
+  get borderColor() { return this._def.ui.borderColor }
+  get textColor() { return this._def.ui.textColor }
 
   // NOTE: user can't modify these because Object.freeze was called in event-def parsing
-  get classNames(): string[] { return this._def.ui.classNames }
-  get extendedProps(): any { return this._def.extendedProps }
+  get classNames() { return this._def.ui.classNames }
+  get extendedProps() { return this._def.extendedProps }
 
 }

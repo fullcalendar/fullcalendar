@@ -17,20 +17,18 @@ export type EventSourceFunc = (
 ) => (void | PromiseLike<EventInput[]>)
 
 
-let eventSourceDef: EventSourceDef = {
+let eventSourceDef: EventSourceDef<EventSourceFunc> = {
 
-  parseMeta(raw: any): EventSourceFunc {
-    if (typeof raw === 'function') { // short form
-      return raw
-    } else if (typeof raw.events === 'function') {
-      return raw.events
+  parseMeta(refined) {
+    if (typeof refined.events === 'function') {
+      return refined.events
     }
     return null
   },
 
   fetch(arg, success, failure) {
     let dateEnv = arg.context.dateEnv
-    let func = arg.eventSource.meta as EventSourceFunc
+    let func = arg.eventSource.meta
 
     unpromisify(
       func.bind(null, { // the function returned from parseMeta

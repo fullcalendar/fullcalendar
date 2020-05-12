@@ -85,7 +85,7 @@ export function reduceEventStore(eventStore: EventStore, action: Action, eventSo
 
 function receiveRawEvents(
   eventStore: EventStore,
-  eventSource: EventSource,
+  eventSource: EventSource<any>,
   fetchId: string,
   fetchRange: DateRange | null,
   rawEvents: EventInput[],
@@ -117,7 +117,7 @@ function receiveRawEvents(
 }
 
 
-function transformRawEvents(rawEvents, eventSource: EventSource, context: CalendarContext) {
+function transformRawEvents(rawEvents, eventSource: EventSource<any>, context: CalendarContext) {
   let calEachTransform = context.options.eventDataTransform
   let sourceEachTransform = eventSource ? eventSource.eventDataTransform : null
 

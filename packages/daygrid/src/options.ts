@@ -1,6 +1,6 @@
 import {
   identity, Identity, ViewApi, EventApi,
-  ClassNameGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler
+  ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler
 } from '@fullcalendar/common'
 import { MoreLinkHookProps } from './TableCell'
 
@@ -29,7 +29,7 @@ export type MoreLinkHandler = (arg: {
 
 export const OPTION_REFINERS = {
   moreLinkClick: identity as Identity<MoreLinkAction>,
-  moreLinkClassNames: identity as Identity<ClassNameGenerator<MoreLinkHookProps>>,
+  moreLinkClassNames: identity as Identity<ClassNamesGenerator<MoreLinkHookProps>>,
   moreLinkContent: identity as Identity<CustomContentGenerator<MoreLinkHookProps>>,
   moreLinkDidMount: identity as Identity<DidMountHandler<MoreLinkHookProps>>,
   moreLinkWillUnmount: identity as Identity<WillUnmountHandler<MoreLinkHookProps>>,

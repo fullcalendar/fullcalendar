@@ -1,18 +1,21 @@
-import { createDuration, Duration, DurationInput } from '../datelib/duration'
-import { refineProps } from '../util/misc'
-import { EventNonDateInput } from './event-parse'
+import { createDuration, Duration } from '../datelib/duration'
+import { refineProps, RawOptionsFromRefiners } from '../options'
 
 /*
 Information about what will happen when an external element is dragged-and-dropped
 onto a calendar. Contains information for creating an event.
 */
 
-export interface DragMetaInput extends EventNonDateInput {
-  startTime?: DurationInput
-  duration?: DurationInput
-  create?: boolean
-  sourceId?: string
+const DRAG_META_REFINERS = {
+  startTime: createDuration,
+  duration: createDuration,
+  create: Boolean,
+  sourceId: String
 }
+
+export type DragMetaInput =
+  RawOptionsFromRefiners<typeof DRAG_META_REFINERS> &
+  { [otherProp: string]: any } // for leftoverProps
 
 export interface DragMeta {
   startTime: Duration | null
@@ -22,22 +25,15 @@ export interface DragMeta {
   leftoverProps: object
 }
 
-const DRAG_META_PROPS = {
-  startTime: createDuration,
-  duration: createDuration,
-  create: Boolean,
-  sourceId: String
-}
-
-const DRAG_META_DEFAULTS = {
-  create: true
-}
 
 export function parseDragMeta(raw: DragMetaInput): DragMeta {
-  let leftoverProps = {}
-  let refined = refineProps(raw, DRAG_META_PROPS, DRAG_META_DEFAULTS, leftoverProps) as DragMeta
+  let { refined, extra } = refineProps(raw, DRAG_META_REFINERS)
 
-  refined.leftoverProps = leftoverProps
-
-  return refined
+  return {
+    startTime: refined.startTime || null,
+    duration: refined.duration || null,
+    create: refined.create != null ? refined.create : true,
+    sourceId: refined.sourceId,
+    leftoverProps: extra
+  }
 }
