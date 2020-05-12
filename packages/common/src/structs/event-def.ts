@@ -1,5 +1,6 @@
 import { Duration } from '../datelib/duration'
 import { EventUi } from '../component/event-ui'
+import { GenericObject } from '../options'
 
 export interface EventDef { // TODO: add recurring type here?
   defId: string
@@ -12,7 +13,7 @@ export interface EventDef { // TODO: add recurring type here?
   title: string
   url: string
   ui: EventUi
-  extendedProps: any
+  extendedProps: GenericObject
 }
 
 export type EventDefHash = { [defId: string]: EventDef }
