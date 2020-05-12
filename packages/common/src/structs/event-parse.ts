@@ -63,7 +63,7 @@ export function parseEvent(
   allowOpenRange: boolean,
   refiners = buildEventRefiners(context)
 ): EventTuple | null {
-  let { refined, extra } = refinedEventDef(raw, context)
+  let { refined, extra } = refineEventDef(raw, context, refiners)
 
   let defaultAllDay = computeIsDefaultAllDay(eventSource, context)
   let recurringRes = parseRecurring(
@@ -99,7 +99,7 @@ export function parseEvent(
 }
 
 
-export function refinedEventDef(raw: EventInput, context: CalendarContext, refiners = buildEventRefiners(context)) {
+export function refineEventDef(raw: EventInput, context: CalendarContext, refiners = buildEventRefiners(context)) {
   return refineProps(raw, refiners)
 }
 
@@ -114,17 +114,21 @@ Will NOT populate extendedProps with the leftover properties.
 Will NOT populate date-related props.
 */
 export function parseEventDef(refined: EventRefined, extra: GenericObject, sourceId: string, allDay: boolean, hasEnd: boolean, context: CalendarContext): EventDef {
-  let def: Partial<EventDef> = {}
-
-  def.publicId = refined.id
-  def.defId = guid()
-  def.sourceId = sourceId
-  def.allDay = allDay
-  def.hasEnd = hasEnd
-  def.ui = createEventUi(refined, context)
-  def.extendedProps = {
-    ...(refined.extendedProps || {}),
-    ...extra
+  let def: EventDef = {
+    title: refined.title,
+    groupId: refined.groupId,
+    publicId: refined.id,
+    url: refined.url,
+    recurringDef: null,
+    defId: guid(),
+    sourceId,
+    allDay,
+    hasEnd,
+    ui: createEventUi(refined, context),
+    extendedProps: {
+      ...(refined.extendedProps || {}),
+      ...extra
+    }
   }
 
   for (let memberAdder of context.pluginHooks.eventDefMemberAdders) {
@@ -135,7 +139,7 @@ export function parseEventDef(refined: EventRefined, extra: GenericObject, sourc
   Object.freeze(def.ui.classNames)
   Object.freeze(def.extendedProps)
 
-  return def as EventDef
+  return def
 }
 
 

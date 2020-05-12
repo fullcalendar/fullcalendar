@@ -624,6 +624,7 @@ function buildViewUiProps(calendarContext: CalendarContext) {
       backgroundColor: options.eventBackgroundColor,
       borderColor: options.eventBorderColor,
       textColor: options.eventTextColor,
+      color: options.eventColor
       // classNames: options.eventClassNames // render hook will handle this
     }, calendarContext),
 

@@ -2,7 +2,7 @@ import { DateRange, rangesEqual, OpenDateRange } from '../datelib/date-range'
 import { DateInput, DateEnv } from '../datelib/env'
 import { Duration } from '../datelib/duration'
 import { createEventInstance } from './event-instance'
-import { parseEventDef, refinedEventDef } from './event-parse'
+import { parseEventDef, refineEventDef } from './event-parse'
 import { EventRenderRange, compileEventUi } from '../component/event-rendering'
 import { EventUiHash } from '../component/event-ui'
 import { CalendarContext } from '../CalendarContext'
@@ -140,7 +140,7 @@ export function buildDateSpanApi(span: DateSpan, dateEnv: DateEnv): DateSpanApi 
 }
 
 export function fabricateEventRange(dateSpan: DateSpan, eventUiBases: EventUiHash, context: CalendarContext): EventRenderRange {
-  let res = refinedEventDef({ editable: false }, context)
+  let res = refineEventDef({ editable: false }, context)
   let def = parseEventDef(
     res.refined,
     res.extra,

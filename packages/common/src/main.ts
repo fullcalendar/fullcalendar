@@ -8,7 +8,7 @@ export const version: string = '<%= version %>' // important to type it, so .d.t
 // types
 export { EventDef, EventDefHash } from './structs/event-def'
 export { EventInstance, EventInstanceHash, createEventInstance } from './structs/event-instance'
-export { EventInput, EventRefined, parseEventDef, EventTuple, EventRefiners, refinedEventDef } from './structs/event-parse'
+export { EventInput, EventRefined, parseEventDef, EventTuple, EventRefiners, refineEventDef } from './structs/event-parse'
 export { BusinessHoursInput, parseBusinessHours } from './structs/business-hours'
 
 export {
@@ -61,7 +61,7 @@ export {
 export { parseClassNames } from './util/html'
 
 export { EventStore, filterEventStoreDefs, createEmptyEventStore, mergeEventStores, getRelevantEvents, eventTupleToStore } from './structs/event-store'
-export { EventUiHash, EventUi, combineEventUis } from './component/event-ui'
+export { EventUiHash, EventUi, combineEventUis, createEventUi } from './component/event-ui'
 export { Splitter, SplittableProps } from './component/event-splitting'
 export { getDayClassNames, getDateMeta, DateMeta, getSlotClassNames } from './component/date-rendering'
 export { buildNavLinkData } from './common/nav-link'

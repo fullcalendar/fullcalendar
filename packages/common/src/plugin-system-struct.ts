@@ -29,7 +29,7 @@ import { GenericRefiners, GenericListenerRefiners } from './options'
 export interface PluginDefInput {
   deps?: PluginDef[]
   reducers?: ReducerFunc[]
-  eventRefiners?: GenericRefiners
+  eventRefiners?: GenericRefiners // why not an array like others?
   eventDefMemberAdders?: EventDefMemberAdder[]
   eventSourceRefiners?: GenericRefiners
   isDraggableTransformers?: eventIsDraggableTransformer[]

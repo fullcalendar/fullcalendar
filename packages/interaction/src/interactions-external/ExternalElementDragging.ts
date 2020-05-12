@@ -16,7 +16,7 @@ import {
   ViewApi,
   CalendarContext,
   getDefaultEventEnd,
-  refinedEventDef
+  refineEventDef
 } from '@fullcalendar/common'
 import { HitDragging } from '../interactions/HitDragging'
 import { __assign } from 'tslib'
@@ -213,7 +213,7 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, context
     __assign(defProps, transform(dateSpan, dragMeta))
   }
 
-  let { refined, extra } = refinedEventDef(defProps, context)
+  let { refined, extra } = refineEventDef(defProps, context)
   let def = parseEventDef(
     refined,
     extra,

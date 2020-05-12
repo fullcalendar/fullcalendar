@@ -52,16 +52,16 @@ export function createEventUi(refined: EventUiRefined, context: CalendarContext)
   let constraint = normalizeConstraint(refined.constraint, context)
 
   return {
-    display: refined.display,
+    display: refined.display || '',
     startEditable: refined.startEditable != null ? refined.startEditable : refined.editable,
     durationEditable: refined.durationEditable != null ? refined.durationEditable : refined.editable,
     constraints: constraint != null ? [ constraint ] : [],
-    overlap: refined.overlap,
+    overlap: refined.overlap != null ? refined.overlap : null,
     allows: refined.allow != null ? [ refined.allow ] : [],
-    backgroundColor: refined.backgroundColor || refined.color,
-    borderColor: refined.borderColor || refined.color,
-    textColor: refined.textColor,
-    classNames: refined.classNames
+    backgroundColor: refined.backgroundColor || refined.color || '',
+    borderColor: refined.borderColor || refined.color || '',
+    textColor: refined.textColor || '',
+    classNames: refined.classNames || []
   }
 }
 
