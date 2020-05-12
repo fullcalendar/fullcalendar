@@ -1,6 +1,6 @@
 import { createDuration } from './datelib/duration'
 import { mergeProps } from './util/object'
-import { ToolbarInput, CustomButtonInput, ButtonIconsInput, ButtonTextCompoundInput } from './toolbar-parse'
+import { ToolbarInput, CustomButtonInput, ButtonIconsInput, ButtonTextCompoundInput } from './toolbar-struct'
 import { createFormatter, FormatterInput } from './datelib/formatting'
 import { WeekNumberCalculation } from './datelib/env'
 import { parseFieldSpecs } from './util/misc'

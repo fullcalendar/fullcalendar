@@ -1,6 +1,6 @@
 import { h } from './vdom'
 import { BaseComponent } from './vdom-util'
-import { ToolbarModel, ToolbarWidget } from './toolbar-parse'
+import { ToolbarModel, ToolbarWidget } from './toolbar-struct'
 
 
 export interface ToolbarProps extends ToolbarContent {
