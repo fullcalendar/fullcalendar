@@ -1,3 +1,2 @@
 
-export * from './vdom-preact'
-// export * from './vdom-react'
+export * from '@fullcalendar/common/dist/vdom-preact'
