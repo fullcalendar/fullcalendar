@@ -12,6 +12,8 @@ exports.localesUp = localesUp
 exports.localesUpWatch = localesUpWatch
 exports.localesAll = localesAll
 exports.localesAllWatch = localesAllWatch
+exports.distDirs = distDirs
+exports.distLinks = distLinks
 
 
 /*
@@ -48,4 +50,64 @@ async function localesAll() {
 
 function localesAllWatch() {
   return watch(SRC_LOCALE_DIR, localesAll)
+}
+
+
+
+const PKG_DIRS = [
+  'packages?(-premium)/*',
+  '!packages?(-premium)/{bundle,__tests__}'
+]
+
+const fs = require('fs')
+
+const exec = require('./scripts/lib/shell').sync.withOptions({
+  live: true,
+  exitOnError: true
+})
+
+
+async function distDirs() {
+  let pkgDirs = await globby(PKG_DIRS, { onlyDirectories: true })
+
+  return pkgDirs.forEach((pkgDir) => {
+    let distDir = path.join(pkgDir, 'dist')
+    let stat
+
+    try {
+      stat = fs.lstatSync(distDir)
+    } catch (ex) {} // if doesn't exist
+
+    if (stat && !stat.isDirectory()) {
+      exec([ 'rm', '-rf', distDir ])
+      stat = null
+    }
+
+    if (!stat) {
+      exec([ 'mkdir', distDir ])
+    }
+  })
+}
+
+
+async function distLinks() {
+  let pkgDirs = await globby(PKG_DIRS, { onlyDirectories: true })
+
+  return pkgDirs.forEach((pkgDir) => {
+    let distDir = path.join(pkgDir, 'dist')
+    let stat
+
+    try {
+      stat = fs.lstatSync(distDir)
+    } catch (ex) {} // if doesn't exist
+
+    if (stat && !stat.isSymbolicLink()) {
+      exec([ 'rm', '-rf', distDir ])
+      stat = null
+    }
+
+    if (!stat) {
+      exec([ 'ln', '-s', 'tsc', distDir ])
+    }
+  })
 }

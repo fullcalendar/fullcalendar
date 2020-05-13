@@ -17,7 +17,7 @@ glob.sync('*/', { cwd: PROJECTS_ROOT }).forEach(function(exampleDir) { // will m
     )
 
   } else {
-    let { success } = exec.sync('yarn', [ 'run', 'build' ], {
+    let { success } = exec.sync([ 'yarn', 'run', 'build' ], {
       cwd: path.join(PROJECTS_ROOT, exampleDir),
       live: true
     })

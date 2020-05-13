@@ -1,34 +1,53 @@
 
 const { spawn, spawnSync, exec, execFile } = require('child_process')
+const { promisify } = require('util')
 
 
-function betterExec(cmd, args, options = {}, callback) {
+function betterExec(cmd, options = {}, callback) {
   let childProcess
+  let cmdStr, cmdPath, cmdArgs
+
+  if (Array.isArray(cmd)) {
+    cmdPath = cmd[0]
+    cmdArgs = cmd.slice(1)
+  } else {
+    cmdStr = cmd
+  }
+
+  function callbackWrap(error, res) {
+    if (callback) {
+      callback(error, res)
+    }
+
+    if (error && options.exitOnError) {
+      process.exit(1) // TODO: somehow get exit code
+    }
+  }
 
   if (options.live) {
-    childProcess = spawn(cmd, args, {
-      shell: args == null,
+    childProcess = spawn(cmdPath || cmdStr, cmdArgs, {
+      shell: !cmdArgs,
       stdio: 'inherit',
       ...options
     })
     childProcess.on('close', function(code) {
-      callback(null, { success: code === 0 })
+      callbackWrap(null, { success: code === 0 })
     })
 
-  } else if (args == null) { // exec in a shell
-    childProcess = exec(cmd, {
+  } else if (cmdArgs) { // array of tokens
+    childProcess = execFile(cmdPath, cmdArgs, {
       encoding: 'utf8',
       ...options
     }, function(error, stdout, stderr) {
-      callback(error, { stdout, stderr, success: !error })
+      callbackWrap(error, { stdout, stderr, success: !error })
     })
 
-  } else {
-    childProcess = execFile(cmd, args, {
+  } else { // exec in a shell
+    childProcess = exec(cmdStr, {
       encoding: 'utf8',
       ...options
     }, function(error, stdout, stderr) {
-      callback(error, { stdout, stderr, success: !error })
+      callbackWrap(error, { stdout, stderr, success: !error })
     })
   }
 
@@ -36,20 +55,48 @@ function betterExec(cmd, args, options = {}, callback) {
 }
 
 
-function betterExecSync(cmd, args, options = {}) {
-  let res = spawnSync(cmd, args, {
+function betterExecSync(cmd, options = {}) {
+  let cmdStr, cmdPath, cmdArgs
+
+  if (Array.isArray(cmd)) {
+    cmdPath = cmd[0]
+    cmdArgs = cmd.slice(1)
+  } else {
+    cmdStr = cmd
+  }
+
+  let res = spawnSync(cmdPath || cmdStr, cmdArgs, {
     encoding: 'utf8',
-    shell: args == null,
+    shell: !cmdArgs,
     stdio: options.live ? 'inherit' : 'pipe',
     ...options
   })
+
+  if (res.status !== 0 && options.exitOnError) {
+    process.exit(res.status)
+  }
 
   return { ...res, success: res.status === 0 }
 }
 
 
+function withOptions(baseOptions = {}) {
+  let origFunc = this
+
+  return (cmd, options) => {
+    return origFunc(cmd, { ...baseOptions, ...options })
+  }
+}
+
+
+betterExec.withOptions = withOptions
 betterExec.sync = betterExecSync
-exports.exec = betterExec
+betterExec.sync.withOptions = withOptions
+betterExec.promise = promisify(betterExec)
+betterExec.promise.withOptions = withOptions
+
+exports.exec = betterExec // both???
+module.exports = betterExec
 
 
 /* parsing workspaces

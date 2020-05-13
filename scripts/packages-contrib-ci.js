@@ -14,7 +14,7 @@ glob.sync('*/', { cwd: PKGS_ROOT }).forEach(function(pkgDir) { // will match ONL
     console.log('Skipping @fullcalendar/angular when in a CI environment because of ChromeHeadless problems (fixed?)')
 
   } else {
-    let { success } = exec.sync('yarn', [ 'run', 'ci' ], {
+    let { success } = exec.sync([ 'yarn', 'run', 'ci' ], {
       cwd: path.join(PKGS_ROOT, pkgDir),
       live: true
     })
