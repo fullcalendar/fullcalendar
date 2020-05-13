@@ -1,15 +1,10 @@
 
 # make sure this links mirrors what's in scripts/clean
 
-/tmp
 /archives
 
-/packages/*/*.js
-/packages/*/*.css
-/packages/*/*.map
-/packages/*/*.d.ts
-/packages/core/locales
-/packages/bundle/locales
+/packages/*/tsconfig.tsbuildinfo
+/packages/*/dist
 
 # continued in packages-premium/.gitignore
 

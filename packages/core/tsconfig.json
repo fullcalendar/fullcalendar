@@ -1,0 +1,10 @@
+{
+  "extends":  "../../tsconfig.package.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "references": [
+    { "path": "../common" }
+  ]
+}

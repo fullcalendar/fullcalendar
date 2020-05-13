@@ -7,6 +7,6 @@
   "dependencies": {
     "tslib": "^1.9.3"
   },
-  "module": "main.js",
-  "types": "main.d.ts"
+  "module": "dist/main.js",
+  "types": "dist/main.d.ts"
 }

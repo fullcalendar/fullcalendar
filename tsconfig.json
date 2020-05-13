@@ -1,61 +1,14 @@
+
 {
-  "compilerOptions": {
-    "target": "es5",
-    "module": "es6",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "lib": [
-      "dom",
-      "es2015",
-      "scripthost"
-    ],
-    "incremental": true,
-    "noUnusedLocals": true,
-    "noImplicitUseStrict": true,
-    "importHelpers": true,
-    "resolveJsonModule": true,
-    "declaration": true,
-    "allowJs": true,
-    "checkJs": true,
-    "jsx": "react",
-    "jsxFactory": "h",
-    "baseUrl": ".",
-    "strictBindCallApply": true,
-    "paths": {
-      "fullcalendar": [ "packages/bundle/src/main" ],
-      "@fullcalendar/core": [ "packages/core/src/main" ],
-      "@fullcalendar/core/*": [ "packages/core/src/*" ],
-      "@fullcalendar/common": [ "packages/common/src/main" ],
-      "@fullcalendar/interaction": [ "packages/interaction/src/main" ],
-      "@fullcalendar/daygrid": [ "packages/daygrid/src/main" ],
-      "@fullcalendar/timegrid": [ "packages/timegrid/src/main" ],
-      "@fullcalendar/list": [ "packages/list/src/main" ],
-      "@fullcalendar/rrule": [ "packages/rrule/src/main" ],
-      "@fullcalendar/luxon": [ "packages/luxon/src/main" ],
-      "@fullcalendar/moment": [ "packages/moment/src/main" ],
-      "@fullcalendar/moment-timezone": [ "packages/moment-timezone/src/main" ],
-      "@fullcalendar/google-calendar": [ "packages/google-calendar/src/main" ],
-      "@fullcalendar/bootstrap": [ "packages/bootstrap/src/main" ],
-      "fullcalendar-scheduler": [ "packages-premium/bundle/src/main" ],
-      "@fullcalendar/scrollgrid": [ "packages-premium/scrollgrid/src/main" ],
-      "@fullcalendar/timeline": [ "packages-premium/timeline/src/main" ],
-      "@fullcalendar/resource-common": [ "packages-premium/resource-common/src/main" ],
-      "@fullcalendar/resource-timeline": [ "packages-premium/resource-timeline/src/main" ],
-      "@fullcalendar/resource-daygrid": [ "packages-premium/resource-daygrid/src/main" ],
-      "@fullcalendar/resource-timegrid": [ "packages-premium/resource-timegrid/src/main" ],
-      "standard-tests/*": [ "packages/__tests__/*" ],
-      "premium-tests/*": [ "packages-premium/__tests__/*" ]
-    },
-    "rootDir": ".",
-    "outDir": "tmp/tsc-output"
-  },
-  "include": [
-    "packages*/*/src/main.ts",
-    "packages*/__tests__/src/**/*",
-    "packages/core/src/locales/*"
-  ],
-  "exclude": [
-    "packages-contrib",
-    "node_modules"
+  "files": [],
+  "references": [
+    { "path": "packages/common" },
+    { "path": "packages/core" },
+    { "path": "packages/daygrid" },
+    { "path": "packages/timegrid" },
+    { "path": "packages/interaction" },
+    { "path": "packages/list" },
+    { "path": "packages/bootstrap" },
+    { "path": "packages/bundle" }
   ]
 }
