@@ -4,7 +4,6 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-
     "target": "es5",
     "module": "es6",
     "moduleResolution": "node",

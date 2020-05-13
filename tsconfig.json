@@ -2,6 +2,7 @@
 {
   "files": [],
   "references": [
+    { "path": "packages/bundle" },
     { "path": "packages/common" },
     { "path": "packages/core" },
     { "path": "packages/daygrid" },
@@ -9,6 +10,17 @@
     { "path": "packages/interaction" },
     { "path": "packages/list" },
     { "path": "packages/bootstrap" },
-    { "path": "packages/bundle" }
+    { "path": "packages/google-calendar" },
+    { "path": "packages/luxon" },
+    { "path": "packages/moment" },
+    { "path": "packages/moment-timezone" },
+    { "path": "packages/rrule" },
+    { "path": "packages-premium/bundle" },
+    { "path": "packages-premium/resource-common" },
+    { "path": "packages-premium/resource-daygrid" },
+    { "path": "packages-premium/resource-timegrid" },
+    { "path": "packages-premium/resource-timeline" },
+    { "path": "packages-premium/scrollgrid" },
+    { "path": "packages-premium/timeline" }
   ]
 }
