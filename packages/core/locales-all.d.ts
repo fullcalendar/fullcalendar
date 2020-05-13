@@ -1,4 +1,4 @@
-import { RawLocale } from './dist/main'
+import { RawLocale } from '@fullcalendar/common'
 
 declare let locales: RawLocale[]
 

@@ -46,6 +46,8 @@
     "tsc:watch": "tsc -b --verbose --watch",
     "sass": "sass `./scripts/sass-args.js`",
     "sass:watch": "sass --watch `./scripts/sass-args.js`",
+    "locales": "gulp localesUp localesAll",
+    "locales:watch": "gulp localesUpWatch localesAllWatch",
     "rollup": "rollup -c --environment BUILD:production",
     "rollup:watch": "rollup -c --environment BUILD:development --watch",
     "test": "concurrently --restart-tries 999 --prefix none 'karma start karma.config.js'",
