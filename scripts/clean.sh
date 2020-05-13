@@ -12,6 +12,8 @@ rm -rf packages/*/tsconfig.tsbuildinfo
 rm -rf packages/*/dist
 rm -rf packages/*/tsc
 rm -rf packages/*/rollup
+rm -rf packages/core/locales
+rm -rf packages/core/locales-all.js
 
 rm -rf packages-premium/*/tsconfig.tsbuildinfo
 rm -rf packages-premium/*/dist

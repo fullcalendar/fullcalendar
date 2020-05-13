@@ -1,37 +1,51 @@
-const { parallel, series } = require('gulp')
-const { shellTask } = require('./scripts/lib/util')
-const { minifyJs, minifyCss } = require('./scripts/lib/minify') // combine into one task? make part of rollup?
-const { lint } = require('./scripts/lib/lint')
-const { archive } = require('./scripts/lib/archive')
-const { writeLocales, watchLocales } = require('./scripts/lib/locales')
-const { buildTestIndex } = require('./scripts/lib/tests-index')
-const { runTsc, runTscWatch } = require('./scripts/lib/tsc')
+const path = require('path')
+const globby = require('globby')
+const handlebars = require('handlebars')
+const { src, dest, watch } = require('gulp')
+const { readFile, writeFile } = require('./scripts/lib/util')
 
-exports.lint = lint
-exports.archive = archive
-exports.locales = writeLocales
-exports.minify = parallel(minifyJs, minifyCss)
+const SRC_LOCALE_DIR = 'packages/core/src/locales'
+const SRC_LOCALE_EXT = '.ts'
+const TSC_LOCALE_FILES = 'packages/core/dist/locales/*.{js,d.ts}'
 
-exports.build = series(
-  () => runTsc(),
-  writeLocales, // needs tsc
-  () => buildTestIndex(), // needs tsc. needs to happen before rollup
-  shellTask('npm:sass'),
-  shellTask('npm:rollup'), // needs tsc, copied scss, generated locales
-  parallel(minifyJs, minifyCss)
-)
+exports.localesUp = localesUp
+exports.localesUpWatch = localesUpWatch
+exports.localesAll = localesAll
+exports.localesAllWatch = localesAllWatch
 
-exports.watch = series(
-  () => runTscWatch(),
-  series(
-    writeLocales, // needs tsc
-    () => buildTestIndex(true), // needs tsc. watch=true
-    shellTask('npm:sass'),
-    parallel(
-      shellTask('npm:sass:watch'), // double work :(
-      shellTask('npm:rollup:watch'), // needs tsc, copied scss, generated locales
-      watchLocales // TODO: ignore initial
-    )
+
+/*
+moves the tsc-generated locale files up one directory,
+so they're accessible with import statements like '@fullcalendar/core/locales/es.js'
+requires tsc to run first.
+*/
+function localesUp() {
+  return src(TSC_LOCALE_FILES)
+    .pipe(dest('packages/core/locales/'))
+}
+
+function localesUpWatch() {
+  return watch(TSC_LOCALE_FILES, localesUp)
+}
+
+
+async function localesAll() {
+  let localeFileNames = await globby('*' + SRC_LOCALE_EXT, { cwd: SRC_LOCALE_DIR })
+  let localeCodes = localeFileNames.map((fileName) => path.basename(fileName, SRC_LOCALE_EXT))
+  let localeImportPaths = localeCodes.map((code) => `./locales/${code}`)
+
+  let templateText = await readFile('packages/core/src/locales-all.js.tpl')
+  let template = handlebars.compile(templateText)
+  let jsText = template({
+    localeImportPaths
+  })
+
+  return writeFile(
+    'packages/core/locales-all.js',
+    jsText
   )
-) // doesn't minify!
-// BUG: right after clean, when watching, tsc re-compiles a lot (must be watching something)
+}
+
+function localesAllWatch() {
+  return watch(SRC_LOCALE_DIR, localesAll)
+}
