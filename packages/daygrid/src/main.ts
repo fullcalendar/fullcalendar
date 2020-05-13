@@ -1,6 +1,6 @@
 import { createPlugin } from '@fullcalendar/common'
 import { DayTableView } from './DayTableView'
-import './main.scss'
+import './main.css'
 import { TableDateProfileGenerator } from './TableDateProfileGenerator'
 import { OPTION_REFINERS } from './options'
 import './options-declare'

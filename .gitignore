@@ -7,8 +7,8 @@
 /packages/*/dist
 /packages/*/tsc
 /packages/*/rollup
-/packages/core/locales/*
-/packages/core/locales-all.js
+/packages/*/locales/*
+/packages/*/locales-all.js
 
 # continued in packages-premium/.gitignore
 

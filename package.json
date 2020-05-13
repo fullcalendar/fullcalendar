@@ -40,7 +40,7 @@
     "postinstall": "./scripts/postinstall.sh",
     "build": "gulp build",
     "watch": "gulp watch",
-    "lint": "gulp lint && ./scripts/check-dts.js",
+    "lint": "gulp lint",
     "clean": "./scripts/clean.sh",
     "tsc": "tsc -b --verbose",
     "tsc:watch": "tsc -b --verbose --watch",
