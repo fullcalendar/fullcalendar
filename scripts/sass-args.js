@@ -1,29 +1,18 @@
 #!/usr/bin/env node
 
 const path = require('path')
-const glob = require('glob')
-const { pkgStructs } = require('./lib/pkg-struct')
+const globby = require('globby')
 
-let pairs = []
+const ROOT = path.resolve(__dirname, '..')
+const SRC_FILES = globby.sync([
+  'packages?(-premium)/*/src/*.scss',
+  '!**/_*.scss'
+], { cwd: ROOT })
 
-for (let pkgStruct of pkgStructs) {
-  let srcDirAbs = path.join(process.cwd(), pkgStruct.srcDir) // TODO: dont rely on us being at root
-  let dirAbs = path.join(process.cwd(), pkgStruct.dir)
-
-  let scssFilesnames = glob.sync('*.scss', { // .scss files in the root
-    cwd: srcDirAbs,
-    ignore: '**/_*.scss' // ignore includes
-  })
-
-  // TODO: when this script runs sass ourselves, make paths relative
-
-  for (let scssFilesname of scssFilesnames) {
-    pairs.push(
-      path.join(srcDirAbs, scssFilesname) +
-      ':' +
-      path.join(dirAbs, scssFilesname.replace('.scss', '.css')) // TODO: more robust replacement
-    )
-  }
-}
+let pairs = SRC_FILES.map((srcFile) => {
+  let pkgDir = path.resolve(srcFile, '../..')
+  let destFile = path.join(pkgDir, 'dist', path.basename(srcFile, '.scss') + '.css')
+  return srcFile + ':' + destFile
+})
 
 console.log(pairs.join(' '))
