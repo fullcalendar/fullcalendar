@@ -4,9 +4,8 @@
 /archives
 
 /packages/*/tsconfig.tsbuildinfo
-/packages/*/dist
 /packages/*/tsc
-/packages/*/rollup
+/packages/*/dist
 /packages/*/locales/*
 /packages/*/locales-all.js
 
