@@ -1,0 +1,18 @@
+{
+  "extends":  "../../tsconfig.package.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "references": [
+    { "path": "../core" },
+    { "path": "../interaction" },
+    { "path": "../daygrid" },
+    { "path": "../timegrid" },
+    { "path": "../list" },
+    { "path": "../bootstrap" }
+  ]
+}

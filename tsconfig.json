@@ -2,6 +2,7 @@
 {
   "files": [],
   "references": [
+    { "path": "packages/__tests__" },
     { "path": "packages/bundle" },
     { "path": "packages/common" },
     { "path": "packages/core" },
@@ -15,6 +16,7 @@
     { "path": "packages/moment" },
     { "path": "packages/moment-timezone" },
     { "path": "packages/rrule" },
+    { "path": "packages-premium/__tests__" },
     { "path": "packages-premium/bundle" },
     { "path": "packages-premium/resource-common" },
     { "path": "packages-premium/resource-daygrid" },
