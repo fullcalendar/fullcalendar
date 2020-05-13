@@ -1,7 +1,0 @@
-[
-  "@fullcalendar/rrule",
-  "@fullcalendar/moment",
-  "@fullcalendar/moment-timezone",
-  "@fullcalendar/luxon",
-  "@fullcalendar/google-calendar"
-]

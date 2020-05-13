@@ -10,6 +10,10 @@ rm -rf archives
 
 rm -rf packages/*/tsconfig.tsbuildinfo
 rm -rf packages/*/dist
+rm -rf packages/*/tsc
+rm -rf packages/*/rollup
 
 rm -rf packages-premium/*/tsconfig.tsbuildinfo
 rm -rf packages-premium/*/dist
+rm -rf packages-premium/*/tsc
+rm -rf packages-premium/*/rollup
