@@ -16,7 +16,7 @@ exports.localesAllWatch = localesAllWatch
 
 /*
 moves the tsc-generated locale files up one directory,
-so they're accessible with import statements like '@fullcalendar/core/locales/es.js'
+so they're accessible with import statements like '@fullcalendar/core/locales/es'
 requires tsc to run first.
 */
 function localesUp() {
