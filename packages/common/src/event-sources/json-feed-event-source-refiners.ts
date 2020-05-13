@@ -1,4 +1,4 @@
-import { identity, Identity } from '@fullcalendar/core'
+import { identity, Identity } from '../options'
 
 export const EVENT_SOURCE_REFINERS = {
   method: String,

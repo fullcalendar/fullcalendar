@@ -59,7 +59,7 @@ export class CalendarApi {
   }
 
 
-  getOption(name: keyof CalendarOptions) { // getter, used externally
+  getOption<OptionName extends keyof CalendarOptions>(name: OptionName): CalendarOptions[OptionName] { // getter, used externally. WTF TS
     return this.currentDataManager!.currentCalendarOptionsInput[name]
   }
 
