@@ -14,6 +14,8 @@ rm -rf packages/*/dist
 rm -rf packages/*/locales
 rm -rf packages/*/locales-all.js
 
+rm -rf tests-*.*
+
 rm -rf packages-premium/*/tsconfig.tsbuildinfo
 rm -rf packages-premium/*/tsc
 rm -rf packages-premium/*/dist

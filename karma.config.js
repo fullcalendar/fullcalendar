@@ -25,22 +25,14 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-
-      // jquery-related deps should attach globally first
-      'node_modules/jquery/dist/jquery.js', // because of jquery-simulate and needing-to-be-first
-      'node_modules/jquery-simulate/jquery.simulate.js', // operates on global jQuery
-      'node_modules/jasmine-jquery/lib/jasmine-jquery.js', // weird this/root reference confuses rollup
-
-      'tmp/tests-compiled/config.js', // a way to dump variables into the test environment
-      { pattern: 'tmp/tests-compiled/main.js', nocache: true },
-      { pattern: 'tmp/tests-compiled/main.css', watched: false  }, // let the JS cause the refresh
-      { pattern: 'tmp/tests-compiled/*.map', included: false, nocache: true, watched: false }
+      'tmp/tests-compiled/config.js', // a way to dump variables into the test environment ... TODO: move location!!!
+      'tests-all.js'
     ],
 
-    // make console errors aware of source files
-    preprocessors: {
-      'tmp/tests-compiled/*.+(js|css)': [ 'sourcemap' ]
-    },
+    // // make console errors aware of source files
+    // preprocessors: {
+    //   'tmp/tests-compiled/*.+(js|css)': [ 'sourcemap' ]
+    // },
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage', 'verbose'

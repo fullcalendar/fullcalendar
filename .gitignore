@@ -9,6 +9,8 @@
 /packages/*/locales/*
 /packages/*/locales-all.js
 
+/tests-*.*
+
 # continued in packages-premium/.gitignore
 
 node_modules

@@ -1,9 +1,14 @@
 const path = require('path')
 const globby = require('globby')
 const handlebars = require('handlebars')
-const { src, dest, watch, parallel } = require('gulp')
+const { src, dest, watch, parallel, series } = require('gulp')
 const { readFile, writeFile } = require('./scripts/lib/util')
 const fs = require('fs')
+const exec = require('./scripts/lib/shell').sync.withOptions({ // always SYNC!
+  live: true,
+  exitOnError: true
+  // TODO: flag for echoing command?
+})
 
 const SRC_LOCALE_DIR = 'packages/core/src/locales'
 const SRC_LOCALE_EXT = '.ts'
@@ -61,13 +66,6 @@ const PKG_DIRS = [
   '!packages?(-premium)/{core-vdom,bundle,__tests__}'
 ]
 
-const exec = require('./scripts/lib/shell').sync.withOptions({
-  live: true,
-  exitOnError: true
-  // TODO: flag for echoing command?
-})
-
-
 async function distDirs() {
   let pkgDirs = await globby(PKG_DIRS, { onlyDirectories: true })
 
@@ -117,13 +115,11 @@ async function distLinks() {
 async function vdomLink() {
   let pkgRoot = 'packages/core-vdom'
   let outPath = path.join(pkgRoot, 'src/vdom.ts')
-  let newTarget = // relative to outPath
-    process.env.FULLCALENDAR_FORCE_REACT
-      ? '../../../packages-contrib/react/src/vdom.ts'
-      : 'vdom-preact.ts'
+  let newTarget = process.env.FULLCALENDAR_FORCE_REACT
+    ? '../../../packages-contrib/react/src/vdom.ts' // relative to outPath
+    : 'vdom-preact.ts'
 
   let currentTarget
-
   try {
     currentTarget = fs.readlinkSync(outPath)
   } catch(ex) {} // if doesn't exist
@@ -132,7 +128,7 @@ async function vdomLink() {
     exec([ 'rm', '-rf', outPath ])
     currentTarget = null
 
-    console.log('Clearing tsbuildinfo because vdom symlink changed') // TODO: use gulp util?
+    console.log('Clearing tsbuildinfo because vdom symlink changed') // TODO: use gulp warn util?
     exec([ 'rm', '-rf', path.join(pkgRoot, 'tsconfig.tsbuildinfo') ])
   }
 
@@ -143,6 +139,12 @@ async function vdomLink() {
 
 
 
+/*
+copy over the vdom files that were externalized by rollup.
+we externalize these for two reasons:
+ - when a consumer build system sees `import './vdom'` it's more likely to treat it with side effects.
+ - rollup-plugin-dts was choking on the namespace declarations in the tsc-generated vdom.d.ts files.
+*/
 const VDOM_FILE_MAP = {
   'packages/core-vdom/tsc/vdom.{js,d.ts}': 'packages/core/dist',
   'packages/common/tsc/vdom.{js,d.ts}': 'packages/common/dist'
@@ -160,4 +162,76 @@ function parallelMap(map, execute) {
     task.displayName = key
     return task
   }))
+}
+
+
+
+
+
+const exec2 = require('./scripts/lib/shell').sync
+
+exports.testsIndex = testsIndex
+exports.testsIndexWatch = series(testsIndex, testsIndexWatch)
+
+async function testsIndex() {
+  let res = exec2(
+    'find packages*/__tests__/tsc -mindepth 2 -name \'*.js\' -print0 | ' +
+    'xargs -0 grep -E "(fdescribe|fit)\\("'
+  )
+
+  if (!res.success && res.stderr) { // means there was a real error
+    throw new Error(res.stderr)
+  }
+
+  let files
+
+  if (!res.success) { // means there were no files that matched
+    let { stdout } = exec2('find packages*/__tests__/tsc -mindepth 2 -name \'*.js\'')
+    files = stdout.trim()
+    files = !files ? [] : files.split('\n')
+    files = uniqStrs(files)
+    files.sort() // work around OS-dependent sorting ... TODO: better sorting that knows about filename slashes
+    console.log(`[test-index] All ${files.length} test files.`) // TODO: use gulp log util?
+
+  } else {
+    files = res.stdout.trim()
+    files = !files ? [] : files.split('\n')
+    files = files.map((line) => line.trim().split(':')[0]) // TODO: do a max split of 1
+    files = uniqStrs(files)
+    files.sort() // work around OS-dependent sorting
+    console.log(
+      '[test-index] Only test files that have fdescribe/fit:\n' + // TODO: use gulp log util?
+      files.map((file) => ` - ${file}`).join('\n')
+    )
+  }
+
+  let mainFiles = globby.sync('packages*/__tests__/tsc/main.js')
+  files = mainFiles.concat(files)
+
+  let code =
+    files.map(
+      (file) => `import ${JSON.stringify('./' + file)}`
+    ).join('\n') +
+    '\n'
+
+  await writeFile('tests-index.js', code)
+}
+
+function testsIndexWatch() {
+  return watch(
+    [ 'packages/__tests__/tsc', 'packages-premium/__tests__/tsc' ], // wtf won't globs work for this?
+    exports.testsIndex
+  )
+}
+
+/*
+TODO: make unnecessary. have grep do this instead with the -l option:
+https://stackoverflow.com/questions/6637882/how-can-i-use-grep-to-show-just-filenames-on-linux
+*/
+function uniqStrs(a) {
+  let hash = {}
+  for (let item of a) {
+    hash[item] = true
+  }
+  return Object.keys(hash)
 }

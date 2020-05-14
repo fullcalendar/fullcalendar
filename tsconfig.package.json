@@ -17,7 +17,7 @@
     "noImplicitUseStrict": true,
     "importHelpers": true,
     "resolveJsonModule": true,
-    "allowJs": false,
+    "allowJs": true,
     "checkJs": false,
     "jsx": "react",
     "jsxFactory": "h",
