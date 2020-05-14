@@ -3,6 +3,7 @@ const globby = require('globby')
 const handlebars = require('handlebars')
 const { src, dest, watch } = require('gulp')
 const { readFile, writeFile } = require('./scripts/lib/util')
+const fs = require('fs')
 
 const SRC_LOCALE_DIR = 'packages/core/src/locales'
 const SRC_LOCALE_EXT = '.ts'
@@ -14,7 +15,7 @@ exports.localesAll = localesAll
 exports.localesAllWatch = localesAllWatch
 exports.distDirs = distDirs
 exports.distLinks = distLinks
-exports.vdomSwitch = vdomSwitch
+exports.vdomLink = vdomLink
 
 
 /*
@@ -57,14 +58,13 @@ function localesAllWatch() {
 
 const PKG_DIRS = [
   'packages?(-premium)/*',
-  '!packages?(-premium)/{bundle,__tests__}'
+  '!packages?(-premium)/{core-vdom,bundle,__tests__}'
 ]
-
-const fs = require('fs')
 
 const exec = require('./scripts/lib/shell').sync.withOptions({
   live: true,
   exitOnError: true
+  // TODO: flag for echoing command?
 })
 
 
@@ -114,17 +114,29 @@ async function distLinks() {
 }
 
 
-/*
-NOTE: when flipping FULLCALENDAR_FORCE_REACT, you'll need to manually trigger a clean+rebuild
-*/
-async function vdomSwitch() {
-  return Promise.resolve()
+async function vdomLink() {
+  let pkgRoot = 'packages/core-vdom'
+  let outPath = path.join(pkgRoot, 'src/main.ts')
+  let newTarget = // relative to outPath
+    process.env.FULLCALENDAR_FORCE_REACT
+      ? '../../../packages-contrib/react/src/vdom.ts'
+      : 'preact.ts'
 
-  let target = process.env.FULLCALENDAR_FORCE_REACT
-    ? '../../../packages-contrib/react/src/vdom.ts'
-    : '../../vdom-preact.ts'
+  let currentTarget
 
-  await exec([
-    'ln', '-sf', target, 'packages/common/src/vdom-switch.ts'
-  ])
+  try {
+    currentTarget = fs.readlinkSync(outPath)
+  } catch(ex) {} // if doesn't exist
+
+  if (currentTarget && currentTarget !== newTarget) {
+    exec([ 'rm', '-rf', outPath ])
+    currentTarget = null
+
+    console.log('Clearing tsbuildinfo because vdom symlink changed') // TODO: use gulp util?
+    exec([ 'rm', '-rf', path.join(pkgRoot, 'tsconfig.tsbuildinfo') ])
+  }
+
+  if (!currentTarget) { // i.e. no existing symlink
+    exec([ 'ln', '-s', newTarget, outPath ])
+  }
 }

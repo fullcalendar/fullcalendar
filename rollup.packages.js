@@ -1,15 +1,13 @@
 const path = require('path')
 const globby = require('globby')
-const nodeResolve = require('@rollup/plugin-node-resolve')
 const dts = require('rollup-plugin-dts').default
 
 
 const REL_REGEX = /^\./
 const VDOM_SWITCH_REGEX = /\/vdom-switch$/
-const MAIN_PATHS = [
+const MAIN_PATHS = [ // TODO: use PKG_DIRS from gulp?
   'packages?(-premium)/*/tsc/main.js',
-  '!packages?(-premium)/bundle/tsc/main.js',
-  '!packages?(-premium)/__tests__/tsc/main.js'
+  '!packages?(-premium)/{core-vdom,bundle,__tests__}/tsc/main.js'
 ]
 
 
@@ -21,7 +19,6 @@ module.exports = [
 
 function jsConfigs() {
   return globby.sync(MAIN_PATHS).map((mainPath) => {
-    let packageName = getPackageName(mainPath)
     return {
       input: mainPath,
       output: {
@@ -29,9 +26,7 @@ function jsConfigs() {
         dir: path.resolve(mainPath, '../../dist')
       },
       plugins: [
-        packageName === 'common'
-          ? removeVDomSwitch()
-          : externalizeVDom(),
+        externalizeVDom(),
         externalizeStylesheets(),
         externalizeNamed(mainPath)
       ]
@@ -61,9 +56,9 @@ function dtsConfigs() {
 }
 
 
-function getPackageName(mainPath) {
-  return mainPath.match(/^packages[^/]*\/([^/]*)/)[1]
-}
+// function getPackageName(mainPath) {
+//   return mainPath.match(/^packages[^/]*\/([^/]*)/)[1]
+// }
 
 
 function externalizeStylesheets() {
@@ -92,22 +87,11 @@ function externalizeNamed(mainPath) {
 }
 
 
-function removeVDomSwitch() {
-  return {
-    resolveId(id) {
-      if (VDOM_SWITCH_REGEX.test(id)) {
-        return { id: 'packages/vdom-nothing.js' }
-      }
-    }
-  }
-}
-
-
 function externalizeVDom() {
   return {
     resolveId(id) {
       if (/\/vdom$/.test(id) || id.match(/^(preact|react|react-dom)$/)) {
-        return { id: './vdom', external: true }
+        return { id: './vdom', external: true, moduleSideEffects: true }
       }
     }
   }
@@ -122,6 +106,7 @@ function fixDtsCode() {
       dts, for classes that have superclasses with getter methods, sometimes reference the return type like this:
         import("@fullcalendar/common/tsc/whatever").Something
       */
+     // BUG: playing weird with TS triple-slash references
       code = code.replace(/(['"]@fullcalendar\/[^\/]+)\/[^'"]+(['"])/g, function(m0, m1, m2) {
         return m1 + m2
       })

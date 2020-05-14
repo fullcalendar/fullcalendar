@@ -4,10 +4,7 @@
     "rootDir": "src",
     "outDir": "tsc"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "references": [
-    { "path": "../core-vdom" }
+  "files": [
+    "src/main.ts"
   ]
 }
