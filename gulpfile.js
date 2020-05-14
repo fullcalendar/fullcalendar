@@ -118,6 +118,8 @@ async function distLinks() {
 NOTE: when flipping FULLCALENDAR_FORCE_REACT, you'll need to manually trigger a clean+rebuild
 */
 async function vdomSwitch() {
+  return Promise.resolve()
+
   let target = process.env.FULLCALENDAR_FORCE_REACT
     ? '../../../packages-contrib/react/src/vdom.ts'
     : '../../vdom-preact.ts'
