@@ -5,6 +5,6 @@
     "outDir": "tsc"
   },
   "files": [
-    "src/main.ts"
+    "src/vdom.ts"
   ]
 }

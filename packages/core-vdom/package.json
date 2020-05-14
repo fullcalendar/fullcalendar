@@ -2,6 +2,6 @@
   "private": true,
   "name": "@fullcalendar/core-vdom",
   "version": "5.0.0-beta.2",
-  "module": "tsc/main.js",
-  "types": "tsc/main.d.ts"
+  "module": "tsc/vdom.js",
+  "types": "tsc/vdom.d.ts"
 }

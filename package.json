@@ -48,7 +48,7 @@
     "sass:watch": "sass --watch `./scripts/sass-args.js`",
     "locales": "gulp localesUp localesAll",
     "locales:watch": "gulp localesUpWatch localesAllWatch",
-    "rollup:packages": "gulp distDirs && rollup -c rollup.packages.js",
+    "rollup:packages": "gulp distDirs && rollup -c rollup.packages.js && gulp copyVDom",
     "rollup:bundles": "rollup -c rollup.bundles.js",
     "rollup:bundles:watch": "rollup -c rollup.bundles.js --watch",
     "test": "concurrently --restart-tries 999 --prefix none 'karma start karma.config.js'",

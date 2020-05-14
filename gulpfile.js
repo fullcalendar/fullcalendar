@@ -1,7 +1,7 @@
 const path = require('path')
 const globby = require('globby')
 const handlebars = require('handlebars')
-const { src, dest, watch } = require('gulp')
+const { src, dest, watch, parallel } = require('gulp')
 const { readFile, writeFile } = require('./scripts/lib/util')
 const fs = require('fs')
 
@@ -116,11 +116,11 @@ async function distLinks() {
 
 async function vdomLink() {
   let pkgRoot = 'packages/core-vdom'
-  let outPath = path.join(pkgRoot, 'src/main.ts')
+  let outPath = path.join(pkgRoot, 'src/vdom.ts')
   let newTarget = // relative to outPath
     process.env.FULLCALENDAR_FORCE_REACT
       ? '../../../packages-contrib/react/src/vdom.ts'
-      : 'preact.ts'
+      : 'vdom-preact.ts'
 
   let currentTarget
 
@@ -139,4 +139,25 @@ async function vdomLink() {
   if (!currentTarget) { // i.e. no existing symlink
     exec([ 'ln', '-s', newTarget, outPath ])
   }
+}
+
+
+
+const VDOM_FILE_MAP = {
+  'packages/core-vdom/tsc/vdom.{js,d.ts}': 'packages/core/dist',
+  'packages/common/tsc/vdom.{js,d.ts}': 'packages/common/dist'
+}
+
+exports.copyVDom = syncFiles(VDOM_FILE_MAP) // weird to put this here. TODO: remove comments?
+
+function syncFiles(map) {
+  return parallelMap(map, (srcGlob, destDir) => src(srcGlob).pipe(dest(destDir)))
+}
+
+function parallelMap(map, execute) {
+  return parallel.apply(null, Object.keys(map).map((key) => {
+    let task = () => execute(key, map[key])
+    task.displayName = key
+    return task
+  }))
 }
