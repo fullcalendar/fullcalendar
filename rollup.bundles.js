@@ -3,6 +3,7 @@ const globby = require('globby')
 const nodeResolve = require('@rollup/plugin-node-resolve')
 const postCss = require('rollup-plugin-postcss')
 const commonjs = require('rollup-plugin-commonjs') // need this old version because new doesn't support rollup v1, only v2
+const replace = require('@rollup/plugin-replace')
 const react = require('react')
 const reactDom = require('react-dom')
 
@@ -33,12 +34,21 @@ function bundleMainConfig(bundleDir) {
       postCss({
         extract: true // to separate file
       }),
-      commonjs({ // for when FULLCALENDAR_FORCE_REACT=1, rollup needs help knowing react exports
+
+      // for when FULLCALENDAR_FORCE_REACT=1
+      // TODO: make separate plugin bundling these somehow
+      commonjs({ // rollup needs help knowing react exports
         namedExports: {
           'react': Object.keys(react),
           'react-dom': Object.keys(reactDom)
         }
+      }),
+      replace({
+        values: {
+          'process.env.NODE_ENV': '"production"' // won't warn on errors. but should set to "development" for tests
+        }
       })
+
     ],
     watch: {
       // chokidar: {
