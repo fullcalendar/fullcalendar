@@ -56,11 +56,6 @@ function dtsConfigs() {
 }
 
 
-// function getPackageName(mainPath) {
-//   return mainPath.match(/^packages[^/]*\/([^/]*)/)[1]
-// }
-
-
 function externalizeStylesheets() {
   return {
     resolveId(id) {
@@ -106,7 +101,7 @@ function fixDtsCode() {
       dts, for classes that have superclasses with getter methods, sometimes reference the return type like this:
         import("@fullcalendar/common/tsc/whatever").Something
       */
-     // BUG: playing weird with TS triple-slash references
+      // BUG: playing weird with TS triple-slash references
       code = code.replace(/(['"]@fullcalendar\/[^\/]+)\/[^'"]+(['"])/g, function(m0, m1, m2) {
         return m1 + m2
       })

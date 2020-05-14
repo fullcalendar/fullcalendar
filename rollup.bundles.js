@@ -2,6 +2,9 @@ const path = require('path')
 const globby = require('globby')
 const nodeResolve = require('@rollup/plugin-node-resolve')
 const postCss = require('rollup-plugin-postcss')
+const commonjs = require('rollup-plugin-commonjs') // need this old version because new doesn't support rollup v1, only v2
+const react = require('react')
+const reactDom = require('react-dom')
 
 const CORE_PKG_DIR = 'packages/core'
 const BUNDLE_DIRS = [ // TODO: use glob!
@@ -29,6 +32,12 @@ function bundleMainConfig(bundleDir) {
       nodeResolve(),
       postCss({
         extract: true // to separate file
+      }),
+      commonjs({ // for when FULLCALENDAR_FORCE_REACT=1, rollup needs help knowing react exports
+        namedExports: {
+          'react': Object.keys(react),
+          'react-dom': Object.keys(reactDom)
+        }
       })
     ],
     watch: {
