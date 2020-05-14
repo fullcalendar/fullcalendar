@@ -14,6 +14,7 @@ exports.localesAll = localesAll
 exports.localesAllWatch = localesAllWatch
 exports.distDirs = distDirs
 exports.distLinks = distLinks
+exports.vdomSwitch = vdomSwitch
 
 
 /*
@@ -110,4 +111,18 @@ async function distLinks() {
       exec([ 'ln', '-s', 'tsc', distDir ])
     }
   })
+}
+
+
+/*
+NOTE: when flipping FULLCALENDAR_FORCE_REACT, you'll need to manually trigger a clean+rebuild
+*/
+async function vdomSwitch() {
+  let target = process.env.FULLCALENDAR_FORCE_REACT
+    ? '../../../packages-contrib/react/src/vdom.ts'
+    : '../../vdom-preact.ts'
+
+  await exec([
+    'ln', '-sf', target, 'packages/common/src/vdom-switch.ts'
+  ])
 }

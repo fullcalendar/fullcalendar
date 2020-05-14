@@ -1,4 +1,4 @@
 
-import './vdom-preact'
+import './vdom-switch'
 
 export * from './vdom-global'

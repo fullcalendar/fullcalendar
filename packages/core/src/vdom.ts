@@ -1,2 +1,2 @@
 
-export * from '@fullcalendar/common/dist/vdom-preact'
+export * from '@fullcalendar/common/dist/vdom-switch'
