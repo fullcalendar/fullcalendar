@@ -1,6 +1,6 @@
 import {
   identity, Identity, ViewApi, EventApi,
-  ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler
+  ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler, VUIEvent
 } from '@fullcalendar/common'
 import { MoreLinkHookProps } from './TableCell'
 
@@ -22,7 +22,7 @@ export type MoreLinkHandler = (arg: {
   allDay: boolean,
   allSegs: EventSegment[],
   hiddenSegs: EventSegment[],
-  jsEvent: UIEvent,
+  jsEvent: VUIEvent,
   view: ViewApi
 }) => MoreLinkSimpleAction | void
 

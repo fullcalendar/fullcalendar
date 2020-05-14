@@ -27,14 +27,15 @@ import { EventHoveringArg } from './interactions/EventHovering'
 import { DateSelectArg, DateUnselectArg } from './calendar-utils'
 import { CalendarApi } from './CalendarApi'
 import { DateProfileGeneratorClass } from './DateProfileGenerator'
+import { VUIEvent } from './vdom'
 
 
 // base options
 // ------------
 
 export const BASE_OPTION_REFINERS = {
-  navLinkDayClick: identity as Identity<string | ((this: CalendarApi, date: Date, jsEvent: Event) => void)>,
-  navLinkWeekClick: identity as Identity<string | ((this: CalendarApi, weekStart: Date, jsEvent: Event) => void)>,
+  navLinkDayClick: identity as Identity<string | ((this: CalendarApi, date: Date, jsEvent: VUIEvent) => void)>,
+  navLinkWeekClick: identity as Identity<string | ((this: CalendarApi, weekStart: Date, jsEvent: VUIEvent) => void)>,
   duration: createDuration,
   bootstrapFontAwesome: identity as Identity<ButtonIconsInput | false>, // TODO: move to bootstrap plugin
   buttonIcons: identity as Identity<ButtonIconsInput | false>,
