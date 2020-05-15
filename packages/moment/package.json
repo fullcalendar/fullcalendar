@@ -9,11 +9,11 @@
   },
   "peerDependencies": {
     "@fullcalendar/common": "5.0.0-beta.2",
-    "moment": "2.24.0"
+    "moment": "^2.24.0"
   },
   "devDependencies": {
     "@fullcalendar/common": "5.0.0-beta.2",
-    "moment": "2.24.0"
+    "moment": "^2.24.0"
   },
   "module": "dist/main.js",
   "types": "dist/main.d.ts"

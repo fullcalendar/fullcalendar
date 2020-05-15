@@ -1,5 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin')
+const MomentTimezoneDataPlugin = require('moment-timezone-data-webpack-plugin')
 
 module.exports = {
   mode: 'development',
@@ -21,6 +23,12 @@ module.exports = {
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery'
+    }),
+    new MomentLocalesPlugin({
+      localesToKeep: [ 'es' ], // a test relies on this
+    }),
+    new MomentTimezoneDataPlugin({
+      matchZones: [ 'Europe/Moscow' ] // a test relies on this
     })
   ]
 }
