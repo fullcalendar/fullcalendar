@@ -171,7 +171,7 @@ function parallelMap(map, execute) {
 const exec2 = require('./scripts/lib/shell').sync
 
 exports.testsIndex = testsIndex
-exports.testsIndexWatch = series(testsIndex, testsIndexWatch)
+exports.testsIndexWatch = testsIndexWatch
 
 async function testsIndex() {
   let res = exec2(
