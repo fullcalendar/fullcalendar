@@ -20,6 +20,12 @@ module.exports = {
       {
         test: /\.css$/,
         use: [ 'style-loader', 'css-loader' ],
+      },
+      {
+        test: /\.js$/,
+        exclude: [ path.join(__dirname, 'node_modules') ],
+        enforce: 'pre',
+        use: [ 'source-map-loader' ] // loads sourceMappingURL
       }
     ]
   },

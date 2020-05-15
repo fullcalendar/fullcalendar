@@ -1,6 +1,7 @@
 const path = require('path')
 const globby = require('globby')
 const dts = require('rollup-plugin-dts').default
+const sourceMapLoader = require('rollup-plugin-sourcemaps')
 
 
 const REL_REGEX = /^\./
@@ -23,9 +24,12 @@ function jsConfigs() {
       input: mainPath,
       output: {
         format: 'es',
-        dir: path.resolve(mainPath, '../../dist')
+        dir: path.resolve(mainPath, '../../dist'),
+        sourcemap: true,
+        sourcemapExcludeSources: true // rely on the src files
       },
       plugins: [
+        sourceMapLoader(),
         externalizeVDom(),
         externalizeStylesheets(),
         externalizeNamed(mainPath)
