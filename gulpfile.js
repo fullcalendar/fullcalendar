@@ -4,32 +4,33 @@ const handlebars = require('handlebars')
 const { src, dest, watch, parallel, series } = require('gulp')
 const { readFile, writeFile } = require('./scripts/lib/util')
 const fs = require('fs')
+const replace = require('gulp-replace')
 const exec = require('./scripts/lib/shell').sync.withOptions({ // always SYNC!
   live: true,
   exitOnError: true
   // TODO: flag for echoing command?
 })
 
-const SRC_LOCALE_DIR = 'packages/core/src/locales'
-const SRC_LOCALE_EXT = '.ts'
-const TSC_LOCALE_FILES = 'packages/core/dist/locales/*.{js,d.ts}'
+const TSC_LOCALE_DIR = 'packages/core/tsc/locales'
+const TSC_LOCALE_EXT = '.js'
+const TSC_LOCALE_FILES = 'packages/core/tsc/locales/*.{js,d.ts}'
 
 exports.localesUp = localesUp
 exports.localesUpWatch = localesUpWatch
 exports.localesAll = localesAll
 exports.localesAllWatch = localesAllWatch
-exports.distDirs = distDirs
-exports.distLinks = distLinks
 exports.vdomLink = vdomLink
 
 
+// TODO: rename to coreLocalesUp/etc
 /*
 moves the tsc-generated locale files up one directory,
 so they're accessible with import statements like '@fullcalendar/core/locales/es'
 requires tsc to run first.
 */
 function localesUp() {
-  return src(TSC_LOCALE_FILES)
+  return src(TSC_LOCALE_FILES) // will watch new files???
+    .pipe(replace(/\/\/.*/g, '')) // remove sourcemap comments
     .pipe(dest('packages/core/locales/'))
 }
 
@@ -39,8 +40,8 @@ function localesUpWatch() {
 
 
 async function localesAll() {
-  let localeFileNames = await globby('*' + SRC_LOCALE_EXT, { cwd: SRC_LOCALE_DIR })
-  let localeCodes = localeFileNames.map((fileName) => path.basename(fileName, SRC_LOCALE_EXT))
+  let localeFileNames = await globby('*' + TSC_LOCALE_EXT, { cwd: TSC_LOCALE_DIR })
+  let localeCodes = localeFileNames.map((fileName) => path.basename(fileName, TSC_LOCALE_EXT ))
   let localeImportPaths = localeCodes.map((code) => `./locales/${code}`)
 
   let templateText = await readFile('packages/core/src/locales-all.js.tpl')
@@ -56,59 +57,7 @@ async function localesAll() {
 }
 
 function localesAllWatch() {
-  return watch(SRC_LOCALE_DIR, localesAll)
-}
-
-
-
-const PKG_DIRS = [
-  'packages?(-premium)/*',
-  '!packages?(-premium)/{core-vdom,bundle,__tests__}'
-]
-
-async function distDirs() {
-  let pkgDirs = await globby(PKG_DIRS, { onlyDirectories: true })
-
-  return pkgDirs.forEach((pkgDir) => {
-    let distDir = path.join(pkgDir, 'dist')
-    let stat
-
-    try {
-      stat = fs.lstatSync(distDir)
-    } catch (ex) {} // if doesn't exist
-
-    if (stat && !stat.isDirectory()) {
-      exec([ 'rm', '-rf', distDir ])
-      stat = null
-    }
-
-    if (!stat) {
-      exec([ 'mkdir', distDir ])
-    }
-  })
-}
-
-
-async function distLinks() {
-  let pkgDirs = await globby(PKG_DIRS, { onlyDirectories: true })
-
-  return pkgDirs.forEach((pkgDir) => {
-    let distDir = path.join(pkgDir, 'dist')
-    let stat
-
-    try {
-      stat = fs.lstatSync(distDir)
-    } catch (ex) {} // if doesn't exist
-
-    if (stat && !stat.isSymbolicLink()) {
-      exec([ 'rm', '-rf', distDir ])
-      stat = null
-    }
-
-    if (!stat) {
-      exec([ 'ln', '-s', 'tsc', distDir ])
-    }
-  })
+  return watch(TSC_LOCALE_DIR, localesAll)
 }
 
 
@@ -138,6 +87,32 @@ async function vdomLink() {
 }
 
 
+exports.dtsLinks = dtsLinks
+exports.dtsClear = dtsClear
+
+const PKG_DIRS2 = [
+  'packages?(-premium)/*',
+  '!packages?(-premium)/{bundle,__tests__}' // includes core-vdom
+]
+
+async function dtsLinks() {
+  let pkgDirs = await globby(PKG_DIRS2, { onlyDirectories: true })
+
+  return pkgDirs.forEach((pkgDir) => {
+    exec([ 'mkdirp', path.join(pkgDir, 'dist') ])
+    exec([ 'ln', '-sF', '../tsc/main.d.ts', path.join(pkgDir, 'dist/main.d.ts') ]) // F will remove dir first. use elsewhere!!!!
+  })
+}
+
+async function dtsClear() { // need this or else .d.ts symlink dest gets overriden???
+  let pkgDirs = await globby(PKG_DIRS2, { onlyDirectories: true })
+
+  return pkgDirs.forEach((pkgDir) => {
+    exec([ 'rm', '-f', path.join(pkgDir, 'dist/main.d.ts') ])
+  })
+}
+
+
 
 /*
 copy over the vdom files that were externalized by rollup.
@@ -150,11 +125,12 @@ const VDOM_FILE_MAP = {
   'packages/common/tsc/vdom.{js,d.ts}': 'packages/common/dist'
 }
 
-exports.copyVDom = syncFiles(VDOM_FILE_MAP) // weird to put this here. TODO: remove comments?
-
-function syncFiles(map) {
-  return parallelMap(map, (srcGlob, destDir) => src(srcGlob).pipe(dest(destDir)))
-}
+exports.copyVDom = parallelMap(
+  VDOM_FILE_MAP,
+  (srcGlob, destDir) => src(srcGlob)
+    .pipe(replace(/\/\/.*/g, '')) // remove sourcemap comments and ///<reference> don in rollup too
+    .pipe(dest(destDir))
+)
 
 function parallelMap(map, execute) {
   return parallel.apply(null, Object.keys(map).map((key) => {
@@ -214,7 +190,7 @@ async function testsIndex() {
     ).join('\n') +
     '\n'
 
-  await writeFile('tmp/tests-index.js', code)
+  await writeFile('tests-output/index.js', code)
 }
 
 function testsIndexWatch() {

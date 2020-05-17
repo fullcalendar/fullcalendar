@@ -25,8 +25,7 @@ function jsConfigs() {
       output: {
         format: 'es',
         dir: path.resolve(mainPath, '../../dist'),
-        sourcemap: true,
-        sourcemapExcludeSources: true // rely on the src files
+        sourcemap: true
       },
       plugins: [
         sourceMapLoader(),
@@ -100,6 +99,9 @@ function externalizeVDom() {
 function fixDtsCode() {
   return {
     renderChunk(code) {
+
+      // remove sourcemap comments and ///<reference>
+      code = code.replace(/\/\/.*/g, '')
 
       /*
       dts, for classes that have superclasses with getter methods, sometimes reference the return type like this:

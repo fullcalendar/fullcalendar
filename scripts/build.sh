@@ -5,6 +5,8 @@ cd "`dirname $0`/.." # start in project root
 
 npm run tsc
 npm run locales
-npm run rollup:packages
-npm run sass # will write to dest dirs created by rollup:packages
-npm run rollup:bundles
+npx rollup -c rollup.bundles.locales.js
+FORCE_EXTERNAL_CSS=1 npx webpack --config webpack.packages.js
+npm run rollup:packages # needs tsc
+npm run rollup:bundles # needs tsc
+# npx webpack --config webpack.tests.js

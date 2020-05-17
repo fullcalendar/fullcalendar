@@ -8,12 +8,12 @@ module.exports = {
   mode: 'development',
   devtool: false, // because we already have SourceMapDevToolPlugin
   entry: {
-    'all': './tmp/tests-index.js',
-    // 'scrollgrid': './packages-premium/__tests__/tsc/scrollgrid.js'
+    'all': './tests-output/index.js',
+    'scrollgrid': './packages-premium/__tests__/tsc/scrollgrid.js'
   },
   output: {
     filename: '[name].js',
-    path: path.join(__dirname, 'tmp/tests-built')
+    path: path.join(__dirname, 'tests-output')
   },
   module: {
     rules: [
@@ -38,10 +38,10 @@ module.exports = {
     new webpack.SourceMapDevToolPlugin({ // inlined by default
       exclude: /vendors/ // don't make sourcemaps for the vendors chunk
     }),
-    // new HtmlWebpackPlugin({ // writes an html file with all necessary chunks
-    //   chunks: [ 'tests-manual/scrollgrid' ],
-    //   filename: 'tests-manual/scrollgrid.html'
-    // }),
+    new HtmlWebpackPlugin({ // writes an html file with all necessary chunks
+      chunks: [ 'scrollgrid' ],
+      filename: 'scrollgrid.html'
+    }),
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery'
