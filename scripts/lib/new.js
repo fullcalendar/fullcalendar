@@ -1,9 +1,11 @@
 const fs = require('fs')
 const path = require('path')
+const rootPkgConfig = require('../../package.json')
 
 
 exports.checkNoSymlinks = checkNoSymlinks
 exports.removeExt = removeExt
+exports.buildBanner = buildBanner
 
 
 function checkNoSymlinks(structs) {
@@ -25,4 +27,14 @@ function checkNoSymlinks(structs) {
 
 function removeExt(path) {
   return path.replace(/\.[^.]*$/,'')
+}
+
+
+// TODO: adapt this for each package
+function buildBanner() {
+  return `/*!
+${rootPkgConfig.title} v${rootPkgConfig.version}
+Docs & License: ${rootPkgConfig.homepage}
+(c) ${rootPkgConfig.copyright}
+*/`
 }

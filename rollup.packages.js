@@ -3,7 +3,7 @@ const path = require('path')
 const dts = require('rollup-plugin-dts').default
 const sourceMapLoader = require('rollup-plugin-sourcemaps')
 const postcss = require('rollup-plugin-postcss')
-const { checkNoSymlinks } = require('./scripts/lib/new')
+const { checkNoSymlinks, buildBanner } = require('./scripts/lib/new')
 const { externalizeStylesheets, externalizeNonRelative } = require('./scripts/lib/new-rollup')
 
 /*
@@ -18,13 +18,15 @@ checkNoSymlinks(publicPackageStructs)
 
 module.exports = [
 
+  // for JS
   ...publicPackageStructs.map((struct) => {
     return {
       input: path.join(struct.dir, struct.mainTscJs),
       output: {
         format: 'es',
         file: path.join(struct.dir, struct.mainDistJs),
-        sourcemap: true
+        sourcemap: true,
+        banner: buildBanner()
       },
       plugins: [
         externalizeVDom(),

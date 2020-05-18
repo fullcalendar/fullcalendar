@@ -1,7 +1,7 @@
 const path = require('path')
 const nodeResolve = require('@rollup/plugin-node-resolve')
 const alias = require('@rollup/plugin-alias')
-const { checkNoSymlinks } = require('./scripts/lib/new')
+const { checkNoSymlinks, buildBanner } = require('./scripts/lib/new')
 const { externalizeStylesheets, buildAliasMap } = require('./scripts/lib/new-rollup')
 
 
@@ -21,7 +21,8 @@ module.exports = bundleStructs.map((struct) => {
     output: {
       format: 'iife',
       name: 'FullCalendar',
-      file: path.join(struct.dir, struct.mainDistJs)
+      file: path.join(struct.dir, struct.mainDistJs),
+      banner: buildBanner()
     },
     plugins: [
       externalizeStylesheets(), // will cause it be IGNORED for iife. good
