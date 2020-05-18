@@ -6,9 +6,11 @@
 
 /packages/*/tsconfig.tsbuildinfo
 /packages/*/tsc
-/packages/*/dist
 /packages/*/locales
-/packages/*/locales-all.js
+/packages/*/*.js
+/packages/*/*.css
+/packages/*/*.map
+/packages/*/*.d.ts
 /packages/core/src/locales-all.ts
 
 # continued in packages-premium/.gitignore

@@ -14,6 +14,6 @@
     "@fullcalendar/luxon": "5.0.0-beta.2",
     "@fullcalendar/google-calendar": "5.0.0-beta.2"
   },
-  "main": "dist/main.js",
-  "types": "dist/main.d.ts"
+  "main": "main.js",
+  "types": "main.d.ts"
 }

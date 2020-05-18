@@ -34,8 +34,8 @@ we externalize these for two reasons:
  - rollup-plugin-dts was choking on the namespace declarations in the tsc-generated vdom.d.ts files.
 */
 const VDOM_FILE_MAP = {
-  'packages/core-vdom/tsc/vdom.{js,d.ts}': 'packages/core/dist',
-  'packages/common/tsc/vdom.{js,d.ts}': 'packages/common/dist'
+  'packages/core-vdom/tsc/vdom.{js,d.ts}': 'packages/core',
+  'packages/common/tsc/vdom.{js,d.ts}': 'packages/common'
 }
 
 const copyVDomMisc = exports.copyVDomMisc = parallelMap(
@@ -136,7 +136,7 @@ function localesAllSrcWatch() {
 
 const { packageStructs } = require('./scripts/lib/package-index')
 
-// exports.writeTscDevLinks = series(removeTscDevLinks, writeTscDevLinks)
+exports.writeTscDevLinks = series(removeTscDevLinks, writeTscDevLinks)
 exports.removeTscDevLinks = removeTscDevLinks
 
 async function writeTscDevLinks() { // bad name. does js AND .d.ts. is it necessary to do the js?
@@ -151,19 +151,17 @@ async function writeTscDevLinks() { // bad name. does js AND .d.ts. is it necess
       path.dirname(dtsOut),
     ])
 
-    exec([ 'ln', '-s', '../' + struct.mainTscJs, jsOut ])
-    exec([ 'ln', '-s', '../' + struct.mainTscDts, dtsOut ])
+    exec([ 'ln', '-s', struct.mainTscJs, jsOut ])
+    exec([ 'ln', '-s', struct.mainTscDts, dtsOut ])
   }
 }
 
 async function removeTscDevLinks() {
   for (let struct of packageStructs) {
-    exec([
-      'rm',
-      '-f',
-      path.join(struct.dir, struct.mainDistJs),
-      path.join(struct.dir, struct.mainDistDts)
-    ])
+    let jsLink = path.join(struct.dir, struct.mainDistJs)
+    let dtsLink = path.join(struct.dir, struct.mainDistDts)
+
+    exec([ 'rm', '-f', jsLink, dtsLink ])
   }
 }
 

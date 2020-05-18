@@ -17,6 +17,6 @@
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26"
   },
-  "module": "dist/main.js",
-  "types": "dist/main.d.ts"
+  "module": "main.js",
+  "types": "main.d.ts"
 }
