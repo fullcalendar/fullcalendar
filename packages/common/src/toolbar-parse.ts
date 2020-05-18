@@ -2,13 +2,13 @@ import { ViewSpec, ViewSpecHash } from './structs/view-spec'
 import { Theme } from './theme/Theme'
 import { mapHash } from './util/object'
 import { CalendarApi } from './CalendarApi'
-import { CalendarOptionsRefined } from './options'
+import { CalendarOptionsRefined, CalendarOptions } from './options'
 import { ToolbarInput, ToolbarModel, ToolbarWidget } from './toolbar-struct'
 
 
 export function parseToolbars(
   calendarOptions: CalendarOptionsRefined,
-  calendarOptionOverrides: Partial<CalendarOptionsRefined>,
+  calendarOptionOverrides: CalendarOptions,
   theme: Theme,
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi
@@ -24,7 +24,7 @@ export function parseToolbars(
 function parseToolbar(
   sectionStrHash: ToolbarInput,
   calendarOptions: CalendarOptionsRefined,
-  calendarOptionOverrides: Partial<CalendarOptionsRefined>,
+  calendarOptionOverrides: CalendarOptions,
   theme: Theme,
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi,
@@ -43,7 +43,7 @@ BAD: querying icons and text here. should be done at render time
 function parseSection(
   sectionStr: string,
   calendarOptions: CalendarOptionsRefined,
-  calendarOptionOverrides: Partial<CalendarOptionsRefined>,
+  calendarOptionOverrides: CalendarOptions,
   theme: Theme,
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi,

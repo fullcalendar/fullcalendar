@@ -211,7 +211,7 @@ export interface BaseOptionRefiners extends BuiltInBaseOptionRefiners {
   // for ambient-extending
 }
 
-type BaseOptions = RawOptionsFromRefiners< // as RawOptions
+export type BaseOptions = RawOptionsFromRefiners< // as RawOptions
   Required<BaseOptionRefiners> // Required is a hack for "Index signature is missing"
 >
 

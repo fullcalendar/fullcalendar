@@ -24,7 +24,7 @@ import { Emitter } from '../common/Emitter'
 import { EventUiHash, EventUi, createEventUi } from '../component/event-ui'
 import { EventDefHash } from '../structs/event-def'
 import { parseToolbars } from '../toolbar-parse'
-import { CalendarOptionsRefined, BaseOptionsRefined, CalendarOptions, CALENDAR_OPTION_REFINERS, ViewOptions, ViewOptionsRefined, BASE_OPTION_DEFAULTS, mergeRawOptions, BASE_OPTION_REFINERS, VIEW_OPTION_REFINERS, CalendarListeners, CALENDAR_LISTENER_REFINERS } from '../options'
+import { CalendarOptionsRefined, CalendarOptions, CALENDAR_OPTION_REFINERS, ViewOptions, ViewOptionsRefined, BASE_OPTION_DEFAULTS, mergeRawOptions, BASE_OPTION_REFINERS, VIEW_OPTION_REFINERS, CalendarListeners, CALENDAR_LISTENER_REFINERS } from '../options'
 import { rangeContainsMarker } from '../datelib/date-range'
 import { ViewApi } from '../ViewApi'
 import { parseBusinessHours } from '../structs/business-hours'
@@ -340,7 +340,7 @@ export class CalendarDataManager {
   }
 
 
-  _computeOptionsData(optionOverrides: Partial<CalendarOptionsRefined>, dynamicOptionOverrides: Partial<CalendarOptionsRefined>, calendarApi: CalendarApi): CalendarOptionsData {
+  _computeOptionsData(optionOverrides: CalendarOptions, dynamicOptionOverrides: CalendarOptions, calendarApi: CalendarApi): CalendarOptionsData {
     // TODO: blacklist options that are handled by optionChangeHandlers
 
     let {
@@ -439,7 +439,7 @@ export class CalendarDataManager {
   }
 
 
-  _computeCurrentViewData(viewType: string, optionsData: CalendarOptionsData, optionOverrides: Partial<BaseOptionsRefined>, dynamicOptionOverrides: Partial<BaseOptionsRefined>): CalendarCurrentViewData {
+  _computeCurrentViewData(viewType: string, optionsData: CalendarOptionsData, optionOverrides: CalendarOptions, dynamicOptionOverrides: CalendarOptions): CalendarCurrentViewData {
     let viewSpec = optionsData.viewSpecs[viewType]
 
     if (!viewSpec) {

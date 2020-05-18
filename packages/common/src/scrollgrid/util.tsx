@@ -4,7 +4,7 @@ import { ViewContext } from '../ViewContext'
 import { computeSmallestCellWidth } from '../util/misc'
 import { isPropsEqual } from '../util/object'
 import { isArraysEqual } from '../util/array'
-import { CalendarOptionsRefined } from '../options'
+import { BaseOptionsRefined } from '../options'
 
 
 export type CssDimValue = string | number // TODO: move to more general file
@@ -202,7 +202,7 @@ export function renderScrollShim(arg: ChunkContentCallbackArgs) {
 }
 
 
-export function getStickyHeaderDates(options: CalendarOptionsRefined) {
+export function getStickyHeaderDates(options: BaseOptionsRefined) {
   let { stickyHeaderDates } = options
 
   if (stickyHeaderDates == null || stickyHeaderDates === 'auto') {
@@ -213,7 +213,7 @@ export function getStickyHeaderDates(options: CalendarOptionsRefined) {
 }
 
 
-export function getStickyFooterScrollbar(options: CalendarOptionsRefined) {
+export function getStickyFooterScrollbar(options: BaseOptionsRefined) {
   let { stickyFooterScrollbar } = options
 
   if (stickyFooterScrollbar == null || stickyFooterScrollbar === 'auto') {

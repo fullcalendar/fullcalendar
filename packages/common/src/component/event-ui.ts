@@ -1,4 +1,4 @@
-import { Constraint, AllowFunc, normalizeConstraint, ConstraintInput } from '../structs/constraint'
+import { Constraint, AllowFunc, normalizeConstraint } from '../structs/constraint'
 import { parseClassNames } from '../util/html'
 import { CalendarContext } from '../CalendarContext'
 import { RawOptionsFromRefiners, RefinedOptionsFromRefiners, identity, Identity } from '../options'
@@ -13,7 +13,7 @@ export const EVENT_UI_REFINERS = {
   editable: Boolean,
   startEditable: Boolean,
   durationEditable: Boolean,
-  constraint: identity as Identity<ConstraintInput>,
+  constraint: identity as Identity<any>, // Identity<ConstraintInput>, // circular reference. ts dies. event->constraint->event
   overlap: identity as Identity<boolean>,
   allow: identity as Identity<AllowFunc>,
   className: parseClassNames,
