@@ -35,11 +35,11 @@ A VERTICAL event
 }
 
 .fc-v-event.fc-event-resizable-mouse .fc-event-resizer-start {
-  top: -($event-resizer-mouse-width / 2);
+  top: calc($event-resizer-mouse-width / -2);
 }
 
 .fc-v-event.fc-event-resizable-mouse .fc-event-resizer-end {
-  bottom: -($event-resizer-mouse-width / 2);
+  bottom: calc($event-resizer-mouse-width / -2);
 }
 
 
@@ -48,15 +48,15 @@ A VERTICAL event
 .fc-v-event.fc-event-selected .fc-event-resizer {
   @include event-resizer-dot;
   left: 50%;
-  margin-left: -($event-resizer-dot-total-width / 2);
+  margin-left: calc($event-resizer-dot-total-width / -2);
 }
 
 .fc-v-event.fc-event-selected .fc-event-resizer-start {
-  top: -($event-resizer-dot-total-width / 2);
+  top: calc($event-resizer-dot-total-width / -2);
 }
 
 .fc-v-event.fc-event-selected .fc-event-resizer-end {
-  bottom: -($event-resizer-dot-total-width / 2);
+  bottom: calc($event-resizer-dot-total-width / -2);
 }
 
 

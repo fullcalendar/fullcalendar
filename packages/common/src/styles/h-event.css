@@ -38,12 +38,12 @@ A HORIZONTAL event
 
 .fc-direction-ltr .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-start,
 .fc-direction-rtl .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-end {
-  left: -($event-resizer-mouse-width / 2);
+  left: calc($event-resizer-mouse-width / -2);
 }
 
 .fc-direction-ltr .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-end,
 .fc-direction-rtl .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-start {
-  right: -($event-resizer-mouse-width / 2);
+  right: calc($event-resizer-mouse-width / -2);
 }
 
 
@@ -52,17 +52,17 @@ A HORIZONTAL event
 .fc-h-event.fc-event-selected .fc-event-resizer {
   @include event-resizer-dot;
   top: 50%;
-  margin-top: -($event-resizer-dot-total-width / 2);
+  margin-top: calc($event-resizer-dot-total-width / -2);
 }
 
 .fc-direction-ltr .fc-h-event.fc-event-selected .fc-event-resizer-start,
 .fc-direction-rtl .fc-h-event.fc-event-selected .fc-event-resizer-end {
-  left: -($event-resizer-dot-total-width / 2);
+  left: calc($event-resizer-dot-total-width / -2);
 }
 
 .fc-direction-ltr .fc-h-event.fc-event-selected .fc-event-resizer-end,
 .fc-direction-rtl .fc-h-event.fc-event-selected .fc-event-resizer-start {
-  right: -($event-resizer-dot-total-width / 2);
+  right: calc($event-resizer-dot-total-width / -2);
 }
 
 
