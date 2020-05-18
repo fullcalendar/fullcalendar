@@ -15,7 +15,8 @@ import {
   NowTimer,
   DateMarker,
   EventApi,
-  DateProfile
+  DateProfile,
+  Fragment
 } from '@fullcalendar/common'
 import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg'
 import { TableRow } from './TableRow'
@@ -112,64 +113,69 @@ export class Table extends DateComponent<TableProps, TableState> {
         width: props.clientWidth,
         minWidth: props.tableMinWidth
       }}>
-        <NowTimer unit='day' content={(nowDate: DateMarker, todayRange: DateRange) => [
-          <table
-            className='fc-scrollgrid-sync-table'
-            style={{
-              width: props.clientWidth,
-              minWidth: props.tableMinWidth,
-              height: expandRows ? props.clientHeight : ''
-            }}
-          >
-            {props.colGroupNode}
-            <tbody>
-              {props.cells.map((cells, row) => (
-                <TableRow
-                  ref={this.rowRefs.createRef(row)}
-                  key={
-                    cells.length
-                      ? cells[0].date.toISOString() /* best? or put key on cell? or use diff formatter? */
-                      : row // in case there are no cells (like when resource view is loading)
-                  }
-                  showDayNumbers={rowCnt > 1}
-                  showWeekNumbers={props.showWeekNumbers}
-                  todayRange={todayRange}
+        <NowTimer unit='day'>
+          {(nowDate: DateMarker, todayRange: DateRange) => (
+            <Fragment>
+              <table
+                className='fc-scrollgrid-sync-table'
+                style={{
+                  width: props.clientWidth,
+                  minWidth: props.tableMinWidth,
+                  height: expandRows ? props.clientHeight : ''
+                }}
+              >
+                {props.colGroupNode}
+                <tbody>
+                  {props.cells.map((cells, row) => (
+                    <TableRow
+                      ref={this.rowRefs.createRef(row)}
+                      key={
+                        cells.length
+                          ? cells[0].date.toISOString() /* best? or put key on cell? or use diff formatter? */
+                          : row // in case there are no cells (like when resource view is loading)
+                      }
+                      showDayNumbers={rowCnt > 1}
+                      showWeekNumbers={props.showWeekNumbers}
+                      todayRange={todayRange}
+                      dateProfile={dateProfile}
+                      cells={cells}
+                      renderIntro={props.renderRowIntro}
+                      businessHourSegs={businessHourSegsByRow[row]}
+                      eventSelection={props.eventSelection}
+                      bgEventSegs={bgEventSegsByRow[row]}
+                      fgEventSegs={fgEventSegsByRow[row]}
+                      dateSelectionSegs={dateSelectionSegsByRow[row]}
+                      eventDrag={eventDragByRow[row]}
+                      eventResize={eventResizeByRow[row]}
+                      dayMaxEvents={dayMaxEvents}
+                      dayMaxEventRows={dayMaxEventRows}
+                      clientWidth={props.clientWidth}
+                      buildMoreLinkText={buildMoreLinkText}
+                      onMoreClick={this.handleMoreLinkClick}
+                    />
+                  ))}
+                </tbody>
+              </table>
+              {(morePopoverState && morePopoverState.currentFgEventSegs === props.fgEventSegs) && // clear popover on event mod
+                <MorePopover
+                  date={morePopoverState.date}
                   dateProfile={dateProfile}
-                  cells={cells}
-                  renderIntro={props.renderRowIntro}
-                  businessHourSegs={businessHourSegsByRow[row]}
-                  eventSelection={props.eventSelection}
-                  bgEventSegs={bgEventSegsByRow[row]}
-                  fgEventSegs={fgEventSegsByRow[row]}
-                  dateSelectionSegs={dateSelectionSegsByRow[row]}
-                  eventDrag={eventDragByRow[row]}
-                  eventResize={eventResizeByRow[row]}
-                  dayMaxEvents={dayMaxEvents}
-                  dayMaxEventRows={dayMaxEventRows}
-                  clientWidth={props.clientWidth}
-                  buildMoreLinkText={buildMoreLinkText}
-                  onMoreClick={this.handleMoreLinkClick}
+                  segs={morePopoverState.allSegs}
+                  alignmentEl={morePopoverState.dayEl}
+                  topAlignmentEl={rowCnt === 1 ? props.headerAlignElRef.current : null}
+                  onCloseClick={this.handleMorePopoverClose}
+                  selectedInstanceId={props.eventSelection}
+                  hiddenInstances={ // yuck
+                    (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
+                    (props.eventResize ? props.eventResize.affectedInstances : null) ||
+                    {}
+                  }
+                  todayRange={todayRange}
                 />
-              ))}
-            </tbody>
-          </table>,
-          (morePopoverState && morePopoverState.currentFgEventSegs === props.fgEventSegs) && // clear popover on event mod
-            <MorePopover
-              date={morePopoverState.date}
-              dateProfile={dateProfile}
-              segs={morePopoverState.allSegs}
-              alignmentEl={morePopoverState.dayEl}
-              topAlignmentEl={rowCnt === 1 ? props.headerAlignElRef.current : null}
-              onCloseClick={this.handleMorePopoverClose}
-              selectedInstanceId={props.eventSelection}
-              hiddenInstances={ // yuck
-                (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-                (props.eventResize ? props.eventResize.affectedInstances : null) ||
-                {}
               }
-              todayRange={todayRange}
-            />
-        ]} />
+            </Fragment>
+          )}
+        </NowTimer>
       </div>
     )
   }

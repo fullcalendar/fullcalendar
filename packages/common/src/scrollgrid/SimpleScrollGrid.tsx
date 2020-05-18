@@ -1,4 +1,4 @@
-import { VNode, h } from '../vdom'
+import { VNode, h, Fragment } from '../vdom'
 import { BaseComponent, setRef } from '../vdom-util'
 import { Scroller, OverflowValue } from './Scroller'
 import { RefMap } from '../util/RefMap'
@@ -21,7 +21,7 @@ export interface SimpleScrollGridProps {
 }
 
 export interface SimpleScrollGridSection extends SectionConfig {
-  key?: string
+  key: string
   chunk?: ChunkConfig
 }
 
@@ -72,7 +72,11 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
   renderSection(sectionConfig: SimpleScrollGridSection, sectionI: number, microColGroupNode: VNode) {
 
     if ('outerContent' in sectionConfig) {
-      return sectionConfig.outerContent
+      return (
+        <Fragment key={sectionConfig.key}>
+          {sectionConfig.outerContent}
+        </Fragment>
+      )
     }
 
     return (

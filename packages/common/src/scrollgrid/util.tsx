@@ -89,20 +89,21 @@ export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: Ch
 
   let content: VNode = typeof chunkConfig.content === 'function' ?
     chunkConfig.content(arg) :
-    h('table', {
-      className: [
-        chunkConfig.tableClassName,
-        sectionConfig.syncRowHeights ? 'fc-scrollgrid-sync-table' : ''
-      ].join(' '),
-      style: {
-        minWidth: arg.tableMinWidth, // because colMinWidths arent enough
-        width: arg.clientWidth,
-        height: expandRows ? arg.clientHeight : '' // css `height` on a <table> serves as a min-height
-      }
-    }, [
+    h('table',
+      {
+        className: [
+          chunkConfig.tableClassName,
+          sectionConfig.syncRowHeights ? 'fc-scrollgrid-sync-table' : ''
+        ].join(' '),
+        style: {
+          minWidth: arg.tableMinWidth, // because colMinWidths arent enough
+          width: arg.clientWidth,
+          height: expandRows ? arg.clientHeight : '' // css `height` on a <table> serves as a min-height
+        }
+      },
       arg.tableColGroupNode,
       h('tbody', {}, typeof chunkConfig.rowContent === 'function' ? chunkConfig.rowContent(arg) : chunkConfig.rowContent)
-    ])
+    )
 
   return content
 }
@@ -136,7 +137,7 @@ export function renderMicroColGroup(cols: ColProps[], shrinkWidth?: number) {
     }
   }
 
-  return (<colgroup>{colNodes}</colgroup>)
+  return h('colgroup', {}, ...colNodes)
 }
 
 

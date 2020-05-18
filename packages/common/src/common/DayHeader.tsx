@@ -34,27 +34,29 @@ export class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: rename t
     )
 
     return (
-      <NowTimer unit='day' content={(nowDate: DateMarker, todayRange: DateRange) => (
-        <tr>
-          {renderIntro && renderIntro()}
-          {dates.map((date) => (
-            datesRepDistinctDays ?
-              <TableDateCell
-                key={date.toISOString()}
-                date={date}
-                dateProfile={dateProfile}
-                todayRange={todayRange}
-                colCnt={dates.length}
-                dayHeaderFormat={dayHeaderFormat}
-              /> :
-              <TableDowCell
-                key={date.getUTCDay()}
-                dow={date.getUTCDay()}
-                dayHeaderFormat={dayHeaderFormat}
-              />
-          ))}
-        </tr>
-      )} />
+      <NowTimer unit='day'>
+        {(nowDate: DateMarker, todayRange: DateRange) => (
+          <tr>
+            {renderIntro && renderIntro()}
+            {dates.map((date) => (
+              datesRepDistinctDays ?
+                <TableDateCell
+                  key={date.toISOString()}
+                  date={date}
+                  dateProfile={dateProfile}
+                  todayRange={todayRange}
+                  colCnt={dates.length}
+                  dayHeaderFormat={dayHeaderFormat}
+                /> :
+                <TableDowCell
+                  key={date.getUTCDay()}
+                  dow={date.getUTCDay()}
+                  dayHeaderFormat={dayHeaderFormat}
+                />
+            ))}
+          </tr>
+        )}
+      </NowTimer>
     )
   }
 

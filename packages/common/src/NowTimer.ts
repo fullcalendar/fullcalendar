@@ -8,7 +8,7 @@ import { getNow } from './reducers/current-date'
 
 export interface NowTimerProps {
   unit: string // TODO: add type of unit
-  content: (now: DateMarker, todayRange: DateRange) => ComponentChildren
+  children: (now: DateMarker, todayRange: DateRange) => ComponentChildren
 }
 
 interface NowTimerState {
@@ -39,7 +39,7 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
 
   render() {
     let { props, state } = this
-    return props.content(state.nowDate, state.todayRange)
+    return props.children(state.nowDate, state.todayRange)
   }
 
 

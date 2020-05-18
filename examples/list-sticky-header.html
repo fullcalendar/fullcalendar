@@ -6,7 +6,6 @@
 <script src='../packages/bundle/main.js'></script>
 <script src='../node_modules/rrule/dist/es5/rrule.js'></script>
 <script src='../packages/bundle/main.js'></script>
-<script src='../packages/bundle/rrule.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -19,28 +18,34 @@
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
-        right: 'listDay,listWeek'
+        right: 'listMonth,listYear'
       },
 
       // customize the button names,
       // otherwise they'd all just say "list"
       views: {
-        listDay: { buttonText: 'list day' },
-        listWeek: { buttonText: 'list week' }
+        listMonth: { buttonText: 'list month' },
+        listYear: { buttonText: 'list year' }
       },
 
-      initialView: 'listWeek',
+      initialView: 'listYear',
       initialDate: '2020-02-12',
       navLinks: true, // can click day/week names to navigate views
       editable: true,
       events: [
         {
-          title: 'repeating event',
-          rrule: {
-            dtstart: '2020-02-09T13:00:00',
-            freq: 'hourly',
-            count: 50
-          },
+          title: 'repeating event 1',
+          daysOfWeek: [ 1, 2, 3 ],
+          duration: '00:30'
+        },
+        {
+          title: 'repeating event 2',
+          daysOfWeek: [ 1, 2, 3 ],
+          duration: '00:30'
+        },
+        {
+          title: 'repeating event 3',
+          daysOfWeek: [ 1, 2, 3 ],
           duration: '00:30'
         }
       ]

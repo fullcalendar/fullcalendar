@@ -52,18 +52,20 @@ export class TableListItemEvent extends BaseComponent<DotTableEventProps> {
 
 
 function renderInnerContent(innerProps: EventMeta) {
-  return [
-    <div
-      className='fc-daygrid-event-dot'
-      style={{ backgroundColor: innerProps.backgroundColor || innerProps.borderColor }}
-    />,
-    innerProps.timeText &&
-      <div className='fc-event-time'>{innerProps.timeText}</div>
-    ,
-    <div className='fc-event-title'>
-      {innerProps.event.title || <Fragment>&nbsp;</Fragment>}
-    </div>
-  ]
+  return (
+    <Fragment>
+      <div
+        className='fc-daygrid-event-dot'
+        style={{ backgroundColor: innerProps.backgroundColor || innerProps.borderColor }}
+      />
+      {innerProps.timeText &&
+        <div className='fc-event-time'>{innerProps.timeText}</div>
+      }
+      <div className='fc-event-title'>
+        {innerProps.event.title || <Fragment>&nbsp;</Fragment>}
+      </div>
+    </Fragment>
+  )
 }
 
 

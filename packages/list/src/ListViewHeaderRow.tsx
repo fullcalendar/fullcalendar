@@ -1,6 +1,6 @@
 import {
   BaseComponent, DateMarker, h, DateRange, getDateMeta,
-  RenderHook, buildNavLinkData, DayHeaderHookProps, getDayClassNames, formatDayString
+  RenderHook, buildNavLinkData, DayHeaderHookProps, getDayClassNames, formatDayString, Fragment
 } from '@fullcalendar/common'
 
 
@@ -74,15 +74,18 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
 
 
 function renderInnerContent(props: HookProps) {
-  return [
-    props.text &&
-      <a className='fc-list-day-text' data-navlink={props.navLinkData}>
-        {props.text}
-      </a>
-    ,
-    props.sideText &&
-      <a className='fc-list-day-side-text' data-navlink={props.navLinkData}>
-        {props.sideText}
-      </a>
-  ]
+  return (
+    <Fragment>
+      {props.text &&
+        <a className='fc-list-day-text' data-navlink={props.navLinkData}>
+          {props.text}
+        </a>
+      }
+      {props.sideText &&
+        <a className='fc-list-day-side-text' data-navlink={props.navLinkData}>
+          {props.sideText}
+        </a>
+      }
+    </Fragment>
+  )
 }

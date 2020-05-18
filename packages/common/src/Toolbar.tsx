@@ -1,4 +1,4 @@
-import { h } from './vdom'
+import { h, VNode } from './vdom'
 import { BaseComponent } from './vdom-util'
 import { ToolbarModel, ToolbarWidget } from './toolbar-struct'
 
@@ -81,59 +81,59 @@ interface ToolbarSectionProps extends ToolbarContent {
 class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
 
   render() {
+    let children = this.props.widgetGroups.map((widgetGroup) => this.renderWidgetGroup(widgetGroup))
+
+    return h('div', { className: 'fc-toolbar-chunk' }, ...children)
+  }
+
+
+  renderWidgetGroup(widgetGroup: ToolbarWidget[]) {
     let { props } = this
     let { theme } = this.context
+    let children: VNode[] = []
+    let isOnlyButtons = true
 
-    return (
-      <div className='fc-toolbar-chunk'>
-        {props.widgetGroups.map((widgetGroup: ToolbarWidget[]) => {
-          let children = []
-          let isOnlyButtons = true
+    for (let widget of widgetGroup) {
+      let { buttonName, buttonClick, buttonText, buttonIcon } = widget
 
-          for (let widget of widgetGroup) {
-            let { buttonName, buttonClick, buttonText, buttonIcon } = widget
+      if (buttonName === 'title') {
+        isOnlyButtons = false
+        children.push(
+          <h2 className='fc-toolbar-title'>{props.title}</h2>
+        )
 
-            if (buttonName === 'title') {
-              isOnlyButtons = false
-              children.push(
-                <h2 className='fc-toolbar-title'>{props.title}</h2>
-              )
+      } else {
+        let ariaAttrs = buttonIcon ? { 'aria-label': buttonName } : {}
 
-            } else {
-              let ariaAttrs = buttonIcon ? { 'aria-label': buttonName } : {}
+        let buttonClasses = [ 'fc-' + buttonName + '-button', theme.getClass('button') ]
+        if (buttonName === props.activeButton) {
+          buttonClasses.push(theme.getClass('buttonActive'))
+        }
 
-              let buttonClasses = [ 'fc-' + buttonName + '-button', theme.getClass('button') ]
-              if (buttonName === props.activeButton) {
-                buttonClasses.push(theme.getClass('buttonActive'))
-              }
+        let isDisabled =
+          (!props.isTodayEnabled && buttonName === 'today') ||
+          (!props.isPrevEnabled && buttonName === 'prev') ||
+          (!props.isNextEnabled && buttonName === 'next')
 
-              let isDisabled =
-                (!props.isTodayEnabled && buttonName === 'today') ||
-                (!props.isPrevEnabled && buttonName === 'prev') ||
-                (!props.isNextEnabled && buttonName === 'next')
+        children.push(
+          <button
+            disabled={isDisabled}
+            className={buttonClasses.join(' ')}
+            onClick={buttonClick}
+            { ...ariaAttrs }
+          >{ buttonText || (buttonIcon ? <span className={buttonIcon} /> : '')}</button>
+        )
+      }
+    }
 
-              children.push(
-                <button
-                  disabled={isDisabled}
-                  className={buttonClasses.join(' ')}
-                  onClick={buttonClick}
-                  { ...ariaAttrs }
-                >{ buttonText || (buttonIcon ? <span className={buttonIcon} /> : '')}</button>
-              )
-            }
-          }
+    if (children.length > 1) {
+      let groupClassName = (isOnlyButtons && theme.getClass('buttonGroup')) || ''
 
-          if (children.length > 1) {
-            let groupClasses = (isOnlyButtons && theme.getClass('buttonGroup')) || ''
+      return h('div', { className: groupClassName }, ...children)
 
-            return (<div className={groupClasses}>{children}</div>)
-          } else {
-            return children[0]
-          }
-
-        })}
-      </div>
-    )
+    } else {
+      return children[0]
+    }
   }
 
 }

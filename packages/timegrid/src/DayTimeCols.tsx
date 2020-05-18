@@ -60,10 +60,10 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
     let dayRanges = this.buildDayRanges(dayTableModel, dateProfile, context.dateEnv)
 
     // give it the first row of cells
+    // TODO: would move this further down hierarchy, but sliceNowDate needs it
     return (
-      <NowTimer // TODO: would move this further down hierarchy, but sliceNowDate needs it
-        unit={isNowIndicator ? 'minute' : 'day'}
-        content={(nowDate: DateMarker, todayRange: DateRange) => (
+      <NowTimer unit={isNowIndicator ? 'minute' : 'day'}>
+        {(nowDate: DateMarker, todayRange: DateRange) => (
           <TimeCols
             ref={this.timeColsRef}
             rootElRef={this.handleRootEl}
@@ -85,7 +85,7 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
             forPrint={props.forPrint}
           />
         )}
-      />
+      </NowTimer>
     )
   }
 

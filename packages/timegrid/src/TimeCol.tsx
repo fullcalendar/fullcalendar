@@ -73,9 +73,9 @@ export class TimeCol extends BaseComponent<TimeColProps> {
                 </Fragment>
               </div>
               <div className='fc-timegrid-col-bg'>
-                <Fragment>{this.renderFillSegs(props.businessHourSegs, 'non-business')}</Fragment>
-                <Fragment>{this.renderFillSegs(props.bgEventSegs, 'bg-event')}</Fragment>
-                <Fragment>{this.renderFillSegs(props.dateSelectionSegs, 'highlight')}</Fragment>
+                {this.renderFillSegs(props.businessHourSegs, 'non-business')}
+                {this.renderFillSegs(props.bgEventSegs, 'bg-event')}
+                {this.renderFillSegs(props.dateSelectionSegs, 'highlight')}
               </div>
               {this.renderNowIndicator(props.nowIndicatorSegs)}
             </div>
@@ -148,7 +148,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     // BAD: assigns TO THE SEGS THEMSELVES
     computeSegVerticals(segs, props.date, props.slatCoords, context.options.eventMinHeight)
 
-    return segs.map((seg) => {
+    let children = segs.map((seg) => {
 
       // inverse-background events don't have specific instances
       // TODO: might be a key collision. better solution
@@ -168,6 +168,8 @@ export class TimeCol extends BaseComponent<TimeColProps> {
         </div>
       )
     })
+
+    return h(Fragment, {}, ...children)
   }
 
 
@@ -176,8 +178,8 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
     if (!slatCoords) { return }
 
-    return segs.map((seg) => (
-      <NowIndicatorRoot isAxis={false} date={date}>
+    return segs.map((seg, i) => (
+      <NowIndicatorRoot isAxis={false} date={date} key={i /* key doesn't matter. will only ever be one */}>
         {(rootElRef, classNames, innerElRef, innerContent) => (
           <div
             ref={rootElRef}

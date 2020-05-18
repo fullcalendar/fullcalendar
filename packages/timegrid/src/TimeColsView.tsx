@@ -58,6 +58,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
     if (headerRowContent) {
       sections.push({
         type: 'header',
+        key: 'header',
         isSticky: stickyHeaderDates,
         chunk: {
           elRef: this.headerElRef,
@@ -69,11 +70,12 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
 
     if (allDayContent) {
       sections.push({
-        key: 'all-day',
         type: 'body',
+        key: 'all-day',
         chunk: { content: allDayContent }
       })
       sections.push({
+        key: 'all-day-divider',
         outerContent: (
           <tr className='fc-scrollgrid-section fc-scrollgrid-section-body'>
             <td
@@ -85,8 +87,8 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
     }
 
     sections.push({
-      key: 'timed',
       type: 'body',
+      key: 'body',
       liquid: true,
       expandRows: Boolean(context.options.expandRows),
       chunk: {
@@ -134,12 +136,15 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
     if (headerRowContent) {
       sections.push({
         type: 'header',
+        key: 'header',
         isSticky: stickyHeaderDates,
         chunks: [
           {
+            key: 'axis',
             rowContent: <tr>{this.renderHeadAxis()}</tr>
           },
           {
+            key: 'cols',
             elRef: this.headerElRef,
             tableClassName: 'fc-col-header',
             rowContent: headerRowContent
@@ -150,21 +155,24 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
 
     if (allDayContent) {
       sections.push({
-        key: 'all-day',
         type: 'body',
+        key: 'all-day',
         syncRowHeights: true,
         chunks: [
           {
+            key: 'axis',
             rowContent: (contentArg: ChunkContentCallbackArgs) => (
               <tr>{this.renderTableRowAxis(contentArg.rowSyncHeights[0])}</tr>
             ),
           },
           {
+            key: 'cols',
             content: allDayContent
           }
         ]
       })
       sections.push({
+        key: 'all-day-divider',
         outerContent: (
           <tr className='fc-scrollgrid-section fc-scrollgrid-section-body'>
             <td
@@ -177,15 +185,17 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
     }
 
     sections.push({
-      key: 'timed',
       type: 'body',
+      key: 'body',
       liquid: true,
       expandRows: Boolean(context.options.expandRows),
       chunks: [
         {
+          key: 'axis',
           rowContent: <TimeBodyAxis slatMetas={slatMetas} />
         },
         {
+          key: 'cols',
           scrollerElRef: this.scrollerElRef,
           content: timeContent
         }
@@ -194,12 +204,18 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
 
     if (stickyFooterScrollbar) {
       sections.push({
-        key: 'scroll',
+        key: 'footer',
         type: 'footer',
         isSticky: true,
         chunks: [
-          { content: renderScrollShim },
-          { content: renderScrollShim }
+          {
+            key: 'axis',
+            content: renderScrollShim
+          },
+          {
+            key: 'cols',
+            content: renderScrollShim
+          }
         ]
       })
     }
@@ -341,7 +357,7 @@ class TimeBodyAxis extends BaseComponent<TimeBodyAxisProps> {
 
   render() {
     return this.props.slatMetas.map((slatMeta: TimeSlatMeta) => (
-      <tr>
+      <tr key={slatMeta.key}>
         <TimeColsAxisCell {...slatMeta} />
       </tr>
     ))

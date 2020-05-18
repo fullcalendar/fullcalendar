@@ -37,6 +37,7 @@ export abstract class TableView<State={}> extends DateComponent<ViewProps, State
     if (headerRowContent) {
       sections.push({
         type: 'header',
+        key: 'header',
         isSticky: stickyHeaderDates,
         chunk: {
           elRef: this.headerElRef,
@@ -48,6 +49,7 @@ export abstract class TableView<State={}> extends DateComponent<ViewProps, State
 
     sections.push({
       type: 'body',
+      key: 'body',
       liquid: true,
       chunk: { content: bodyContent }
     })
@@ -89,8 +91,10 @@ export abstract class TableView<State={}> extends DateComponent<ViewProps, State
     if (headerRowContent) {
       sections.push({
         type: 'header',
+        key: 'header',
         isSticky: stickyHeaderDates,
         chunks: [{
+          key: 'main',
           elRef: this.headerElRef,
           tableClassName: 'fc-col-header',
           rowContent: headerRowContent
@@ -100,8 +104,10 @@ export abstract class TableView<State={}> extends DateComponent<ViewProps, State
 
     sections.push({
       type: 'body',
+      key: 'body',
       liquid: true,
       chunks: [{
+        key: 'main',
         content: bodyContent
       }]
     })
@@ -109,8 +115,12 @@ export abstract class TableView<State={}> extends DateComponent<ViewProps, State
     if (stickyFooterScrollbar) {
       sections.push({
         type: 'footer',
+        key: 'footer',
         isSticky: true,
-        chunks: [{ content: renderScrollShim }]
+        chunks: [{
+          key: 'main',
+          content: renderScrollShim
+        }]
       })
     }
 

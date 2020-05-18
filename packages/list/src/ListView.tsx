@@ -119,45 +119,50 @@ export class ListView extends DateComponent<ViewProps> {
     let segsByDay = groupSegsByDay(allSegs) // sparse array
 
     return (
-      <NowTimer unit='day' content={(nowDate: DateMarker, todayRange: DateRange) => {
-        let innerNodes: VNode[] = []
+      <NowTimer unit='day'>
+        {(nowDate: DateMarker, todayRange: DateRange) => {
+          let innerNodes: VNode[] = []
 
-        for (let dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
-          let daySegs = segsByDay[dayIndex]
+          for (let dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
+            let daySegs = segsByDay[dayIndex]
 
-          if (daySegs) { // sparse array, so might be undefined
+            if (daySegs) { // sparse array, so might be undefined
+              let dayStr = dayDates[dayIndex].toISOString()
 
-            // append a day header
-            innerNodes.push(
-              <ListViewHeaderRow
-                dayDate={dayDates[dayIndex]}
-                todayRange={todayRange}
-              />
-            )
-
-            daySegs = sortEventSegs(daySegs, options.eventOrder)
-
-            for (let seg of daySegs) {
+              // append a day header
               innerNodes.push(
-                <ListViewEventRow
-                  seg={seg}
-                  isDragging={false}
-                  isResizing={false}
-                  isDateSelecting={false}
-                  isSelected={false}
-                  {...getSegMeta(seg, todayRange, nowDate)}
+                <ListViewHeaderRow
+                  key={dayStr}
+                  dayDate={dayDates[dayIndex]}
+                  todayRange={todayRange}
                 />
               )
+
+              daySegs = sortEventSegs(daySegs, options.eventOrder)
+
+              for (let seg of daySegs) {
+                innerNodes.push(
+                  <ListViewEventRow
+                    key={dayStr + ':' + seg.eventRange.instance.instanceId /* are multiple segs for an instanceId */}
+                    seg={seg}
+                    isDragging={false}
+                    isResizing={false}
+                    isDateSelecting={false}
+                    isSelected={false}
+                    {...getSegMeta(seg, todayRange, nowDate)}
+                  />
+                )
+              }
             }
           }
-        }
 
-        return (
-          <table className={'fc-list-table ' + theme.getClass('table')}>
-            <tbody>{innerNodes}</tbody>
-          </table>
-        )
-      }} />
+          return (
+            <table className={'fc-list-table ' + theme.getClass('table')}>
+              <tbody>{innerNodes}</tbody>
+            </table>
+          )
+        }}
+      </NowTimer>
     )
   }
 
@@ -264,7 +269,7 @@ function computeDateVars(dateProfile: DateProfile) {
 
 
 // Returns a sparse array of arrays, segs grouped by their dayIndex
-function groupSegsByDay(segs) {
+function groupSegsByDay(segs): Seg[][] {
   let segsByDay = [] // sparse array
   let i
   let seg

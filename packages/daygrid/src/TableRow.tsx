@@ -145,15 +145,19 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               segIsHidden={segIsHidden}
               fgPaddingBottom={paddingBottoms[col]}
               fgContentElRef={this.cellContentElRefs.createRef(cell.key)}
-              fgContent={[
-                <Fragment>{normalFgNodes}</Fragment>, // Fragment scopes the keys
-                <Fragment>{mirrorFgNodes}</Fragment>
-              ]}
-              bgContent={[
-                <Fragment>{this.renderFillSegs(highlightSegsByCol[col], 'highlight')}</Fragment>, // Fragment scopes the keys
-                <Fragment>{this.renderFillSegs(businessHoursByCol[col], 'non-business')}</Fragment>,
-                <Fragment>{this.renderFillSegs(bgEventSegsByCol[col], 'bg-event')}</Fragment>
-              ]}
+              fgContent={( // Fragment scopes the keys
+                <Fragment>
+                  <Fragment>{normalFgNodes}</Fragment>
+                  <Fragment>{mirrorFgNodes}</Fragment>
+                </Fragment>
+              )}
+              bgContent={( // Fragment scopes the keys
+                <Fragment>
+                  {this.renderFillSegs(highlightSegsByCol[col], 'highlight')}
+                  {this.renderFillSegs(businessHoursByCol[col], 'non-business')}
+                  {this.renderFillSegs(bgEventSegsByCol[col], 'bg-event')}
+                </Fragment>
+              )}
             />
           )
         })}
@@ -291,7 +295,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   }
 
 
-  renderFillSegs(segs: TableSeg[], fillType: string): VNode[] {
+  renderFillSegs(segs: TableSeg[], fillType: string) {
     let { isRtl } = this.context
     let { todayRange } = this.props
     let { cellInnerPositions } = this.state
@@ -328,7 +332,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
       }
     }
 
-    return nodes
+    return h(Fragment, {}, ...nodes)
   }
 
 
