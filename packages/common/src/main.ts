@@ -153,6 +153,7 @@ export {
 } from './options'
 
 export { config } from './global-config'
+export { globalLocales } from './global-locales'
 
 export { RecurringType, ParsedRecurring } from './structs/recurring-event'
 

@@ -1,5 +1,5 @@
 import { mergeProps } from '../util/object'
-import { getGlobalRawLocales } from '../global-locales' // weird to be importing this
+import { globalLocales } from '../global-locales' // weird to be importing this
 import { __assign } from 'tslib'
 import { CalendarOptions, CalendarOptionsRefined } from '../options'
 
@@ -53,8 +53,7 @@ const RAW_EN_LOCALE = {
 
 export function organizeRawLocales(explicitRawLocales: RawLocale[]): RawLocaleInfo {
   let defaultCode = explicitRawLocales.length > 0 ? explicitRawLocales[0].code : 'en'
-  let globalRawLocales = getGlobalRawLocales()
-  let allRawLocales = globalRawLocales.concat(explicitRawLocales)
+  let allRawLocales = globalLocales.concat(explicitRawLocales)
   let rawLocaleMap: RawLocaleMap = {
     en: RAW_EN_LOCALE // necessary?
   }
