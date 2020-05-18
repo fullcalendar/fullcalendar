@@ -12,7 +12,7 @@ but needs symlinks killed also
 compiles from TSC files
 */
 
-const { bundleStructs, packageStructs } = require('./scripts/lib/package-index')
+const { bundleStructs, publicPackageStructs } = require('./scripts/lib/package-index')
 checkNoSymlinks(bundleStructs)
 
 module.exports = bundleStructs.map((struct) => {
@@ -24,9 +24,9 @@ module.exports = bundleStructs.map((struct) => {
       file: path.join(struct.dir, struct.mainDistJs)
     },
     plugins: [
-      externalizeStylesheets(), // will cause it be IGNORED for iiffe. good
+      externalizeStylesheets(), // will cause it be IGNORED for iife. good
       alias({
-        entries: buildAliasMap(packageStructs)
+        entries: buildAliasMap(publicPackageStructs)
       }),
       nodeResolve()
     ]

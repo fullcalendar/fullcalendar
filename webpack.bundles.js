@@ -5,7 +5,7 @@ const { checkNoSymlinks } = require('./scripts/lib/new')
 const { buildEntryMap, buildAliasMap } = require('./scripts/lib/new-webpack')
 
 
-const { bundleStructs, packageStructs } = require('./scripts/lib/package-index')
+const { bundleStructs, publicPackageStructs } = require('./scripts/lib/package-index')
 checkNoSymlinks(bundleStructs) // can we avoid this if we only ever write js?
 
 module.exports = {
@@ -20,7 +20,7 @@ module.exports = {
   },
   resolve: {
     extensions: [ '.ts', '.tsx', '.js' ],
-    alias: buildAliasMap(packageStructs)
+    alias: buildAliasMap(publicPackageStructs)
   },
   module: {
     rules: [

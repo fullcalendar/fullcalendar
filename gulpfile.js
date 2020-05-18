@@ -62,7 +62,7 @@ exports.build = series(
   localesAllSrc, // before tsc
   execTask('tsc -b --verbose'),
   removeTscDevLinks,
-  execTask('webpack --config webpack.bundles.js'),
+  execTask('webpack --config webpack.bundles.js'), // always compile from SRC
   execTask('rollup -c rollup.locales.js'),
   process.env.FULLCALENDAR_FORCE_REACT
     ? async function() {} // rollup doesn't know how to make bundles for react-mode
@@ -98,6 +98,7 @@ exports.test = series(
   )
 )
 
+// note: if you want FULLCALENDAR_FORCE_REACT, you need to rebuild first, because of core-vdom
 exports.testCi = series(
   linkVDomLib, // looks at FULLCALENDAR_FORCE_REACT
   testsIndex,
@@ -136,13 +137,13 @@ function localesAllSrcWatch() {
 
 
 
-const { packageStructs } = require('./scripts/lib/package-index')
+const { publicPackageStructs } = require('./scripts/lib/package-index')
 
 exports.writeTscDevLinks = series(removeTscDevLinks, writeTscDevLinks)
 exports.removeTscDevLinks = removeTscDevLinks
 
 async function writeTscDevLinks() { // bad name. does js AND .d.ts. is it necessary to do the js?
-  for (let struct of packageStructs) {
+  for (let struct of publicPackageStructs) {
     let jsOut = path.join(struct.dir, struct.mainDistJs)
     let dtsOut = path.join(struct.dir, struct.mainDistDts)
 
@@ -159,7 +160,7 @@ async function writeTscDevLinks() { // bad name. does js AND .d.ts. is it necess
 }
 
 async function removeTscDevLinks() {
-  for (let struct of packageStructs) {
+  for (let struct of publicPackageStructs) {
     let jsLink = path.join(struct.dir, struct.mainDistJs)
     let dtsLink = path.join(struct.dir, struct.mainDistDts)
 
@@ -182,7 +183,7 @@ async function linkVDomLib() {
 
   if (process.env.FULLCALENDAR_FORCE_REACT) {
     console.log()
-    console.log('COMPILING TO REACT')
+    console.log('CONNECTING TO REACT')
     console.log()
   }
 

@@ -18,6 +18,7 @@ function externalizeStylesheets() {
 }
 
 
+// for going to SRC
 function buildAliasMap(structs) {
   let aliasMap = {}
 

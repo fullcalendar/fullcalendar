@@ -13,12 +13,12 @@ but needs symlinks killed also
 compiles from TSC files
 */
 
-const { packageStructs } = require('./scripts/lib/package-index')
-checkNoSymlinks(packageStructs)
+const { publicPackageStructs } = require('./scripts/lib/package-index')
+checkNoSymlinks(publicPackageStructs)
 
 module.exports = [
 
-  ...packageStructs.map((struct) => {
+  ...publicPackageStructs.map((struct) => {
     return {
       input: path.join(struct.dir, struct.mainTscJs),
       output: {
@@ -38,7 +38,8 @@ module.exports = [
     }
   }),
 
-  ...packageStructs.map((struct) => {
+  // for DTS
+  ...publicPackageStructs.map((struct) => {
     return {
       input: path.join(struct.dir, struct.mainTscDts),
       output: {

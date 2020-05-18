@@ -3,7 +3,7 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin')
 const MomentTimezoneDataPlugin = require('moment-timezone-data-webpack-plugin')
-const { packageStructs } = require('./scripts/lib/package-index')
+const { publicPackageStructs } = require('./scripts/lib/package-index')
 const { buildAliasMap } = require('./scripts/lib/new-webpack')
 
 
@@ -31,7 +31,7 @@ module.exports = (env) => {
     },
     resolve: {
       extensions: [ '.ts', '.tsx', '.js' ],
-      alias: packageMode === 'src' ? buildAliasMap(packageStructs) : {}
+      alias: packageMode === 'src' ? buildAliasMap(publicPackageStructs) : {}
     },
     module: {
       rules: [
