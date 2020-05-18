@@ -64,8 +64,10 @@ exports.build = series(
   removeTscDevLinks,
   execTask('webpack --config webpack.bundles.js'),
   execTask('rollup -c rollup.locales.js'),
-  execTask('rollup -c rollup.bundles.js'), // needs tsc, needs removeTscDevLinks
-  execTask('rollup -c rollup.packages.js'), // same
+  process.env.FULLCALENDAR_FORCE_REACT
+    ? async function() {} // rollup doesn't know how to make bundles for react-mode
+    : execTask('rollup -c rollup.bundles.js'), // needs tsc, needs removeTscDevLinks
+  execTask('rollup -c rollup.packages.js'),
   copyVDomMisc
 )
 
@@ -97,8 +99,9 @@ exports.test = series(
 )
 
 exports.testCi = series(
+  linkVDomLib, // looks at FULLCALENDAR_FORCE_REACT
   testsIndex,
-  execTask('webpack --config webpack.tests.js --env.PACKAGE_MODE=dist'),
+  execTask(`webpack --config webpack.tests.js --env.PACKAGE_MODE=${process.env.FULLCALENDAR_FORCE_REACT ? 'src' : 'dist'}`), // react-mode cant do dist-mode
   execTask('karma start karma.config.js ci')
 )
 
@@ -176,6 +179,12 @@ async function linkVDomLib() {
   let newTarget = process.env.FULLCALENDAR_FORCE_REACT
     ? '../../../packages-contrib/react/src/vdom.ts' // relative to outPath
     : 'vdom-preact.ts'
+
+  if (process.env.FULLCALENDAR_FORCE_REACT) {
+    console.log()
+    console.log('COMPILING TO REACT')
+    console.log()
+  }
 
   let currentTarget
   try {

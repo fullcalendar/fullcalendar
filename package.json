@@ -45,8 +45,8 @@
     "test:ci": "gulp testCi",
     "ci": "./scripts/ci.sh",
     "archive": "gulp archive",
-    "preversion": "./scripts/update-example-dates.sh && npm run clean",
-    "version": "npm run ci && npm run archive",
+    "preversion": "./scripts/update-example-dates.sh && yarn run clean",
+    "version": "yarn run ci && yarn run archive",
     "postversion": "echo 'EXEC: git push --recurse-submodules=on-demand' && echo 'STILL NEED TO PUSH ALL TAGS'"
   },
   "devDependencies": {
