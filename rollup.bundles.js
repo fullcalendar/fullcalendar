@@ -8,6 +8,8 @@ const { externalizeStylesheets, buildAliasMap } = require('./scripts/lib/new-rol
 /*
 needs tsc to run first
 but needs symlinks killed also
+
+compiles from TSC files
 */
 
 const { bundleStructs, packageStructs } = require('./scripts/lib/package-index')

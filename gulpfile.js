@@ -80,8 +80,7 @@ exports.watch = series(
     execParallel({
       tsc: 'tsc -b --watch --preserveWatchOutput --pretty', // wont do pretty bc of piping
       bundles: 'webpack --config webpack.bundles.js --watch',
-      // do in serial tho...
-      // locales: 'rollup -c rollup.locales.js --watch' // needs tsc to have ran first // always regenerates all on any common tsc change :(
+      locales: 'rollup -c rollup.locales.js --watch' // operates on src files. fyi: tests will need this instantly, if compiled together
     })
   )
 )

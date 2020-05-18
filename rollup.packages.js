@@ -9,6 +9,8 @@ const { externalizeStylesheets, externalizeNonRelative } = require('./scripts/li
 /*
 needs tsc to run first
 but needs symlinks killed also
+
+compiles from TSC files
 */
 
 const { packageStructs } = require('./scripts/lib/package-index')
