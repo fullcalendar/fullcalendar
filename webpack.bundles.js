@@ -7,7 +7,7 @@ const { bundleStructs, publicPackageStructs } = require('./scripts/lib/package-i
 checkNoSymlinks(bundleStructs) // can we avoid this if we only ever write js?
 
 module.exports = (env) => {
-  let doSourceMaps = !env.NO_SOURCE_MAPS
+  let doSourceMaps = !(env && env.NO_SOURCE_MAPS)
 
   return {
     mode: 'development',

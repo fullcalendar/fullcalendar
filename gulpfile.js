@@ -300,7 +300,7 @@ function execParallel(map) {
     taskArray.push({ name: taskName, command: map[taskName] })
   }
 
-  let func = () => concurrently(taskArray)
+  let func = () => concurrently(taskArray, { killOthers: ['failure'] })
   func.displayName = 'concurrently'
   return func
 }
