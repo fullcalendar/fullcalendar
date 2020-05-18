@@ -70,7 +70,7 @@ function transplantCss(fileName) { // fileName w/o extension
     },
     intro() {
       if (hasCss) {
-        return `import './${fileName}.css'`
+        return `import './${fileName}.css';`
       } else {
         return ''
       }
