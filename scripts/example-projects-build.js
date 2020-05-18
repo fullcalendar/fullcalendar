@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 const path = require('path')
-const { glob } = require('glob')
-const { exec } = require('./lib/shell')
+const globby = require('globby')
+const exec = require('./lib/shell')
 
 const PROJECTS_ROOT = path.resolve(__dirname, '../example-projects')
 const IS_CI = Boolean(process.env.CI)
 
-glob.sync('*/', { cwd: PROJECTS_ROOT }).forEach(function(exampleDir) { // will match ONLY directories
+globby.sync('*', { cwd: PROJECTS_ROOT, onlyDirectories: true }).forEach(function(exampleDir) { // will match ONLY directories
   let exampleName = exampleDir.replace(/\/$/, '')
 
   if (IS_CI && exampleName.match('angular')) {

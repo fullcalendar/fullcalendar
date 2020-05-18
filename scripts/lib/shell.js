@@ -98,7 +98,6 @@ betterExec.sync.withOptions = withOptions
 betterExec.promise = promisify(betterExec)
 betterExec.promise.withOptions = withOptions
 
-exports.exec = betterExec // both???
 module.exports = betterExec
 
 

@@ -10806,7 +10806,7 @@ postcss-advanced-variables@^3.0.1:
     "@csstools/sass-import-resolve" "^1.0.0"
     postcss "^7.0.6"
 
-postcss-calc@^7.0.1:
+postcss-calc@^7.0.1, postcss-calc@^7.0.2:
   version "7.0.2"
   resolved "https://registry.yarnpkg.com/postcss-calc/-/postcss-calc-7.0.2.tgz#504efcd008ca0273120568b0792b16cdcde8aac1"
   integrity sha512-rofZFHUg6ZIrvRwPeFktv06GdbDYLcGqh9EwiMutZg+a0oePCCw1zHOEiji6LCpyRcjTREtPASuUqeAvYlEVvQ==
