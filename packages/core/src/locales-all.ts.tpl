@@ -1,4 +1,6 @@
 
+// automatically generated
+
 {{#each localeImportPaths}}
 import l{{@index}} from '{{this}}'
 {{/each}}

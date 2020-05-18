@@ -1,8 +1,8 @@
 const path = require('path')
 const globby = require('globby')
 const handlebars = require('handlebars')
-const { src, dest, watch, parallel, series } = require('gulp')
-const { readFile, writeFile } = require('./scripts/lib/util')
+const { src, dest, parallel, series } = require('gulp')
+const { readFile, writeFile, watch } = require('./scripts/lib/util')
 const fs = require('fs')
 const replace = require('gulp-replace')
 const exec = require('./scripts/lib/shell').sync.withOptions({ // always SYNC!
@@ -10,58 +10,170 @@ const exec = require('./scripts/lib/shell').sync.withOptions({ // always SYNC!
   exitOnError: true
   // TODO: flag for echoing command?
 })
-
-const TSC_LOCALE_DIR = 'packages/core/tsc/locales'
-const TSC_LOCALE_EXT = '.js'
-const TSC_LOCALE_FILES = 'packages/core/tsc/locales/*.{js,d.ts}'
-
-exports.localesUp = localesUp
-exports.localesUpWatch = localesUpWatch
-exports.localesAll = localesAll
-exports.localesAllWatch = localesAllWatch
-exports.vdomLink = vdomLink
+const concurrently = require('concurrently')
 
 
-// TODO: rename to coreLocalesUp/etc
+
+const linkPkgSubdirs = exports.linkPkgSubdirs = series(
+  // rewire the @fullcalendar/angular package.
+  // we still want yarn to install its dependencies,
+  // but we want other packages to reference it by its dist/fullcalendar folder
+  execTask('rm -f node_modules/@fullcalendar/angular'),
+  execTask('ln -s ../../packages-contrib/angular/dist/fullcalendar node_modules/@fullcalendar/angular'),
+
+  // same concept for fullcalendar-tests
+  execTask('rm -f node_modules/fullcalendar-tests'),
+  execTask('ln -s ../packages/__tests__/tsc node_modules/fullcalendar-tests')
+)
+
+
 /*
-moves the tsc-generated locale files up one directory,
-so they're accessible with import statements like '@fullcalendar/core/locales/es'
-requires tsc to run first.
+copy over the vdom files that were externalized by rollup.
+we externalize these for two reasons:
+ - when a consumer build system sees `import './vdom'` it's more likely to treat it with side effects.
+ - rollup-plugin-dts was choking on the namespace declarations in the tsc-generated vdom.d.ts files.
 */
-function localesUp() {
-  return src(TSC_LOCALE_FILES) // will watch new files???
-    .pipe(replace(/\/\/.*/g, '')) // remove sourcemap comments
-    .pipe(dest('packages/core/locales/'))
+const VDOM_FILE_MAP = {
+  'packages/core-vdom/tsc/vdom.{js,d.ts}': 'packages/core/dist',
+  'packages/common/tsc/vdom.{js,d.ts}': 'packages/common/dist'
 }
 
-function localesUpWatch() {
-  return watch(TSC_LOCALE_FILES, localesUp)
+const copyVDomMisc = exports.copyVDomMisc = parallelMap(
+  VDOM_FILE_MAP,
+  (srcGlob, destDir) => src(srcGlob)
+    .pipe(replace(/\/\/.*/g, '')) // remove sourcemap comments and ///<reference> don in rollup too
+    .pipe(dest(destDir))
+)
+
+function parallelMap(map, execute) {
+  return parallel.apply(null, Object.keys(map).map((key) => {
+    let task = () => execute(key, map[key])
+    task.displayName = key
+    return task
+  }))
 }
 
 
-async function localesAll() {
-  let localeFileNames = await globby('*' + TSC_LOCALE_EXT, { cwd: TSC_LOCALE_DIR })
-  let localeCodes = localeFileNames.map((fileName) => path.basename(fileName, TSC_LOCALE_EXT ))
-  let localeImportPaths = localeCodes.map((code) => `./locales/${code}`)
 
-  let templateText = await readFile('packages/core/src/locales-all.js.tpl')
+exports.build = series(
+  linkPkgSubdirs,
+  linkVDomLib,
+  series(removeTscDevLinks, writeTscDevLinks), // for tsc
+  localesAllSrc, // before tsc
+  execTask('tsc -b --verbose'),
+  removeTscDevLinks,
+  execTask('webpack --config webpack.bundles.js'),
+  execTask('rollup -c rollup.locales.js'),
+  execTask('rollup -c rollup.bundles.js'), // needs tsc, needs removeTscDevLinks
+  execTask('rollup -c rollup.packages.js'), // same
+  copyVDomMisc
+)
+
+exports.watch = series(
+  linkPkgSubdirs,
+  linkVDomLib,
+  series(removeTscDevLinks, writeTscDevLinks), // for tsc
+  localesAllSrc, // before tsc
+  execTask('tsc -b --verbose'), // initial run
+  parallel(
+    localesAllSrcWatch,
+    execParallel({
+      tsc: 'tsc -b --watch --preserveWatchOutput --pretty', // wont do pretty bc of piping
+      bundles: 'webpack --config webpack.bundles.js --watch',
+      // do in serial tho...
+      // locales: 'rollup -c rollup.locales.js --watch' // needs tsc to have ran first // always regenerates all on any common tsc change :(
+    })
+  )
+)
+
+exports.test = series(
+  testsIndex,
+  parallel(
+    testsIndexWatch,
+    execParallel({
+      webpack: 'webpack --config webpack.tests.js --env.PACKAGE_MODE=src --watch',
+      karma: 'karma start karma.config.js'
+    })
+  )
+)
+
+exports.testCi = series(
+  testsIndex,
+  execTask('webpack --config webpack.tests.js --env.PACKAGE_MODE=dist'),
+  execTask('karma start karma.config.js ci')
+)
+
+
+
+const LOCALES_SRC_DIR = 'packages/core/src/locales'
+const LOCALES_ALL_TPL = 'packages/core/src/locales-all.ts.tpl'
+const LOCALES_ALL_DEST = 'packages/core/src/locales-all.ts'
+
+exports.localesAllSrc = localesAllSrc
+exports.localesAllSrcWatch = localesAllSrcWatch
+
+async function localesAllSrc() {
+  let localeFileNames = await globby('*.ts', { cwd: LOCALES_SRC_DIR })
+  let localeCodes = localeFileNames.map((fileName) => path.basename(fileName, '.ts'))
+  let localeImportPaths = localeCodes.map((localeCode) => `./locales/${localeCode}`)
+
+  let templateText = await readFile(LOCALES_ALL_TPL)
   let template = handlebars.compile(templateText)
   let jsText = template({
     localeImportPaths
   })
 
-  return writeFile(
-    'packages/core/locales-all.js',
-    jsText
-  )
+  await writeFile(LOCALES_ALL_DEST, jsText)
 }
 
-function localesAllWatch() {
-  return watch(TSC_LOCALE_DIR, localesAll)
+function localesAllSrcWatch() {
+  return watch([ LOCALES_SRC_DIR, LOCALES_ALL_TPL ], localesAllSrc)
 }
 
 
-async function vdomLink() {
+
+
+
+const { packageStructs } = require('./scripts/lib/package-index')
+
+// exports.writeTscDevLinks = series(removeTscDevLinks, writeTscDevLinks)
+exports.removeTscDevLinks = removeTscDevLinks
+
+async function writeTscDevLinks() { // bad name. does js AND .d.ts. is it necessary to do the js?
+  for (let struct of packageStructs) {
+    let jsOut = path.join(struct.dir, struct.mainDistJs)
+    let dtsOut = path.join(struct.dir, struct.mainDistDts)
+
+    exec([
+      'mkdir',
+      '-p',
+      path.dirname(jsOut),
+      path.dirname(dtsOut),
+    ])
+
+    exec([ 'ln', '-s', '../' + struct.mainTscJs, jsOut ])
+    exec([ 'ln', '-s', '../' + struct.mainTscDts, dtsOut ])
+  }
+}
+
+async function removeTscDevLinks() {
+  for (let struct of packageStructs) {
+    exec([
+      'rm',
+      '-f',
+      path.join(struct.dir, struct.mainDistJs),
+      path.join(struct.dir, struct.mainDistDts)
+    ])
+  }
+}
+
+
+
+// depends on FULLCALENDAR_FORCE_REACT
+
+exports.linkVDomLib = linkVDomLib
+
+async function linkVDomLib() {
   let pkgRoot = 'packages/core-vdom'
   let outPath = path.join(pkgRoot, 'src/vdom.ts')
   let newTarget = process.env.FULLCALENDAR_FORCE_REACT
@@ -87,61 +199,6 @@ async function vdomLink() {
 }
 
 
-exports.dtsLinks = dtsLinks
-exports.dtsClear = dtsClear
-
-const PKG_DIRS2 = [
-  'packages?(-premium)/*',
-  '!packages?(-premium)/{bundle,__tests__}' // includes core-vdom
-]
-
-async function dtsLinks() {
-  let pkgDirs = await globby(PKG_DIRS2, { onlyDirectories: true })
-
-  return pkgDirs.forEach((pkgDir) => {
-    exec([ 'mkdirp', path.join(pkgDir, 'dist') ])
-    exec([ 'ln', '-sF', '../tsc/main.d.ts', path.join(pkgDir, 'dist/main.d.ts') ]) // F will remove dir first. use elsewhere!!!!
-  })
-}
-
-async function dtsClear() { // need this or else .d.ts symlink dest gets overriden???
-  let pkgDirs = await globby(PKG_DIRS2, { onlyDirectories: true })
-
-  return pkgDirs.forEach((pkgDir) => {
-    exec([ 'rm', '-f', path.join(pkgDir, 'dist/main.d.ts') ])
-  })
-}
-
-
-
-/*
-copy over the vdom files that were externalized by rollup.
-we externalize these for two reasons:
- - when a consumer build system sees `import './vdom'` it's more likely to treat it with side effects.
- - rollup-plugin-dts was choking on the namespace declarations in the tsc-generated vdom.d.ts files.
-*/
-const VDOM_FILE_MAP = {
-  'packages/core-vdom/tsc/vdom.{js,d.ts}': 'packages/core/dist',
-  'packages/common/tsc/vdom.{js,d.ts}': 'packages/common/dist'
-}
-
-exports.copyVDom = parallelMap(
-  VDOM_FILE_MAP,
-  (srcGlob, destDir) => src(srcGlob)
-    .pipe(replace(/\/\/.*/g, '')) // remove sourcemap comments and ///<reference> don in rollup too
-    .pipe(dest(destDir))
-)
-
-function parallelMap(map, execute) {
-  return parallel.apply(null, Object.keys(map).map((key) => {
-    let task = () => execute(key, map[key])
-    task.displayName = key
-    return task
-  }))
-}
-
-
-
 
 
 const exec2 = require('./scripts/lib/shell').sync
@@ -151,7 +208,7 @@ exports.testsIndexWatch = testsIndexWatch
 
 async function testsIndex() {
   let res = exec2(
-    'find packages*/__tests__/tsc -mindepth 2 -name \'*.js\' -print0 | ' +
+    'find packages*/__tests__/src -mindepth 2 -type f -print0 | ' +
     'xargs -0 grep -E "(fdescribe|fit)\\("'
   )
 
@@ -162,7 +219,7 @@ async function testsIndex() {
   let files
 
   if (!res.success) { // means there were no files that matched
-    let { stdout } = exec2('find packages*/__tests__/tsc -mindepth 2 -name \'*.js\'')
+    let { stdout } = exec2('find packages*/__tests__/src -mindepth 2 -type f')
     files = stdout.trim()
     files = !files ? [] : files.split('\n')
     files = uniqStrs(files)
@@ -181,7 +238,7 @@ async function testsIndex() {
     )
   }
 
-  let mainFiles = globby.sync('packages*/__tests__/tsc/main.js')
+  let mainFiles = globby.sync('packages*/__tests__/src/main.*')
   files = mainFiles.concat(files)
 
   let code =
@@ -195,7 +252,7 @@ async function testsIndex() {
 
 function testsIndexWatch() {
   return watch(
-    [ 'packages/__tests__/tsc', 'packages-premium/__tests__/tsc' ], // wtf won't globs work for this?
+    [ 'packages/__tests__/src', 'packages-premium/__tests__/src' ], // wtf won't globs work for this?
     exports.testsIndex
   )
 }
@@ -210,4 +267,26 @@ function uniqStrs(a) {
     hash[item] = true
   }
   return Object.keys(hash)
+}
+
+
+
+function execTask(args) {
+  const exec = require('./scripts/lib/shell').promise.withOptions({ live: true })
+  let name = Array.isArray(args) ? args[0] : args.match(/\w+/)[0]
+  let taskFunc = () => exec(args)
+  taskFunc.displayName = name
+  return taskFunc
+}
+
+function execParallel(map) {
+  let taskArray = []
+
+  for (let taskName in map) {
+    taskArray.push({ name: taskName, command: map[taskName] })
+  }
+
+  let func = () => concurrently(taskArray)
+  func.displayName = 'concurrently'
+  return func
 }

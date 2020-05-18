@@ -1,84 +1,78 @@
+const fs = require('fs')
 const path = require('path')
-const globby = require('globby')
 const dts = require('rollup-plugin-dts').default
 const sourceMapLoader = require('rollup-plugin-sourcemaps')
+const postcss = require('rollup-plugin-postcss')
+const { checkNoSymlinks } = require('./scripts/lib/new')
+const { externalizeStylesheets, externalizeNonRelative } = require('./scripts/lib/new-rollup')
 
+/*
+needs tsc to run first
+but needs symlinks killed also
+*/
 
-const REL_REGEX = /^\./
-const VDOM_SWITCH_REGEX = /\/vdom-switch$/
-const MAIN_PATHS = [ // TODO: use PKG_DIRS from gulp?
-  'packages?(-premium)/*/tsc/main.js',
-  '!packages?(-premium)/{core-vdom,bundle,__tests__}/tsc/main.js'
-]
-
+const { packageStructs } = require('./scripts/lib/package-index')
+checkNoSymlinks(packageStructs)
 
 module.exports = [
-  ...jsConfigs(),
-  ...dtsConfigs()
-]
 
-
-function jsConfigs() {
-  return globby.sync(MAIN_PATHS).map((mainPath) => {
+  ...packageStructs.map((struct) => {
     return {
-      input: mainPath,
+      input: path.join(struct.dir, struct.mainTscJs),
       output: {
         format: 'es',
-        dir: path.resolve(mainPath, '../../dist'),
+        file: path.join(struct.dir, struct.mainDistJs),
         sourcemap: true
       },
       plugins: [
-        sourceMapLoader(),
         externalizeVDom(),
-        externalizeStylesheets(),
-        externalizeNamed(mainPath)
+        externalizeNonRelative(),
+        sourceMapLoader(),
+        postcss({ // will use postcss.config.js
+          extract: true
+        }),
+        transplantCss(struct.mainName),
       ]
     }
-  })
-}
+  }),
 
-
-function dtsConfigs() {
-  return globby.sync(MAIN_PATHS).map((mainPath) => {
-    let dtsPath = mainPath.replace(/\.js$/, '.d.ts')
+  ...packageStructs.map((struct) => {
     return {
-      input: dtsPath,
+      input: path.join(struct.dir, struct.mainTscDts),
       output: {
         format: 'es',
-        file: path.resolve(mainPath, '../../dist/main.d.ts')
+        file: path.join(struct.dir, struct.mainDistDts),
       },
       plugins: [
         externalizeVDom(),
         externalizeStylesheets(),
-        externalizeNamed(dtsPath),
+        externalizeNonRelative(),
         dts(),
         fixDtsCode()
       ]
     }
   })
-}
+
+]
 
 
-function externalizeStylesheets() {
-  return {
-    resolveId(id) {
-      if (id.match(/\.css$/)) {
-        return { id, external: true }
+function transplantCss(fileName) { // fileName w/o extension
+  let hasCss = false
+
+  return         {
+    resolveId(id, importer) {
+      if (/^\./.test(id) && /\.css$/.test(id)) { // relative stylesheet
+        hasCss = true
+        let filePath = path.join(importer, '..', id)
+        filePath = filePath.replace('/tsc/', '/src/') // not very robust!!!
+        return filePath
       }
-    }
-  }
-}
-
-
-function externalizeNamed(mainPath) {
-  return {
-    resolveId(id) {
-      if (
-        id !== mainPath && // not the main file
-        !REL_REGEX.test(id) && // non-relative
-        !VDOM_SWITCH_REGEX.test(id)
-      ) {
-        return { id, external: true }
+    },
+    intro() {
+      if (hasCss) {
+        return `import './${fileName}.css'`
+      } else {
+        return ''
       }
     }
   }
@@ -108,7 +102,7 @@ function fixDtsCode() {
         import("@fullcalendar/common/tsc/whatever").Something
       */
       // BUG: playing weird with TS triple-slash references
-      code = code.replace(/(['"]@fullcalendar\/[^\/]+)\/[^'"]+(['"])/g, function(m0, m1, m2) {
+      code = code.replace(/(['"]@fullcalendar\/[^'"]+)\/[^'"]+(['"])/g, function(m0, m1, m2) {
         return m1 + m2
       })
 

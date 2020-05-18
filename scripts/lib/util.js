@@ -21,7 +21,7 @@ exports.fileExists = fileExists
 exports.mkdirp = mkdirp
 
 
-function betterWatch() {
+function betterWatch() { // i cant believe gulp doesnt do this
   let watcher = watch.apply(null, arguments)
 
   return new Promise((resolve) => {

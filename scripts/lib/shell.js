@@ -31,7 +31,10 @@ function betterExec(cmd, options = {}, callback) {
       ...options
     })
     childProcess.on('close', function(code) {
-      callbackWrap(null, { success: code === 0 })
+      callbackWrap(
+        code === 0 ? null : new Error('shell command failed'),
+        { success: code === 0 }
+      )
     })
 
   } else if (cmdArgs) { // array of tokens

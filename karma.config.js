@@ -5,7 +5,7 @@ let isRealCiEnv = Boolean(process.env.CI)
 let isCi = isRealCiEnv || cmdArgs.indexOf('ci') !== -1
 
 writeFileSync(
-  'tmp/tests-built/config.js',
+  'tests-output/config.js',
   'window.karmaConfig = ' + JSON.stringify({
     isCi: isRealCiEnv
   })
@@ -25,7 +25,8 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'tmp/tests-built/*.js' // make config.js come first somehow?
+      'tests-output/config.js',
+      'tests-output/*all*.js'
     ],
 
     // // make console errors aware of source files

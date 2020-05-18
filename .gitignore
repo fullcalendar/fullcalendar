@@ -2,13 +2,14 @@
 # make sure this links mirrors what's in scripts/clean
 
 /archives
-/tmp
+/tests-output
 
 /packages/*/tsconfig.tsbuildinfo
 /packages/*/tsc
 /packages/*/dist
-/packages/*/locales/*
+/packages/*/locales
 /packages/*/locales-all.js
+/packages/core/src/locales-all.ts
 
 # continued in packages-premium/.gitignore
 
