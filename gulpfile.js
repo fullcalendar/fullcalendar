@@ -11,6 +11,7 @@ const exec = require('./scripts/lib/shell').sync.withOptions({ // always SYNC!
   // TODO: flag for echoing command?
 })
 const concurrently = require('concurrently')
+const { minifyBundleJs, minifyBundleCss } = require('./scripts/lib/minify')
 
 
 
@@ -54,7 +55,6 @@ function parallelMap(map, execute) {
 }
 
 
-
 exports.build = series(
   linkPkgSubdirs,
   linkVDomLib,
@@ -62,13 +62,15 @@ exports.build = series(
   localesAllSrc, // before tsc
   execTask('tsc -b --verbose'),
   removeTscDevLinks,
-  execTask('webpack --config webpack.bundles.js'), // always compile from SRC
+  execTask('webpack --config webpack.bundles.js --env.NO_SOURCE_MAPS'), // always compile from SRC
   execTask('rollup -c rollup.locales.js'),
   process.env.FULLCALENDAR_FORCE_REACT
     ? async function() {} // rollup doesn't know how to make bundles for react-mode
     : execTask('rollup -c rollup.bundles.js'), // needs tsc, needs removeTscDevLinks
   execTask('rollup -c rollup.packages.js'),
-  copyVDomMisc
+  copyVDomMisc,
+  minifyBundleJs,
+  minifyBundleCss
 )
 
 exports.watch = series(
@@ -99,8 +101,9 @@ exports.test = series(
 )
 
 // note: if you want FULLCALENDAR_FORCE_REACT, you need to rebuild first, because of core-vdom
+// TODO: rename FULLCALENDAR_FORCE_REACT to FORCE_TESTS_FROM_SOURCE for this case?
 exports.testCi = series(
-  linkVDomLib, // looks at FULLCALENDAR_FORCE_REACT
+  linkVDomLib, // looks at FULLCALENDAR_FORCE_REACT (doesn't matter?)
   testsIndex,
   execTask(`webpack --config webpack.tests.js --env.PACKAGE_MODE=${process.env.FULLCALENDAR_FORCE_REACT ? 'src' : 'dist'}`), // react-mode cant do dist-mode
   execTask('karma start karma.config.js ci')

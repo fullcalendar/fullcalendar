@@ -4,11 +4,11 @@ const cssmin = require('gulp-cssmin')
 const rename = require('gulp-rename')
 
 
-exports.minifyJs = minifyJs
-exports.minifyCss = minifyCss
+exports.minifyBundleJs = minifyBundleJs
+exports.minifyBundleCss = minifyBundleCss
 
 
-function minifyJs() {
+function minifyBundleJs() {
   return src([
     'packages?(-premium)/bundle/*.js',
     '!**/*.min.js' // avoid double minify
@@ -29,7 +29,7 @@ function minifyJs() {
 }
 
 
-function minifyCss() {
+function minifyBundleCss() {
   return src([
     'packages?(-premium)/bundle/*.css',
     '!**/*.min.css' // avoid double minify

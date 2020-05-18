@@ -29,7 +29,7 @@ module.exports = [
       plugins: [
         externalizeVDom(),
         externalizeNonRelative(),
-        sourceMapLoader(),
+        sourceMapLoader(), // load from transpiled-via-tsc JS files
         postcss({ // will use postcss.config.js
           extract: true
         }),

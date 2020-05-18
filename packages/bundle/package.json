@@ -15,5 +15,6 @@
     "@fullcalendar/google-calendar": "5.0.0-beta.2"
   },
   "main": "main.js",
+  "unpkg": "main.min.js",
   "types": "main.d.ts"
 }
