@@ -48,11 +48,11 @@ module.exports = [
   },
 
   // locales/*.js, for CORE
-  ...srcLocaleFiles.map((localeFile) => ({
-    input: localeFile,
+  ...srcLocaleFiles.map((srcLocaleFile) => ({
+    input: srcLocaleFile,
     output: {
       format: 'es',
-      file: path.join('packages/core/locales', path.basename(localeFile))
+      file: path.join('packages/core/locales', path.basename(srcLocaleFile, '.ts') + '.js')
     },
     plugins: [
       sucraseInstance
@@ -60,12 +60,12 @@ module.exports = [
   })),
 
   // locales/*.js, for BUNDLES
-  ...srcLocaleFiles.map((localeFile) => ({
-    input: localeFile,
+  ...srcLocaleFiles.map((srcLocaleFile) => ({
+    input: srcLocaleFile,
     output: bundleDirs.map((bundleDir) => ({
       format: 'iife',
       name: 'FullCalendar',
-      file: path.join(bundleDir, 'locales', path.basename(localeFile))
+      file: path.join(bundleDir, 'locales', path.basename(srcLocaleFile, '.ts') + '.js')
     })),
     plugins: [
       sucraseInstance,
@@ -79,7 +79,7 @@ module.exports = [
 function bundleWrapLocalesAll() {
   return {
     renderChunk(code) {
-      return code.replace(/^var FullCalendar = /, 'FullCalendar.globalLocales = ')
+      return code.replace(/^var FullCalendar = \(/, '[].push.apply(FullCalendar.globalLocales, ') // needs to be by-reference. can't reassign
     }
   }
 }
