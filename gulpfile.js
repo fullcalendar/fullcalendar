@@ -257,11 +257,11 @@ async function testsIndex() {
 
   let code =
     files.map(
-      (file) => `import ${JSON.stringify('../' + file)}`
+      (file) => `import ${JSON.stringify('../../' + file)}`
     ).join('\n') +
     '\n'
 
-  await writeFile('tests-output/index.js', code)
+  await writeFile('tmp/tests/index.js', code)
 }
 
 function testsIndexWatch() {

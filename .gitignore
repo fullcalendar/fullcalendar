@@ -2,7 +2,7 @@
 # make sure this links mirrors what's in scripts/clean
 
 /archives
-/tests-output
+/tmp
 
 /packages/*/tsconfig.tsbuildinfo
 /packages/*/tsc

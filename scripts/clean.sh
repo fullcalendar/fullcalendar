@@ -7,7 +7,7 @@ cd "`dirname $0`/.." # always start in project root
 # make sure this list mirrors what's in .gitignore
 
 rm -rf archives
-rm -rf tests-output
+rm -rf tmp
 
 rm -rf packages/*/tsconfig.tsbuildinfo
 rm -rf packages/*/tsc

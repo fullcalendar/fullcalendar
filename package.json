@@ -43,8 +43,8 @@
     "lint": "gulp lint",
     "test": "gulp test",
     "test:ci": "gulp testCi",
-    "ci": "./scripts/ci.sh",
     "archive": "gulp archive",
+    "ci": "./scripts/ci.sh",
     "preversion": "./scripts/update-example-dates.sh && yarn run clean",
     "version": "yarn run ci && yarn run archive",
     "postversion": "echo 'EXEC: git push --recurse-submodules=on-demand' && echo 'STILL NEED TO PUSH ALL TAGS'"

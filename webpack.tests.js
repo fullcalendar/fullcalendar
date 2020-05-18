@@ -22,12 +22,12 @@ module.exports = (env) => {
     mode: 'development',
     devtool: false, // because we already have SourceMapDevToolPlugin
     entry: {
-      'all': './tests-output/index.js',
+      'all': './tmp/tests/index.js',
       'scrollgrid': './packages-premium/__tests__/src/scrollgrid.tsx'
     },
     output: {
       filename: '[name].js',
-      path: path.join(__dirname, 'tests-output')
+      path: path.join(__dirname, 'tmp/tests')
     },
     resolve: {
       extensions: [ '.ts', '.tsx', '.js' ],
