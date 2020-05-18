@@ -13,6 +13,7 @@
     { "path": "../daygrid" },
     { "path": "../timegrid" },
     { "path": "../list" },
-    { "path": "../bootstrap" }
+    { "path": "../bootstrap" },
+    { "path": "../google-calendar" }
   ]
 }
