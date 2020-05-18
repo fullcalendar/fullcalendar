@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 const path = require('path')
-const { glob } = require('glob')
-const { exec } = require('./lib/shell')
+const globby = require('globby')
+const exec = require('./lib/shell')
 
 const PKGS_ROOT = path.resolve(__dirname, '../packages-contrib')
 const IS_CI = Boolean(process.env.CI)
 
-glob.sync('*/', { cwd: PKGS_ROOT }).forEach(function(pkgDir) { // will match ONLY directories
+globby.sync('*', { cwd: PKGS_ROOT, onlyDirectories: true }).forEach(function(pkgDir) { // will match ONLY directories
   let pkgShortName = pkgDir.replace(/\/$/, '')
 
   if (IS_CI && pkgShortName.match('angular')) {
