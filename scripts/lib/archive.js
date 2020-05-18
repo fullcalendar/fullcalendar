@@ -1,7 +1,6 @@
 const path = require('path')
 const { src, dest, parallel } = require('gulp')
 const modify = require('gulp-modify-file')
-const rename = require('gulp-rename')
 const zip = require('gulp-zip')
 const { promisifyVinyl } = require('./util')
 
@@ -9,7 +8,7 @@ const { promisifyVinyl } = require('./util')
 /*
 assumes everything already built
 */
-exports.archive = parallel(
+module.exports = parallel(
   writeStandardArchive,
   writePremiumArchive
 )
@@ -80,7 +79,13 @@ function writeArchiveFiles(options) {
   let tmpDir = path.join('tmp/archives', options.archiveName)
 
   let writingPkgs = promisifyVinyl(
-    src('**/*.+(js|css)', { cwd: options.bundleDir, base: options.bundleDir }).pipe(
+    src([
+      '*.+(js|css)',
+      'locales/*.js'
+    ], {
+      cwd: options.bundleDir,
+      base: options.bundleDir
+    }).pipe(
       dest(path.join(tmpDir, 'lib'))
     )
   )

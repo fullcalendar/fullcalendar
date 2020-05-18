@@ -15,6 +15,10 @@ const { minifyBundleJs, minifyBundleCss } = require('./scripts/lib/minify')
 
 
 
+exports.archive = require('./scripts/lib/archive')
+
+
+
 const linkPkgSubdirs = exports.linkPkgSubdirs = series(
   // rewire the @fullcalendar/angular package.
   // we still want yarn to install its dependencies,
