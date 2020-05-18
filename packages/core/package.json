@@ -12,5 +12,6 @@
     "@fullcalendar/common": "5.0.0-beta.2"
   },
   "module": "main.js",
-  "types": "main.d.ts"
+  "types": "main.d.ts",
+  "sideEffects": true
 }
