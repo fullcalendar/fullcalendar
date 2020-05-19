@@ -41,7 +41,7 @@ export default class DayGridFillRenderer extends FillRenderer {
 
     skeletonEl = $(
       '<div class="fc-' + className + '-skeleton">' +
-        '<table><tr/></table>' +
+        '<table><tr></tr></table>' +
       '</div>'
     )
     trEl = skeletonEl.find('tr')
@@ -49,7 +49,7 @@ export default class DayGridFillRenderer extends FillRenderer {
     if (startCol > 0) {
       trEl.append(
         // will create (startCol + 1) td's
-        new Array(startCol + 1).join('<td/>')
+        new Array(startCol + 1).join('<td></td>')
       )
     }
 
@@ -60,7 +60,7 @@ export default class DayGridFillRenderer extends FillRenderer {
     if (endCol < colCnt) {
       trEl.append(
         // will create (colCnt - endCol) td's
-        new Array(colCnt - endCol + 1).join('<td/>')
+        new Array(colCnt - endCol + 1).join('<td></td>')
       )
     }
 
