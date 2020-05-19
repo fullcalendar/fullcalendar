@@ -18,7 +18,7 @@
     "importHelpers": true,
     "resolveJsonModule": true,
     "allowJs": true,
-    "checkJs": false,
+    "checkJs": true,
     "jsx": "react",
     "jsxFactory": "createElement",
     "baseUrl": ".",

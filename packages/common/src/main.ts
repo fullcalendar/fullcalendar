@@ -5,7 +5,8 @@ import './main.css'
 
 export const version: string = '<%= version %>' // important to type it, so .d.ts has generic string
 
-// types
+import './event-sources/json-feed-event-source-declare' // plugin-like. these ambient defs need to be top-level
+
 export { EventDef, EventDefHash } from './structs/event-def'
 export { EventInstance, EventInstanceHash, createEventInstance } from './structs/event-instance'
 export { EventInput, EventRefined, parseEventDef, EventTuple, EventRefiners, refineEventDef } from './structs/event-parse'

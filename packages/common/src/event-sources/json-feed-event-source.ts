@@ -5,7 +5,6 @@ import { DateRange } from '../datelib/date-range'
 import { __assign } from 'tslib'
 import { createPlugin } from '../plugin-system'
 import { EVENT_SOURCE_REFINERS } from './json-feed-event-source-refiners'
-import './json-feed-event-source-declare'
 
 
 interface JsonFeedMeta {

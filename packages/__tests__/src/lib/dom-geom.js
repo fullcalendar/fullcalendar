@@ -77,7 +77,7 @@ export function getTrailingBoundingRect(els, direction = 'ltr') {
 }
 
 
-export function sortBoundingRects(els, direction) {
+export function sortBoundingRects(els, direction = 'ltr') {
   els = $(els) // TODO: un-jquery-ify
   const rects = els.map(function(i, node) {
     return getBoundingRect(node)
