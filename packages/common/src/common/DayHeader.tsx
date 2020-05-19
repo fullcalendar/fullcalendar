@@ -1,7 +1,7 @@
 import { BaseComponent } from '../vdom-util'
 import { DateMarker } from '../datelib/marker'
 import { computeFallbackHeaderFormat } from './table-utils'
-import { VNode, h } from '../vdom'
+import { VNode, createElement } from '../vdom'
 import { TableDateCell, TableDowCell } from './TableDateCell'
 import { NowTimer } from '../NowTimer'
 import { DateRange } from '../datelib/date-range'

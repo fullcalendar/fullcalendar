@@ -1,5 +1,5 @@
 import {
-  VNode, h,
+  VNode, createElement,
   SimpleScrollGrid,
   SimpleScrollGridSection,
   ChunkContentCallbackArgs,

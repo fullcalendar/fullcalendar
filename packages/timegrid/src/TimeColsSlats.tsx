@@ -1,5 +1,5 @@
 import {
-  h, VNode,
+  createElement, VNode,
   BaseComponent,
   ViewContext,
   createDuration,

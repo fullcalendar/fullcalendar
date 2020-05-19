@@ -1,4 +1,4 @@
-import { Ref, createRef, ComponentChildren, h, RefObject, createContext } from '../vdom'
+import { Ref, createRef, ComponentChildren, createElement, RefObject, createContext } from '../vdom'
 import { setRef, BaseComponent } from '../vdom-util'
 import { isPropsEqual } from '../util/object'
 import { parseClassNames, ClassNamesInput } from '../util/html'
@@ -254,7 +254,7 @@ function normalizeClassNames<HookProps>(classNames: ClassNamesGenerator<HookProp
 
 function normalizeContent(input, hookProps) {
   if (typeof input === 'function') {
-    return input(hookProps, h) // give the function the vdom-creation func
+    return input(hookProps, createElement) // give the function the vdom-creation func
   } else {
     return input
   }

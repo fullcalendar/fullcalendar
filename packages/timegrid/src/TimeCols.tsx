@@ -1,5 +1,5 @@
 import {
-  h, VNode, Ref,
+  createElement, VNode, Ref,
   addDurations,
   multiplyDuration,
   wholeDivideDurations,

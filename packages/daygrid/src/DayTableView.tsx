@@ -1,5 +1,5 @@
 import {
-  h, createRef,
+  createElement, createRef,
   DayHeader,
   DateProfileGenerator,
   DateProfile,

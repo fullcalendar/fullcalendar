@@ -20,7 +20,7 @@
     "allowJs": true,
     "checkJs": false,
     "jsx": "react",
-    "jsxFactory": "h",
+    "jsxFactory": "createElement",
     "baseUrl": ".",
     "strictBindCallApply": true,
     "paths": {

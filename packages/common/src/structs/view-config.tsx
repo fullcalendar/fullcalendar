@@ -1,6 +1,6 @@
 import { ViewProps } from '../View'
 import { mapHash } from '../util/object'
-import { ComponentType, Component, h } from '../vdom'
+import { ComponentType, Component, createElement } from '../vdom'
 import { ViewRoot } from '../common/ViewRoot'
 import { RenderHook } from '../common/render-hook'
 import { ViewContext, ViewContextType } from '../ViewContext'

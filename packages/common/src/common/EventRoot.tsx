@@ -1,5 +1,5 @@
 import { Seg } from '../component/DateComponent'
-import { ComponentChildren, h, Ref, createRef } from '../vdom'
+import { ComponentChildren, createElement, Ref, createRef } from '../vdom'
 import { EventApi } from '../api/EventApi'
 import { computeSegDraggable, computeSegStartResizable, computeSegEndResizable, setElSeg } from '../component/event-rendering'
 import { EventMeta, getSkinCss, getEventClassNames } from '../component/event-rendering'

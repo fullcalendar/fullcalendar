@@ -2,7 +2,7 @@ import {
   EventSegUiInteractionState,
   VNode,
   DateComponent,
-  h,
+  createElement,
   PositionCache,
   RefMap,
   mapHash,
@@ -332,7 +332,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
       }
     }
 
-    return h(Fragment, {}, ...nodes)
+    return createElement(Fragment, {}, ...nodes)
   }
 
 

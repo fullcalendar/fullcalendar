@@ -1,5 +1,5 @@
 import {
-  h, ComponentChildren, applyStyle, BaseComponent, DelayedRunner, Ref, setRef
+  createElement, ComponentChildren, applyStyle, BaseComponent, DelayedRunner, Ref, setRef
 } from '@fullcalendar/common'
 
 

@@ -1,7 +1,7 @@
 import { RenderHook, RenderHookPropsChildren } from './render-hook'
 import { DateMarker } from '../datelib/marker'
 import { ViewContext, ViewContextType } from '../ViewContext'
-import { h } from '../vdom'
+import { createElement } from '../vdom'
 import { ViewApi } from '../ViewApi'
 
 

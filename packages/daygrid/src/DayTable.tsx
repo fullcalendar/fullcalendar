@@ -1,5 +1,5 @@
 import {
-  h, createRef, VNode,
+  createElement, createRef, VNode,
   EventStore,
   EventUiHash,
   DateSpan,

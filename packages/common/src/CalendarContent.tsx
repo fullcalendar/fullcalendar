@@ -9,7 +9,7 @@ import { DateMarker } from './datelib/marker'
 import { CalendarData } from './reducers/data-types'
 import { ViewPropsTransformerClass } from './plugin-system-struct'
 import { __assign } from 'tslib'
-import { h, createRef, Component, VUIEvent, Fragment } from './vdom'
+import { createElement, createRef, Component, VUIEvent, Fragment } from './vdom'
 import { buildDelegationHandler } from './util/dom-event'
 import { ViewContainer } from './ViewContainer'
 import { CssDimValue } from './scrollgrid/util'
@@ -207,7 +207,7 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
       (buildAppendContent) => buildAppendContent(props)
     )
 
-    return h(Fragment, {}, ...children)
+    return createElement(Fragment, {}, ...children)
   }
 
 

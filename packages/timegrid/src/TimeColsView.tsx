@@ -1,5 +1,5 @@
 import {
-  h, createRef,
+  createElement, createRef,
   diffDays,
   SimpleScrollGridSection,
   VNode,

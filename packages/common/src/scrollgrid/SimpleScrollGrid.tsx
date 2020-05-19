@@ -1,4 +1,4 @@
-import { VNode, h, Fragment } from '../vdom'
+import { VNode, createElement, Fragment } from '../vdom'
 import { BaseComponent, setRef } from '../vdom-util'
 import { Scroller, OverflowValue } from './Scroller'
 import { RefMap } from '../util/RefMap'

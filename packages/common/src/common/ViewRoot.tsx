@@ -1,6 +1,6 @@
 import { ViewSpec } from '../structs/view-spec'
 import { MountHook, buildClassNameNormalizer } from './render-hook'
-import { ComponentChildren, h, Ref } from '../vdom'
+import { ComponentChildren, createElement, Ref } from '../vdom'
 import { BaseComponent } from '../vdom-util'
 import { ViewApi } from '../ViewApi'
 

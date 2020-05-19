@@ -1,7 +1,7 @@
 import { DateRange } from '../datelib/date-range'
 import { getDayClassNames, getDateMeta, DateMeta } from '../component/date-rendering'
 import { DateMarker, addDays } from '../datelib/marker'
-import { h } from '../vdom'
+import { createElement } from '../vdom'
 import { __assign } from 'tslib'
 import { DateFormatter } from '../datelib/DateFormatter'
 import { formatDayString } from '../datelib/formatting-utils'

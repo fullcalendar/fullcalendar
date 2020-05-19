@@ -1,5 +1,5 @@
 import {
-  BaseComponent, DateMarker, h, DateRange, getDateMeta,
+  BaseComponent, DateMarker, createElement, DateRange, getDateMeta,
   RenderHook, buildNavLinkData, DayHeaderHookProps, getDayClassNames, formatDayString, Fragment
 } from '@fullcalendar/common'
 

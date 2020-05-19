@@ -1,4 +1,4 @@
-import { h, ComponentChildren, Ref } from '../vdom'
+import { createElement, ComponentChildren, Ref } from '../vdom'
 import { BaseComponent, setRef } from '../vdom-util'
 import { CssDimValue, ScrollerLike } from './util'
 

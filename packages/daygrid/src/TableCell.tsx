@@ -1,7 +1,7 @@
 import {
   Ref,
   ComponentChildren,
-  h,
+  createElement,
   DateMarker,
   DateComponent,
   CssDimValue,

@@ -1,5 +1,5 @@
 import {
-  MinimalEventProps, BaseComponent, ViewContext, h, AllDayHookProps,
+  MinimalEventProps, BaseComponent, ViewContext, createElement, AllDayHookProps,
   Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventMeta, EventRoot, ComponentChildren, RenderHook
 } from "@fullcalendar/common"
 

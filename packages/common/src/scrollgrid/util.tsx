@@ -1,4 +1,4 @@
-import { VNode, h, Ref } from '../vdom'
+import { VNode, createElement, Ref } from '../vdom'
 import { findElements } from '../util/dom-manip'
 import { ViewContext } from '../ViewContext'
 import { computeSmallestCellWidth } from '../util/misc'
@@ -89,7 +89,7 @@ export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: Ch
 
   let content: VNode = typeof chunkConfig.content === 'function' ?
     chunkConfig.content(arg) :
-    h('table',
+    createElement('table',
       {
         className: [
           chunkConfig.tableClassName,
@@ -102,7 +102,7 @@ export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: Ch
         }
       },
       arg.tableColGroupNode,
-      h('tbody', {}, typeof chunkConfig.rowContent === 'function' ? chunkConfig.rowContent(arg) : chunkConfig.rowContent)
+      createElement('tbody', {}, typeof chunkConfig.rowContent === 'function' ? chunkConfig.rowContent(arg) : chunkConfig.rowContent)
     )
 
   return content
@@ -137,7 +137,7 @@ export function renderMicroColGroup(cols: ColProps[], shrinkWidth?: number) {
     }
   }
 
-  return h('colgroup', {}, ...colNodes)
+  return createElement('colgroup', {}, ...colNodes)
 }
 
 

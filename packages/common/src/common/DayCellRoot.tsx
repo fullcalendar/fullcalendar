@@ -1,4 +1,4 @@
-import { Ref, ComponentChildren, h } from '../vdom'
+import { Ref, ComponentChildren, createElement } from '../vdom'
 import { DateMarker } from '../datelib/marker'
 import { DateRange } from '../datelib/date-range'
 import { getDateMeta, getDayClassNames, DateMeta } from '../component/date-rendering'

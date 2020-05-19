@@ -1,4 +1,4 @@
-import { h, VNode } from './vdom'
+import { createElement, VNode } from './vdom'
 import { BaseComponent } from './vdom-util'
 import { ToolbarModel, ToolbarWidget } from './toolbar-struct'
 
@@ -83,7 +83,7 @@ class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
   render() {
     let children = this.props.widgetGroups.map((widgetGroup) => this.renderWidgetGroup(widgetGroup))
 
-    return h('div', { className: 'fc-toolbar-chunk' }, ...children)
+    return createElement('div', { className: 'fc-toolbar-chunk' }, ...children)
   }
 
 
@@ -129,7 +129,7 @@ class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
     if (children.length > 1) {
       let groupClassName = (isOnlyButtons && theme.getClass('buttonGroup')) || ''
 
-      return h('div', { className: groupClassName }, ...children)
+      return createElement('div', { className: groupClassName }, ...children)
 
     } else {
       return children[0]

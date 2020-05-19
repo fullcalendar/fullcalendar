@@ -1,5 +1,5 @@
 import {
-  h,
+  createElement,
   ViewProps,
   Scroller,
   DateMarker,

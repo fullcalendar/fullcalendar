@@ -1,4 +1,4 @@
-import { h, BaseComponent, Seg, EventRoot, buildSegTimeText, EventMeta, Fragment } from '@fullcalendar/common'
+import { createElement, BaseComponent, Seg, EventRoot, buildSegTimeText, EventMeta, Fragment } from '@fullcalendar/common'
 import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering'
 
 

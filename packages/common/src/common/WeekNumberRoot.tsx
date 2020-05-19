@@ -1,7 +1,7 @@
 import { ViewContext, ViewContextType } from '../ViewContext'
 import { DateMarker } from '../datelib/marker'
 import { RenderHook, RenderHookPropsChildren } from './render-hook'
-import { h } from '../vdom'
+import { createElement } from '../vdom'
 import { DateFormatter } from '../datelib/DateFormatter'
 
 

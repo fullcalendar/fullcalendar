@@ -4,7 +4,7 @@ import {
   DateComponent,
   RefObject,
   CssDimValue,
-  h,
+  createElement,
   PositionCache,
   Ref,
   memoize,

@@ -1,5 +1,5 @@
 import { BaseComponent } from './vdom-util'
-import { ComponentChildren, Ref, h, VUIEvent } from './vdom'
+import { ComponentChildren, Ref, createElement, VUIEvent } from './vdom'
 import { CssDimValue } from './scrollgrid/util'
 
 

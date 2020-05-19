@@ -1,6 +1,6 @@
 import { __assign } from 'tslib'
 import {
-  CalendarOptions, Action, CalendarContent, render, h, DelayedRunner, CssDimValue, applyStyleProp,
+  CalendarOptions, Action, CalendarContent, render, createElement, DelayedRunner, CssDimValue, applyStyleProp,
   CalendarApi, computeCalendarClassNames, computeCalendarHeight, isArraysEqual, CalendarDataManager, CalendarData,
   CustomContentRenderContext
  } from '@fullcalendar/common'

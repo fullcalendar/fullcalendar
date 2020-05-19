@@ -12,7 +12,7 @@ declare global {
     export import Component = preact.Component
     export import ComponentChild = preact.ComponentChild
     export import ComponentChildren = preact.ComponentChildren
-    export import h = preact.h
+    export import createElement = preact.createElement
     export import render = preact.render
     export import createRef = preact.createRef
     export import Fragment = preact.Fragment
@@ -23,7 +23,7 @@ declare global {
 
 window.FullCalendarVDom = {
   Component: preact.Component,
-  h: preact.h,
+  createElement: preact.createElement,
   render: preact.render,
   createRef: preact.createRef,
   Fragment: preact.Fragment,
@@ -45,7 +45,7 @@ export function flushToDom() {
   }
 
   preact.options.debounceRendering = execCallbackSync
-  preact.render(preact.h(FakeComponent, {}), document.createElement('div'))
+  preact.render(preact.createElement(FakeComponent, {}), document.createElement('div'))
 
   while (callbackQ.length) {
     callbackQ.shift()()
@@ -55,7 +55,7 @@ export function flushToDom() {
 }
 
 class FakeComponent extends preact.Component {
-  render() { return preact.h('div', {}) }
+  render() { return preact.createElement('div', {}) }
   componentDidMount() { this.setState({}) }
 }
 

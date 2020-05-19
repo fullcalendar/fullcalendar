@@ -1,4 +1,4 @@
-import { h } from '../vdom'
+import { createElement } from '../vdom'
 import { EventRoot } from './EventRoot'
 import { Seg } from '../component/DateComponent'
 import { EventMeta } from '../component/event-rendering'

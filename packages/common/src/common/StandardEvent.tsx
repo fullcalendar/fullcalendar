@@ -1,5 +1,5 @@
 
-import { ComponentChildren, h, Fragment } from '../vdom'
+import { ComponentChildren, createElement, Fragment } from '../vdom'
 import { BaseComponent } from '../vdom-util'
 import { buildSegTimeText, EventMeta } from '../component/event-rendering'
 import { EventRoot, MinimalEventProps } from './EventRoot'
