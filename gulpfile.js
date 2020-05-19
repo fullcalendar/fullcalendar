@@ -12,6 +12,7 @@ const exec = require('./scripts/lib/shell').sync.withOptions({ // always SYNC!
 })
 const concurrently = require('concurrently')
 const { minifyBundleJs, minifyBundleCss } = require('./scripts/lib/minify')
+const modify = require('gulp-modify-file')
 
 
 
@@ -30,6 +31,7 @@ const linkPkgSubdirs = exports.linkPkgSubdirs = series(
   execTask('rm -f node_modules/fullcalendar-tests'),
   execTask('ln -s ../packages/__tests__/tsc node_modules/fullcalendar-tests')
 )
+
 
 
 /*
@@ -59,12 +61,36 @@ function parallelMap(map, execute) {
 }
 
 
+
+const localesDts = exports.localesDts = parallel(localesAllDts, localesEachDts)
+
+function localesAllDts() { // needs tsc
+  return src('packages/core/tsc/locales-all.d.ts')
+    .pipe(removeSimpleComments())
+    .pipe(dest('packages/core'))
+}
+
+function localesEachDts() { // needs tsc
+  return src('packages/core/tsc/locales/*.d.ts')
+    .pipe(removeSimpleComments())
+    .pipe(dest('packages/core/locales')) // TODO: remove sourcemap comment
+}
+
+function removeSimpleComments() { // like a gulp plugin
+  return modify(function(code) { // TODO: use gulp-replace instead
+    return code.replace(/\/\/.*/g, '') // TODO: make a general util for this
+  })
+}
+
+
+
 exports.build = series(
   linkPkgSubdirs,
   linkVDomLib,
   series(removeTscDevLinks, writeTscDevLinks), // for tsc
   localesAllSrc, // before tsc
   execTask('tsc -b --verbose'),
+  localesDts,
   removeTscDevLinks,
   execTask('webpack --config webpack.bundles.js --env.NO_SOURCE_MAPS'), // always compile from SRC
   execTask('rollup -c rollup.locales.js'),
@@ -83,6 +109,7 @@ exports.watch = series(
   series(removeTscDevLinks, writeTscDevLinks), // for tsc
   localesAllSrc, // before tsc
   execTask('tsc -b --verbose'), // initial run
+  localesDts, // won't watch :(
   parallel(
     localesAllSrcWatch,
     execParallel({
@@ -139,8 +166,6 @@ async function localesAllSrc() {
 function localesAllSrcWatch() {
   return watch([ LOCALES_SRC_DIR, LOCALES_ALL_TPL ], localesAllSrc)
 }
-
-
 
 
 
