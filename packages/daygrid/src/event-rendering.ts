@@ -1,4 +1,5 @@
-import { EventRenderRange, diffDays, createFormatter } from '@fullcalendar/common'
+import { createFormatter } from '@fullcalendar/common'
+import { TableSeg } from './TableSeg'
 
 
 export const DEFAULT_TABLE_EVENT_TIME_FORMAT = createFormatter({
@@ -9,13 +10,13 @@ export const DEFAULT_TABLE_EVENT_TIME_FORMAT = createFormatter({
 })
 
 
-export function hasListItemDisplay(eventRange: EventRenderRange) {
-  let { display } = eventRange.ui
+export function hasListItemDisplay(seg: TableSeg) {
+  let { display } = seg.eventRange.ui
   let isAuto = !display || display === 'auto' // TODO: normalize earlier on
 
   return display === 'list-item' || (
     isAuto &&
-    !eventRange.def.allDay &&
-      diffDays(eventRange.instance.range.start, eventRange.instance.range.end) <= 1 // TODO: use nextDayThreshold
+    !seg.eventRange.def.allDay &&
+    seg.firstCol === seg.lastCol // can't be multi-day
   )
 }

@@ -49,8 +49,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
               )}
             </DayCellContent>
             {props.segs.map((seg) => {
-              let { eventRange } = seg
-              let instanceId = eventRange.instance.instanceId
+              let instanceId = seg.eventRange.instance.instanceId
 
               return (
                 <div
@@ -60,7 +59,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
                     visibility: hiddenInstances[instanceId] ? 'hidden' : ('' as any)
                   }}
                 >
-                  {hasListItemDisplay(eventRange) ?
+                  {hasListItemDisplay(seg) ?
                     <TableListItemEvent
                       seg={seg}
                       isDragging={false}

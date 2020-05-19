@@ -18,8 +18,8 @@ describe('dayGrid advanced event rendering', function() {
       ]
     })
 
-    let viewWrapper = new DayGridViewWrapper(calendar)
-    let eventEls = viewWrapper.dayGrid.getEventEls()
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEls = dayGridWrapper.getEventEls()
     let rects = eventEls.map((el) => el.getBoundingClientRect())
     let intersects = false
 
@@ -33,6 +33,26 @@ describe('dayGrid advanced event rendering', function() {
     }
 
     expect(intersects).toBe(false)
+  })
+
+  it('does not render multi-day event as list-item', function() {
+    let calendar = initCalendar({
+      initialView: 'dayGridMonth',
+      initialDate: '2020-05-01',
+      eventDisplay: 'auto',
+      events: [
+        {
+          title: 'event 1',
+          start: '2020-05-11T22:00:00',
+          end: '2020-05-12T06:00:00'
+        },
+      ]
+    })
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEl = dayGridWrapper.getEventEls()[0]
+
+    expect(dayGridWrapper.isEventListItem(eventEl)).toBe(false)
   })
 
 })

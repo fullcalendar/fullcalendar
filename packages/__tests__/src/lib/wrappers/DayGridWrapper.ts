@@ -178,6 +178,11 @@ export class DayGridWrapper {
   }
 
 
+  isEventListItem(el: HTMLElement) {
+    return el.classList.contains('fc-daygrid-dot-event')
+  }
+
+
   getFirstEventEl() {
     return this.el.querySelector('.fc-daygrid-event') as HTMLElement
   }

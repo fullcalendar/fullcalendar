@@ -226,8 +226,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
     if (cellInnerPositions && cellContentPositions) {
       for (let seg of segs) {
-        let { eventRange } = seg
-        let instanceId = eventRange.instance.instanceId
+        let instanceId = seg.eventRange.instance.instanceId
         let isMirror = isDragging || isResizing || isDateSelecting
         let isSelected = selectedInstanceHash[instanceId]
         let isInvisible = segIsHidden[instanceId] || isSelected
@@ -255,6 +254,9 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
           marginTop = segMarginTops[instanceId]
         }
 
+        /*
+        known bug: events that are force to be list-item but span multiple days still take up space in later columns
+        */
         nodes.push(
           <div
             className={'fc-daygrid-event-harness' + (isAbsolute ? ' fc-daygrid-event-harness-abs' : '')}
@@ -268,7 +270,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               right: right || ''
             }}
           >
-            {hasListItemDisplay(eventRange) ?
+            {hasListItemDisplay(seg) ?
               <TableListItemEvent
                 seg={seg}
                 isDragging={isDragging}
