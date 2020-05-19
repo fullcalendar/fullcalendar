@@ -16,8 +16,8 @@ export const EVENT_UI_REFINERS = {
   constraint: identity as Identity<any>, // Identity<ConstraintInput>, // circular reference. ts dies. event->constraint->event
   overlap: identity as Identity<boolean>,
   allow: identity as Identity<AllowFunc>,
-  className: parseClassNames,
-  classNames: parseClassNames,
+  className: parseClassNames, // will both end up as array of strings
+  classNames: parseClassNames, // "
   color: String,
   backgroundColor: String,
   borderColor: String,
