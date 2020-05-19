@@ -34,15 +34,13 @@ export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
         isResizing={props.isResizing}
         isDateSelecting={props.isDateSelecting}
       >
-        {(rootElRef, classNames, style, innerElRef, innerContent, hookProps) => (
+        {(rootElRef, classNames, innerElRef, innerContent, hookProps) => (
           <tr className={[ 'fc-list-event', hookProps.event.url ? 'fc-event-forced-url' : '' ].concat(classNames).join(' ')} ref={rootElRef}>
             {buildTimeContent(seg, timeFormat, context)}
             <td className='fc-list-event-graphic'>
-              <span className='fc-list-event-dot' style={{
-                backgroundColor: hookProps.event.backgroundColor
-              }} />
+              <span className='fc-list-event-dot' style={{ backgroundColor: hookProps.backgroundColor }} />
             </td>
-            <td className='fc-list-event-title' ref={innerElRef}>
+            <td className='fc-list-event-title' ref={innerElRef} style={{ color: hookProps.textColor }}>
               {innerContent}
             </td>
           </tr>

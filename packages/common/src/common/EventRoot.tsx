@@ -2,7 +2,7 @@ import { Seg } from '../component/DateComponent'
 import { ComponentChildren, createElement, Ref, createRef } from '../vdom'
 import { EventApi } from '../api/EventApi'
 import { computeSegDraggable, computeSegStartResizable, computeSegEndResizable, setElSeg } from '../component/event-rendering'
-import { EventMeta, getSkinCss, getEventClassNames } from '../component/event-rendering'
+import { EventMeta, getEventClassNames } from '../component/event-rendering'
 import { RenderHook } from './render-hook'
 import { BaseComponent } from '../vdom-util'
 
@@ -26,7 +26,6 @@ export interface EventRootProps extends MinimalEventProps {
   children: (
     rootElRef: Ref<any>,
     classNames: string[],
-    style: any,
     innerElRef: Ref<any>,
     innerContent: ComponentChildren,
     hookProps: EventMeta
@@ -67,7 +66,6 @@ export class EventRoot extends BaseComponent<EventRootProps> {
       isResizing: Boolean(props.isResizing)
     }
 
-    let style = getSkinCss(ui)
     let standardClassNames = getEventClassNames(hookProps).concat(ui.classNames)
 
     return (
@@ -81,7 +79,7 @@ export class EventRoot extends BaseComponent<EventRootProps> {
         elRef={this.elRef}
       >
         {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
-          rootElRef, standardClassNames.concat(customClassNames), style, innerElRef, innerContent, hookProps
+          rootElRef, standardClassNames.concat(customClassNames), innerElRef, innerContent, hookProps
         )}
       </RenderHook>
     )

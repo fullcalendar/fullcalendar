@@ -23,13 +23,13 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
 
   render() {
     let { props, context } = this
-
+    let { seg } = props
     let timeFormat = context.options.eventTimeFormat || props.defaultTimeFormat
-    let timeText = buildSegTimeText(props.seg, timeFormat, context, props.defaultDisplayEventTime, props.defaultDisplayEventEnd)
+    let timeText = buildSegTimeText(seg, timeFormat, context, props.defaultDisplayEventTime, props.defaultDisplayEventEnd)
 
     return (
       <EventRoot
-        seg={props.seg}
+        seg={seg}
         timeText={timeText}
         disableDragging={props.disableDragging}
         disableResizing={props.disableResizing}
@@ -42,14 +42,17 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
         isFuture={props.isFuture}
         isToday={props.isToday}
       >
-        {(rootElRef, classNames, style, innerElRef, innerContent, hookProps) => (
+        {(rootElRef, classNames, innerElRef, innerContent, hookProps) => (
           <a
             className={props.extraClassNames.concat(classNames).join(' ')}
-            style={style}
+            style={{
+              borderColor: hookProps.borderColor,
+              backgroundColor: hookProps.backgroundColor
+            }}
             ref={rootElRef}
-            {...getSegAnchorAttrs(props.seg)}
+            {...getSegAnchorAttrs(seg)}
           >
-            <div className='fc-event-main' ref={innerElRef}>
+            <div className='fc-event-main' ref={innerElRef} style={{ color: hookProps.textColor }}>
               {innerContent}
             </div>
             {hookProps.isStartResizable &&

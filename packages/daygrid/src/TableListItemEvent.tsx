@@ -16,8 +16,6 @@ export class TableListItemEvent extends BaseComponent<DotTableEventProps> {
 
   render() {
     let { props, context } = this
-
-
     let timeFormat = context.options.eventTimeFormat || DEFAULT_TABLE_EVENT_TIME_FORMAT
     let timeText = buildSegTimeText(props.seg, timeFormat, context, true, props.defaultDisplayEventEnd)
 
@@ -34,11 +32,11 @@ export class TableListItemEvent extends BaseComponent<DotTableEventProps> {
         isFuture={props.isFuture}
         isToday={props.isToday}
       >
-        {(rootElRef, classNames, style, innerElRef, innerContent, innerProps) => ( // we don't use styles!
+        {(rootElRef, classNames, innerElRef, innerContent, hookProps) => ( // we don't use styles!
           <a
             className={[ 'fc-daygrid-event', 'fc-daygrid-dot-event' ].concat(classNames).join(' ')}
             ref={rootElRef}
-            style={{ color: innerProps.textColor }}
+            style={{ color: hookProps.textColor }}
             {...getSegAnchorAttrs(props.seg)}
           >
             {innerContent}
