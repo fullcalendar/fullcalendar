@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "fi",
@@ -19,4 +19,4 @@ export default {
   allDayText: "Koko päivä",
   moreLinkText: "lisää",
   noEventsText: "Ei näytettäviä tapahtumia"
-} as RawLocale
+} as LocaleInput

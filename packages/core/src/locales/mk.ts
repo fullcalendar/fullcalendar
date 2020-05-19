@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "mk",
@@ -17,4 +17,4 @@ export default {
     return "+повеќе " + n;
   },
   noEventsText: "Нема настани за прикажување"
-} as RawLocale
+} as LocaleInput

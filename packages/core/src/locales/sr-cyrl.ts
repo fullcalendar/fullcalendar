@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "sr-cyrl",
@@ -21,4 +21,4 @@ export default {
     return "+ још " + n;
   },
   noEventsText: "Нема догађаја за приказ"
-} as RawLocale
+} as LocaleInput

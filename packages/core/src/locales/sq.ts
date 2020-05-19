@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "sq",
@@ -21,4 +21,4 @@ export default {
     return "+më tepër " + n;
   },
   noEventsText: "Nuk ka evente për të shfaqur"
-} as RawLocale
+} as LocaleInput

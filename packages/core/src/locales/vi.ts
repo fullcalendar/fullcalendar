@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "vi",
@@ -21,4 +21,4 @@ export default {
     return "+ thêm " + n;
   },
   noEventsText: "Không có sự kiện để hiển thị"
-} as RawLocale
+} as LocaleInput

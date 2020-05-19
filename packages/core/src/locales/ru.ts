@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "ru",
@@ -21,4 +21,4 @@ export default {
     return "+ ещё " + n;
   },
   noEventsText: "Нет событий для отображения"
-} as RawLocale
+} as LocaleInput

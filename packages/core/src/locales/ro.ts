@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "ro",
@@ -21,4 +21,4 @@ export default {
     return "+alte " + n;
   },
   noEventsText: "Nu există evenimente de afișat"
-} as RawLocale
+} as LocaleInput

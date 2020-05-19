@@ -9,7 +9,7 @@ import { DateInput } from './datelib/env'
 import { DateRangeInput } from './datelib/date-range'
 import { BusinessHoursInput } from './structs/business-hours'
 import { ViewApi } from './ViewApi'
-import { LocaleSingularArg, RawLocale } from './datelib/locale'
+import { LocaleSingularArg, LocaleInput } from './datelib/locale'
 import { OverlapFunc, ConstraintInput, AllowFunc } from './structs/constraint'
 import { EventInputTransformer, EventInput } from './structs/event-parse'
 import { PluginDef } from './plugin-system-struct'
@@ -96,7 +96,7 @@ export const BASE_OPTION_REFINERS = {
   endParam: String,
   timeZoneParam: String,
   timeZone: String,
-  locales: identity as Identity<RawLocale[]>,
+  locales: identity as Identity<LocaleInput[]>,
   locale: identity as Identity<LocaleSingularArg>,
   themeSystem: String as Identity<'standard' | string>,
   dragRevertDuration: Number,

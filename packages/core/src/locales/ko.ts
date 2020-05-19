@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "ko",
@@ -15,4 +15,4 @@ export default {
   allDayText: "종일",
   moreLinkText: "개",
   noEventsText: "일정이 없습니다"
-} as RawLocale
+} as LocaleInput

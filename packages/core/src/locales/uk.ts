@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "uk",
@@ -21,4 +21,4 @@ export default {
     return "+ще " + n + "...";
   },
   noEventsText: "Немає подій для відображення"
-} as RawLocale
+} as LocaleInput

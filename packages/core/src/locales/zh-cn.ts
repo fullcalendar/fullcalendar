@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "zh-cn",
@@ -22,4 +22,4 @@ export default {
     return "另外 " + n + " 个";
   },
   noEventsText: "没有事件显示"
-} as RawLocale
+} as LocaleInput

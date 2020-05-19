@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "de",
@@ -22,4 +22,4 @@ export default {
     return "+ weitere " + n;
   },
   noEventsText: "Keine Ereignisse anzuzeigen"
-} as RawLocale
+} as LocaleInput

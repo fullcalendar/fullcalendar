@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "ug",
@@ -9,4 +9,4 @@ export default {
     list: "كۈنتەرتىپ"
   },
   allDayText: "پۈتۈن كۈن"
-} as RawLocale
+} as LocaleInput

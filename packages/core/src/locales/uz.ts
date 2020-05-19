@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "uz",
@@ -13,4 +13,4 @@ export default {
     return "+ yana " + n;
   },
   noEventsText: "Ko'rsatish uchun voqealar yo'q"
-} as RawLocale
+} as LocaleInput

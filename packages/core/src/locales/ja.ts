@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "ja",
@@ -17,4 +17,4 @@ export default {
     return "他 " + n + " 件";
   },
   noEventsText: "表示する予定はありません"
-} as RawLocale
+} as LocaleInput

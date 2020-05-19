@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "lt",
@@ -19,4 +19,4 @@ export default {
   allDayText: "Visą dieną",
   moreLinkText: "daugiau",
   noEventsText: "Nėra įvykių rodyti"
-} as RawLocale
+} as LocaleInput

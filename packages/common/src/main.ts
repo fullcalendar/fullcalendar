@@ -124,7 +124,7 @@ export {
 } from './datelib/formatting-utils'
 export { NamedTimeZoneImpl } from './datelib/timezone'
 export { parse as parseMarker } from './datelib/parsing'
-export { RawLocale } from './datelib/locale'
+export { LocaleInput } from './datelib/locale'
 
 export { EventSourceDef } from './structs/event-source-def'
 export { EventSource, EventSourceHash } from './structs/event-source'

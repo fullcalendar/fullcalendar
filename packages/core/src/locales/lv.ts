@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "lv",
@@ -21,4 +21,4 @@ export default {
     return "+vēl " + n;
   },
   noEventsText: "Nav notikumu"
-} as RawLocale
+} as LocaleInput

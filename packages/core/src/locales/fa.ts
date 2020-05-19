@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "fa",
@@ -22,4 +22,4 @@ export default {
     return "بیش از " + n;
   },
   noEventsText: "هیچ رویدادی به نمایش"
-} as RawLocale
+} as LocaleInput

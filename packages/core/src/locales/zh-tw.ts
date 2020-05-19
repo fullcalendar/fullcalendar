@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "zh-tw",
@@ -15,4 +15,4 @@ export default {
   allDayText: "整天",
   moreLinkText: '顯示更多',
   noEventsText: "没有任何活動"
-} as RawLocale
+} as LocaleInput

@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "ka",
@@ -21,4 +21,4 @@ export default {
     return "+ კიდევ " + n;
   },
   noEventsText: "ღონისძიებები არ არის"
-} as RawLocale
+} as LocaleInput

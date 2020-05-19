@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "he",
@@ -16,4 +16,4 @@ export default {
   moreLinkText: "אחר",
   noEventsText: "אין אירועים להצגה",
   weekText: "שבוע"
-} as RawLocale
+} as LocaleInput

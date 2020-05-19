@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "ms",
@@ -21,4 +21,4 @@ export default {
     return "masih ada " + n + " acara";
   },
   noEventsText: "Tiada peristiwa untuk dipaparkan"
-} as RawLocale
+} as LocaleInput

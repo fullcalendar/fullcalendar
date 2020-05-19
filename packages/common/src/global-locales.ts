@@ -1,3 +1,3 @@
-import { RawLocale } from './datelib/locale'
+import { LocaleInput } from './datelib/locale'
 
-export const globalLocales: RawLocale[] = []
+export const globalLocales: LocaleInput[] = []

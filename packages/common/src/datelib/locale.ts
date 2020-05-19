@@ -4,7 +4,7 @@ import { __assign } from 'tslib'
 import { CalendarOptions, CalendarOptionsRefined } from '../options'
 
 export type LocaleCodeArg = string | string[]
-export type LocaleSingularArg = LocaleCodeArg | RawLocale
+export type LocaleSingularArg = LocaleCodeArg | LocaleInput
 
 export interface Locale {
   codeArg: LocaleCodeArg
@@ -14,14 +14,14 @@ export interface Locale {
   options: CalendarOptionsRefined
 }
 
-export interface RawLocale extends CalendarOptions {
+export interface LocaleInput extends CalendarOptions {
   code: string
 }
 
-export type RawLocaleMap = { [code: string]: RawLocale }
+export type LocaleInputMap = { [code: string]: LocaleInput }
 
 export interface RawLocaleInfo {
-  map: RawLocaleMap
+  map: LocaleInputMap
   defaultCode: string
 }
 
@@ -51,10 +51,10 @@ const RAW_EN_LOCALE = {
 }
 
 
-export function organizeRawLocales(explicitRawLocales: RawLocale[]): RawLocaleInfo {
+export function organizeRawLocales(explicitRawLocales: LocaleInput[]): RawLocaleInfo {
   let defaultCode = explicitRawLocales.length > 0 ? explicitRawLocales[0].code : 'en'
   let allRawLocales = globalLocales.concat(explicitRawLocales)
-  let rawLocaleMap: RawLocaleMap = {
+  let rawLocaleMap: LocaleInputMap = {
     en: RAW_EN_LOCALE // necessary?
   }
 
@@ -69,7 +69,7 @@ export function organizeRawLocales(explicitRawLocales: RawLocale[]): RawLocaleIn
 }
 
 
-export function buildLocale(inputSingular: LocaleSingularArg, available: RawLocaleMap) {
+export function buildLocale(inputSingular: LocaleSingularArg, available: LocaleInputMap) {
   if (typeof inputSingular === 'object' && !Array.isArray(inputSingular)) {
     return parseLocale(
       inputSingular.code,
@@ -82,7 +82,7 @@ export function buildLocale(inputSingular: LocaleSingularArg, available: RawLoca
 }
 
 
-function queryLocale(codeArg: LocaleCodeArg, available: RawLocaleMap): Locale {
+function queryLocale(codeArg: LocaleCodeArg, available: LocaleInputMap): Locale {
   let codes = [].concat(codeArg || []) // will convert to array
   let raw = queryRawLocale(codes, available) || RAW_EN_LOCALE
 
@@ -90,7 +90,7 @@ function queryLocale(codeArg: LocaleCodeArg, available: RawLocaleMap): Locale {
 }
 
 
-function queryRawLocale(codes: string[], available: RawLocaleMap): RawLocale {
+function queryRawLocale(codes: string[], available: LocaleInputMap): LocaleInput {
   for (let i = 0; i < codes.length; i++) {
     let parts = codes[i].toLocaleLowerCase().split('-')
 
@@ -106,7 +106,7 @@ function queryRawLocale(codes: string[], available: RawLocaleMap): RawLocale {
 }
 
 
-function parseLocale(codeArg: LocaleCodeArg, codes: string[], raw: RawLocale): Locale {
+function parseLocale(codeArg: LocaleCodeArg, codes: string[], raw: LocaleInput): Locale {
   let merged = mergeProps([ RAW_EN_LOCALE, raw ], [ 'buttonText' ])
 
   delete merged.code // don't want this part of the options

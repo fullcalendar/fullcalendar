@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "et",
@@ -21,4 +21,4 @@ export default {
     return "+ veel " + n;
   },
   noEventsText: "Kuvamiseks puuduvad sündmused"
-} as RawLocale
+} as LocaleInput

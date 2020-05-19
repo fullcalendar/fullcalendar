@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "kk",
@@ -21,4 +21,4 @@ export default {
     return "+ тағы " + n;
   },
   noEventsText: "Көрсету үшін оқиғалар жоқ"
-} as RawLocale
+} as LocaleInput

@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "hu",
@@ -19,4 +19,4 @@ export default {
   allDayText: "Egész nap",
   moreLinkText: "további",
   noEventsText: "Nincs megjeleníthető esemény"
-} as RawLocale
+} as LocaleInput

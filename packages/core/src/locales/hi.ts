@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "hi",
@@ -21,4 +21,4 @@ export default {
     return "+अधिक " + n;
   },
   noEventsText: "कोई घटनाओं को प्रदर्शित करने के लिए"
-} as RawLocale
+} as LocaleInput

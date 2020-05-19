@@ -1,4 +1,4 @@
-import { RawLocale } from '@fullcalendar/common'
+import { LocaleInput } from '@fullcalendar/common'
 
 export default {
   code: "ca",
@@ -19,4 +19,4 @@ export default {
   allDayText: "Tot el dia",
   moreLinkText: "més",
   noEventsText: "No hi ha esdeveniments per mostrar"
-} as RawLocale
+} as LocaleInput
