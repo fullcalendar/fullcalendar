@@ -36,18 +36,11 @@ export function computeFgSegPlacement( // for one row. TODO: print mode?
 
   segs = sortEventSegs(segs, eventOrderSpecs) as TableSeg[]
 
-  // TODO: try all seg placements and choose the topmost! dont quit after first
-  // SOLUTION: when placed, insert into colPlacements
   for (let seg of segs) {
     let { instanceId } = seg.eventRange.instance
     let eventHeight = eventHeights[instanceId]
 
-    placeSeg(seg, eventHeight || 0)
-  }
-
-  // sort. for dayMaxEvents and segTops computation
-  for (let placements of colPlacements) {
-    placements.sort(cmpPlacements) // sorts in-place
+    placeSeg(seg, eventHeight || 0) // will keep colPlacements sorted by top
   }
 
   if (dayMaxEvents === true || dayMaxEventRows === true) {
@@ -116,7 +109,15 @@ export function computeFgSegPlacement( // for one row. TODO: print mode?
   function tryPlaceSegAt(seg, segHeight, top) {
     if (canPlaceSegAt(seg, segHeight, top)) {
       for (let col = seg.firstCol; col <= seg.lastCol; col++) {
-        colPlacements[col].push({
+        let placements = colPlacements[col]
+        let insertionIndex = 0
+        while (
+          insertionIndex < placements.length &&
+          top > placements[insertionIndex].top
+        ) {
+          insertionIndex++
+        }
+        placements.splice(insertionIndex, 0, { // will keep it sorted by top
           seg,
           top,
           bottom: top + segHeight
@@ -179,11 +180,6 @@ function extractAllColSegs(oneColPlacements: TableSegPlacement[], col: number) {
   }
 
   return segs
-}
-
-
-function cmpPlacements(placement0, placement1) {
-  return placement0.top - placement1.top
 }
 
 
