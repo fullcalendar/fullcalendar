@@ -74,7 +74,13 @@ export class CalendarApi {
 
 
   on<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, handler: CalendarListeners[ListenerName]) {
-    this.currentDataManager!.emitter.on(handlerName, handler)
+    let { currentDataManager } = this
+
+    if (currentDataManager.currentCalendarOptionsRefiners[handlerName]) {
+      currentDataManager.emitter.on(handlerName, handler)
+    } else {
+      console.warn(`Unknown listener name '${handlerName}'`)
+    }
   }
 
 

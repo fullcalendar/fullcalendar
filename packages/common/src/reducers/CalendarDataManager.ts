@@ -84,6 +84,7 @@ export class CalendarDataManager {
   private currentCalendarOptionsRefined: CalendarOptionsRefined = ({} as any)
   private currentViewOptionsInput: ViewOptions = {}
   private currentViewOptionsRefined: ViewOptionsRefined = ({} as any)
+  public currentCalendarOptionsRefiners: any = {}
 
 
   constructor(props: CalendarDataManagerProps) {
@@ -388,7 +389,7 @@ export class CalendarDataManager {
     let availableRawLocales = availableLocaleData.map
     let localeDefaults = this.buildLocale(locale || availableLocaleData.defaultCode, availableRawLocales).options
     let pluginHooks = this.buildPluginHooks(optionOverrides.plugins || [], globalPlugins)
-    let refiners = {
+    let refiners = this.currentCalendarOptionsRefiners = {
       ...BASE_OPTION_REFINERS,
       ...CALENDAR_LISTENER_REFINERS,
       ...CALENDAR_OPTION_REFINERS,
@@ -430,7 +431,6 @@ export class CalendarDataManager {
     return {
       rawOptions: this.currentCalendarOptionsInput,
       refinedOptions: this.currentCalendarOptionsRefined,
-      refiners,
       pluginHooks,
       availableLocaleData,
       localeDefaults,
