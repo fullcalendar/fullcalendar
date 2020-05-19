@@ -85,7 +85,7 @@ export default class AgendaView extends View {
     this.scroller.render()
 
     timeGridWrapEl = this.scroller.el.addClass('fc-time-grid-container')
-    timeGridEl = $('<div class="fc-time-grid" />').appendTo(timeGridWrapEl)
+    timeGridEl = $('<div class="fc-time-grid">').appendTo(timeGridWrapEl)
 
     this.el.find('.fc-body > tr > td').append(timeGridWrapEl)
 

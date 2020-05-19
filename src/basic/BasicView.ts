@@ -82,7 +82,7 @@ export default class BasicView extends View {
     this.scroller.render()
 
     dayGridContainerEl = this.scroller.el.addClass('fc-day-grid-container')
-    dayGridEl = $('<div class="fc-day-grid" />').appendTo(dayGridContainerEl)
+    dayGridEl = $('<div class="fc-day-grid">').appendTo(dayGridContainerEl)
 
     this.el.find('.fc-body > tr > td').append(dayGridContainerEl)
 

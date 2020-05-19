@@ -811,7 +811,7 @@ export function htmlEscape(s) {
     .replace(/>/g, '&gt;')
     .replace(/'/g, '&#039;')
     .replace(/"/g, '&quot;')
-    .replace(/\n/g, '<br />')
+    .replace(/\n/g, '<br>')
 }
 
 

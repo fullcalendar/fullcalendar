@@ -514,7 +514,7 @@ export default class DayGrid extends InteractiveDateComponent {
         if (segsBelow.length) {
           td = cellMatrix[levelLimit - 1][col]
           moreLink = this.renderMoreLink(row, col, segsBelow)
-          moreWrap = $('<div/>').append(moreLink)
+          moreWrap = $('<div>').append(moreLink)
           td.append(moreWrap)
           moreNodes.push(moreWrap[0])
         }
@@ -551,14 +551,14 @@ export default class DayGrid extends InteractiveDateComponent {
 
           // make a replacement <td> for each column the segment occupies. will be one for each colspan
           for (j = 0; j < colSegsBelow.length; j++) {
-            moreTd = $('<td class="fc-more-cell"/>').attr('rowspan', rowspan)
+            moreTd = $('<td class="fc-more-cell">').attr('rowspan', rowspan)
             segsBelow = colSegsBelow[j]
             moreLink = this.renderMoreLink(
               row,
               seg.leftCol + j,
               [ seg ].concat(segsBelow) // count seg as hidden too
             )
-            moreWrap = $('<div/>').append(moreLink)
+            moreWrap = $('<div>').append(moreLink)
             moreTd.append(moreWrap)
             segMoreNodes.push(moreTd[0])
             moreNodes.push(moreTd[0])
@@ -598,7 +598,7 @@ export default class DayGrid extends InteractiveDateComponent {
   renderMoreLink(row, col, hiddenSegs) {
     let view = this.view
 
-    return $('<a class="fc-more"/>')
+    return $('<a class="fc-more">')
       .text(
         this.getMoreLinkText(hiddenSegs.length)
       )
