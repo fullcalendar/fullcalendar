@@ -222,7 +222,11 @@ describe('event coloring', function() {
       ? calendarWrapper.getBgEventEls()[0]
       : calendarWrapper.getEventEls()[0]
 
-    return $(eventEl).css(prop)
+    if (prop === 'color') {
+      return $(eventEl).find('.fc-event-title').css(prop)
+    } else {
+      return $(eventEl).css(prop)
+    }
   }
 
   function getTestEvent(defaultOptions, extraOptions) {
