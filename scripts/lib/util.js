@@ -14,6 +14,7 @@ exports.watchTask = watchTask
 exports.shellTask = shellTask
 exports.promisifyVinyl = promisifyVinyl
 exports.readFile = betterReadFile
+exports.readFileSync = betterReadFileSync
 exports.writeFile = betterWriteFile
 exports.writeFileSync = betterWriteFileSync
 exports.copyFile = betterCopyFile
@@ -63,6 +64,11 @@ function promisifyVinyl(vinyl) {
 
 function betterReadFile(destPath) {
   return readFile(destPath, { encoding: 'utf8' })
+}
+
+
+function betterReadFileSync(destPath) {
+  return fs.readFileSync(destPath, { encoding: 'utf8' })
 }
 
 
