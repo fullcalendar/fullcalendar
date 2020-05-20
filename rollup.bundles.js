@@ -2,7 +2,7 @@ const path = require('path')
 const nodeResolve = require('@rollup/plugin-node-resolve')
 const alias = require('@rollup/plugin-alias')
 const { checkNoSymlinks, buildBanner } = require('./scripts/lib/new')
-const { externalizeStylesheets, buildAliasMap } = require('./scripts/lib/new-rollup')
+const { externalizeStylesheets, buildAliasMap, injectReleaseDate } = require('./scripts/lib/new-rollup')
 
 
 /*
@@ -29,7 +29,8 @@ module.exports = bundleStructs.map((struct) => {
       alias({
         entries: buildAliasMap(publicPackageStructs)
       }),
-      nodeResolve()
+      nodeResolve(),
+      injectReleaseDate()
     ]
   }
 })

@@ -4,7 +4,8 @@ const dts = require('rollup-plugin-dts').default
 const sourceMapLoader = require('rollup-plugin-sourcemaps')
 const postcss = require('rollup-plugin-postcss')
 const { checkNoSymlinks, buildBanner } = require('./scripts/lib/new')
-const { externalizeStylesheets, externalizeNonRelative } = require('./scripts/lib/new-rollup')
+const { externalizeStylesheets, externalizeNonRelative, injectReleaseDate } = require('./scripts/lib/new-rollup')
+
 
 /*
 needs tsc to run first
@@ -36,6 +37,7 @@ module.exports = [
           extract: true
         }),
         transplantCss(struct.mainName),
+        injectReleaseDate()
       ]
     }
   }),

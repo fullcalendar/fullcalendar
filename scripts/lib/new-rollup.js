@@ -1,10 +1,12 @@
 const path = require('path')
+const replace = require('@rollup/plugin-replace')
 
 
 exports.externalizeStylesheets = externalizeStylesheets
 exports.externalizeNonRelative = externalizeNonRelative
 exports.externalizeRelative = externalizeRelative
 exports.buildAliasMap = buildAliasMap
+exports.injectReleaseDate = injectReleaseDate
 
 
 function externalizeStylesheets() {
@@ -49,4 +51,14 @@ function externalizeRelative() {
       }
     }
   }
+}
+
+
+function injectReleaseDate() {
+  return replace({
+    delimiters: [ '<%= ', ' %>' ],
+    values: {
+      releaseDate: new Date().toISOString().replace(/T.*/, '') // just YYYY-MM-DD
+    }
+  })
 }
