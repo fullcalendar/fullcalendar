@@ -29,10 +29,10 @@ module.exports = function(config) {
       'tmp/tests/*all*.js'
     ],
 
-    // // make console errors aware of source files
-    // preprocessors: {
-    //   'tmp/tests-compiled/*.+(js|css)': [ 'sourcemap' ]
-    // },
+    // make console errors aware of source files
+    preprocessors: {
+      'tmp/tests/*.js': [ 'sourcemap' ]
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage', 'verbose'
