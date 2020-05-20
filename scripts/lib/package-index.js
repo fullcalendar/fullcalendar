@@ -28,6 +28,7 @@ function buildStruct(configPath) {
   return {
     name: config.name,
     dir,
+    isPremium: dir.match('packages-premium'), // TODO: better
     mainName,
     mainDistJs,
     mainDistDts,

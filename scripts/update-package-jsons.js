@@ -20,6 +20,7 @@ const PROPS_TO_COPY = [
 exec([ path.join(__dirname, 'require-clean-working-tree.sh') ])
 
 let mainConfig = require('../package.json')
+let premiumConfig = require('../packages-premium/package.json')
 let configPaths = []
 
 for (let struct of publicPackageStructs) {
@@ -27,7 +28,13 @@ for (let struct of publicPackageStructs) {
   let config = require(configPath)
 
   for (let propName of PROPS_TO_COPY) {
-    config[propName] = mainConfig[propName]
+    if (propName in mainConfig) {
+      config[propName] = mainConfig[propName]
+    }
+
+    if (struct.isPremium && (propName in premiumConfig)) {
+      config[propName] = premiumConfig[propName]
+    }
   }
 
   writeFileSync(configPath, JSON.stringify(config, null, '  ') + '\n')
