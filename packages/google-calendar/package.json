@@ -14,5 +14,19 @@
     "@fullcalendar/common": "5.0.0-beta.2"
   },
   "module": "main.js",
-  "types": "main.d.ts"
+  "types": "main.d.ts",
+  "homepage": "https://fullcalendar.io/",
+  "bugs": "https://fullcalendar.io/reporting-bugs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fullcalendar/fullcalendar.git",
+    "homepage": "https://github.com/fullcalendar/fullcalendar"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Adam Shaw",
+    "email": "arshaw@arshaw.com",
+    "url": "http://arshaw.com/"
+  },
+  "copyright": "2019 Adam Shaw"
 }
