@@ -5,14 +5,13 @@
   "description": "A connector to the Luxon date library",
   "docs": "https://fullcalendar.io/docs/luxon-plugin",
   "dependencies": {
+    "@fullcalendar/common": "5.0.0-beta.3",
     "tslib": "^1.9.3"
   },
   "peerDependencies": {
-    "@fullcalendar/common": "5.0.0-beta.3",
     "luxon": "^1.12.1"
   },
   "devDependencies": {
-    "@fullcalendar/common": "5.0.0-beta.3",
     "luxon": "^1.12.1"
   },
   "module": "main.js",
