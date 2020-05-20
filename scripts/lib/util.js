@@ -75,7 +75,7 @@ function betterWriteFile(destPath, content) {
 
 function betterWriteFileSync(destPath, content) {
   mkdirp.sync(path.dirname(destPath))
-  writeFile(destPath, content, { encoding: 'utf8' })
+  return fs.writeFileSync(destPath, content, { encoding: 'utf8' })
 }
 
 
