@@ -1,18 +1,18 @@
 {
   "name": "@fullcalendar/timegrid",
-  "version": "5.0.0-beta.2",
+  "version": "5.0.0-beta.3",
   "title": "FullCalendar Time Grid Plugin",
   "description": "Display your events on a grid of time slots",
   "docs": "https://fullcalendar.io/docs/timegrid-view",
   "dependencies": {
     "tslib": "^1.9.3",
-    "@fullcalendar/daygrid": "5.0.0-beta.2"
+    "@fullcalendar/daygrid": "5.0.0-beta.3"
   },
   "peerDependencies": {
-    "@fullcalendar/common": "5.0.0-beta.2"
+    "@fullcalendar/common": "5.0.0-beta.3"
   },
   "devDependencies": {
-    "@fullcalendar/common": "5.0.0-beta.2"
+    "@fullcalendar/common": "5.0.0-beta.3"
   },
   "module": "main.js",
   "types": "main.d.ts",
