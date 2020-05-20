@@ -1,4 +1,32 @@
 
+v5.0.0-beta.3 (2020-05-20)
+--------------------------
+
+Changes since beta.2:
+- features:
+  - the `@fullcalendar/react` plugin now uses React's real virtual DOM engine
+  - typescript definitions for every part of the API. baked in, so won't fall out of date.
+  - console warnings when given unknown options/props/listeners
+- minor API changes:
+  - `windowResize` and `datesDidUpdate` now receive an arg with a ViewApi object
+  - `eventSourceSuccess`, `eventSourceFailure`, and `moreLinkClick` can't be attached using .on()
+- distribution:
+  - working sourcemaps in all packages (#4719)
+  - the `fullcalendar` and `fullcalendar-scheduler` bundles
+    - are published as browser-globals only. no longer published as UMDs
+    - now include the Google Calendar connector in their main files
+    - don't provide copies of the other non-bundled plugins anymore (like rrule, moment, moment-timezone)
+    - both receive locale/locale-all entrypoints that will be automatically connected when loaded
+- fixes:
+  - Week numbers are not clickable as navLinks (#5427)
+  - Events of different heights in the same resource can be positioned incorrectly (#5413)
+  - Events displayed on wrong date when pushed down by previous events that span multiple days (#5408)
+  - `textColor` setting in Event Object not working anymore (#5355)
+  - `resourceAreaWidth` is not updated when changed with setOption (#5368)
+  - JS error when printing timeline view with expandRows (#5399)
+  - fixed Scheduler license keys not working with `fullcalendar-scheduler` bundle
+
+
 v5.0.0-beta.2 (2020-04-14)
 --------------------------
 
