@@ -7,6 +7,7 @@ exports.externalizeNonRelative = externalizeNonRelative
 exports.externalizeRelative = externalizeRelative
 exports.buildAliasMap = buildAliasMap
 exports.injectReleaseDate = injectReleaseDate
+exports.removeStylesheetImports = removeStylesheetImports
 
 
 function externalizeStylesheets() {
@@ -14,6 +15,17 @@ function externalizeStylesheets() {
     resolveId(id) {
       if (id.match(/\.(css|scss|sass)$/)) {
         return { id, external: true }
+      }
+    }
+  }
+}
+
+
+function removeStylesheetImports() {
+  return {
+    resolveId(id) {
+      if (id.match(/\.(css|scss|sass)$/)) { // TODO: more DRY
+        return { id: '', external: true }
       }
     }
   }
