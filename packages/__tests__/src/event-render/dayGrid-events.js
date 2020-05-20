@@ -1,5 +1,5 @@
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { rectsIntersect } from '../lib/geom'
+import { anyElsIntersect } from '../lib/dom-geom'
 
 
 describe('dayGrid advanced event rendering', function() {
@@ -20,19 +20,8 @@ describe('dayGrid advanced event rendering', function() {
 
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     let eventEls = dayGridWrapper.getEventEls()
-    let rects = eventEls.map((el) => el.getBoundingClientRect())
-    let intersects = false
 
-    for (let i = 0; i < rects.length; i++) {
-      for (let j = i + 1; j < rects.length; j++) {
-        if (rectsIntersect(rects[i], rects[j])) {
-          console.log('rect intersection', eventEls[i], eventEls[j])
-          intersects = true
-        }
-      }
-    }
-
-    expect(intersects).toBe(false)
+    expect(anyElsIntersect(eventEls)).toBe(false)
   })
 
   it('does not render multi-day event as list-item', function() {

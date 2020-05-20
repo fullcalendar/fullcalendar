@@ -1,6 +1,6 @@
 import {
   isRect, isRectMostlyAbove, isRectMostlyLeft, isRectMostlyBounded,
-  isRectMostlyHBounded, isRectMostlyVBounded
+  isRectMostlyHBounded, isRectMostlyVBounded, rectsIntersect
 } from './geom'
 
 
@@ -30,6 +30,21 @@ export function getBoundingRect(el) {
   return $.extend({}, el[0].getBoundingClientRect(), {
     node: el // very useful for debugging
   })
+}
+
+
+export function anyElsIntersect(els) {
+  let rects = els.map((el) => el.getBoundingClientRect())
+
+  for (let i = 0; i < rects.length; i++) {
+    for (let j = i + 1; j < rects.length; j++) {
+      if (rectsIntersect(rects[i], rects[j])) {
+        return [ els[i], els[j] ]
+      }
+    }
+  }
+
+  return false
 }
 
 
