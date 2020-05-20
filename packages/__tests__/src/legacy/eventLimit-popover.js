@@ -33,15 +33,17 @@ describe('more-link popover', function() { // TODO: rename file
       let calendar = initCalendar({
         direction: 'ltr'
       })
-      let dayGridWrapper = new ViewWrapper(calendar).dayGrid
-
-      dayGridWrapper.openMorePopover()
       setTimeout(function() {
-        let cellLeft = dayGridWrapper.getDayEl('2014-07-29').getBoundingClientRect().left
-        let popoverLeft = dayGridWrapper.getMorePopoverEl().getBoundingClientRect().left
-        let diff = Math.abs(cellLeft - popoverLeft)
-        expect(diff).toBeLessThan(2)
-        done()
+        let dayGridWrapper = new ViewWrapper(calendar).dayGrid
+
+        dayGridWrapper.openMorePopover()
+        setTimeout(function() {
+          let cellLeft = dayGridWrapper.getDayEl('2014-07-29').getBoundingClientRect().left
+          let popoverLeft = dayGridWrapper.getMorePopoverEl().getBoundingClientRect().left
+          let diff = Math.abs(cellLeft - popoverLeft)
+          expect(diff).toBeLessThan(2)
+          done()
+        })
       })
     })
 
@@ -49,15 +51,17 @@ describe('more-link popover', function() { // TODO: rename file
       let calendar = initCalendar({
         direction: 'rtl'
       })
-      let dayGridWrapper = new ViewWrapper(calendar).dayGrid
-
-      dayGridWrapper.openMorePopover()
       setTimeout(function() {
-        let cellRight = dayGridWrapper.getDayEl('2014-07-29').getBoundingClientRect().right
-        let popoverRight = dayGridWrapper.getMorePopoverEl().getBoundingClientRect().right
-        let diff = Math.abs(cellRight - popoverRight)
-        expect(diff).toBeLessThan(2)
-        done()
+        let dayGridWrapper = new ViewWrapper(calendar).dayGrid
+
+        dayGridWrapper.openMorePopover()
+        setTimeout(function() {
+          let cellRight = dayGridWrapper.getDayEl('2014-07-29').getBoundingClientRect().right
+          let popoverRight = dayGridWrapper.getMorePopoverEl().getBoundingClientRect().right
+          let diff = Math.abs(cellRight - popoverRight)
+          expect(diff).toBeLessThan(2)
+          done()
+        })
       })
     })
   })
@@ -70,15 +74,17 @@ describe('more-link popover', function() { // TODO: rename file
 
     it('aligns with top of cell', function(done) {
       let calendar = initCalendar()
-      let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
-
-      dayGridWrapper.openMorePopover()
       setTimeout(function() {
-        let cellTop = dayGridWrapper.getDayEl('2014-07-29').getBoundingClientRect().top
-        let popoverTop = dayGridWrapper.getMorePopoverEl().getBoundingClientRect().top
-        let diff = Math.abs(cellTop - popoverTop)
-        expect(diff).toBeLessThan(2)
-        done()
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+        dayGridWrapper.openMorePopover()
+        setTimeout(function() {
+          let cellTop = dayGridWrapper.getDayEl('2014-07-29').getBoundingClientRect().top
+          let popoverTop = dayGridWrapper.getMorePopoverEl().getBoundingClientRect().top
+          let diff = Math.abs(cellTop - popoverTop)
+          expect(diff).toBeLessThan(2)
+          done()
+        })
       })
     })
 
@@ -91,13 +97,15 @@ describe('more-link popover', function() { // TODO: rename file
           }
         ])
       })
-      let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
-
-      dayGridWrapper.openMorePopover()
       setTimeout(function() {
-        expect(dayGridWrapper.getMorePopoverEventCnt()).toBeGreaterThan(1)
-        expect(dayGridWrapper.getMorePopoverBgEventCnt()).toBe(0)
-        done()
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+        dayGridWrapper.openMorePopover()
+        setTimeout(function() {
+          expect(dayGridWrapper.getMorePopoverEventCnt()).toBeGreaterThan(1)
+          expect(dayGridWrapper.getMorePopoverBgEventCnt()).toBe(0)
+          done()
+        })
       })
     })
 
@@ -110,12 +118,14 @@ describe('more-link popover', function() { // TODO: rename file
           { title: 'event4', start: '2014-07-29T00:00:00', end: '2014-07-28T23:00:00' }
         ]
       })
-      let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
-
-      dayGridWrapper.openMorePopover()
       setTimeout(function() {
-        expect(dayGridWrapper.getMorePopoverEventCnt()).toBe(4)
-        done()
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+        dayGridWrapper.openMorePopover()
+        setTimeout(function() {
+          expect(dayGridWrapper.getMorePopoverEventCnt()).toBe(4)
+          done()
+        })
       })
     })
 
@@ -176,15 +186,17 @@ describe('more-link popover', function() { // TODO: rename file
           }
         ]
       })
-      let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
-
-      dayGridWrapper.openMorePopover()
       setTimeout(function() {
-        let titles = dayGridWrapper.getMorePopoverEventTitles()
-        expect(titles).toEqual([
-          'event01', 'event05', 'event07', 'event03', 'event02', 'event08', 'event04'
-        ])
-        done()
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+        dayGridWrapper.openMorePopover()
+        setTimeout(function() {
+          let titles = dayGridWrapper.getMorePopoverEventTitles()
+          expect(titles).toEqual([
+            'event01', 'event05', 'event07', 'event03', 'event02', 'event08', 'event04'
+          ])
+          done()
+        })
       })
     })
 
