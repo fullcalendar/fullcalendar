@@ -1,6 +1,9 @@
 {
   "name": "@fullcalendar/core",
   "version": "5.0.0-beta.2",
+  "title": "FullCalendar Core Package",
+  "description": "Provides core functionality, including the Calendar class",
+  "docs": "https://fullcalendar.io/docs/initialize-es6",
   "dependencies": {
     "preact": "^10.0.5",
     "tslib": "^1.9.3"
