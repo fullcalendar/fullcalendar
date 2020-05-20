@@ -21,7 +21,6 @@ for (let struct of publicPackageStructs) {
   let text = template(config)
 
   writeFileSync(readmePath, text)
-  console.log(text)
   readmePaths.push(readmePath)
 }
 
