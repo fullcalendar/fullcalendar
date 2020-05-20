@@ -19,7 +19,7 @@ module.exports = bundleStructs.map((struct) => {
   return {
     input: path.join(struct.dir, struct.mainTscJs),
     output: {
-      format: 'umd',
+      format: 'iife',
       name: 'FullCalendar',
       file: path.join(struct.dir, struct.mainDistJs),
       banner: buildBanner()
