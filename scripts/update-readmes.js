@@ -2,7 +2,7 @@
 
 const path = require('path')
 const { readFileSync, writeFileSync } = require('./lib/util')
-const { publicPackageStructs } = require('./lib/package-index')
+const { publicPackageStructs, bundleStructs } = require('./lib/package-index')
 const exec = require('./lib/shell').sync.withOptions({
   exitOnError: true,
   live: true
@@ -13,8 +13,9 @@ exec([ path.join(__dirname, 'require-clean-working-tree.sh') ])
 const handlebars = require('handlebars')
 let template = handlebars.compile(readFileSync(path.join(__dirname, '../packages/README.md.tpl')))
 let readmePaths = []
+let subjectStructs = publicPackageStructs.concat(bundleStructs)
 
-for (let struct of publicPackageStructs) {
+for (let struct of subjectStructs) {
   let readmePath = path.join(__dirname, '..', struct.dir, 'README.md')
   let configPath = path.join(__dirname, '..', struct.dir, 'package.json')
   let config = require(configPath)

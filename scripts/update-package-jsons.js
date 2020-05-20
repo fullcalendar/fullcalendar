@@ -2,7 +2,7 @@
 
 const path = require('path')
 const { writeFileSync } = require('./lib/util')
-const { publicPackageStructs } = require('./lib/package-index')
+const { publicPackageStructs, bundleStructs } = require('./lib/package-index')
 const exec = require('./lib/shell').sync.withOptions({
   exitOnError: true,
   live: true
@@ -22,8 +22,9 @@ exec([ path.join(__dirname, 'require-clean-working-tree.sh') ])
 let mainConfig = require('../package.json')
 let premiumConfig = require('../packages-premium/package.json')
 let configPaths = []
+let subjectStructs = publicPackageStructs.concat(bundleStructs)
 
-for (let struct of publicPackageStructs) {
+for (let struct of subjectStructs) {
   let configPath = path.join(__dirname, '..', struct.dir, 'package.json')
   let config = require(configPath)
 
