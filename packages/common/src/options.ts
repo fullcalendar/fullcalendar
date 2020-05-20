@@ -275,7 +275,7 @@ export type BaseOptionsRefined = DefaultedRefinedOptions<
 // ------------------
 
 export const CALENDAR_LISTENER_REFINERS = {
-  datesDidUpdate: identity as Identity<() => void>,
+  datesDidUpdate: identity as Identity<(arg: { view: ViewApi }) => void>,
   windowResize: identity as Identity<(arg: { view: ViewApi }) => void>,
   eventClick: identity as Identity<(arg: EventClickArg) => void>, // TODO: resource for scheduler????
   eventMouseEnter: identity as Identity<(arg: EventHoveringArg) => void>,

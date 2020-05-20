@@ -141,13 +141,15 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
 
     window.addEventListener('resize', this.handleWindowResize)
 
-    this.props.emitter.trigger('datesDidUpdate')
+    this.props.emitter.trigger('datesDidUpdate', { view: props.viewApi })
   }
 
 
   componentDidUpdate(prevProps: CalendarContentProps) {
-    if (prevProps.dateProfile !== this.props.dateProfile) {
-      this.props.emitter.trigger('datesDidUpdate')
+    let { props } = this
+
+    if (prevProps.dateProfile !== props.dateProfile) {
+      props.emitter.trigger('datesDidUpdate', { view: props.viewApi })
     }
   }
 
