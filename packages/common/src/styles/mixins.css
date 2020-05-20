@@ -9,7 +9,7 @@
 }
 
 @mixin event-resizer-dot {
-  border-radius: $event-resizer-dot-total-width / 2;
+  border-radius: calc($event-resizer-dot-total-width / 2);
   border-width: $event-resizer-dot-border-width;
   width: $event-resizer-dot-total-width;
   height: $event-resizer-dot-total-width;
