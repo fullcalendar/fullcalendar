@@ -285,8 +285,9 @@ export const CALENDAR_LISTENER_REFINERS = {
   loading: identity as Identity<(isLoading: boolean) => void>,
 
   // internal
-  _destroy: identity as Identity<() => void>,
-  _init: identity as Identity<() => void>,
+  _unmount: identity as Identity<() => void>,
+  _beforeprint: identity as Identity<() => void>,
+  _afterprint: identity as Identity<() => void>,
   _noEventDrop: identity as Identity<() => void>,
   _noEventResize: identity as Identity<() => void>,
   _resize: identity as Identity<(forced: boolean) => void>,

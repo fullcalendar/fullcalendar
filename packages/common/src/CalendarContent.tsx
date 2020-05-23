@@ -105,6 +105,7 @@ export class CalendarContent extends Component<CalendarContentProps> {
           height={viewHeight}
           aspectRatio={viewAspectRatio}
           onClick={this.handleNavLinkClick}
+          forPrint={props.forPrint}
         >
           {this.renderView(props)}
           {this.buildAppendContent()}
@@ -151,6 +152,8 @@ export class CalendarContent extends Component<CalendarContentProps> {
     for (let interaction of this.calendarInteractions) {
       interaction.destroy()
     }
+
+    this.props.emitter.trigger('_unmount')
   }
 
 
@@ -192,7 +195,7 @@ export class CalendarContent extends Component<CalendarContentProps> {
 
 
   renderView(props: CalendarContentProps) {
-    let { pluginHooks, options } = props
+    let { pluginHooks } = props
     let { viewSpec } = props
 
     let viewProps: ViewProps = {
@@ -213,7 +216,7 @@ export class CalendarContent extends Component<CalendarContentProps> {
     for (let transformer of transformers) {
       __assign(
         viewProps,
-        transformer.transform(viewProps, viewSpec, props, options)
+        transformer.transform(viewProps, props)
       )
     }
 

@@ -18,6 +18,7 @@ declare global {
     export import Fragment = preact.Fragment
     export import createContext = preact.createContext
     export type VUIEvent = UIEvent
+    export function flushToDom(): void
   }
 }
 
@@ -27,7 +28,8 @@ window.FullCalendarVDom = {
   render: preact.render,
   createRef: preact.createRef,
   Fragment: preact.Fragment,
-  createContext // custom implementation
+  createContext, // custom implementation
+  flushToDom
 }
 
 
@@ -36,7 +38,7 @@ window.FullCalendarVDom = {
 // TODO: link gh issues
 
 
-export function flushToDom() {
+function flushToDom() {
   let oldDebounceRendering = preact.options.debounceRendering // orig
   let callbackQ = []
 

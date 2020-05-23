@@ -3,7 +3,6 @@ import { EventDefMemberAdder } from './structs/event-parse'
 import { eventDefMutationApplier } from './structs/event-mutation'
 import { DatePointTransform, DateSpanTransform, CalendarInteractionClass, OptionChangeHandlerMap } from './calendar-utils'
 import { ViewConfigInputHash } from './structs/view-config'
-import { ViewSpec } from './structs/view-spec'
 import { ViewProps } from './View'
 import { CalendarContentProps } from './CalendarContent'
 import { CalendarContext } from './CalendarContext'
@@ -23,12 +22,14 @@ import { ComponentChildren } from './vdom'
 import { ScrollGridImpl } from './scrollgrid/ScrollGridImpl'
 import { ContentTypeHandlers } from './common/render-hook'
 import { GenericRefiners, GenericListenerRefiners } from './options'
+import { CalendarApi } from './CalendarApi'
 
 // TODO: easier way to add new hooks? need to update a million things
 
 export interface PluginDefInput {
   deps?: PluginDef[]
   reducers?: ReducerFunc[]
+  calendarApiInit?: (calendarApi: CalendarApi) => void
   eventRefiners?: GenericRefiners // why not an array like others?
   eventDefMemberAdders?: EventDefMemberAdder[]
   eventSourceRefiners?: GenericRefiners
@@ -63,6 +64,7 @@ export interface PluginDefInput {
 
 export interface PluginHooks {
   reducers: ReducerFunc[]
+  calendarApiInit: ((calendarApi: CalendarApi) => void)[]
   eventRefiners: GenericRefiners
   eventDefMemberAdders: EventDefMemberAdder[]
   eventSourceRefiners: GenericRefiners
@@ -103,7 +105,7 @@ export interface PluginDef extends PluginHooks {
 export type ViewPropsTransformerClass = new() => ViewPropsTransformer
 
 export interface ViewPropsTransformer {
-  transform(viewProps: ViewProps, viewSpec: ViewSpec, calendarProps: CalendarContentProps, allOptions: any): any
+  transform(viewProps: ViewProps, calendarProps: CalendarContentProps): any
 }
 
 export type ViewContainerAppend = (context: CalendarContext) => ComponentChildren

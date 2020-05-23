@@ -2,10 +2,6 @@
 .fc {
   font-size: 1em;
 
-  // layout of immediate children
-  display: flex;
-  flex-direction: column;
-
   &,
   *,
   *:before,
@@ -37,6 +33,12 @@
     text-decoration: underline;
   }
 
+}
+
+.fc.fc-media-screen { // don't do in print. FF doesn't know how to flow
+  // layout of immediate children
+  display: flex;
+  flex-direction: column;
 }
 
 .fc-direction-ltr {

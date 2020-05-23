@@ -112,6 +112,11 @@ export class CalendarDataManager {
     this.emitter.setThisContext(props.calendarApi)
     this.emitter.setOptions(currentViewData.options)
 
+    // needs to be after setThisContext
+    for (let callback of optionsData.pluginHooks.calendarApiInit) {
+      callback(props.calendarApi)
+    }
+
     let currentDate = getInitialDate(optionsData.calendarOptions, optionsData.dateEnv)
     let dateProfile = currentViewData.dateProfileGenerator.build(currentDate)
 

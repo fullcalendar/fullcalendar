@@ -2,9 +2,8 @@ import { __assign } from 'tslib'
 import {
   CalendarOptions, Action, CalendarContent, render, createElement, DelayedRunner, CssDimValue, applyStyleProp,
   CalendarApi, CalendarRoot, isArraysEqual, CalendarDataManager, CalendarData,
-  CustomContentRenderContext
+  CustomContentRenderContext, flushToDom
  } from '@fullcalendar/common'
-import { flushToDom } from './vdom'
 
 
 export class Calendar extends CalendarApi {
@@ -32,8 +31,6 @@ export class Calendar extends CalendarApi {
       onAction: this.handleAction,
       onData: this.handleData
     })
-
-    this.trigger('_init')
   }
 
 
@@ -60,7 +57,7 @@ export class Calendar extends CalendarApi {
       let { currentData } = this
 
       render(
-        <CalendarRoot options={currentData.calendarOptions} theme={currentData.theme}>
+        <CalendarRoot options={currentData.calendarOptions} theme={currentData.theme} emitter={currentData.emitter}>
           {(classNames, height, isHeightAuto, forPrint) => {
             this.setClassNames(classNames)
             this.setHeight(height)
@@ -104,7 +101,6 @@ export class Calendar extends CalendarApi {
     if (this.isRendering) {
       this.isRendering = false
       this.renderRunner.request()
-      this.trigger('_destroy')
     }
   }
 

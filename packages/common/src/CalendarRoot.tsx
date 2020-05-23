@@ -1,14 +1,16 @@
-import { ComponentChildren } from './vdom'
+import { ComponentChildren, flushToDom } from './vdom'
 import { BaseComponent } from './vdom-util'
 import { CssDimValue } from './scrollgrid/util'
-import { CalendarOptions } from './options'
+import { CalendarOptions, CalendarListeners } from './options'
 import { Theme } from './theme/Theme'
 import { getCanVGrowWithinCell } from './util/table-styling'
+import { Emitter } from './common/Emitter'
 
 
 export interface CalendarRootProps {
   options: CalendarOptions
   theme: Theme
+  emitter: Emitter<CalendarListeners>
   children: (classNames: string[], height: CssDimValue, isHeightAuto: boolean, forPrint: boolean) => ComponentChildren
 }
 
@@ -48,19 +50,32 @@ export class CalendarRoot extends BaseComponent<CalendarRootProps, CalendarRootS
 
 
   componentDidMount() {
-    window.addEventListener('beforeprint', this.handleBeforePrint)
-    window.addEventListener('afterprint', this.handleAfterPrint)
+    let { emitter } = this.props
+    emitter.on('_beforeprint', this.handleBeforePrint)
+    emitter.on('_afterprint', this.handleAfterPrint)
+
+    // // for testing
+    // document.addEventListener('keypress', (ev) => {
+    //   if (ev.key === 'p') {
+    //     window.removeEventListener('afterprint', this.handleAfterPrint)
+    //     this.setState({
+    //       forPrint: !this.state.forPrint
+    //     })
+    //   }
+    // })
   }
 
 
   componentWillUnmount() {
-    window.removeEventListener('beforeprint', this.handleBeforePrint)
-    window.removeEventListener('afterprint', this.handleAfterPrint)
+    let { emitter } = this.props
+    emitter.off('_beforeprint', this.handleBeforePrint)
+    emitter.off('_afterprint', this.handleAfterPrint)
   }
 
 
   handleBeforePrint = () => {
     this.setState({ forPrint: true })
+    flushToDom()
   }
 
 

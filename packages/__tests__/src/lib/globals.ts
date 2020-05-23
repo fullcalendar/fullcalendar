@@ -1,4 +1,4 @@
-import { Calendar, CalendarOptions } from '@fullcalendar/core'
+import { Calendar, CalendarOptions, createPlugin } from '@fullcalendar/core'
 import { __assign } from 'tslib'
 import { parseLocalDate, parseUtcDate } from './date-parsing'
 
@@ -69,9 +69,13 @@ function initCalendar(moreOptions?: CalendarOptions, el?) {
   /** @type {any} */
   var newCalendar = null
 
-  options._init = function() {
-    newCalendar = window.currentCalendar = this
-  }
+  options.plugins = options.plugins.concat([
+    createPlugin({
+      calendarApiInit(calendarApi) {
+        newCalendar = window.currentCalendar = calendarApi as Calendar
+      }
+    })
+  ])
 
   var cool = new Calendar($el[0], options)
 

@@ -10,6 +10,7 @@ export interface ViewContainerProps {
   onClick?: (ev: VUIEvent) => void
   elRef?: Ref<HTMLDivElement>
   children?: ComponentChildren
+  forPrint: boolean
 }
 
 
@@ -22,14 +23,14 @@ export class ViewContainer extends BaseComponent<ViewContainerProps> {
 
     let classNames = [
       'fc-view-harness',
-      (aspectRatio || props.liquid || props.height)
+      ((aspectRatio || props.liquid || props.height) && !props.forPrint)
         ? 'fc-view-harness-active' // harness controls the height
         : 'fc-view-harness-passive' // let the view do the height
     ]
     let height: CssDimValue = ''
     let paddingBottom: CssDimValue = ''
 
-    if (aspectRatio) {
+    if (aspectRatio && !props.forPrint) {
       paddingBottom = (1 / aspectRatio) * 100 + '%'
     } else {
       height = props.height || ''
