@@ -15,6 +15,7 @@ export interface StandardEventProps extends MinimalEventProps {
   disableDragging?: boolean // default false
   disableResizing?: boolean // default false
   defaultContent?: (hookProps: EventMeta) => ComponentChildren // not used by anyone yet
+  forPrint?: boolean
 }
 
 
@@ -25,7 +26,13 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
     let { props, context } = this
     let { seg } = props
     let timeFormat = context.options.eventTimeFormat || props.defaultTimeFormat
-    let timeText = buildSegTimeText(seg, timeFormat, context, props.defaultDisplayEventTime, props.defaultDisplayEventEnd)
+    let timeText = buildSegTimeText(
+      seg,
+      timeFormat,
+      context,
+      props.forPrint ? true : props.defaultDisplayEventTime,
+      props.forPrint ? true : props.defaultDisplayEventEnd
+    )
 
     return (
       <EventRoot

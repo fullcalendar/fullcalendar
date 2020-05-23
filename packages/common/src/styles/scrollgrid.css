@@ -33,12 +33,16 @@
 // dedup top/bottom borders
 // rows own their top border for the most part
 .fc-scrollgrid tr:not(.fc-scrollgrid-section-header) > * { // but header still owns its bottom border
-  border-bottom: 0;
+  border-bottom-width: 0;
 }
 .fc-scrollgrid tr:first-child > *,
 .fc-scrollgrid-section-header + .fc-scrollgrid-section > *, // the section right after the header
 .fc .fc-scrollgrid-section-footer > * { // the foot, because it's usually just scrollbars
-  border-top: 0;
+  border-top-width: 0;
+}
+
+.fc-media-print .fc-scrollgrid thead tr:last-child > * { // hack
+  border-bottom-width: 1px;
 }
 
 
