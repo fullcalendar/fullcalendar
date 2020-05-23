@@ -54,6 +54,7 @@ export class DayTableView extends TableView {
         headerAlignElRef={this.headerElRef}
         clientWidth={contentArg.clientWidth}
         clientHeight={contentArg.clientHeight}
+        forPrint={props.forPrint}
       />
     )
 

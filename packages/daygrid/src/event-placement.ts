@@ -1,5 +1,14 @@
+import {
+  sortEventSegs,
+  OrderSpec,
+  EventApi,
+  EventRenderRange,
+  addDays,
+  intersectRanges,
+  DateMarker
+} from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
-import { sortEventSegs, OrderSpec, EventApi } from '@fullcalendar/common'
+import { TableCellModel } from './TableCell'
 
 
 interface TableSegPlacement {
@@ -10,10 +19,12 @@ interface TableSegPlacement {
 
 
 export function computeFgSegPlacement( // for one row. TODO: print mode?
+  forPrint: boolean,
+  cellModels: TableCellModel[],
   segs: TableSeg[],
   dayMaxEvents: boolean | number,
   dayMaxEventRows: boolean | number,
-  eventHeights: { [instanceId: string]: number },
+  eventHeights: { [instanceIdAndFirstCol: string]: number },
   maxContentHeight: number | null,
   colCnt: number,
   eventOrderSpecs: OrderSpec<EventApi>[]
@@ -25,32 +36,34 @@ export function computeFgSegPlacement( // for one row. TODO: print mode?
   let segMarginTops: { [instanceId: string]: number } = {} // simetimes populated for each seg
   let moreTops: { [col: string]: number } = {}
   let paddingBottoms: { [col: string]: number } = {} // for each cell's inner-wrapper div
-  let segsByFirstCol: TableSeg[][]
-  let finalSegsByCol: TableSeg[][] = [] // has each seg represented in each col. only if ready to do positioning
 
   for (let i = 0; i < colCnt; i++) {
     colPlacements.push([])
     moreCnts.push(0)
-    finalSegsByCol.push([])
   }
 
   segs = sortEventSegs(segs, eventOrderSpecs) as TableSeg[]
 
   for (let seg of segs) {
     let { instanceId } = seg.eventRange.instance
-    let eventHeight = eventHeights[instanceId]
+    let eventHeight = eventHeights[instanceId + ':' + seg.firstCol]
 
     placeSeg(seg, eventHeight || 0) // will keep colPlacements sorted by top
   }
 
-  if (dayMaxEvents === true || dayMaxEventRows === true) {
-    limitByMaxHeight(moreCnts, segIsHidden, colPlacements, maxContentHeight) // populates moreCnts/segIsHidden
+  if (!forPrint) {
+    // NOTE: if we ever allow event-limit for print-mode, we'll need to rearchitect the TableSeg struct and this function,
+    // because results are hashed by instanceId, and there will be multiple instanceIds per row. bad.
 
-  } else if (typeof dayMaxEvents === 'number') {
-    limitByMaxEvents(moreCnts, segIsHidden, colPlacements, dayMaxEvents) // populates moreCnts/segIsHidden
+    if (dayMaxEvents === true || dayMaxEventRows === true) {
+      limitByMaxHeight(moreCnts, segIsHidden, colPlacements, maxContentHeight) // populates moreCnts/segIsHidden
 
-  } else if (typeof dayMaxEventRows === 'number') {
-    limitByMaxRows(moreCnts, segIsHidden, colPlacements, dayMaxEventRows) // populates moreCnts/segIsHidden
+    } else if (typeof dayMaxEvents === 'number') {
+      limitByMaxEvents(moreCnts, segIsHidden, colPlacements, dayMaxEvents) // populates moreCnts/segIsHidden
+
+    } else if (typeof dayMaxEventRows === 'number') {
+      limitByMaxRows(moreCnts, segIsHidden, colPlacements, dayMaxEventRows) // populates moreCnts/segIsHidden
+    }
   }
 
   // computes segTops/segMarginTops/moreTops/paddingBottoms
@@ -91,9 +104,6 @@ export function computeFgSegPlacement( // for one row. TODO: print mode?
     }
   }
 
-  segsByFirstCol = colPlacements.map(extractFirstColSegs) // operates on the sorted cols
-  finalSegsByCol = colPlacements.map(extractAllColSegs)
-
   function placeSeg(seg, segHeight) {
     if (!tryPlaceSegAt(seg, segHeight, 0)) {
       for (let col = seg.firstCol; col <= seg.lastCol; col++) {
@@ -113,7 +123,7 @@ export function computeFgSegPlacement( // for one row. TODO: print mode?
         let insertionIndex = 0
         while (
           insertionIndex < placements.length &&
-          top > placements[insertionIndex].top
+          top >= placements[insertionIndex].top
         ) {
           insertionIndex++
         }
@@ -140,15 +150,25 @@ export function computeFgSegPlacement( // for one row. TODO: print mode?
     return true
   }
 
-  for (let instanceId in eventHeights) {
-    if (!eventHeights[instanceId]) {
-      segIsHidden[instanceId] = true
+  if (!forPrint) {
+    // what does this do!?
+    for (let instanceIdAndFirstCol in eventHeights) {
+      if (!eventHeights[instanceIdAndFirstCol]) {
+        segIsHidden[instanceIdAndFirstCol.split(':')[0]] = true
+      }
     }
   }
 
+  let segsByFirstCol = colPlacements.map(extractFirstColSegs) // operates on the sorted cols
+  let segsByEachCol = colPlacements.map((placements, col) => {
+    let segs = extractAllColSegs(placements)
+    segs = resliceDaySegs(segs, cellModels[col].date, col)
+    return segs
+  })
+
   return {
-    finalSegsByCol,
-    segsByFirstCol,
+    segsByFirstCol: forPrint ? segsByEachCol : segsByFirstCol, // which col each el will be inserted. TODO: better name
+    segsByEachCol,
     segIsHidden,
     segTops,
     segMarginTops,
@@ -172,7 +192,7 @@ function extractFirstColSegs(oneColPlacements: TableSegPlacement[], col: number)
 }
 
 
-function extractAllColSegs(oneColPlacements: TableSegPlacement[], col: number) {
+function extractAllColSegs(oneColPlacements: TableSegPlacement[]) {
   let segs: TableSeg[] = []
 
   for (let placement of oneColPlacements) {
@@ -269,4 +289,37 @@ function limitEvents(hiddenCnts, segIsHidden, colPlacements, moreLinkConsumesLev
       }
     }
   }
+}
+
+
+// Given the events within an array of segment objects, reslice them to be in a single day
+function resliceDaySegs(segs: TableSeg[], dayDate: DateMarker, colIndex: number) {
+  let dayStart = dayDate
+  let dayEnd = addDays(dayStart, 1)
+  let dayRange = { start: dayStart, end: dayEnd }
+  let newSegs = []
+
+  for (let seg of segs) {
+    let eventRange = seg.eventRange
+    let origRange = eventRange.range
+    let slicedRange = intersectRanges(origRange, dayRange)
+
+    if (slicedRange) {
+      newSegs.push({
+        ...seg,
+        firstCol: colIndex,
+        lastCol: colIndex,
+        eventRange: {
+          def: eventRange.def,
+          ui: { ...eventRange.ui, durationEditable: false }, // hack to disable resizing
+          instance: eventRange.instance,
+          range: slicedRange
+        } as EventRenderRange,
+        isStart: seg.isStart && slicedRange.start.valueOf() === origRange.start.valueOf(),
+        isEnd: seg.isEnd && slicedRange.end.valueOf() === origRange.end.valueOf()
+      })
+    }
+  }
+
+  return newSegs
 }

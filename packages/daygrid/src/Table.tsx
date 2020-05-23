@@ -46,6 +46,7 @@ export interface TableProps {
   dayMaxEvents: boolean | number
   dayMaxEventRows: boolean | number
   headerAlignElRef?: RefObject<HTMLElement>
+  forPrint: boolean
 }
 
 interface TableState {
@@ -152,11 +153,12 @@ export class Table extends DateComponent<TableProps, TableState> {
                       clientWidth={props.clientWidth}
                       buildMoreLinkText={buildMoreLinkText}
                       onMoreClick={this.handleMoreLinkClick}
+                      forPrint={props.forPrint}
                     />
                   ))}
                 </tbody>
               </table>
-              {(morePopoverState && morePopoverState.currentFgEventSegs === props.fgEventSegs) && // clear popover on event mod
+              {(!props.forPrint && morePopoverState && morePopoverState.currentFgEventSegs === props.fgEventSegs) && // clear popover on event mod
                 <MorePopover
                   date={morePopoverState.date}
                   dateProfile={dateProfile}

@@ -40,6 +40,7 @@ export interface DayTableProps {
   headerAlignElRef?: RefObject<HTMLElement> // for more popover alignment
   clientWidth: number | null
   clientHeight: number | null
+  forPrint: boolean
 }
 
 export class DayTable extends DateComponent<DayTableProps, ViewContext> {
@@ -68,6 +69,7 @@ export class DayTable extends DateComponent<DayTableProps, ViewContext> {
         headerAlignElRef={props.headerAlignElRef}
         clientWidth={props.clientWidth}
         clientHeight={props.clientHeight}
+        forPrint={props.forPrint}
       />
     )
   }

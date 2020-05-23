@@ -46,13 +46,14 @@ export interface TableRowProps {
   showDayNumbers: boolean
   showWeekNumbers: boolean
   buildMoreLinkText: (num: number) => string
+  forPrint: boolean
 }
 
 interface TableRowState {
   cellInnerPositions: PositionCache
   cellContentPositions: PositionCache
   maxContentHeight: number | null
-  segHeights: { [instanceId: string]: number } | null
+  segHeights: { [instanceIdAndFirstCol: string]: number } | null
 }
 
 
@@ -61,7 +62,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   private cellElRefs = new RefMap<HTMLTableCellElement>() // the <td>
   private cellInnerElRefs = new RefMap<HTMLElement>() // the fc-daygrid-day-frame
   private cellContentElRefs = new RefMap<HTMLDivElement>() // the fc-daygrid-day-events
-  private segHarnessRefs = new RefMap<HTMLDivElement>()
+  private segHarnessRefs = new RefMap<HTMLDivElement>() // indexed by "instanceId:firstCol"
   private rootElRef = createRef<HTMLTableRowElement>()
 
   state: TableRowState = {
@@ -81,7 +82,9 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     let highlightSegsByCol = splitSegsByFirstCol(this.getHighlightSegs(), colCnt)
     let mirrorSegsByCol = splitSegsByFirstCol(this.getMirrorSegs(), colCnt)
 
-    let { paddingBottoms, finalSegsByCol, segsByFirstCol, segIsHidden, segTops, segMarginTops, moreCnts, moreTops } = computeFgSegPlacement(
+    let { paddingBottoms, segsByFirstCol, segsByEachCol, segIsHidden, segTops, segMarginTops, moreCnts, moreTops } = computeFgSegPlacement(
+      props.forPrint,
+      props.cells,
       props.fgEventSegs,
       props.dayMaxEvents,
       props.dayMaxEventRows,
@@ -137,12 +140,11 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               extraDataAttrs={cell.extraDataAttrs}
               extraClassNames={cell.extraClassNames}
               moreCnt={moreCnts[col]}
-              moreMarginTop={moreTops[col] /* rename */}
               buildMoreLinkText={props.buildMoreLinkText}
               onMoreClick={props.onMoreClick}
-              hasEvents={Boolean(normalFgNodes.length)}
-              allFgSegs={finalSegsByCol[col]}
               segIsHidden={segIsHidden}
+              moreMarginTop={moreTops[col] /* rename */}
+              segsByEachCol={segsByEachCol[col]}
               fgPaddingBottom={paddingBottoms[col]}
               fgContentElRef={this.cellContentElRefs.createRef(cell.key)}
               fgContent={( // Fragment scopes the keys
@@ -152,11 +154,12 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
                 </Fragment>
               )}
               bgContent={( // Fragment scopes the keys
-                <Fragment>
-                  {this.renderFillSegs(highlightSegsByCol[col], 'highlight')}
-                  {this.renderFillSegs(businessHoursByCol[col], 'non-business')}
-                  {this.renderFillSegs(bgEventSegsByCol[col], 'bg-event')}
-                </Fragment>
+                !props.forPrint &&
+                  <Fragment>
+                    {this.renderFillSegs(highlightSegsByCol[col], 'highlight')}
+                    {this.renderFillSegs(businessHoursByCol[col], 'non-business')}
+                    {this.renderFillSegs(bgEventSegsByCol[col], 'bg-event')}
+                  </Fragment>
               )}
             />
           )
@@ -219,18 +222,18 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     isDateSelecting?: boolean
   ): VNode[] {
     let { context } = this
-    let { eventSelection } = this.props
+    let { eventSelection, forPrint } = this.props
     let { cellInnerPositions, cellContentPositions } = this.state
     let defaultDisplayEventEnd = this.props.cells.length === 1 // colCnt === 1
     let nodes: VNode[] = []
 
-    if (cellInnerPositions && cellContentPositions) {
+    if (forPrint || (cellInnerPositions && cellContentPositions)) {
       for (let seg of segs) {
         let instanceId = seg.eventRange.instance.instanceId
         let isMirror = isDragging || isResizing || isDateSelecting
         let isSelected = selectedInstanceHash[instanceId]
-        let isInvisible = segIsHidden[instanceId] || isSelected
-        let isAbsolute = segIsHidden[instanceId] || isMirror || seg.firstCol !== seg.lastCol || !seg.isStart || !seg.isEnd // TODO: simpler way? NOT DRY
+        let isInvisible = !forPrint && (segIsHidden[instanceId] || isSelected)
+        let isAbsolute = !forPrint && (segIsHidden[instanceId] || isMirror || seg.firstCol !== seg.lastCol || !seg.isStart || !seg.isEnd) // TODO: simpler way? NOT DRY
         let marginTop: CssDimValue
         let top: CssDimValue
         let left: CssDimValue
@@ -261,7 +264,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
           <div
             className={'fc-daygrid-event-harness' + (isAbsolute ? ' fc-daygrid-event-harness-abs' : '')}
             key={instanceId}
-            ref={isMirror ? null : this.segHarnessRefs.createRef(instanceId)}
+            ref={isMirror ? null : this.segHarnessRefs.createRef(instanceId + ':' + seg.firstCol) /* in print mode when in mult cols, could collide */}
             style={{
               visibility: isInvisible ? 'hidden' : ('' as any),
               marginTop: marginTop || '',
@@ -341,7 +344,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   updateSizing(isExternalSizingChange) {
     let { props, cellInnerElRefs, cellContentElRefs } = this
 
-    if (props.clientWidth !== null) { // positioning ready?
+    if (props.clientWidth !== null && !props.forPrint) { // positioning ready?
 
       if (isExternalSizingChange) {
         let cellInnerEls = props.cells.map((cell) => cellInnerElRefs.currentMap[cell.key])
@@ -378,7 +381,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
 
   computeSegHeights() { // query
-    return mapHash(this.segHarnessRefs.currentMap, (eventHarnessEl, instanceId) => (
+    return mapHash(this.segHarnessRefs.currentMap, (eventHarnessEl) => (
       eventHarnessEl.getBoundingClientRect().height
     ))
   }

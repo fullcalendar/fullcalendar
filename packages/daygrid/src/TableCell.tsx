@@ -13,9 +13,6 @@ import {
   DayCellRoot,
   DayCellContent,
   BaseComponent,
-  EventRenderRange,
-  addDays,
-  intersectRanges,
   DateProfile,
   VUIEvent,
   setRef,
@@ -37,7 +34,7 @@ export interface TableCellProps {
   fgContentElRef?: Ref<HTMLDivElement> // TODO: rename!!! classname confusion. is the "event" div
   fgContent: ComponentChildren
   fgPaddingBottom: CssDimValue
-  hasEvents: boolean // TODO: do something with this
+  // hasEvents: boolean // TODO: when reviving, event should "have events" even when none *start* on the cell
   moreCnt: number
   moreMarginTop: number
   showDayNumber: boolean
@@ -45,7 +42,7 @@ export interface TableCellProps {
   todayRange: DateRange
   buildMoreLinkText: (num: number) => string
   onMoreClick?: (arg: MoreLinkArg) => void
-  allFgSegs: TableSeg[] // for more-popover. includes segs that aren't rooted in this cell but that pass over it
+  segsByEachCol: TableSeg[] // for more-popover. includes segs that aren't rooted in this cell but that pass over it
   segIsHidden: { [instanceId: string]: boolean } // for more-popover. TODO: rename to be about selected instances
 }
 
@@ -184,7 +181,7 @@ export class TableCell extends DateComponent<TableCellProps> {
     let { props } = this
 
     if (props.onMoreClick) {
-      let allSegs = resliceDaySegs(props.allFgSegs, props.date)
+      let allSegs = props.segsByEachCol
       let hiddenSegs = allSegs.filter(
         (seg: TableSeg) => props.segIsHidden[seg.eventRange.instance.instanceId]
       )
@@ -210,37 +207,6 @@ function renderTopInner(props: DayCellHookProps) {
 
 function renderMoreLinkInner(props) {
   return props.text
-}
-
-
-// Given the events within an array of segment objects, reslice them to be in a single day
-function resliceDaySegs(segs, dayDate) {
-  let dayStart = dayDate
-  let dayEnd = addDays(dayStart, 1)
-  let dayRange = { start: dayStart, end: dayEnd }
-  let newSegs = []
-
-  for (let seg of segs) {
-    let eventRange = seg.eventRange
-    let origRange = eventRange.range
-    let slicedRange = intersectRanges(origRange, dayRange)
-
-    if (slicedRange) {
-      newSegs.push({
-        ...seg,
-        eventRange: {
-          def: eventRange.def,
-          ui: { ...eventRange.ui, durationEditable: false }, // hack to disable resizing
-          instance: eventRange.instance,
-          range: slicedRange
-        } as EventRenderRange,
-        isStart: seg.isStart && slicedRange.start.valueOf() === origRange.start.valueOf(),
-        isEnd: seg.isEnd && slicedRange.end.valueOf() === origRange.end.valueOf()
-      })
-    }
-  }
-
-  return newSegs
 }
 
 
