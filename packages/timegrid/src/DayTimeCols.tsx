@@ -68,6 +68,7 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
             ref={this.timeColsRef}
             rootElRef={this.handleRootEl}
             {...this.slicer.sliceProps(props, dateProfile, null, context, dayRanges)}
+            forPrint={props.forPrint}
             axis={props.axis}
             dateProfile={dateProfile}
             slatMetas={props.slatMetas}
@@ -82,7 +83,6 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
             nowIndicatorSegs={isNowIndicator && this.slicer.sliceNowDate(nowDate, context, dayRanges)}
             todayRange={todayRange}
             onScrollTopRequest={props.onScrollTopRequest}
-            forPrint={props.forPrint}
           />
         )}
       </NowTimer>

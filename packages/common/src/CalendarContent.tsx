@@ -29,6 +29,8 @@ interface CalendarContentState {
   forPrint: boolean
 }
 
+const FORCE_PRINT = false // temporary
+
 
 export class CalendarContent extends Component<CalendarContentProps, CalendarContentState> {
 
@@ -44,7 +46,7 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
   private calendarInteractions: CalendarInteraction[]
 
   state = {
-    forPrint: false
+    forPrint: FORCE_PRINT
   }
 
 
@@ -339,7 +341,7 @@ function isHeightAuto(options) {
 export function computeCalendarClassNames(props: CalendarData) {
   let classNames: string[] = [
     'fc',
-    'fc-media-screen', // 'fc-media-print'
+    FORCE_PRINT ? 'fc-media-print' : 'fc-media-screen',
     'fc-direction-' + props.options.direction,
     props.theme.getClass('root')
   ]

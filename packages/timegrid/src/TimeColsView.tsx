@@ -46,7 +46,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
   // ----------------------------------------------------------------------------------------------------
 
 
-  renderSimpleLayout(
+  renderSimpleLayout( // always executed forPrint
     headerRowContent: VNode | null,
     allDayContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
     timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null
@@ -114,7 +114,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
   }
 
 
-  renderHScrollLayout(
+  renderHScrollLayout( // never executed forPrint
     headerRowContent: VNode | null,
     allDayContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
     timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,

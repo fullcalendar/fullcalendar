@@ -79,7 +79,7 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
           {props.tableColGroupNode}
           <tbody>
             <tr>
-              {props.axis &&
+              {(props.axis && !props.forPrint) &&
                 <td className='fc-timegrid-axis' />
               }
               {props.cells.map((cell, i) => (
@@ -102,6 +102,7 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
                   eventResize={eventResizeByRow[i]}
                   slatCoords={props.slatCoords}
                   eventSelection={props.eventSelection}
+                  forPrint={props.forPrint}
                 />
               ))}
             </tr>

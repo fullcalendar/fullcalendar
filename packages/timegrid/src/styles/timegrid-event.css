@@ -10,12 +10,6 @@
 // root
 
 .fc-timegrid-event {
-  position: absolute;
-  top: 0;
-  bottom: 1px; // stay away from bottom slot line
-  left: 0;
-  right: 0;
-
   // TODO: vars
   font-size: .85em;
   border-radius: 3px;
@@ -27,6 +21,23 @@
     max-height: 100%;
     overflow: hidden;
     padding: 1px 1px 0;
+  }
+}
+
+.fc-media-screen {
+  .fc-timegrid-event {
+    position: absolute;
+    top: 0;
+    bottom: 1px; // stay away from bottom slot line
+    left: 0;
+    right: 0;
+  }
+}
+
+.fc-media-print {
+  .fc-timegrid-event {
+    margin-top: .25em;
+    margin-bottom: .25em;
   }
 }
 

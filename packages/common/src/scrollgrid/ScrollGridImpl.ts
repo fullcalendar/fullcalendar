@@ -7,7 +7,7 @@ export interface ScrollGridProps {
   colGroups?: ColGroupConfig[]
   sections: ScrollGridSectionConfig[]
   liquid?: boolean
-  forPrint?: boolean
+  forPrint: boolean
   elRef?: Ref<any>
 }
 

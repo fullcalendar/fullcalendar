@@ -27,13 +27,15 @@ export class DayTimeColsView extends TimeColsView {
     let splitProps = this.allDaySplitter.splitProps(props)
     let slatMetas = this.buildSlatMetas(dateProfile.slotMinTime, dateProfile.slotMaxTime, options.slotLabelInterval, options.slotDuration, dateEnv)
     let { dayMinWidth } = options
+    let hasAttachedAxis = !props.forPrint && !dayMinWidth
+    let hasDetachedAxis = !props.forPrint && dayMinWidth
 
     let headerContent = options.dayHeaders &&
       <DayHeader
         dates={dayTableModel.headerDates}
         dateProfile={dateProfile}
         datesRepDistinctDays={true}
-        renderIntro={dayMinWidth ? null : this.renderHeadAxis}
+        renderIntro={hasAttachedAxis ? this.renderHeadAxis : null}
       />
 
     let allDayContent = (options.allDaySlot !== false) && ((contentArg: ChunkContentCallbackArgs) => (
@@ -44,7 +46,7 @@ export class DayTimeColsView extends TimeColsView {
         nextDayThreshold={options.nextDayThreshold}
         tableMinWidth={contentArg.tableMinWidth}
         colGroupNode={contentArg.tableColGroupNode}
-        renderRowIntro={dayMinWidth ? null : this.renderTableRowAxis}
+        renderRowIntro={hasAttachedAxis ? this.renderTableRowAxis : null}
         showWeekNumbers={false}
         expandRows={false}
         headerAlignElRef={this.headerElRef}
@@ -60,7 +62,7 @@ export class DayTimeColsView extends TimeColsView {
         {...splitProps['timed']}
         dayTableModel={dayTableModel}
         dateProfile={dateProfile}
-        axis={!dayMinWidth}
+        axis={hasAttachedAxis}
         slotDuration={options.slotDuration}
         slatMetas={slatMetas}
         forPrint={props.forPrint}
@@ -73,7 +75,7 @@ export class DayTimeColsView extends TimeColsView {
       />
     )
 
-    return dayMinWidth
+    return hasDetachedAxis
       ? this.renderHScrollLayout(headerContent, allDayContent, timeGridContent, dayTableModel.colCnt, dayMinWidth, slatMetas)
       : this.renderSimpleLayout(headerContent, allDayContent, timeGridContent)
   }

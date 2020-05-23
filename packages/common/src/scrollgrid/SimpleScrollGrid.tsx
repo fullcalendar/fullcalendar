@@ -16,7 +16,7 @@ export interface SimpleScrollGridProps {
   cols: ColProps[]
   sections: SimpleScrollGridSection[]
   liquid?: boolean
-  forPrint?: boolean
+  forPrint: boolean
   height?: CssDimValue // TODO: give to real ScrollGrid
 }
 

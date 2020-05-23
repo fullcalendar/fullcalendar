@@ -58,7 +58,7 @@ export class DayTableView extends TableView {
       />
     )
 
-    return options.dayMinWidth
+    return (options.dayMinWidth && !props.forPrint)
       ? this.renderHScrollLayout(headerContent, bodyContent, dayTableModel.colCnt, options.dayMinWidth)
       : this.renderSimpleLayout(headerContent, bodyContent)
   }
