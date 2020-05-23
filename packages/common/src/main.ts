@@ -164,7 +164,8 @@ export { PluginDef, PluginDefInput, ViewPropsTransformer, ViewContainerAppend } 
 export { createPlugin } from './plugin-system'
 export { Action } from './reducers/Action'
 export { CalendarContext } from './CalendarContext'
-export { CalendarContentProps, CalendarContent, computeCalendarClassNames, computeCalendarHeight } from './CalendarContent'
+export { CalendarContentProps, CalendarContent } from './CalendarContent'
+export { CalendarRoot } from './CalendarRoot'
 
 export { DayHeader } from './common/DayHeader'
 export { computeFallbackHeaderFormat } from './common/table-utils'

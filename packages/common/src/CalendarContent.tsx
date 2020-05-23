@@ -12,8 +12,6 @@ import { __assign } from 'tslib'
 import { createElement, createRef, Component, VUIEvent, Fragment } from './vdom'
 import { buildDelegationHandler } from './util/dom-event'
 import { ViewContainer } from './ViewContainer'
-import { CssDimValue } from './scrollgrid/util'
-import { getCanVGrowWithinCell } from './util/table-styling'
 import { Interaction, InteractionSettingsInput, InteractionClass, parseInteractionSettings, interactionSettingsStore } from './interactions/interaction'
 import { DateComponent } from './component/DateComponent'
 import { EventClicking } from './interactions/EventClicking'
@@ -23,16 +21,13 @@ import { CalendarInteraction } from './calendar-utils'
 import { DelayedRunner } from './util/runner'
 
 
-export type CalendarContentProps = CalendarData
-
-interface CalendarContentState {
+export interface CalendarContentProps extends CalendarData {
   forPrint: boolean
+  isHeightAuto: boolean
 }
 
-const FORCE_PRINT = false // temporary
 
-
-export class CalendarContent extends Component<CalendarContentProps, CalendarContentState> {
+export class CalendarContent extends Component<CalendarContentProps> {
 
   context: never
 
@@ -44,10 +39,6 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
   private footerRef = createRef<Toolbar>()
   private interactionsStore: { [componentUid: string]: Interaction[] } = {}
   private calendarInteractions: CalendarInteraction[]
-
-  state = {
-    forPrint: FORCE_PRINT
-  }
 
 
   /*
@@ -70,7 +61,7 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
     let viewHeight: string | number = ''
     let viewAspectRatio: number | undefined
 
-    if (isHeightAuto(options)) {
+    if (props.isHeightAuto) {
       viewHeight = ''
 
     } else if (options.height != null) {
@@ -132,9 +123,6 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
 
 
   componentDidMount() {
-    window.addEventListener('beforeprint', this.handleBeforePrint)
-    window.addEventListener('afterprint', this.handleAfterPrint)
-
     let { props } = this
     this.calendarInteractions = props.pluginHooks.calendarInteractions
       .map((calendarInteractionClass) => {
@@ -157,24 +145,12 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
 
 
   componentWillUnmount() {
-    window.removeEventListener('beforeprint', this.handleBeforePrint)
-    window.removeEventListener('afterprint', this.handleAfterPrint)
-
     window.removeEventListener('resize', this.handleWindowResize)
     this.resizeRunner.clear()
 
     for (let interaction of this.calendarInteractions) {
       interaction.destroy()
     }
-  }
-
-
-  handleBeforePrint = () => {
-    this.setState({ forPrint: true })
-  }
-
-  handleAfterPrint = () => {
-    this.setState({ forPrint: false })
   }
 
 
@@ -228,8 +204,8 @@ export class CalendarContent extends Component<CalendarContentProps, CalendarCon
       eventSelection: props.eventSelection,
       eventDrag: props.eventDrag,
       eventResize: props.eventResize,
-      isHeightAuto: this.state.forPrint || isHeightAuto(options),
-      forPrint: this.state.forPrint
+      isHeightAuto: props.isHeightAuto,
+      forPrint: props.forPrint
     }
 
     let transformers = this.buildViewPropTransformers(pluginHooks.viewPropsTransformers)
@@ -327,44 +303,6 @@ function buildToolbarProps(
     isNextEnabled: nextInfo.isValid
   }
 }
-
-
-function isHeightAuto(options) {
-  return options.height === 'auto' || options.contentHeight === 'auto'
-}
-
-
-// Outer Div Rendering
-// -----------------------------------------------------------------------------------------------------------------
-
-
-export function computeCalendarClassNames(props: CalendarData) {
-  let classNames: string[] = [
-    'fc',
-    FORCE_PRINT ? 'fc-media-print' : 'fc-media-screen',
-    'fc-direction-' + props.options.direction,
-    props.theme.getClass('root')
-  ]
-
-  if (!getCanVGrowWithinCell()) {
-    classNames.push('fc-liquid-hack')
-  }
-
-  return classNames
-}
-
-
-// NOTE: consult view-height-computation in render()
-export function computeCalendarHeight(props: CalendarData): CssDimValue {
-  let { options } = props
-
-  if (!isHeightAuto(options) && options.height != null) {
-    return options.height
-  }
-
-  return ''
-}
-
 
 
 // Plugin
