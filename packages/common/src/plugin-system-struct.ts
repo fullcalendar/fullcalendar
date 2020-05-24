@@ -22,14 +22,13 @@ import { ComponentChildren } from './vdom'
 import { ScrollGridImpl } from './scrollgrid/ScrollGridImpl'
 import { ContentTypeHandlers } from './common/render-hook'
 import { GenericRefiners, GenericListenerRefiners } from './options'
-import { CalendarApi } from './CalendarApi'
 
 // TODO: easier way to add new hooks? need to update a million things
 
 export interface PluginDefInput {
   deps?: PluginDef[]
   reducers?: ReducerFunc[]
-  calendarApiInit?: (calendarApi: CalendarApi) => void
+  contextInit?: (context: CalendarContext) => void
   eventRefiners?: GenericRefiners // why not an array like others?
   eventDefMemberAdders?: EventDefMemberAdder[]
   eventSourceRefiners?: GenericRefiners
@@ -64,7 +63,7 @@ export interface PluginDefInput {
 
 export interface PluginHooks {
   reducers: ReducerFunc[]
-  calendarApiInit: ((calendarApi: CalendarApi) => void)[]
+  contextInit: ((context: CalendarContext) => void)[]
   eventRefiners: GenericRefiners
   eventDefMemberAdders: EventDefMemberAdder[]
   eventSourceRefiners: GenericRefiners

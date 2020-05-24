@@ -89,8 +89,7 @@ export class CalendarApi {
   }
 
 
-  // not meant to be public
-  trigger<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, ...args: Parameters<CalendarListeners[ListenerName]>) {
+  protected trigger<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, ...args: Parameters<CalendarListeners[ListenerName]>) {
     this.currentDataManager!.emitter.trigger(handlerName, ...args)
   }
 

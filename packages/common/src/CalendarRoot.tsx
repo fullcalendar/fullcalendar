@@ -53,16 +53,6 @@ export class CalendarRoot extends BaseComponent<CalendarRootProps, CalendarRootS
     let { emitter } = this.props
     emitter.on('_beforeprint', this.handleBeforePrint)
     emitter.on('_afterprint', this.handleAfterPrint)
-
-    // // for testing
-    // document.addEventListener('keypress', (ev) => {
-    //   if (ev.key === 'p') {
-    //     window.removeEventListener('afterprint', this.handleAfterPrint)
-    //     this.setState({
-    //       forPrint: !this.state.forPrint
-    //     })
-    //   }
-    // })
   }
 
 

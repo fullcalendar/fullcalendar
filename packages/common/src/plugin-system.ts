@@ -10,7 +10,7 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     id: guid(),
     deps: input.deps || [],
     reducers: input.reducers || [],
-    calendarApiInit: [].concat(input.calendarApiInit || []),
+    contextInit: [].concat(input.contextInit || []),
     eventRefiners: input.eventRefiners || {},
     eventDefMemberAdders: input.eventDefMemberAdders || [],
     eventSourceRefiners: input.eventSourceRefiners || {},
@@ -49,7 +49,7 @@ export function buildPluginHooks(pluginDefs: PluginDef[] | null, globalDefs: Plu
   let isAdded: { [pluginId: string]: boolean } = {}
   let hooks: PluginHooks = {
     reducers: [],
-    calendarApiInit: [],
+    contextInit: [],
     eventRefiners: {},
     eventDefMemberAdders: [],
     eventSourceRefiners: {},
@@ -105,7 +105,7 @@ export function buildPluginHooks(pluginDefs: PluginDef[] | null, globalDefs: Plu
 function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
   return {
     reducers: hooks0.reducers.concat(hooks1.reducers),
-    calendarApiInit: hooks0.calendarApiInit.concat(hooks1.calendarApiInit),
+    contextInit: hooks0.contextInit.concat(hooks1.contextInit),
     eventRefiners: { ...hooks0.eventRefiners, ...hooks1.eventRefiners },
     eventDefMemberAdders: hooks0.eventDefMemberAdders.concat(hooks1.eventDefMemberAdders),
     eventSourceRefiners: { ...hooks0.eventSourceRefiners, ...hooks1.eventSourceRefiners },
