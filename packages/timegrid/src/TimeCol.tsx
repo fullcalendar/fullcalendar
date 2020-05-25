@@ -23,7 +23,6 @@ export interface TimeColProps {
   eventDrag: EventSegUiInteractionState | null
   eventResize: EventSegUiInteractionState | null
   slatCoords: TimeColsSlatsCoords
-  forPrint: boolean
 }
 
 export class TimeCol extends BaseComponent<TimeColProps> {
@@ -102,33 +101,34 @@ export class TimeCol extends BaseComponent<TimeColProps> {
   ) {
     let { props } = this
 
-    if (props.forPrint) {
-      return this.renderPrintFgSegs(segs)
-    } else if (props.slatCoords) {
+    // if (props.forPrint) {
+    //   return this.renderPrintFgSegs(segs)
+    // } else
+    if (props.slatCoords) {
       return this.renderPositionedFgSegs(segs, segIsInvisible, isDragging, isResizing, isDateSelecting)
     }
   }
 
 
-  renderPrintFgSegs(segs: TimeColsSeg[]) {
-    let { props } = this
+  // renderPrintFgSegs(segs: TimeColsSeg[]) {
+  //   let { props } = this
 
-    return segs.map((seg) => (
-      <div
-        className='fc-timegrid-event-harness'
-        key={seg.eventRange.instance.instanceId}
-      >
-        <TimeColEvent
-          seg={seg}
-          isDragging={false}
-          isResizing={false}
-          isDateSelecting={false}
-          isSelected={false}
-          {...getSegMeta(seg, props.todayRange, props.nowDate)}
-        />
-      </div>
-    ))
-  }
+  //   return segs.map((seg) => (
+  //     <div
+  //       className='fc-timegrid-event-harness'
+  //       key={seg.eventRange.instance.instanceId}
+  //     >
+  //       <TimeColEvent
+  //         seg={seg}
+  //         isDragging={false}
+  //         isResizing={false}
+  //         isDateSelecting={false}
+  //         isSelected={false}
+  //         {...getSegMeta(seg, props.todayRange, props.nowDate)}
+  //       />
+  //     </div>
+  //   ))
+  // }
 
 
   renderPositionedFgSegs(

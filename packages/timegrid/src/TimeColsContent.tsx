@@ -32,7 +32,6 @@ export interface TimeColsContentProps {
   eventDrag: EventSegUiInteractionState | null
   eventResize: EventSegUiInteractionState | null
   nowIndicatorSegs: TimeColsSeg[]
-  forPrint: boolean
   clientWidth: number | null
   tableMinWidth: CssDimValue
   tableColGroupNode: VNode
@@ -102,7 +101,6 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
                   eventResize={eventResizeByRow[i]}
                   slatCoords={props.slatCoords}
                   eventSelection={props.eventSelection}
-                  forPrint={props.forPrint}
                 />
               ))}
             </tr>
