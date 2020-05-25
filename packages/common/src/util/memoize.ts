@@ -85,7 +85,14 @@ export function memoizeArraylike<Args extends any[], Res>( // used at all?
     let i = 0
 
     for (; i < currentLen; i++) {
-      if (!isArraysEqual(currentArgSets[i], newArgSets[i])) {
+
+      if (!newArgSets[i]) { // one of the old sets no longer exists
+        if (teardownFunc) {
+          teardownFunc(currentResults[i])
+        }
+
+      }
+      else if (!isArraysEqual(currentArgSets[i], newArgSets[i])) {
 
         if (teardownFunc) {
           teardownFunc(currentResults[i])

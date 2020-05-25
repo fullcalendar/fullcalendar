@@ -128,8 +128,8 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
     }
 
     let { context, props } = this
-    let stickyHeaderDates = getStickyHeaderDates(context.options)
-    let stickyFooterScrollbar = getStickyFooterScrollbar(context.options)
+    let stickyHeaderDates = !props.forPrint && getStickyHeaderDates(context.options)
+    let stickyFooterScrollbar = !props.forPrint && getStickyFooterScrollbar(context.options)
     let sections: ScrollGridSectionConfig[] = []
 
     if (headerRowContent) {

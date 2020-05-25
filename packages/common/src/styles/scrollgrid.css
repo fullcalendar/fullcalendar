@@ -26,7 +26,7 @@
   border: 1px solid #ddd; // okay because bootstrap does this too
 }
 .fc-media-print .fc-scrollgrid { // allows it to stretch so that hard-set widths of inner table push it out!?
-  table-layout: auto;
+  /* table-layout: auto; */
 }
 
 
