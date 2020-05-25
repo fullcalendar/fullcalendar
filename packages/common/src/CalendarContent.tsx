@@ -61,7 +61,7 @@ export class CalendarContent extends Component<CalendarContentProps> {
     let viewHeight: string | number = ''
     let viewAspectRatio: number | undefined
 
-    if (props.isHeightAuto) {
+    if (props.isHeightAuto || props.forPrint) {
       viewHeight = ''
 
     } else if (options.height != null) {
@@ -105,7 +105,6 @@ export class CalendarContent extends Component<CalendarContentProps> {
           height={viewHeight}
           aspectRatio={viewAspectRatio}
           onClick={this.handleNavLinkClick}
-          forPrint={props.forPrint}
         >
           {this.renderView(props)}
           {this.buildAppendContent()}

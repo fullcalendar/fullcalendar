@@ -15,7 +15,6 @@ export interface StandardEventProps extends MinimalEventProps {
   disableDragging?: boolean // default false
   disableResizing?: boolean // default false
   defaultContent?: (hookProps: EventMeta) => ComponentChildren // not used by anyone yet
-  forPrint?: boolean
 }
 
 
@@ -30,8 +29,8 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
       seg,
       timeFormat,
       context,
-      props.forPrint ? true : props.defaultDisplayEventTime,
-      props.forPrint ? true : props.defaultDisplayEventEnd
+      props.defaultDisplayEventTime,
+      props.defaultDisplayEventEnd
     )
 
     return (

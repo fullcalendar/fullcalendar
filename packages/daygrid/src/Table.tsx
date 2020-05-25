@@ -153,7 +153,6 @@ export class Table extends DateComponent<TableProps, TableState> {
                       clientWidth={props.clientWidth}
                       buildMoreLinkText={buildMoreLinkText}
                       onMoreClick={this.handleMoreLinkClick}
-                      forPrint={props.forPrint}
                     />
                   ))}
                 </tbody>

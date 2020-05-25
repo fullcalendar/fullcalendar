@@ -72,12 +72,12 @@ export interface ScrollerLike { // have scrollers implement?
 }
 
 
-export function getSectionHasLiquidHeight(props: { forPrint: boolean, liquid?: boolean }, sectionConfig: SectionConfig) {
-  return !props.forPrint && props.liquid && sectionConfig.liquid // does the section do liquid-height? (need to have whole scrollgrid liquid-height as well)
+export function getSectionHasLiquidHeight(props: { liquid: boolean }, sectionConfig: SectionConfig) {
+  return props.liquid && sectionConfig.liquid // does the section do liquid-height? (need to have whole scrollgrid liquid-height as well)
 }
 
 
-export function getAllowYScrolling(props: { forPrint: boolean, liquid?: boolean }, sectionConfig: SectionConfig) {
+export function getAllowYScrolling(props: { liquid: boolean }, sectionConfig: SectionConfig) {
   return sectionConfig.maxHeight != null || // if its possible for the height to max out, we might need scrollbars
     getSectionHasLiquidHeight(props, sectionConfig) // if the section is liquid height, it might condense enough to require scrollbars
 }

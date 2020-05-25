@@ -77,18 +77,16 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
         width: props.clientWidth,
         minWidth: props.tableMinWidth
       }}>
-        {!props.forPrint &&
-          <TimeColsSlats
-            axis={props.axis}
-            dateProfile={props.dateProfile}
-            slatMetas={props.slatMetas}
-            clientWidth={props.clientWidth}
-            minHeight={props.expandRows ? props.clientHeight : ''}
-            tableMinWidth={props.tableMinWidth}
-            tableColGroupNode={props.axis ? props.tableColGroupNode : null /* axis depends on the colgroup's shrinking */}
-            onCoords={this.handleSlatCoords}
-          />
-        }
+        <TimeColsSlats
+          axis={props.axis}
+          dateProfile={props.dateProfile}
+          slatMetas={props.slatMetas}
+          clientWidth={props.clientWidth}
+          minHeight={props.expandRows ? props.clientHeight : ''}
+          tableMinWidth={props.tableMinWidth}
+          tableColGroupNode={props.axis ? props.tableColGroupNode : null /* axis depends on the colgroup's shrinking */}
+          onCoords={this.handleSlatCoords}
+        />
         <TimeColsContent
           cells={props.cells}
           axis={props.axis}

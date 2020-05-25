@@ -46,7 +46,6 @@ export interface TableRowProps {
   showDayNumbers: boolean
   showWeekNumbers: boolean
   buildMoreLinkText: (num: number) => string
-  forPrint: boolean
 }
 
 interface TableRowState {
@@ -83,7 +82,6 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     let mirrorSegsByCol = splitSegsByFirstCol(this.getMirrorSegs(), colCnt)
 
     let { paddingBottoms, segsByFirstCol, segsByEachCol, segIsHidden, segTops, segMarginTops, moreCnts, moreTops } = computeFgSegPlacement(
-      props.forPrint,
       props.cells,
       props.fgEventSegs,
       props.dayMaxEvents,
@@ -154,12 +152,11 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
                 </Fragment>
               )}
               bgContent={( // Fragment scopes the keys
-                !props.forPrint &&
-                  <Fragment>
-                    {this.renderFillSegs(highlightSegsByCol[col], 'highlight')}
-                    {this.renderFillSegs(businessHoursByCol[col], 'non-business')}
-                    {this.renderFillSegs(bgEventSegsByCol[col], 'bg-event')}
-                  </Fragment>
+                <Fragment>
+                  {this.renderFillSegs(highlightSegsByCol[col], 'highlight')}
+                  {this.renderFillSegs(businessHoursByCol[col], 'non-business')}
+                  {this.renderFillSegs(bgEventSegsByCol[col], 'bg-event')}
+                </Fragment>
               )}
             />
           )
@@ -222,18 +219,18 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     isDateSelecting?: boolean
   ): VNode[] {
     let { context } = this
-    let { eventSelection, forPrint } = this.props
+    let { eventSelection } = this.props
     let { cellInnerPositions, cellContentPositions } = this.state
     let defaultDisplayEventEnd = this.props.cells.length === 1 // colCnt === 1
     let nodes: VNode[] = []
 
-    if (forPrint || (cellInnerPositions && cellContentPositions)) {
+    if (cellInnerPositions && cellContentPositions) {
       for (let seg of segs) {
         let instanceId = seg.eventRange.instance.instanceId
         let isMirror = isDragging || isResizing || isDateSelecting
         let isSelected = selectedInstanceHash[instanceId]
-        let isInvisible = !forPrint && (segIsHidden[instanceId] || isSelected)
-        let isAbsolute = !forPrint && (segIsHidden[instanceId] || isMirror || seg.firstCol !== seg.lastCol || !seg.isStart || !seg.isEnd) // TODO: simpler way? NOT DRY
+        let isInvisible = segIsHidden[instanceId] || isSelected
+        let isAbsolute = segIsHidden[instanceId] || isMirror || seg.firstCol !== seg.lastCol || !seg.isStart || !seg.isEnd // TODO: simpler way? NOT DRY
         let marginTop: CssDimValue
         let top: CssDimValue
         let left: CssDimValue
@@ -344,7 +341,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   updateSizing(isExternalSizingChange) {
     let { props, cellInnerElRefs, cellContentElRefs } = this
 
-    if (props.clientWidth !== null && !props.forPrint) { // positioning ready?
+    if (props.clientWidth !== null) { // positioning ready?
 
       if (isExternalSizingChange) {
         let cellInnerEls = props.cells.map((cell) => cellInnerElRefs.currentMap[cell.key])

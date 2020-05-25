@@ -54,13 +54,14 @@ export abstract class TableView<State={}> extends DateComponent<ViewProps, State
       chunk: { content: bodyContent }
     })
 
+    console.log('forPrint', props.forPrint)
+
     return (
       <ViewRoot viewSpec={context.viewSpec}>
         {(rootElRef, classNames) => (
           <div ref={rootElRef} className={[ 'fc-daygrid' ].concat(classNames).join(' ')}>
             <SimpleScrollGrid
-              liquid={!props.isHeightAuto}
-              forPrint={props.forPrint}
+              liquid={!props.isHeightAuto && !props.forPrint}
               cols={[] /* TODO: make optional? */}
               sections={sections}
             />
@@ -129,8 +130,7 @@ export abstract class TableView<State={}> extends DateComponent<ViewProps, State
         {(rootElRef, classNames) => (
           <div ref={rootElRef} className={[ 'fc-daygrid' ].concat(classNames).join(' ')}>
             <ScrollGrid
-              liquid={!props.isHeightAuto}
-              forPrint={props.forPrint}
+              liquid={!props.isHeightAuto && !props.forPrint}
               colGroups={[ { cols: [ { span: colCnt, minWidth: dayMinWidth } ] } ]}
               sections={sections}
             />

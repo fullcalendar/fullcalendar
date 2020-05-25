@@ -19,7 +19,6 @@ interface TableSegPlacement {
 
 
 export function computeFgSegPlacement( // for one row. TODO: print mode?
-  forPrint: boolean,
   cellModels: TableCellModel[],
   segs: TableSeg[],
   dayMaxEvents: boolean | number,
@@ -51,19 +50,14 @@ export function computeFgSegPlacement( // for one row. TODO: print mode?
     placeSeg(seg, eventHeight || 0) // will keep colPlacements sorted by top
   }
 
-  if (!forPrint) {
-    // NOTE: if we ever allow event-limit for print-mode, we'll need to rearchitect the TableSeg struct and this function,
-    // because results are hashed by instanceId, and there will be multiple instanceIds per row. bad.
+  if (dayMaxEvents === true || dayMaxEventRows === true) {
+    limitByMaxHeight(moreCnts, segIsHidden, colPlacements, maxContentHeight) // populates moreCnts/segIsHidden
 
-    if (dayMaxEvents === true || dayMaxEventRows === true) {
-      limitByMaxHeight(moreCnts, segIsHidden, colPlacements, maxContentHeight) // populates moreCnts/segIsHidden
+  } else if (typeof dayMaxEvents === 'number') {
+    limitByMaxEvents(moreCnts, segIsHidden, colPlacements, dayMaxEvents) // populates moreCnts/segIsHidden
 
-    } else if (typeof dayMaxEvents === 'number') {
-      limitByMaxEvents(moreCnts, segIsHidden, colPlacements, dayMaxEvents) // populates moreCnts/segIsHidden
-
-    } else if (typeof dayMaxEventRows === 'number') {
-      limitByMaxRows(moreCnts, segIsHidden, colPlacements, dayMaxEventRows) // populates moreCnts/segIsHidden
-    }
+  } else if (typeof dayMaxEventRows === 'number') {
+    limitByMaxRows(moreCnts, segIsHidden, colPlacements, dayMaxEventRows) // populates moreCnts/segIsHidden
   }
 
   // computes segTops/segMarginTops/moreTops/paddingBottoms
@@ -150,12 +144,10 @@ export function computeFgSegPlacement( // for one row. TODO: print mode?
     return true
   }
 
-  if (!forPrint) {
-    // what does this do!?
-    for (let instanceIdAndFirstCol in eventHeights) {
-      if (!eventHeights[instanceIdAndFirstCol]) {
-        segIsHidden[instanceIdAndFirstCol.split(':')[0]] = true
-      }
+  // what does this do!?
+  for (let instanceIdAndFirstCol in eventHeights) {
+    if (!eventHeights[instanceIdAndFirstCol]) {
+      segIsHidden[instanceIdAndFirstCol.split(':')[0]] = true
     }
   }
 
@@ -167,7 +159,7 @@ export function computeFgSegPlacement( // for one row. TODO: print mode?
   })
 
   return {
-    segsByFirstCol: forPrint ? segsByEachCol : segsByFirstCol, // which col each el will be inserted. TODO: better name
+    segsByFirstCol,
     segsByEachCol,
     segIsHidden,
     segTops,

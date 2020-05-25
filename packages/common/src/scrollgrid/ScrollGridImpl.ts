@@ -6,8 +6,7 @@ import { ViewContext } from '../ViewContext'
 export interface ScrollGridProps {
   colGroups?: ColGroupConfig[]
   sections: ScrollGridSectionConfig[]
-  liquid?: boolean
-  forPrint: boolean
+  liquid: boolean
   elRef?: Ref<any>
 }
 

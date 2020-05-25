@@ -46,7 +46,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
   // ----------------------------------------------------------------------------------------------------
 
 
-  renderSimpleLayout( // always executed forPrint
+  renderSimpleLayout(
     headerRowContent: VNode | null,
     allDayContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
     timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null
@@ -102,8 +102,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
         {(rootElRef, classNames) => (
           <div className={[ 'fc-timegrid' ].concat(classNames).join(' ')} ref={rootElRef}>
             <SimpleScrollGrid
-              forPrint={props.forPrint}
-              liquid={!props.isHeightAuto}
+              liquid={!props.isHeightAuto && !props.forPrint}
               cols={[ { width: 'shrink' } ]}
               sections={sections}
             />
@@ -114,7 +113,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
   }
 
 
-  renderHScrollLayout( // never executed forPrint
+  renderHScrollLayout(
     headerRowContent: VNode | null,
     allDayContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
     timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
@@ -225,8 +224,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
         {(rootElRef, classNames) => (
           <div className={[ 'fc-timegrid' ].concat(classNames).join(' ')} ref={rootElRef}>
             <ScrollGrid
-              forPrint={props.forPrint}
-              liquid={!props.isHeightAuto}
+              liquid={!props.isHeightAuto && !props.forPrint}
               colGroups={[
                 { width: 'shrink', cols: [ { width: 'shrink' } ] }, // TODO: allow no specify cols
                 { cols: [ { span: colCnt, minWidth: dayMinWidth } ] }

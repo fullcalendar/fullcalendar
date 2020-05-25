@@ -31,7 +31,7 @@ export class CalendarRoot extends BaseComponent<CalendarRootProps, CalendarRootS
     let { options } = props
     let { forPrint } = this.state
 
-    let isHeightAuto = !forPrint && options.height === 'auto' || options.contentHeight === 'auto'
+    let isHeightAuto = forPrint || options.height === 'auto' || options.contentHeight === 'auto'
     let height = (!isHeightAuto && options.height != null) ? options.height : ''
 
     let classNames: string[] = [
@@ -65,7 +65,7 @@ export class CalendarRoot extends BaseComponent<CalendarRootProps, CalendarRootS
 
   handleBeforePrint = () => {
     this.setState({ forPrint: true })
-    flushToDom()
+    flushToDom() // because printing grabs DOM immediately after
   }
 
 

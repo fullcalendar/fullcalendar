@@ -15,8 +15,7 @@ import { getScrollbarWidths } from '../util/scrollbar-width'
 export interface SimpleScrollGridProps {
   cols: ColProps[]
   sections: SimpleScrollGridSection[]
-  liquid?: boolean
-  forPrint: boolean
+  liquid: boolean
   height?: CssDimValue // TODO: give to real ScrollGrid
 }
 
@@ -53,10 +52,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     let sectionConfigs = props.sections || []
     let cols = this.processCols(props.cols)
 
-    let microColGroupNode = props.forPrint ?
-        <colgroup></colgroup> : // temporary
-        this.renderMicroColGroup(cols, state.shrinkWidth)
-
+    let microColGroupNode = this.renderMicroColGroup(cols, state.shrinkWidth)
     let classNames = getScrollGridClassNames(props.liquid, context)
 
     return (
@@ -146,12 +142,10 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
 
   // TODO: can do a really simple print-view. dont need to join rows
   handleSizing = () => {
-    if (!this.props.forPrint) {
-      this.setState({
-        shrinkWidth: this.computeShrinkWidth(), // will create each chunk's <colgroup>. TODO: precompute hasShrinkWidth
-        ...this.computeScrollerDims()
-      })
-    }
+    this.setState({
+      shrinkWidth: this.computeShrinkWidth(), // will create each chunk's <colgroup>. TODO: precompute hasShrinkWidth
+      ...this.computeScrollerDims()
+    })
   }
 
 
