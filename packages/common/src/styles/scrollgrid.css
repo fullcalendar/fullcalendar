@@ -11,19 +11,7 @@
     padding: 0;
   }
 
-  & > thead {
-    border-bottom-style: hidden !important; // hide. let the inner table be in charge
-  }
-
-  & > thead table {
-    border-top-style: hidden !important;
-    border-left-style: hidden !important;
-    border-right-style: hidden !important;
-    // keep the bottom border
-  }
-
-  & > tbody table,
-  & > tfoot table {
+  & table { // inner tables
     border-style: hidden !important;
   }
 }
