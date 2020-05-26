@@ -1,6 +1,9 @@
 import { EventSource } from '../structs/event-source'
 import { CalendarContext } from '../CalendarContext'
 
+// no public types yet. when there are, export from:
+// import {} from './api-type-deps'
+
 export class EventSourceApi {
 
   constructor(

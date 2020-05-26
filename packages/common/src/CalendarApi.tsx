@@ -1,14 +1,9 @@
-import { DateInput } from './datelib/env'
 import { DateMarker } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
-import { createDuration, DurationInput } from './datelib/duration'
-import { parseDateSpan, DateSpanInput } from './structs/date-span'
-import { DateRangeInput } from './datelib/date-range'
-import { EventSourceInput, parseEventSource } from './structs/event-source-parse'
-import { EventInput, parseEvent } from './structs/event-parse'
-import { EventSourceApi } from './api/EventSourceApi'
-import { EventApi } from './api/EventApi'
-import { ViewApi } from './ViewApi'
+import { createDuration } from './datelib/duration'
+import { parseDateSpan } from './structs/date-span'
+import { parseEventSource } from './structs/event-source-parse'
+import { parseEvent } from './structs/event-parse'
 import { eventTupleToStore } from './structs/event-store'
 import { ViewSpec } from './structs/view-spec'
 import { __assign } from 'tslib'
@@ -18,7 +13,21 @@ import { triggerDateSelect, triggerDateUnselect } from './calendar-utils'
 import { CalendarDataManager } from './reducers/CalendarDataManager'
 import { Action } from './reducers/Action'
 import { EventSource } from './structs/event-source'
-import { CalendarOptions, CalendarListeners } from './options'
+
+// public
+import {
+  CalendarOptions,
+  CalendarListeners,
+  DateInput,
+  DurationInput,
+  DateSpanInput,
+  DateRangeInput,
+  EventSourceInput,
+  EventInput,
+  EventSourceApi,
+  EventApi,
+  ViewApi,
+} from './api-type-deps'
 
 
 export class CalendarApi {

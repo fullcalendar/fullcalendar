@@ -5,6 +5,7 @@ import './options-declare'
 import './main.css'
 
 export { ListView }
+export * from './api-type-deps'
 
 export default createPlugin({
   optionRefiners: OPTION_REFINERS,

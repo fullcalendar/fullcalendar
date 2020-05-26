@@ -22,7 +22,7 @@ import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg'
 import { TableRow } from './TableRow'
 import { TableCellModel, MoreLinkArg } from './TableCell'
 import { MorePopover } from './MorePopover'
-import { MoreLinkAction } from './options'
+import { MoreLinkAction } from './more-link'
 
 
 export interface TableProps {

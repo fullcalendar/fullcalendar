@@ -1,33 +1,38 @@
 import { createDuration } from './datelib/duration'
 import { mergeProps } from './util/object'
-import { ToolbarInput, CustomButtonInput, ButtonIconsInput, ButtonTextCompoundInput } from './toolbar-struct'
-import { createFormatter, FormatterInput } from './datelib/formatting'
-import { WeekNumberCalculation } from './datelib/env'
+import { createFormatter } from './datelib/formatting'
 import { parseFieldSpecs } from './util/misc'
-import { CssDimValue } from './scrollgrid/util'
-import { DateInput } from './datelib/env'
-import { DateRangeInput } from './datelib/date-range'
-import { BusinessHoursInput } from './structs/business-hours'
-import { ViewApi } from './ViewApi'
-import { LocaleSingularArg, LocaleInput } from './datelib/locale'
-import { OverlapFunc, ConstraintInput, AllowFunc } from './structs/constraint'
-import { EventInputTransformer, EventInput } from './structs/event-parse'
-import { PluginDef } from './plugin-system-struct'
-import { EventSourceInput } from './structs/event-source-parse'
-import { ViewComponentType, ViewHookProps } from './structs/view-config'
 import { EventMeta } from './component/event-rendering'
-import { ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler } from './common/render-hook'
-import { NowIndicatorHookProps } from './common/NowIndicatorRoot'
-import { WeekNumberHookProps } from './common/WeekNumberRoot'
-import { SlotLaneHookProps, SlotLabelHookProps, AllDayHookProps, DayHeaderHookProps } from './render-hook-misc'
-import { DayCellHookProps } from './common/DayCellRoot'
-import { ViewRootHookProps } from './common/ViewRoot'
-import { EventClickArg } from './interactions/EventClicking'
-import { EventHoveringArg } from './interactions/EventHovering'
-import { DateSelectArg, DateUnselectArg } from './calendar-utils'
-import { CalendarApi } from './CalendarApi'
 import { DateProfileGeneratorClass } from './DateProfileGenerator'
-import { VUIEvent } from './vdom'
+
+// public
+import {
+  CssDimValue,
+  DateInput,
+  DateRangeInput,
+  BusinessHoursInput,
+  EventSourceInput,
+  ViewApi,
+  LocaleSingularArg, LocaleInput,
+  EventInput, EventInputTransformer,
+  OverlapFunc, ConstraintInput, AllowFunc,
+  PluginDef,
+  ViewComponentType, ViewHookProps,
+  ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler,
+  NowIndicatorHookProps,
+  WeekNumberHookProps,
+  SlotLaneHookProps, SlotLabelHookProps, AllDayHookProps, DayHeaderHookProps,
+  DayCellHookProps,
+  ViewRootHookProps,
+  EventClickArg,
+  EventHoveringArg,
+  DateSelectArg, DateUnselectArg,
+  CalendarApi,
+  VUIEvent,
+  WeekNumberCalculation,
+  FormatterInput,
+  ToolbarInput, CustomButtonInput, ButtonIconsInput, ButtonTextCompoundInput
+} from './api-type-deps'
 
 
 // base options

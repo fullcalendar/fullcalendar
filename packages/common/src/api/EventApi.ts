@@ -3,12 +3,19 @@ import { EVENT_NON_DATE_REFINERS, EVENT_DATE_REFINERS } from '../structs/event-p
 import { EventInstance } from '../structs/event-instance'
 import { EVENT_UI_REFINERS } from '../component/event-ui'
 import { EventMutation } from '../structs/event-mutation'
-import { DateInput } from '../datelib/env'
 import { diffDates, computeAlignedDayRange } from '../util/date'
-import { DurationInput, createDuration, durationsEqual } from '../datelib/duration'
-import { createFormatter, FormatterInput } from '../datelib/formatting'
-import { EventSourceApi } from './EventSourceApi'
+import { createDuration, durationsEqual } from '../datelib/duration'
+import { createFormatter } from '../datelib/formatting'
 import { CalendarContext } from '../CalendarContext'
+
+// public
+import {
+  DateInput,
+  DurationInput,
+  FormatterInput,
+  EventSourceApi
+} from '../api-type-deps'
+
 
 export class EventApi {
 

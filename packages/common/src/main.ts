@@ -7,6 +7,21 @@ export const version: string = '<%= version %>' // important to type it, so .d.t
 
 import './event-sources/json-feed-event-source-declare' // plugin-like. these ambient defs need to be top-level
 
+// explicit API
+export { EventSourceApi } from './api/EventSourceApi'
+export { EventApi } from './api/EventApi'
+export { CalendarApi } from './CalendarApi'
+export { formatDate, formatRange } from './formatting-api'
+export { ViewApi } from './ViewApi'
+export * from './api-type-deps'
+
+export { // things for plugins. everything else is exported in api-type-deps
+  BASE_OPTION_DEFAULTS, BASE_OPTION_REFINERS, identity, Identity, GenericObject, refineProps,
+  BaseOptionRefiners, BaseOptionsRefined, CalendarOptionRefiners, CalendarOptionsRefined,
+  ViewOptionRefiners, ViewOptionsRefined, RawOptionsFromRefiners, RefinedOptionsFromRefiners,
+  CalendarListenerRefiners
+} from './options'
+
 export { EventDef, EventDefHash } from './structs/event-def'
 export { EventInstance, EventInstanceHash, createEventInstance } from './structs/event-instance'
 export { EventInput, EventRefined, parseEventDef, EventTuple, EventRefiners, refineEventDef } from './structs/event-parse'
@@ -93,9 +108,7 @@ export { DateComponent, Seg, EventSegUiInteractionState } from './component/Date
 export { CalendarData } from './reducers/data-types'
 export { CalendarDataManager } from './reducers/CalendarDataManager'
 export { CalendarDataProvider, CalendarDataProviderProps } from './component/CalendarDataProvider'
-export { CalendarApi } from './CalendarApi'
 export { ViewProps, sliceEvents } from './View'
-export { ViewApi } from './ViewApi'
 
 export { DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 export { ViewDef } from './structs/view-def'
@@ -139,20 +152,6 @@ export { eventDragMutationMassager, EventDropTransformers } from './interactions
 export { EventResizeJoinTransforms } from './interactions/event-resizing'
 export { ElementDragging } from './interactions/ElementDragging'
 
-export { formatDate, formatRange } from './formatting-api'
-
-export {
-  DayHeaderHookProps, SlotLaneHookProps, SlotLabelHookProps, AllDayHookProps,
-} from './render-hook-misc'
-
-export {
-  BASE_OPTION_DEFAULTS, BASE_OPTION_REFINERS, identity, Identity,
-  BaseOptionRefiners, BaseOptionsRefined,
-  CalendarOptionRefiners, CalendarOptions, CalendarOptionsRefined, GenericObject,
-  ViewOptionRefiners, ViewOptions, ViewOptionsRefined, RawOptionsFromRefiners, RefinedOptionsFromRefiners, refineProps,
-  CalendarListenerRefiners
-} from './options'
-
 export { config } from './global-config'
 export { globalLocales } from './global-locales'
 
@@ -189,7 +188,6 @@ export { Slicer, SlicedProps } from './common/slicing-utils'
 export { EventMutation, applyMutationToEventStore } from './structs/event-mutation'
 export { Constraint, ConstraintInput, AllowFunc } from './structs/constraint'
 export { isPropsValid, isInteractionValid } from './validation'
-export { EventApi } from './api/EventApi'
 
 export { requestJson } from './util/requestJson'
 

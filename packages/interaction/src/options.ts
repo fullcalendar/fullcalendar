@@ -1,8 +1,12 @@
 import { identity, Identity } from '@fullcalendar/common'
-import { DateClickArg } from './interactions/DateClicking'
-import { EventDragStartArg, EventDragStopArg, EventDropArg } from './interactions/EventDragging'
-import { EventResizeStartArg, EventResizeStopArg, EventResizeDoneArg } from './interactions/EventResizing'
-import { DropArg, EventReceiveArg, EventLeaveArg } from './utils'
+
+// public
+import {
+  DateClickArg,
+  EventDragStartArg, EventDragStopArg, EventDropArg,
+  EventResizeStartArg, EventResizeStopArg, EventResizeDoneArg,
+  DropArg, EventReceiveArg, EventLeaveArg
+} from './api-type-deps'
 
 export const LISTENER_REFINERS = {
   dateClick: identity as Identity<(arg: DateClickArg) => void>,

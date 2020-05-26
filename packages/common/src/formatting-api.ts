@@ -1,7 +1,13 @@
-import { DateEnv, DateInput } from './datelib/env'
+import { DateEnv } from './datelib/env'
 import { createFormatter } from './datelib/formatting'
 import { organizeRawLocales, buildLocale } from './datelib/locale'
 import { BASE_OPTION_DEFAULTS } from './options'
+
+// public
+import {
+  DateInput
+} from './api-type-deps'
+
 
 export function formatDate(dateInput: DateInput, settings = {}) {
   let dateEnv = buildDateEnv(settings)

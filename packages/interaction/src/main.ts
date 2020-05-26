@@ -15,6 +15,7 @@ export default createPlugin({
   listenerRefiners: LISTENER_REFINERS
 })
 
+export * from './api-type-deps'
 export { FeaturefulElementDragging }
 export { PointerDragging } from './dnd/PointerDragging'
 export { ExternalDraggable as Draggable } from './interactions-external/ExternalDraggable'

@@ -1,5 +1,9 @@
 import { identity, Identity, ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler, createFormatter, FormatterInput } from '@fullcalendar/common'
-import { NoEventsHookProps } from './ListView'
+
+// public
+import {
+  NoEventsHookProps
+} from './api-type-deps'
 
 export const OPTION_REFINERS = {
   listDayFormat: createFalsableFormatter, // defaults specified in list plugins

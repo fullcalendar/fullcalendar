@@ -1,31 +1,12 @@
 import {
-  identity, Identity, ViewApi, EventApi,
-  ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler, VUIEvent
+  identity, Identity, ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler
 } from '@fullcalendar/common'
-import { MoreLinkHookProps } from './TableCell'
 
-
-// TODO: move these types to their own file
-
-export interface EventSegment {
-  event: EventApi
-  start: Date
-  end: Date
-  isStart: boolean
-  isEnd: boolean
-}
-
-export type MoreLinkAction = MoreLinkSimpleAction | MoreLinkHandler
-export type MoreLinkSimpleAction = 'popover' | 'week' | 'day' | 'timeGridWeek' | 'timeGridDay' | string
-export type MoreLinkHandler = (arg: {
-  date: Date,
-  allDay: boolean,
-  allSegs: EventSegment[],
-  hiddenSegs: EventSegment[],
-  jsEvent: VUIEvent,
-  view: ViewApi
-}) => MoreLinkSimpleAction | void
-
+// public
+import {
+  MoreLinkHookProps,
+  MoreLinkAction
+} from './api-type-deps'
 
 export const OPTION_REFINERS = {
   moreLinkClick: identity as Identity<MoreLinkAction>,
