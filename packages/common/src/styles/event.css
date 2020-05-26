@@ -11,13 +11,6 @@ a.fc-event {
   cursor: pointer;
 }
 
-// print tweaks
-.fc-media-print {
-  .fc-event {
-    page-break-inside: avoid;
-  }
-}
-
 
 // mirror
 // ----------------------------------------------------------------------------------------------------
@@ -49,12 +42,6 @@ a.fc-event {
 .fc-event-resizable-mouse .fc-event-resizer, // MOUSE
 .fc-event-selected .fc-event-resizer { // TOUCH
   display: block;
-}
-
-.fc-media-print {
-  .fc-event-resizer {
-    display: none;
-  }
 }
 
 

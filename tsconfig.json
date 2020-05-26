@@ -23,6 +23,7 @@
     { "path": "packages-premium/resource-timegrid" },
     { "path": "packages-premium/resource-timeline" },
     { "path": "packages-premium/scrollgrid" },
-    { "path": "packages-premium/timeline" }
+    { "path": "packages-premium/timeline" },
+    { "path": "packages-premium/adaptive" }
   ]
 }

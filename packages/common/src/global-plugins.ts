@@ -6,14 +6,12 @@ import { jsonFeedEventSourcePlugin } from './event-sources/json-feed-event-sourc
 import { simpleRecurringEventsPlugin } from './structs/recurring-event-simple'
 import { changeHandlerPlugin } from './option-change-handlers'
 import { injectHtml, injectDomNodes } from './util/dom-manip'
-import { adaptivePlugin } from './adaptive'
 
 /*
 this array is exposed on the root namespace so that UMD plugins can add to it.
 see the rollup-bundles script.
 */
 export let globalPlugins: PluginDef[] = [ // TODO: make a const?
-  adaptivePlugin,
   arrayEventSourcePlugin,
   funcEventSourcePlugin,
   jsonFeedEventSourcePlugin,

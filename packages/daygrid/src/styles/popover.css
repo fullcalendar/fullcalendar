@@ -41,9 +41,3 @@
   }
 
 }
-
-.fc-media-print {
-  .fc-popover {
-    display: none; // TODO: have JS close the popovers onbeforeprint?
-  }
-}

@@ -81,8 +81,3 @@
   height: 1px; // needs height to create scrollbars
   margin-bottom: -1px;
 }
-
-
-.fc-scrollgrid table tr {
-  break-inside: avoid; // awesome
-}
