@@ -1,8 +1,12 @@
 
-export class Emitter<HandlerFuncs extends { [eventName: string]: (...args: any[]) => any }> {
+export interface HandlerFuncTypeHash {
+  [eventName: string]: (...args: any[]) => any // with all properties required
+}
+
+export class Emitter<HandlerFuncs extends HandlerFuncTypeHash> {
 
   private handlers: { [Prop in keyof HandlerFuncs]?: HandlerFuncs[Prop][] } = {}
-  private options: HandlerFuncs
+  private options: Partial<HandlerFuncs>
   private thisContext: any = null
 
 
@@ -11,7 +15,7 @@ export class Emitter<HandlerFuncs extends { [eventName: string]: (...args: any[]
   }
 
 
-  setOptions(options: HandlerFuncs) {
+  setOptions(options: Partial<HandlerFuncs>) {
     this.options = options
   }
 

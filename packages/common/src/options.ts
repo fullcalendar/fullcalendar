@@ -306,8 +306,8 @@ export interface CalendarListenerRefiners extends BuiltInCalendarListenerRefiner
   // for ambient extending
 }
 
-export type CalendarListeners = RefinedOptionsFromRefiners<Required<CalendarListenerRefiners>> // Required hack
-
+type CalendarListenersLoose = RefinedOptionsFromRefiners<Required<CalendarListenerRefiners>> // Required hack
+export type CalendarListeners = Required<CalendarListenersLoose> // much more convenient for Emitters and whatnot
 
 
 // calendar-specific options
@@ -329,12 +329,12 @@ export interface CalendarOptionRefiners extends BuiltInCalendarOptionRefiners {
 
 export type CalendarOptions =
   BaseOptions &
-  CalendarListeners &
+  CalendarListenersLoose &
   RawOptionsFromRefiners<Required<CalendarOptionRefiners>> // Required hack https://github.com/microsoft/TypeScript/issues/15300
 
 export type CalendarOptionsRefined =
   BaseOptionsRefined &
-  CalendarListeners &
+  CalendarListenersLoose &
   RefinedOptionsFromRefiners<Required<CalendarOptionRefiners>> // Required hack
 
 const COMPLEX_CALENDAR_OPTIONS: (keyof CalendarOptions)[] = [
@@ -370,12 +370,12 @@ export interface ViewOptionRefiners extends BuiltInViewOptionRefiners {
 
 export type ViewOptions =
   BaseOptions &
-  CalendarListeners &
+  CalendarListenersLoose &
   RawOptionsFromRefiners<Required<ViewOptionRefiners>> // Required hack
 
 export type ViewOptionsRefined =
   BaseOptionsRefined &
-  CalendarListeners &
+  CalendarListenersLoose &
   RefinedOptionsFromRefiners<Required<ViewOptionRefiners>> // Required hack
 
 

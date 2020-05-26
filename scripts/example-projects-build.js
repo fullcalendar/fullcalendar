@@ -17,7 +17,24 @@ globby.sync('*', { cwd: PROJECTS_ROOT, onlyDirectories: true }).forEach(function
     )
 
   } else {
-    let { success } = exec.sync([ 'yarn', 'run', 'build' ], {
+
+    // tsc
+    if (exampleName.match('typescript')) {
+      let { success } = exec.sync([ 'npx', 'tsc' ], {
+        cwd: path.join(PROJECTS_ROOT, exampleDir),
+        live: true
+      })
+
+      if (!success) {
+        console.warn(`Failed running tsc in example project "${exampleName}"`)
+        process.exit(1)
+
+      } else {
+        console.log(`Succeeded running tsc in example project "${exampleName}"`)
+      }
+    }
+
+    let { success } = exec.sync([ 'npm', 'run', 'build' ], {
       cwd: path.join(PROJECTS_ROOT, exampleDir),
       live: true
     })

@@ -89,9 +89,16 @@ function transplantCss(fileName) { // fileName w/o extension
 
 function externalizeVDom() {
   return {
-    resolveId(id) {
+    resolveId(id, importer) {
       if (/\/vdom$/.test(id) || id.match(/^(preact|react|react-dom)$/)) {
-        return { id: './vdom', external: true, moduleSideEffects: true }
+        if (
+          importer.match('packages/common') ||
+          importer.match('packages/core')
+        ) {
+          return { id: './vdom', external: true, moduleSideEffects: true }
+        } else {
+          return { id: '@fullcalendar/common', external: true, moduleSideEffects: true }
+        }
       }
     }
   }
