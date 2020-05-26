@@ -216,7 +216,12 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
 
         } else {
           let { dateEnv, options, viewApi } = context
-          let labelFormat = options.slotLabelFormat || DEFAULT_SLAT_LABEL_FORMAT
+
+          let labelFormat = // TODO: fully pre-parse
+            options.slotLabelFormat == null ? DEFAULT_SLAT_LABEL_FORMAT :
+            Array.isArray(options.slotLabelFormat) ? createFormatter(options.slotLabelFormat[0]) :
+            createFormatter(options.slotLabelFormat)
+
           let hookProps: SlotLabelHookProps = {
             time: props.time,
             date: dateEnv.toDate(props.date),

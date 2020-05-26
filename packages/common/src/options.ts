@@ -153,7 +153,7 @@ export const BASE_OPTION_REFINERS = {
   droppable: Boolean,
   unselectCancel: String,
 
-  slotLabelFormat: createFormatter,
+  slotLabelFormat: identity as Identity<FormatterInput | FormatterInput[]>,
 
   slotLaneClassNames: identity as Identity<ClassNamesGenerator<SlotLaneHookProps>>,
   slotLaneContent: identity as Identity<CustomContentGenerator<SlotLaneHookProps>>,

@@ -32,6 +32,15 @@ const MULTI_SPACE_RE = /\s+/g
 const LTR_RE = /\u200e/g // control character
 const UTC_RE = /UTC|GMT/
 
+
+export interface NativeFormatterOptions extends Intl.DateTimeFormatOptions {
+  week?: 'short' | 'narrow' | 'numeric'
+  meridiem?: 'lowercase' | 'short' | 'narrow' | boolean
+  omitZeroMinute?: boolean
+  omitCommas?: boolean
+  separator?: string
+}
+
 export class NativeFormatter implements DateFormatter {
 
   standardDateProps: any
@@ -39,7 +48,7 @@ export class NativeFormatter implements DateFormatter {
   severity: number
   private buildFormattingFunc: typeof buildFormattingFunc // caching for efficiency with same date env
 
-  constructor(formatSettings) {
+  constructor(formatSettings: NativeFormatterOptions) {
     let standardDateProps: any = {}
     let extendedSettings: any = {}
     let severity = 0
@@ -51,7 +60,7 @@ export class NativeFormatter implements DateFormatter {
       } else {
         standardDateProps[name] = formatSettings[name]
 
-        if (name in STANDARD_DATE_PROP_SEVERITIES) {
+        if (name in STANDARD_DATE_PROP_SEVERITIES) { // TODO: what about hour12? no severity
           severity = Math.max(STANDARD_DATE_PROP_SEVERITIES[name], severity)
         }
       }
