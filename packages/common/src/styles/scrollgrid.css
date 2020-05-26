@@ -4,7 +4,6 @@
   &, table { // all tables (self included)
     width: 100%; // because tables don't normally do this
     table-layout: fixed;
-    border-collapse: collapse !important; // need important?
   }
 
   & tr > * { // all cells (self included)
@@ -12,9 +11,33 @@
   }
 
   & table { // inner tables
-    border-style: hidden !important;
+    border-collapse: collapse !important; // need important?
+    border-top-style: hidden !important;
+    border-left-style: hidden !important;
+    border-right-style: hidden !important;
+  }
+
+  & > tbody table,
+  & > tfoot table {
+    border-bottom-style: hidden !important; // head keeps its bottom border tho
+  }
+
+  border-collapse: separate;
+  border-right-width: 0 !important;
+  border-bottom-width: 0 !important;
+
+  & > * > tr > * {
+    border-top-width: 0;
+    border-left-width: 0;
+  }
+
+  & > thead > tr > *,
+  & > tfoot > tr > * {
+    border-bottom-width: 0;
   }
 }
+
+
 
 .fc-scrollgrid-liquid {
   height: 100%;
@@ -58,7 +81,8 @@
 }
 
 .fc-scrollgrid > thead > .fc-scrollgrid-section-sticky > * {
-  top: -1px; // because border-sharing causes a gap at the top
+  top: 0; // because border-sharing causes a gap at the top
+    // TODO: give safari -1. has bug
 }
 
 .fc-scrollgrid > tfoot > .fc-scrollgrid-section-sticky > * {
