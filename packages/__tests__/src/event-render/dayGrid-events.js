@@ -24,6 +24,25 @@ describe('dayGrid advanced event rendering', function() {
     expect(anyElsIntersect(eventEls)).toBe(false)
   })
 
+  it('renders single-day timed event as list-item', function() {
+    let calendar = initCalendar({
+      initialView: 'dayGridMonth',
+      initialDate: '2020-05-01',
+      eventDisplay: 'auto',
+      events: [
+        {
+          title: 'event 1',
+          start: '2020-05-11T22:00:00'
+        }
+      ]
+    })
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEl = dayGridWrapper.getEventEls()[0]
+
+    expect(dayGridWrapper.isEventListItem(eventEl)).toBe(true)
+  })
+
   it('does not render multi-day event as list-item', function() {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
@@ -34,7 +53,21 @@ describe('dayGrid advanced event rendering', function() {
           title: 'event 1',
           start: '2020-05-11T22:00:00',
           end: '2020-05-12T06:00:00'
-        },
+        }
+      ]
+    })
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEl = dayGridWrapper.getEventEls()[0]
+
+    expect(dayGridWrapper.isEventListItem(eventEl)).toBe(false)
+  })
+
+  it('render only block when eventDislay:block', function() {
+    let calendar = initCalendar({
+      eventDisplay: 'block',
+      events: [
+        { start: '2020-05-02T02:00:00', title: 'event a' }
       ]
     })
 

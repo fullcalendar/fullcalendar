@@ -218,6 +218,7 @@ export type BaseOptions = RawOptionsFromRefiners< // as RawOptions
 // do NOT give a type here. need `typeof BASE_OPTION_DEFAULTS` to give real results.
 // raw values.
 export const BASE_OPTION_DEFAULTS = {
+  eventDisplay: 'auto',
   defaultRangeSeparator: ' - ',
   titleRangeSeparator: ' \u2013 ', // en dash
   defaultTimedEventDuration: '01:00:00',

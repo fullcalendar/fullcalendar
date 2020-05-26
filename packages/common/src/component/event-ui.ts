@@ -34,7 +34,7 @@ export type EventUiInput = RawOptionsFromRefiners<Required<EventUiRefiners>> // 
 export type EventUiRefined = RefinedOptionsFromRefiners<Required<EventUiRefiners>> // Required hack
 
 export interface EventUi {
-  display: string
+  display: string | null
   startEditable: boolean | null
   durationEditable: boolean | null
   constraints: Constraint[]
@@ -53,7 +53,7 @@ export function createEventUi(refined: EventUiRefined, context: CalendarContext)
   let constraint = normalizeConstraint(refined.constraint, context)
 
   return {
-    display: refined.display || '',
+    display: refined.display || null,
     startEditable: refined.startEditable != null ? refined.startEditable : refined.editable,
     durationEditable: refined.durationEditable != null ? refined.durationEditable : refined.editable,
     constraints: constraint != null ? [ constraint ] : [],

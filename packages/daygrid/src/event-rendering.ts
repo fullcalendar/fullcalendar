@@ -12,10 +12,9 @@ export const DEFAULT_TABLE_EVENT_TIME_FORMAT = createFormatter({
 
 export function hasListItemDisplay(seg: TableSeg) {
   let { display } = seg.eventRange.ui
-  let isAuto = !display || display === 'auto' // TODO: normalize earlier on
 
   return display === 'list-item' || (
-    isAuto &&
+    display === 'auto' &&
     !seg.eventRange.def.allDay &&
     seg.firstCol === seg.lastCol // can't be multi-day
   )
