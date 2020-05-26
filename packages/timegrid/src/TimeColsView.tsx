@@ -193,6 +193,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
       chunks: [
         {
           key: 'axis',
+          tableClassName: 'fc-timegrid-slot-labels',
           rowContent: <TimeBodyAxis slatMetas={slatMetas} />
         },
         {

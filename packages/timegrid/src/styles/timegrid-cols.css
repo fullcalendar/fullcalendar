@@ -6,25 +6,26 @@
   overflow: hidden;
 }
 
-.fc-timegrid-cols {
-  position: absolute; // no z-index. children will decide and go above slots
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.fc-media-screen {
+  .fc-timegrid-cols {
+    position: absolute; // no z-index. children will decide and go above slots
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 
-  & > table {
-    height: 100% !important;
+    & > table {
+      height: 100% !important;
+    }
+  }
+
+  .fc-timegrid-event-harness {
+    position: absolute; // top/left/right/bottom will all be set by JS
   }
 }
 
-.fc-timegrid-col-origin {
-  position: relative;
-  height: 0; // all segments position themselves based on this div
-}
-
-.fc-timegrid-event-harness {
-  position: absolute; // top/left/right/bottom will all be set by JS
+.fc-timegrid-col-origin { // TODO: rename to frame?
+  position: relative; // why do we need this now?
 }
 
 

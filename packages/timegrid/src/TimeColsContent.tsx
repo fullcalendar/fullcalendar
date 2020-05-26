@@ -37,6 +37,7 @@ export interface TimeColsContentProps {
   tableColGroupNode: VNode
   slatCoords: TimeColsSlatsCoords
   onColCoords?: (colCoords: PositionCache) => void
+  forPrint: boolean
 }
 
 
@@ -101,6 +102,7 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
                   eventResize={eventResizeByRow[i]}
                   slatCoords={props.slatCoords}
                   eventSelection={props.eventSelection}
+                  forPrint={props.forPrint}
                 />
               ))}
             </tr>
@@ -135,7 +137,10 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
   updateCoords() {
     let { props } = this
 
-    if (props.onColCoords && props.clientWidth !== null) { // means sizing has stabilized
+    if (
+      props.onColCoords &&
+      props.clientWidth !== null // means sizing has stabilized
+    ) {
       props.onColCoords(
         new PositionCache(
           this.rootElRef.current,

@@ -34,6 +34,11 @@ export function injectDomNodes(el: HTMLElement, domNodes: Node[] | NodeList) {
 }
 
 
+export function isElVisible(el: HTMLElement) {
+  return Boolean(el.offsetWidth && el.offsetHeight)
+}
+
+
 // Querying
 // ----------------------------------------------------------------------------------------------------------------
 

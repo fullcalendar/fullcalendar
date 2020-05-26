@@ -19,7 +19,8 @@ import {
   RenderHook,
   DateProfile,
   SlotLabelHookProps,
-  SlotLaneHookProps
+  SlotLaneHookProps,
+  isElVisible
 } from '@fullcalendar/common'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
@@ -105,19 +106,26 @@ export class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
   updateSizing() {
     let { props } = this
 
-    if (props.onCoords && props.clientWidth !== null) { // means sizing has stabilized
-      props.onCoords(
-        new TimeColsSlatsCoords(
-          new PositionCache(
-            this.rootElRef.current,
-            collectSlatEls(this.slatElRefs.currentMap, props.slatMetas),
-            false,
-            true // vertical
-          ),
-          this.props.dateProfile,
-          props.slatMetas
+    if (
+      props.onCoords &&
+      props.clientWidth !== null // means sizing has stabilized
+    ) {
+      let rootEl = this.rootElRef.current
+
+      if (isElVisible(rootEl)) { // not hidden by css
+        props.onCoords(
+          new TimeColsSlatsCoords(
+            new PositionCache(
+              this.rootElRef.current,
+              collectSlatEls(this.slatElRefs.currentMap, props.slatMetas),
+              false,
+              true // vertical
+            ),
+            this.props.dateProfile,
+            props.slatMetas
+          )
         )
-      )
+      }
     }
   }
 

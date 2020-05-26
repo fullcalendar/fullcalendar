@@ -72,7 +72,8 @@ export {
   applyStyle,
   applyStyleProp,
   elementMatches,
-  elementClosest
+  elementClosest,
+  isElVisible
 } from './util/dom-manip'
 export { parseClassNames } from './util/html'
 

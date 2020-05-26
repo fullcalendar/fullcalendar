@@ -106,6 +106,7 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
           tableColGroupNode={props.tableColGroupNode}
           slatCoords={state.slatCoords}
           onColCoords={this.handleColCoords}
+          forPrint={props.forPrint}
         />
       </div>
     )

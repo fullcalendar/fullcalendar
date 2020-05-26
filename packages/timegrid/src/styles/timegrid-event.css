@@ -24,12 +24,14 @@
   }
 }
 
-.fc-timegrid-event {
-  position: absolute;
-  top: 0;
-  bottom: 1px; // stay away from bottom slot line
-  left: 0;
-  right: 0;
+.fc-media-screen {
+  .fc-timegrid-event {
+    position: absolute;
+    top: 0;
+    bottom: 1px; // stay away from bottom slot line
+    left: 0;
+    right: 0;
+  }
 }
 
 
