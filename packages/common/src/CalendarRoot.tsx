@@ -1,4 +1,4 @@
-import { ComponentChildren, flushToDom } from './vdom'
+import { ComponentChildren } from './vdom'
 import { BaseComponent } from './vdom-util'
 import { CssDimValue } from './scrollgrid/util'
 import { CalendarOptions, CalendarListeners } from './options'
@@ -65,7 +65,6 @@ export class CalendarRoot extends BaseComponent<CalendarRootProps, CalendarRootS
 
   handleBeforePrint = () => {
     this.setState({ forPrint: true })
-    flushToDom() // because printing grabs DOM immediately after
   }
 
 

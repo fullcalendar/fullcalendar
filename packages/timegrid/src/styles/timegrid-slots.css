@@ -6,6 +6,7 @@
 
 .fc-timegrid-slot { // a <td>
   height: 1.5em;
+  border-bottom: 0 !important; // each cell owns its top border so it can change to dotted
 }
 
 .fc-timegrid-slot-minor {

@@ -54,8 +54,6 @@ export abstract class TableView<State={}> extends DateComponent<ViewProps, State
       chunk: { content: bodyContent }
     })
 
-    console.log('forPrint', props.forPrint)
-
     return (
       <ViewRoot viewSpec={context.viewSpec}>
         {(rootElRef, classNames) => (

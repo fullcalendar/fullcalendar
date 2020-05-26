@@ -55,11 +55,40 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     let microColGroupNode = this.renderMicroColGroup(cols, state.shrinkWidth)
     let classNames = getScrollGridClassNames(props.liquid, context)
 
+    // TODO: make DRY
+    let configCnt = sectionConfigs.length
+    let configI = 0
+    let currentConfig: SimpleScrollGridSection
+    let headSectionNodes: VNode[] = []
+    let bodySectionNodes: VNode[] = []
+    let footSectionNodes: VNode[] = []
+
+    while (configI < configCnt && (currentConfig = sectionConfigs[configI]).type === 'header') {
+      headSectionNodes.push(this.renderSection(currentConfig, configI, microColGroupNode))
+      configI++
+    }
+
+    while (configI < configCnt && (currentConfig = sectionConfigs[configI]).type === 'body') {
+      bodySectionNodes.push(this.renderSection(currentConfig, configI, microColGroupNode))
+      configI++
+    }
+
+    while (configI < configCnt && (currentConfig = sectionConfigs[configI]).type === 'footer') {
+      footSectionNodes.push(this.renderSection(currentConfig, configI, microColGroupNode))
+      configI++
+    }
+
     return (
       <table className={classNames.join(' ')} style={{ height: props.height }}>
-        <tbody>
-          {sectionConfigs.map((sectionConfig, sectionI) => this.renderSection(sectionConfig, sectionI, microColGroupNode))}
-        </tbody>
+        {Boolean(headSectionNodes.length) &&
+          createElement('thead', {}, ...headSectionNodes)
+        }
+        {Boolean(bodySectionNodes.length) &&
+          createElement('tbody', {}, ...bodySectionNodes)
+        }
+        {Boolean(footSectionNodes.length) &&
+          createElement('tfoot', {}, ...footSectionNodes)
+        }
       </table>
     )
   }

@@ -71,6 +71,7 @@ export function elementMatches(el: HTMLElement, selector: string): HTMLElement {
 
 // accepts multiple subject els
 // returns a real array. good for methods like forEach
+// TODO: accept the document
 export function findElements(container: HTMLElement[] | HTMLElement | NodeListOf<HTMLElement>, selector: string): HTMLElement[] {
   let containers = container instanceof HTMLElement ? [ container ] : container
   let allMatches: HTMLElement[] = []

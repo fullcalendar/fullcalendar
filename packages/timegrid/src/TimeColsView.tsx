@@ -75,9 +75,10 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
         chunk: { content: allDayContent }
       })
       sections.push({
+        type: 'body',
         key: 'all-day-divider',
-        outerContent: (
-          <tr className='fc-scrollgrid-section fc-scrollgrid-section-body'>
+        outerContent: ( // TODO: rename to cellContent so don't need to define <tr>?
+          <tr className='fc-scrollgrid-section'>
             <td
               className={'fc-timegrid-divider fc-divider ' + context.theme.getClass('tableCellShaded')}
             />
@@ -172,8 +173,9 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
       })
       sections.push({
         key: 'all-day-divider',
-        outerContent: (
-          <tr className='fc-scrollgrid-section fc-scrollgrid-section-body'>
+        type: 'body',
+        outerContent: ( // TODO: rename to cellContent so don't need to define <tr>?
+          <tr className='fc-scrollgrid-section'>
             <td
               colSpan={2}
               className={'fc-timegrid-divider fc-divider ' + context.theme.getClass('tableCellShaded')}

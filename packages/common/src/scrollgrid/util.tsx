@@ -18,7 +18,7 @@ export interface ColProps {
 
 export interface SectionConfig {
   outerContent?: VNode
-  type?: 'body' | 'header' | 'footer'
+  type: 'body' | 'header' | 'footer'
   className?: string
   maxHeight?: number
   liquid?: boolean
@@ -176,7 +176,6 @@ export function getScrollGridClassNames(liquid: boolean, context: ViewContext) {
 export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGrow: boolean) {
   let classNames = [
     'fc-scrollgrid-section',
-    `fc-scrollgrid-section-${sectionConfig.type}`,
     sectionConfig.className // used?
   ]
 

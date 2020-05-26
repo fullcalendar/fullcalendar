@@ -1,9 +1,5 @@
 
-.fc-media-screen {
-
-  .fc-sticky {
-    position: -webkit-sticky;
-    position: sticky;
-  }
-
+.fc-sticky {
+  position: -webkit-sticky !important;
+  position: sticky !important;
 }

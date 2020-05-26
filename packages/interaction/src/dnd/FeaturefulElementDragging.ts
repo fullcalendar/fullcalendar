@@ -29,13 +29,17 @@ export class FeaturefulElementDragging extends ElementDragging {
   delayTimeoutId: number | null = null
 
 
-  constructor(containerEl: HTMLElement) {
+  constructor(containerEl: HTMLElement, selector?: string) {
     super(containerEl)
 
     let pointer = this.pointer = new PointerDragging(containerEl)
     pointer.emitter.on('pointerdown', this.onPointerDown)
     pointer.emitter.on('pointermove', this.onPointerMove)
     pointer.emitter.on('pointerup', this.onPointerUp)
+
+    if (selector) {
+      pointer.selector = selector
+    }
 
     this.mirror = new ElementMirror()
     this.autoScroller = new AutoScroller()

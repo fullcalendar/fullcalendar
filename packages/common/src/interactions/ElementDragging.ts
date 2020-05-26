@@ -17,7 +17,8 @@ export abstract class ElementDragging { // TODO: rename to *Interface?
 
   emitter: Emitter<any>
 
-  constructor(el: HTMLElement) {
+
+  constructor(el: HTMLElement, selector?: string) {
     this.emitter = new Emitter()
   }
 
@@ -41,4 +42,4 @@ export abstract class ElementDragging { // TODO: rename to *Interface?
 
 }
 
-export type ElementDraggingClass = { new(el: HTMLElement): ElementDragging }
+export type ElementDraggingClass = { new(el: HTMLElement, selector?: string): ElementDragging }

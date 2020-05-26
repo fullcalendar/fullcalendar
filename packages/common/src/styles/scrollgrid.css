@@ -1,60 +1,39 @@
 
 .fc-scrollgrid {
 
-  // root AND inner tables
-  &, table {
+  &, table { // all tables (self included)
     width: 100%; // because tables don't normally do this
     table-layout: fixed;
-    border-collapse: separate !important; // much better for sticky chunks. OVERCOME reset
+    border-collapse: collapse !important; // need important?
   }
 
-  // inner tables
-  table {
-    border-style: hidden !important; // kill outer border if theme styled it. chunks handle it
-  }
-
-  // all cells
-  tr > * {
+  & tr > * { // all cells (self included)
     padding: 0;
   }
 
+  & > thead {
+    border-bottom-style: hidden !important; // hide. let the inner table be in charge
+  }
+
+  & > thead table {
+    border-top-style: hidden !important;
+    border-left-style: hidden !important;
+    border-right-style: hidden !important;
+    // keep the bottom border
+  }
+
+  & > tbody table,
+  & > tfoot table {
+    border-style: hidden !important;
+  }
 }
+
 .fc-scrollgrid-liquid {
   height: 100%;
 }
+
 .fc-theme-standard .fc-scrollgrid {
-  border: 1px solid #ddd; // okay because bootstrap does this too
-}
-.fc-media-print .fc-scrollgrid { // allows it to stretch so that hard-set widths of inner table push it out!?
-  /* table-layout: auto; */
-}
-
-
-// dedup top/bottom borders
-// rows own their top border for the most part
-.fc-scrollgrid tr:not(.fc-scrollgrid-section-header) > * { // but header still owns its bottom border
-  border-bottom-width: 0;
-}
-.fc-scrollgrid tr:first-child > *,
-.fc-scrollgrid-section-header + .fc-scrollgrid-section > *, // the section right after the header
-.fc .fc-scrollgrid-section-footer > * { // the foot, because it's usually just scrollbars
-  border-top-width: 0;
-}
-
-.fc-media-print .fc-scrollgrid thead tr:last-child > * { // hack
-  border-bottom-width: 1px;
-}
-
-
-// dedup left/right borders
-// rows own their left border (right border in rtl)
-.fc-direction-ltr .fc-scrollgrid tr > * {
-  &:first-child { border-left: 0 }
-  & { border-right: 0 }
-}
-.fc-direction-rtl .fc-scrollgrid tr > * {
-  &:first-child { border-right: 0 }
-  & { border-left: 0 }
+  border: 1px solid #ddd; // bootstrap does this. match
 }
 
 
@@ -83,22 +62,27 @@
 
 // stickiness
 
-.fc-scrollgrid-section-header > td {
-  top: 0; // for when sticky
-}
-
-.fc-scrollgrid-section-footer > td {
-  bottom: 0; // for when sticky
-}
-
-.fc-scrollgrid-section-sticky > td {
+.fc-scrollgrid-section-sticky > * {
   background: #fff; // TODO: var
-  position: sticky; // TODO: browser prefixes?
+  position: sticky !important; // TODO: browser prefixes? important because overcomes fc-liquid-hack
   z-index: 2; // TODO: var
   // TODO: box-shadow when sticking
+}
+
+.fc-scrollgrid > thead > .fc-scrollgrid-section-sticky > * {
+  top: -1px; // because border-sharing causes a gap at the top
+}
+
+.fc-scrollgrid > tfoot > .fc-scrollgrid-section-sticky > * {
+  bottom: 0; // known bug: bottom-stickiness doesn't work in safari
 }
 
 .fc-scrollgrid-sticky-shim { // for horizontal scrollbar
   height: 1px; // needs height to create scrollbars
   margin-bottom: -1px;
+}
+
+
+.fc-scrollgrid table tr {
+  break-inside: avoid; // awesome
 }
