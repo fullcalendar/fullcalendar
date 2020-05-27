@@ -1,4 +1,17 @@
 
+v5.0.0-beta.4 (2020-05-26)
+--------------------------
+
+Changes since beta.3:
+- features:
+  - improved printing for timeline view (#4813)
+- fixes:
+  - `eventDisplay` not working (#5434)
+  - typescript errors when compiling with tsc (#5446)
+  - `slotLabelFormat` as array not working (#5450)
+  - more exports of typescript interfaces (#5452)
+
+
 v5.0.0-beta.3 (2020-05-20)
 --------------------------
 
