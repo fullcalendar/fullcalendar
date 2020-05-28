@@ -1,4 +1,11 @@
 
+v4.4.1 (2020-05-27)
+-------------------
+
+- fix: loading callback does not fire for resources (#5278)
+- fix: calling `setOption` when there is a date selection causes a typeerror (#5266)
+
+
 v4.4.0 (2020-02-11)
 -------------------
 
