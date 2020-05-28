@@ -54,6 +54,7 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
     let { dayGrid } = this
     let { dateProfile, dayTable } = props
 
+    dayGrid.receiveContext(context) // hack because context is used in sliceProps
     dayGrid.receiveProps({
       ...this.slicer.sliceProps(props, dateProfile, props.nextDayThreshold, context.calendar, dayGrid, dayTable),
       dateProfile,
