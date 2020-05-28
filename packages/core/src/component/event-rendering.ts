@@ -214,7 +214,7 @@ export function triggerRenderedSegs(context: ComponentContext, segs: Seg[], isMi
     }
   }
 
-  if (!calendar.state.loadingLevel) { // avoid initial empty state while pending
+  if (!calendar.state.eventSourceLoadingLevel) { // avoid initial empty state while pending
     calendar.afterSizingTriggers._eventsPositioned = [ null ] // fire once
   }
 }
