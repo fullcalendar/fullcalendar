@@ -1,4 +1,10 @@
 
+v4.4.2 (2020-05-28)
+-------------------
+
+Bump all packages so that all latest deps are fetched
+
+
 v4.4.1 (2020-05-27)
 -------------------
 
