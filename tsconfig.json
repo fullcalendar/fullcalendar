@@ -14,7 +14,7 @@
     "importHelpers": true,
     "resolveJsonModule": true,
     "allowJs": true,
-    "checkJs": true,
+    "checkJs": false,
     "baseUrl": ".",
     "paths": {
       "@fullcalendar/core": [ "packages/core/src/main" ],
