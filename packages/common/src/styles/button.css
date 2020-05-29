@@ -46,10 +46,7 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
     color: #212529;
     text-align: center;
     vertical-align: middle;
-    -webkit-user-select: none;
-      -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
+    user-select: none;
     background-color: transparent;
     border: 1px solid transparent;
     padding: 0.4em 0.65em;
@@ -65,8 +62,7 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
 
   & .fc-button:focus {
     outline: 0;
-    -webkit-box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25);
-            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25);
   }
 
   & .fc-button:disabled {
@@ -88,8 +84,7 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
   }
 
   & .fc-button-primary:focus {
-    -webkit-box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
-            box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
+    box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
   }
 
   & .fc-button-primary:disabled {
@@ -107,8 +102,7 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
 
   & .fc-button-primary:not(:disabled):active:focus,
   & .fc-button-primary:not(:disabled).fc-button-active:focus {
-    -webkit-box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
-            box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
+    box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
   }
 
   // icons within buttons

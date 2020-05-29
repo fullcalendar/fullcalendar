@@ -3,17 +3,13 @@
 
   & .fc-button-group {
     position: relative;
-    display: -webkit-inline-box;
-    display: -ms-inline-flexbox;
     display: inline-flex;
     vertical-align: middle;
   }
 
   & .fc-button-group > .fc-button {
     position: relative;
-    -webkit-box-flex: 1;
-        -ms-flex: 1 1 auto;
-            flex: 1 1 auto;
+    flex: 1 1 auto;
   }
 
   & .fc-button-group > .fc-button:hover {
