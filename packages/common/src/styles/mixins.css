@@ -25,7 +25,7 @@
 }
 
 @mixin bg-z-indexes {
-  .fc-non-business { z-index: 1 }
-  .fc-bg-event { z-index: 2 }
-  .fc-highlight { z-index: 3 }
+  & .fc-non-business { z-index: 1 }
+  & .fc-bg-event { z-index: 2 }
+  & .fc-highlight { z-index: 3 }
 }

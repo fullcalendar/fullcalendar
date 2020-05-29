@@ -11,7 +11,8 @@
 
   & .fc-scrollgrid {
 
-    &, table { // all tables (self included)
+    &,
+    & table { // all tables (self included)
       width: 100%; // because tables don't normally do this
       table-layout: fixed;
     }

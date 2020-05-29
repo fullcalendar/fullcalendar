@@ -31,7 +31,7 @@ $daygrid-popover-z: 7;
   // positioning for balanced vs natural
 
   & .fc-daygrid-body-balanced {
-    .fc-daygrid-day-events {
+    & .fc-daygrid-day-events {
       position: absolute;
       left: 0;
       right: 0;

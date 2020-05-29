@@ -8,8 +8,8 @@
   // TODO: vars
   font-size: .85em;
 
-  .fc-event-time,
-  .fc-event-title {
+  & .fc-event-time,
+  & .fc-event-title {
     display: inline;
   }
 }
@@ -20,13 +20,13 @@
   border: 1px solid #3788d8; // TODO: var
   background-color: #3788d8; // TODO: var
 
-  .fc-event-main {
+  & .fc-event-main {
     color: #fff; // better to be within the <a> tag, for theme. TODO: var
     padding: 1px;
     overflow: hidden;
   }
 
-  .fc-event-time {
+  & .fc-event-time {
     font-weight: bold;
   }
 }
@@ -38,7 +38,7 @@
   overflow: hidden;
   padding: 2px 0;
 
-  .fc-event-title {
+  & .fc-event-title {
     font-weight: bold;
   }
 
