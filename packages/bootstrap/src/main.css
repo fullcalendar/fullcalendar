@@ -1,42 +1,19 @@
 
-.fc.fc-theme-bootstrap a {
-  text-decoration: none;
-}
+.fc-theme-bootstrap {
+  // TODO: force event hovering on navlink!!
 
-.fc.fc-theme-bootstrap a[data-navlink]:hover {
-  text-decoration: underline;
-}
+  & .table {
+    margin-bottom: 0;
+  }
 
-.fc-theme-bootstrap .fc-day-today.alert {
-  border-radius: 0;
-}
+  & .fc-timegrid-slots table {
+    /* some themes have background color. see through to cols */
+    background: none;
+  }
 
-.fc-theme-bootstrap .table {
-  margin-bottom: 0;
-}
+  & .fc-bootstrap-bordered { // we provide this alongside "card card-primary"
+    background: transparent; // some themes provide background. undo
+    border-radius: 0; // some themes provide border-radius. undo
+  }
 
-.fc-theme-bootstrap .fc-popover.card {
-  position: absolute; // because .card sets it to position:relative
-}
-
-.fc .fc-bootstrap-bordered {
-  background: transparent; // some themes provide background. undo
-  border-radius: 0; // some themes provide border-radius. undo
-}
-
-
-/* Popover
---------------------------------------------------------------------------------------------------*/
-
-.fc-theme-bootstrap .fc-popover .card-body {
-  padding: 0; // undo built-in padding
-}
-
-
-/* TimeGrid Slots (lines that run horizontally)
---------------------------------------------------------------------------------------------------*/
-
-.fc-theme-bootstrap .fc-timegrid-slots table {
-  /* some themes have background color. see through to slats */
-  background: none;
 }

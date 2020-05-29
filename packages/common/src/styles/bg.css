@@ -1,46 +1,50 @@
 
-.fc-bg-event,
-.fc-non-business,
-.fc-highlight {
-  // will always have a harness with position:relative/absolute, so absolutely expand
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.fc {
 
-  opacity: .3;
-}
+  & .fc-bg-event,
+  & .fc-non-business,
+  & .fc-highlight {
+    // will always have a harness with position:relative/absolute, so absolutely expand
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 
-
-.fc-non-business {
-  background: #d7d7d7;
-}
-
-.fc-bg-event {
-  background: rgb(143, 223, 130);
-}
-
-.fc-highlight {
-  background: #bce8f1;
-}
+    opacity: .3;
+  }
 
 
-.fc-bg-event .fc-event-title {
-  margin: .5em;
-  font-size: .85em;
-  font-style: italic;
-}
+  & .fc-non-business {
+    background: #d7d7d7;
+  }
+
+  & .fc-bg-event {
+    background: rgb(143, 223, 130);
+  }
+
+  & .fc-highlight {
+    background: #bce8f1;
+  }
 
 
-// today <td>
-// DIFFERENT SYSTEM, not within a shared container
+  & .fc-bg-event .fc-event-title {
+    margin: .5em;
+    font-size: .85em;
+    font-style: italic;
+  }
 
-// for all themes. bootstrap didn't provide a good semi-transparent color for this
-.fc-day-today {
-  background: rgba(255, 220, 40, 0.15);
-}
 
-.fc-day-disabled {
-  background: #f2f2f2; // TODO: let theme style
+  // today <td>
+  // DIFFERENT SYSTEM, not within a shared container
+
+  // for all themes. bootstrap didn't provide a good semi-transparent color for this
+  & .fc-day-today {
+    background: rgba(255, 220, 40, 0.15);
+  }
+
+  & .fc-day-disabled {
+    background: #f2f2f2; // TODO: let theme style
+  }
+
 }

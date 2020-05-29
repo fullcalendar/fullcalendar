@@ -1,41 +1,50 @@
 
-.fc-popover {
-  position: fixed !important; // OVERCOME BOOTSTRAP
-  top: 0; // for when not positioned yet
-  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+.fc {
+  // TODO: for bootstrap, use popover class instead!!!
+
+  & .fc-popover {
+    position: fixed;
+    top: 0; // for when not positioned yet
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  }
+
+  & .fc-popover-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 4px;
+  }
+
+  & .fc-popover-title {
+    margin: 0 2px;
+  }
+
+  & .fc-popover-close {
+    cursor: pointer;
+    opacity: 0.65;
+    font-size: 1.1em;
+  }
+
 }
 
-.fc-popover-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 3px 4px !important; // OVERCOME BOOTSTRAP
-}
+.fc-direction-rtl {
 
-.fc-direction-rtl .fc-popover-header {
-  flex-direction: row-reverse;
-}
+  & .fc-popover-header {
+    flex-direction: row-reverse;
+  }
 
-.fc-popover-title {
-  margin: 0 2px;
-}
-
-.fc-popover-close {
-  cursor: pointer;
-  opacity: 0.65;
-  font-size: 1.1em;
 }
 
 .fc-theme-standard {
 
-  .fc-popover {
+  & .fc-popover {
     border: 1px solid $fc-theme-standard-border-color;
     border: 1px solid var(--fc-theme-standard-border-color, $fc-theme-standard-border-color);
     background: #fff;
   }
 
-  .fc-popover-header {
+  & .fc-popover-header {
     background: $fc-theme-standard-muted-bg-color;
     background: var(--fc-theme-standard-muted-bg-color, $fc-theme-standard-muted-bg-color);
   }

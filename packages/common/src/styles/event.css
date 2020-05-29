@@ -1,7 +1,13 @@
 
+// okay for event to be root precedence
+
 // link resets
 a.fc-event {
   display: block;
+  text-decoration: none;
+}
+a.fc-event,
+a.fc-event:hover {
   text-decoration: none;
 }
 

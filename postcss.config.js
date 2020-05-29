@@ -3,7 +3,7 @@ module.exports = {
   plugins: [
     require('postcss-advanced-variables'),
     require('postcss-nested'),
-    require('postcss-nested-ancestors'), // for & within nested
+    require('postcss-nested-ancestors'), // for & within nested ... needed?
     require('postcss-calc')
   ]
 }

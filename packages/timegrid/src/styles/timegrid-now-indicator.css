@@ -1,41 +1,52 @@
 
-// line
+.fc {
 
-.fc-timegrid-now-indicator-line {
-  position: absolute;
-  z-index: $timegrid-now-indicator-z;
-  left: 0;
-  right: 0;
-  border-style: solid;
-  border-color: $now-indicator-color;
-  border-width: 1px 0 0;
+  // line
+
+  & .fc-timegrid-now-indicator-line {
+    position: absolute;
+    z-index: $timegrid-now-indicator-z;
+    left: 0;
+    right: 0;
+    border-style: solid;
+    border-color: $now-indicator-color;
+    border-width: 1px 0 0;
+  }
+
+  // arrow
+
+  & .fc-timegrid-now-indicator-arrow {
+    position: absolute;
+    z-index: $timegrid-now-indicator-z;
+    margin-top: -5px; // vertically center on top coordinate
+    border-style: solid;
+    border-color: $now-indicator-color;
+  }
+
 }
 
+.fc-direction-ltr {
 
-// arrow
+  & .fc-timegrid-now-indicator-arrow {
+    left: 0;
 
-.fc-timegrid-now-indicator-arrow {
-  position: absolute;
-  z-index: $timegrid-now-indicator-z;
-  margin-top: -5px; // vertically center on top coordinate
-  border-style: solid;
-  border-color: $now-indicator-color;
+    // triangle pointing right. TODO: mixin
+    border-width: 5px 0 5px 6px;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+  }
+
 }
 
-.fc-direction-ltr .fc-timegrid-now-indicator-arrow {
-  left: 0;
+.fc-direction-rtl {
 
-  // triangle pointing right. TODO: mixin
-  border-width: 5px 0 5px 6px;
-  border-top-color: transparent;
-  border-bottom-color: transparent;
-}
+  & .fc-timegrid-now-indicator-arrow {
+    right: 0;
 
-.fc-direction-rtl .fc-timegrid-now-indicator-arrow {
-  right: 0;
+    // triangle pointing left. TODO: mixin
+    border-width: 5px 6px 5px 0;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+  }
 
-  // triangle pointing left. TODO: mixin
-  border-width: 5px 6px 5px 0;
-  border-top-color: transparent;
-  border-bottom-color: transparent;
 }

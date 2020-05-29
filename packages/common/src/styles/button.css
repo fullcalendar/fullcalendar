@@ -8,110 +8,114 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
 
 // reset
 
-.fc-button {
-  border-radius: 0;
-  overflow: visible;
-  text-transform: none;
-  margin: 0;
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-}
+.fc {
 
-.fc-button:focus {
-  outline: 1px dotted;
-  outline: 5px auto -webkit-focus-ring-color;
-}
+  & .fc-button {
+    border-radius: 0;
+    overflow: visible;
+    text-transform: none;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+  }
 
-.fc-button {
-  -webkit-appearance: button;
-}
+  & .fc-button:focus {
+    outline: 1px dotted;
+    outline: 5px auto -webkit-focus-ring-color;
+  }
 
-.fc-button:not(:disabled) {
-  cursor: pointer;
-}
+  & .fc-button {
+    -webkit-appearance: button;
+  }
 
-.fc-button::-moz-focus-inner {
-  padding: 0;
-  border-style: none;
-}
+  & .fc-button:not(:disabled) {
+    cursor: pointer;
+  }
 
-// theme
+  & .fc-button::-moz-focus-inner {
+    padding: 0;
+    border-style: none;
+  }
 
-.fc-button {
-  display: inline-block;
-  font-weight: 400;
-  color: #212529;
-  text-align: center;
-  vertical-align: middle;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-  background-color: transparent;
-  border: 1px solid transparent;
-  padding: 0.4em 0.65em;
-  font-size: 1em;
-  line-height: 1.5;
-  border-radius: 0.25em;
-}
+  // theme
 
-.fc-button:hover {
-  color: #212529;
-  text-decoration: none;
-}
+  & .fc-button {
+    display: inline-block;
+    font-weight: 400;
+    color: #212529;
+    text-align: center;
+    vertical-align: middle;
+    -webkit-user-select: none;
+      -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 0.4em 0.65em;
+    font-size: 1em;
+    line-height: 1.5;
+    border-radius: 0.25em;
+  }
 
-.fc-button:focus {
-  outline: 0;
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25);
-          box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25);
-}
+  & .fc-button:hover {
+    color: #212529;
+    text-decoration: none;
+  }
 
-.fc-button:disabled {
-  opacity: 0.65;
-}
+  & .fc-button:focus {
+    outline: 0;
+    -webkit-box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25);
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25);
+  }
 
-// "primary" coloring
+  & .fc-button:disabled {
+    opacity: 0.65;
+  }
 
-.fc-button-primary {
-  color: #fff;
-  background-color: #2C3E50;
-  border-color: #2C3E50;
-}
+  // "primary" coloring
 
-.fc-button-primary:hover {
-  color: #fff;
-  background-color: #1e2b37;
-  border-color: #1a252f;
-}
+  & .fc-button-primary {
+    color: #fff;
+    background-color: #2C3E50;
+    border-color: #2C3E50;
+  }
 
-.fc-button-primary:focus {
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
-}
+  & .fc-button-primary:hover {
+    color: #fff;
+    background-color: #1e2b37;
+    border-color: #1a252f;
+  }
 
-.fc-button-primary:disabled {
-  color: #fff;
-  background-color: #2C3E50;
-  border-color: #2C3E50;
-}
+  & .fc-button-primary:focus {
+    -webkit-box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
+            box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
+  }
 
-.fc-button-primary:not(:disabled):active,
-.fc-button-primary:not(:disabled).fc-button-active {
-  color: #fff;
-  background-color: #1a252f;
-  border-color: #151e27;
-}
+  & .fc-button-primary:disabled {
+    color: #fff;
+    background-color: #2C3E50;
+    border-color: #2C3E50;
+  }
 
-.fc-button-primary:not(:disabled):active:focus,
-.fc-button-primary:not(:disabled).fc-button-active:focus {
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
-}
+  & .fc-button-primary:not(:disabled):active,
+  & .fc-button-primary:not(:disabled).fc-button-active {
+    color: #fff;
+    background-color: #1a252f;
+    border-color: #151e27;
+  }
 
-// icons within buttons
+  & .fc-button-primary:not(:disabled):active:focus,
+  & .fc-button-primary:not(:disabled).fc-button-active:focus {
+    -webkit-box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
+            box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
+  }
 
-.fc-button .fc-icon {
-  vertical-align: middle;
-  font-size: 1.5em; // bump up the size (but don't make it bigger than line-height of button, which is 1.5em also)
+  // icons within buttons
+
+  & .fc-button .fc-icon {
+    vertical-align: middle;
+    font-size: 1.5em; // bump up the size (but don't make it bigger than line-height of button, which is 1.5em also)
+  }
+
 }

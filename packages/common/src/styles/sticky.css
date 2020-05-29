@@ -1,5 +1,9 @@
 
-.fc-sticky {
-  position: -webkit-sticky !important;
-  position: sticky !important;
+.fc {
+
+  & .fc-sticky {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+  }
+
 }

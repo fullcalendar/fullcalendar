@@ -1,67 +1,63 @@
 
-// harness
-
 .fc-timegrid-event-harness-inset .fc-timegrid-event,
 .fc-timegrid-event.fc-event-mirror {
   box-shadow: 0px 0px 0px 1px #fff; // TODO: var
 }
 
-
-// root
-
-.fc-timegrid-event {
+.fc-timegrid-event { // events need to be root
   // TODO: vars
   font-size: .85em;
   border-radius: 3px;
   border: 1px solid #3788d8;
   background-color: #3788d8;
 
-  .fc-event-main {
+  // kill radius/padding when event continues into future/past
+
+  &:not(.fc-event-start) {
+    // replace space made by the top border with padding
+    border-top-width: 0;
+    padding-top: 1px;
+
+    // remove top rounded corners
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  &:not(.fc-event-end) {
+    // replace space made by the top border with padding
+    border-bottom-width: 0;
+    padding-bottom: 1px;
+
+    // remove bottom rounded corners
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  & .fc-event-main {
     color: #fff; // better to be within the <a> tag, for theme. TODO: var
     max-height: 100%;
     overflow: hidden;
     padding: 1px 1px 0;
   }
+
+  // time header
+
+  & .fc-event-time {
+    white-space: nowrap;
+    font-size: .85em;
+    margin-bottom: 1px;
+  }
+
 }
 
 .fc-media-screen {
-  .fc-timegrid-event {
+
+  & .fc-timegrid-event {
     position: absolute;
     top: 0;
     bottom: 1px; // stay away from bottom slot line
     left: 0;
     right: 0;
   }
-}
 
-
-// kill radius/padding when event continues into future/past
-
-.fc-timegrid-event:not(.fc-event-start) {
-  // replace space made by the top border with padding
-  border-top-width: 0;
-  padding-top: 1px;
-
-  // remove top rounded corners
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-
-.fc-timegrid-event:not(.fc-event-end) {
-  // replace space made by the top border with padding
-  border-bottom-width: 0;
-  padding-bottom: 1px;
-
-  // remove bottom rounded corners
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-
-// time header
-
-.fc-timegrid-event .fc-event-time {
-  white-space: nowrap;
-  font-size: .85em;
-  margin-bottom: 1px;
 }

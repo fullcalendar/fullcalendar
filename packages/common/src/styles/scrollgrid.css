@@ -1,95 +1,96 @@
 
-.fc-scrollgrid {
+.fc-theme-standard {
 
-  &, table { // all tables (self included)
-    width: 100%; // because tables don't normally do this
-    table-layout: fixed;
+  & .fc-scrollgrid {
+    border: 1px solid #ddd; // bootstrap does this. match
   }
 
-  & tr > * { // all cells (self included)
-    padding: 0;
-  }
+}
 
-  & table { // inner tables
-    border-collapse: collapse !important; // need important?
-    border-top-style: hidden !important;
-    border-left-style: hidden !important;
-    border-right-style: hidden !important;
-  }
+.fc {
 
-  & > tbody table,
-  & > tfoot table {
-    border-bottom-style: hidden !important; // head keeps its bottom border tho
-  }
+  & .fc-scrollgrid {
 
-  border-collapse: separate;
-  border-right-width: 0 !important;
-  border-bottom-width: 0 !important;
+    &, table { // all tables (self included)
+      width: 100%; // because tables don't normally do this
+      table-layout: fixed;
+    }
 
-  & > * > tr > * {
-    border-top-width: 0;
-    border-left-width: 0;
-  }
+    & table { // inner tables
+      border-top-style: hidden;
+      border-left-style: hidden;
+      border-right-style: hidden;
+    }
 
-  & > thead > tr > *,
-  & > tfoot > tr > * {
+    & > tbody table,
+    & > tfoot table {
+      border-bottom-style: hidden; // head keeps its bottom border tho
+    }
+
+    border-collapse: separate;
+    border-right-width: 0;
     border-bottom-width: 0;
-  }
-}
 
+    & > * > tr > * {
+      border-top-width: 0;
+      border-left-width: 0;
+    }
 
-
-.fc-scrollgrid-liquid {
-  height: 100%;
-}
-
-.fc-theme-standard .fc-scrollgrid {
-  border: 1px solid #ddd; // bootstrap does this. match
-}
-
-
-.fc-scrollgrid-section { // a <tr>
-  height: 0;
-
-  > td {
-    height: 0; // needs a height so inner div within grow
+    & > thead > tr > *,
+    & > tfoot > tr > * {
+      border-bottom-width: 0;
+    }
   }
 
-  table {
-    height: 1px;
-      // for most browsers, if a height isn't set on the table, can't do liquid-height within cells
-      // serves as a min-height. harmless
+  & .fc-scrollgrid-liquid {
+    height: 100%;
   }
-}
 
-.fc-scrollgrid-section-liquid {
-  height: auto;
+  & .fc-scrollgrid-section { // a <tr>
+    height: 0;
 
-  > td {
-    height: 100%; // FF needs this instead of auto
+    & > td {
+      height: 0; // needs a height so inner div within grow
+    }
+
+    & table {
+      height: 1px;
+        // for most browsers, if a height isn't set on the table, can't do liquid-height within cells
+        // serves as a min-height. harmless
+    }
+
   }
-}
 
+  & .fc-scrollgrid-section-liquid {
+    height: auto;
 
-// stickiness
+    & > td {
+      height: 100%; // FF needs this instead of auto
+    }
 
-.fc-scrollgrid-section-sticky > * {
-  background: #fff; // TODO: var
-  position: sticky !important; // TODO: browser prefixes? important because overcomes fc-liquid-hack
-  z-index: 2; // TODO: var
-  // TODO: box-shadow when sticking
-}
+  }
 
-.fc-scrollgrid > thead > .fc-scrollgrid-section-sticky > * {
-  top: 0; // because border-sharing causes a gap at the top
-    // TODO: give safari -1. has bug
-}
+  // stickiness
 
-.fc-scrollgrid > tfoot > .fc-scrollgrid-section-sticky > * {
-  bottom: 0; // known bug: bottom-stickiness doesn't work in safari
-}
+  & .fc-scrollgrid-section-sticky > * {
+    background: #fff; // TODO: var
+    position: sticky !important; // TODO: browser prefixes? important because overcomes fc-liquid-hack
+    z-index: 2; // TODO: var
+    // TODO: box-shadow when sticking
+  }
 
-.fc-scrollgrid-sticky-shim { // for horizontal scrollbar
-  height: 1px; // needs height to create scrollbars
-  margin-bottom: -1px;
+  & .fc-scrollgrid > thead > .fc-scrollgrid-section-sticky > * {
+    top: 0; // because border-sharing causes a gap at the top
+      // TODO: give safari -1. has bug
+  }
+
+  & .fc-scrollgrid > tfoot > .fc-scrollgrid-section-sticky > * {
+    bottom: 0; // known bug: bottom-stickiness doesn't work in safari
+  }
+
+  & .fc-scrollgrid-sticky-shim { // for horizontal scrollbar
+    height: 1px; // needs height to create scrollbars
+    margin-bottom: -1px;
+  }
+
 }

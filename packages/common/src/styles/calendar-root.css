@@ -1,44 +1,58 @@
 
+// resets
+
 .fc {
-  font-size: 1em;
 
   &,
-  *,
-  *:before,
-  *:after {
+  & *,
+  & *:before,
+  & *:after {
     -webkit-box-sizing: border-box;
-       -moz-box-sizing: border-box;
+        -moz-box-sizing: border-box;
             box-sizing: border-box;
   }
 
 
-  table {
+  & table {
     border-spacing: 0;
     font-size: 1em; /* normalize cross-browser */
+    border-collapse: collapse;
   }
 
-  th {
+  & th {
     text-align: center; // is this needed?
   }
 
-  th, td {
+  & th,
+  & td {
     vertical-align: top;
+    padding: 0;
   }
 
-  a[data-navlink] {
+  & a[data-navlink] {
     cursor: pointer;
   }
 
-  a[data-navlink]:hover {
+  & a[data-navlink]:hover {
     text-decoration: underline;
   }
 
-}
+  // for FF, which doesn't expand a 100% div within a table cell. use absolute positioning
+  // inner-wrappers are responsible for being absolute
+  // TODO: best place for this?
+  & .fc-liquid-hack {
+    & td,
+    & th {
+      position: relative;
+    }
+  }
 
-.fc {
+  font-size: 1em;
+
   // layout of immediate children
   display: flex;
   flex-direction: column;
+
 }
 
 .fc-direction-ltr {
@@ -52,19 +66,9 @@
 }
 
 .fc-theme-standard {
-
-  td, th {
+  & td,
+  & th {
     border: 1px solid $fc-theme-standard-border-color;
     border: 1px solid var(--fc-theme-standard-border-color, $fc-theme-standard-border-color);
-  }
-
-}
-
-
-// for FF, which doesn't expand a 100% div within a table cell. use absolute positioning
-// inner-wrappers are responsible for being absolute
-.fc-liquid-hack {
-  td, th {
-    position: relative;
   }
 }

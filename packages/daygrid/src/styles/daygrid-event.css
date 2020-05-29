@@ -1,5 +1,5 @@
 
-.fc-daygrid-event {
+.fc-daygrid-event { // make root-level, because will be dragged-and-dropped outside of a component root
   position: relative;
   white-space: nowrap;
   margin: 1px 0; // spacing between events
@@ -13,16 +13,6 @@
     display: inline;
   }
 }
-
-// spacing between time and title
-.fc-direction-ltr .fc-daygrid-event .fc-event-time {
-  margin-right: 3px; // TODO: var
-}
-.fc-direction-rtl .fc-daygrid-event .fc-event-time {
-  margin-left: 3px; // TODO: var
-}
-
-
 
 // --- the rectangle ("block") style of event ---
 
@@ -40,19 +30,6 @@
     font-weight: bold;
   }
 }
-
-// kill radius when event continues into future/past
-.fc-direction-ltr .fc-daygrid-block-event:not(.fc-event-start),
-.fc-direction-rtl .fc-daygrid-block-event:not(.fc-event-end) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-.fc-direction-ltr .fc-daygrid-block-event:not(.fc-event-end),
-.fc-direction-rtl .fc-daygrid-block-event:not(.fc-event-start) {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
 
 // --- the dot style of event ---
 // (time and title are already display:inline b/c they're spans)
@@ -78,4 +55,33 @@
   height: 8px;
   border-radius: 50%;
   background: #3788d8; // TODO: var
+}
+
+.fc-direction-ltr {
+
+  // spacing between time and title
+  & .fc-daygrid-event .fc-event-time {
+    margin-right: 3px; // TODO: var
+  }
+
+}
+
+.fc-direction-rtl {
+
+  & .fc-daygrid-event .fc-event-time {
+    margin-left: 3px; // TODO: var
+  }
+
+}
+
+// kill radius when event continues into future/past
+.fc-direction-ltr .fc-daygrid-block-event:not(.fc-event-start),
+.fc-direction-rtl .fc-daygrid-block-event:not(.fc-event-end) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.fc-direction-ltr .fc-daygrid-block-event:not(.fc-event-end),
+.fc-direction-rtl .fc-daygrid-block-event:not(.fc-event-start) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }

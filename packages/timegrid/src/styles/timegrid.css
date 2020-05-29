@@ -1,10 +1,14 @@
 
-.fc .fc-timegrid-divider { // OVERCOME RESET
-  padding: 0 0 2px; // browsers get confused when you set height. use padding instead
-}
+.fc {
 
-.fc-timegrid-body {
-  position: relative;
-  z-index: 1; // scope the z-indexes of slots and cols
-  min-height: 100%; // fill height always, even when slat table doesn't grow
+  & .fc-timegrid-divider {
+    padding: 0 0 2px; // browsers get confused when you set height. use padding instead
+  }
+
+  & .fc-timegrid-body {
+    position: relative;
+    z-index: 1; // scope the z-indexes of slots and cols
+    min-height: 100%; // fill height always, even when slat table doesn't grow
+  }
+
 }
