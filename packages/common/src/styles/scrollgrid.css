@@ -75,7 +75,7 @@
 
   & .fc-scrollgrid-section-sticky > * {
     background: #fff; // TODO: var
-    position: sticky !important; // TODO: browser prefixes? important because overcomes fc-liquid-hack
+    position: sticky;
     z-index: 2; // TODO: var
     // TODO: box-shadow when sticking
   }

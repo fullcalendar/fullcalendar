@@ -39,12 +39,6 @@
     height: 100%; // will need liquid-hack in FF
   }
 
-  & .fc-liquid-hack {
-    & .fc-timegrid-axis-frame-liquid {
-      @include liquid-absolute-override;
-    }
-  }
-
   & .fc-timegrid-axis-frame {
     overflow: hidden;
     display: flex;
@@ -73,6 +67,14 @@
   & .fc-timegrid-axis-frame,
   & .fc-timegrid-slot-label-frame {
     text-align: left;
+  }
+
+}
+
+.fc-liquid-hack {
+
+  & .fc-timegrid-axis-frame-liquid {
+    @include liquid-absolute-override;
   }
 
 }

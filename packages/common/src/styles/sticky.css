@@ -2,8 +2,7 @@
 .fc {
 
   & .fc-sticky {
-    position: -webkit-sticky !important;
-    position: sticky !important;
+    position: sticky;
   }
 
 }

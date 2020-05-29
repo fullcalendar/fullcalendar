@@ -35,16 +35,6 @@
     text-decoration: underline;
   }
 
-  // for FF, which doesn't expand a 100% div within a table cell. use absolute positioning
-  // inner-wrappers are responsible for being absolute
-  // TODO: best place for this?
-  & .fc-liquid-hack {
-    & td,
-    & th {
-      position: relative;
-    }
-  }
-
   font-size: 1em;
 
   // layout of immediate children
@@ -69,4 +59,16 @@
     border: 1px solid $fc-theme-standard-border-color;
     border: 1px solid var(--fc-theme-standard-border-color, $fc-theme-standard-border-color);
   }
+}
+
+// for FF, which doesn't expand a 100% div within a table cell. use absolute positioning
+// inner-wrappers are responsible for being absolute
+// TODO: best place for this?
+.fc-liquid-hack {
+
+  & td,
+  & th {
+    position: relative;
+  }
+
 }

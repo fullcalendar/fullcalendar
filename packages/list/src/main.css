@@ -38,7 +38,7 @@
 
   & .fc-list-sticky {
     & .fc-list-day > * {
-      position: sticky; // TODO: browser prefix?
+      position: sticky;
       z-index: 2; // TODO: var
       top: 0;
     }
