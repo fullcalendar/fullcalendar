@@ -3,8 +3,9 @@ module.exports = {
   plugins: [
     require('postcss-advanced-variables'),
     require('postcss-nesting'),
-    require('postcss-css-variables')({
-      preserve: true // keep the var() expressions, with fallback
+    require('postcss-custom-properties')({
+      importFrom: './packages/common/src/styles/vars.css', // available to all stylesheets
+      preserve: true
     }),
     require('postcss-calc')
 

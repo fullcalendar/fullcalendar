@@ -101,7 +101,7 @@
     "postcss-advanced-variables": "^3.0.1",
     "postcss-calc": "^7.0.2",
     "postcss-comment": "^2.0.0",
-    "postcss-css-variables": "^0.17.0",
+    "postcss-custom-properties": "^9.1.1",
     "postcss-loader": "^3.0.0",
     "postcss-nesting": "^7.0.1",
     "rollup": "^1.32.1",
