@@ -56,8 +56,7 @@
 .fc-theme-standard {
   & td,
   & th {
-    border: 1px solid $fc-theme-standard-border-color;
-    border: 1px solid var(--fc-theme-standard-border-color, $fc-theme-standard-border-color);
+    border: 1px solid var(--fc-theme-standard-border-color);
   }
 }
 

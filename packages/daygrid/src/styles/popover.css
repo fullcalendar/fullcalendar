@@ -39,14 +39,12 @@
 .fc-theme-standard {
 
   & .fc-popover {
-    border: 1px solid $fc-theme-standard-border-color;
-    border: 1px solid var(--fc-theme-standard-border-color, $fc-theme-standard-border-color);
+    border: 1px solid var(--fc-theme-standard-border-color);
     background: #fff;
   }
 
   & .fc-popover-header {
-    background: $fc-theme-standard-muted-bg-color;
-    background: var(--fc-theme-standard-muted-bg-color, $fc-theme-standard-muted-bg-color);
+    background: var(--fc-theme-standard-muted-bg-color);
   }
 
 }

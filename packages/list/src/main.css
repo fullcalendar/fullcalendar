@@ -5,8 +5,7 @@
 .fc-theme-standard {
 
   & .fc-list {
-    border: 1px solid $fc-theme-standard-border-color;
-    border: 1px solid var(--fc-theme-standard-border-color, $fc-theme-standard-border-color);
+    border: 1px solid var(--fc-theme-standard-border-color);
   }
 
   & .fc-list-event:hover td {
@@ -14,8 +13,7 @@
   }
 
   & .fc-list-day-frame {
-    background: $fc-theme-standard-muted-bg-color;
-    background: var(--fc-theme-standard-muted-bg-color, $fc-theme-standard-muted-bg-color);
+    background: var(--fc-theme-standard-muted-bg-color);
   }
 
 }

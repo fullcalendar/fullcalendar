@@ -1,6 +1,8 @@
 
-$fc-theme-standard-border-color: #ddd;
-$fc-theme-standard-muted-bg-color: #eee;
+:root {
+  --fc-theme-standard-border-color: #ddd;
+  --fc-theme-standard-muted-bg-color: #eee;
+}
 
 $event-resizer-dot-total-width: 8px;
 $event-resizer-dot-border-width: 1px;
