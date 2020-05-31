@@ -11,7 +11,8 @@ import {
   RefObject,
   renderScrollShim,
   getStickyHeaderDates,
-  getStickyFooterScrollbar
+  getStickyFooterScrollbar,
+  ChunkConfigRowContent
 } from '@fullcalendar/common'
 
 
@@ -27,7 +28,7 @@ export abstract class TableView<State={}> extends DateComponent<ViewProps, State
 
 
   renderSimpleLayout(
-    headerRowContent: VNode | null,
+    headerRowContent: ChunkConfigRowContent,
     bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode
   ) {
     let { props, context } = this
@@ -71,7 +72,7 @@ export abstract class TableView<State={}> extends DateComponent<ViewProps, State
 
 
   renderHScrollLayout(
-    headerRowContent: VNode | null,
+    headerRowContent: ChunkConfigRowContent,
     bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode,
     colCnt: number,
     dayMinWidth: number

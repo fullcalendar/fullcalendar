@@ -5,9 +5,26 @@ these values are automatically known in all stylesheets.
 the :root statement itself is only included in the common stylesheet.
 this file is not processed by postcss when imported into the postcss-custom-properties plugin,
 so only write standard css!
+
+NOTE: for old browsers, will need to start after changing a variable
 */
 
 :root {
-  --fc-theme-standard-border-color: #ddd;
-  --fc-theme-standard-muted-bg-color: #eee;
+  --fc-theme-standard-border-color: #ddd; /* TODO: rename */
+  --fc-theme-standard-muted-bg-color: #eee; /* TODO: rename */
+  --fc-non-business-color: rgba(215, 215, 215, 0.3);
+  --fc-bg-event-color: rgb(143, 223, 130, 0.3);
+  --fc-highlight-color: rgba(188, 232, 241, 0.3);
+  --fc-today-color: rgba(255, 220, 40, 0.15);
+  --fc-neutral-color: rgba(208, 208, 208, 0.3);
+  --fc-smaller-font-size: .85em;
+
+  --fc-button-text-color: #fff;
+  --fc-button-bg-color: #2C3E50;
+  --fc-button-border-color: #2C3E50;
+  --fc-button-hover-bg-color: #1e2b37;
+  --fc-button-hover-border-color: #1a252f;
+  --fc-button-active-bg-color: #1a252f;
+  --fc-button-active-border-color: #151e27;
+
 }

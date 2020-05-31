@@ -47,7 +47,7 @@ export class ListView extends DateComponent<ViewProps> {
 
     let extraClassNames = [
       'fc-list',
-      context.theme.getClass('bordered'),
+      context.theme.getClass('table'), // just for the outer border. will be on div
       context.options.stickyHeaderDates !== false ? 'fc-list-sticky' : ''
     ]
 

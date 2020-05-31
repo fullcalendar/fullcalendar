@@ -1,7 +1,10 @@
 
-// resets
-
 .fc {
+  // layout of immediate children
+  display: flex;
+  flex-direction: column;
+
+  font-size: 1em;
 
   &,
   & *,
@@ -10,15 +13,14 @@
     box-sizing: border-box;
   }
 
-
   & table {
-    border-spacing: 0;
-    font-size: 1em; /* normalize cross-browser */
     border-collapse: collapse;
+    border-spacing: 0;
+    font-size: 1em; // normalize cross-browser
   }
 
   & th {
-    text-align: center; // is this needed?
+    text-align: center;
   }
 
   & th,
@@ -34,13 +36,6 @@
   & a[data-navlink]:hover {
     text-decoration: underline;
   }
-
-  font-size: 1em;
-
-  // layout of immediate children
-  display: flex;
-  flex-direction: column;
-
 }
 
 .fc-direction-ltr {

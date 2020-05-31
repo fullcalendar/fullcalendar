@@ -41,9 +41,9 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
     let text = dateEnv.format(date, props.dayHeaderFormat)
 
     // if colCnt is 1, we are already in a day-view and don't need a navlink
-    let navLinkData = (options.navLinks && !dayMeta.isDisabled && props.colCnt > 1)
-      ? buildNavLinkData(date)
-      : null
+    let navLinkAttrs = (options.navLinks && !dayMeta.isDisabled && props.colCnt > 1)
+      ? { 'data-navlink': buildNavLinkData(date), tabIndex: 0 }
+      : {}
 
     let hookProps: DayHeaderHookProps = {
       date: dateEnv.toDate(date),
@@ -70,18 +70,20 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
             colSpan={props.colSpan}
             {...props.extraDataAttrs}
           >
-            {!dayMeta.isDisabled &&
-              <a
-                data-navlink={navLinkData}
-                className={[
-                  'fc-col-header-cell-cushion',
-                  props.isSticky ? 'fc-sticky' : ''
-                ].join(' ')}
-                ref={innerElRef}
-              >
-                {innerContent}
-              </a>
-            }
+            <div className='fc-scrollgrid-sync-inner'>
+              {!dayMeta.isDisabled &&
+                <a
+                  ref={innerElRef}
+                  className={[
+                    'fc-col-header-cell-cushion',
+                    props.isSticky ? 'fc-sticky' : ''
+                  ].join(' ')}
+                  {...navLinkAttrs}
+                >
+                  {innerContent}
+                </a>
+              }
+            </div>
           </th>
         )}
       </RenderHook>
@@ -149,15 +151,17 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
             colSpan={props.colSpan}
             {...props.extraDataAttrs}
           >
-            <a
-              className={[
-                'fc-col-header-cell-cushion',
-                props.isSticky ? 'fc-sticky' : ''
-              ].join(' ')}
-              ref={innerElRef}
-            >
-              {innerContent}
-            </a>
+            <div className='fc-scrollgrid-sync-inner'>
+              <a
+                className={[
+                  'fc-col-header-cell-cushion',
+                  props.isSticky ? 'fc-sticky' : ''
+                ].join(' ')}
+                ref={innerElRef}
+              >
+                {innerContent}
+              </a>
+            </div>
           </th>
         )}
       </RenderHook>

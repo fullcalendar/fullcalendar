@@ -6,9 +6,9 @@ These styles only apply when the standard-theme is activated.
 When it's NOT activated, the fc-button classes won't even be in the DOM.
 */
 
-// reset
-
 .fc {
+
+  // reset
 
   & .fc-button {
     border-radius: 0;
@@ -43,7 +43,6 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
   & .fc-button {
     display: inline-block;
     font-weight: 400;
-    color: #212529;
     text-align: center;
     vertical-align: middle;
     user-select: none;
@@ -56,7 +55,6 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
   }
 
   & .fc-button:hover {
-    color: #212529;
     text-decoration: none;
   }
 
@@ -72,32 +70,32 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
   // "primary" coloring
 
   & .fc-button-primary {
-    color: #fff;
-    background-color: #2C3E50;
-    border-color: #2C3E50;
+    color: var(--fc-button-text-color);
+    background-color: var(--fc-button-bg-color);
+    border-color: var(--fc-button-border-color);
   }
 
   & .fc-button-primary:hover {
-    color: #fff;
-    background-color: #1e2b37;
-    border-color: #1a252f;
+    color: var(--fc-button-text-color);
+    background-color: var(--fc-button-hover-bg-color);
+    border-color: var(--fc-button-hover-border-color);
+  }
+
+  & .fc-button-primary:disabled { // not DRY
+    color: var(--fc-button-text-color);
+    background-color: var(--fc-button-bg-color);
+    border-color: var(--fc-button-border-color); // overrides :hover
   }
 
   & .fc-button-primary:focus {
     box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
   }
 
-  & .fc-button-primary:disabled {
-    color: #fff;
-    background-color: #2C3E50;
-    border-color: #2C3E50;
-  }
-
   & .fc-button-primary:not(:disabled):active,
   & .fc-button-primary:not(:disabled).fc-button-active {
-    color: #fff;
-    background-color: #1a252f;
-    border-color: #151e27;
+    color: var(--fc-button-text-color);
+    background-color: var(--fc-button-active-bg-color);
+    border-color: var(--fc-button-active-border-color);
   }
 
   & .fc-button-primary:not(:disabled):active:focus,

@@ -140,7 +140,7 @@ $daygrid-popover-z: 7;
   // week number (within frame)
   // TODO: maybe we should move it within day-top
 
-  & .fc-daygrid-week-number {
+  & .fc-daygrid-week-number { // TODO: make semi-transparent for bootstrap!!!
     position: absolute;
     z-index: $daygrid-weeknum-z;
     top: 0;

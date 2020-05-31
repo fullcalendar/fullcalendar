@@ -18,7 +18,8 @@ import {
   getStickyHeaderDates,
   getStickyFooterScrollbar,
   createFormatter,
-  AllDayHookProps
+  AllDayHookProps,
+  CssDimValue
 } from '@fullcalendar/common'
 import { AllDaySplitter } from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
@@ -138,10 +139,13 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
         type: 'header',
         key: 'header',
         isSticky: stickyHeaderDates,
+        syncRowHeights: true,
         chunks: [
           {
             key: 'axis',
-            rowContent: <tr>{this.renderHeadAxis()}</tr>
+            rowContent: (arg: ChunkContentCallbackArgs) => (
+              <tr>{this.renderHeadAxis(arg.rowSyncHeights[0])}</tr>
+            )
           },
           {
             key: 'cols',
@@ -267,14 +271,15 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderHeadAxis = () => {
+  renderHeadAxis = (frameHeight: CssDimValue = '') => {
     let { options } = this.context
     let { dateProfile } = this.props
     let range = dateProfile.renderRange
     let dayCnt = diffDays(range.start, range.end)
-    let navLinkData = (options.navLinks && dayCnt === 1) // only do in day views (to avoid doing in week views that dont need it)
-      ? buildNavLinkData(range.start, 'week')
-      : null
+
+    let navLinkAttrs = (options.navLinks && dayCnt === 1) // only do in day views (to avoid doing in week views that dont need it)
+      ? { 'data-navlink': buildNavLinkData(range.start, 'week'), tabIndex: 0 }
+      : {}
 
     if (options.weekNumbers) {
       return (
@@ -284,8 +289,15 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
               'fc-timegrid-axis',
               'fc-scrollgrid-shrink'
             ].concat(classNames).join(' ')}>
-              <div className='fc-timegrid-axis-frame fc-scrollgrid-shrink-frame fc-timegrid-axis-frame-liquid'>
-                <a className='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion' data-navlink={navLinkData} ref={innerElRef}>
+              <div
+                className='fc-timegrid-axis-frame fc-scrollgrid-shrink-frame fc-timegrid-axis-frame-liquid'
+                style={{ height: frameHeight }}
+              >
+                <a
+                  ref={innerElRef}
+                  className='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion'
+                  {...navLinkAttrs}
+                >
                   {innerContent}
                 </a>
               </div>
@@ -296,7 +308,9 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
     }
 
     return (
-      <th className='fc-timegrid-axis'></th>
+      <th className='fc-timegrid-axis'>
+        <div className='fc-timegrid-axis-frame' style={{ height: frameHeight }}></div>
+      </th>
     )
   }
 

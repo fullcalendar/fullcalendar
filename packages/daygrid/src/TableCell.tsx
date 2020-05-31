@@ -95,6 +95,10 @@ export class TableCell extends DateComponent<TableCellProps> {
       view: viewApi
     }
 
+    let navLinkAttrs = options.navLinks
+      ? { 'data-navlink': buildNavLinkData(date, 'week'), tabIndex: 0 }
+      : {}
+
     return (
       <DayCellRoot
         date={date}
@@ -118,7 +122,7 @@ export class TableCell extends DateComponent<TableCellProps> {
                     <a
                       ref={rootElRef}
                       className={[ 'fc-daygrid-week-number' ].concat(classNames).join(' ')}
-                      data-navlink={options.navLinks ? buildNavLinkData(date, 'week') : null}
+                      {...navLinkAttrs}
                     >
                       {innerContent}
                     </a>
@@ -223,6 +227,10 @@ class TableCellTop extends BaseComponent<TableCellTopProps> {
   render() {
     let { props } = this
 
+    let navLinkAttrs = this.context.options.navLinks
+      ? { 'data-navlink': buildNavLinkData(props.date), tabIndex: 0 }
+      : {}
+
     return (
       <DayCellContent
         date={props.date}
@@ -235,10 +243,7 @@ class TableCellTop extends BaseComponent<TableCellTopProps> {
         {(innerElRef, innerContent) => (
           innerContent &&
             <div className='fc-daygrid-day-top' ref={innerElRef}>
-              <a
-                className='fc-daygrid-day-number'
-                data-navlink={this.context.options.navLinks ? buildNavLinkData(props.date) : null}
-              >
+              <a className='fc-daygrid-day-number' {...navLinkAttrs}>
                 {innerContent}
               </a>
             </div>

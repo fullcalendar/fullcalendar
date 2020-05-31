@@ -10,41 +10,32 @@
     left: 0;
     right: 0;
     bottom: 0;
-
-    opacity: .3;
   }
 
-
   & .fc-non-business {
-    background: #d7d7d7;
+    background: var(--fc-non-business-color);
   }
 
   & .fc-bg-event {
-    background: rgb(143, 223, 130);
+    background: var(--fc-bg-event-color);
   }
 
   & .fc-highlight {
-    background: #bce8f1;
+    background: var(--fc-highlight-color);
   }
-
 
   & .fc-bg-event .fc-event-title {
     margin: .5em;
-    font-size: .85em;
+    font-size: var(--fc-smaller-font-size);
     font-style: italic;
   }
 
-
-  // today <td>
-  // DIFFERENT SYSTEM, not within a shared container
-
-  // for all themes. bootstrap didn't provide a good semi-transparent color for this
   & .fc-day-today {
-    background: rgba(255, 220, 40, 0.15);
+    background: var(--fc-today-color); // for all themes. bootstrap didn't provide a good semi-transparent color for this
   }
 
   & .fc-day-disabled {
-    background: #f2f2f2; // TODO: let theme style
+    background: var(--fc-neutral-color);
   }
 
 }

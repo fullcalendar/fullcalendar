@@ -74,15 +74,19 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
 
 
 function renderInnerContent(props: HookProps) {
+  let navLinkAttrs = props.navLinkData // is there a type for this?
+    ? { 'data-navlink': props.navLinkData, tabIndex: 0 }
+    : {}
+
   return (
     <Fragment>
       {props.text &&
-        <a className='fc-list-day-text' data-navlink={props.navLinkData}>
+        <a className='fc-list-day-text' {...navLinkAttrs}>
           {props.text}
         </a>
       }
       {props.sideText &&
-        <a className='fc-list-day-side-text' data-navlink={props.navLinkData}>
+        <a className='fc-list-day-side-text' {...navLinkAttrs}>
           {props.sideText}
         </a>
       }
