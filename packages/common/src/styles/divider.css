@@ -1,8 +1,0 @@
-
-.fc-theme-standard {
-
-  & .fc-divider {
-    background: var(--fc-theme-standard-muted-bg-color);
-  }
-
-}

@@ -5,6 +5,7 @@ export class StandardTheme extends Theme {
 
 StandardTheme.prototype.classes = {
   root: 'fc-theme-standard', // TODO: compute this off of registered theme name
+  tableCellShaded: 'fc-cell-shaded',
   buttonGroup: 'fc-button-group',
   button: 'fc-button fc-button-primary',
   buttonActive: 'fc-button-active'

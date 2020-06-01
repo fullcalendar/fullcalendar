@@ -1,6 +1,5 @@
 
 @import './styles/vars'; // the :root declaration for css variables
-@import './styles/constants'; // sass-like variables
 @import './styles/mixins';
 
 @import './styles/page-root';
@@ -16,7 +15,6 @@
 @import './styles/sticky';
 @import './styles/view-harness';
 @import './styles/col-header';
-@import './styles/divider';
 @import './styles/bg';
 @import './styles/event';
 @import './styles/h-event';

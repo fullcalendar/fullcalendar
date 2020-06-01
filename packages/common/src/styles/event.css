@@ -87,7 +87,7 @@ a.fc-event:hover {
 .fc-event-selected:after {
   content: "";
   position: absolute;
-  z-index: $event-dimmer-z;
+  z-index: 1; // TODO: var
   top: -1px; // overcome border
   left: -1px; // overcome border
   right: -1px; // overcome border

@@ -9,7 +9,7 @@
     left: 0;
     right: 0;
     border-style: solid;
-    border-color: $now-indicator-color;
+    border-color: var(--now-indicator-color);
     border-width: 1px 0 0;
   }
 
@@ -20,7 +20,7 @@
     z-index: $timegrid-now-indicator-z;
     margin-top: -5px; // vertically center on top coordinate
     border-style: solid;
-    border-color: $now-indicator-color;
+    border-color: var(--now-indicator-color);
   }
 
 }

@@ -9,10 +9,10 @@
 }
 
 @mixin event-resizer-dot {
-  border-radius: calc($event-resizer-dot-total-width / 2);
-  border-width: $event-resizer-dot-border-width;
-  width: $event-resizer-dot-total-width;
-  height: $event-resizer-dot-total-width;
+  border-radius: calc(var(--event-resizer-dot-total-width) / 2);
+  border-width: var(--event-resizer-dot-border-width);
+  width: var(--event-resizer-dot-total-width);
+  height: var(--event-resizer-dot-total-width);
   border-style: solid;
   border-color: inherit;
   background: #fff;

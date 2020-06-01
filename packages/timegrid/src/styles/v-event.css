@@ -7,7 +7,7 @@ A VERTICAL event
 
   & .fc-event-main {
     position: relative; // specifically for the z-index
-    z-index: $event-main-z;
+    z-index: 2; // TODO: var
   }
 
 
@@ -15,7 +15,7 @@ A VERTICAL event
 
   & .fc-event-resizer {
     position: absolute;
-    z-index: $event-resizer-z;
+    z-index: 3; // TODO: var
   }
 
   & .fc-event-resizer-start {
@@ -30,17 +30,17 @@ A VERTICAL event
   // resizer for MOUSE
 
   &.fc-event-resizable-mouse .fc-event-resizer {
-    height: $event-resizer-mouse-width;
+    height: var(--event-resizer-girth);
     left: -1px; // overcome border
     right: -1px; // overcome border
   }
 
   &.fc-event-resizable-mouse .fc-event-resizer-start {
-    top: calc($event-resizer-mouse-width / -2);
+    top: calc(var(--event-resizer-girth) / -2);
   }
 
   &.fc-event-resizable-mouse .fc-event-resizer-end {
-    bottom: calc($event-resizer-mouse-width / -2);
+    bottom: calc(var(--event-resizer-girth) / -2);
   }
 
 
@@ -49,15 +49,15 @@ A VERTICAL event
   &.fc-event-selected .fc-event-resizer {
     @include event-resizer-dot;
     left: 50%;
-    margin-left: calc($event-resizer-dot-total-width / -2);
+    margin-left: calc(var(--event-resizer-dot-total-width) / -2);
   }
 
   &.fc-event-selected .fc-event-resizer-start {
-    top: calc($event-resizer-dot-total-width / -2);
+    top: calc(var(--event-resizer-dot-total-width) / -2);
   }
 
   &.fc-event-selected .fc-event-resizer-end {
-    bottom: calc($event-resizer-dot-total-width / -2);
+    bottom: calc(var(--event-resizer-dot-total-width) / -2);
   }
 
 

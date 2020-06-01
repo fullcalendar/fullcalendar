@@ -34,6 +34,7 @@
     background: var(--fc-today-color); // for all themes. bootstrap didn't provide a good semi-transparent color for this
   }
 
+  & .fc-cell-shaded,
   & .fc-day-disabled {
     background: var(--fc-neutral-color);
   }

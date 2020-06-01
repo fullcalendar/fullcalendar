@@ -81,7 +81,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
         outerContent: ( // TODO: rename to cellContent so don't need to define <tr>?
           <tr className='fc-scrollgrid-section'>
             <td
-              className={'fc-timegrid-divider fc-divider ' + context.theme.getClass('tableCellShaded')}
+              className={'fc-timegrid-divider ' + context.theme.getClass('tableCellShaded')}
             />
           </tr>
         )
@@ -182,7 +182,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
           <tr className='fc-scrollgrid-section'>
             <td
               colSpan={2}
-              className={'fc-timegrid-divider fc-divider ' + context.theme.getClass('tableCellShaded')}
+              className={'fc-timegrid-divider ' + context.theme.getClass('tableCellShaded')}
             />
           </tr>
         )
