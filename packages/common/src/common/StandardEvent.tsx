@@ -82,8 +82,10 @@ function renderInnerContent(innerProps: EventMeta) {
       {innerProps.timeText &&
         <div className='fc-event-time'>{innerProps.timeText}</div>
       }
-      <div className='fc-event-title'>
-        {innerProps.event.title || <Fragment>&nbsp;</Fragment>}
+      <div className='fc-event-title-frame'>
+        <div className='fc-event-title fc-sticky'>
+          {innerProps.event.title || <Fragment>&nbsp;</Fragment>}
+        </div>
       </div>
     </Fragment>
   )
