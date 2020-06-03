@@ -8,11 +8,11 @@
   }
 
   & .fc-list-event:hover td {
-    background-color: #f5f5f5;
+    background-color: var(--fc-neutral-color-lighter);
   }
 
-  & .fc-list-day-frame {
-    background: var(--fc-theme-standard-muted-bg-color);
+  & .fc-list-day-cushion {
+    background-color: var(--fc-neutral-color);
   }
 
 }
@@ -24,7 +24,6 @@
 
   & .fc-list-table {
     width: 100%;
-    border-collapse: collapse;
     border-style: hidden; // kill outer border on theme
   }
 
@@ -34,20 +33,19 @@
   }
 
   & .fc-list-sticky {
-    & .fc-list-day > * {
+    & .fc-list-day > * { // the cells
       position: sticky;
-      z-index: 2; // TODO: var
       top: 0;
     }
   }
 
   & .fc-list-table th {
-    background: #fff; // for when headers are styled to be transparent and sticky. TODO: var
+    background: var(--fc-base-bg-color); // for when headers are styled to be transparent and sticky
     padding: 0; // uses an inner-wrapper instead...
   }
 
   & .fc-list-table td,
-  & .fc-list-day-frame {
+  & .fc-list-day-cushion {
     padding: 8px 14px;
   }
 
@@ -55,7 +53,7 @@
   // date heading rows
   // ----------------------------------------------------------------------------------------------------
 
-  & .fc-list-day-frame {
+  & .fc-list-day-cushion {
     &:after {
       @include clearfix; // clear floating
     }
@@ -78,10 +76,11 @@
 
   & .fc-list-event-dot {
     display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
-    background-color: #3788d8; // TODO: var
+    box-sizing: content-box;
+    width: 0;
+    height: 0;
+    border: var(--list-event-dot-radius) solid var(--event-border-color);
+    border-radius: var(--list-event-dot-radius);
   }
 
   // reset <a> styling
@@ -97,7 +96,7 @@
 
   // message when no events
   & .fc-list-empty {
-    background-color: #eee;
+    background-color: var(--fc-neutral-color);
     height: 100%;
     display: flex;
     justify-content: center;
@@ -121,5 +120,5 @@
 }
 
 // make the dot closer to the event title
-.fc-direction-ltr .fc-list-event-graphic { padding-right: 0 }
-.fc-direction-rtl .fc-list-event-graphic { padding-left: 0 }
+.fc-direction-ltr .fc-list-table .fc-list-event-graphic { padding-right: 0 }
+.fc-direction-rtl .fc-list-table .fc-list-event-graphic { padding-left: 0 }

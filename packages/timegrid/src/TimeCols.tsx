@@ -46,6 +46,7 @@ export interface TimeColsProps {
   forPrint: boolean
   axis: boolean
   slatMetas: TimeSlatMeta[]
+  onSlatCoords?: (slatCoords: TimeColsSlatsCoords) => void
 }
 
 interface TimeColsState {
@@ -154,6 +155,10 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
 
   handleSlatCoords = (slatCoords: TimeColsSlatsCoords | null) => {
     this.setState({ slatCoords })
+
+    if (this.props.onSlatCoords) {
+      this.props.onSlatCoords(slatCoords)
+    }
   }
 
 

@@ -60,7 +60,7 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
             data-date={formatDayString(dayDate)}
           >
             <th colSpan={3}>
-              <div className={'fc-list-day-frame ' + theme.getClass('tableCellShaded')} ref={innerElRef}>
+              <div className={'fc-list-day-cushion ' + theme.getClass('tableCellShaded')} ref={innerElRef}>
                 {innerContent}
               </div>
             </th>

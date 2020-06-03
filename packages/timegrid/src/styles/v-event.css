@@ -5,18 +5,32 @@ A VERTICAL event
 
 .fc-v-event { // allowed to be top-level
 
+  border: 1px solid var(--event-bg-color);
+  background-color: var(--event-border-color);
+
   & .fc-event-main {
-    position: relative; // specifically for the z-index
-    z-index: 2; // TODO: var
+    color: var(--event-text-color);
   }
 
+  &:not(.fc-event-start) {
+    border-top-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  &:not(.fc-event-end) {
+    border-bottom-width: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &.fc-event-selected:before {
+    // expand hit area
+    left: -10px;
+    right: -10px;
+  }
 
   // resizer (mouse AND touch)
-
-  & .fc-event-resizer {
-    position: absolute;
-    z-index: 3; // TODO: var
-  }
 
   & .fc-event-resizer-start {
     cursor: n-resize;
@@ -26,46 +40,43 @@ A VERTICAL event
     cursor: s-resize;
   }
 
-
   // resizer for MOUSE
 
-  &.fc-event-resizable-mouse .fc-event-resizer {
-    height: var(--event-resizer-girth);
-    left: -1px; // overcome border
-    right: -1px; // overcome border
-  }
+  &:not(.fc-event-selected) {
 
-  &.fc-event-resizable-mouse .fc-event-resizer-start {
-    top: calc(var(--event-resizer-girth) / -2);
-  }
+    & .fc-event-resizer {
+      height: var(--event-resizer-girth);
+      left: 0;
+      right: 0;
+    }
 
-  &.fc-event-resizable-mouse .fc-event-resizer-end {
-    bottom: calc(var(--event-resizer-girth) / -2);
-  }
+    & .fc-event-resizer-start {
+      top: calc(var(--event-resizer-girth) / -2);
+    }
 
+    & .fc-event-resizer-end {
+      bottom: calc(var(--event-resizer-girth) / -2);
+    }
+
+  }
 
   // resizer for TOUCH (when event is "selected")
 
-  &.fc-event-selected .fc-event-resizer {
-    @include event-resizer-dot;
-    left: 50%;
-    margin-left: calc(var(--event-resizer-dot-total-width) / -2);
-  }
+  &.fc-event-selected {
 
-  &.fc-event-selected .fc-event-resizer-start {
-    top: calc(var(--event-resizer-dot-total-width) / -2);
-  }
+    & .fc-event-resizer {
+      left: 50%;
+      margin-left: calc(var(--event-resizer-dot-total-width) / -2);
+    }
 
-  &.fc-event-selected .fc-event-resizer-end {
-    bottom: calc(var(--event-resizer-dot-total-width) / -2);
-  }
+    & .fc-event-resizer-start {
+      top: calc(var(--event-resizer-dot-total-width) / -2);
+    }
 
+    & .fc-event-resizer-end {
+      bottom: calc(var(--event-resizer-dot-total-width) / -2);
+    }
 
-  // expand touch area for TOUCH (when event is "selected")
-
-  &.fc-event-selected:before {
-    left: -10px;
-    right: -10px;
   }
 
 }

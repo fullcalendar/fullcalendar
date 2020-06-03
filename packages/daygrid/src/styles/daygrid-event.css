@@ -1,27 +1,22 @@
 
 .fc-daygrid-event { // make root-level, because will be dragged-and-dropped outside of a component root
-  position: relative;
+  position: relative; // for z-indexes assigned later
   white-space: nowrap;
-  margin: 1px 0; // spacing between events
   border-radius: 3px; // dot event needs this to when selected
-
-  // TODO: vars
-  font-size: .85em;
+  font-size: var(--fc-smaller-font-size);
 
   & .fc-event-time,
   & .fc-event-title {
-    display: inline;
+    display: inline-block; // better than inline, for sitting next to dot
   }
+
 }
 
 // --- the rectangle ("block") style of event ---
 
 .fc-daygrid-block-event {
-  border: 1px solid #3788d8; // TODO: var
-  background-color: #3788d8; // TODO: var
 
   & .fc-event-main {
-    color: #fff; // better to be within the <a> tag, for theme. TODO: var
     padding: 1px;
     overflow: hidden;
   }
@@ -29,14 +24,14 @@
   & .fc-event-time {
     font-weight: bold;
   }
+
 }
 
 // --- the dot style of event ---
-// (time and title are already display:inline b/c they're spans)
 
 .fc-daygrid-dot-event {
-  overflow: hidden;
   padding: 2px 0;
+  overflow: hidden;
 
   & .fc-event-title {
     font-weight: bold;
@@ -44,44 +39,34 @@
 
   &:hover,
   &.fc-event-mirror {
-    background: rgba(0, 0, 0, .1);
+    background: rgba(0, 0, 0, 0.1);
   }
+
 }
 
 .fc-daygrid-event-dot { // the actual dot
   display: inline-block;
   margin: 0 4px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #3788d8; // TODO: var
+  box-sizing: content-box;
+  width: 0;
+  height: 0;
+  border: var(--event-dot-radius) solid var(--event-border-color);
+  border-radius: var(--event-dot-radius);
 }
 
+
+// --- spacing between time and title ---
+
+$daygrid-event-inner-margin: 3px;
+
 .fc-direction-ltr {
-
-  // spacing between time and title
   & .fc-daygrid-event .fc-event-time {
-    margin-right: 3px; // TODO: var
+    margin-right: $daygrid-event-inner-margin;
   }
-
 }
 
 .fc-direction-rtl {
-
   & .fc-daygrid-event .fc-event-time {
-    margin-left: 3px; // TODO: var
+    margin-left: $daygrid-event-inner-margin;
   }
-
-}
-
-// kill radius when event continues into future/past
-.fc-direction-ltr .fc-daygrid-block-event:not(.fc-event-start),
-.fc-direction-rtl .fc-daygrid-block-event:not(.fc-event-end) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-.fc-direction-ltr .fc-daygrid-block-event:not(.fc-event-end),
-.fc-direction-rtl .fc-daygrid-block-event:not(.fc-event-start) {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
 }

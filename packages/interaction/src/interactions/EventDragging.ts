@@ -109,6 +109,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
         getComponentTouchDelay(component) :
         null
 
+    mirror.parentNode = elementClosest(origTarget, '.fc')
     mirror.revertDuration = options.dragRevertDuration
 
     let isValid =

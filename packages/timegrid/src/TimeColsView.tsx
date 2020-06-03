@@ -19,10 +19,14 @@ import {
   getStickyFooterScrollbar,
   createFormatter,
   AllDayHookProps,
-  CssDimValue
+  CssDimValue,
+  NowTimer,
+  DateMarker,
+  NowIndicatorRoot
 } from '@fullcalendar/common'
 import { AllDaySplitter } from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
 
 const DEFAULT_WEEK_NUM_FORMAT = createFormatter({ week: 'short' })
@@ -34,13 +38,21 @@ const AUTO_ALL_DAY_MAX_EVENT_ROWS = 5
 // Is a manager for the TimeCols subcomponent and possibly the DayGrid subcomponent (if allDaySlot is on).
 // Responsible for managing width/height.
 
-export abstract class TimeColsView extends DateComponent<ViewProps> {
+interface TimeColsViewState {
+  slatCoords: TimeColsSlatsCoords | null
+}
+
+export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsViewState> {
 
   protected allDaySplitter = new AllDaySplitter() // for use by subclasses
 
   protected headerElRef: RefObject<HTMLTableCellElement> = createRef<HTMLTableCellElement>()
   private rootElRef: RefObject<HTMLDivElement> = createRef<HTMLDivElement>()
   private scrollerElRef: RefObject<HTMLDivElement> = createRef<HTMLDivElement>()
+
+  state = {
+    slatCoords: null
+  }
 
 
   // rendering
@@ -121,7 +133,8 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
     timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
     colCnt: number,
     dayMinWidth: number,
-    slatMetas: TimeSlatMeta[]
+    slatMetas: TimeSlatMeta[],
+    slatCoords: TimeColsSlatsCoords | null // yuck
   ) {
     let ScrollGrid = this.context.pluginHooks.scrollGridImpl
 
@@ -189,6 +202,8 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
       })
     }
 
+    let isNowIndicator = context.options.nowIndicator
+
     sections.push({
       type: 'body',
       key: 'body',
@@ -198,7 +213,43 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
         {
           key: 'axis',
           tableClassName: 'fc-timegrid-slot-labels',
-          rowContent: <TimeBodyAxis slatMetas={slatMetas} />
+          content: (arg) => {
+            // TODO: make this now-indicator arrow more DRY with TimeColsContent
+            return (
+              <div className='fc-timegrid-axis-chunk'>
+                <table>
+                  {arg.tableColGroupNode}
+                  <tbody>
+                    <TimeBodyAxis slatMetas={slatMetas} />
+                  </tbody>
+                </table>
+                <div className='fc-timegrid-now-indicator-container'>
+                  <NowTimer unit={isNowIndicator ? 'minute' : 'day' /* hacky */}>
+                    {(nowDate: DateMarker) => {
+                      let nowIndicatorTop =
+                        isNowIndicator &&
+                        slatCoords &&
+                        slatCoords.safeComputeTop(nowDate) // might return void
+
+                      if (typeof nowIndicatorTop === 'number') {
+                        return (
+                          <NowIndicatorRoot isAxis={true} date={nowDate}>
+                            {(rootElRef, classNames, innerElRef, innerContent) => (
+                              <div
+                                ref={rootElRef}
+                                className={[ 'fc-timegrid-now-indicator-arrow' ].concat(classNames).join(' ')}
+                                style={{ top: nowIndicatorTop }}
+                              >{innerContent}</div>
+                            )}
+                          </NowIndicatorRoot>
+                        )
+                      }
+                    }}
+                  </NowTimer>
+                </div>
+              </div>
+            )
+          }
         },
         {
           key: 'cols',
@@ -354,6 +405,11 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
     )
   }
 
+
+  handleSlatCoords = (slatCoords: TimeColsSlatsCoords) => {
+    this.setState({ slatCoords })
+  }
+
 }
 
 function renderAllDayInner(hookProps) {
@@ -368,7 +424,7 @@ interface TimeBodyAxisProps {
   slatMetas: TimeSlatMeta[]
 }
 
-class TimeBodyAxis extends BaseComponent<TimeBodyAxisProps> {
+class TimeBodyAxis extends BaseComponent<TimeBodyAxisProps> { // just <tr> content
 
   render() {
     return this.props.slatMetas.map((slatMeta: TimeSlatMeta) => (

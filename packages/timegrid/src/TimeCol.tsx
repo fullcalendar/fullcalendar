@@ -53,39 +53,38 @@ export class TimeCol extends BaseComponent<TimeColProps> {
             {...dataAttrs}
             {...props.extraDataAttrs}
           >
-            <div className='fc-timegrid-col-origin'>
-              <div className='fc-timegrid-col-events'>
-                {/* the Fragments scope the keys */}
-                <Fragment>
-                  {this.renderFgSegs(
-                    mirrorSegs as TimeColsSeg[],
-                    {},
-                    Boolean(props.eventDrag),
-                    Boolean(props.eventResize),
-                    Boolean(isSelectMirror)
-                    // TODO: pass in left/right instead of using only computeSegTopBottomCss
-                  )}
-                </Fragment>
-                <Fragment>
-                  {this.renderFgSegs(
-                    props.fgEventSegs,
-                    interactionAffectedInstances
-                  )}
-                </Fragment>
-              </div>
+            <div className='fc-timegrid-col-frame'>
               <div className='fc-timegrid-col-bg'>
                 {this.renderFillSegs(props.businessHourSegs, 'non-business')}
                 {this.renderFillSegs(props.bgEventSegs, 'bg-event')}
                 {this.renderFillSegs(props.dateSelectionSegs, 'highlight')}
               </div>
-              {this.renderNowIndicator(props.nowIndicatorSegs)}
+              <div className='fc-timegrid-col-events'>
+                {this.renderFgSegs(
+                  props.fgEventSegs,
+                  interactionAffectedInstances
+                )}
+              </div>
+              <div className='fc-timegrid-col-events'>
+                {this.renderFgSegs(
+                  mirrorSegs as TimeColsSeg[],
+                  {},
+                  Boolean(props.eventDrag),
+                  Boolean(props.eventResize),
+                  Boolean(isSelectMirror)
+                  // TODO: pass in left/right instead of using only computeSegTopBottomCss
+                )}
+              </div>
+              <div className='fc-timegrid-now-indicator-container'>
+                {this.renderNowIndicator(props.nowIndicatorSegs)}
+              </div>
+              <TimeColMisc
+                date={props.date}
+                dateProfile={props.dateProfile}
+                todayRange={props.todayRange}
+                extraHookProps={props.extraHookProps}
+              />
             </div>
-            <TimeColMisc
-              date={props.date}
-              dateProfile={props.dateProfile}
-              todayRange={props.todayRange}
-              extraHookProps={props.extraHookProps}
-            />
           </td>
         )}
       </DayCellRoot>

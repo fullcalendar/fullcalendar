@@ -3,64 +3,64 @@
 A HORIZONTAL event
 */
 
-.fc-h-event { // events allowed to be top-level precedence
+.fc-h-event { // allowed to be top-level
 
-  &.fc-event-main {
-    position: relative; // specifically for the z-index
-    z-index: 2; // TODO: var
+  border: 1px solid var(--event-bg-color);
+  background-color: var(--event-border-color);
+
+  & .fc-event-main {
+    color: var(--event-text-color);
   }
 
-  &.fc-event-resizer {
-    position: absolute;
-    z-index: 3; // TODO: var
-  }
-
-  &.fc-event-resizable-mouse {
-
-    & .fc-event-resizer {
-      width: var(--event-resizer-girth);
-      top: -1px; // overcome border
-      bottom: -1px; // overcome border
-    }
-
-  }
-
-  &.fc-event-selected {
-
-    // expand touch area for TOUCH (when event is "selected")
-    &:before {
-      top: -10px;
-      bottom: -10px;
-    }
-
-    & .fc-event-resizer {
-      @include event-resizer-dot;
-      top: 50%;
-      margin-top: calc(var(--event-resizer-dot-total-width) / -2);
-    }
-
+  &.fc-event-selected:before {
+    // expand hit area
+    top: -10px;
+    bottom: -10px;
   }
 
 }
 
-.fc-direction-ltr .fc-h-event .fc-event-resizer-start,
-.fc-direction-rtl .fc-h-event .fc-event-resizer-end {
+// adjust border and border-radius (if there is any) for non-start/end
+
+.fc-direction-ltr .fc-daygrid-block-event:not(.fc-event-start),
+.fc-direction-rtl .fc-daygrid-block-event:not(.fc-event-end) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left-width: 0;
+}
+
+.fc-direction-ltr .fc-daygrid-block-event:not(.fc-event-end),
+.fc-direction-rtl .fc-daygrid-block-event:not(.fc-event-start) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right-width: 0;
+}
+
+// resizers
+
+.fc-h-event:not(.fc-event-selected) .fc-event-resizer {
+  top: 0;
+  bottom: 0;
+  width: var(--event-resizer-girth);
+}
+
+.fc-direction-ltr .fc-h-event:not(.fc-event-selected) .fc-event-resizer-start,
+.fc-direction-rtl .fc-h-event:not(.fc-event-selected) .fc-event-resizer-end {
   cursor: w-resize;
-}
-
-.fc-direction-ltr .fc-h-event .fc-event-resizer-end,
-.fc-direction-rtl .fc-h-event .fc-event-resizer-start {
-  cursor: e-resize;
-}
-
-.fc-direction-ltr .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-start,
-.fc-direction-rtl .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-end {
   left: calc(var(--event-resizer-girth) / -2);
 }
 
-.fc-direction-ltr .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-end,
-.fc-direction-rtl .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-start {
+.fc-direction-ltr .fc-h-event:not(.fc-event-selected) .fc-event-resizer-end,
+.fc-direction-rtl .fc-h-event:not(.fc-event-selected) .fc-event-resizer-start {
+  cursor: e-resize;
   right: calc(var(--event-resizer-girth) / -2);
+}
+
+// resizers for TOUCH
+
+.fc-h-event.fc-event-selected .fc-event-resizer {
+  top: 50%;
+  margin-top: calc(var(--event-resizer-dot-total-width) / -2);
 }
 
 .fc-direction-ltr .fc-h-event.fc-event-selected .fc-event-resizer-start,

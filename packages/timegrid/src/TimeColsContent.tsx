@@ -80,7 +80,23 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
           <tbody>
             <tr>
               {props.axis &&
-                <td className='fc-timegrid-axis' />
+                <td className='fc-timegrid-col fc-timegrid-axis'>
+                  <div class='fc-timegrid-col-frame'>
+                    <div class='fc-timegrid-now-indicator-container'>
+                      {typeof nowIndicatorTop === 'number' &&
+                        <NowIndicatorRoot isAxis={true} date={props.nowDate}>
+                          {(rootElRef, classNames, innerElRef, innerContent) => (
+                            <div
+                              ref={rootElRef}
+                              className={[ 'fc-timegrid-now-indicator-arrow' ].concat(classNames).join(' ')}
+                              style={{ top: nowIndicatorTop }}
+                            >{innerContent}</div>
+                          )}
+                        </NowIndicatorRoot>
+                      }
+                    </div>
+                  </div>
+                </td>
               }
               {props.cells.map((cell, i) => (
                 <TimeCol
@@ -108,17 +124,6 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
             </tr>
           </tbody>
         </table>
-        {typeof nowIndicatorTop === 'number' &&
-          <NowIndicatorRoot isAxis={true} date={props.nowDate}>
-            {(rootElRef, classNames, innerElRef, innerContent) => (
-              <div
-                ref={rootElRef}
-                className={[ 'fc-timegrid-now-indicator-arrow' ].concat(classNames).join(' ')}
-                style={{ top: nowIndicatorTop }}
-              >{innerContent}</div>
-            )}
-          </NowIndicatorRoot>
-        }
       </div>
     )
   }

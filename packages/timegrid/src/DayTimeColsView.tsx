@@ -70,13 +70,14 @@ export class DayTimeColsView extends TimeColsView {
         tableMinWidth={contentArg.tableMinWidth}
         clientWidth={contentArg.clientWidth}
         clientHeight={contentArg.clientHeight}
+        onSlatCoords={this.handleSlatCoords}
         expandRows={contentArg.expandRows}
         onScrollTopRequest={this.handleScrollTopRequest}
       />
     )
 
     return hasDetachedAxis
-      ? this.renderHScrollLayout(headerContent, allDayContent, timeGridContent, dayTableModel.colCnt, dayMinWidth, slatMetas)
+      ? this.renderHScrollLayout(headerContent, allDayContent, timeGridContent, dayTableModel.colCnt, dayMinWidth, slatMetas, this.state.slatCoords)
       : this.renderSimpleLayout(headerContent, allDayContent, timeGridContent)
   }
 

@@ -11,4 +11,14 @@
     min-height: 100%; // fill height always, even when slat table doesn't grow
   }
 
+  & .fc-timegrid-axis-chunk { // for advanced ScrollGrid
+    position: relative; // offset parent for now-indicator-container
+
+    & > table {
+      position: relative;
+      z-index: 1; // above the now-indicator-container
+    }
+
+  }
+
 }

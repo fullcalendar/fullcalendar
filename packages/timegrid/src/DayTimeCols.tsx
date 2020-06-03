@@ -20,6 +20,7 @@ import {
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeCols } from './TimeCols'
 import { TimeSlatMeta } from './TimeColsSlats'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
 
 export interface DayTimeColsProps {
@@ -42,6 +43,7 @@ export interface DayTimeColsProps {
   expandRows: boolean
   onScrollTopRequest?: (scrollTop: number) => void
   forPrint: boolean
+  onSlatCoords?: (slatCoords: TimeColsSlatsCoords) => void
 }
 
 
@@ -83,6 +85,7 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
             nowIndicatorSegs={isNowIndicator && this.slicer.sliceNowDate(nowDate, context, dayRanges)}
             todayRange={todayRange}
             onScrollTopRequest={props.onScrollTopRequest}
+            onSlatCoords={props.onSlatCoords}
           />
         )}
       </NowTimer>

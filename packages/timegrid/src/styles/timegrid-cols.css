@@ -1,28 +1,23 @@
 
 .fc {
 
-  & .fc-timegrid-cols {
-    // prevents now indicator arrow from bleeding out and causing more scrolling
-    // bad if we want to do sticky-titles on events in timegrid
-    // TODO: move now indicator arrow into own container, that does its own overflow
-    overflow: hidden;
-  }
-
-  & .fc-timegrid-col-origin { // TODO: rename to frame?
-    position: relative; // why do we need this now?
-  }
-
-  // fg events
-
-  & .fc-timegrid-col-events {
+  & .fc-timegrid-col-frame {
+    min-height: 100%; // does liquid-hack below
     position: relative;
-    z-index: $timegrid-col-fg-z;
+  }
+
+  & .fc-timegrid-col-bg,
+  & .fc-timegrid-col-events,
+  & .fc-timegrid-now-indicator-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
   }
 
   // bg
 
   & .fc-timegrid-col-bg {
-    position: relative;
     z-index: $timegrid-col-bg-z;
     @include bg-z-indexes;
   }
@@ -31,6 +26,23 @@
     position: absolute; // top/bottom will be set by JS
     left: 0;
     right: 0;
+  }
+
+  // fg events
+  // (the mirror segs are put into a separate container with same classname,
+  // and they must be after the normal seg container to appear at a higher z-index)
+
+  & .fc-timegrid-col-events {
+    z-index: $timegrid-col-fg-z;
+    // child event segs have z-indexes that are scoped within this div
+  }
+
+  // now indicator
+
+  & .fc-timegrid-now-indicator-container {
+    bottom: 0;
+    overflow: hidden; // don't let overflow of lines/arrows cause unnecessary scrolling
+    // z-index is set on the individual elements
   }
 
 }
@@ -45,7 +57,7 @@
     bottom: 0;
 
     & > table {
-      height: 100%; // TODO: test this???
+      height: 100%;
     }
   }
 
@@ -67,6 +79,14 @@
 
   & .fc-timegrid-col-events {
     margin: 0 2px 0 2.5%;
+  }
+
+}
+
+.fc-liquid-hack {
+
+  & .fc-timegrid-col-frame {
+    @include liquid-absolute-override;
   }
 
 }

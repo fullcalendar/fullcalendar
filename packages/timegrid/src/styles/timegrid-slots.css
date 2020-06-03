@@ -8,7 +8,7 @@
 
   & .fc-timegrid-slot { // a <td>
     height: 1.5em;
-    border-bottom: 0;
+    border-bottom: 0; // each cell owns its top border
   }
 
   & .fc-timegrid-slot-minor {
@@ -43,7 +43,7 @@
     overflow: hidden;
     display: flex;
     align-items: center; // vertical align
-    justify-content: flex-end; // horizontal align. matches text-align
+    justify-content: flex-end; // horizontal align. matches text-align below
   }
 
   & .fc-timegrid-axis-cushion {
@@ -55,7 +55,6 @@
 
 .fc-direction-ltr {
 
-  & .fc-timegrid-axis-frame,
   & .fc-timegrid-slot-label-frame {
     text-align: right;
   }
@@ -64,7 +63,6 @@
 
 .fc-direction-rtl {
 
-  & .fc-timegrid-axis-frame,
   & .fc-timegrid-slot-label-frame {
     text-align: left;
   }

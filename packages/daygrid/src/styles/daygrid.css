@@ -1,8 +1,23 @@
 
-$daygrid-topbottom-z: 4; // one more than .fc-highlight's z-index. WEIRD solution
+$daygrid-non-business-z: 1;
+$daygrid-bg-event-z: 2;
+$daygrid-highlight-z: 3;
+$daygrid-topbottom-z: 4;
 $daygrid-weeknum-z: 5;
 $daygrid-event-z: 6;
-$daygrid-popover-z: 7;
+$daygrid-event-mirror-z: 7;
+$daygrid-popover-z: 8;
+
+
+// help things clear margins of inner content
+.fc-daygrid-day-frame,
+.fc-daygrid-day-top, // for floated day number
+.fc-daygrid-day-events,
+.fc-daygrid-event-harness { // for event top/bottom margins
+  &:before { @include clearfix; }
+  &:after { @include clearfix; }
+}
+
 
 .fc {
 
@@ -11,18 +26,33 @@ $daygrid-popover-z: 7;
     z-index: 1; // container inner z-index's because <tr>s can't do it
   }
 
-
-  // cell inner-wrappers
-
   & .fc-daygrid-day-frame {
     position: relative;
     min-height: 100%; // seems to work better than `height` because sets height after rows/cells naturally do it
-
-    &:before {
-      @include clearfix; // clear top-margin of event-container when first child
-    }
   }
 
+  // cell top
+
+  & .fc-daygrid-day-top {
+    position: relative;
+    z-index: $daygrid-topbottom-z;
+  }
+
+  & .fc-day-other .fc-daygrid-day-top {
+    opacity: 0.3;
+  }
+
+  // day number (within cell top)
+
+  & .fc-daygrid-day-number {
+    padding: 4px;
+  }
+
+  // event container
+
+  & .fc-daygrid-day-events {
+    margin-top: 1px; // needs to be margin, not padding, so that available cell height can be computed
+  }
 
   // positioning for balanced vs natural
 
@@ -37,78 +67,53 @@ $daygrid-popover-z: 7;
   & .fc-daygrid-body-unbalanced {
     & .fc-daygrid-day-events {
       position: relative; // for containing abs positioned event harnesses
-      min-height: 3em; // in addition to being a min-height during natural height, equalizes the heights a little bit
-
-      &:before {
-        @include clearfix; // clear top-margin of event harnesses
-      }
+      min-height: 2em; // in addition to being a min-height during natural height, equalizes the heights a little bit
     }
   }
 
   & .fc-daygrid-body-natural { // can coexist with -unbalanced
     & .fc-daygrid-day-events {
-      padding-bottom: 1em;
+      margin-bottom: 1em;
     }
   }
 
-
-  // cell top
-
-  & .fc-daygrid-day-top {
-    position: relative;
-    z-index: $daygrid-topbottom-z;
-
-    &:after {
-      @include clearfix;
-    }
-  }
-
-  & .fc-day-other .fc-daygrid-day-top {
-    opacity: 0.3;
-  }
-
-
-  // day number (within cell top)
-
-  & .fc-daygrid-day-number {
-    padding: 4px; // TODO: variable
-  }
-
-
-  // fg events
-
-  & .fc-daygrid-day-events {
-    margin-left: 2px;
-    margin-right: 2px;
-
-    &:first-child { // only add top margin if no fc-daygrid-day-top
-      margin-top: 2px;
-    }
-  }
-
-
-  // fg event harness
+  // event harness
 
   & .fc-daygrid-event-harness {
-    &:before {
-      @include clearfix; // for when event element has top margin
-    }
-    &:after {
-      @include clearfix; // for when event element has bottom margin
-    }
+    position: relative;
   }
 
   & .fc-daygrid-event-harness-abs {
     position: absolute;
-    top: 0; // fallback
-    left: 0; // fallback
-    right: 0; // fallback
+    top: 0; // fallback (will probably be set)
+    left: 0; // fallback (will probably be set)
+    right: 0; // fallback (will probably be set)
   }
 
-  & .fc-daygrid-event:not(.fc-event-mirror) { // TODO: should be in daygrid-event file? needs var
-    z-index: $daygrid-event-z; // is already position:relative
+  & .fc-daygrid-bg-harness {
+    position: absolute;
+    top: 0;
+    bottom: 0;
   }
 
+  // bg content
+
+  & .fc-daygrid-day-bg {
+    & .fc-non-business { z-index: $daygrid-non-business-z }
+    & .fc-bg-event { z-index: $daygrid-bg-event-z }
+    & .fc-highlight { z-index: $daygrid-highlight-z }
+  }
+
+  // events
+
+  & .fc-daygrid-event {
+    z-index: $daygrid-event-z;
+    margin-top: 1px;
+  }
+
+  & .fc-daygrid-event.fc-event-mirror {
+    z-index: $daygrid-event-mirror-z;
+  }
 
   // cell bottom (within day-events)
 
@@ -123,32 +128,17 @@ $daygrid-popover-z: 7;
     cursor: pointer;
   }
 
-
-  // bg content (within frame)
-
-  & .fc-daygrid-day-bg {
-    @include bg-z-indexes;
-  }
-
-  & .fc-daygrid-bg-harness {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-  }
-
-
   // week number (within frame)
-  // TODO: maybe we should move it within day-top
 
-  & .fc-daygrid-week-number { // TODO: make semi-transparent for bootstrap!!!
+  & .fc-daygrid-week-number {
     position: absolute;
     z-index: $daygrid-weeknum-z;
     top: 0;
     padding: 2px;
     min-width: 1.5em;
     text-align: center;
-    background-color: #f2f2f2; // TODO: var
-    color: #808080; // TODO: var
+    background-color: var(--fc-neutral-color);
+    color: var(--fc-neutral-text-color);
   }
 
   // popover
@@ -157,13 +147,21 @@ $daygrid-popover-z: 7;
     z-index: $daygrid-popover-z;
   }
 
-  // TODO: should set to ZERO, and have events do their own padding in the harness. then, get rid of inner div thing
-  // TODO: use popover component from bootstrap
   & .fc-more-popover .fc-popover-body {
-    padding: 10px;
     min-width: 220px;
+    padding: 10px;
   }
 
+}
+
+.fc-direction-ltr .fc-daygrid-event.fc-event-start,
+.fc-direction-rtl .fc-daygrid-event.fc-event-end {
+  margin-left: 2px;
+}
+
+.fc-direction-ltr .fc-daygrid-event.fc-event-end,
+.fc-direction-rtl .fc-daygrid-event.fc-event-start {
+  margin-right: 2px;
 }
 
 .fc-direction-ltr {

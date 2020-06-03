@@ -49,8 +49,7 @@ export interface TableRowProps {
 }
 
 interface TableRowState {
-  cellInnerPositions: PositionCache
-  cellContentPositions: PositionCache
+  framePositions: PositionCache
   maxContentHeight: number | null
   segHeights: { [instanceIdAndFirstCol: string]: number } | null
 }
@@ -59,14 +58,13 @@ interface TableRowState {
 export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
   private cellElRefs = new RefMap<HTMLTableCellElement>() // the <td>
-  private cellInnerElRefs = new RefMap<HTMLElement>() // the fc-daygrid-day-frame
-  private cellContentElRefs = new RefMap<HTMLDivElement>() // the fc-daygrid-day-events
+  private frameElRefs = new RefMap<HTMLElement>() // the fc-daygrid-day-frame
+  private fgElRefs = new RefMap<HTMLDivElement>() // the fc-daygrid-day-events
   private segHarnessRefs = new RefMap<HTMLDivElement>() // indexed by "instanceId:firstCol"
   private rootElRef = createRef<HTMLTableRowElement>()
 
   state: TableRowState = {
-    cellInnerPositions: null,
-    cellContentPositions: null,
+    framePositions: null,
     maxContentHeight: null,
     segHeights: {}
   }
@@ -128,7 +126,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
             <TableCell
               key={cell.key}
               elRef={this.cellElRefs.createRef(cell.key)}
-              innerElRef={this.cellInnerElRefs.createRef(cell.key) /* FF <td> problem, but okay to use for left/right. TODO: rename prop */}
+              innerElRef={this.frameElRefs.createRef(cell.key) /* FF <td> problem, but okay to use for left/right. TODO: rename prop */}
               dateProfile={props.dateProfile}
               date={cell.date}
               showDayNumber={props.showDayNumbers || showWeekNumber /* for spacing, we need to force day-numbers if week numbers */}
@@ -144,7 +142,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               moreMarginTop={moreTops[col] /* rename */}
               segsByEachCol={segsByEachCol[col]}
               fgPaddingBottom={paddingBottoms[col]}
-              fgContentElRef={this.cellContentElRefs.createRef(cell.key)}
+              fgContentElRef={this.fgElRefs.createRef(cell.key)}
               fgContent={( // Fragment scopes the keys
                 <Fragment>
                   <Fragment>{normalFgNodes}</Fragment>
@@ -220,11 +218,11 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   ): VNode[] {
     let { context } = this
     let { eventSelection } = this.props
-    let { cellInnerPositions, cellContentPositions } = this.state
+    let { framePositions } = this.state
     let defaultDisplayEventEnd = this.props.cells.length === 1 // colCnt === 1
     let nodes: VNode[] = []
 
-    if (cellInnerPositions && cellContentPositions) {
+    if (framePositions) {
       for (let seg of segs) {
         let instanceId = seg.eventRange.instance.instanceId
         let isMirror = isDragging || isResizing || isDateSelecting
@@ -239,15 +237,12 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
         if (isAbsolute) {
           top = segTops[instanceId]
 
-          // TODO: cache these left/rights so that when vertical coords come around, don't need to recompute?
           if (context.isRtl) {
-            right = seg.isStart ? 0 : cellContentPositions.rights[seg.firstCol] - cellInnerPositions.rights[seg.firstCol]
-            left = (seg.isEnd ? cellContentPositions.lefts[seg.lastCol] : cellInnerPositions.lefts[seg.lastCol])
-              - cellContentPositions.lefts[seg.firstCol]
+            right = 0
+            left = framePositions.lefts[seg.lastCol] - framePositions.lefts[seg.firstCol]
           } else {
-            left = seg.isStart ? 0 : cellInnerPositions.lefts[seg.firstCol] - cellContentPositions.lefts[seg.firstCol]
-            right = cellContentPositions.rights[seg.firstCol]
-              - (seg.isEnd ? cellContentPositions.rights[seg.lastCol] : cellInnerPositions.rights[seg.lastCol])
+            left = 0
+            right = framePositions.rights[seg.firstCol] - framePositions.rights[seg.lastCol]
           }
 
         } else {
@@ -300,18 +295,18 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   renderFillSegs(segs: TableSeg[], fillType: string) {
     let { isRtl } = this.context
     let { todayRange } = this.props
-    let { cellInnerPositions } = this.state
+    let { framePositions } = this.state
     let nodes: VNode[] = []
 
-    if (cellInnerPositions) {
+    if (framePositions) {
       for (let seg of segs) {
 
         let leftRightCss = isRtl ? {
           right: 0,
-          left: cellInnerPositions.lefts[seg.lastCol] - cellInnerPositions.lefts[seg.firstCol]
+          left: framePositions.lefts[seg.lastCol] - framePositions.lefts[seg.firstCol]
         } : {
           left: 0,
-          right: cellInnerPositions.rights[seg.firstCol] - cellInnerPositions.rights[seg.lastCol],
+          right: framePositions.rights[seg.firstCol] - framePositions.rights[seg.lastCol],
         }
 
         // inverse-background events don't have specific instances
@@ -339,28 +334,21 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
 
   updateSizing(isExternalSizingChange) {
-    let { props, cellInnerElRefs, cellContentElRefs } = this
+    let { props, frameElRefs } = this
 
     if (props.clientWidth !== null) { // positioning ready?
 
       if (isExternalSizingChange) {
-        let cellInnerEls = props.cells.map((cell) => cellInnerElRefs.currentMap[cell.key])
-        let cellContentEls = props.cells.map((cell) => cellContentElRefs.currentMap[cell.key])
+        let frameEls = props.cells.map((cell) => frameElRefs.currentMap[cell.key])
 
-        if (cellContentEls.length) {
+        if (frameEls.length) {
           let originEl = this.rootElRef.current
 
           this.setState({ // will trigger isCellPositionsChanged...
-            cellInnerPositions: new PositionCache(
+            framePositions: new PositionCache(
               originEl,
-              cellInnerEls,
+              frameEls,
               true, // isHorizontal
-              false
-            ),
-            cellContentPositions: new PositionCache(
-              originEl,
-              cellContentEls,
-              true, // isHorizontal (for computeFgSegPlacement)
               false
             )
           })
@@ -387,9 +375,9 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   computeMaxContentHeight() {
     let firstKey = this.props.cells[0].key
     let cellEl = this.cellElRefs.currentMap[firstKey]
-    let eventsEl = this.cellContentElRefs.currentMap[firstKey]
+    let fcContainerEl = this.fgElRefs.currentMap[firstKey]
 
-    return cellEl.getBoundingClientRect().bottom - eventsEl.getBoundingClientRect().top
+    return cellEl.getBoundingClientRect().bottom - fcContainerEl.getBoundingClientRect().top
   }
 
 
