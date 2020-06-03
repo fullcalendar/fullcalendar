@@ -10,6 +10,22 @@ A VERTICAL event
 
   & .fc-event-main {
     color: var(--event-text-color);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  & .fc-event-title-frame { // serves as a container for the sticky cushion
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0; // important for allowing to shrink all the way
+  }
+
+  & .fc-event-title { // will have fc-sticky on it
+    top: 0;
+    bottom: 0;
+    max-height: 100%; // clip overflow
+    overflow: hidden;
   }
 
   &:not(.fc-event-start) {

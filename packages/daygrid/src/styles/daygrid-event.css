@@ -4,25 +4,19 @@
   white-space: nowrap;
   border-radius: 3px; // dot event needs this to when selected
   font-size: var(--fc-smaller-font-size);
-
-  & .fc-event-time,
-  & .fc-event-title {
-    display: inline-block; // better than inline, for sitting next to dot
-  }
-
 }
 
 // --- the rectangle ("block") style of event ---
 
 .fc-daygrid-block-event {
 
-  & .fc-event-main {
-    padding: 1px;
-    overflow: hidden;
-  }
-
   & .fc-event-time {
     font-weight: bold;
+  }
+
+  & .fc-event-time,
+  & .fc-event-title {
+    padding: 1px;
   }
 
 }
@@ -35,6 +29,11 @@
 
   & .fc-event-title {
     font-weight: bold;
+  }
+
+  & .fc-event-time,
+  & .fc-event-title {
+    display: inline-block; // better than inline, for sitting next to dot
   }
 
   &:hover,

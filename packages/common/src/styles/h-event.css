@@ -10,6 +10,22 @@ A HORIZONTAL event
 
   & .fc-event-main {
     color: var(--event-text-color);
+    display: flex;
+  }
+
+  & .fc-event-title-frame { // serves as a container for the sticky cushion
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0; // important for allowing to shrink all the way
+  }
+
+  & .fc-event-title {
+    display: inline-block; // need this to be sticky cross-browser
+    vertical-align: top; // for not messing up line-height
+    left: 0;  // for sticky
+    right: 0; // for sticky
+    max-width: 100%; // clip overflow on this element
+    overflow: hidden;
   }
 
   &.fc-event-selected:before {

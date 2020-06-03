@@ -10,12 +10,8 @@
   border-radius: 3px;
 
   & .fc-event-main {
-    max-height: 100%;
-    overflow: hidden;
     padding: 1px 1px 0;
   }
-
-  // time header
 
   & .fc-event-time {
     white-space: nowrap;
@@ -28,7 +24,7 @@
 .fc-media-screen {
 
   & .fc-timegrid-event {
-    position: absolute;
+    position: absolute; // absolute WITHIN the harness
     top: 0;
     bottom: 1px; // stay away from bottom slot line
     left: 0;
