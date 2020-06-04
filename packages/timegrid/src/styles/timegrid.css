@@ -1,6 +1,10 @@
 
 .fc {
 
+  & .fc-timegrid .fc-daygrid-body { // the all-day daygrid within the timegrid view
+    z-index: 2; // put above the timegrid-body so that more-popover is above everything. TODO: better solution
+  }
+
   & .fc-timegrid-divider {
     padding: 0 0 2px; // browsers get confused when you set height. use padding instead
   }

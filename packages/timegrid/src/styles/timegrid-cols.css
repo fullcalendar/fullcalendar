@@ -1,9 +1,29 @@
 
 .fc {
-
   & .fc-timegrid-col-frame {
-    min-height: 100%; // does liquid-hack below
+    min-height: 100%; // liquid-hack is below
     position: relative;
+  }
+}
+
+.fc-liquid-hack {
+  & .fc-timegrid-col-frame {
+    @include liquid-absolute-override;
+  }
+}
+
+.fc-media-screen {
+
+  & .fc-timegrid-cols {
+    position: absolute; // no z-index. children will decide and go above slots
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    & > table {
+      height: 100%;
+    }
   }
 
   & .fc-timegrid-col-bg,
@@ -14,6 +34,14 @@
     left: 0;
     right: 0;
   }
+
+  & .fc-timegrid-event-harness {
+    position: absolute; // top/left/right/bottom will all be set by JS
+  }
+
+}
+
+.fc {
 
   // bg
 
@@ -47,26 +75,6 @@
 
 }
 
-.fc-media-screen {
-
-  & .fc-timegrid-cols {
-    position: absolute; // no z-index. children will decide and go above slots
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    & > table {
-      height: 100%;
-    }
-  }
-
-  & .fc-timegrid-event-harness {
-    position: absolute; // top/left/right/bottom will all be set by JS
-  }
-
-}
-
 .fc-direction-ltr {
 
   & .fc-timegrid-col-events {
@@ -79,14 +87,6 @@
 
   & .fc-timegrid-col-events {
     margin: 0 2px 0 2.5%;
-  }
-
-}
-
-.fc-liquid-hack {
-
-  & .fc-timegrid-col-frame {
-    @include liquid-absolute-override;
   }
 
 }

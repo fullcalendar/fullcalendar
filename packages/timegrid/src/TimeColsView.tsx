@@ -212,7 +212,6 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
       chunks: [
         {
           key: 'axis',
-          tableClassName: 'fc-timegrid-slot-labels',
           content: (arg) => {
             // TODO: make this now-indicator arrow more DRY with TimeColsContent
             return (
