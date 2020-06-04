@@ -8,14 +8,27 @@ const DEFAULT_TIME_FORMAT = createFormatter({
 })
 
 
-export class TimeColEvent extends BaseComponent<MinimalEventProps> {
+export interface TimeColEventProps extends MinimalEventProps {
+  isCondensed: boolean
+}
+
+export class TimeColEvent extends BaseComponent<TimeColEventProps> {
 
   render() {
+    let classNames = [
+      'fc-timegrid-event',
+      'fc-v-event'
+    ]
+
+    if (this.props.isCondensed) {
+      classNames.push('fc-timegrid-event-condensed')
+    }
+
     return (
       <StandardEvent
         {...this.props}
         defaultTimeFormat={DEFAULT_TIME_FORMAT}
-        extraClassNames={[ 'fc-timegrid-event', 'fc-v-event' ]}
+        extraClassNames={classNames}
       />
     )
   }

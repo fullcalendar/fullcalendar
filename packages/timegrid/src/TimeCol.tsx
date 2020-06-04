@@ -1,4 +1,7 @@
-import { Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta, DateRange, Fragment, DayCellRoot, NowIndicatorRoot, DayCellContent, BgEvent, renderFill, DateProfile } from '@fullcalendar/common'
+import {
+  Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta, DateRange, Fragment, DayCellRoot, NowIndicatorRoot,
+  DayCellContent, BgEvent, renderFill, DateProfile, config
+} from '@fullcalendar/common'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { computeSegCoords, computeSegVerticals } from './event-placement'
@@ -25,6 +28,9 @@ export interface TimeColProps {
   slatCoords: TimeColsSlatsCoords
   forPrint: boolean
 }
+
+config.timeGridEventCondensedHeight = 30
+
 
 export class TimeCol extends BaseComponent<TimeColProps> {
 
@@ -123,6 +129,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
           isResizing={false}
           isDateSelecting={false}
           isSelected={false}
+          isCondensed={false}
           {...getSegMeta(seg, props.todayRange, props.nowDate)}
         />
       </div>
@@ -168,6 +175,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
             isResizing={isResizing}
             isDateSelecting={isDateSelecting}
             isSelected={instanceId === props.eventSelection}
+            isCondensed={(seg.bottom - seg.top) < config.timeGridEventCondensedHeight}
             {...getSegMeta(seg, props.todayRange, props.nowDate)}
           />
         </div>

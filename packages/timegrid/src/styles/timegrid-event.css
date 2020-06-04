@@ -21,6 +21,22 @@
 
 }
 
+.fc-timegrid-event-condensed {
+
+  & .fc-event-main {
+    flex-direction: row;
+  }
+
+  & .fc-event-time:after {
+    content: '\00a0-\00a0'; // dash surrounded by non-breaking spaces
+  }
+
+  & .fc-event-title {
+    font-size: var(--fc-smaller-font-size)
+  }
+
+}
+
 .fc-media-screen {
 
   & .fc-timegrid-event {
