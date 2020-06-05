@@ -71,7 +71,7 @@ export class TimeGridWrapper {
 
 
   getColEl(col) {
-    return this.el.querySelectorAll('.fc-timegrid-col')[col] as HTMLElement
+    return this.el.querySelectorAll('.fc-timegrid-col:not(.fc-timegrid-axis)')[col] as HTMLElement
   }
 
 
@@ -159,9 +159,9 @@ export class TimeGridWrapper {
 
   resizeEvent(eventEl: HTMLElement, origEndDate, newEndDate, onBeforeRelease?) {
     return new Promise((resolve) => {
-      $(eventEl).simulate('mouseover') // resizer only shows on hover
+      let resizerEl = $(eventEl).find('.' + CalendarWrapper.EVENT_RESIZER_CLASSNAME)
+        .css('display', 'block')[0] // usually only displays on hover. force display
 
-      let resizerEl = eventEl.querySelector('.' + CalendarWrapper.EVENT_RESIZER_CLASSNAME)
       let resizerPoint = getRectCenter(resizerEl.getBoundingClientRect())
       let origPoint = this.getPoint(origEndDate)
       let yCorrect = resizerPoint.top - origPoint.top

@@ -2,6 +2,7 @@ import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import { waitEventDrag } from '../lib/wrappers/interaction-util'
 import { filterVisibleEls } from '../lib/dom-misc'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
 describe('event dragging on repeating events', function() {
   pushOptions({
@@ -42,25 +43,22 @@ describe('event dragging on repeating events', function() {
   })
 
   it('hides other repeating events when dragging', function(done) {
-
     let calendar = initCalendar({
-
       eventDragStart() {
         setTimeout(function() { // try go execute DURING the drag
-          let visibleEventEls = filterVisibleEls(calendarWrapper.getEventEls())
+          let visibleEventEls = filterVisibleEls(dayGridWrapper.getEventEls())
           expect(visibleEventEls.length).toBe(0)
         }, 0)
       },
-
       eventDrop() {
         setTimeout(function() {
           done()
         }, 10)
       }
     })
-    let calendarWrapper = new CalendarWrapper(calendar)
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-    $(calendarWrapper.getFirstEventEl()).simulate('drag', {
+    $(dayGridWrapper.getFirstEventEl()).simulate('drag', {
       dx: 100,
       duration: 100 // ample time for separate eventDragStart/eventDrop
     })
@@ -83,7 +81,7 @@ describe('event dragging on repeating events', function() {
 
       eventDragStart() {
         setTimeout(function() { // try go execute DURING the drag
-          let visibleEventEls = filterVisibleEls(calendarWrapper.getEventEls())
+          let visibleEventEls = filterVisibleEls(dayGridWrapper.getEventEls())
           expect(visibleEventEls.length).toBe(1) // the dragging event AND the other regular event
         }, 0)
       },
@@ -94,9 +92,9 @@ describe('event dragging on repeating events', function() {
         }, 10)
       }
     })
-    let calendarWrapper = new CalendarWrapper(calendar)
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-    $(calendarWrapper.getFirstEventEl()).simulate('drag', {
+    $(dayGridWrapper.getFirstEventEl()).simulate('drag', {
       dx: 100,
       duration: 100 // ample time for separate eventDragStart/eventDrop
     })

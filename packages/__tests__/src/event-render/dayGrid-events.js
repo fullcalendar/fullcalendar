@@ -3,6 +3,9 @@ import { anyElsIntersect } from '../lib/dom-geom'
 
 
 describe('dayGrid advanced event rendering', function() {
+  pushOptions({
+    initialDate: '2020-05-01'
+  })
 
   // https://github.com/fullcalendar/fullcalendar/issues/5408
   it('renders without intersecting', function() {

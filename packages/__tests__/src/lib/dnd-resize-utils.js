@@ -122,7 +122,9 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
       let eventEls = calendarWrapper.getEventEls()
       return $(eventEls[eventEls.length - 1]) // the last one
     })()
+
     $dragEl = $eventEl.find('.' + CalendarWrapper.EVENT_RESIZER_CLASSNAME)
+      .css('display', 'block') // resizer usually only shows on hover. force-show it
 
     if (resizeDateHasTime) {
       var timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -142,7 +144,6 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
     expect($dragEl.length).toBe(1)
     dx = $lastDayEl.offset().left + $lastDayEl.outerWidth() - 2 - ($eventEl.offset().left + $eventEl.outerWidth())
 
-    $dragEl.simulate('mouseover') // resizer only shows up on mouseover
     $dragEl.simulate('drag', {
       dx: dx,
       dy: dy,

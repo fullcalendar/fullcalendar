@@ -3,14 +3,13 @@ import { CalendarWrapper } from './wrappers/CalendarWrapper'
 
 
 export function resize(point0, point1, fromStart, debug) {
-  var $eventEl = $(new CalendarWrapper(currentCalendar).getFirstEventEl())
+  var eventEl = new CalendarWrapper(currentCalendar).getFirstEventEl()
 
-  $eventEl.simulate('mouseover') // so that resize handle is revealed
-
-  var resizerEl = $eventEl.find(
+  var $resizerEl = $(eventEl).find(
     '.' + (fromStart ? CalendarWrapper.EVENT_START_RESIZER_CLASSNAME : CalendarWrapper.EVENT_END_RESIZER_CLASSNAME)
-  )
-  var resizerRect = resizerEl[0].getBoundingClientRect()
+  ).css('display', 'block') // usually only displays on hover. force display
+
+  var resizerRect = $resizerEl[0].getBoundingClientRect()
   var resizerCenter = getRectCenter(resizerRect)
 
   var vector = subtractPoints(
@@ -23,7 +22,7 @@ export function resize(point0, point1, fromStart, debug) {
   )
   var deferred = $.Deferred()
 
-  resizerEl.simulate('drag', {
+  $resizerEl.simulate('drag', {
     point: resizerCenter,
     end: endPoint,
     debug: debug
