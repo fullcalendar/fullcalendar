@@ -77,13 +77,13 @@ a.fc-event:hover {
 .fc-event-selected {
 
   & .fc-event-resizer {
-    border-radius: calc(var(--event-resizer-dot-total-width) / 2);
-    border-width: var(--event-resizer-dot-border-width);
-    width: var(--event-resizer-dot-total-width);
-    height: var(--event-resizer-dot-total-width);
+    border-radius: calc(var(--fc-event-resizer-dot-total-width) / 2);
+    border-width: var(--fc-event-resizer-dot-border-width);
+    width: var(--fc-event-resizer-dot-total-width);
+    height: var(--fc-event-resizer-dot-total-width);
     border-style: solid;
     border-color: inherit;
-    background: var(--fc-base-bg-color);
+    background: var(--fc-page-bg-color);
 
     // expand hit area
     &:before {
@@ -120,7 +120,7 @@ a.fc-event:hover {
   // dimmer effect
   &:after {
     content: "";
-    background: var(--event-selected-overlay-color);
+    background: var(--fc-event-selected-overlay-color);
     position: absolute;
     z-index: $event-selected-dimmer-z;
 

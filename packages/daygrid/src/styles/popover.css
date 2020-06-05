@@ -30,12 +30,12 @@
 .fc-theme-standard {
 
   & .fc-popover {
-    border: 1px solid var(--fc-theme-standard-border-color);
+    border: 1px solid var(--fc-border-color);
     background: #fff;
   }
 
   & .fc-popover-header {
-    background: var(--fc-theme-standard-muted-bg-color);
+    background: var(--fc-neutral-bg-color);
   }
 
 }

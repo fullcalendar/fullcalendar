@@ -1,12 +1,12 @@
 
 .fc-timegrid-event-harness-inset .fc-timegrid-event,
 .fc-timegrid-event.fc-event-mirror {
-  box-shadow: 0px 0px 0px 1px var(--fc-base-bg-color);
+  box-shadow: 0px 0px 0px 1px var(--fc-page-bg-color);
 }
 
 .fc-timegrid-event { // events need to be root
 
-  font-size: var(--fc-smaller-font-size);
+  font-size: var(--fc-small-font-size);
   border-radius: 3px;
 
   & .fc-event-main {
@@ -15,7 +15,7 @@
 
   & .fc-event-time {
     white-space: nowrap;
-    font-size: var(--fc-smaller-font-size);
+    font-size: var(--fc-small-font-size);
     margin-bottom: 1px;
   }
 
@@ -32,7 +32,7 @@
   }
 
   & .fc-event-title {
-    font-size: var(--fc-smaller-font-size)
+    font-size: var(--fc-small-font-size)
   }
 
 }

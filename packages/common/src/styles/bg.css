@@ -26,17 +26,17 @@
 
   & .fc-bg-event .fc-event-title {
     margin: .5em;
-    font-size: var(--fc-smaller-font-size);
+    font-size: var(--fc-small-font-size);
     font-style: italic;
   }
 
   & .fc-day-today {
-    background: var(--fc-today-color); // for all themes. bootstrap didn't provide a good semi-transparent color for this
+    background: var(--fc-today-bg-color); // for all themes. bootstrap didn't provide a good semi-transparent color for this
   }
 
   & .fc-cell-shaded,
   & .fc-day-disabled {
-    background: var(--fc-neutral-color);
+    background: var(--fc-neutral-bg-color);
   }
 
 }

@@ -10,20 +10,11 @@ NOTE: for old browsers, will need to start after changing a variable
 */
 
 :root {
-  --fc-theme-standard-border-color: #ddd; /* TODO: rename */
-  --fc-theme-standard-muted-bg-color: #eee; /* TODO: rename */
-
-  --fc-non-business-color: rgba(215, 215, 215, 0.3);
-  --fc-bg-event-color: rgb(143, 223, 130, 0.3);
-  --fc-highlight-color: rgba(188, 232, 241, 0.3);
-  --fc-today-color: rgba(255, 220, 40, 0.15);
-  --fc-neutral-color: rgba(208, 208, 208, 0.3);
-  --fc-neutral-color-lighter: #f5f5f5; /* not really a great color */
+  --fc-small-font-size: .85em;
+  --fc-page-bg-color: #fff;
+  --fc-neutral-bg-color: rgba(208, 208, 208, 0.3);
   --fc-neutral-text-color: #808080;
-
-  --fc-base-bg-color: #fff;
-
-  --fc-smaller-font-size: .85em;
+  --fc-border-color: #ddd;
 
   --fc-button-text-color: #fff;
   --fc-button-bg-color: #2C3E50;
@@ -33,20 +24,18 @@ NOTE: for old browsers, will need to start after changing a variable
   --fc-button-active-bg-color: #1a252f;
   --fc-button-active-border-color: #151e27;
 
-  /* TODO: add fc- !!!! */
+  --fc-event-bg-color: #3788d8;
+  --fc-event-border-color: #3788d8;
+  --fc-event-text-color: #fff;
+  --fc-event-selected-overlay-color: rgba(0, 0, 0, 0.25);
 
-  --now-indicator-color: red;
+  --fc-event-resizer-thickness: 8px;
+  --fc-event-resizer-dot-total-width: 8px;
+  --fc-event-resizer-dot-border-width: 1px;
 
-  --event-resizer-girth: 8px;
-  --event-resizer-dot-total-width: 8px;
-  --event-resizer-dot-border-width: 1px;
-
-  --event-selected-overlay-color: rgba(0, 0, 0, 0.25);
-
-  --event-bg-color: #3788d8;
-  --event-border-color: #3788d8;
-  --event-text-color: #fff; /* only for colored backgrounds */
-
-  --event-dot-radius: 4px; /* TODO: rename to be about daygrid */
-  --list-event-dot-radius: 5px;
+  --fc-non-business-color: rgba(215, 215, 215, 0.3);
+  --fc-bg-event-color: rgb(143, 223, 130, 0.3);
+  --fc-highlight-color: rgba(188, 232, 241, 0.3);
+  --fc-today-bg-color: rgba(255, 220, 40, 0.15);
+  --fc-now-indicator-color: red;
 }

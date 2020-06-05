@@ -5,11 +5,11 @@ A HORIZONTAL event
 
 .fc-h-event { // allowed to be top-level
 
-  border: 1px solid var(--event-bg-color);
-  background-color: var(--event-border-color);
+  border: 1px solid var(--fc-event-bg-color);
+  background-color: var(--fc-event-border-color);
 
   & .fc-event-main {
-    color: var(--event-text-color);
+    color: var(--fc-event-text-color);
     display: flex;
   }
 
@@ -57,34 +57,34 @@ A HORIZONTAL event
 .fc-h-event:not(.fc-event-selected) .fc-event-resizer {
   top: 0;
   bottom: 0;
-  width: var(--event-resizer-girth);
+  width: var(--fc-event-resizer-thickness);
 }
 
 .fc-direction-ltr .fc-h-event:not(.fc-event-selected) .fc-event-resizer-start,
 .fc-direction-rtl .fc-h-event:not(.fc-event-selected) .fc-event-resizer-end {
   cursor: w-resize;
-  left: calc(var(--event-resizer-girth) / -2);
+  left: calc(var(--fc-event-resizer-thickness) / -2);
 }
 
 .fc-direction-ltr .fc-h-event:not(.fc-event-selected) .fc-event-resizer-end,
 .fc-direction-rtl .fc-h-event:not(.fc-event-selected) .fc-event-resizer-start {
   cursor: e-resize;
-  right: calc(var(--event-resizer-girth) / -2);
+  right: calc(var(--fc-event-resizer-thickness) / -2);
 }
 
 // resizers for TOUCH
 
 .fc-h-event.fc-event-selected .fc-event-resizer {
   top: 50%;
-  margin-top: calc(var(--event-resizer-dot-total-width) / -2);
+  margin-top: calc(var(--fc-event-resizer-dot-total-width) / -2);
 }
 
 .fc-direction-ltr .fc-h-event.fc-event-selected .fc-event-resizer-start,
 .fc-direction-rtl .fc-h-event.fc-event-selected .fc-event-resizer-end {
-  left: calc(var(--event-resizer-dot-total-width) / -2);
+  left: calc(var(--fc-event-resizer-dot-total-width) / -2);
 }
 
 .fc-direction-ltr .fc-h-event.fc-event-selected .fc-event-resizer-end,
 .fc-direction-rtl .fc-h-event.fc-event-selected .fc-event-resizer-start {
-  right: calc(var(--event-resizer-dot-total-width) / -2);
+  right: calc(var(--fc-event-resizer-dot-total-width) / -2);
 }

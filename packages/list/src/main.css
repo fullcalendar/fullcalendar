@@ -1,18 +1,23 @@
 
 @import '../../common/src/styles/mixins';
 
+:root {
+  --fc-list-event-dot-width: 10px;
+  --fc-list-event-hover-bg-color: #f5f5f5;
+}
+
 .fc-theme-standard {
 
   & .fc-list {
-    border: 1px solid var(--fc-theme-standard-border-color);
+    border: 1px solid var(--fc-border-color);
   }
 
   & .fc-list-event:hover td {
-    background-color: var(--fc-neutral-color-lighter);
+    background-color: var(--fc-list-event-hover-bg-color);
   }
 
   & .fc-list-day-cushion {
-    background-color: var(--fc-neutral-color);
+    background-color: var(--fc-neutral-bg-color);
   }
 
 }
@@ -36,11 +41,11 @@
     & .fc-list-day > * { // the cells
       position: sticky;
       top: 0;
+      background: var(--fc-page-bg-color); // for when headers are styled to be transparent and sticky
     }
   }
 
   & .fc-list-table th {
-    background: var(--fc-base-bg-color); // for when headers are styled to be transparent and sticky
     padding: 0; // uses an inner-wrapper instead...
   }
 
@@ -79,8 +84,8 @@
     box-sizing: content-box;
     width: 0;
     height: 0;
-    border: var(--list-event-dot-radius) solid var(--event-border-color);
-    border-radius: var(--list-event-dot-radius);
+    border: calc(var(--fc-list-event-dot-width) / 2) solid var(--fc-event-border-color);
+    border-radius: calc(var(--fc-list-event-dot-width) / 2);
   }
 
   // reset <a> styling
@@ -96,7 +101,7 @@
 
   // message when no events
   & .fc-list-empty {
-    background-color: var(--fc-neutral-color);
+    background-color: var(--fc-neutral-bg-color);
     height: 100%;
     display: flex;
     justify-content: center;

@@ -3,7 +3,7 @@
   position: relative; // for z-indexes assigned later
   white-space: nowrap;
   border-radius: 3px; // dot event needs this to when selected
-  font-size: var(--fc-smaller-font-size);
+  font-size: var(--fc-small-font-size);
 }
 
 // --- the rectangle ("block") style of event ---
@@ -49,8 +49,8 @@
   box-sizing: content-box;
   width: 0;
   height: 0;
-  border: var(--event-dot-radius) solid var(--event-border-color);
-  border-radius: var(--event-dot-radius);
+  border: calc(var(--fc-daygrid-event-dot-width) / 2) solid var(--fc-event-border-color);
+  border-radius: calc(var(--fc-daygrid-event-dot-width) / 2);
 }
 
 

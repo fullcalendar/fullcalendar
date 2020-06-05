@@ -137,7 +137,7 @@ $daygrid-popover-z: 8;
     padding: 2px;
     min-width: 1.5em;
     text-align: center;
-    background-color: var(--fc-neutral-color);
+    background-color: var(--fc-neutral-bg-color);
     color: var(--fc-neutral-text-color);
   }
 
