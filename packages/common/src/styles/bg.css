@@ -18,16 +18,17 @@
 
   & .fc-bg-event {
     background: var(--fc-bg-event-color);
+    opacity: var(--fc-bg-event-opacity);
+
+    & .fc-event-title {
+      margin: .5em;
+      font-size: var(--fc-small-font-size);
+      font-style: italic;
+    }
   }
 
   & .fc-highlight {
     background: var(--fc-highlight-color);
-  }
-
-  & .fc-bg-event .fc-event-title {
-    margin: .5em;
-    font-size: var(--fc-small-font-size);
-    font-style: italic;
   }
 
   & .fc-day-today {

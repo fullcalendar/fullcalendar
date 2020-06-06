@@ -1,3 +1,4 @@
+
 module.exports = {
   parser: require('postcss-comment'), // for "//" style comments
   plugins: [
@@ -5,7 +6,8 @@ module.exports = {
     require('postcss-nesting'),
     require('postcss-custom-properties')({
       importFrom: './packages/common/src/styles/vars.css', // available to all stylesheets
-      preserve: true
+      preserve: true, // keep var statements intact (but still reduce their value in a second statement)
+      preserveWithFallback: true // the preserved var statements will have a fallback value
     }),
     require('postcss-calc')
 

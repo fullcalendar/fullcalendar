@@ -1,5 +1,4 @@
 
-@import './styles/vars'; // the :root declaration for css variables
 @import './styles/mixins';
 
 @import './styles/page-root';

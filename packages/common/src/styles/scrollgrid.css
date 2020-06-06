@@ -2,7 +2,7 @@
 .fc-theme-standard {
 
   & .fc-scrollgrid {
-    border: 1px solid #ddd; // bootstrap does this. match
+    border: 1px solid var(--fc-border-color); // bootstrap does this. match
   }
 
 }

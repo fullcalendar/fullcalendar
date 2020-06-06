@@ -10863,16 +10863,6 @@ postcss-css-variables@^0.14.0:
     extend "^3.0.1"
     postcss "^6.0.8"
 
-postcss-css-variables@^0.17.0:
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/postcss-css-variables/-/postcss-css-variables-0.17.0.tgz#56cba1d9f0360609136cfbfda8bbd2c1ed2e4082"
-  integrity sha512-/ZpFnJgksNOrQA72b3DKhExYh+0e2P5nEc3aPZ62G7JLmdDjWRFv3k/q4LxV7uzXFnmvkhXRbdVIiH5tKgfFNA==
-  dependencies:
-    balanced-match "^1.0.0"
-    escape-string-regexp "^1.0.3"
-    extend "^3.0.1"
-    postcss "^6.0.8"
-
 postcss-custom-properties@^9.1.1:
   version "9.1.1"
   resolved "https://registry.yarnpkg.com/postcss-custom-properties/-/postcss-custom-properties-9.1.1.tgz#55822d70ff48004f6d307a338ba64a7fb0a4bfff"

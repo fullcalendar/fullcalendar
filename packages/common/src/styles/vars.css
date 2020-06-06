@@ -34,7 +34,8 @@ NOTE: for old browsers, will need to start after changing a variable
   --fc-event-resizer-dot-border-width: 1px;
 
   --fc-non-business-color: rgba(215, 215, 215, 0.3);
-  --fc-bg-event-color: rgb(143, 223, 130, 0.3);
+  --fc-bg-event-color: rgb(143, 223, 130);
+  --fc-bg-event-opacity: 0.3;
   --fc-highlight-color: rgba(188, 232, 241, 0.3);
   --fc-today-bg-color: rgba(255, 220, 40, 0.15);
   --fc-now-indicator-color: red;
