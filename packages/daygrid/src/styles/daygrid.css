@@ -11,7 +11,6 @@ $daygrid-popover-z: 8;
 
 // help things clear margins of inner content
 .fc-daygrid-day-frame,
-.fc-daygrid-day-top, // for floated day number
 .fc-daygrid-day-events,
 .fc-daygrid-event-harness { // for event top/bottom margins
   &:before { @include clearfix; }
@@ -36,6 +35,8 @@ $daygrid-popover-z: 8;
   & .fc-daygrid-day-top {
     position: relative;
     z-index: $daygrid-topbottom-z;
+    display: flex;
+    flex-direction: row-reverse;
   }
 
   & .fc-day-other .fc-daygrid-day-top {
@@ -166,10 +167,6 @@ $daygrid-popover-z: 8;
 
 .fc-direction-ltr {
 
-  & .fc-daygrid-day-number {
-    float: right;
-  }
-
   & .fc-daygrid-week-number {
     left: 0;
     border-radius: 0 0 3px 0;
@@ -178,10 +175,6 @@ $daygrid-popover-z: 8;
 }
 
 .fc-direction-rtl {
-
-  & .fc-daygrid-day-number {
-    float: left;
-  }
 
   & .fc-daygrid-week-number {
     right: 0;
