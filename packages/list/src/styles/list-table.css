@@ -1,0 +1,66 @@
+
+.fc {
+
+  // table within the scroller
+  // ----------------------------------------------------------------------------------------------------
+
+  & .fc-list-table {
+    width: 100%;
+    border-style: hidden; // kill outer border on theme
+  }
+
+  & .fc-list-table tr > * {
+    border-left: 0;
+    border-right: 0;
+  }
+
+  & .fc-list-sticky {
+    & .fc-list-day > * { // the cells
+      position: sticky;
+      top: 0;
+      background: var(--fc-page-bg-color); // for when headers are styled to be transparent and sticky
+    }
+  }
+
+  & .fc-list-table th {
+    padding: 0; // uses an inner-wrapper instead...
+  }
+
+  & .fc-list-table td,
+  & .fc-list-day-cushion {
+    padding: 8px 14px;
+  }
+
+
+  // date heading rows
+  // ----------------------------------------------------------------------------------------------------
+
+  & .fc-list-day-cushion {
+    &:after {
+      @include clearfix; // clear floating
+    }
+  }
+
+}
+
+.fc-theme-standard {
+
+  & .fc-list-day-cushion {
+    background-color: var(--fc-neutral-bg-color);
+  }
+
+}
+
+.fc-direction-ltr .fc-list-day-text,
+.fc-direction-rtl .fc-list-day-side-text {
+  float: left;
+}
+
+.fc-direction-ltr .fc-list-day-side-text,
+.fc-direction-rtl .fc-list-day-text {
+  float: right;
+}
+
+// make the dot closer to the event title
+.fc-direction-ltr .fc-list-table .fc-list-event-graphic { padding-right: 0 }
+.fc-direction-rtl .fc-list-table .fc-list-event-graphic { padding-left: 0 }
