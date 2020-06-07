@@ -12,6 +12,7 @@
   width: 1em;
   height: 1em;
   text-align: center;
+  user-select: none;
 
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'fcicons' !important;
