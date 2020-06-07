@@ -81,8 +81,8 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
             <tr>
               {props.axis &&
                 <td className='fc-timegrid-col fc-timegrid-axis'>
-                  <div class='fc-timegrid-col-frame'>
-                    <div class='fc-timegrid-now-indicator-container'>
+                  <div className='fc-timegrid-col-frame'>
+                    <div className='fc-timegrid-now-indicator-container'>
                       {typeof nowIndicatorTop === 'number' &&
                         <NowIndicatorRoot isAxis={true} date={props.nowDate}>
                           {(rootElRef, classNames, innerElRef, innerContent) => (
