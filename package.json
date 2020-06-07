@@ -116,8 +116,6 @@
     "source-map-loader": "^0.2.4",
     "style-loader": "^1.2.1",
     "ts-loader": "^7.0.4",
-    "tslint": "^5.16.0",
-    "tslint-config-standard": "^8.0.1",
     "typescript": "^3.9.3",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
