@@ -30,6 +30,7 @@ export class CalendarDataProvider extends Component<CalendarDataProviderProps, C
 
   handleData = (data: CalendarData) => {
     if (!this.dataManager) { // still within initial run, before assignment in constructor
+      // eslint-disable-next-line react/no-direct-mutation-state
       this.state = data // can't use setState yet
     } else {
       this.setState(data)

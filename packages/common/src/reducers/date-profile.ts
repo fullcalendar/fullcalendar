@@ -5,6 +5,8 @@ import { rangeContainsMarker } from '../datelib/date-range'
 
 
 export function reduceDateProfile(currentDateProfile: DateProfile | null, action: Action, currentDate: DateMarker, dateProfileGenerator: DateProfileGenerator): DateProfile {
+  let dp: DateProfile
+
   switch (action.type) {
 
     case 'CHANGE_VIEW_TYPE':
@@ -20,16 +22,16 @@ export function reduceDateProfile(currentDateProfile: DateProfile | null, action
       break
 
     case 'PREV':
-      let dp0 = dateProfileGenerator.buildPrev(currentDateProfile, currentDate)
-      if (dp0.isValid) {
-        return dp0
+      dp = dateProfileGenerator.buildPrev(currentDateProfile, currentDate)
+      if (dp.isValid) {
+        return dp
       }
       break
 
     case 'NEXT':
-      let dp1 = dateProfileGenerator.buildNext(currentDateProfile, currentDate)
-      if (dp1.isValid) {
-        return dp1
+      dp = dateProfileGenerator.buildNext(currentDateProfile, currentDate)
+      if (dp.isValid) {
+        return dp
       }
       break
   }

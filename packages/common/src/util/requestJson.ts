@@ -25,7 +25,9 @@ export function requestJson(method: string, url: string, params: object, success
       try {
         res = JSON.parse(xhr.responseText)
         parsed = true
-      } catch (err) {}
+      } catch (err) {
+        // will handle parsed=false
+      }
 
       if (parsed) {
         successCallback(res, xhr)

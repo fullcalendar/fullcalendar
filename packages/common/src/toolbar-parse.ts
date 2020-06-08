@@ -55,8 +55,8 @@ function parseSection(
   let calendarButtonText = calendarOptions.buttonText || {}
   let sectionSubstrs = sectionStr ? sectionStr.split(' ') : []
 
-  return sectionSubstrs.map((buttonGroupStr, i): ToolbarWidget[] => {
-    return buttonGroupStr.split(',').map((buttonName, j): ToolbarWidget => {
+  return sectionSubstrs.map((buttonGroupStr): ToolbarWidget[] => {
+    return buttonGroupStr.split(',').map((buttonName): ToolbarWidget => {
 
       if (buttonName === 'title') {
         return { buttonName }

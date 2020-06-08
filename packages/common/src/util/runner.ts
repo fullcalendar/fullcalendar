@@ -128,7 +128,7 @@ export class TaskRunner<Task> { // this class USES the DelayedRunner
       let completedTasks: Task[] = []
       let task: Task
 
-      while (task = queue.shift()) {
+      while ((task = queue.shift())) {
         this.runTask(task)
         completedTasks.push(task)
       }

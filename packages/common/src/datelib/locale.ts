@@ -1,6 +1,5 @@
 import { mergeProps } from '../util/object'
 import { globalLocales } from '../global-locales' // weird to be importing this
-import { __assign } from 'tslib'
 import { CalendarOptions, CalendarOptionsRefined } from '../options'
 
 export type LocaleCodeArg = string | string[]

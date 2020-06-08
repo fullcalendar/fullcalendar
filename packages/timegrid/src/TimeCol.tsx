@@ -200,13 +200,9 @@ export class TimeCol extends BaseComponent<TimeColProps> {
       let key = eventRange.instance ? eventRange.instance.instanceId : eventRange.def.defId
 
       return (
-        <div className='fc-timegrid-bg-harness' style={this.computeSegTopBottomCss(seg)}>
+        <div key={key} className='fc-timegrid-bg-harness' style={this.computeSegTopBottomCss(seg)}>
           {fillType === 'bg-event' ?
-            <BgEvent
-              key={key}
-              seg={seg}
-              {...getSegMeta(seg, props.todayRange, props.nowDate)}
-            /> :
+            <BgEvent seg={seg} {...getSegMeta(seg, props.todayRange, props.nowDate)} /> :
             renderFill(fillType)
           }
         </div>

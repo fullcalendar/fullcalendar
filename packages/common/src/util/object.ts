@@ -178,7 +178,7 @@ export function compareObjs(oldProps, newProps, equalityFuncs: EqualityFuncs<any
 
   for (let key in newProps) {
     if (key in oldProps && isObjValsEqual(oldProps[key], newProps[key], equalityFuncs[key])) {
-      ; // equal
+      // equal
     } else {
       return false
     }

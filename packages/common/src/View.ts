@@ -4,7 +4,6 @@ import { EventUiHash } from './component/event-ui'
 import { sliceEventStore, EventRenderRange } from './component/event-rendering'
 import { DateSpan } from './structs/date-span'
 import { EventInteractionState } from './interactions/event-interaction-state'
-import { __assign } from 'tslib'
 import { Duration } from './datelib/duration'
 
 

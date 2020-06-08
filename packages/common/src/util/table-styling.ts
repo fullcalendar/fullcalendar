@@ -12,7 +12,7 @@ export function getCanVGrowWithinCell() {
 
 function computeCanVGrowWithinCell() {
   // TODO: abstraction for creating these temporary detection-based els
-  var el = document.createElement('div')
+  let el = document.createElement('div')
   el.style.position = 'absolute' // for not interfering with current layout
   el.style.top = '0'
   el.style.left = '0'

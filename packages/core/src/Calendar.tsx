@@ -1,4 +1,3 @@
-import { __assign } from 'tslib'
 import {
   CalendarOptions, Action, CalendarContent, render, createElement, DelayedRunner, CssDimValue, applyStyleProp,
   CalendarApi, CalendarRoot, isArraysEqual, CalendarDataManager, CalendarData,
