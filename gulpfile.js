@@ -13,6 +13,7 @@ const exec = require('./scripts/lib/shell').sync.withOptions({ // always SYNC!
 const concurrently = require('concurrently')
 const { minifyBundleJs, minifyBundleCss } = require('./scripts/lib/minify')
 const modify = require('gulp-modify-file')
+const { allStructs } = require('./scripts/lib/package-index')
 
 
 
@@ -328,4 +329,40 @@ function execParallel(map) {
   let func = () => concurrently(taskArray, { killOthers: ['failure'] })
   func.displayName = 'concurrently'
   return func
+}
+
+
+
+const exec3 = require('./scripts/lib/shell').sync.withOptions({
+  live: true,
+  exitOnError: false
+})
+
+exports.eslint = function() {
+  let anyFailures = false
+
+  for (let struct of allStructs) {
+    if (struct.name !== '@fullcalendar/core-vdom') {
+      let cmd = [
+        'eslint', '--config', 'eslint.config.js',
+        path.join(struct.dir, 'src'),
+        '--ext', '.ts,.tsx,.js,.jsx'
+      ]
+
+      console.log('Running eslint on', struct.name, '...')
+      console.log(cmd.join(' '))
+      console.log()
+
+      let { success } = exec3(cmd)
+      if (!success) {
+        anyFailures = true
+      }
+    }
+  }
+
+  if (anyFailures) {
+    return Promise.reject(new Error('At least one linting job failed'))
+  }
+
+  return Promise.resolve()
 }
