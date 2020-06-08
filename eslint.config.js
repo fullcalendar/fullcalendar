@@ -3,8 +3,7 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
-    sourceType: 'module' // Allows for the use of imports
+    sourceType: 'module' // allows for the use of imports
   },
   plugins: [
     '@typescript-eslint',
@@ -20,7 +19,10 @@ module.exports = {
     'plugin:react/recommended'
   ],
   rules: {
-    'no-unused-vars': 0, // because can't get jsxFactory to work. and don't like func arg stipulation
+    'no-unused-vars': 0,
+      // disable so that doesn't complain about unnused ts type imports.
+      // also because can't get jsxFactory to work.
+
     'no-undef': 0, // because tsc does this. hard to make work with tests globals
     'prefer-const': 0,
     'prefer-spread': 0,
