@@ -14,7 +14,7 @@ module.exports = {
       version: 'detect'
     }
   },
-  extends: [
+  extends: [ // TODO: start using 'standard'
     'eslint:recommended',
     'plugin:react/recommended'
   ],
@@ -23,7 +23,7 @@ module.exports = {
       // disable so that doesn't complain about unnused ts type imports.
       // also because can't get jsxFactory to work.
 
-    'no-undef': 0, // because tsc does this. hard to make work with tests globals
+    'no-undef': 0, // because tsc already checks this. hard to make work with tests globals
     'prefer-const': 0,
     'prefer-spread': 0,
     'prefer-rest-params': 0,
