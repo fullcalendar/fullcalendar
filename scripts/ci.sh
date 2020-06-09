@@ -10,7 +10,7 @@ FULLCALENDAR_FORCE_REACT=1 yarn run test:ci
 yarn run clean
 yarn run build
 yarn run archive
-# yarn run lint # for v5!!!
+yarn run lint
 yarn run test:ci
 
 ./scripts/packages-contrib-ci.js

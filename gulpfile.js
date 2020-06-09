@@ -338,7 +338,7 @@ const exec3 = require('./scripts/lib/shell').sync.withOptions({
   exitOnError: false
 })
 
-exports.eslint = function() {
+exports.lint = exports.eslint = function() {
   let anyFailures = false
 
   for (let struct of allStructs) {
