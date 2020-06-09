@@ -384,12 +384,12 @@ export type ViewOptionsRefined =
 // ----------------------------------------------------------------------------------------------------
 
 
-export function mergeRawOptions(optionSets: GenericObject[]) {
+export function mergeRawOptions(optionSets: Dictionary[]) {
   return mergeProps(optionSets, COMPLEX_CALENDAR_OPTIONS)
 }
 
 
-export function refineProps<Refiners extends GenericRefiners, Raw extends RawOptionsFromRefiners<Refiners>>(input: Raw, refiners: Refiners): { refined: RefinedOptionsFromRefiners<Refiners>, extra: GenericObject } {
+export function refineProps<Refiners extends GenericRefiners, Raw extends RawOptionsFromRefiners<Refiners>>(input: Raw, refiners: Refiners): { refined: RefinedOptionsFromRefiners<Refiners>, extra: Dictionary } {
   let refined = {} as any
   let extra = {} as any
 
@@ -434,12 +434,12 @@ export type RefinedOptionsFromRefiners<Refiners extends GenericRefiners> = {
     Refiners[Prop] extends ((input: any) => infer RefinedType) ? RefinedType : never
 }
 
-export type DefaultedRefinedOptions<RefinedOptions extends GenericObject, DefaultKey extends keyof RefinedOptions> =
+export type DefaultedRefinedOptions<RefinedOptions extends Dictionary, DefaultKey extends keyof RefinedOptions> =
   Required<Pick<RefinedOptions, DefaultKey>> &
   Partial<Omit<RefinedOptions, DefaultKey>>
 
 
-export type GenericObject = { [prop: string]: any } // TODO: Partial<{}>
+export type Dictionary = Record<string, any>
 
 export type Identity<T = any> = (raw: T) => T
 

@@ -1,4 +1,4 @@
-import { createPlugin, EventSourceDef, addDays, DateEnv, requestJson, GenericObject } from '@fullcalendar/common'
+import { createPlugin, EventSourceDef, addDays, DateEnv, requestJson, Dictionary } from '@fullcalendar/common'
 import { OPTION_REFINERS } from './options-refiners'
 import './options-declare'
 import { EVENT_SOURCE_REFINERS } from './event-source-refiners'
@@ -12,7 +12,7 @@ interface GCalMeta {
   googleCalendarId: string
   googleCalendarApiKey?: string
   googleCalendarApiBase?: string,
-  extraParams?: object | (() => object)
+  extraParams?: Dictionary | (() => Dictionary)
 }
 
 
@@ -91,11 +91,11 @@ function parseGoogleCalendarId(url) {
 
   // detect if the ID was specified as a single string.
   // will match calendars like "asdf1234@calendar.google.com" in addition to person email calendars.
-  if (/^[^\/]+@([^\/\.]+\.)*(google|googlemail|gmail)\.com$/.test(url)) {
+  if (/^[^/]+@([^/.]+\.)*(google|googlemail|gmail)\.com$/.test(url)) {
     return url
   } else if (
-    (match = /^https:\/\/www.googleapis.com\/calendar\/v3\/calendars\/([^\/]*)/.exec(url)) ||
-    (match = /^https?:\/\/www.google.com\/calendar\/feeds\/([^\/]*)/.exec(url))
+    (match = /^https:\/\/www.googleapis.com\/calendar\/v3\/calendars\/([^/]*)/.exec(url)) ||
+    (match = /^https?:\/\/www.google.com\/calendar\/feeds\/([^/]*)/.exec(url))
   ) {
     return decodeURIComponent(match[1])
   }
@@ -111,7 +111,7 @@ function buildUrl(meta) {
 }
 
 
-function buildRequestParams(range, apiKey: string, extraParams: GenericObject, dateEnv: DateEnv) {
+function buildRequestParams(range, apiKey: string, extraParams: Dictionary, dateEnv: DateEnv) {
   let params
   let startStr
   let endStr

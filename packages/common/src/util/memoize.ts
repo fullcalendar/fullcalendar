@@ -1,5 +1,6 @@
 import { isArraysEqual } from './array'
 import { isPropsEqual } from './object'
+import { Dictionary } from '../options'
 
 
 export function memoize<Args extends any[], Res>(
@@ -36,7 +37,7 @@ export function memoize<Args extends any[], Res>(
 }
 
 
-export function memoizeObjArg<Arg extends object, Res>(
+export function memoizeObjArg<Arg extends Dictionary, Res>(
   workerFunc: (arg: Arg) => Res,
   resEquality?: (res0: Res, res1: Res) => boolean,
   teardownFunc?: (res: Res) => void

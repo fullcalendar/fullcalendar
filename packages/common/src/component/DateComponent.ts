@@ -8,6 +8,7 @@ import { elementClosest } from '../util/dom-manip'
 import { isDateSelectionValid, isInteractionValid } from '../validation'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { guid } from '../util/misc'
+import { Dictionary } from '../options'
 
 export type DateComponentHash = { [uid: string]: DateComponent<any, any> }
 
@@ -36,7 +37,7 @@ PURPOSES:
 - hook up to fg, fill, and mirror renderers
 - interface for dragging and hits
 */
-export abstract class DateComponent<Props={}, State={}> extends BaseComponent<Props, State> {
+export abstract class DateComponent<Props=Dictionary, State=Dictionary> extends BaseComponent<Props, State> {
 
   uid = guid()
 

@@ -42,7 +42,9 @@ $.simulate.prototype.simulateWindowResize = function() {
   if (typeof Event !== 'undefined') {
     try {
       event = new Event('resize')
-    } catch (ex) {}
+    } catch (ex) {
+      // why would fail?
+    }
   }
 
   if (!event) {

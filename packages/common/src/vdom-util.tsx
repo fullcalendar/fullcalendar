@@ -2,10 +2,11 @@ import { Component, Ref } from './vdom'
 import { ViewContextType, ViewContext } from './ViewContext'
 import { __assign } from 'tslib'
 import { compareObjs, EqualityFuncs, getUnequalProps } from './util/object'
+import { Dictionary } from './options'
 
 
 // TODO: make a HOC instead
-export abstract class BaseComponent<Props={}, State={}> extends Component<Props, State> {
+export abstract class BaseComponent<Props=Dictionary, State=Dictionary> extends Component<Props, State> {
 
   static addPropsEquality = addPropsEquality
   static addStateEquality = addStateEquality

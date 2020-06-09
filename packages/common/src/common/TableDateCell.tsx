@@ -9,6 +9,7 @@ import { RenderHook } from './render-hook'
 import { buildNavLinkData } from './nav-link'
 import { DateProfile } from '../DateProfileGenerator'
 import { DayHeaderHookProps } from '../render-hook-misc'
+import { Dictionary } from '../options'
 
 
 export interface TableDateCellProps {
@@ -19,8 +20,8 @@ export interface TableDateCellProps {
   dayHeaderFormat: DateFormatter
   colSpan?: number
   isSticky?: boolean // TODO: get this outta here somehow
-  extraDataAttrs?: object
-  extraHookProps?: object
+  extraDataAttrs?: Dictionary
+  extraHookProps?: Dictionary
 }
 
 const CLASS_NAME = 'fc-col-header-cell' // do the cushion too? no
@@ -97,8 +98,8 @@ export interface TableDowCellProps {
   dayHeaderFormat: DateFormatter
   colSpan?: number
   isSticky?: boolean // TODO: get this outta here somehow
-  extraHookProps?: object
-  extraDataAttrs?: object
+  extraHookProps?: Dictionary
+  extraDataAttrs?: Dictionary
   extraClassNames?: string[]
 }
 

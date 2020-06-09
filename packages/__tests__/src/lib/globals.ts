@@ -198,7 +198,7 @@ function oneCall(func) {
 }
 
 function spyOnMethod(Class, methodName, dontCallThrough) {
-  var origMethod = Class.prototype.hasOwnProperty(methodName)
+  var origMethod = Class.prototype.hasOwnProperty(methodName) // eslint-disable-line no-prototype-builtins
     ? Class.prototype[methodName]
     : null
 

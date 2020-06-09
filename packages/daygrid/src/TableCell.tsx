@@ -18,6 +18,7 @@ import {
   setRef,
   createFormatter,
   ViewApi,
+  Dictionary,
 } from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
 
@@ -25,8 +26,8 @@ import { TableSeg } from './TableSeg'
 export interface TableCellProps {
   date: DateMarker
   dateProfile: DateProfile
-  extraHookProps?: object
-  extraDataAttrs?: object
+  extraHookProps?: Dictionary
+  extraDataAttrs?: Dictionary
   extraClassNames?: string[]
   elRef?: Ref<HTMLTableCellElement>
   innerElRef?: Ref<HTMLDivElement>
@@ -49,8 +50,8 @@ export interface TableCellProps {
 export interface TableCellModel { // TODO: move somewhere else. combine with DayTableCell?
   key: string
   date: DateMarker
-  extraHookProps?: object
-  extraDataAttrs?: object
+  extraHookProps?: Dictionary
+  extraDataAttrs?: Dictionary
   extraClassNames?: string[]
 }
 
@@ -219,7 +220,7 @@ interface TableCellTopProps {
   dateProfile: DateProfile
   showDayNumber: boolean
   todayRange: DateRange
-  extraHookProps?: object
+  extraHookProps?: Dictionary
 }
 
 class TableCellTop extends BaseComponent<TableCellTopProps> {

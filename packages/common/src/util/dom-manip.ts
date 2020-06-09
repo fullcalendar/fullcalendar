@@ -1,4 +1,5 @@
 import { isArraysEqual } from './array'
+import { Dictionary } from '../options'
 
 
 export function htmlToElement(html: string): HTMLElement {
@@ -120,7 +121,7 @@ export function findDirectChildren(parent: HTMLElement[] | HTMLElement, selector
 
 const PIXEL_PROP_RE = /(top|left|right|bottom|width|height)$/i
 
-export function applyStyle(el: HTMLElement, props: object) {
+export function applyStyle(el: HTMLElement, props: Dictionary) {
   for (let propName in props) {
     applyStyleProp(el, propName, props[propName])
   }

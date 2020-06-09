@@ -12,7 +12,8 @@ import {
   renderScrollShim,
   getStickyHeaderDates,
   getStickyFooterScrollbar,
-  ChunkConfigRowContent
+  ChunkConfigRowContent,
+  Dictionary
 } from '@fullcalendar/common'
 
 
@@ -22,7 +23,7 @@ import {
 // It is responsible for managing width/height.
 
 
-export abstract class TableView<State={}> extends DateComponent<ViewProps, State> {
+export abstract class TableView<State=Dictionary> extends DateComponent<ViewProps, State> {
 
   protected headerElRef: RefObject<HTMLTableCellElement> = createRef<HTMLTableCellElement>()
 

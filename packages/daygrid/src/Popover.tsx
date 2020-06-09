@@ -1,12 +1,12 @@
 import {
-  createElement, ComponentChildren, applyStyle, BaseComponent, DelayedRunner, Ref, setRef
+  createElement, ComponentChildren, applyStyle, BaseComponent, DelayedRunner, Ref, setRef, Dictionary
 } from '@fullcalendar/common'
 
 
 export interface PopoverProps {
   title: string
   extraClassNames?: string[]
-  extraAttrs?: object
+  extraAttrs?: Dictionary
   alignmentEl: HTMLElement
   topAlignmentEl?: HTMLElement
   onClose?: () => void

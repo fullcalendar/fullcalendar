@@ -7,7 +7,7 @@ import { CalendarContext } from '../CalendarContext'
 import { EventDef } from './event-def'
 import { createEventInstance, EventInstance } from './event-instance'
 import { EventSource } from './event-source'
-import { RefinedOptionsFromRefiners, RawOptionsFromRefiners, identity, Identity, GenericObject, refineProps } from '../options'
+import { RefinedOptionsFromRefiners, RawOptionsFromRefiners, identity, Identity, Dictionary, refineProps } from '../options'
 import { EVENT_UI_REFINERS, createEventUi, EventUiInput, EventUiRefined } from '../component/event-ui'
 
 
@@ -28,7 +28,7 @@ export const EVENT_DATE_REFINERS = {
 const EVENT_REFINERS = { // does NOT include EVENT_UI_REFINERS
   ...EVENT_NON_DATE_REFINERS,
   ...EVENT_DATE_REFINERS,
-  extendedProps: identity as Identity<GenericObject>
+  extendedProps: identity as Identity<Dictionary>
 }
 
 type BuiltInEventRefiners = typeof EVENT_REFINERS
@@ -113,7 +113,7 @@ export function buildEventRefiners(context: CalendarContext) {
 Will NOT populate extendedProps with the leftover properties.
 Will NOT populate date-related props.
 */
-export function parseEventDef(refined: EventRefined, extra: GenericObject, sourceId: string, allDay: boolean, hasEnd: boolean, context: CalendarContext): EventDef {
+export function parseEventDef(refined: EventRefined, extra: Dictionary, sourceId: string, allDay: boolean, hasEnd: boolean, context: CalendarContext): EventDef {
   let def: EventDef = {
     title: refined.title || '',
     groupId: refined.groupId || '',

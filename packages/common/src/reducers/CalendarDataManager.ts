@@ -24,7 +24,7 @@ import { Emitter } from '../common/Emitter'
 import { EventUiHash, EventUi, createEventUi } from '../component/event-ui'
 import { EventDefHash } from '../structs/event-def'
 import { parseToolbars } from '../toolbar-parse'
-import { CalendarOptionsRefined, CalendarOptions, CALENDAR_OPTION_REFINERS, ViewOptions, ViewOptionsRefined, BASE_OPTION_DEFAULTS, mergeRawOptions, BASE_OPTION_REFINERS, VIEW_OPTION_REFINERS, CalendarListeners, CALENDAR_LISTENER_REFINERS } from '../options'
+import { CalendarOptionsRefined, CalendarOptions, CALENDAR_OPTION_REFINERS, ViewOptions, ViewOptionsRefined, BASE_OPTION_DEFAULTS, mergeRawOptions, BASE_OPTION_REFINERS, VIEW_OPTION_REFINERS, CalendarListeners, CALENDAR_LISTENER_REFINERS, Dictionary } from '../options'
 import { rangeContainsMarker } from '../datelib/date-range'
 import { ViewApi } from '../ViewApi'
 import { parseBusinessHours } from '../structs/business-hours'
@@ -45,10 +45,10 @@ export interface CalendarDataManagerProps {
 }
 
 export type ReducerFunc = ( // TODO: rename to CalendarDataInjector. move view-props-manip hook here as well?
-  currentState: object | null,
+  currentState: Dictionary | null,
   action: Action | null,
   context: CalendarContext & CalendarDataManagerState // more than just context
-) => object
+) => Dictionary
 
 
 // in future refactor, do the redux-style function(state=initial) for initial-state

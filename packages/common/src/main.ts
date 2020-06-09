@@ -16,7 +16,7 @@ export { ViewApi } from './ViewApi'
 export * from './api-type-deps'
 
 export { // things for plugins. everything else is exported in api-type-deps
-  BASE_OPTION_DEFAULTS, BASE_OPTION_REFINERS, identity, Identity, GenericObject, refineProps,
+  BASE_OPTION_DEFAULTS, BASE_OPTION_REFINERS, identity, Identity, Dictionary, refineProps,
   BaseOptionRefiners, BaseOptionsRefined, CalendarOptionRefiners, CalendarOptionsRefined,
   ViewOptionRefiners, ViewOptionsRefined, RawOptionsFromRefiners, RefinedOptionsFromRefiners,
   CalendarListenerRefiners

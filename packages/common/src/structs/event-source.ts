@@ -3,7 +3,7 @@ import { DateRange } from '../datelib/date-range'
 import { EventUi } from '../component/event-ui'
 import { CalendarContext } from '../CalendarContext'
 import { CalendarApi } from '../CalendarApi'
-import { GenericObject } from '../options'
+import { Dictionary } from '../options'
 
 /*
 TODO: "EventSource" is the same name as a built-in type in TypeScript. Rethink.
@@ -34,7 +34,7 @@ export interface EventSource<Meta> {
   ui: EventUi
   success: EventSourceSuccessResponseHandler | null
   failure: EventSourceErrorResponseHandler | null
-  extendedProps: GenericObject // undocumented
+  extendedProps: Dictionary // undocumented
 }
 
 

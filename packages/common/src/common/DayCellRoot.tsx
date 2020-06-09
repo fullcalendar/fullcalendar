@@ -10,6 +10,7 @@ import { BaseComponent } from '../vdom-util'
 import { DateProfile } from '../DateProfileGenerator'
 import { memoizeObjArg } from '../util/memoize'
 import { DateEnv } from '../datelib/env'
+import { Dictionary } from '../options'
 
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
@@ -21,7 +22,7 @@ interface DayCellHookPropsInput {
   dateEnv: DateEnv
   viewApi: ViewApi
   showDayNumber?: boolean // defaults to false
-  extraProps?: object // so can include a resource
+  extraProps?: Dictionary // so can include a resource
 }
 
 export interface DayCellHookProps extends DateMeta {
@@ -38,7 +39,7 @@ export interface DayCellRootProps {
   dateProfile: DateProfile
   todayRange: DateRange
   showDayNumber?: boolean // defaults to false
-  extraHookProps?: object
+  extraHookProps?: Dictionary
   children: (
     rootElRef: Ref<any>,
     classNames: string[],
@@ -96,7 +97,7 @@ export interface DayCellContentProps {
   dateProfile: DateProfile
   todayRange: DateRange
   showDayNumber?: boolean // defaults to false
-  extraHookProps?: object
+  extraHookProps?: Dictionary
   defaultContent?: (hookProps: DayCellHookProps) => ComponentChildren
   children: (
     innerElRef: Ref<any>,

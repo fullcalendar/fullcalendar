@@ -1,5 +1,5 @@
 import { createDuration, Duration } from '../datelib/duration'
-import { refineProps, RawOptionsFromRefiners } from '../options'
+import { refineProps, RawOptionsFromRefiners, Dictionary } from '../options'
 
 /*
 Information about what will happen when an external element is dragged-and-dropped
@@ -22,7 +22,7 @@ export interface DragMeta {
   duration: Duration | null
   create: boolean // create an event when dropped?
   sourceId: string // similar to addEvent's parameter
-  leftoverProps: object
+  leftoverProps: Dictionary
 }
 
 
