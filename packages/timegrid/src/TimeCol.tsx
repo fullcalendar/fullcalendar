@@ -194,10 +194,11 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
     let children = segs.map((seg) => {
 
-      // inverse-background events don't have specific instances
-      // TODO: might be a key collision. better solution
       let { eventRange } = seg
-      let key = eventRange.instance ? eventRange.instance.instanceId : eventRange.def.defId
+      let key = eventRange.instance
+        ? eventRange.instance.instanceId
+        : eventRange.def.defId + ':' + eventRange.range.start.toISOString()
+          // inverse-background events don't have specific instances. TODO: better solution
 
       return (
         <div key={key} className='fc-timegrid-bg-harness' style={this.computeSegTopBottomCss(seg)}>
@@ -209,7 +210,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
       )
     })
 
-    return createElement(Fragment, {}, ...children)
+    return <Fragment>{children}</Fragment>
   }
 
 
