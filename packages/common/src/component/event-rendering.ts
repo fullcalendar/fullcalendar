@@ -349,3 +349,11 @@ export function getEventClassNames(props: EventMeta) { // weird that we use this
 
   return classNames
 }
+
+
+export function buildEventRangeKey(eventRange: EventRenderRange) {
+  return eventRange.instance
+    ? eventRange.instance.instanceId
+    : eventRange.def.defId + ':' + eventRange.range.start.toISOString()
+      // inverse-background events don't have specific instances. TODO: better solution
+}

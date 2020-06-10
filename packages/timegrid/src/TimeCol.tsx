@@ -1,6 +1,6 @@
 import {
   Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta, DateRange, Fragment, DayCellRoot, NowIndicatorRoot,
-  DayCellContent, BgEvent, renderFill, DateProfile, config
+  DayCellContent, BgEvent, renderFill, DateProfile, config, buildEventRangeKey
 } from '@fullcalendar/common'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
@@ -192,23 +192,14 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     // BAD: assigns TO THE SEGS THEMSELVES
     computeSegVerticals(segs, props.date, props.slatCoords, context.options.eventMinHeight)
 
-    let children = segs.map((seg) => {
-
-      let { eventRange } = seg
-      let key = eventRange.instance
-        ? eventRange.instance.instanceId
-        : eventRange.def.defId + ':' + eventRange.range.start.toISOString()
-          // inverse-background events don't have specific instances. TODO: better solution
-
-      return (
-        <div key={key} className='fc-timegrid-bg-harness' style={this.computeSegTopBottomCss(seg)}>
-          {fillType === 'bg-event' ?
-            <BgEvent seg={seg} {...getSegMeta(seg, props.todayRange, props.nowDate)} /> :
-            renderFill(fillType)
-          }
-        </div>
-      )
-    })
+    let children = segs.map((seg) => (
+      <div key={buildEventRangeKey(seg.eventRange)} className='fc-timegrid-bg-harness' style={this.computeSegTopBottomCss(seg)}>
+        {fillType === 'bg-event' ?
+          <BgEvent seg={seg} {...getSegMeta(seg, props.todayRange, props.nowDate)} /> :
+          renderFill(fillType)
+        }
+      </div>
+    ))
 
     return <Fragment>{children}</Fragment>
   }

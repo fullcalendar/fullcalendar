@@ -179,7 +179,7 @@ export {
   computeSegDraggable, computeSegStartResizable, computeSegEndResizable,
   getEventClassNames, buildSegTimeText,
   buildSegCompareObj, sortEventSegs,
-  getSegMeta, EventMeta
+  getSegMeta, EventMeta, buildEventRangeKey
 } from './component/event-rendering'
 
 export { DayTableModel, DayTableSeg, DayTableCell } from './common/DayTableModel'

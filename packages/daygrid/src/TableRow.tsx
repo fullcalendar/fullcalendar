@@ -14,7 +14,8 @@ import {
   BgEvent,
   renderFill,
   isPropsEqual,
-  createRef
+  createRef,
+  buildEventRangeKey
 } from '@fullcalendar/common'
 import { TableSeg, splitSegsByFirstCol } from './TableSeg'
 import { TableCell, TableCellModel, MoreLinkArg } from './TableCell'
@@ -309,19 +310,14 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
           right: framePositions.rights[seg.firstCol] - framePositions.rights[seg.lastCol],
         }
 
-        // inverse-background events don't have specific instances
-        // TODO: might be a key collision. better solution
-        let { eventRange } = seg
-        let key = eventRange.instance ? eventRange.instance.instanceId : eventRange.def.defId
-
         nodes.push(
-          <div className='fc-daygrid-bg-harness' style={leftRightCss}>
+          <div
+            key={buildEventRangeKey(seg.eventRange)}
+            className='fc-daygrid-bg-harness'
+            style={leftRightCss}
+          >
             {fillType === 'bg-event' ?
-              <BgEvent
-                key={key}
-                seg={seg}
-                {...getSegMeta(seg, todayRange)}
-              /> :
+              <BgEvent seg={seg} {...getSegMeta(seg, todayRange)} /> :
               renderFill(fillType)
             }
           </div>
