@@ -173,6 +173,7 @@ export { TableDateCell, TableDowCell } from './common/TableDateCell'
 
 export { DaySeriesModel } from './common/DaySeriesModel'
 
+export { eventWillAdd, eventWillUpdate, eventWillRemove } from './events-will-update'
 export { EventInteractionState } from './interactions/event-interaction-state'
 export {
   EventRenderRange, sliceEventStore, hasBgRendering, setElSeg, getElSeg,

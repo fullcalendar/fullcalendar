@@ -11,7 +11,7 @@ import {
   createDuration,
   EventInteractionState,
   EventResizeJoinTransforms,
-  Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration
+  Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration, eventWillUpdate
 } from '@fullcalendar/common'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
@@ -189,26 +189,33 @@ export class EventResizing extends Interaction {
     } as EventResizeStopArg)
 
     if (this.validMutation) {
-      context.dispatch({
-        type: 'MERGE_EVENTS',
-        eventStore: mutatedRelevantEvents
-      })
+      let updatedEventApi = new EventApi(
+        context,
+        mutatedRelevantEvents.defs[eventDef.defId],
+        eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
+      )
+      let dataShouldUpdate = eventWillUpdate(updatedEventApi, mutatedRelevantEvents, context)
+
+      if (dataShouldUpdate) {
+        context.dispatch({
+          type: 'MERGE_EVENTS',
+          eventStore: mutatedRelevantEvents
+        })
+      }
 
       context.emitter.trigger('eventResize', {
         el: this.draggingSegEl,
         startDelta: this.validMutation.startDelta || createDuration(0),
         endDelta: this.validMutation.endDelta || createDuration(0),
         prevEvent: eventApi,
-        event: new EventApi( // the data AFTER the mutation
-          context,
-          mutatedRelevantEvents.defs[eventDef.defId],
-          eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
-        ),
+        event: updatedEventApi,
         revert: function() {
-          context.dispatch({
-            type: 'MERGE_EVENTS',
-            eventStore: relevantEvents
-          })
+          if (dataShouldUpdate) {
+            context.dispatch({
+              type: 'MERGE_EVENTS',
+              eventStore: relevantEvents
+            })
+          }
         },
         jsEvent: ev.origEvent,
         view: context.viewApi

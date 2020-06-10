@@ -1,12 +1,14 @@
 import { EventDef } from '../structs/event-def'
 import { EVENT_NON_DATE_REFINERS, EVENT_DATE_REFINERS } from '../structs/event-parse'
 import { EventInstance } from '../structs/event-instance'
-import { EVENT_UI_REFINERS } from '../component/event-ui'
-import { EventMutation } from '../structs/event-mutation'
+import { EVENT_UI_REFINERS, EventUiHash } from '../component/event-ui'
+import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { diffDates, computeAlignedDayRange } from '../util/date'
 import { createDuration, durationsEqual } from '../datelib/duration'
 import { createFormatter } from '../datelib/formatting'
 import { CalendarContext } from '../CalendarContext'
+import { eventWillUpdate, eventWillRemove } from '../events-will-update'
+import { getRelevantEvents } from '../structs/event-store'
 
 // public
 import {
@@ -210,28 +212,52 @@ export class EventApi {
   }
 
   mutate(mutation: EventMutation) { // meant to be private. but plugins need access
-    let def = this._def
     let instance = this._instance
 
     if (instance) {
-      this._context.dispatch({
-        type: 'MUTATE_EVENTS',
-        instanceId: instance.instanceId,
-        mutation,
-        fromApi: true
-      })
+      let def = this._def
+      let context = this._context
+      let { eventStore } = context.getCurrentData()
+      let relevantEvents = getRelevantEvents(eventStore, instance.instanceId)
+      let eventConfigBase = {
+        '': { // HACK. always allow API to mutate events
+          display: '',
+          startEditable: true,
+          durationEditable: true,
+          constraints: [],
+          overlap: null,
+          allows: [],
+          backgroundColor: '',
+          borderColor: '',
+          textColor: '',
+          classNames: []
+        }
+      } as EventUiHash
 
-      let { eventStore } = this._context.getCurrentData()
-      this._def = eventStore.defs[def.defId]
-      this._instance = eventStore.instances[instance.instanceId]
+      relevantEvents = applyMutationToEventStore(relevantEvents, eventConfigBase, mutation, context)
+      let updatedDef = relevantEvents.defs[def.defId]
+      let updatedInstance = relevantEvents.instances[instance.instanceId]
+      let updatedEventApi = new EventApi(context, updatedDef, updatedInstance)
+
+      if (eventWillUpdate(updatedEventApi, relevantEvents, context)) {
+        context.dispatch({
+          type: 'MERGE_EVENTS',
+          eventStore: relevantEvents
+        })
+
+        this._def = updatedDef
+        this._instance = updatedInstance
+      }
     }
   }
 
   remove() {
-    this._context.dispatch({
-      type: 'REMOVE_EVENT_DEF',
-      defId: this._def.defId
-    })
+    if (eventWillRemove(this, this._context)) {
+      this._context.dispatch({
+        type: 'REMOVE_EVENT_DEF',
+        defId: this._def.defId
+      })
+    }
   }
 
   get source(): EventSourceApi | null {

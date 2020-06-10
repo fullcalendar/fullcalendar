@@ -2,7 +2,6 @@ import { EventInstanceHash } from '../structs/event-instance'
 import { EventInput } from '../structs/event-parse'
 import { DateRange } from '../datelib/date-range'
 import { EventStore } from '../structs/event-store'
-import { EventMutation } from '../structs/event-mutation'
 import { EventSource, EventSourceError } from '../structs/event-source'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DateSpan } from '../structs/date-span'
@@ -39,7 +38,6 @@ export type Action =
 
   { type: 'ADD_EVENTS', eventStore: EventStore } |
   { type: 'MERGE_EVENTS', eventStore: EventStore } |
-  { type: 'MUTATE_EVENTS', instanceId: string, mutation: EventMutation, fromApi?: boolean } |
   { type: 'REMOVE_EVENT_DEF', defId: string } |
   { type: 'REMOVE_EVENT_INSTANCES', instances: EventInstanceHash } |
   { type: 'REMOVE_ALL_EVENTS' }

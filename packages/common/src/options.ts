@@ -31,7 +31,8 @@ import {
   VUIEvent,
   WeekNumberCalculation,
   FormatterInput,
-  ToolbarInput, CustomButtonInput, ButtonIconsInput, ButtonTextCompoundInput
+  ToolbarInput, CustomButtonInput, ButtonIconsInput, ButtonTextCompoundInput,
+  EventsWillUpdateArg
 } from './api-type-deps'
 
 
@@ -135,6 +136,7 @@ export const BASE_OPTION_REFINERS = {
   defaultAllDay: Boolean,
   eventSourceFailure: identity as Identity<(this: CalendarApi, error: any) => void>,
   eventSourceSuccess: identity as Identity<(this: CalendarApi, eventsInput: EventInput[], xhr?: XMLHttpRequest) => EventInput[] | void>,
+  eventsWillUpdate: identity as Identity<(arg: EventsWillUpdateArg) => void | boolean>,
 
   eventDisplay: String, // TODO: give more specific
   eventStartEditable: Boolean,

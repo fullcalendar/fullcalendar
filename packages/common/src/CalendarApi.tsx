@@ -12,6 +12,7 @@ import { triggerDateSelect, triggerDateUnselect } from './calendar-utils'
 import { CalendarDataManager } from './reducers/CalendarDataManager'
 import { Action } from './reducers/Action'
 import { EventSource } from './structs/event-source'
+import { eventWillAdd } from './events-will-update'
 
 // public
 import {
@@ -367,14 +368,18 @@ export class CalendarApi {
     if (eventInput instanceof EventApi) {
       let def = eventInput._def
       let instance = eventInput._instance
-      let { eventStore } = this.getCurrentData()
+      let currentData = this.getCurrentData()
 
       // not already present? don't want to add an old snapshot
-      if (!eventStore.defs[def.defId]) {
-        this.dispatch({
-          type: 'ADD_EVENTS',
-          eventStore: eventTupleToStore({ def, instance }) // TODO: better util for two args?
-        })
+      if (!currentData.eventStore.defs[def.defId]) {
+        let storeAdds = eventTupleToStore({ def, instance }) // TODO: better util for two args?
+
+        if (eventWillAdd(eventInput, storeAdds, currentData)) {
+          this.dispatch({
+            type: 'ADD_EVENTS',
+            eventStore: storeAdds
+          })
+        }
       }
 
       return eventInput
@@ -400,17 +405,21 @@ export class CalendarApi {
     let tuple = parseEvent(eventInput, eventSource, state, false)
 
     if (tuple) {
-
-      this.dispatch({
-        type: 'ADD_EVENTS',
-        eventStore: eventTupleToStore(tuple)
-      })
-
-      return new EventApi(
+      let storeAdds = eventTupleToStore(tuple)
+      let newEventApi = new EventApi(
         state,
         tuple.def,
         tuple.def.recurringDef ? null : tuple.instance
       )
+
+      if (eventWillAdd(newEventApi, storeAdds, state)) {
+        this.dispatch({
+          type: 'ADD_EVENTS',
+          eventStore: storeAdds
+        })
+      }
+
+      return newEventApi
     }
 
     return null

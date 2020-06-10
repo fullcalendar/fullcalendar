@@ -14,7 +14,8 @@ import {
   EventDropTransformers,
   CalendarContext,
   ViewApi,
-  Duration
+  Duration,
+  eventWillAdd, eventWillUpdate, eventWillRemove
 } from '@fullcalendar/common'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
@@ -263,11 +264,19 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
         // dropped within same calendar
         if (receivingContext === initialContext) {
+          let updatedEventApi = new EventApi(
+            initialContext,
+            mutatedRelevantEvents.defs[eventDef.defId],
+            eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
+          )
+          let dataShouldUpdate = eventWillUpdate(updatedEventApi, mutatedRelevantEvents, initialContext)
 
-          initialContext.dispatch({
-            type: 'MERGE_EVENTS',
-            eventStore: mutatedRelevantEvents
-          })
+          if (dataShouldUpdate) {
+            initialContext.dispatch({
+              type: 'MERGE_EVENTS',
+              eventStore: mutatedRelevantEvents
+            })
+          }
 
           let transformed: ReturnType<EventDropTransformers> = {}
 
@@ -280,16 +289,14 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             el: ev.subjectEl as HTMLElement,
             delta: validMutation.datesDelta!,
             oldEvent: eventApi,
-            event: new EventApi( // the data AFTER the mutation
-              initialContext,
-              mutatedRelevantEvents.defs[eventDef.defId],
-              eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
-            ),
+            event: updatedEventApi,
             revert: function() {
-              initialContext.dispatch({
-                type: 'MERGE_EVENTS',
-                eventStore: relevantEvents
-              })
+              if (dataShouldUpdate) {
+                initialContext.dispatch({
+                  type: 'MERGE_EVENTS',
+                  eventStore: relevantEvents
+                })
+              }
             },
             jsEvent: ev.origEvent,
             view: initialView
@@ -306,15 +313,25 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             view: initialView
           })
 
-          initialContext.dispatch({
-            type: 'REMOVE_EVENT_INSTANCES',
-            instances: this.mutatedRelevantEvents!.instances
-          })
+          if (eventWillRemove(eventApi, initialContext)) {
+            initialContext.dispatch({
+              type: 'REMOVE_EVENT_INSTANCES',
+              instances: this.mutatedRelevantEvents!.instances
+            })
+          }
 
-          receivingContext.dispatch({
-            type: 'MERGE_EVENTS',
-            eventStore: this.mutatedRelevantEvents!
-          })
+          let addedEventApi = new EventApi(
+            receivingContext,
+            mutatedRelevantEvents.defs[eventDef.defId],
+            mutatedRelevantEvents.instances[eventInstance.instanceId]
+          )
+
+          if (eventWillAdd(addedEventApi, mutatedRelevantEvents, receivingContext)) {
+            receivingContext.dispatch({
+              type: 'MERGE_EVENTS',
+              eventStore: this.mutatedRelevantEvents!
+            })
+          }
 
           if (ev.isTouch) {
             receivingContext.dispatch({
@@ -332,11 +349,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
           receivingContext.emitter.trigger('eventReceive', {
             draggedEl: ev.subjectEl as HTMLElement,
-            event: new EventApi( // the data AFTER the mutation
-              receivingContext,
-              mutatedRelevantEvents.defs[eventDef.defId],
-              mutatedRelevantEvents.instances[eventInstance.instanceId]
-            ),
+            event: addedEventApi,
             view: finalHit.component.context.viewApi
           })
         }

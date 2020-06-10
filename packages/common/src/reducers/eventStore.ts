@@ -1,12 +1,10 @@
 import { filterHash, mapHash } from '../util/object'
-import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { EventDef } from '../structs/event-def'
 import { EventInstance, EventInstanceHash } from '../structs/event-instance'
 import { EventInput } from '../structs/event-parse'
 import {
   EventStore,
   mergeEventStores,
-  getRelevantEvents,
   createEmptyEventStore,
   filterEventStoreDefs,
   parseEvents
@@ -16,7 +14,6 @@ import { EventSourceHash, EventSource } from '../structs/event-source'
 import { DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
 import { DateEnv } from '../datelib/env'
-import { EventUiHash } from '../component/event-ui'
 import { CalendarContext } from '../CalendarContext'
 import { expandRecurring } from '../structs/recurring-event'
 
@@ -54,9 +51,6 @@ export function reduceEventStore(eventStore: EventStore, action: Action, eventSo
       } else {
         return eventStore
       }
-
-    case 'MUTATE_EVENTS':
-      return applyMutationToRelated(eventStore, action.instanceId, action.mutation, action.fromApi, context)
 
     case 'REMOVE_EVENT_INSTANCES':
       return excludeInstances(eventStore, action.instances)
@@ -188,30 +182,6 @@ export function rezoneEventStoreDates(eventStore: EventStore, oldDateEnv: DateEn
   })
 
   return { defs, instances }
-}
-
-
-function applyMutationToRelated(eventStore: EventStore, instanceId: string, mutation: EventMutation, fromApi: boolean, context: CalendarContext): EventStore {
-  let relevant = getRelevantEvents(eventStore, instanceId)
-  let eventConfigBase = fromApi ?
-    { '': { // HACK. always allow API to mutate events
-      display: '',
-      startEditable: true,
-      durationEditable: true,
-      constraints: [],
-      overlap: null,
-      allows: [],
-      backgroundColor: '',
-      borderColor: '',
-      textColor: '',
-      classNames: []
-    } } as EventUiHash :
-    context.getCurrentData().eventUiBases
-
-
-  relevant = applyMutationToEventStore(relevant, eventConfigBase, mutation, context)
-
-  return mergeEventStores(eventStore, relevant)
 }
 
 
