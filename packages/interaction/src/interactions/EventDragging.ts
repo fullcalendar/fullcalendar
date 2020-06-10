@@ -269,9 +269,8 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             mutatedRelevantEvents.defs[eventDef.defId],
             eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
           )
-          let dataShouldUpdate = eventWillUpdate(updatedEventApi, mutatedRelevantEvents, initialContext)
 
-          if (dataShouldUpdate) {
+          if (eventWillUpdate(updatedEventApi, mutatedRelevantEvents, initialContext)) {
             initialContext.dispatch({
               type: 'MERGE_EVENTS',
               eventStore: mutatedRelevantEvents
@@ -291,8 +290,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             oldEvent: eventApi,
             event: updatedEventApi,
             revert() {
-              if (dataShouldUpdate) {
-                eventsWillLoad(relevantEvents, initialContext)
+              if (eventWillUpdate(eventApi, relevantEvents, initialContext)) {
                 initialContext.dispatch({
                   type: 'MERGE_EVENTS',
                   eventStore: relevantEvents

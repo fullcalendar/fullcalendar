@@ -11,7 +11,7 @@ import {
   createDuration,
   EventInteractionState,
   EventResizeJoinTransforms,
-  Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration, eventWillUpdate, eventsWillLoad
+  Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration, eventWillUpdate
 } from '@fullcalendar/common'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
@@ -194,9 +194,8 @@ export class EventResizing extends Interaction {
         mutatedRelevantEvents.defs[eventDef.defId],
         eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
       )
-      let dataShouldUpdate = eventWillUpdate(updatedEventApi, mutatedRelevantEvents, context)
 
-      if (dataShouldUpdate) {
+      if (eventWillUpdate(updatedEventApi, mutatedRelevantEvents, context)) {
         context.dispatch({
           type: 'MERGE_EVENTS',
           eventStore: mutatedRelevantEvents
@@ -210,8 +209,7 @@ export class EventResizing extends Interaction {
         prevEvent: eventApi,
         event: updatedEventApi,
         revert() {
-          if (dataShouldUpdate) {
-            eventsWillLoad(relevantEvents, context)
+          if (eventWillUpdate(eventApi, relevantEvents, context)) {
             context.dispatch({
               type: 'MERGE_EVENTS',
               eventStore: relevantEvents
