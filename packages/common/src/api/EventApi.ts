@@ -9,6 +9,8 @@ import { createFormatter } from '../datelib/formatting'
 import { CalendarContext } from '../CalendarContext'
 import { eventWillUpdate, eventWillRemove } from '../events-will-update'
 import { getRelevantEvents } from '../structs/event-store'
+import { __assign } from 'tslib'
+import { Dictionary } from '../options'
 
 // public
 import {
@@ -304,5 +306,78 @@ export class EventApi {
   // NOTE: user can't modify these because Object.freeze was called in event-def parsing
   get classNames() { return this._def.ui.classNames }
   get extendedProps() { return this._def.extendedProps }
+
+
+  toPlainObject(settings: { collapseExtendedProps?: boolean, collapseColor?: boolean } = {}): Dictionary {
+    let { dateEnv } = this._context
+    let def = this._def
+    let instance = this._instance
+    let { ui } = def
+    let res: Dictionary = {
+      title: def.title,
+      allDay: def.allDay
+    }
+
+    if (instance) {
+      res.start = dateEnv.formatIso(instance.range.start, { omitTime: def.allDay })
+
+      if (def.hasEnd) {
+        res.end = dateEnv.formatIso(instance.range.end, { omitTime: def.allDay })
+      }
+    }
+
+    if (def.publicId) {
+      res.id = def.publicId
+    }
+
+    if (def.groupId) {
+      res.groupId = def.groupId
+    }
+
+    if (def.url) {
+      res.url = def.url
+    }
+
+    if (ui.display && ui.display !== 'auto') {
+      res.display = ui.display
+    }
+
+    // TODO: include startEditable/durationEditable/constraint/overlap/allow
+
+    if (settings.collapseColor && ui.backgroundColor && ui.backgroundColor === ui.borderColor) {
+      res.color = ui.backgroundColor
+
+    } else {
+      if (ui.backgroundColor) {
+        res.backgroundColor = ui.backgroundColor
+      }
+      if (ui.borderColor) {
+        res.borderColor = ui.borderColor
+      }
+    }
+
+    if (ui.textColor) {
+      res.textColor = ui.textColor
+    }
+
+    if (ui.classNames.length) {
+      res.classNames = ui.classNames
+    }
+
+    if (Object.keys(def.extendedProps).length) {
+      if (settings.collapseExtendedProps) {
+        __assign(res, def.extendedProps)
+      } else {
+        res.extendedProps = def.extendedProps
+      }
+    }
+
+    return res
+  }
+
+
+  toJSON() {
+    return this.toPlainObject()
+  }
 
 }
