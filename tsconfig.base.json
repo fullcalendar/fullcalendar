@@ -21,11 +21,6 @@
     "checkJs": true,
     "jsx": "react",
     "jsxFactory": "createElement",
-    "baseUrl": ".",
-    "strictBindCallApply": true,
-    "paths": {
-      "@fullcalendar/core/locales/*": [ "packages/core/src/locales/*" ],
-      "@fullcalendar/core/locales-all": [ "packages/core/src/locales-all" ]
-    }
+    "strictBindCallApply": true
   }
 }
