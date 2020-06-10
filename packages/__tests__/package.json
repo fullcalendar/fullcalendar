@@ -14,6 +14,13 @@
     "@fullcalendar/moment": "5.0.0-beta.4",
     "@fullcalendar/moment-timezone": "5.0.0-beta.4",
     "@fullcalendar/google-calendar": "5.0.0-beta.4",
-    "@fullcalendar/bootstrap": "5.0.0-beta.4"
+    "@fullcalendar/bootstrap": "5.0.0-beta.4",
+    "components-jqueryui": "github:components/jqueryui",
+    "jasmine-jquery": "^2.1.1",
+    "jquery": "^3.4.0",
+    "jquery-simulate": "github:jquery/jquery-simulate",
+    "moment": "^2.24.0",
+    "tslib": "^1.9.3",
+    "xhr-mock": "^2.5.1"
   }
 }

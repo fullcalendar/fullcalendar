@@ -64,11 +64,11 @@
     "@typescript-eslint/parser": "^3.1.0",
     "bootstrap": "^3.4.1",
     "chokidar": "^2.1.5",
-    "components-jqueryui": "github:components/jqueryui",
     "concurrently": "^4.1.1",
     "css-loader": "^3.5.3",
     "dragula": "^3.7.2",
     "eslint": "^7.2.0",
+    "eslint-plugin-import": "^2.21.1",
     "eslint-plugin-react": "^7.20.0",
     "glob": "^7.1.3",
     "globby": "^11.0.0",
@@ -83,9 +83,6 @@
     "handlebars": "^4.1.2",
     "html-webpack-plugin": "^4.3.0",
     "jasmine-core": "2.5.2",
-    "jasmine-jquery": "^2.1.1",
-    "jquery": "^3.4.0",
-    "jquery-simulate": "github:jquery/jquery-simulate",
     "karma": "^0.13.22",
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^1.1.2",
@@ -117,7 +114,6 @@
     "typescript": "^3.9.3",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
-    "xhr-mock": "^2.5.1",
     "yarn": "1.18.0"
   }
 }

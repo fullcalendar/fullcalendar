@@ -7,7 +7,8 @@ module.exports = {
   },
   plugins: [
     '@typescript-eslint',
-    'react'
+    'react',
+    'import'
   ],
   settings: {
     react: {
@@ -30,6 +31,8 @@ module.exports = {
     'react/react-in-jsx-scope': 0, // requires React to always be imported
     'react/display-name': 0,
     'react/prop-types': 0,
+
+    'import/no-extraneous-dependencies': 'error',
 
     '@typescript-eslint/ban-types': 'error'
 
