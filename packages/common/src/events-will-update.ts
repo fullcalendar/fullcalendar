@@ -7,6 +7,7 @@ export interface EventsWillUpdateArg {
   addingEvent: EventApi | null
   updatingEvent: EventApi | null
   removingEvent: EventApi | null
+  loadingEvents: EventApi[]
   allEvents: EventApi[]
 }
 
@@ -26,4 +27,15 @@ export function eventWillUpdate(eventApi: EventApi, storeUpdates: EventStore, co
 export function eventWillRemove(eventApi: EventApi, context: CalendarContext) {
   let handler = context.options.eventsWillUpdate
   return !handler || handler({ removingEvent: eventApi } as any) !== false
+}
+
+
+export function eventsWillLoad(storeUpdates: EventStore, context: CalendarContext) {
+  let handler = context.options.eventsWillUpdate
+
+  if (handler) {
+    handler({
+      loadingEvents: storeUpdates
+    } as any)
+  }
 }

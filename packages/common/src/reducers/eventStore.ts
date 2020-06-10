@@ -16,6 +16,7 @@ import { DateProfile } from '../DateProfileGenerator'
 import { DateEnv } from '../datelib/env'
 import { CalendarContext } from '../CalendarContext'
 import { expandRecurring } from '../structs/recurring-event'
+import { eventsWillLoad } from '../events-will-update'
 
 
 export function reduceEventStore(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, context: CalendarContext): EventStore {
@@ -100,6 +101,8 @@ function receiveRawEvents(
     if (fetchRange) {
       subset = expandRecurring(subset, fetchRange, context)
     }
+
+    eventsWillLoad(subset, context)
 
     return mergeEventStores(
       excludeEventsBySourceId(eventStore, eventSource.sourceId),

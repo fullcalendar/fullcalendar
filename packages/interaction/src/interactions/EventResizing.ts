@@ -11,7 +11,7 @@ import {
   createDuration,
   EventInteractionState,
   EventResizeJoinTransforms,
-  Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration, eventWillUpdate
+  Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration, eventWillUpdate, eventsWillLoad
 } from '@fullcalendar/common'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
@@ -209,8 +209,9 @@ export class EventResizing extends Interaction {
         endDelta: this.validMutation.endDelta || createDuration(0),
         prevEvent: eventApi,
         event: updatedEventApi,
-        revert: function() {
+        revert() {
           if (dataShouldUpdate) {
+            eventsWillLoad(relevantEvents, context)
             context.dispatch({
               type: 'MERGE_EVENTS',
               eventStore: relevantEvents

@@ -15,7 +15,7 @@ import {
   CalendarContext,
   ViewApi,
   Duration,
-  eventWillAdd, eventWillUpdate, eventWillRemove
+  eventWillAdd, eventWillUpdate, eventWillRemove, eventsWillLoad
 } from '@fullcalendar/common'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
@@ -290,8 +290,9 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             delta: validMutation.datesDelta!,
             oldEvent: eventApi,
             event: updatedEventApi,
-            revert: function() {
+            revert() {
               if (dataShouldUpdate) {
+                eventsWillLoad(relevantEvents, initialContext)
                 initialContext.dispatch({
                   type: 'MERGE_EVENTS',
                   eventStore: relevantEvents
