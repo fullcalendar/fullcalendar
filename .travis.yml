@@ -3,7 +3,7 @@ sudo: false # route build to the container-based infrastructure for a faster bui
 
 language: node_js
 node_js:
-  - "11" # restore back to "node" (without quotes) when Travis is compatible with Node 12
+  - node # the latest
 
 cache:
   directories:
