@@ -57,9 +57,7 @@ export function reduceEventStore(eventStore: EventStore, action: Action, eventSo
       return excludeInstances(eventStore, action.instances)
 
     case 'REMOVE_EVENT_DEF':
-      return filterEventStoreDefs(eventStore, function(eventDef) {
-        return eventDef.defId !== action.defId
-      })
+      return excludeEventsByDefId(eventStore, action.defId)
 
     case 'REMOVE_EVENT_SOURCE':
       return excludeEventsBySourceId(eventStore, action.sourceId)
@@ -188,9 +186,16 @@ export function rezoneEventStoreDates(eventStore: EventStore, oldDateEnv: DateEn
 }
 
 
-function excludeEventsBySourceId(eventStore, sourceId) {
+function excludeEventsBySourceId(eventStore: EventStore, sourceId: string) {
   return filterEventStoreDefs(eventStore, function(eventDef: EventDef) {
     return eventDef.sourceId !== sourceId
+  })
+}
+
+
+export function excludeEventsByDefId(eventStore: EventStore, defId: string) {
+  return filterEventStoreDefs(eventStore, function(eventDef) {
+    return eventDef.defId !== defId
   })
 }
 

@@ -4,7 +4,7 @@ import { createDuration } from './datelib/duration'
 import { parseDateSpan } from './structs/date-span'
 import { parseEventSource } from './structs/event-source-parse'
 import { parseEvent } from './structs/event-parse'
-import { eventTupleToStore } from './structs/event-store'
+import { eventTupleToStore, EventStore } from './structs/event-store'
 import { ViewSpec } from './structs/view-spec'
 import { PointerDragEvent } from './interactions/pointer'
 import { getNow } from './reducers/current-date'
@@ -13,6 +13,7 @@ import { CalendarDataManager } from './reducers/CalendarDataManager'
 import { Action } from './reducers/Action'
 import { EventSource } from './structs/event-source'
 import { eventWillAdd } from './events-will-update'
+import { CalendarContext } from './CalendarContext'
 
 // public
 import {
@@ -458,18 +459,9 @@ export class CalendarApi {
 
 
   getEvents(): EventApi[] {
-    let state = this.getCurrentData()
-    let { defs, instances } = state.eventStore
-    let eventApis: EventApi[] = []
+    let currentData = this.getCurrentData()
 
-    for (let id in instances) {
-      let instance = instances[id]
-      let def = defs[instance.defId]
-
-      eventApis.push(new EventApi(state, def, instance))
-    }
-
-    return eventApis
+    return buildEventApis(currentData.eventStore, currentData)
   }
 
 
@@ -560,4 +552,19 @@ export class CalendarApi {
     }
   }
 
+}
+
+
+export function buildEventApis(eventStore: EventStore, context: CalendarContext): EventApi[] {
+  let { defs, instances } = eventStore
+  let eventApis: EventApi[] = []
+
+  for (let id in instances) {
+    let instance = instances[id]
+    let def = defs[instance.defId]
+
+    eventApis.push(new EventApi(context, def, instance))
+  }
+
+  return eventApis
 }
