@@ -67,3 +67,14 @@ export function diffDates(date0: DateMarker, date1: DateMarker, dateEnv: DateEnv
     return diffDayAndTime(date0, date1) // returns a duration
   }
 }
+
+
+export function buildZonedRangeArg(dateEnv: DateEnv, range: DateRange) {
+  return  {
+    start: dateEnv.toDate(range.start),
+    end: dateEnv.toDate(range.end),
+    startStr: dateEnv.formatIso(range.start),
+    endStr: dateEnv.formatIso(range.end),
+    timeZone: dateEnv.timeZone
+  }
+}
