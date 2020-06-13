@@ -64,7 +64,7 @@ describe('addEvent', function() {
     })
 
     let theSource = currentCalendar.getEventSourceById('9')
-    let newEvent = currentCalendar.addEvent({ id: 'b', start: '2018-09-10' }, 9)
+    let newEvent = currentCalendar.addEvent({ id: 'b', start: '2018-09-10' }, '9')
     expect(newEvent.source.id === theSource.id)
   })
 
