@@ -280,6 +280,7 @@ export class CalendarDataManager {
       __assign(newState, reducer(state, action, contextAndState)) // give the OLD state, for old value
     }
 
+    // TODO: use propSetHandlers in plugin system
     if (!prevLoadingLevel && loadingLevel) {
       emitter.trigger('loading', true)
     } else if (prevLoadingLevel && !loadingLevel) {

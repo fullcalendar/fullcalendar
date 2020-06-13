@@ -19,7 +19,6 @@ import { EventHovering } from './interactions/EventHovering'
 import { getNow } from './reducers/current-date'
 import { CalendarInteraction } from './calendar-utils'
 import { DelayedRunner } from './util/runner'
-import { buildZonedRangeArg } from './util/date'
 
 
 export interface CalendarContentProps extends CalendarData {
@@ -125,32 +124,30 @@ export class CalendarContent extends Component<CalendarContentProps> {
 
   componentDidMount() {
     let { props } = this
+
     this.calendarInteractions = props.pluginHooks.calendarInteractions
       .map((calendarInteractionClass) => {
         return new calendarInteractionClass(props)
       })
 
     window.addEventListener('resize', this.handleWindowResize)
-    this.triggerDatesDidUpdate()
+
+    let propSetHandlers = props.pluginHooks.propSetHandlers
+    for (let propName in propSetHandlers) {
+      propSetHandlers[propName](props[propName], props)
+    }
   }
 
 
   componentDidUpdate(prevProps: CalendarContentProps) {
     let { props } = this
 
-    if (prevProps.dateProfile !== props.dateProfile) {
-      this.triggerDatesDidUpdate()
+    let propSetHandlers = props.pluginHooks.propSetHandlers
+    for (let propName in propSetHandlers) {
+      if (props[propName] !== prevProps[propName]) {
+        propSetHandlers[propName](props[propName], props)
+      }
     }
-  }
-
-
-  private triggerDatesDidUpdate() {
-    let { props } = this
-
-    props.emitter.trigger('datesDidUpdate', {
-      ...buildZonedRangeArg(props.dateEnv, props.dateProfile.activeRange),
-      view: props.viewApi
-    })
   }
 
 

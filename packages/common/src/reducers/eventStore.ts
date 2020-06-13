@@ -7,6 +7,7 @@ import {
   mergeEventStores,
   createEmptyEventStore,
   filterEventStoreDefs,
+  excludeSubEventStore,
   parseEvents
 } from '../structs/event-store'
 import { Action } from './Action'
@@ -16,7 +17,6 @@ import { DateProfile } from '../DateProfileGenerator'
 import { DateEnv } from '../datelib/env'
 import { CalendarContext } from '../CalendarContext'
 import { expandRecurring } from '../structs/recurring-event'
-import { eventsWillLoad } from '../events-will-update'
 
 
 export function reduceEventStore(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, context: CalendarContext): EventStore {
@@ -53,11 +53,8 @@ export function reduceEventStore(eventStore: EventStore, action: Action, eventSo
         return eventStore
       }
 
-    case 'REMOVE_EVENT_INSTANCES':
-      return excludeInstances(eventStore, action.instances)
-
-    case 'REMOVE_EVENT_DEF':
-      return excludeEventsByDefId(eventStore, action.defId)
+    case 'REMOVE_EVENTS':
+      return excludeSubEventStore(eventStore, action.eventStore)
 
     case 'REMOVE_EVENT_SOURCE':
       return excludeEventsBySourceId(eventStore, action.sourceId)
@@ -99,8 +96,6 @@ function receiveRawEvents(
     if (fetchRange) {
       subset = expandRecurring(subset, fetchRange, context)
     }
-
-    eventsWillLoad(subset, context)
 
     return mergeEventStores(
       excludeEventsBySourceId(eventStore, eventSource.sourceId),
@@ -189,13 +184,6 @@ export function rezoneEventStoreDates(eventStore: EventStore, oldDateEnv: DateEn
 function excludeEventsBySourceId(eventStore: EventStore, sourceId: string) {
   return filterEventStoreDefs(eventStore, function(eventDef: EventDef) {
     return eventDef.sourceId !== sourceId
-  })
-}
-
-
-export function excludeEventsByDefId(eventStore: EventStore, defId: string) {
-  return filterEventStoreDefs(eventStore, function(eventDef) {
-    return eventDef.defId !== defId
   })
 }
 

@@ -3,7 +3,7 @@ import { EventSourceDef } from '../structs/event-source-def'
 import { EventSourceError } from '../structs/event-source'
 import { EventInput } from '../structs/event-parse'
 import { createPlugin } from '../plugin-system'
-import { buildZonedRangeArg } from '../util/date'
+import { buildRangeApiWithTimeZone } from '../structs/date-span'
 
 export type EventSourceFunc = (
   arg: {
@@ -32,7 +32,7 @@ let eventSourceDef: EventSourceDef<EventSourceFunc> = {
     let func = arg.eventSource.meta
 
     unpromisify(
-      func.bind(null, buildZonedRangeArg(dateEnv, arg.range)),
+      func.bind(null, buildRangeApiWithTimeZone(arg.range, dateEnv)),
       function(rawEvents) { // success
         success({ rawEvents }) // needs an object response
       },

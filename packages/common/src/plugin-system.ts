@@ -40,7 +40,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     scrollGridImpl: input.scrollGridImpl || null,
     contentTypeHandlers: input.contentTypeHandlers || {},
     listenerRefiners: input.listenerRefiners || {},
-    optionRefiners: input.optionRefiners || {}
+    optionRefiners: input.optionRefiners || {},
+    propSetHandlers: input.propSetHandlers || {}
   }
 }
 
@@ -79,7 +80,8 @@ export function buildPluginHooks(pluginDefs: PluginDef[] | null, globalDefs: Plu
     scrollGridImpl: null,
     contentTypeHandlers: {},
     listenerRefiners: {},
-    optionRefiners: {}
+    optionRefiners: {},
+    propSetHandlers: {}
   }
 
   function addDefs(defs: PluginDef[]) {
@@ -136,5 +138,6 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     contentTypeHandlers: { ...hooks0.contentTypeHandlers, ...hooks1.contentTypeHandlers },
     listenerRefiners: { ...hooks0.listenerRefiners, ...hooks1.listenerRefiners },
     optionRefiners: { ...hooks0.optionRefiners, ...hooks1.optionRefiners },
+    propSetHandlers: { ...hooks0.propSetHandlers, ...hooks1.propSetHandlers }
   }
 }

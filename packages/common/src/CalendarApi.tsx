@@ -4,7 +4,7 @@ import { createDuration } from './datelib/duration'
 import { parseDateSpan } from './structs/date-span'
 import { parseEventSource } from './structs/event-source-parse'
 import { parseEvent } from './structs/event-parse'
-import { eventTupleToStore, EventStore } from './structs/event-store'
+import { eventTupleToStore } from './structs/event-store'
 import { ViewSpec } from './structs/view-spec'
 import { PointerDragEvent } from './interactions/pointer'
 import { getNow } from './reducers/current-date'
@@ -12,8 +12,7 @@ import { triggerDateSelect, triggerDateUnselect } from './calendar-utils'
 import { CalendarDataManager } from './reducers/CalendarDataManager'
 import { Action } from './reducers/Action'
 import { EventSource } from './structs/event-source'
-import { eventWillAdd } from './events-will-update'
-import { CalendarContext } from './CalendarContext'
+import { eventApiToStore, buildEventApis } from './api/EventApi'
 
 // public
 import {
@@ -373,14 +372,11 @@ export class CalendarApi {
 
       // not already present? don't want to add an old snapshot
       if (!currentData.eventStore.defs[def.defId]) {
-        let storeAdds = eventTupleToStore({ def, instance }) // TODO: better util for two args?
-
-        if (eventWillAdd(eventInput, storeAdds, currentData)) {
-          this.dispatch({
-            type: 'ADD_EVENTS',
-            eventStore: storeAdds
-          })
-        }
+        this.dispatch({
+          type: 'ADD_EVENTS',
+          eventStore: eventTupleToStore({ def, instance }) // TODO: better util for two args?
+        })
+        this.triggerEventAdd(eventInput)
       }
 
       return eventInput
@@ -406,24 +402,37 @@ export class CalendarApi {
     let tuple = parseEvent(eventInput, eventSource, state, false)
 
     if (tuple) {
-      let storeAdds = eventTupleToStore(tuple)
       let newEventApi = new EventApi(
         state,
         tuple.def,
         tuple.def.recurringDef ? null : tuple.instance
       )
-
-      if (eventWillAdd(newEventApi, storeAdds, state)) {
-        this.dispatch({
-          type: 'ADD_EVENTS',
-          eventStore: storeAdds
-        })
-      }
+      this.dispatch({
+        type: 'ADD_EVENTS',
+        eventStore: eventTupleToStore(tuple)
+      })
+      this.triggerEventAdd(newEventApi)
 
       return newEventApi
     }
 
     return null
+  }
+
+
+  private triggerEventAdd(eventApi: EventApi) {
+    let { emitter } = this.getCurrentData()
+
+    emitter.trigger('eventAdd', {
+      event: eventApi,
+      relatedEvents: [],
+      revert: () => {
+        this.dispatch({
+          type: 'REMOVE_EVENTS',
+          eventStore: eventApiToStore(eventApi)
+        })
+      }
+    })
   }
 
 
@@ -552,19 +561,4 @@ export class CalendarApi {
     }
   }
 
-}
-
-
-export function buildEventApis(eventStore: EventStore, context: CalendarContext): EventApi[] {
-  let { defs, instances } = eventStore
-  let eventApis: EventApi[] = []
-
-  for (let id in instances) {
-    let instance = instances[id]
-    let def = defs[instance.defId]
-
-    eventApis.push(new EventApi(context, def, instance))
-  }
-
-  return eventApis
 }

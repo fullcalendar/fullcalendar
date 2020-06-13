@@ -9,7 +9,7 @@ import './event-sources/json-feed-event-source-declare' // plugin-like. these am
 
 // explicit API
 export { EventSourceApi } from './api/EventSourceApi'
-export { EventApi } from './api/EventApi'
+export { EventApi, buildEventApis } from './api/EventApi'
 export { CalendarApi } from './CalendarApi'
 export { formatDate, formatRange } from './formatting-api'
 export { ViewApi } from './ViewApi'
@@ -173,7 +173,6 @@ export { TableDateCell, TableDowCell } from './common/TableDateCell'
 
 export { DaySeriesModel } from './common/DaySeriesModel'
 
-export { eventWillAdd, eventWillUpdate, eventWillRemove, eventsWillLoad } from './events-will-update'
 export { EventInteractionState } from './interactions/event-interaction-state'
 export {
   EventRenderRange, sliceEventStore, hasBgRendering, setElSeg, getElSeg,

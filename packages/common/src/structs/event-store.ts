@@ -100,3 +100,30 @@ export function filterEventStoreDefs(eventStore: EventStore, filterFunc: (eventD
   })
   return { defs, instances }
 }
+
+
+export function excludeSubEventStore(master: EventStore, sub: EventStore): EventStore {
+  let { defs, instances } = master
+  let filteredDefs: { [defId: string]: EventDef } = {}
+  let filteredInstances: { [instanceId: string]: EventInstance } = {}
+
+  for (let defId in defs) {
+    if (!sub.defs[defId]) { // not explicitly excluded
+      filteredDefs[defId] = defs[defId]
+    }
+  }
+
+  for (let instanceId in instances) {
+    if (
+      !sub.instances[instanceId] && // not explicitly excluded
+      filteredDefs[instances[instanceId].defId] // def wasn't filtered away
+    ) {
+      filteredInstances[instanceId] = instances[instanceId]
+    }
+  }
+
+  return {
+    defs: filteredDefs,
+    instances: filteredInstances
+  }
+}

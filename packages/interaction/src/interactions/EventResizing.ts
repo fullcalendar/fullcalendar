@@ -11,7 +11,7 @@ import {
   createDuration,
   EventInteractionState,
   EventResizeJoinTransforms,
-  Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration, eventWillUpdate
+  Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration, EventChangeArg, buildEventApis
 } from '@fullcalendar/common'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
@@ -28,13 +28,10 @@ export interface EventResizeStartStopArg {
   view: ViewApi
 }
 
-export interface EventResizeDoneArg {
+export interface EventResizeDoneArg extends EventChangeArg {
   el: HTMLElement
   startDelta: Duration
   endDelta: Duration
-  prevEvent: EventApi
-  event: EventApi
-  revert: () => void
   jsEvent: MouseEvent
   view: ViewApi
 }
@@ -195,30 +192,33 @@ export class EventResizing extends Interaction {
         eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
       )
 
-      if (eventWillUpdate(updatedEventApi, mutatedRelevantEvents, context)) {
-        context.dispatch({
-          type: 'MERGE_EVENTS',
-          eventStore: mutatedRelevantEvents
-        })
+      context.dispatch({
+        type: 'MERGE_EVENTS',
+        eventStore: mutatedRelevantEvents
+      })
+
+      let eventChangeArg: EventChangeArg = {
+        oldEvent: eventApi,
+        event: updatedEventApi,
+        relatedEvents: buildEventApis(mutatedRelevantEvents, context, eventInstance),
+        revert() {
+          context.dispatch({
+            type: 'MERGE_EVENTS',
+            eventStore: relevantEvents // the pre-change events
+          })
+        }
       }
 
       context.emitter.trigger('eventResize', {
+        ...eventChangeArg,
         el: this.draggingSegEl,
         startDelta: this.validMutation.startDelta || createDuration(0),
         endDelta: this.validMutation.endDelta || createDuration(0),
-        prevEvent: eventApi,
-        event: updatedEventApi,
-        revert() {
-          if (eventWillUpdate(eventApi, relevantEvents, context)) {
-            context.dispatch({
-              type: 'MERGE_EVENTS',
-              eventStore: relevantEvents
-            })
-          }
-        },
-        jsEvent: ev.origEvent,
+        jsEvent: ev.origEvent as MouseEvent,
         view: context.viewApi
-      } as EventResizeDoneArg)
+      })
+
+      context.emitter.trigger('eventChange', eventChangeArg)
 
     } else {
       context.emitter.trigger('_noEventResize')

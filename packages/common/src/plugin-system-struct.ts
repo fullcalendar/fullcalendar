@@ -22,6 +22,7 @@ import { ComponentChildren } from './vdom'
 import { ScrollGridImpl } from './scrollgrid/ScrollGridImpl'
 import { ContentTypeHandlers } from './common/render-hook'
 import { GenericRefiners, GenericListenerRefiners } from './options'
+import { CalendarData } from './reducers/data-types'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -59,6 +60,7 @@ export interface PluginDefInput {
   contentTypeHandlers?: ContentTypeHandlers
   listenerRefiners?: GenericListenerRefiners
   optionRefiners?: GenericRefiners
+  propSetHandlers?: { [propName: string]: (val: any, context: CalendarData) => void } // TODO: make better types
 }
 
 export interface PluginHooks {
@@ -94,6 +96,7 @@ export interface PluginHooks {
   contentTypeHandlers: ContentTypeHandlers
   listenerRefiners: GenericListenerRefiners
   optionRefiners: GenericRefiners
+  propSetHandlers: { [propName: string]: (val: any, context: CalendarData) => void }
 }
 
 export interface PluginDef extends PluginHooks {

@@ -7,8 +7,7 @@ import { diffDates, computeAlignedDayRange } from '../util/date'
 import { createDuration, durationsEqual } from '../datelib/duration'
 import { createFormatter } from '../datelib/formatting'
 import { CalendarContext } from '../CalendarContext'
-import { eventWillUpdate, eventWillRemove } from '../events-will-update'
-import { getRelevantEvents } from '../structs/event-store'
+import { getRelevantEvents, EventStore } from '../structs/event-store'
 import { __assign } from 'tslib'
 import { Dictionary } from '../options'
 
@@ -237,29 +236,49 @@ export class EventApi {
       } as EventUiHash
 
       relevantEvents = applyMutationToEventStore(relevantEvents, eventConfigBase, mutation, context)
-      let updatedDef = relevantEvents.defs[def.defId]
-      let updatedInstance = relevantEvents.instances[instance.instanceId]
-      let updatedEventApi = new EventApi(context, updatedDef, updatedInstance)
 
-      if (eventWillUpdate(updatedEventApi, relevantEvents, context)) {
-        context.dispatch({
-          type: 'MERGE_EVENTS',
-          eventStore: relevantEvents
-        })
+      let oldEvent = new EventApi(context, def, instance) // snapshot
+      this._def = relevantEvents.defs[def.defId]
+      this._instance = relevantEvents.instances[instance.instanceId]
 
-        this._def = updatedDef
-        this._instance = updatedInstance
-      }
+      context.dispatch({
+        type: 'MERGE_EVENTS',
+        eventStore: relevantEvents
+      })
+
+      context.emitter.trigger('eventChange', {
+        oldEvent,
+        event: this,
+        relatedEvents: buildEventApis(relevantEvents, context, instance),
+        revert() {
+          context.dispatch({
+            type: 'REMOVE_EVENTS',
+            eventStore: relevantEvents
+          })
+        }
+      })
     }
   }
 
   remove() {
-    if (eventWillRemove(this, this._context)) {
-      this._context.dispatch({
-        type: 'REMOVE_EVENT_DEF',
-        defId: this._def.defId
-      })
-    }
+    let context = this._context
+    let asStore = eventApiToStore(this)
+
+    context.dispatch({
+      type: 'REMOVE_EVENTS',
+      eventStore: asStore
+    })
+
+    context.emitter.trigger('eventRemove', {
+      event: this,
+      relatedEvents: [],
+      revert() {
+        context.dispatch({
+          type: 'MERGE_EVENTS',
+          eventStore: asStore
+        })
+      }
+    })
   }
 
   get source(): EventSourceApi | null {
@@ -380,4 +399,35 @@ export class EventApi {
     return this.toPlainObject()
   }
 
+}
+
+
+export function eventApiToStore(eventApi: EventApi): EventStore {
+  let def = eventApi._def
+  let instance = eventApi._instance
+
+  return {
+    defs: { [def.defId]: def },
+    instances: instance
+      ? { [instance.instanceId]: instance }
+      : {}
+  }
+}
+
+
+export function buildEventApis(eventStore: EventStore, context: CalendarContext, excludeInstance?: EventInstance): EventApi[] {
+  let { defs, instances } = eventStore
+  let eventApis: EventApi[] = []
+  let excludeInstanceId = excludeInstance ? excludeInstance.instanceId : ''
+
+  for (let id in instances) {
+    let instance = instances[id]
+    let def = defs[instance.defId]
+
+    if (instance.instanceId !== excludeInstanceId) {
+      eventApis.push(new EventApi(context, def, instance))
+    }
+  }
+
+  return eventApis
 }

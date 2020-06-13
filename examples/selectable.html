@@ -10,6 +10,17 @@
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
+
+      // eventAdd: function(arg) {
+      //   console.log('eventAdd', arg)
+      // },
+      // eventChange: function(arg) {
+      //   console.log('eventChange', arg)
+      // },
+      // eventRemove: function(arg) {
+      //   console.log('eventRemove', arg)
+      // },
+
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
@@ -30,6 +41,11 @@
           })
         }
         calendar.unselect()
+      },
+      eventClick: function(arg) {
+        if (confirm('Are you sure you want to delete this event?')) {
+          arg.event.remove()
+        }
       },
       editable: true,
       dayMaxEvents: true, // allow "more" link when too many events

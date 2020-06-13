@@ -32,7 +32,8 @@ import {
   WeekNumberCalculation,
   FormatterInput,
   ToolbarInput, CustomButtonInput, ButtonIconsInput, ButtonTextCompoundInput,
-  EventsWillUpdateArg
+  DatesSetArg,
+  EventApi, EventAddArg, EventChangeArg, EventRemoveArg
 } from './api-type-deps'
 
 
@@ -136,7 +137,6 @@ export const BASE_OPTION_REFINERS = {
   defaultAllDay: Boolean,
   eventSourceFailure: identity as Identity<(this: CalendarApi, error: any) => void>,
   eventSourceSuccess: identity as Identity<(this: CalendarApi, eventsInput: EventInput[], xhr?: XMLHttpRequest) => EventInput[] | void>,
-  eventsWillUpdate: identity as Identity<(arg: EventsWillUpdateArg) => void | boolean>,
 
   eventDisplay: String, // TODO: give more specific
   eventStartEditable: Boolean,
@@ -283,7 +283,11 @@ export type BaseOptionsRefined = DefaultedRefinedOptions<
 // ------------------
 
 export const CALENDAR_LISTENER_REFINERS = {
-  datesDidUpdate: identity as Identity<(arg: { view: ViewApi }) => void>,
+  datesSet: identity as Identity<(arg: DatesSetArg) => void>,
+  eventsSet: identity as Identity<(events: EventApi[]) => void>,
+  eventAdd: identity as Identity<(arg: EventAddArg) => void>,
+  eventChange: identity as Identity<(arg: EventChangeArg) => void>,
+  eventRemove: identity as Identity<(arg: EventRemoveArg) => void>,
   windowResize: identity as Identity<(arg: { view: ViewApi }) => void>,
   eventClick: identity as Identity<(arg: EventClickArg) => void>, // TODO: resource for scheduler????
   eventMouseEnter: identity as Identity<(arg: EventHoveringArg) => void>,

@@ -37,12 +37,19 @@ export interface DateSpan extends OpenDateSpan {
   range: DateRange
 }
 
-export interface DateSpanApi {
+export interface RangeApi {
   start: Date
   end: Date
   startStr: string
   endStr: string
+}
+
+export interface DateSpanApi extends RangeApi {
   allDay: boolean
+}
+
+export interface RangeApiWithTimeZone extends RangeApi {
+  timeZone: string
 }
 
 export interface DatePointApi {
@@ -131,11 +138,24 @@ function isSpanPropsEqual(span0: DateSpan, span1: DateSpan): boolean {
 
 export function buildDateSpanApi(span: DateSpan, dateEnv: DateEnv): DateSpanApi {
   return {
-    start: dateEnv.toDate(span.range.start),
-    end: dateEnv.toDate(span.range.end),
-    startStr: dateEnv.formatIso(span.range.start, { omitTime: span.allDay }),
-    endStr: dateEnv.formatIso(span.range.end, { omitTime: span.allDay }),
+    ...buildRangeApi(span.range, dateEnv, span.allDay),
     allDay: span.allDay
+  }
+}
+
+export function buildRangeApiWithTimeZone(range: DateRange, dateEnv: DateEnv, omitTime?: boolean): RangeApiWithTimeZone {
+  return {
+    ...buildRangeApi(range, dateEnv, omitTime),
+    timeZone: dateEnv.timeZone
+  }
+}
+
+export function buildRangeApi(range: DateRange, dateEnv: DateEnv, omitTime?: boolean): RangeApi {
+  return {
+    start: dateEnv.toDate(range.start),
+    end: dateEnv.toDate(range.end),
+    startStr: dateEnv.formatIso(range.start, { omitTime }),
+    endStr: dateEnv.formatIso(range.end, { omitTime })
   }
 }
 

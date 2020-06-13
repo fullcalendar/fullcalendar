@@ -1,4 +1,3 @@
-import { EventInstanceHash } from '../structs/event-instance'
 import { EventInput } from '../structs/event-parse'
 import { DateRange } from '../datelib/date-range'
 import { EventStore } from '../structs/event-store'
@@ -38,6 +37,5 @@ export type Action =
 
   { type: 'ADD_EVENTS', eventStore: EventStore } |
   { type: 'MERGE_EVENTS', eventStore: EventStore } |
-  { type: 'REMOVE_EVENT_DEF', defId: string } |
-  { type: 'REMOVE_EVENT_INSTANCES', instances: EventInstanceHash } |
+  { type: 'REMOVE_EVENTS', eventStore: EventStore } |
   { type: 'REMOVE_ALL_EVENTS' }

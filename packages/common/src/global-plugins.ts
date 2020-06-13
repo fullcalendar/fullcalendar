@@ -6,6 +6,9 @@ import { jsonFeedEventSourcePlugin } from './event-sources/json-feed-event-sourc
 import { simpleRecurringEventsPlugin } from './structs/recurring-event-simple'
 import { changeHandlerPlugin } from './option-change-handlers'
 import { injectHtml, injectDomNodes } from './util/dom-manip'
+import { handleDateProfile } from './dates-set'
+import { handleEventStore } from './event-crud'
+
 
 /*
 this array is exposed on the root namespace so that UMD plugins can add to it.
@@ -17,10 +20,14 @@ export let globalPlugins: PluginDef[] = [ // TODO: make a const?
   jsonFeedEventSourcePlugin,
   simpleRecurringEventsPlugin,
   changeHandlerPlugin,
-  createPlugin({
+  createPlugin({ // misc...
     contentTypeHandlers: {
       html: () => injectHtml,
       domNodes: () => injectDomNodes
+    },
+    propSetHandlers: {
+      dateProfile: handleDateProfile,
+      eventStore: handleEventStore
     }
   })
 ]
