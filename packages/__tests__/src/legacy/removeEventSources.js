@@ -33,8 +33,8 @@ describe('removeEventSources', function() {
 
       expect(calendarWrapper.getEventEls().length).toBe(3)
 
-      calendar.getEventSourceById(1).remove()
-      calendar.getEventSourceById(3).remove()
+      calendar.getEventSourceById('1').remove()
+      calendar.getEventSourceById('3').remove()
 
       expect(calendarWrapper.getEventEls().length).toBe(1)
       expect($('.event2').length).toBe(1)
