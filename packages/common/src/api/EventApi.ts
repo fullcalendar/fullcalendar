@@ -25,6 +25,8 @@ export class EventApi {
   _context: CalendarContext
   _def: EventDef
   _instance: EventInstance | null
+    // instance will be null if expressing a recurring event that has no current instances,
+    // OR if trying to validate an incoming external event that has no dates assigned
 
   constructor(context: CalendarContext, def: EventDef, instance?: EventInstance) {
     this._context = context
