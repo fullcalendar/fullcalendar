@@ -9,6 +9,7 @@ import { ViewSpec } from './structs/view-spec'
 import { PointerDragEvent } from './interactions/pointer'
 import { getNow } from './reducers/current-date'
 import { triggerDateSelect, triggerDateUnselect } from './calendar-utils'
+import { hashValuesToArray } from './util/object'
 import { CalendarDataManager } from './reducers/CalendarDataManager'
 import { Action } from './reducers/Action'
 import { EventSource } from './structs/event-source'
@@ -363,7 +364,7 @@ export class CalendarApi {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  addEvent(eventInput: EventInput, sourceInput?: EventSourceApi | string | number): EventApi | null {
+  addEvent(eventInput: EventInput, sourceInput?: EventSourceApi | string | boolean): EventApi | null {
 
     if (eventInput instanceof EventApi) {
       let def = eventInput._def
@@ -382,12 +383,18 @@ export class CalendarApi {
       return eventInput
     }
 
+    let state = this.getCurrentData()
     let eventSource: EventSource<any>
 
     if (sourceInput instanceof EventSourceApi) {
       eventSource = sourceInput.internalEventSource
 
-    } else if (sourceInput != null) {
+    } else if (typeof sourceInput === 'boolean') {
+      if (sourceInput) { // true. part of the first event source
+        eventSource = hashValuesToArray(state.eventSources)[0]
+      }
+
+    } else if (sourceInput != null) { // an ID. accepts a number too
       let sourceApi = this.getEventSourceById(sourceInput) // TODO: use an internal function
 
       if (!sourceApi) {
@@ -398,7 +405,6 @@ export class CalendarApi {
       }
     }
 
-    let state = this.getCurrentData()
     let tuple = parseEvent(eventInput, eventSource, state, false)
 
     if (tuple) {
@@ -496,7 +502,7 @@ export class CalendarApi {
   }
 
 
-  getEventSourceById(id: string | number): EventSourceApi | null {
+  getEventSourceById(id: string): EventSourceApi | null {
     let state = this.getCurrentData()
     let sourceHash = state.eventSources
 
