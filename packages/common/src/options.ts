@@ -323,6 +323,7 @@ export const CALENDAR_OPTION_REFINERS = { // does not include base nor calendar 
   buttonText: identity as Identity<ButtonTextCompoundInput>,
   views: identity as Identity<{ [viewId: string]: ViewOptions }>,
   plugins: identity as Identity<PluginDef[]>,
+  initialEvents: identity as Identity<EventSourceInput>,
   events: identity as Identity<EventSourceInput>,
   eventSources: identity as Identity<EventSourceInput[]>
 }

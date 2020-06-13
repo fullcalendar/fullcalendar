@@ -6,6 +6,7 @@ import { DateProfile } from '../DateProfileGenerator'
 import { Action } from './Action'
 import { guid } from '../util/misc'
 import { CalendarContext } from '../CalendarContext'
+import { CalendarOptions } from '../options'
 
 
 export function initEventSources(calendarOptions, dateProfile: DateProfile, context: CalendarContext) {
@@ -247,14 +248,17 @@ function excludeStaticSources(eventSources: EventSourceHash, context: CalendarCo
 }
 
 
-function parseInitialSources(rawOptions, context: CalendarContext) {
+function parseInitialSources(rawOptions: CalendarOptions, context: CalendarContext) {
   let refiners = buildEventSourceRefiners(context)
-  let rawSources = rawOptions.eventSources || []
-  let singleRawSource = rawOptions.events
+  let rawSources = [].concat(rawOptions.eventSources || [])
   let sources = [] // parsed
 
-  if (singleRawSource) {
-    rawSources.unshift(singleRawSource)
+  if (rawOptions.initialEvents) {
+    rawSources.unshift(rawOptions.initialEvents)
+  }
+
+  if (rawOptions.events) {
+    rawSources.unshift(rawOptions.events)
   }
 
   for (let rawSource of rawSources) {
