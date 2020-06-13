@@ -332,9 +332,10 @@ export class EventApi {
     let def = this._def
     let instance = this._instance
     let { ui } = def
-    let res: Dictionary = {
-      title: def.title,
-      allDay: def.allDay
+    let res: Dictionary = {}
+
+    if (def.title) {
+      res.title = def.title
     }
 
     if (instance) {
@@ -361,6 +362,7 @@ export class EventApi {
       res.display = ui.display
     }
 
+    // TODO: what about recurring-event properties???
     // TODO: include startEditable/durationEditable/constraint/overlap/allow
 
     if (settings.collapseColor && ui.backgroundColor && ui.backgroundColor === ui.borderColor) {
