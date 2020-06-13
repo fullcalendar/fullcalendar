@@ -1,4 +1,4 @@
-import { createElement, BaseComponent, Seg, EventRoot, buildSegTimeText, EventMeta, Fragment } from '@fullcalendar/common'
+import { createElement, BaseComponent, Seg, EventRoot, buildSegTimeText, EventContentArg, Fragment } from '@fullcalendar/common'
 import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering'
 
 
@@ -49,7 +49,7 @@ export class TableListItemEvent extends BaseComponent<DotTableEventProps> {
 }
 
 
-function renderInnerContent(innerProps: EventMeta) {
+function renderInnerContent(innerProps: EventContentArg) {
   return (
     <Fragment>
       <div

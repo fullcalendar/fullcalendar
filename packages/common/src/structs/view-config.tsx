@@ -2,7 +2,7 @@ import { ViewProps } from '../View'
 import { mapHash } from '../util/object'
 import { ComponentType, Component, createElement } from '../vdom'
 import { ViewRoot } from '../common/ViewRoot'
-import { RenderHook } from '../common/render-hook'
+import { RenderHook, MountArg } from '../common/render-hook'
 import { ViewContext, ViewContextType } from '../ViewContext'
 import { ViewOptions } from '../options'
 import { Duration } from '../datelib/duration'
@@ -52,9 +52,11 @@ function parseViewConfig(input: ViewConfigInput): ViewConfig {
 }
 
 
-export interface ViewHookProps extends ViewProps {
+export interface SpecificViewContentArg extends ViewProps {
   nextDayThreshold: Duration
 }
+
+export type SpecificViewMountArg = MountArg<SpecificViewContentArg>
 
 
 function createViewHookComponent(options: ViewOptions) {
@@ -64,7 +66,7 @@ function createViewHookComponent(options: ViewOptions) {
         {(context: ViewContext) => (
           <ViewRoot viewSpec={context.viewSpec}>
             {(rootElRef, viewClassNames) => {
-              let hookProps: ViewHookProps = {
+              let hookProps: SpecificViewContentArg = {
                 ...viewProps,
                 nextDayThreshold: context.options.nextDayThreshold
               }

@@ -18,8 +18,8 @@ import {
   ViewContextType,
   RenderHook,
   DateProfile,
-  SlotLabelHookProps,
-  SlotLaneHookProps,
+  SlotLabelContentArg,
+  SlotLaneContentArg,
   isElVisible
 } from '@fullcalendar/common'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
@@ -154,7 +154,7 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
     return (
       <tbody>
         {props.slatMetas.map((slatMeta, i) => {
-          let hookProps: SlotLaneHookProps = {
+          let hookProps: SlotLaneContentArg = {
             time: slatMeta.time,
             date: context.dateEnv.toDate(slatMeta.date),
             view: context.viewApi
@@ -230,7 +230,7 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
             Array.isArray(options.slotLabelFormat) ? createFormatter(options.slotLabelFormat[0]) :
             createFormatter(options.slotLabelFormat)
 
-          let hookProps: SlotLabelHookProps = {
+          let hookProps: SlotLabelContentArg = {
             time: props.time,
             date: dateEnv.toDate(props.date),
             view: viewApi,
@@ -238,7 +238,7 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
           }
 
           return (
-            <RenderHook<SlotLabelHookProps> // needed?
+            <RenderHook<SlotLabelContentArg> // needed?
               hookProps={hookProps}
               classNames={options.slotLabelClassNames}
               content={options.slotLabelContent}

@@ -21,16 +21,19 @@ import {
   ViewRoot,
   RenderHook,
   DateComponent,
-  ViewApi
+  ViewApi,
+  MountArg
 } from '@fullcalendar/common'
 import { ListViewHeaderRow } from './ListViewHeaderRow'
 import { ListViewEventRow } from './ListViewEventRow'
 
 
-export interface NoEventsHookProps {
+export interface NoEventsContentArg {
   text: string
   view: ViewApi
 }
+
+export type NoEventsMountArg = MountArg<NoEventsContentArg>
 
 
 /*
@@ -88,13 +91,13 @@ export class ListView extends DateComponent<ViewProps> {
 
   renderEmptyMessage() {
     let { options, viewApi } = this.context
-    let hookProps: NoEventsHookProps = {
+    let hookProps: NoEventsContentArg = {
       text: options.noEventsText,
       view: viewApi
     }
 
     return (
-      <RenderHook<NoEventsHookProps> // needed???
+      <RenderHook<NoEventsContentArg> // needed???
         hookProps={hookProps}
         classNames={options.noEventsClassNames}
         content={options.noEventsContent}

@@ -1,6 +1,6 @@
 import { ViewContext, ViewContextType } from '../ViewContext'
 import { DateMarker } from '../datelib/marker'
-import { RenderHook, RenderHookPropsChildren } from './render-hook'
+import { RenderHook, RenderHookPropsChildren, MountArg } from './render-hook'
 import { createElement } from '../vdom'
 import { DateFormatter } from '../datelib/DateFormatter'
 
@@ -11,11 +11,12 @@ export interface WeekNumberRootProps {
   children: RenderHookPropsChildren
 }
 
-export interface WeekNumberHookProps {
+export interface WeekNumberContentArg {
   num: number
   text: string
   date: Date
 }
+export type WeekNumberMountArg = MountArg<WeekNumberContentArg>
 
 
 export const WeekNumberRoot = (props: WeekNumberRootProps) => (
@@ -26,10 +27,10 @@ export const WeekNumberRoot = (props: WeekNumberRootProps) => (
       let format = options.weekNumberFormat || props.defaultFormat
       let num = dateEnv.computeWeekNumber(date) // TODO: somehow use for formatting as well?
       let text = dateEnv.format(date, format)
-      let hookProps: WeekNumberHookProps = { num, text, date }
+      let hookProps: WeekNumberContentArg = { num, text, date }
 
       return (
-        <RenderHook<WeekNumberHookProps> // why isn't WeekNumberHookProps being auto-detected?
+        <RenderHook<WeekNumberContentArg> // why isn't WeekNumberContentArg being auto-detected?
           hookProps={hookProps}
           classNames={options.weekNumberClassNames}
           content={options.weekNumberContent}

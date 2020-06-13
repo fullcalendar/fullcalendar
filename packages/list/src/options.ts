@@ -2,17 +2,18 @@ import { identity, Identity, ClassNamesGenerator, CustomContentGenerator, DidMou
 
 // public
 import {
-  NoEventsHookProps
+  NoEventsContentArg,
+  NoEventsMountArg
 } from './api-type-deps'
 
 export const OPTION_REFINERS = {
   listDayFormat: createFalsableFormatter, // defaults specified in list plugins
   listDaySideFormat: createFalsableFormatter, // "
 
-  noEventsClassNames: identity as Identity<ClassNamesGenerator<NoEventsHookProps>>,
-  noEventsContent: identity as Identity<CustomContentGenerator<NoEventsHookProps>>,
-  noEventsDidMount: identity as Identity<DidMountHandler<NoEventsHookProps>>,
-  noEventsWillUnmount: identity as Identity<WillUnmountHandler<NoEventsHookProps>>
+  noEventsClassNames: identity as Identity<ClassNamesGenerator<NoEventsContentArg>>,
+  noEventsContent: identity as Identity<CustomContentGenerator<NoEventsContentArg>>,
+  noEventsDidMount: identity as Identity<DidMountHandler<NoEventsMountArg>>,
+  noEventsWillUnmount: identity as Identity<WillUnmountHandler<NoEventsMountArg>>
 
   // noEventsText is defined in base options
 }

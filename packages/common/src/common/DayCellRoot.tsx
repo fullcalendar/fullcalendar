@@ -4,7 +4,7 @@ import { DateRange } from '../datelib/date-range'
 import { getDateMeta, getDayClassNames, DateMeta } from '../component/date-rendering'
 import { createFormatter } from '../datelib/formatting'
 import { formatDayString } from '../datelib/formatting-utils'
-import { buildClassNameNormalizer, MountHook, ContentHook } from './render-hook'
+import { buildClassNameNormalizer, MountHook, ContentHook, MountArg } from './render-hook'
 import { ViewApi } from '../ViewApi'
 import { BaseComponent } from '../vdom-util'
 import { DateProfile } from '../DateProfileGenerator'
@@ -25,12 +25,13 @@ interface DayCellHookPropsInput {
   extraProps?: Dictionary // so can include a resource
 }
 
-export interface DayCellHookProps extends DateMeta {
+export interface DayCellContentArg extends DateMeta {
   date: DateMarker // localized
   view: ViewApi
   dayNumberText: string
   [extraProp: string]: any // so can include a resource
 }
+export type DayCellMountArg = MountArg<DayCellContentArg>
 
 
 export interface DayCellRootProps {
@@ -51,7 +52,7 @@ export interface DayCellRootProps {
 export class DayCellRoot extends BaseComponent<DayCellRootProps> {
 
   refineHookProps = memoizeObjArg(refineHookProps)
-  normalizeClassNames = buildClassNameNormalizer<DayCellHookProps>()
+  normalizeClassNames = buildClassNameNormalizer<DayCellContentArg>()
 
 
   render() {
@@ -98,7 +99,7 @@ export interface DayCellContentProps {
   todayRange: DateRange
   showDayNumber?: boolean // defaults to false
   extraHookProps?: Dictionary
-  defaultContent?: (hookProps: DayCellHookProps) => ComponentChildren
+  defaultContent?: (hookProps: DayCellContentArg) => ComponentChildren
   children: (
     innerElRef: Ref<any>,
     innerContent: ComponentChildren
@@ -134,7 +135,7 @@ export class DayCellContent extends BaseComponent<DayCellContentProps> {
 }
 
 
-function refineHookProps(raw: DayCellHookPropsInput): DayCellHookProps {
+function refineHookProps(raw: DayCellHookPropsInput): DayCellContentArg {
   let { date, dateEnv } = raw
   let dayMeta = getDateMeta(date, raw.todayRange, null, raw.dateProfile)
 

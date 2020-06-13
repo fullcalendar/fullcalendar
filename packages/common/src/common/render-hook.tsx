@@ -4,13 +4,13 @@ import { isPropsEqual } from '../util/object'
 import { parseClassNames, ClassNamesInput } from '../util/html'
 
 
-export interface RenderHookProps<HookProps> {
-  hookProps: HookProps
-  classNames: ClassNamesGenerator<HookProps>
-  content: CustomContentGenerator<HookProps>
-  defaultContent?: DefaultContentGenerator<HookProps>
-  didMount: DidMountHandler<HookProps>
-  willUnmount: WillUnmountHandler<HookProps>
+export interface RenderHookProps<ContentArg> {
+  hookProps: ContentArg
+  classNames: ClassNamesGenerator<ContentArg>
+  content: CustomContentGenerator<ContentArg>
+  defaultContent?: DefaultContentGenerator<ContentArg>
+  didMount: DidMountHandler<MountArg<ContentArg>>
+  willUnmount: WillUnmountHandler<MountArg<ContentArg>>
   children: RenderHookPropsChildren
   elRef?: Ref<any>
 }
@@ -74,7 +74,7 @@ export interface ObjCustomContent {
 
 export type CustomContent = ComponentChildren | ObjCustomContent
 export type CustomContentGenerator<HookProps> = CustomContent | ((hookProps: HookProps) => CustomContent)
-export type DefaultContentGenerator<HookProps> = (hookProps: HookProps) => ComponentChildren
+export type DefaultContentGenerator<HookProps> = (hookProps: HookProps) => ComponentChildren // TODO: rename to be about function, not default. use in above type
 
 // for forcing rerender of components that use the ContentHook
 export const CustomContentRenderContext = createContext<number>(0)
@@ -177,19 +177,19 @@ export class ContentHook<HookProps> extends BaseComponent<ContentHookProps<HookP
 
 
 
-export type HookPropsWithEl<HookProps> = HookProps & { el: HTMLElement }
-export type DidMountHandler<HookProps> = (hookProps: HookPropsWithEl<HookProps>) => void
-export type WillUnmountHandler<HookProps> = (hookProps: HookPropsWithEl<HookProps>) => void
+export type MountArg<ContentArg> = ContentArg & { el: HTMLElement }
+export type DidMountHandler<MountArg extends { el: HTMLElement }> = (mountArg: MountArg) => void
+export type WillUnmountHandler<MountArg extends { el: HTMLElement }> = (mountArg: MountArg) => void
 
-export interface MountHookProps<HookProps> {
-  hookProps: HookProps
-  didMount: DidMountHandler<HookProps>
-  willUnmount: WillUnmountHandler<HookProps>
+export interface MountHookProps<ContentArg> {
+  hookProps: ContentArg
+  didMount: DidMountHandler<MountArg<ContentArg>>
+  willUnmount: WillUnmountHandler<MountArg<ContentArg>>
   children: (rootElRef: Ref<any>) => ComponentChildren
   elRef?: Ref<any> // maybe get rid of once we have better API for caller to combine refs
 }
 
-export class MountHook<HookProps> extends BaseComponent<MountHookProps<HookProps>> {
+export class MountHook<ContentArg> extends BaseComponent<MountHookProps<ContentArg>> {
 
   rootEl: HTMLElement
 

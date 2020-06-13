@@ -1,6 +1,6 @@
 import {
-  MinimalEventProps, BaseComponent, ViewContext, createElement, AllDayHookProps,
-  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventMeta, EventRoot, ComponentChildren, RenderHook
+  MinimalEventProps, BaseComponent, ViewContext, createElement, AllDayContentArg,
+  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventContentArg, EventRoot, ComponentChildren, RenderHook
 } from "@fullcalendar/common"
 
 
@@ -52,7 +52,7 @@ export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
 }
 
 
-function renderEventInnerContent(props: EventMeta) {
+function renderEventInnerContent(props: EventContentArg) {
   let { event } = props
   let url = event.url
   let anchorAttrs = url ? { href: url } : {}
@@ -114,13 +114,13 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewCont
     }
 
     if (doAllDay) {
-      let hookProps: AllDayHookProps = {
+      let hookProps: AllDayContentArg = {
         text: context.options.allDayText,
         view: context.viewApi
       }
 
       return (
-        <RenderHook<AllDayHookProps> // needed?
+        <RenderHook<AllDayContentArg> // needed?
           hookProps={hookProps}
           classNames={options.allDayClassNames}
           content={options.allDayContent}

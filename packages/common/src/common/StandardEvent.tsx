@@ -1,7 +1,7 @@
 
 import { ComponentChildren, createElement, Fragment } from '../vdom'
 import { BaseComponent } from '../vdom-util'
-import { buildSegTimeText, EventMeta } from '../component/event-rendering'
+import { buildSegTimeText, EventContentArg } from '../component/event-rendering'
 import { EventRoot, MinimalEventProps } from './EventRoot'
 import { Seg } from '../component/DateComponent'
 import { DateFormatter } from '../datelib/DateFormatter'
@@ -14,7 +14,7 @@ export interface StandardEventProps extends MinimalEventProps {
   defaultDisplayEventEnd?: boolean // default true
   disableDragging?: boolean // default false
   disableResizing?: boolean // default false
-  defaultContent?: (hookProps: EventMeta) => ComponentChildren // not used by anyone yet
+  defaultContent?: (hookProps: EventContentArg) => ComponentChildren // not used by anyone yet
 }
 
 
@@ -76,7 +76,7 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
 }
 
 
-function renderInnerContent(innerProps: EventMeta) {
+function renderInnerContent(innerProps: EventContentArg) {
   return (
     <Fragment>
       {innerProps.timeText &&

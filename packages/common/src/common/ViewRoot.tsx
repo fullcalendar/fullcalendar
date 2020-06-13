@@ -1,5 +1,5 @@
 import { ViewSpec } from '../structs/view-spec'
-import { MountHook, buildClassNameNormalizer } from './render-hook'
+import { MountHook, buildClassNameNormalizer, MountArg } from './render-hook'
 import { ComponentChildren, createElement, Ref } from '../vdom'
 import { BaseComponent } from '../vdom-util'
 import { ViewApi } from '../ViewApi'
@@ -11,20 +11,22 @@ export interface ViewRootProps {
   elRef?: Ref<any>
 }
 
-export interface ViewRootHookProps {
+export interface ViewContentArg {
   view: ViewApi
 }
+
+export type ViewMountArg = MountArg<ViewContentArg>
 
 
 export class ViewRoot extends BaseComponent<ViewRootProps> {
 
-  normalizeClassNames = buildClassNameNormalizer<ViewRootHookProps>()
+  normalizeClassNames = buildClassNameNormalizer<ViewContentArg>()
 
 
   render() {
     let { props, context } = this
     let { options } = context
-    let hookProps: ViewRootHookProps = { view: context.viewApi }
+    let hookProps: ViewContentArg = { view: context.viewApi }
     let customClassNames = this.normalizeClassNames(options.viewClassNames, hookProps)
 
     return (

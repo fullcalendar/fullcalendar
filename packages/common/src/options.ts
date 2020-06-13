@@ -2,7 +2,6 @@ import { createDuration } from './datelib/duration'
 import { mergeProps } from './util/object'
 import { createFormatter } from './datelib/formatting'
 import { parseFieldSpecs } from './util/misc'
-import { EventMeta } from './component/event-rendering'
 import { DateProfileGeneratorClass } from './DateProfileGenerator'
 
 // public
@@ -17,13 +16,17 @@ import {
   EventInput, EventInputTransformer,
   OverlapFunc, ConstraintInput, AllowFunc,
   PluginDef,
-  ViewComponentType, ViewHookProps,
+  ViewComponentType,
+  SpecificViewContentArg, SpecificViewMountArg,
   ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler,
-  NowIndicatorHookProps,
-  WeekNumberHookProps,
-  SlotLaneHookProps, SlotLabelHookProps, AllDayHookProps, DayHeaderHookProps,
-  DayCellHookProps,
-  ViewRootHookProps,
+  NowIndicatorContentArg, NowIndicatorMountArg,
+  WeekNumberContentArg, WeekNumberMountArg,
+  SlotLaneContentArg, SlotLaneMountArg,
+  SlotLabelContentArg, SlotLabelMountArg,
+  AllDayContentArg, AllDayMountArg,
+  DayHeaderContentArg, DayHeaderMountArg,
+  DayCellContentArg, DayCellMountArg,
+  ViewContentArg, ViewMountArg,
   EventClickArg,
   EventHoveringArg,
   DateSelectArg, DateUnselectArg,
@@ -32,6 +35,7 @@ import {
   WeekNumberCalculation,
   FormatterInput,
   ToolbarInput, CustomButtonInput, ButtonIconsInput, ButtonTextCompoundInput,
+  EventContentArg, EventMountArg,
   DatesSetArg,
   EventApi, EventAddArg, EventChangeArg, EventRemoveArg
 } from './api-type-deps'
@@ -64,15 +68,15 @@ export const BASE_OPTION_REFINERS = {
 
   dayHeaders: Boolean,
   dayHeaderFormat: createFormatter,
-  dayHeaderClassNames: identity as Identity<ClassNamesGenerator<DayHeaderHookProps>>,
-  dayHeaderContent: identity as Identity<CustomContentGenerator<DayHeaderHookProps>>,
-  dayHeaderDidMount: identity as Identity<DidMountHandler<DayHeaderHookProps>>,
-  dayHeaderWillUnmount: identity as Identity<WillUnmountHandler<DayHeaderHookProps>>,
+  dayHeaderClassNames: identity as Identity<ClassNamesGenerator<DayHeaderContentArg>>,
+  dayHeaderContent: identity as Identity<CustomContentGenerator<DayHeaderContentArg>>,
+  dayHeaderDidMount: identity as Identity<DidMountHandler<DayHeaderMountArg>>,
+  dayHeaderWillUnmount: identity as Identity<WillUnmountHandler<DayHeaderMountArg>>,
 
-  dayCellClassNames: identity as Identity<ClassNamesGenerator<DayCellHookProps>>,
-  dayCellContent: identity as Identity<CustomContentGenerator<DayCellHookProps>>,
-  dayCellDidMount: identity as Identity<DidMountHandler<DayCellHookProps>>,
-  dayCellWillUnmount: identity as Identity<WillUnmountHandler<DayCellHookProps>>,
+  dayCellClassNames: identity as Identity<ClassNamesGenerator<DayCellContentArg>>,
+  dayCellContent: identity as Identity<CustomContentGenerator<DayCellContentArg>>,
+  dayCellDidMount: identity as Identity<DidMountHandler<DayCellMountArg>>,
+  dayCellWillUnmount: identity as Identity<WillUnmountHandler<DayCellMountArg>>,
 
   initialView: String,
   aspectRatio: Number,
@@ -80,22 +84,22 @@ export const BASE_OPTION_REFINERS = {
 
   weekNumberCalculation: identity as Identity<WeekNumberCalculation>,
   weekNumbers: Boolean,
-  weekNumberClassNames: identity as Identity<ClassNamesGenerator<WeekNumberHookProps>>,
-  weekNumberContent: identity as Identity<CustomContentGenerator<WeekNumberHookProps>>,
-  weekNumberDidMount: identity as Identity<DidMountHandler<WeekNumberHookProps>>,
-  weekNumberWillUnmount: identity as Identity<WillUnmountHandler<WeekNumberHookProps>>,
+  weekNumberClassNames: identity as Identity<ClassNamesGenerator<WeekNumberContentArg>>,
+  weekNumberContent: identity as Identity<CustomContentGenerator<WeekNumberContentArg>>,
+  weekNumberDidMount: identity as Identity<DidMountHandler<WeekNumberMountArg>>,
+  weekNumberWillUnmount: identity as Identity<WillUnmountHandler<WeekNumberMountArg>>,
 
   editable: Boolean,
 
-  viewClassNames: identity as Identity<ClassNamesGenerator<ViewRootHookProps>>,
-  viewDidMount: identity as Identity<DidMountHandler<ViewRootHookProps>>,
-  viewWillUnmount: identity as Identity<WillUnmountHandler<ViewRootHookProps>>,
+  viewClassNames: identity as Identity<ClassNamesGenerator<ViewContentArg>>,
+  viewDidMount: identity as Identity<DidMountHandler<ViewMountArg>>,
+  viewWillUnmount: identity as Identity<WillUnmountHandler<ViewMountArg>>,
 
   nowIndicator: Boolean,
-  nowIndicatorClassNames: identity as Identity<ClassNamesGenerator<NowIndicatorHookProps>>,
-  nowIndicatorContent: identity as Identity<CustomContentGenerator<NowIndicatorHookProps>>,
-  nowIndicatorDidMount: identity as Identity<DidMountHandler<NowIndicatorHookProps>>,
-  nowIndicatorWillUnmount: identity as Identity<WillUnmountHandler<NowIndicatorHookProps>>,
+  nowIndicatorClassNames: identity as Identity<ClassNamesGenerator<NowIndicatorContentArg>>,
+  nowIndicatorContent: identity as Identity<CustomContentGenerator<NowIndicatorContentArg>>,
+  nowIndicatorDidMount: identity as Identity<DidMountHandler<NowIndicatorMountArg>>,
+  nowIndicatorWillUnmount: identity as Identity<WillUnmountHandler<NowIndicatorMountArg>>,
 
   showNonCurrentDates: Boolean,
   lazyFetching: Boolean,
@@ -148,10 +152,10 @@ export const BASE_OPTION_REFINERS = {
   eventBorderColor: String,
   eventTextColor: String,
   eventColor: String,
-  eventClassNames: identity as Identity<ClassNamesGenerator<EventMeta>>,
-  eventContent: identity as Identity<CustomContentGenerator<EventMeta>>,
-  eventDidMount: identity as Identity<DidMountHandler<EventMeta>>,
-  eventWillUnmount: identity as Identity<WillUnmountHandler<EventMeta>>,
+  eventClassNames: identity as Identity<ClassNamesGenerator<EventContentArg>>,
+  eventContent: identity as Identity<CustomContentGenerator<EventContentArg>>,
+  eventDidMount: identity as Identity<DidMountHandler<EventMountArg>>,
+  eventWillUnmount: identity as Identity<WillUnmountHandler<EventMountArg>>,
 
   selectConstraint: identity as Identity<ConstraintInput>,
   selectOverlap: identity as Identity<boolean | OverlapFunc>,
@@ -162,15 +166,15 @@ export const BASE_OPTION_REFINERS = {
 
   slotLabelFormat: identity as Identity<FormatterInput | FormatterInput[]>,
 
-  slotLaneClassNames: identity as Identity<ClassNamesGenerator<SlotLaneHookProps>>,
-  slotLaneContent: identity as Identity<CustomContentGenerator<SlotLaneHookProps>>,
-  slotLaneDidMount: identity as Identity<DidMountHandler<SlotLaneHookProps>>,
-  slotLaneWillUnmount: identity as Identity<WillUnmountHandler<SlotLaneHookProps>>,
+  slotLaneClassNames: identity as Identity<ClassNamesGenerator<SlotLaneContentArg>>,
+  slotLaneContent: identity as Identity<CustomContentGenerator<SlotLaneContentArg>>,
+  slotLaneDidMount: identity as Identity<DidMountHandler<SlotLaneMountArg>>,
+  slotLaneWillUnmount: identity as Identity<WillUnmountHandler<SlotLaneMountArg>>,
 
-  slotLabelClassNames: identity as Identity<ClassNamesGenerator<SlotLabelHookProps>>,
-  slotLabelContent: identity as Identity<CustomContentGenerator<SlotLabelHookProps>>,
-  slotLabelDidMount: identity as Identity<DidMountHandler<SlotLabelHookProps>>,
-  slotLabelWillUnmount: identity as Identity<WillUnmountHandler<SlotLabelHookProps>>,
+  slotLabelClassNames: identity as Identity<ClassNamesGenerator<SlotLabelContentArg>>,
+  slotLabelContent: identity as Identity<CustomContentGenerator<SlotLabelContentArg>>,
+  slotLabelDidMount: identity as Identity<DidMountHandler<SlotLabelMountArg>>,
+  slotLabelWillUnmount: identity as Identity<WillUnmountHandler<SlotLabelMountArg>>,
 
   dayMaxEvents: identity as Identity<boolean | number>,
   dayMaxEventRows: identity as Identity<boolean | number>,
@@ -178,10 +182,10 @@ export const BASE_OPTION_REFINERS = {
   slotLabelInterval: createDuration,
 
   allDayText: String,
-  allDayClassNames: identity as Identity<ClassNamesGenerator<AllDayHookProps>>,
-  allDayContent: identity as Identity<CustomContentGenerator<AllDayHookProps>>,
-  allDayDidMount: identity as Identity<DidMountHandler<AllDayHookProps>>,
-  allDayWillUnmount: identity as Identity<WillUnmountHandler<AllDayHookProps>>,
+  allDayClassNames: identity as Identity<ClassNamesGenerator<AllDayContentArg>>,
+  allDayContent: identity as Identity<CustomContentGenerator<AllDayContentArg>>,
+  allDayDidMount: identity as Identity<DidMountHandler<AllDayMountArg>>,
+  allDayWillUnmount: identity as Identity<WillUnmountHandler<AllDayMountArg>>,
 
   slotMinWidth: Number, // move to timeline?
   navLinks: Boolean,
@@ -363,10 +367,10 @@ export const VIEW_OPTION_REFINERS = {
   buttonTextKey: String, // internal only
   dateProfileGeneratorClass: identity as Identity<DateProfileGeneratorClass>,
   usesMinMaxTime: Boolean, // internal only
-  classNames: identity as Identity<ClassNamesGenerator<ViewHookProps>>,
-  content: identity as Identity<CustomContentGenerator<ViewHookProps>>,
-  didMount: identity as Identity<DidMountHandler<ViewHookProps>>,
-  willUnmount: identity as Identity<WillUnmountHandler<ViewHookProps>>
+  classNames: identity as Identity<ClassNamesGenerator<SpecificViewContentArg>>,
+  content: identity as Identity<CustomContentGenerator<SpecificViewContentArg>>,
+  didMount: identity as Identity<DidMountHandler<SpecificViewMountArg>>,
+  willUnmount: identity as Identity<WillUnmountHandler<SpecificViewMountArg>>
 }
 
 type BuiltInViewOptionRefiners = typeof VIEW_OPTION_REFINERS

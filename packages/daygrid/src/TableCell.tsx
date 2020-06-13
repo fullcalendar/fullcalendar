@@ -7,7 +7,7 @@ import {
   CssDimValue,
   DateRange,
   buildNavLinkData,
-  DayCellHookProps,
+  DayCellContentArg,
   RenderHook,
   WeekNumberRoot,
   DayCellRoot,
@@ -19,6 +19,7 @@ import {
   createFormatter,
   ViewApi,
   Dictionary,
+  MountArg,
 } from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
 
@@ -71,11 +72,13 @@ export interface HookProps {
   isToday: boolean
 }
 
-export interface MoreLinkHookProps {
+export interface MoreLinkContentArg {
   num: number
   text: string
   view: ViewApi
 }
+
+export type MoreLinkMountArg = MountArg<MoreLinkContentArg>
 
 const DEFAULT_WEEK_NUM_FORMAT = createFormatter({ week: 'narrow' })
 
@@ -90,7 +93,7 @@ export class TableCell extends DateComponent<TableCellProps> {
     let { props } = this
     let { date, dateProfile } = props
 
-    let hookProps: MoreLinkHookProps = {
+    let hookProps: MoreLinkContentArg = {
       num: props.moreCnt,
       text: props.buildMoreLinkText(props.moreCnt),
       view: viewApi
@@ -147,7 +150,7 @@ export class TableCell extends DateComponent<TableCellProps> {
                 {props.fgContent}
                 {Boolean(props.moreCnt) &&
                   <div className='fc-daygrid-day-bottom' style={{ marginTop: props.moreMarginTop }}>
-                    <RenderHook<MoreLinkHookProps> // needed?
+                    <RenderHook<MoreLinkContentArg> // needed?
                       hookProps={hookProps}
                       classNames={options.moreLinkClassNames}
                       content={options.moreLinkContent}
@@ -205,7 +208,7 @@ export class TableCell extends DateComponent<TableCellProps> {
 }
 
 
-function renderTopInner(props: DayCellHookProps) {
+function renderTopInner(props: DayCellContentArg) {
   return props.dayNumberText
 }
 

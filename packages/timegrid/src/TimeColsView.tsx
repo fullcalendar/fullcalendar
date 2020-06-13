@@ -18,7 +18,7 @@ import {
   getStickyHeaderDates,
   getStickyFooterScrollbar,
   createFormatter,
-  AllDayHookProps,
+  AllDayContentArg,
   CssDimValue,
   NowTimer,
   DateMarker,
@@ -373,14 +373,14 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
   // but DayGrid still needs to have classNames on inner elements in order to measure.
   renderTableRowAxis = (rowHeight?: number) => {
     let { options, viewApi } = this.context
-    let hookProps: AllDayHookProps = {
+    let hookProps: AllDayContentArg = {
       text: options.allDayText,
       view: viewApi
     }
 
     return (
       // TODO: make reusable hook. used in list view too
-      <RenderHook<AllDayHookProps>
+      <RenderHook<AllDayContentArg>
         hookProps={hookProps}
         classNames={options.allDayClassNames}
         content={options.allDayContent}

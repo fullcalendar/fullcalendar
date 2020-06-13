@@ -1,3 +1,3 @@
 
-export { MoreLinkHookProps } from './TableCell'
+export { MoreLinkContentArg, MoreLinkMountArg } from './TableCell'
 export * from './more-link'

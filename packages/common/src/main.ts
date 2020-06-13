@@ -179,7 +179,7 @@ export {
   computeSegDraggable, computeSegStartResizable, computeSegEndResizable,
   getEventClassNames, buildSegTimeText,
   buildSegCompareObj, sortEventSegs,
-  getSegMeta, EventMeta, buildEventRangeKey
+  getSegMeta, EventContentArg, buildEventRangeKey
 } from './component/event-rendering'
 
 export { DayTableModel, DayTableSeg, DayTableCell } from './common/DayTableModel'
@@ -219,12 +219,12 @@ export { ScrollResponder, ScrollRequest } from './ScrollResponder'
 export { globalPlugins } from './global-plugins'
 export {
   RenderHook, RenderHookProps, RenderHookPropsChildren, MountHook, MountHookProps, buildClassNameNormalizer, ContentHook, CustomContentRenderContext,
-  ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler
+  ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler, MountArg
 } from './common/render-hook'
 export { StandardEvent, StandardEventProps } from './common/StandardEvent'
 export { NowIndicatorRoot, NowIndicatorRootProps } from './common/NowIndicatorRoot'
 
-export { DayCellRoot, DayCellRootProps, DayCellContent, DayCellContentProps, DayCellHookProps } from './common/DayCellRoot'
+export { DayCellRoot, DayCellRootProps, DayCellContent, DayCellContentProps, DayCellContentArg } from './common/DayCellRoot'
 export { EventRoot, MinimalEventProps } from './common/EventRoot'
 export { renderFill, BgEvent, BgEventProps } from './common/bg-fill'
 export { WeekNumberRoot, WeekNumberRootProps } from './common/WeekNumberRoot'

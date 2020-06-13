@@ -4,14 +4,15 @@ import {
 
 // public
 import {
-  MoreLinkHookProps,
+  MoreLinkContentArg,
+  MoreLinkMountArg,
   MoreLinkAction
 } from './api-type-deps'
 
 export const OPTION_REFINERS = {
   moreLinkClick: identity as Identity<MoreLinkAction>,
-  moreLinkClassNames: identity as Identity<ClassNamesGenerator<MoreLinkHookProps>>,
-  moreLinkContent: identity as Identity<CustomContentGenerator<MoreLinkHookProps>>,
-  moreLinkDidMount: identity as Identity<DidMountHandler<MoreLinkHookProps>>,
-  moreLinkWillUnmount: identity as Identity<WillUnmountHandler<MoreLinkHookProps>>,
+  moreLinkClassNames: identity as Identity<ClassNamesGenerator<MoreLinkContentArg>>,
+  moreLinkContent: identity as Identity<CustomContentGenerator<MoreLinkContentArg>>,
+  moreLinkDidMount: identity as Identity<DidMountHandler<MoreLinkMountArg>>,
+  moreLinkWillUnmount: identity as Identity<WillUnmountHandler<MoreLinkMountArg>>,
 }

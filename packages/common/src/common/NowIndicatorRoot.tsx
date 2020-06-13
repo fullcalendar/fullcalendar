@@ -1,4 +1,4 @@
-import { RenderHook, RenderHookPropsChildren } from './render-hook'
+import { RenderHook, RenderHookPropsChildren, MountArg } from './render-hook'
 import { DateMarker } from '../datelib/marker'
 import { ViewContext, ViewContextType } from '../ViewContext'
 import { createElement } from '../vdom'
@@ -11,18 +11,20 @@ export interface NowIndicatorRootProps {
   children: RenderHookPropsChildren
 }
 
-export interface NowIndicatorHookProps {
+export interface NowIndicatorContentArg {
   isAxis: boolean
   date: Date
   view: ViewApi
 }
+
+export type NowIndicatorMountArg = MountArg<NowIndicatorContentArg>
 
 
 export const NowIndicatorRoot = (props: NowIndicatorRootProps) => (
   <ViewContextType.Consumer>
     {(context: ViewContext) => {
       let { options } = context
-      let hookProps: NowIndicatorHookProps = {
+      let hookProps: NowIndicatorContentArg = {
         isAxis: props.isAxis,
         date: context.dateEnv.toDate(props.date),
         view: context.viewApi

@@ -13,6 +13,7 @@ import { ViewContext } from '../ViewContext'
 import { DateFormatter } from '../datelib/DateFormatter'
 import { DateMarker } from '../datelib/marker'
 import { ViewApi } from '../ViewApi'
+import { MountArg } from '../common/render-hook'
 
 
 export interface EventRenderRange extends EventTuple {
@@ -204,7 +205,7 @@ export function buildSegCompareObj(seg: Seg) {
 // other stuff
 
 
-export interface EventMeta { // for *Content handlers
+export interface EventContentArg { // for *Content handlers
   event: EventApi
   timeText: string
   backgroundColor: string // TODO: add other EventUi props?
@@ -224,6 +225,8 @@ export interface EventMeta { // for *Content handlers
   isResizing: boolean
   view: ViewApi // specifically for the API
 }
+
+export type EventMountArg = MountArg<EventContentArg>
 
 
 export function computeSegDraggable(seg: Seg, context: ViewContext) {
@@ -300,7 +303,7 @@ export function getSegMeta(seg: Seg, todayRange: DateRange, nowDate?: DateMarker
 }
 
 
-export function getEventClassNames(props: EventMeta) { // weird that we use this interface, but convenient
+export function getEventClassNames(props: EventContentArg) { // weird that we use this interface, but convenient
   let classNames: string[] = [ 'fc-event' ]
 
   if (props.isMirror) {

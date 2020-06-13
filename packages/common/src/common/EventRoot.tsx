@@ -2,7 +2,7 @@ import { Seg } from '../component/DateComponent'
 import { ComponentChildren, createElement, Ref, createRef } from '../vdom'
 import { EventApi } from '../api/EventApi'
 import { computeSegDraggable, computeSegStartResizable, computeSegEndResizable, setElSeg } from '../component/event-rendering'
-import { EventMeta, getEventClassNames } from '../component/event-rendering'
+import { EventContentArg, getEventClassNames } from '../component/event-rendering'
 import { RenderHook } from './render-hook'
 import { BaseComponent } from '../vdom-util'
 
@@ -22,13 +22,13 @@ export interface EventRootProps extends MinimalEventProps {
   timeText: string
   disableDragging?: boolean
   disableResizing?: boolean
-  defaultContent: (hookProps: EventMeta) => ComponentChildren
+  defaultContent: (hookProps: EventContentArg) => ComponentChildren
   children: (
     rootElRef: Ref<any>,
     classNames: string[],
     innerElRef: Ref<any>,
     innerContent: ComponentChildren,
-    hookProps: EventMeta
+    hookProps: EventContentArg
   ) => ComponentChildren
 }
 
@@ -45,7 +45,7 @@ export class EventRoot extends BaseComponent<EventRootProps> {
     let { eventRange } = seg
     let { ui } = eventRange
 
-    let hookProps: EventMeta = {
+    let hookProps: EventContentArg = {
       event: new EventApi(context, eventRange.def, eventRange.instance),
       view: context.viewApi,
       timeText: props.timeText,

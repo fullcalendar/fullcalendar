@@ -8,7 +8,7 @@ import { BaseComponent } from '../vdom-util'
 import { RenderHook } from './render-hook'
 import { buildNavLinkData } from './nav-link'
 import { DateProfile } from '../DateProfileGenerator'
-import { DayHeaderHookProps } from '../render-hook-misc'
+import { DayHeaderContentArg } from '../render-hook-misc'
 import { Dictionary } from '../options'
 
 
@@ -45,7 +45,7 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
       ? { 'data-navlink': buildNavLinkData(date), tabIndex: 0 }
       : {}
 
-    let hookProps: DayHeaderHookProps = {
+    let hookProps: DayHeaderContentArg = {
       date: dateEnv.toDate(date),
       view: viewApi,
       ...props.extraHookProps,
@@ -127,7 +127,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
 
     let text = dateEnv.format(date, props.dayHeaderFormat)
 
-    let hookProps: DayHeaderHookProps = {
+    let hookProps: DayHeaderContentArg = { // TODO: make this public?
       date,
       ...dateMeta,
       view: viewApi,
@@ -171,6 +171,6 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
 }
 
 
-function renderInner(hookProps: DayHeaderHookProps) {
+function renderInner(hookProps: DayHeaderContentArg) {
   return hookProps.text
 }

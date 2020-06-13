@@ -1,7 +1,7 @@
 import { createElement } from '../vdom'
 import { EventRoot } from './EventRoot'
 import { Seg } from '../component/DateComponent'
-import { EventMeta } from '../component/event-rendering'
+import { EventContentArg } from '../component/event-rendering'
 
 
 export function renderFill(fillType: string) {
@@ -47,7 +47,7 @@ export const BgEvent = (props: BgEventProps) => (
   </EventRoot>
 )
 
-function renderInnerContent(props: EventMeta) {
+function renderInnerContent(props: EventContentArg) {
   let title = props.event.title
 
   return title && (

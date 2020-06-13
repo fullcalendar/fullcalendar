@@ -1,2 +1,2 @@
 
-export { NoEventsHookProps } from './ListView'
+export { NoEventsContentArg, NoEventsMountArg } from './ListView'

@@ -1,6 +1,6 @@
 import {
   BaseComponent, DateMarker, createElement, DateRange, getDateMeta,
-  RenderHook, buildNavLinkData, DayHeaderHookProps, getDayClassNames, formatDayString, Fragment
+  RenderHook, buildNavLinkData, DayHeaderContentArg, getDayClassNames, formatDayString, Fragment
 } from '@fullcalendar/common'
 
 
@@ -9,7 +9,7 @@ export interface ListViewHeaderRowProps {
   todayRange: DateRange
 }
 
-interface HookProps extends DayHeaderHookProps { // doesn't enforce much since DayCellHookProps allow extra props
+interface HookProps extends DayHeaderContentArg { // doesn't enforce much since DayCellContentArg allow extra props
   text: string
   sideText: string
 }
