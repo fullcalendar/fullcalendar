@@ -3,10 +3,11 @@ v5.0.0-rc
 ---------
 
 Changes since beta.4:
-  - breaking API changes:
+  - breaking changes:
     - renamed `datesDidUpdate` to `datesSet` and added more props to the arg
     - for `eventResize` callback arg, renamed `prevEvent` to `oldEvent`
-  - new API features:
+    - resources are ordered by ID by default. no longer sort by natural order
+  - new features:
     - eventDrop now receives relatedEvents prop
     - eventResize now receives relatedEvents prop
     - eventReceive now receives relatedEvents prop and a revert function
