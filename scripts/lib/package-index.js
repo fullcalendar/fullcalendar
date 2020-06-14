@@ -34,7 +34,8 @@ function buildStruct(configPath) {
     mainDistDts,
     mainSrc,
     mainTscJs,
-    mainTscDts
+    mainTscDts,
+    meta: config
   }
 }
 

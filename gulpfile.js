@@ -1,9 +1,9 @@
+const fs = require('fs')
 const path = require('path')
 const globby = require('globby')
 const handlebars = require('handlebars')
 const { src, dest, parallel, series } = require('gulp')
 const { readFile, writeFile, watch } = require('./scripts/lib/util')
-const fs = require('fs')
 const replace = require('gulp-replace')
 const exec = require('./scripts/lib/shell').sync.withOptions({ // always SYNC!
   live: true,
@@ -13,7 +13,8 @@ const exec = require('./scripts/lib/shell').sync.withOptions({ // always SYNC!
 const concurrently = require('concurrently')
 const { minifyBundleJs, minifyBundleCss } = require('./scripts/lib/minify')
 const modify = require('gulp-modify-file')
-const { allStructs } = require('./scripts/lib/package-index')
+const { allStructs, publicPackageStructs } = require('./scripts/lib/package-index')
+const semver = require('semver')
 
 
 
@@ -169,8 +170,6 @@ function localesAllSrcWatch() {
 }
 
 
-
-const { publicPackageStructs } = require('./scripts/lib/package-index')
 
 exports.writeTscDevLinks = series(removeTscDevLinks, writeTscDevLinks)
 exports.removeTscDevLinks = removeTscDevLinks
@@ -338,7 +337,7 @@ const exec3 = require('./scripts/lib/shell').sync.withOptions({
   exitOnError: false
 })
 
-exports.lint = exports.eslint = function() {
+exports.eslint = function() {
   let anyFailures = false
 
   for (let struct of allStructs) {
@@ -366,3 +365,40 @@ exports.lint = exports.eslint = function() {
 
   return Promise.resolve()
 }
+
+
+const REQUIRED_TSLIB_SEMVER = '2'
+
+exports.lintPackageMeta = function() {
+  let success = true
+
+  for (let struct of publicPackageStructs) {
+    let { meta } = struct
+
+    if (!meta.main || !meta.module || meta.main !== meta.module) {
+      console.warn(`${struct.name} should have a 'main' entry that matches its 'module' entry`)
+      success = false
+    }
+
+    let tslibSemver = (meta.dependencies || {}).tslib || ''
+
+    if (!tslibSemver || !semver.intersects(tslibSemver, REQUIRED_TSLIB_SEMVER)) {
+      console.warn(`${struct.name} has a tslib version ('${tslibSemver}') that does not satisfy '${REQUIRED_TSLIB_SEMVER}'`)
+      success = false
+    }
+
+    if (!fs.existsSync(path.join(struct.dir, '.npmignore'))) {
+      console.warn(`${struct.name} needs a .npmignore file`)
+      success = false
+    }
+  }
+
+  if (success) {
+    return Promise.resolve()
+  } else {
+    return Promise.reject(new Error('At least one package.json has an error'))
+  }
+}
+
+
+exports.lint = series(exports.lintPackageMeta, exports.eslint)
