@@ -20,7 +20,7 @@
     "jquery": "^3.4.0",
     "jquery-simulate": "github:jquery/jquery-simulate",
     "moment": "^2.24.0",
-    "tslib": "^1.9.3",
+    "tslib": "^2.0.0",
     "xhr-mock": "^2.5.1"
   }
 }

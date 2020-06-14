@@ -6,7 +6,7 @@
   "docs": "https://fullcalendar.io/docs/luxon-plugin",
   "dependencies": {
     "@fullcalendar/common": "5.0.0-beta.4",
-    "tslib": "^1.9.3"
+    "tslib": "^2.0.0"
   },
   "peerDependencies": {
     "luxon": "^1.12.1"
@@ -14,6 +14,7 @@
   "devDependencies": {
     "luxon": "^1.12.1"
   },
+  "main": "main.js",
   "module": "main.js",
   "types": "main.d.ts",
   "homepage": "https://fullcalendar.io/",

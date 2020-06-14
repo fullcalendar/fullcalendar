@@ -7,8 +7,9 @@
   "dependencies": {
     "@fullcalendar/common": "5.0.0-beta.4",
     "@fullcalendar/daygrid": "5.0.0-beta.4",
-    "tslib": "^1.9.3"
+    "tslib": "^2.0.0"
   },
+  "main": "main.js",
   "module": "main.js",
   "types": "main.d.ts",
   "homepage": "https://fullcalendar.io/",
