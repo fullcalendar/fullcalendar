@@ -1,4 +1,33 @@
 
+v5.0.0-rc
+---------
+
+Changes since beta.4:
+  - breaking API changes:
+    - renamed `datesDidUpdate` to `datesSet` and added more props to the arg
+    - for `eventResize` callback arg, renamed `prevEvent` to `oldEvent`
+  - new API features:
+    - eventDrop now receives relatedEvents prop
+    - eventResize now receives relatedEvents prop
+    - eventReceive now receives relatedEvents prop and a revert function
+    - eventLeave now receives relatedEvents prop and a revert function
+    - eventAdd
+    - eventChange
+    - eventRemove
+    - eventsSet
+    - initialEvents
+    - Event::toPlainObject, Event::toJSON
+    - Calendar::addEvent accept `true` for source
+    - resourceAdd
+    - resourceChange
+    - resourceRemove
+    - resourcesSet
+    - initialResources
+    - Resource::setProp
+    - Resource::setExtendedProp
+    - Resource::toPlainObject, Resource::toJSON
+
+
 v5.0.0-beta.4 (2020-05-26)
 --------------------------
 
