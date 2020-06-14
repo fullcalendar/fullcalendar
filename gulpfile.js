@@ -277,7 +277,7 @@ async function testsIndex() {
     )
   }
 
-  let mainFiles = globby.sync('packages*/__tests__/src/main.*')
+  let mainFiles = globby.sync('packages*/__tests__/src/main.{js,ts}')
   files = mainFiles.concat(files)
 
   let code =
