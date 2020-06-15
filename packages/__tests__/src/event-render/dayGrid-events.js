@@ -27,6 +27,31 @@ describe('dayGrid advanced event rendering', function() {
     expect(anyElsIntersect(eventEls)).toBe(false)
   })
 
+  it('won\'t intersect when doing custom rendering', function() {
+    let calendar = initCalendar({
+      initialView: 'dayGridMonth',
+      initialDate: '2020-06-01',
+      events: [
+        { start: '2020-06-04', end: '2020-06-08', title: 'event a' },
+        { start: '2020-06-05', end: '2020-06-09', title: 'event b' },
+        { start: '2020-06-08T12:00:00', title: 'event c' }
+      ],
+      eventContent(arg) { // creates varying-height events, which revealed the bug
+        return {
+          html:`
+            <b>${arg.timeText}</b>
+            <i>${arg.event.title}</i>
+          `
+        }
+      }
+    })
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEls = dayGridWrapper.getEventEls()
+
+    expect(anyElsIntersect(eventEls)).toBe(false)
+  })
+
   it('renders single-day timed event as list-item', function() {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
