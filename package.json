@@ -33,7 +33,9 @@
     ],
     "nohoist": [
       "**/codelyzer",
-      "**/karma-sourcemap-loader"
+      "**/karma-sourcemap-loader",
+      "**/@vue/cli-service",
+      "@fullcalendar/vue/**"
     ]
   },
   "scripts": {
