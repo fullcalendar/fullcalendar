@@ -18,6 +18,7 @@ Changes since beta.4:
     - eventsSet
     - initialEvents
     - Event::toPlainObject, Event::toJSON
+    - Event::startStr, Event::endStr
     - Calendar::addEvent accept `true` for source
     - resourceAdd
     - resourceChange
@@ -27,6 +28,12 @@ Changes since beta.4:
     - Resource::setProp
     - Resource::setExtendedProp
     - Resource::toPlainObject, Resource::toJSON
+  - bugfixes:
+    - Event popover display issues with many events (#5471)
+    - Jest test runner cannot find fullcalendar modules (#5467)
+    - Incorrect version of tslib required (#5479)
+    - License key option unknown, error in console (#5462)
+    - @fullcalendar/common has no exported member ScrollGridChunkConfig (#5459)
 
 
 v5.0.0-beta.4 (2020-05-26)
