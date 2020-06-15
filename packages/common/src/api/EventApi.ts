@@ -307,6 +307,28 @@ export class EventApi {
       null
   }
 
+  get startStr(): string {
+    let instance = this._instance
+    if (instance) {
+      return this._context.dateEnv.formatIso(instance.range.start, {
+        omitTime: this._def.allDay,
+        forcedTzo: instance.forcedStartTzo
+      })
+    }
+    return ''
+  }
+
+  get endStr(): string {
+    let instance = this._instance
+    if (instance && this._def.hasEnd) {
+      return this._context.dateEnv.formatIso(instance.range.end, {
+        omitTime: this._def.allDay,
+        forcedTzo: instance.forcedEndTzo
+      })
+    }
+    return ''
+  }
+
   // computable props that all access the def
   // TODO: find a TypeScript-compatible way to do this at scale
   get id() { return this._def.publicId }
@@ -330,22 +352,21 @@ export class EventApi {
 
 
   toPlainObject(settings: { collapseExtendedProps?: boolean, collapseColor?: boolean } = {}): Dictionary {
-    let { dateEnv } = this._context
     let def = this._def
-    let instance = this._instance
     let { ui } = def
+    let { startStr, endStr } = this
     let res: Dictionary = {}
 
     if (def.title) {
       res.title = def.title
     }
 
-    if (instance) {
-      res.start = dateEnv.formatIso(instance.range.start, { omitTime: def.allDay })
+    if (startStr) {
+      res.start = startStr
+    }
 
-      if (def.hasEnd) {
-        res.end = dateEnv.formatIso(instance.range.end, { omitTime: def.allDay })
-      }
+    if (endStr) {
+      res.end = endStr
     }
 
     if (def.publicId) {

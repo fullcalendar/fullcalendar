@@ -137,7 +137,8 @@ export class ContentHook<HookProps> extends BaseComponent<ContentHookProps<HookP
       if (customContentInfo) {
         customContentInfo.contentVal = innerContent[customContentInfo.contentKey]
 
-      } else {
+      } else if (typeof innerContent === 'object') {
+
         // look for a prop that would indicate a custom content handler is needed
         for (let contentKey in contentTypeHandlers) {
 

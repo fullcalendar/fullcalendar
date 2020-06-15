@@ -296,7 +296,11 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
 
 
   handleScrollTopRequest = (scrollTop: number) => {
-    this.scrollerElRef.current.scrollTop = scrollTop
+    let scrollerEl = this.scrollerElRef.current
+
+    if (scrollerEl) { // TODO: not sure how this could ever be null. weirdness with the reducer
+      scrollerEl.scrollTop = scrollTop
+    }
   }
 
 

@@ -187,9 +187,9 @@ export class CalendarDataManager {
       ? { ...props.optionOverrides, ...optionOverrides }
       : optionOverrides
 
-    this.actionRunner.pause('resetOptions')
-    this.updateData()
-    this.actionRunner.resume('resetOptions')
+    this.actionRunner.request({ // hack. will cause updateData
+      type: 'NOTHING'
+    })
   }
 
 
@@ -330,8 +330,9 @@ export class CalendarDataManager {
     if (oldCalendarOptions && oldCalendarOptions !== newCalendarOptions) {
 
       if (oldCalendarOptions.timeZone !== newCalendarOptions.timeZone) {
-        data.eventSources = reduceEventSourcesNewTimeZone(data.eventSources, state.dateProfile, data)
-        data.eventStore = rezoneEventStoreDates(data.eventStore, oldData.dateEnv, data.dateEnv)
+        // hack
+        state.eventSources = data.eventSources = reduceEventSourcesNewTimeZone(data.eventSources, state.dateProfile, data)
+        state.eventStore = data.eventStore = rezoneEventStoreDates(data.eventStore, oldData.dateEnv, data.dateEnv)
       }
 
       for (let optionName in changeHandlers) {

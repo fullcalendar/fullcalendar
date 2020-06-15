@@ -71,6 +71,40 @@ describe('events as a json feed', function() {
     })
   })
 
+  // https://github.com/fullcalendar/fullcalendar/issues/5485
+  it('processes new events under updated time zone', function(done) {
+
+    XHRMock.get(/^my-feed\.php/, function(req, res) {
+      let reqTimeZone = req.url().query.timeZone
+
+      return res.status(200).header('content-type', 'application/json').body(
+        JSON.stringify([
+          reqTimeZone === 'America/Chicago'
+            ? { start: '2014-06-08T01:00:00' }
+            : { start: '2014-06-08T03:00:00' }
+        ])
+      )
+    })
+
+    let calendar = initCalendar({
+      events: 'my-feed.php',
+      timeZone: 'America/Chicago'
+    })
+
+    setTimeout(function() {
+      let eventStartStr = calendar.getEvents()[0].startStr
+      expect(eventStartStr).toBe('2014-06-08T01:00:00')
+
+      calendar.setOption('timeZone', 'America/New_York')
+      setTimeout(function() {
+        let eventStartStr = calendar.getEvents()[0].startStr
+        expect(eventStartStr).toBe('2014-06-08T03:00:00')
+
+        done()
+      }, 100)
+    }, 100)
+  })
+
   it('requests correctly with event source extended form', function(done) {
 
     XHRMock.get(/^my-feed\.php/, function(req, res) {
