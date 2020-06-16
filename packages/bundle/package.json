@@ -1,17 +1,17 @@
 {
   "name": "fullcalendar",
-  "version": "5.0.0-beta.4",
+  "version": "5.0.0-rc",
   "title": "FullCalendar Standard Bundle",
   "description": "An easily consumable combination of standard plugins",
   "docs": "https://fullcalendar.io/docs/v5/getting-started",
   "devDependencies": {
-    "@fullcalendar/core": "5.0.0-beta.4",
-    "@fullcalendar/interaction": "5.0.0-beta.4",
-    "@fullcalendar/daygrid": "5.0.0-beta.4",
-    "@fullcalendar/timegrid": "5.0.0-beta.4",
-    "@fullcalendar/list": "5.0.0-beta.4",
-    "@fullcalendar/bootstrap": "5.0.0-beta.4",
-    "@fullcalendar/google-calendar": "5.0.0-beta.4"
+    "@fullcalendar/core": "5.0.0-rc",
+    "@fullcalendar/interaction": "5.0.0-rc",
+    "@fullcalendar/daygrid": "5.0.0-rc",
+    "@fullcalendar/timegrid": "5.0.0-rc",
+    "@fullcalendar/list": "5.0.0-rc",
+    "@fullcalendar/bootstrap": "5.0.0-rc",
+    "@fullcalendar/google-calendar": "5.0.0-rc"
   },
   "main": "main.js",
   "unpkg": "main.min.js",
