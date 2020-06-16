@@ -15,6 +15,11 @@ export class ViewApi { // always represents the current view. otherwise, it'd ne
   }
 
 
+  get calendar() {
+    return this.getCurrentData().calendarApi
+  }
+
+
   get title() {
     return this.getCurrentData().viewTitle
   }

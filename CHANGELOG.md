@@ -1,6 +1,6 @@
 
-v5.0.0-rc
----------
+v5.0.0-rc (2020-06-15)
+----------------------
 
 Changes since beta.4:
   - breaking changes:
@@ -29,6 +29,7 @@ Changes since beta.4:
     - Resource::setProp
     - Resource::setExtendedProp
     - Resource::toPlainObject, Resource::toJSON
+    - View::calendar
   - bugfixes:
     - Event popover display issues with many events (#5471)
     - Jest test runner cannot find fullcalendar modules (#5467)
