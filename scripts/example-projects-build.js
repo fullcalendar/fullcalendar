@@ -18,28 +18,34 @@ globby.sync('*', { cwd: PROJECTS_ROOT, onlyDirectories: true }).forEach(function
 
   } else {
 
+    let { success: cleanSuccess } = exec.sync([ 'npm', 'run', 'clean' ], {
+      cwd: path.join(PROJECTS_ROOT, exampleDir),
+      live: true
+    })
+    if (!cleanSuccess) {
+      console.warn(`Failed cleaning example project "${exampleName}"`)
+      process.exit(1)
+    }
+
     // tsc
-    if (exampleName.match('typescript')) {
-      let { success } = exec.sync([ 'npx', 'tsc' ], {
+    if (exampleName.match('typescript') && !exampleName.match('vue')) {
+      let { success: tscSuccess } = exec.sync([ 'npx', 'tsc' ], {
         cwd: path.join(PROJECTS_ROOT, exampleDir),
         live: true
       })
-
-      if (!success) {
+      if (!tscSuccess) {
         console.warn(`Failed running tsc in example project "${exampleName}"`)
         process.exit(1)
-
       } else {
         console.log(`Succeeded running tsc in example project "${exampleName}"`)
       }
     }
 
-    let { success } = exec.sync([ 'npm', 'run', 'build' ], {
+    let { success: buildSuccess } = exec.sync([ 'npm', 'run', 'build' ], {
       cwd: path.join(PROJECTS_ROOT, exampleDir),
       live: true
     })
-
-    if (!success) {
+    if (!buildSuccess) {
       console.warn(`Failed building example project "${exampleName}"`)
       process.exit(1)
     }
