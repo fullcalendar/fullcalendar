@@ -10,7 +10,6 @@
     "tslib": "^2.0.0"
   },
   "main": "main.js",
-  "module": "main.js",
   "types": "main.d.ts",
   "sideEffects": true,
   "homepage": "https://fullcalendar.io/",

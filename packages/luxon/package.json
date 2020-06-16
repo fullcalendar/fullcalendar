@@ -15,7 +15,6 @@
     "luxon": "^1.12.1"
   },
   "main": "main.js",
-  "module": "main.js",
   "types": "main.d.ts",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",

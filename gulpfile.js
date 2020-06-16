@@ -375,8 +375,13 @@ exports.lintPackageMeta = function() {
   for (let struct of publicPackageStructs) {
     let { meta } = struct
 
-    if (!meta.main || !meta.module || meta.main !== meta.module) {
-      console.warn(`${struct.name} should have a 'main' entry that matches its 'module' entry`)
+    if (!meta.main) {
+      console.warn(`${struct.name} should have a 'main' entry`)
+      success = false
+    }
+
+    if (meta.module) {
+      console.warn(`${struct.name} should NOT have a 'module' entry`)
       success = false
     }
 
