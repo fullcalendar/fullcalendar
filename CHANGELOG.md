@@ -8,6 +8,7 @@ Changes since beta.4:
     - for `eventResize` callback arg, renamed `prevEvent` to `oldEvent`
     - resources are ordered by ID by default. no longer sort by natural order
   - new features:
+    - system for overriding CSS variables
     - timegrid event titles are sticky-positioned while scrolling
     - eventDrop now receives relatedEvents prop
     - eventResize now receives relatedEvents prop
