@@ -20,7 +20,9 @@ NOTE: for old browsers, will need to start after changing a variable
   --fc-button-bg-color: #2C3E50;
   --fc-button-border-color: #2C3E50;
   --fc-button-hover-bg-color: #1e2b37;
+  --fc-button-hover-text-color: #fff;
   --fc-button-hover-border-color: #1a252f;
+  --fc-button-active-text-color: #fff;
   --fc-button-active-bg-color: #1a252f;
   --fc-button-active-border-color: #151e27;
 
