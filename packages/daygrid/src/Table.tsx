@@ -151,6 +151,7 @@ export class Table extends DateComponent<TableProps, TableState> {
                       dayMaxEvents={dayMaxEvents}
                       dayMaxEventRows={dayMaxEventRows}
                       clientWidth={props.clientWidth}
+                      clientHeight={props.clientHeight}
                       buildMoreLinkText={buildMoreLinkText}
                       onMoreClick={this.handleMoreLinkClick}
                     />

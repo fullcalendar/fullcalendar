@@ -1,5 +1,6 @@
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { anyElsIntersect } from '../lib/dom-geom'
+import { filterVisibleEls } from '../lib/dom-misc'
 
 
 describe('dayGrid advanced event rendering', function() {
@@ -103,6 +104,42 @@ describe('dayGrid advanced event rendering', function() {
     let eventEl = dayGridWrapper.getEventEls()[0]
 
     expect(dayGridWrapper.isEventListItem(eventEl)).toBe(false)
+  })
+
+  it('adjusts more link when getting bigger then smaller with liquid height', function() {
+    const LARGE_HEIGHT = 800
+    const SMALL_HEIGHT = 500
+    let $container = $(
+      `<div style="height:${LARGE_HEIGHT}px"><div></div></div>`
+    ).appendTo('body')
+
+    let calendar = initCalendar({
+      height: '100%',
+      dayMaxEvents: true, // will cause visible event count to vary
+      events: [
+        { start: '2020-05-02', end: '2020-05-03', title: 'event a' },
+        { start: '2020-05-02', end: '2020-05-03', title: 'event b' },
+        { start: '2020-05-02', end: '2020-05-03', title: 'event c' },
+        { start: '2020-05-02', end: '2020-05-03', title: 'event d' },
+        { start: '2020-05-02', end: '2020-05-03', title: 'event e' },
+        { start: '2020-05-02', end: '2020-05-03', title: 'event f' },
+      ]
+    }, $container.find('div'))
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let origEventCnt = filterVisibleEls(dayGridWrapper.getEventEls()).length
+
+    $container.css('height', SMALL_HEIGHT)
+    calendar.updateSize()
+    let smallEventCnt = filterVisibleEls(dayGridWrapper.getEventEls()).length
+    expect(smallEventCnt).not.toBe(origEventCnt)
+
+    $container.css('height', LARGE_HEIGHT)
+    calendar.updateSize()
+    let largeEventCnt = filterVisibleEls(dayGridWrapper.getEventEls()).length
+    expect(largeEventCnt).toBe(origEventCnt)
+
+    $container.remove()
   })
 
 })

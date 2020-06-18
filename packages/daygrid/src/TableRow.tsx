@@ -41,6 +41,7 @@ export interface TableRowProps {
   dayMaxEvents: boolean | number
   dayMaxEventRows: boolean | number
   clientWidth: number | null
+  clientHeight: number | null // simply for causing an updateSize, for when liquid height
   onMoreClick?: (arg: MoreLinkArg) => void
   dateProfile: DateProfile
   todayRange: DateRange
