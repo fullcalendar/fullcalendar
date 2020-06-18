@@ -5,8 +5,6 @@ import './main.css'
 
 export const version: string = '<%= version %>' // important to type it, so .d.ts has generic string
 
-import './event-sources/json-feed-event-source-declare' // plugin-like. these ambient defs need to be top-level
-
 // explicit API
 export { EventSourceApi } from './api/EventSourceApi'
 export { EventApi, buildEventApis } from './api/EventApi'

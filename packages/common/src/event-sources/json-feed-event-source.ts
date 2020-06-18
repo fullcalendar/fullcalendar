@@ -4,7 +4,7 @@ import { EventSourceDef } from '../structs/event-source-def'
 import { DateRange } from '../datelib/date-range'
 import { __assign } from 'tslib'
 import { createPlugin } from '../plugin-system'
-import { EVENT_SOURCE_REFINERS } from './json-feed-event-source-refiners'
+import { JSON_FEED_EVENT_SOURCE_REFINERS } from './json-feed-event-source-refiners'
 
 
 interface JsonFeedMeta {
@@ -52,7 +52,7 @@ let eventSourceDef: EventSourceDef<JsonFeedMeta> = {
 
 
 export const jsonFeedEventSourcePlugin = createPlugin({
-  eventSourceRefiners: EVENT_SOURCE_REFINERS,
+  eventSourceRefiners: JSON_FEED_EVENT_SOURCE_REFINERS,
   eventSourceDefs: [ eventSourceDef ]
 })
 
