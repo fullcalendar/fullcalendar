@@ -112,6 +112,7 @@
     "shelljs": "^0.8.3",
     "source-map-loader": "^0.2.4",
     "style-loader": "^1.2.1",
+    "stylelint": "^13.6.1",
     "ts-loader": "^7.0.4",
     "typescript": "^3.9.3",
     "webpack": "^4.43.0",

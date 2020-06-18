@@ -366,6 +366,38 @@ exports.eslint = function() {
   return Promise.resolve()
 }
 
+exports.stylelint = function() { // on BUILT css
+  let anyFailures = false
+
+  for (let struct of allStructs) {
+    if (struct.name !== '@fullcalendar/core-vdom') {
+      let builtCssFile = path.join(struct.dir, 'main.css')
+
+      if (fs.existsSync(builtCssFile)) {
+        let cmd = [
+          'stylelint', '--config', 'stylelint.config.js',
+          builtCssFile
+        ]
+
+        console.log('Running stylelint on', struct.name, '...')
+        console.log(cmd.join(' '))
+        console.log()
+
+        let { success } = exec3(cmd)
+        if (!success) {
+          anyFailures = true
+        }
+      }
+    }
+  }
+
+  if (anyFailures) {
+    return Promise.reject(new Error('At least one linting job failed'))
+  }
+
+  return Promise.resolve()
+}
+
 
 const REQUIRED_TSLIB_SEMVER = '2'
 
