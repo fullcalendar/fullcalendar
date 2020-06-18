@@ -14,6 +14,8 @@
   }
 
   & .fc-event-time {
+    flex-shrink: 0;
+    overflow: hidden;
     white-space: nowrap;
     font-size: var(--fc-small-font-size);
     margin-bottom: 1px;
@@ -25,6 +27,7 @@
 
   & .fc-event-main {
     flex-direction: row;
+    overflow: hidden;
   }
 
   & .fc-event-time:after {
