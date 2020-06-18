@@ -42,6 +42,7 @@
     "watch": "gulp watch",
     "clean": "./scripts/clean.sh",
     "lint": "gulp lint",
+    "lintBuilt": "gulp lintBuilt",
     "test": "gulp test",
     "test:ci": "gulp testCi",
     "archive": "gulp archive",

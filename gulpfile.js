@@ -337,6 +337,7 @@ const exec3 = require('./scripts/lib/shell').sync.withOptions({
   exitOnError: false
 })
 
+
 exports.eslint = function() {
   let anyFailures = false
 
@@ -366,33 +367,63 @@ exports.eslint = function() {
   return Promise.resolve()
 }
 
-exports.stylelint = function() { // on BUILT css
+
+exports.lintBuiltCss = function() {
   let anyFailures = false
 
-  for (let struct of allStructs) {
-    if (struct.name !== '@fullcalendar/core-vdom') {
-      let builtCssFile = path.join(struct.dir, 'main.css')
+  for (let struct of publicPackageStructs) {
+    let builtCssFile = path.join(struct.dir, 'main.css')
 
-      if (fs.existsSync(builtCssFile)) {
-        let cmd = [
-          'stylelint', '--config', 'stylelint.config.js',
-          builtCssFile
-        ]
+    if (fs.existsSync(builtCssFile)) {
+      let cmd = [
+        'stylelint', '--config', 'stylelint.config.js',
+        builtCssFile
+      ]
 
-        console.log('Running stylelint on', struct.name, '...')
-        console.log(cmd.join(' '))
-        console.log()
+      console.log('Running stylelint on', struct.name, '...')
+      console.log(cmd.join(' '))
+      console.log()
 
-        let { success } = exec3(cmd)
-        if (!success) {
-          anyFailures = true
-        }
+      let { success } = exec3(cmd)
+      if (!success) {
+        anyFailures = true
       }
     }
   }
 
   if (anyFailures) {
     return Promise.reject(new Error('At least one linting job failed'))
+  }
+
+  return Promise.resolve()
+}
+
+
+exports.lintBuiltDts = function() {
+  let anyFailures = false
+
+  for (let struct of publicPackageStructs) {
+    let dtsFile = path.join(struct.dir, 'main.d.ts')
+    console.log(`Checking ${dtsFile}`)
+
+    // look for bad module declarations (when relative, assumed NOT to be ambient, so BAD)
+    // look for references to react/preact (should always use vdom instead)
+    let { stdout } = require('./scripts/lib/shell').sync([
+      'grep', '-iEe', '(declare module [\'"]\\.|p?react)', dtsFile
+    ])
+
+    stdout = stdout.trim()
+
+    if (stdout) { // don't worry about failure. grep gives failure if no results
+      console.log('  BAD: ' + stdout)
+      anyFailures = true
+    }
+
+    console.log()
+  }
+
+  if (anyFailures) {
+    return Promise.reject(new Error('At least one dts linting job failed'))
   }
 
   return Promise.resolve()
@@ -439,3 +470,4 @@ exports.lintPackageMeta = function() {
 
 
 exports.lint = series(exports.lintPackageMeta, exports.eslint)
+exports.lintBuilt = series(exports.lintBuiltCss, exports.lintBuiltDts)
