@@ -448,6 +448,11 @@ exports.lintPackageMeta = function() {
       success = false
     }
 
+    if (meta.dependencies && meta.dependencies['@fullcalendar/core']) {
+      console.warn(`${struct.name} should have @fullcalendar/common as a dep, NOT @fullcalendar/core`)
+      success = false
+    }
+
     let tslibSemver = (meta.dependencies || {}).tslib || ''
 
     if (!tslibSemver || !semver.intersects(tslibSemver, REQUIRED_TSLIB_SEMVER)) {
