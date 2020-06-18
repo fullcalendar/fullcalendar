@@ -232,6 +232,15 @@
   resolved "https://registry.yarnpkg.com/@angular/router/-/router-9.0.7.tgz#0296d11a17a6b94c0463c9b166dc4244b8fea5e5"
   integrity sha512-uKru9F/Zju//gg6INl54abnlpLdEUUO/GpCfMk4zqu8LCZGNFta6OY7VT+9DK9Vdrh/XUD70oE9WoelcRwwTYA==
 
+"@arshaw/postcss-calc@^7.0.2":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@arshaw/postcss-calc/-/postcss-calc-7.0.2.tgz#fd92cc54a64c381eec1073454a9b73822db3a6fc"
+  integrity sha512-co0Hjp5N10WY4RY7l1pHFqwbG+SyK1gjhdg2CqlW7+tw37itYlssYCIHI1NV0GhwoqXo8tQBx4TQ1Eii9/i0pg==
+  dependencies:
+    postcss "^7.0.27"
+    postcss-selector-parser "^6.0.2"
+    postcss-value-parser "^4.0.2"
+
 "@arshaw/postcss-custom-properties@^9.1.1":
   version "9.1.1"
   resolved "https://registry.yarnpkg.com/@arshaw/postcss-custom-properties/-/postcss-custom-properties-9.1.1.tgz#7783f538fe014b71bf484c0e43324ee71ad09c9b"

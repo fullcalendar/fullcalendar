@@ -51,6 +51,7 @@
     "postversion": "echo 'EXEC: git push --recurse-submodules=on-demand' && echo 'STILL NEED TO PUSH ALL TAGS'"
   },
   "devDependencies": {
+    "@arshaw/postcss-calc": "^7.0.2",
     "@arshaw/postcss-custom-properties": "^9.1.1",
     "@rollup/plugin-alias": "^3.1.0",
     "@rollup/plugin-node-resolve": "^7.1.3",
@@ -96,7 +97,6 @@
     "moment-timezone-data-webpack-plugin": "^1.3.0",
     "postcss": "^7.0.30",
     "postcss-advanced-variables": "^3.0.1",
-    "postcss-calc": "^7.0.2",
     "postcss-comment": "^2.0.0",
     "postcss-loader": "^3.0.0",
     "postcss-nesting": "^7.0.1",

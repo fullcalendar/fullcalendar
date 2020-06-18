@@ -9,7 +9,7 @@ module.exports = {
       preserve: true, // keep var statements intact (but still reduce their value in a second statement)
       preserveWithFallback: true // the preserved var statements will have a fallback value
     }),
-    require('postcss-calc')
+    require('@arshaw/postcss-calc') // a fork that ensures important spaces (issue 5503)
 
     // TODO: remove empty blocks
     // apparently it should automatically work with postcss-nesting, but doesn't seem to
