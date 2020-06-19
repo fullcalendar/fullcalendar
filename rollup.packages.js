@@ -52,6 +52,7 @@ module.exports = [
       },
       plugins: [
         fixDtsCodeIn(),
+        ensurePremiumCommonAmbient(),
         externalizeVDom(),
         externalizeStylesheets(),
         externalizeNonRelative(),
@@ -99,6 +100,17 @@ function externalizeVDom() {
         } else {
           return { id: '@fullcalendar/common', external: true, moduleSideEffects: true }
         }
+      }
+    }
+  }
+}
+
+
+function ensurePremiumCommonAmbient() {
+  return {
+    resolveId(id) {
+      if (id === '@fullcalendar/premium-common') {
+        return { id, external: true, moduleSideEffects: true }
       }
     }
   }

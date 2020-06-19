@@ -411,12 +411,21 @@ exports.lintBuiltDts = function() {
     let { stdout } = require('./scripts/lib/shell').sync([
       'grep', '-iEe', '(declare module [\'"]\\.|p?react)', dtsFile
     ])
-
     stdout = stdout.trim()
-
     if (stdout) { // don't worry about failure. grep gives failure if no results
       console.log('  BAD: ' + stdout)
       anyFailures = true
+    }
+
+    if (struct.isPremium && struct.name !== '@fullcalendar/premium-common') {
+      let { stdout: stdout2 } = require('./scripts/lib/shell').sync([
+        'grep', '-e', '@fullcalendar/premium-common', dtsFile
+      ])
+      stdout2 = stdout2.trim()
+      if (!stdout2) {
+        console.warn(`The premium package ${struct.name} does not have @fullcalendar/premium-common reference in .d.ts`)
+        anyFailures = true
+      }
     }
 
     console.log()
