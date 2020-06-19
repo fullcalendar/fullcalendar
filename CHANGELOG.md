@@ -1,4 +1,14 @@
 
+v5.0.0
+------
+
+Changes since RC:
+- CSS fix for timegrid events. overflow hidden on time text
+- fix where dayMaxEvents would not readjust when increasing height of calendar
+- fix typescript def omission of eventSource 'method' prop (#5505)
+- fix typescript def problem with schedulerLicenseKey again (#5462)
+
+
 v5.0.0-rc (2020-06-15)
 ----------------------
 
@@ -31,12 +41,14 @@ Changes since beta.4:
     - Resource::setExtendedProp
     - Resource::toPlainObject, Resource::toJSON
     - View::calendar
+    - TypeScript definitions for Vue connector
   - bugfixes:
     - Event popover display issues with many events (#5471)
     - Jest test runner cannot find fullcalendar modules (#5467)
     - Incorrect version of tslib required (#5479)
     - License key option unknown, error in console (#5462)
     - @fullcalendar/common has no exported member ScrollGridChunkConfig (#5459)
+    - event title should display on same line as time for 30 minute events in grid views (#5447)
 
 
 v5.0.0-beta.4 (2020-05-26)
