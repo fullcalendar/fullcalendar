@@ -6,7 +6,7 @@ the :root statement itself is only included in the common stylesheet.
 this file is not processed by postcss when imported into the postcss-custom-properties plugin,
 so only write standard css!
 
-NOTE: for old browsers, will need to start after changing a variable
+NOTE: for old browsers, will need to restart watcher after changing a variable
 */
 
 :root {

@@ -16,9 +16,9 @@ globby.sync('*', { cwd: PROJECTS_ROOT, onlyDirectories: true }).forEach(function
       'TODO: come up with a solution for v5'
     )
 
-  } else if (exampleName === 'vue-vuex') {
+  } else if (exampleName === 'vue-vuex' || exampleName === 'react-mobx-typescript') {
     console.log(
-      'Skipping vue-vuex because it doesn\'t work with hoisting.'
+      `Skipping ${exampleName} because it doesn\'t work with hoisting yet.`
     )
 
   } else {
