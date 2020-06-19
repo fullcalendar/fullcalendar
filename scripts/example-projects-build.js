@@ -16,6 +16,11 @@ globby.sync('*', { cwd: PROJECTS_ROOT, onlyDirectories: true }).forEach(function
       'TODO: come up with a solution for v5'
     )
 
+  } else if (exampleName === 'vue-vuex') {
+    console.log(
+      'Skipping vue-vuex because it doesn\'t work with hoisting.'
+    )
+
   } else {
 
     let { success: cleanSuccess } = exec.sync([ 'npm', 'run', 'clean' ], {
