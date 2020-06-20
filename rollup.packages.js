@@ -27,7 +27,7 @@ module.exports = [
         format: 'es',
         file: path.join(struct.dir, struct.mainDistJs),
         sourcemap: true,
-        banner: buildBanner()
+        banner: buildBanner(struct.isPremium)
       },
       plugins: [
         externalizeVDom(),

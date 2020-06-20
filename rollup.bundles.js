@@ -22,7 +22,7 @@ module.exports = bundleStructs.map((struct) => {
       format: 'iife',
       name: 'FullCalendar',
       file: path.join(struct.dir, struct.mainDistJs),
-      banner: buildBanner()
+      banner: buildBanner(struct.isPremium)
     },
     plugins: [
       removeStylesheetImports(),
