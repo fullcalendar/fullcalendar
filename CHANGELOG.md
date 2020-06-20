@@ -1,6 +1,6 @@
 
-v5.0.0
-------
+v5.0.0 (2020-06-19)
+-------------------
 
 Changes since RC:
 - CSS fix for timegrid events. overflow hidden on time text
