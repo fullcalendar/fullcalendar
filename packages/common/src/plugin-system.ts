@@ -1,5 +1,6 @@
 import { guid } from './util/misc'
 import { PluginDefInput, PluginDef, PluginHooks } from './plugin-system-struct'
+import { isArraysEqual } from './util/array'
 
 
 // TODO: easier way to add new hooks? need to update a million things
@@ -46,7 +47,7 @@ export function createPlugin(input: PluginDefInput): PluginDef {
 }
 
 
-export function buildPluginHooks(pluginDefs: PluginDef[] | null, globalDefs: PluginDef[]): PluginHooks {
+function buildPluginHooks(pluginDefs: PluginDef[], globalDefs: PluginDef[]): PluginHooks {
   let isAdded: { [pluginId: string]: boolean } = {}
   let hooks: PluginHooks = {
     reducers: [],
@@ -101,6 +102,22 @@ export function buildPluginHooks(pluginDefs: PluginDef[] | null, globalDefs: Plu
   addDefs(globalDefs)
 
   return hooks
+}
+
+
+export function buildBuildPluginHooks() { // memoizes
+  let currentOverrideDefs: PluginDef[] = []
+  let currentGlobalDefs: PluginDef[] = []
+  let currentHooks: PluginHooks
+
+  return function(overrideDefs: PluginDef[], globalDefs: PluginDef[]) {
+    if (!currentHooks || !isArraysEqual(overrideDefs, currentOverrideDefs) || !isArraysEqual(globalDefs, currentGlobalDefs)) {
+      currentHooks = buildPluginHooks(overrideDefs, globalDefs)
+    }
+    currentOverrideDefs = overrideDefs
+    currentGlobalDefs = globalDefs
+    return currentHooks
+  }
 }
 
 

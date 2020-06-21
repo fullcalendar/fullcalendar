@@ -1,10 +1,11 @@
 
-v5.0.0 (2020-06-19)
+v5.0.0 (2020-06-20)
 -------------------
 
 Changes since RC:
 - CSS fix for timegrid events. overflow hidden on time text
 - fix where dayMaxEvents would not readjust when increasing height of calendar
+- fix for calendar updating when no options were reset (#5519)
 - fix typescript def omission of eventSource 'method' prop (#5505)
 - fix typescript def problem with schedulerLicenseKey again (#5462)
 

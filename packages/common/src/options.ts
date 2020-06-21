@@ -1,5 +1,5 @@
 import { createDuration } from './datelib/duration'
-import { mergeProps } from './util/object'
+import { mergeProps, isPropsEqual } from './util/object'
 import { createFormatter } from './datelib/formatting'
 import { parseFieldSpecs } from './util/misc'
 import { DateProfileGeneratorClass } from './DateProfileGenerator'
@@ -348,12 +348,22 @@ export type CalendarOptionsRefined =
   CalendarListenersLoose &
   RefinedOptionsFromRefiners<Required<CalendarOptionRefiners>> // Required hack
 
-const COMPLEX_CALENDAR_OPTIONS: (keyof CalendarOptions)[] = [
-  'headerToolbar',
-  'footerToolbar',
-  'buttonText',
-  'buttonIcons'
-]
+export const COMPLEX_OPTION_COMPARATORS: {
+  [optionName in keyof CalendarOptions]: (a: CalendarOptions[optionName], b: CalendarOptions[optionName]) => boolean
+} = {
+  headerToolbar: isBoolComplexEqual,
+  footerToolbar: isBoolComplexEqual,
+  buttonText: isBoolComplexEqual,
+  buttonIcons: isBoolComplexEqual
+}
+
+function isBoolComplexEqual(a, b) {
+  if (typeof a === 'object' && typeof b === 'object' && a && b) { // both non-null objects
+    return isPropsEqual(a, b)
+  } else {
+    return a === b
+  }
+}
 
 
 
@@ -396,7 +406,7 @@ export type ViewOptionsRefined =
 
 
 export function mergeRawOptions(optionSets: Dictionary[]) {
-  return mergeProps(optionSets, COMPLEX_CALENDAR_OPTIONS)
+  return mergeProps(optionSets, COMPLEX_OPTION_COMPARATORS)
 }
 
 

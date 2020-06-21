@@ -5,8 +5,7 @@ import { compareObjs, EqualityFuncs, getUnequalProps } from './util/object'
 import { Dictionary } from './options'
 
 
-// TODO: make a HOC instead
-export abstract class BaseComponent<Props=Dictionary, State=Dictionary> extends Component<Props, State> {
+export abstract class PureComponent<Props=Dictionary, State=Dictionary> extends Component<Props, State> {
 
   static addPropsEquality = addPropsEquality
   static addStateEquality = addStateEquality
@@ -30,8 +29,16 @@ export abstract class BaseComponent<Props=Dictionary, State=Dictionary> extends 
 
 }
 
-BaseComponent.prototype.propEquality = {}
-BaseComponent.prototype.stateEquality = {}
+PureComponent.prototype.propEquality = {}
+PureComponent.prototype.stateEquality = {}
+
+
+export abstract class BaseComponent<Props=Dictionary, State=Dictionary> extends PureComponent<Props, State> {
+
+  static contextType = ViewContextType
+  context: ViewContext
+
+}
 
 
 function addPropsEquality(this: { prototype: { propEquality: any } }, propEquality) {

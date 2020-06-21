@@ -9,7 +9,7 @@ import { DateMarker } from './datelib/marker'
 import { CalendarData } from './reducers/data-types'
 import { ViewPropsTransformerClass } from './plugin-system-struct'
 import { __assign } from 'tslib'
-import { createElement, createRef, Component, VUIEvent, Fragment } from './vdom'
+import { createElement, createRef, VUIEvent, Fragment } from './vdom'
 import { buildDelegationHandler } from './util/dom-event'
 import { ViewContainer } from './ViewContainer'
 import { Interaction, InteractionSettingsInput, InteractionClass, parseInteractionSettings, interactionSettingsStore } from './interactions/interaction'
@@ -19,6 +19,7 @@ import { EventHovering } from './interactions/EventHovering'
 import { getNow } from './reducers/current-date'
 import { CalendarInteraction } from './calendar-utils'
 import { DelayedRunner } from './util/runner'
+import { PureComponent } from './vdom-util'
 
 
 export interface CalendarContentProps extends CalendarData {
@@ -27,7 +28,7 @@ export interface CalendarContentProps extends CalendarData {
 }
 
 
-export class CalendarContent extends Component<CalendarContentProps> {
+export class CalendarContent extends PureComponent<CalendarContentProps> {
 
   context: never
 

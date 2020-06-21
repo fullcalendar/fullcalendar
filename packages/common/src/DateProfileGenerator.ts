@@ -1,7 +1,6 @@
 import { DateMarker, startOfDay, addDays } from './datelib/marker'
 import { Duration, createDuration, asRoughDays, asRoughMs, greatestDurationDenominator } from './datelib/duration'
 import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, parseRange, DateRangeInput } from './datelib/date-range'
-import { ViewSpec } from './structs/view-spec'
 import { DateEnv, DateInput } from './datelib/env'
 import { computeVisibleDayRange } from './util/date'
 import { getNow } from './reducers/current-date'
@@ -22,7 +21,10 @@ export interface DateProfile {
 }
 
 export interface DateProfileGeneratorProps extends DateProfileOptions {
-  viewSpec: ViewSpec
+  dateProfileGeneratorClass: DateProfileGeneratorClass // not used by DateProfileGenerator itself
+  duration: Duration
+  durationUnit: string
+  usesMinMaxTime: boolean
   dateEnv: DateEnv
   calendarApi: CalendarApi
 }
@@ -186,21 +188,21 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
   // See build() for a description of `direction`.
   // Guaranteed to have `range` and `unit` properties. `duration` is optional.
   buildCurrentRangeInfo(date: DateMarker, direction) {
-    let { viewSpec, dateEnv } = this.props
+    let { props } = this
     let duration = null
     let unit = null
     let range = null
     let dayCount
 
-    if (viewSpec.duration) {
-      duration = viewSpec.duration
-      unit = viewSpec.durationUnit
+    if (props.duration) {
+      duration = props.duration
+      unit = props.durationUnit
       range = this.buildRangeFromDuration(date, direction, duration, unit)
     } else if ((dayCount = this.props.dayCount)) {
       unit = 'day'
       range = this.buildRangeFromDayCount(date, direction, dayCount)
     } else if ((range = this.buildCustomVisibleRange(date))) {
-      unit = dateEnv.greatestWholeUnit(range.start, range.end).unit
+      unit = props.dateEnv.greatestWholeUnit(range.start, range.end).unit
     } else {
       duration = this.getFallbackDuration()
       unit = greatestDurationDenominator(duration).unit
@@ -219,11 +221,11 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
   // Returns a new activeRange to have time values (un-ambiguate)
   // slotMinTime or slotMaxTime causes the range to expand.
   adjustActiveRange(range: DateRange) {
-    let { dateEnv, viewSpec, slotMinTime, slotMaxTime } = this.props
+    let { dateEnv, usesMinMaxTime, slotMinTime, slotMaxTime } = this.props
     let start = range.start
     let end = range.end
 
-    if (viewSpec.optionDefaults.usesMinMaxTime) {
+    if (usesMinMaxTime) {
 
       // expand active range if slotMinTime is negative (why not when positive?)
       if (asRoughDays(slotMinTime) < 0) {

@@ -3,23 +3,16 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
 
 // Merges an array of objects into a single object.
 // The second argument allows for an array of property names who's object values will be merged together.
-export function mergeProps(propObjs, complexProps?): any {
+export function mergeProps(propObjs, complexPropsMap?): any {
   let dest = {}
-  let i
-  let name
-  let complexObjs
-  let j
-  let val
-  let props
 
-  if (complexProps) {
-    for (i = 0; i < complexProps.length; i++) {
-      name = complexProps[i]
-      complexObjs = []
+  if (complexPropsMap) {
+    for (let name in complexPropsMap) {
+      let complexObjs = []
 
       // collect the trailing object values, stopping when a non-object is discovered
-      for (j = propObjs.length - 1; j >= 0; j--) {
-        val = propObjs[j][name]
+      for (let i = propObjs.length - 1; i >= 0; i--) {
+        let val = propObjs[i][name]
 
         if (typeof val === 'object' && val) { // non-null object
           complexObjs.unshift(val)
@@ -37,10 +30,10 @@ export function mergeProps(propObjs, complexProps?): any {
   }
 
   // copy values into the destination, going from last to first
-  for (i = propObjs.length - 1; i >= 0; i--) {
-    props = propObjs[i]
+  for (let i = propObjs.length - 1; i >= 0; i--) {
+    let props = propObjs[i]
 
-    for (name in props) {
+    for (let name in props) {
       if (!(name in dest)) { // if already assigned by previous props or complex props, don't reassign
         dest[name] = props[name]
       }

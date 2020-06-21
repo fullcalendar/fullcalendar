@@ -1,7 +1,7 @@
 import { buildLocale, RawLocaleInfo, organizeRawLocales, LocaleSingularArg } from '../datelib/locale'
 import { memoize, memoizeObjArg } from '../util/memoize'
 import { Action } from './Action'
-import { buildPluginHooks } from '../plugin-system'
+import { buildBuildPluginHooks } from '../plugin-system'
 import { PluginHooks } from '../plugin-system-struct'
 import { DateEnv } from '../datelib/env'
 import { CalendarApi } from '../CalendarApi'
@@ -24,7 +24,14 @@ import { Emitter } from '../common/Emitter'
 import { EventUiHash, EventUi, createEventUi } from '../component/event-ui'
 import { EventDefHash } from '../structs/event-def'
 import { parseToolbars } from '../toolbar-parse'
-import { CalendarOptionsRefined, CalendarOptions, CALENDAR_OPTION_REFINERS, ViewOptions, ViewOptionsRefined, BASE_OPTION_DEFAULTS, mergeRawOptions, BASE_OPTION_REFINERS, VIEW_OPTION_REFINERS, CalendarListeners, CALENDAR_LISTENER_REFINERS, Dictionary } from '../options'
+import {
+  CalendarOptionsRefined, CalendarOptions,
+  CALENDAR_OPTION_REFINERS, COMPLEX_OPTION_COMPARATORS,
+  ViewOptions, ViewOptionsRefined,
+  BASE_OPTION_DEFAULTS, mergeRawOptions,
+  BASE_OPTION_REFINERS, VIEW_OPTION_REFINERS,
+  CalendarListeners, CALENDAR_LISTENER_REFINERS, Dictionary
+} from '../options'
 import { rangeContainsMarker } from '../datelib/date-range'
 import { ViewApi } from '../ViewApi'
 import { parseBusinessHours } from '../structs/business-hours'
@@ -61,7 +68,7 @@ export class CalendarDataManager {
   private computeCurrentViewData = memoize(this._computeCurrentViewData)
   private organizeRawLocales = memoize(organizeRawLocales)
   private buildLocale = memoize(buildLocale)
-  private buildPluginHooks = memoize(buildPluginHooks)
+  private buildPluginHooks = buildBuildPluginHooks()
   private buildDateEnv = memoize(buildDateEnv)
   private buildTheme = memoize(buildTheme)
   private parseToolbars = memoize(parseToolbars)
@@ -417,16 +424,21 @@ export class CalendarDataManager {
     let anyChanges = false
 
     for (let optionName in raw) {
+      if (optionName !== 'plugins') { // because plugins is special-cased
 
-      if (raw[optionName] === currentRaw[optionName]) {
-        refined[optionName] = currentRefined[optionName]
+        if (
+          raw[optionName] === currentRaw[optionName] ||
+          (COMPLEX_OPTION_COMPARATORS[optionName] && (optionName in currentRaw) && COMPLEX_OPTION_COMPARATORS[optionName](currentRaw[optionName], raw[optionName]))
+        ) {
+          refined[optionName] = currentRefined[optionName]
 
-      } else if (refiners[optionName]) {
-        refined[optionName] = refiners[optionName](raw[optionName])
-        anyChanges = true
+        } else if (refiners[optionName]) {
+          refined[optionName] = refiners[optionName](raw[optionName])
+          anyChanges = true
 
-      } else {
-        extra[optionName] = currentRaw[optionName]
+        } else {
+          extra[optionName] = currentRaw[optionName]
+        }
       }
     }
 
@@ -464,7 +476,10 @@ export class CalendarDataManager {
     warnUnknownOptions(extra)
 
     let dateProfileGenerator = this.buildDateProfileGenerator({
-      viewSpec,
+      dateProfileGeneratorClass: viewSpec.optionDefaults.dateProfileGeneratorClass,
+      duration: viewSpec.duration,
+      durationUnit: viewSpec.durationUnit,
+      usesMinMaxTime: viewSpec.optionDefaults.usesMinMaxTime,
       dateEnv: optionsData.dateEnv,
       calendarApi: this.props.calendarApi, // should come from elsewhere?
       slotMinTime: refinedOptions.slotMinTime,
@@ -583,7 +598,7 @@ function buildTheme(options: CalendarOptionsRefined, pluginHooks: PluginHooks) {
 
 
 function buildDateProfileGenerator(props: DateProfileGeneratorProps): DateProfileGenerator {
-  let DateProfileGeneratorClass = props.viewSpec.optionDefaults.dateProfileGeneratorClass || DateProfileGenerator
+  let DateProfileGeneratorClass = props.dateProfileGeneratorClass || DateProfileGenerator
 
   return new DateProfileGeneratorClass(props)
 }

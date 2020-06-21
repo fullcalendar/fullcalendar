@@ -1,5 +1,5 @@
 import { ViewDef, compileViewDefs } from './view-def'
-import { Duration, createDuration, greatestDurationDenominator } from '../datelib/duration'
+import { Duration, createDuration, greatestDurationDenominator, DurationInput } from '../datelib/duration'
 import { mapHash } from '../util/object'
 import { ViewOptions, CalendarOptions, BASE_OPTION_DEFAULTS } from '../options'
 import { ViewConfigInputHash, parseViewConfigs, ViewConfigHash, ViewComponentType } from './view-config'
@@ -51,7 +51,7 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
   let singleUnitOverrides: ViewOptions = {}
 
   if (durationInput) {
-    duration = createDuration(durationInput)
+    duration = createDurationCached(durationInput)
 
     if (duration) { // valid?
       let denom = greatestDurationDenominator(duration)
@@ -101,4 +101,21 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
       queryButtonText(BASE_OPTION_DEFAULTS) ||
       viewDef.type // fall back to given view name
   }
+}
+
+
+// hack to get memoization working
+
+let durationInputMap: { [json: string]: Duration } = {}
+
+function createDurationCached(durationInput: DurationInput) {
+  let json = JSON.stringify(durationInput)
+  let res = durationInputMap[json]
+
+  if (res === undefined) {
+    res = createDuration(durationInput)
+    durationInputMap[json] = res
+  }
+
+  return res
 }
