@@ -32,11 +32,10 @@ export class TableListItemEvent extends BaseComponent<DotTableEventProps> {
         isFuture={props.isFuture}
         isToday={props.isToday}
       >
-        {(rootElRef, classNames, innerElRef, innerContent, hookProps) => ( // we don't use styles!
+        {(rootElRef, classNames, innerElRef, innerContent) => ( // we don't use styles!
           <a
             className={[ 'fc-daygrid-event', 'fc-daygrid-dot-event' ].concat(classNames).join(' ')}
             ref={rootElRef}
-            style={{ color: hookProps.textColor }}
             {...getSegAnchorAttrs(props.seg)}
           >
             {innerContent}

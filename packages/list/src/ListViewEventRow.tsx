@@ -40,7 +40,7 @@ export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
             <td className='fc-list-event-graphic'>
               <span className='fc-list-event-dot' style={{ borderColor: hookProps.borderColor || hookProps.backgroundColor }} />
             </td>
-            <td className='fc-list-event-title' ref={innerElRef} style={{ color: hookProps.textColor }}>
+            <td className='fc-list-event-title' ref={innerElRef}>
               {innerContent}
             </td>
           </tr>

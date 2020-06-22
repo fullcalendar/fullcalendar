@@ -5,6 +5,7 @@ v5.0.0 (2020-06-20)
 Changes since RC:
 - CSS fix for timegrid events. overflow hidden on time text
 - fix where dayMaxEvents would not readjust when increasing height of calendar
+- don't set custom text colors on list-view events or list-item events (#5522)
 - fix event dot color not being customizable (#5522)
 - fix for calendar updating when no options were reset (#5519)
 - fix typescript def omission of eventSource 'method' prop (#5505)
