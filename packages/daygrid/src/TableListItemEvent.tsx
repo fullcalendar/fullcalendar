@@ -54,7 +54,7 @@ function renderInnerContent(innerProps: EventContentArg) {
     <Fragment>
       <div
         className='fc-daygrid-event-dot'
-        style={{ borderColor: innerProps.backgroundColor || innerProps.borderColor }}
+        style={{ borderColor: innerProps.borderColor || innerProps.backgroundColor }}
       />
       {innerProps.timeText &&
         <div className='fc-event-time'>{innerProps.timeText}</div>

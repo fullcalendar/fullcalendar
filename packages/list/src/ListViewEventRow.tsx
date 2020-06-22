@@ -38,7 +38,7 @@ export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
           <tr className={[ 'fc-list-event', hookProps.event.url ? 'fc-event-forced-url' : '' ].concat(classNames).join(' ')} ref={rootElRef}>
             {buildTimeContent(seg, timeFormat, context)}
             <td className='fc-list-event-graphic'>
-              <span className='fc-list-event-dot' style={{ backgroundColor: hookProps.backgroundColor }} />
+              <span className='fc-list-event-dot' style={{ borderColor: hookProps.borderColor || hookProps.backgroundColor }} />
             </td>
             <td className='fc-list-event-title' ref={innerElRef} style={{ color: hookProps.textColor }}>
               {innerContent}
