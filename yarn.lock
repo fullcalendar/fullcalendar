@@ -14986,7 +14986,7 @@ rollup@^1.31.0, rollup@^1.32.1:
     "@types/node" "*"
     acorn "^7.1.0"
 
-rrule@^2.6.0, rrule@^2.6.2:
+rrule@^2.6.0:
   version "2.6.4"
   resolved "https://registry.yarnpkg.com/rrule/-/rrule-2.6.4.tgz#7f4f31fda12bc7249bb176c891109a9bc448e035"
   integrity sha512-sLdnh4lmjUqq8liFiOUXD5kWp/FcnbDLPwq5YAc/RrN6120XOPb86Ae5zxF7ttBVq8O3LxjjORMEit1baluahA==
