@@ -249,9 +249,9 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
               {(rootElRef, customClassNames, innerElRef, innerContent) => (
                 <td ref={rootElRef} className={classNames.concat(customClassNames).join(' ')} data-time={props.isoTimeStr}>
                   <div className='fc-timegrid-slot-label-frame fc-scrollgrid-shrink-frame'>
-                    <span className='fc-timegrid-slot-label-cushion fc-scrollgrid-shrink-cushion' ref={innerElRef}>
+                    <div className='fc-timegrid-slot-label-cushion fc-scrollgrid-shrink-cushion' ref={innerElRef}>
                       {innerContent}
-                    </span>
+                    </div>
                   </div>
                 </td>
               )}

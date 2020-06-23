@@ -16,6 +16,7 @@
   }
 
   & .fc-timegrid-slot-label-cushion {
+    display: inline-block;
     white-space: nowrap;
   }
 
