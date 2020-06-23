@@ -2,7 +2,8 @@
 v5.0.1 (2020-06-23)
 -------------------
 
-- change CSS for when 'today' background color is applied
+- fix: prevent timed background events from appearing in daygrid
+- fix: change CSS for when 'today' background color is applied
   - fixes bootstrap-themed popover incorrectly being colored semi-transparent
   - removes yellow color from date headers in timegrid view, which looks better
 

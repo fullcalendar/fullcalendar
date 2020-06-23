@@ -143,7 +143,7 @@ export class Table extends DateComponent<TableProps, TableState> {
                       renderIntro={props.renderRowIntro}
                       businessHourSegs={businessHourSegsByRow[row]}
                       eventSelection={props.eventSelection}
-                      bgEventSegs={bgEventSegsByRow[row]}
+                      bgEventSegs={bgEventSegsByRow[row].filter(isSegAllDay) /* hack */}
                       fgEventSegs={fgEventSegsByRow[row]}
                       dateSelectionSegs={dateSelectionSegsByRow[row]}
                       eventDrag={eventDragByRow[row]}
@@ -307,4 +307,9 @@ function buildBuildMoreLinkText(moreLinkTextInput): (num: number) => string {
       return `+${num} ${moreLinkTextInput}`
     }
   }
+}
+
+
+function isSegAllDay(seg: TableSeg) {
+  return seg.eventRange.def.allDay
 }
