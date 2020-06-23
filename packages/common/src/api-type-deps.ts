@@ -5,6 +5,7 @@ export { DurationInput } from './datelib/duration'
 export { DateSpanInput } from './structs/date-span'
 export { DateRangeInput } from './datelib/date-range'
 export { EventSourceInput } from './structs/event-source-parse'
+export { EventSourceFunc } from './event-sources/func-event-source' // people might want this
 export { EventInput, EventInputTransformer } from './structs/event-parse'
 export { EventSourceApi } from './api/EventSourceApi'
 export { EventApi } from './api/EventApi'
