@@ -1,9 +1,17 @@
 
 .fc {
+
+  & .fc-timegrid-col {
+    &.fc-day-today {
+      background-color: var(--fc-today-bg-color);
+    }
+  }
+
   & .fc-timegrid-col-frame {
     min-height: 100%; // liquid-hack is below
     position: relative;
   }
+
 }
 
 .fc-liquid-hack {

@@ -25,6 +25,12 @@ $daygrid-popover-z: 8;
     z-index: 1; // container inner z-index's because <tr>s can't do it
   }
 
+  & .fc-daygrid-day {
+    &.fc-day-today {
+      background-color: var(--fc-today-bg-color);
+    }
+  }
+
   & .fc-daygrid-day-frame {
     position: relative;
     min-height: 100%; // seems to work better than `height` because sets height after rows/cells naturally do it
