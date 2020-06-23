@@ -31,7 +31,7 @@
 
   & .fc-popover {
     border: 1px solid var(--fc-border-color);
-    background: #fff;
+    background: var(--fc-page-bg-color);
   }
 
   & .fc-popover-header {

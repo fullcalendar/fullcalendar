@@ -74,7 +74,7 @@
   // stickiness
 
   & .fc-scrollgrid-section-sticky > * {
-    background: #fff; // TODO: var
+    background: var(--fc-page-bg-color);
     position: sticky;
     z-index: 2; // TODO: var
     // TODO: box-shadow when sticking
