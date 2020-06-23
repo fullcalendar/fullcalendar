@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/timegrid",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "title": "FullCalendar Time Grid Plugin",
   "description": "Display your events on a grid of time slots",
   "docs": "https://fullcalendar.io/docs/timegrid-view",
