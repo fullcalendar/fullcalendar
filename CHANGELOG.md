@@ -2,6 +2,9 @@
 v5.0.1 (2020-06-23)
 -------------------
 
+- fix: give type attribute to buttons in header to prevent form submit (#5529)
+- fix: time axis customization via slotLabelContent causes ugly spacing (#5526)
+- fix: export EventSourceFunc in type definitions (#5530)
 - fix: prevent timed background events from appearing in daygrid
 - fix: change CSS for when 'today' background color is applied
   - fixes bootstrap-themed popover incorrectly being colored semi-transparent
