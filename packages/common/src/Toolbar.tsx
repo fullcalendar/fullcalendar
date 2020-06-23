@@ -120,6 +120,7 @@ class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
             disabled={isDisabled}
             className={buttonClasses.join(' ')}
             onClick={buttonClick}
+            type='button'
             { ...ariaAttrs }
           >{ buttonText || (buttonIcon ? <span className={buttonIcon} /> : '')}</button>
         )
