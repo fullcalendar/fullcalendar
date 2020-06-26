@@ -19,8 +19,7 @@ import {
   RenderHook,
   DateProfile,
   SlotLabelContentArg,
-  SlotLaneContentArg,
-  isElVisible
+  SlotLaneContentArg
 } from '@fullcalendar/common'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
@@ -112,7 +111,7 @@ export class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
     ) {
       let rootEl = this.rootElRef.current
 
-      if (isElVisible(rootEl)) { // not hidden by css
+      if (rootEl.offsetHeight) { // not hidden by css
         props.onCoords(
           new TimeColsSlatsCoords(
             new PositionCache(

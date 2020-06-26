@@ -71,7 +71,7 @@ export {
   applyStyleProp,
   elementMatches,
   elementClosest,
-  isElVisible
+  isElVisible // TODO: remove next minor version
 } from './util/dom-manip'
 export { parseClassNames } from './util/html'
 

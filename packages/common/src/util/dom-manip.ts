@@ -35,8 +35,8 @@ export function injectDomNodes(el: HTMLElement, domNodes: Node[] | NodeList) {
 }
 
 
-export function isElVisible(el: HTMLElement) {
-  return Boolean(el.offsetWidth && el.offsetHeight)
+export function isElVisible(el: HTMLElement) { // TODO: remove next minor version
+  return Boolean(el.offsetWidth || el.offsetHeight)
 }
 
 
