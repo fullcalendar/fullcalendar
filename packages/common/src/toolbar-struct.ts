@@ -31,6 +31,8 @@ export interface ButtonIconsInput {
   next?: string
   prevYear?: string
   nextYear?: string
+  today?: string
+  [viewOrCustomButton: string]: string | undefined
 }
 
 export interface ButtonTextCompoundInput {
@@ -42,5 +44,5 @@ export interface ButtonTextCompoundInput {
   month?: string
   week?: string
   day?: string
-  [viewId: string]: string | undefined // needed b/c of other optional types ... make extendable???
+  [viewOrCustomButton: string]: string | undefined // needed b/c of other optional types
 }
