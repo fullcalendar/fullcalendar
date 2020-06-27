@@ -65,6 +65,7 @@
     "@types/node": "^12.12.14",
     "@typescript-eslint/eslint-plugin": "^3.1.0",
     "@typescript-eslint/parser": "^3.1.0",
+    "autoprefixer": "^9.8.4",
     "bootstrap": "^3.4.1",
     "chokidar": "^2.1.5",
     "concurrently": "^4.1.1",

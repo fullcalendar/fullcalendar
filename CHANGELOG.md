@@ -1,4 +1,10 @@
 
+v5.0.2
+------
+
+- fix: unwanted text selection while dragging in Safari
+
+
 v5.0.1 (2020-06-23)
 -------------------
 
