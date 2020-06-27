@@ -377,7 +377,7 @@ export class DateEnv {
     start: DateMarker,
     end: DateMarker,
     formatter: DateFormatter,
-    dateOptions: { forcedStartTzo?: number, forcedEndTzo?: number, isEndExclusive?: boolean } = {}
+    dateOptions: { forcedStartTzo?: number, forcedEndTzo?: number, isEndExclusive?: boolean, defaultSeparator?: string } = {}
   ) {
 
     if (dateOptions.isEndExclusive) {
@@ -397,7 +397,8 @@ export class DateEnv {
           dateOptions.forcedEndTzo :
           this.offsetForMarker(end)
       },
-      this
+      this,
+      dateOptions.defaultSeparator
     )
   }
 

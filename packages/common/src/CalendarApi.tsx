@@ -292,12 +292,12 @@ export class CalendarApi {
 
   // `settings` is for formatter AND isEndExclusive
   formatRange(d0: DateInput, d1: DateInput, settings) {
-    let { dateEnv, options } = this.getCurrentData()
+    let { dateEnv } = this.getCurrentData()
 
     return dateEnv.formatRange(
       dateEnv.createMarker(d0),
       dateEnv.createMarker(d1),
-      createFormatter(settings, options.defaultRangeSeparator),
+      createFormatter(settings),
       settings
     )
   }

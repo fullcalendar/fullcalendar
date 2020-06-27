@@ -43,7 +43,7 @@ function formatWithCmdStr(cmdStr: string, arg: VerboseFormattingArg) {
       cmd,
       createMomentFormatFunc(startMom),
       createMomentFormatFunc(endMom),
-      arg.separator
+      arg.defaultSeparator
     )
   }
 

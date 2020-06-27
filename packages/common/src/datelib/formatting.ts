@@ -4,19 +4,15 @@ import { FuncFormatter, FuncFormatterFunc } from './formatting-func'
 import { DateFormatter } from './DateFormatter'
 
 
-// TODO: use Intl.DateTimeFormatOptions
 export type FormatterInput = NativeFormatterOptions | string | FuncFormatterFunc
 
 
-export function createFormatter(input: FormatterInput, defaultSeparator?: string): DateFormatter {
+export function createFormatter(input: FormatterInput): DateFormatter {
   if (typeof input === 'object' && input) { // non-null object
-    if (typeof defaultSeparator === 'string') {
-      input = { separator: defaultSeparator, ...input }
-    }
     return new NativeFormatter(input)
 
   } else if (typeof input === 'string') {
-    return new CmdFormatter(input, defaultSeparator)
+    return new CmdFormatter(input)
 
   } else if (typeof input === 'function') {
     return new FuncFormatter(input as FuncFormatterFunc)

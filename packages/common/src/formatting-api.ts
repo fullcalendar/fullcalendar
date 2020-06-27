@@ -1,5 +1,6 @@
 import { DateEnv } from './datelib/env'
 import { createFormatter } from './datelib/formatting'
+import { NativeFormatterOptions } from './datelib/formatting-native'
 import { organizeRawLocales, buildLocale } from './datelib/locale'
 import { BASE_OPTION_DEFAULTS } from './options'
 
@@ -9,9 +10,19 @@ import {
 } from './api-type-deps'
 
 
-export function formatDate(dateInput: DateInput, settings = {}) {
-  let dateEnv = buildDateEnv(settings)
-  let formatter = createFormatter(settings)
+export interface FormatDateOptions extends NativeFormatterOptions {
+  locale?: string
+}
+
+export interface FormatRangeOptions extends FormatDateOptions {
+  separator?: string
+  isEndExclusive?: boolean
+}
+
+
+export function formatDate(dateInput: DateInput, options: FormatDateOptions = {}) {
+  let dateEnv = buildDateEnv(options)
+  let formatter = createFormatter(options)
   let dateMeta = dateEnv.createMarkerMeta(dateInput)
 
   if (!dateMeta) { // TODO: warning?
@@ -23,13 +34,14 @@ export function formatDate(dateInput: DateInput, settings = {}) {
   })
 }
 
+
 export function formatRange(
   startInput: DateInput,
   endInput: DateInput,
-  settings // mixture of env and formatter settings
+  options: FormatRangeOptions // mixture of env and formatter settings
 ) {
-  let dateEnv = buildDateEnv(typeof settings === 'object' && settings ? settings : {}) // pass in if non-null object
-  let formatter = createFormatter(settings, BASE_OPTION_DEFAULTS.defaultRangeSeparator)
+  let dateEnv = buildDateEnv(typeof options === 'object' && options ? options : {}) // pass in if non-null object
+  let formatter = createFormatter(options)
   let startMeta = dateEnv.createMarkerMeta(startInput)
   let endMeta = dateEnv.createMarkerMeta(endInput)
 
@@ -40,21 +52,20 @@ export function formatRange(
   return dateEnv.formatRange(startMeta.marker, endMeta.marker, formatter, {
     forcedStartTzo: startMeta.forcedTzo,
     forcedEndTzo: endMeta.forcedTzo,
-    isEndExclusive: settings.isEndExclusive
+    isEndExclusive: options.isEndExclusive,
+    defaultSeparator: BASE_OPTION_DEFAULTS.defaultRangeSeparator
   })
 }
 
+
 // TODO: more DRY and optimized
-function buildDateEnv(settings) {
+function buildDateEnv(settings: FormatRangeOptions) {
   let locale = buildLocale(settings.locale || 'en', organizeRawLocales([]).map) // TODO: don't hardcode 'en' everywhere
 
-  // ensure required settings
-  settings = {
+  return new DateEnv({
     timeZone: BASE_OPTION_DEFAULTS.timeZone,
     calendarSystem: 'gregory',
     ...settings,
     locale
-  }
-
-  return new DateEnv(settings)
+  })
 }

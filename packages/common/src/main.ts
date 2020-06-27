@@ -9,7 +9,7 @@ export const version: string = '<%= version %>' // important to type it, so .d.t
 export { EventSourceApi } from './api/EventSourceApi'
 export { EventApi, buildEventApis } from './api/EventApi'
 export { CalendarApi } from './CalendarApi'
-export { formatDate, formatRange } from './formatting-api'
+export { formatDate, formatRange, FormatDateOptions, FormatRangeOptions } from './formatting-api'
 export { ViewApi } from './ViewApi'
 export * from './api-type-deps'
 

@@ -200,7 +200,7 @@ export class EventApi {
   formatRange(formatInput: FormatterInput) {
     let { dateEnv } = this._context
     let instance = this._instance
-    let formatter = createFormatter(formatInput, this._context.options.defaultRangeSeparator)
+    let formatter = createFormatter(formatInput)
 
     if (this._def.hasEnd) {
       return dateEnv.formatRange(instance.range.start, instance.range.end, formatter, {

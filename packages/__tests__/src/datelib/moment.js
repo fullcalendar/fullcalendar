@@ -1,13 +1,15 @@
 import { Calendar } from '@fullcalendar/core'
 import momentPlugin, { toMoment, toMomentDuration } from '@fullcalendar/moment'
 import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
 import 'moment/locale/es' // only test spanish
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
 
 describe('moment plugin', function() {
 
-  const PLUGINS = [ dayGridPlugin, momentPlugin ]
+  const PLUGINS = [ dayGridPlugin, timeGridPlugin, momentPlugin ]
   pushOptions({ plugins: PLUGINS })
 
   describe('toMoment', function() {
@@ -164,6 +166,22 @@ describe('moment plugin', function() {
         titleRangeSeparator: ' to '
       })
       expect(currentCalendar.view.title).toBe('September 2 to 8 18 yup')
+    })
+
+    // https://github.com/fullcalendar/fullcalendar/issues/5493
+    it('displays correct rangeSeparator on events', function() {
+      let calendar = initCalendar({
+        initialView: 'timeGridDay',
+        initialDate: '2020-06-26',
+        scrollTime: '00:00',
+        eventTimeFormat: 'HH:mm:ss',
+        events: [
+          { title: 'event', start: '2020-06-26T01:00:00', end: '2020-06-26T02:00:00' }
+        ]
+      })
+      let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+      let timeTexts = timeGridWrapper.getEventTimeTexts()
+      expect(timeTexts[0]).toBe('01:00:00 - 02:00:00')
     })
 
   })

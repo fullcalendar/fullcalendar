@@ -64,7 +64,7 @@ function formatWithCmdStr(cmdStr: string, arg: VerboseFormattingArg) {
       cmd,
       start.toFormat.bind(start),
       end.toFormat.bind(end),
-      arg.separator
+      arg.defaultSeparator
     )
   }
 

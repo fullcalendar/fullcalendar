@@ -77,7 +77,7 @@ export class NativeFormatter implements DateFormatter {
     return this.buildFormattingFunc(this.standardDateProps, this.extendedSettings, context)(date)
   }
 
-  formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext) {
+  formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext, betterDefaultSeparator?: string) {
     let { standardDateProps, extendedSettings } = this
 
     let diffSeverity = computeMarkerDiffSeverity(start.marker, end.marker, context.calendarSystem)
@@ -108,7 +108,7 @@ export class NativeFormatter implements DateFormatter {
     let partial1 = partialFormattingFunc(end)
 
     let insertion = findCommonInsertion(full0, partial0, full1, partial1)
-    let separator = extendedSettings.separator || context.defaultSeparator || ''
+    let separator = extendedSettings.separator || betterDefaultSeparator || context.defaultSeparator || ''
 
     if (insertion) {
       return insertion.before + partial0 + separator + partial1 + insertion.after

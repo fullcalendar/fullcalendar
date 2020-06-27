@@ -13,12 +13,12 @@ export class FuncFormatter implements DateFormatter {
     this.func = func
   }
 
-  format(date: ZonedMarker, context: DateFormattingContext) {
-    return this.func(createVerboseFormattingArg(date, null, context))
+  format(date: ZonedMarker, context: DateFormattingContext, betterDefaultSeparator?: string) {
+    return this.func(createVerboseFormattingArg(date, null, context, betterDefaultSeparator))
   }
 
-  formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext) {
-    return this.func(createVerboseFormattingArg(start, end, context))
+  formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext, betterDefaultSeparator?: string) {
+    return this.func(createVerboseFormattingArg(start, end, context, betterDefaultSeparator))
   }
 
 }

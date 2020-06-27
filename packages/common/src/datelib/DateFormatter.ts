@@ -9,10 +9,10 @@ export interface VerboseFormattingArg { // TODO: kill this
   end?: ExpandedZonedMarker
   timeZone: string
   localeCodes: string[],
-  separator: string
+  defaultSeparator: string
 }
 
-export function createVerboseFormattingArg(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext, separator?: string): VerboseFormattingArg {
+export function createVerboseFormattingArg(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext, betterDefaultSeparator?: string): VerboseFormattingArg {
   let startInfo = expandZonedMarker(start, context.calendarSystem)
   let endInfo = end ? expandZonedMarker(end, context.calendarSystem) : null
 
@@ -22,7 +22,7 @@ export function createVerboseFormattingArg(start: ZonedMarker, end: ZonedMarker,
     end: endInfo,
     timeZone: context.timeZone,
     localeCodes: context.locale.codes,
-    separator
+    defaultSeparator: betterDefaultSeparator || context.defaultSeparator
   }
 }
 
@@ -40,5 +40,5 @@ export interface DateFormattingContext {
 
 export interface DateFormatter {
   format(date: ZonedMarker, context: DateFormattingContext): string
-  formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext, separatorOverride?: string): string
+  formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext, betterDefaultSeparator?: string): string
 }

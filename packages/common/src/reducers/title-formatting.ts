@@ -20,11 +20,11 @@ export function buildTitle(dateProfile: DateProfile, viewOptions: BaseOptions, d
   return dateEnv.formatRange(
     range.start,
     range.end,
-    createFormatter(
-      viewOptions.titleFormat || buildTitleFormat(dateProfile),
-      viewOptions.titleRangeSeparator
-    ),
-    { isEndExclusive: dateProfile.isRangeAllDay }
+    createFormatter(viewOptions.titleFormat || buildTitleFormat(dateProfile)),
+    {
+      isEndExclusive: dateProfile.isRangeAllDay,
+      defaultSeparator: viewOptions.titleRangeSeparator
+    }
   )
 }
 

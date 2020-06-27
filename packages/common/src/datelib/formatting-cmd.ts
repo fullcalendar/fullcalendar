@@ -13,19 +13,17 @@ It receives this at the time of formatting, as a setting.
 export class CmdFormatter implements DateFormatter {
 
   cmdStr: string
-  separator: string
 
-  constructor(cmdStr: string, separator?: string) {
+  constructor(cmdStr: string) {
     this.cmdStr = cmdStr
-    this.separator = separator
   }
 
-  format(date: ZonedMarker, context: DateFormattingContext) {
-    return context.cmdFormatter(this.cmdStr, createVerboseFormattingArg(date, null, context, this.separator))
+  format(date: ZonedMarker, context: DateFormattingContext, betterDefaultSeparator?: string) {
+    return context.cmdFormatter(this.cmdStr, createVerboseFormattingArg(date, null, context, betterDefaultSeparator))
   }
 
-  formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext) {
-    return context.cmdFormatter(this.cmdStr, createVerboseFormattingArg(start, end, context, this.separator))
+  formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext, betterDefaultSeparator?: string) {
+    return context.cmdFormatter(this.cmdStr, createVerboseFormattingArg(start, end, context, betterDefaultSeparator))
   }
 
 }
