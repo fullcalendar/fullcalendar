@@ -5,6 +5,10 @@
     cursor: pointer; // whole row will seem clickable
   }
 
+  & .fc-list-event:hover td {
+    background-color: var(--fc-list-event-hover-bg-color);
+  }
+
   // shrink certain cols
   & .fc-list-event-graphic,
   & .fc-list-event-time {
