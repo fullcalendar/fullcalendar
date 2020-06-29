@@ -1,7 +1,16 @@
 
-v5.0.2
-------
+v5.0.2 (2020-06-29)
+-------------------
 
+- fix: css variables for default event border and bg color switched (#5551)
+- fix: eventContent moves arrow event length indicators (#5547)
+- fix: wrong ts types for bootstrapFontAwesome settings (#5548)
+- fix: Dash between event start and end times is "undefined" with
+  eventTimeFormat and moment plugin (#5493)
+- fix: Events get displaced due to incorrect collisions detected depending on
+  browser, zoom level (#5549)
+- fix: Resource rows are initially squished in Chome in timeline view with
+  contentHeight: "auto" and JSON resources (#5545)
 - fix: unwanted text selection while dragging in Safari
 - fix: reintroduce list-view color-change on event-row hover
 
