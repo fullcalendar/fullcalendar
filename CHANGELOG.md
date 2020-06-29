@@ -1,5 +1,5 @@
 
-v5.0.2 (2020-06-29)
+v5.1.0 (2020-06-29)
 -------------------
 
 - fix: css variables for default event border and bg color switched (#5551)
