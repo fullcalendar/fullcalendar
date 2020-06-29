@@ -5,8 +5,8 @@ A VERTICAL event
 
 .fc-v-event { // allowed to be top-level
 
-  border: 1px solid var(--fc-event-bg-color);
-  background-color: var(--fc-event-border-color);
+  border: 1px solid var(--fc-event-border-color);
+  background-color: var(--fc-event-bg-color);
 
   & .fc-event-main {
     color: var(--fc-event-text-color);
