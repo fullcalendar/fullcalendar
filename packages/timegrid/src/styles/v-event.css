@@ -4,7 +4,7 @@ A VERTICAL event
 */
 
 .fc-v-event { // allowed to be top-level
-
+  display: block;
   border: 1px solid var(--fc-event-border-color);
   background-color: var(--fc-event-bg-color);
 

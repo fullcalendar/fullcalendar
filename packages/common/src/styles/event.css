@@ -8,10 +8,6 @@ $event-resizer-z: 4;
 // link resets
 // ----------------------------------------------------------------------------------------------------
 
-.fc-event { // don't be too specific with a tag
-  display: block;
-}
-
 a.fc-event,
 a.fc-event:hover {
   text-decoration: none;

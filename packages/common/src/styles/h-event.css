@@ -4,7 +4,7 @@ A HORIZONTAL event
 */
 
 .fc-h-event { // allowed to be top-level
-
+  display: block;
   border: 1px solid var(--fc-event-bg-color);
   background-color: var(--fc-event-border-color);
 

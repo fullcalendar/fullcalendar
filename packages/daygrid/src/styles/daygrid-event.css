@@ -24,6 +24,7 @@
 // --- the dot style of event ---
 
 .fc-daygrid-dot-event {
+  display: block;
   padding: 2px 0;
   overflow: hidden;
 
