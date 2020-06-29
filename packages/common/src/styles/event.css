@@ -8,7 +8,7 @@ $event-resizer-z: 4;
 // link resets
 // ----------------------------------------------------------------------------------------------------
 
-a.fc-event {
+.fc-event { // don't be too specific with a tag
   display: block;
 }
 

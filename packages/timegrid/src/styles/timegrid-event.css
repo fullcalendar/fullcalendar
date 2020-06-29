@@ -14,8 +14,6 @@
   }
 
   & .fc-event-time {
-    flex-shrink: 0;
-    overflow: hidden;
     white-space: nowrap;
     font-size: var(--fc-small-font-size);
     margin-bottom: 1px;
@@ -25,7 +23,7 @@
 
 .fc-timegrid-event-condensed {
 
-  & .fc-event-main {
+  & .fc-event-main-frame {
     flex-direction: row;
     overflow: hidden;
   }

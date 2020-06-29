@@ -78,16 +78,16 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
 
 function renderInnerContent(innerProps: EventContentArg) {
   return (
-    <Fragment>
+    <div className='fc-event-main-frame'>
       {innerProps.timeText &&
         <div className='fc-event-time'>{innerProps.timeText}</div>
       }
-      <div className='fc-event-title-frame'>
+      <div className='fc-event-title-container'>
         <div className='fc-event-title fc-sticky'>
           {innerProps.event.title || <Fragment>&nbsp;</Fragment>}
         </div>
       </div>
-    </Fragment>
+    </div>
   )
 }
 
