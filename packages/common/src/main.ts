@@ -70,8 +70,7 @@ export {
   applyStyle,
   applyStyleProp,
   elementMatches,
-  elementClosest,
-  isElVisible // TODO: remove next minor version
+  elementClosest
 } from './util/dom-manip'
 export { parseClassNames } from './util/html'
 
