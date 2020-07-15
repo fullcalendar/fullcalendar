@@ -291,8 +291,7 @@ describe('background events', function() {
     })
 
     describe('when in month view', function() {
-      // disabled for v4
-      xit('can be activated when rendering set on the source', function() {
+      it('can be activated when rendering set on the source', function() {
         let calendar = initCalendar({
           initialView: 'dayGridMonth',
           eventSources: [ {
@@ -310,8 +309,7 @@ describe('background events', function() {
     })
 
     describe('when in timeGrid view and timed event', function() {
-      // disabled for v4
-      xit('can be activated when rendering set on the source', function() {
+      it('can be activated when rendering set on the source', function() {
         let calendar = initCalendar({
           initialView: 'timeGridWeek',
           eventSources: [ {
@@ -321,10 +319,10 @@ describe('background events', function() {
             } ]
           } ]
         })
-        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+        let viewWrapper = new TimeGridViewWrapper(calendar)
 
-        expect(dayGridWrapper.getBgEventEls().length).toBe(1)
-        expect(dayGridWrapper.getEventEls().length).toBe(0)
+        expect(viewWrapper.dayGrid.getEventEls().length).toBe(0)
+        expect(viewWrapper.timeGrid.getBgEventEls().length).toBe(1)
       })
     })
   })
