@@ -1,5 +1,5 @@
 const path = require('path')
-const nodeResolve = require('@rollup/plugin-node-resolve')
+const nodeResolve = require('@rollup/plugin-node-resolve').default
 const alias = require('@rollup/plugin-alias')
 const { checkNoSymlinks, buildBanner } = require('./scripts/lib/new')
 const { removeStylesheetImports, buildAliasMap, injectReleaseDate } = require('./scripts/lib/new-rollup')
