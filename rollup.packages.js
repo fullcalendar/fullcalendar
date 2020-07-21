@@ -123,6 +123,8 @@ function fixDtsCodeIn() {
     fix problem with tsc outputting random imports like this:
       import("../../../packages/common/src/plugin-system-struct")
       import("../../../packages/common/src/main")
+    relevant tickets:
+      https://github.com/microsoft/TypeScript/issues/38111 - "Declaration emit reveals paths within dependency that were not referred to in the source file"
     */
     resolveId(id, importer) {
       if (importer && id.match('packages/common')) {
@@ -143,19 +145,27 @@ function fixDtsCodeOut() {
       /*
       tsc, for classes that have superclasses with getter methods, sometimes reference the return type like this:
         import("@fullcalendar/common/tsc/whatever").Something
-      and this is from WITHIN the @fullcalendar/common package
+      (and this is from WITHIN the @fullcalendar/common package)
+      possible BUG with this hack: playing weird with TS triple-slash references
+      relevant tickets:
+        https://github.com/microsoft/TypeScript/issues/38111 - "Declaration emit reveals paths within dependency that were not referred to in the source file"
       */
-      // BUG: playing weird with TS triple-slash references
       code = code.replace(/(['"]@fullcalendar\/[^'"]+)\/[^'"]+(['"])/g, function(m0, m1, m2) {
         return m1 + m2
       })
 
-      // sometimes tsc fully resolved generic vdom declarations to preact, which makes the VNode<any> a thing (which it shouldn't be)
+      /*
+      sometimes tsc fully resolved generic vdom declarations to preact, which makes the VNode<any> a thing (which it shouldn't be)
+      relevant tickets:
+        https://github.com/microsoft/TypeScript/issues/37151 - "Declaration emit should not inline type definitions"
+      */
       code = code.replace(/VNode<any>/g, 'VNode')
 
       /*
       rollup-plugin-dts sometimes does not correctly reduce nested type declarations, leaving something like this:
         import("../toolbar-struct").ToolbarInput
+      relevant tickets:
+        https://github.com/Swatinem/rollup-plugin-dts/issues/106 - "Imported type within imported generic is not reduced"
       */
       code = code.replace(/import\(([^)]*)\)\./g, '')
 
