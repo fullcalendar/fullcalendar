@@ -161,14 +161,6 @@ function fixDtsCodeOut() {
       */
       code = code.replace(/VNode<any>/g, 'VNode')
 
-      /*
-      rollup-plugin-dts sometimes does not correctly reduce nested type declarations, leaving something like this:
-        import("../toolbar-struct").ToolbarInput
-      relevant tickets:
-        https://github.com/Swatinem/rollup-plugin-dts/issues/106 - "Imported type within imported generic is not reduced"
-      */
-      code = code.replace(/import\(([^)]*)\)\./g, '')
-
       if (/\b(p?react)\b/.test(code)) {
         throw new Error('BAD reference to preact/react in DTS')
       }
