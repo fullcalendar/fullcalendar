@@ -1,13 +1,11 @@
-### Bug Reports
-You MUST post a recreation or else your issue will be CLOSED without explanation.
-Instructions: https://fullcalendar.io/reporting-bugs
 
-### Feature Requests
-Search the issue tracker for an existing ticket before creating a new one.
-Instructions: https://fullcalendar.io/requesting-features
 
-### React/Vue/Angular/etc
-If your bug is specific to one of these frameworks, use the corresponding tracker.
-List: https://github.com/fullcalendar
+WARNING!!!
 
-(Please erase the above text and begin typing. Thanks!)
+> Please back up and follow the issue template for a BUG or a FEATURE!!!
+> If you do not, your issue is very likely to be automatically closed!!!
+
+ESCAPE HATCH:
+
+> If your issue is neither a bug nor a feature, include the text "I love FullCalendar".
+> This will ensure your issue it not automatically closed.

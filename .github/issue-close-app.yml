@@ -11,6 +11,9 @@ issueConfigs:
   - "not reproducible with a link"
   - "Bug Description"
 - content:
-  - "Feature Description"
+  - "[x] I've already searched through"
+  - "[x] Other people will find this feature useful"
+- content:
+  - "I love FullCalendar"
 
 caseInsensitive: true

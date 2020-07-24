@@ -1,21 +1,18 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
-
 ---
 
-### Is there already a ticket?
+### Checklist
 
-Search the through the existing feature requests first:
-https://fullcalendar.io/issues
+Please mark these items with an [x]
+
+  - [ ] I've already searched through [existing tickets](https://fullcalendar.io/issues)
+  - [ ] Other people will find this feature useful
 
 ### Feature Description
 
 Please describe what this feature will do.
-Will others find it useful?
 
 ### Visual Mockups
 
