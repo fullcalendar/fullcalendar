@@ -1,0 +1,16 @@
+
+comment: "This issue is closed because it does not meet our issue template. Please read it."
+
+issueConfigs:
+- content:
+  - "Reduced Test Case"
+  - "http"
+  - "Bug Description"
+- content:
+  - "Reduced Test Case"
+  - "not reproducible with a link"
+  - "Bug Description"
+- content:
+  - "Feature Description"
+
+caseInsensitive: true
