@@ -7,6 +7,7 @@ import {
   renderChunkContent, getSectionHasLiquidHeight, ChunkConfig, hasShrinkWidth, CssDimValue,
   isColPropsEqual
 } from './util'
+import { getCanVGrowWithinCell } from '../util/table-styling'
 import { memoize } from '../util/memoize'
 import { isPropsEqual } from '../util/object'
 import { getScrollbarWidths } from '../util/scrollbar-width'
@@ -78,18 +79,22 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
       configI++
     }
 
-    return (
-      <table className={classNames.join(' ')} style={{ height: props.height }}>
-        {Boolean(headSectionNodes.length) &&
-          createElement('thead', {}, ...headSectionNodes)
-        }
-        {Boolean(bodySectionNodes.length) &&
-          createElement('tbody', {}, ...bodySectionNodes)
-        }
-        {Boolean(footSectionNodes.length) &&
-          createElement('tfoot', {}, ...footSectionNodes)
-        }
-      </table>
+    // firefox bug: when setting height on table and there is a thead or tfoot,
+    // the necessary height:100% on the liquid-height body section forces the *whole* table to be taller. (bug #5524)
+    // use getCanVGrowWithinCell as a way to detect table-stupid firefox.
+    // if so, use a simpler dom structure, jam everything into a lone tbody.
+    let isBuggy = !getCanVGrowWithinCell()
+
+    return createElement(
+      'table',
+      {
+        className: classNames.join(' '),
+        style: { height: props.height }
+      },
+      Boolean(!isBuggy && headSectionNodes.length) && createElement('thead', {}, ...headSectionNodes),
+      Boolean(!isBuggy && bodySectionNodes.length) && createElement('tbody', {}, ...bodySectionNodes),
+      Boolean(!isBuggy && footSectionNodes.length) && createElement('tfoot', {}, ...footSectionNodes),
+      isBuggy && createElement('tbody', {}, ...headSectionNodes, ...bodySectionNodes, ...footSectionNodes)
     )
   }
 

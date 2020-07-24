@@ -34,10 +34,10 @@
   }
 
   & .fc-scrollgrid-section { // a <tr>
-    height: 0;
+    height: 1px; // better than 0, for firefox
 
     & > td {
-      height: 0; // needs a height so inner div within grow
+      height: 1px; // needs a height so inner div within grow. better than 0, for firefox
     }
 
     & table {
@@ -52,7 +52,7 @@
     height: auto;
 
     & > td {
-      height: 100%; // FF needs this instead of auto
+      height: 100%; // better than `auto`, for firefox
     }
 
   }

@@ -74,6 +74,8 @@ export {
 } from './util/dom-manip'
 export { parseClassNames } from './util/html'
 
+export { getCanVGrowWithinCell } from './util/table-styling'
+
 export { EventStore, filterEventStoreDefs, createEmptyEventStore, mergeEventStores, getRelevantEvents, eventTupleToStore } from './structs/event-store'
 export { EventUiHash, EventUi, combineEventUis, createEventUi } from './component/event-ui'
 export { Splitter, SplittableProps } from './component/event-splitting'
