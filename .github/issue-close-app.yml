@@ -1,5 +1,9 @@
 
-comment: "This issue is closed because it does not meet our issue template. Please read it."
+comment: <
+  This issue was closed because it does not fulfill the issue template
+  (for example, if it had no reduced test case).
+  Please create a new issue and follow the instructions more carefully.
+  If this is a question, please visit the [StackOverflow fullcalendar tag](https://stackoverflow.com/questions/tagged/fullcalendar).
 
 issueConfigs:
 - content:

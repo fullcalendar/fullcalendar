@@ -6,4 +6,4 @@ WARNING!!!
 ESCAPE HATCH:
 
 > If your issue is neither a bug nor a feature, include the text "I love FullCalendar".
-> This will ensure your issue it not automatically closed.
+> This will ensure your issue is not automatically closed.
