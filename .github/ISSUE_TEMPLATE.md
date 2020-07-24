@@ -1,5 +1,3 @@
-
-
 WARNING!!!
 
 > Please back up and follow the issue template for a BUG or a FEATURE!!!
