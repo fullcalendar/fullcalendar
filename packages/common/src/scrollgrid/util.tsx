@@ -176,6 +176,7 @@ export function getScrollGridClassNames(liquid: boolean, context: ViewContext) {
 export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGrow: boolean) {
   let classNames = [
     'fc-scrollgrid-section',
+    'fc-scrollgrid-section-' + sectionConfig.type,
     sectionConfig.className // used?
   ]
 

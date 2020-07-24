@@ -23,24 +23,10 @@
       border-right-style: hidden;
     }
 
-    & > tbody table,
-    & > tfoot table {
-      border-bottom-style: hidden; // head keeps its bottom border tho
-    }
-
     border-collapse: separate;
     border-right-width: 0;
     border-bottom-width: 0;
 
-    & > * > tr > * {
-      border-top-width: 0;
-      border-left-width: 0;
-    }
-
-    & > thead > tr > *,
-    & > tfoot > tr > * {
-      border-bottom-width: 0;
-    }
   }
 
   & .fc-scrollgrid-liquid {
@@ -71,6 +57,21 @@
 
   }
 
+  & .fc-scrollgrid-section > * {
+    border-top-width: 0;
+    border-left-width: 0;
+  }
+
+  & .fc-scrollgrid-section-header > *,
+  & .fc-scrollgrid-section-footer > * {
+    border-bottom-width: 0;
+  }
+
+  & .fc-scrollgrid-section-body table,
+  & .fc-scrollgrid-section-footer table {
+    border-bottom-style: hidden; // head keeps its bottom border tho
+  }
+
   // stickiness
 
   & .fc-scrollgrid-section-sticky > * {
@@ -80,12 +81,12 @@
     // TODO: box-shadow when sticking
   }
 
-  & .fc-scrollgrid > thead > .fc-scrollgrid-section-sticky > * {
+  & .fc-scrollgrid-section-header.fc-scrollgrid-section-sticky > * {
     top: 0; // because border-sharing causes a gap at the top
       // TODO: give safari -1. has bug
   }
 
-  & .fc-scrollgrid > tfoot > .fc-scrollgrid-section-sticky > * {
+  & .fc-scrollgrid-section-footer.fc-scrollgrid-section-sticky > * {
     bottom: 0; // known bug: bottom-stickiness doesn't work in safari
   }
 
