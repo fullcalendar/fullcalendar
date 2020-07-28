@@ -1,13 +1,5 @@
-import { isArraysEqual } from './array'
 import { Dictionary } from '../options'
-
-
-export function htmlToElement(html: string): HTMLElement {
-  html = html.trim()
-  let container = document.createElement('div')
-  container.innerHTML = html
-  return container.firstChild as HTMLElement
-}
+import { VNode, render } from '../vdom'
 
 
 export function removeElement(el: HTMLElement) { // removes nodes in addition to elements. bad name
@@ -16,22 +8,10 @@ export function removeElement(el: HTMLElement) { // removes nodes in addition to
   }
 }
 
-
-export function injectHtml(el: HTMLElement, html: string) {
-  el.innerHTML = html
-}
-
-
-export function injectDomNodes(el: HTMLElement, domNodes: Node[] | NodeList) {
-  let oldNodes = Array.prototype.slice.call(el.childNodes) // TODO: use array util
-  let newNodes = Array.prototype.slice.call(domNodes) // TODO: use array util
-
-  if (!isArraysEqual(oldNodes, newNodes)) {
-    for (let newNode of newNodes) {
-      el.appendChild(newNode)
-    }
-    oldNodes.forEach(removeElement)
-  }
+export function renderVirtual(v: VNode): HTMLElement { // TODO: use elsewhere?
+  let parentEl = document.createElement('div')
+  render(v, parentEl)
+  return parentEl.firstChild as HTMLElement
 }
 
 

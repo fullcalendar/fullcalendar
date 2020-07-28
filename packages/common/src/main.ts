@@ -65,12 +65,12 @@ export { mapHash, filterHash, isPropsEqual, compareObjs, buildHashFromArray, col
 export {
   findElements,
   findDirectChildren,
-  htmlToElement,
   removeElement,
   applyStyle,
   applyStyleProp,
   elementMatches,
-  elementClosest
+  elementClosest,
+  renderVirtual
 } from './util/dom-manip'
 export { parseClassNames } from './util/html'
 

@@ -13,8 +13,6 @@ export function getIsRtlScrollbarOnLeft() { // responsible for caching the compu
 
 
 function computeIsRtlScrollbarOnLeft() { // creates an offscreen test element, then removes it
-
-  // TODO: use htmlToElement
   let outerEl = document.createElement('div')
   applyStyle(outerEl, {
     position: 'absolute',
