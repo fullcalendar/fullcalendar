@@ -12,6 +12,7 @@ export interface SlotLaneContentArg extends Partial<DateMeta> { // TODO: move?
 export type SlotLaneMountArg = MountArg<SlotLaneContentArg>
 
 export interface SlotLabelContentArg { // TODO: move?
+  level: number
   time: Duration
   date: Date
   view: ViewApi

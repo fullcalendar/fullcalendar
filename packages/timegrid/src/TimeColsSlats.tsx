@@ -230,6 +230,7 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
             createFormatter(options.slotLabelFormat)
 
           let hookProps: SlotLabelContentArg = {
+            level: 0,
             time: props.time,
             date: dateEnv.toDate(props.date),
             view: viewApi,
