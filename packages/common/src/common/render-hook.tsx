@@ -79,6 +79,7 @@ export type DefaultContentGenerator<HookProps> = (hookProps: HookProps) => Compo
 // for forcing rerender of components that use the ContentHook
 export const CustomContentRenderContext = createContext<number>(0)
 
+
 export interface ContentHookProps<HookProps> {
   hookProps: HookProps
   content: CustomContentGenerator<HookProps>
@@ -90,7 +91,23 @@ export interface ContentHookProps<HookProps> {
   backupElRef?: RefObject<any>
 }
 
-export class ContentHook<HookProps> extends BaseComponent<ContentHookProps<HookProps>> { // TODO: rename to CustomContentHook?
+interface ContentHookInnerProps<HookProps> extends ContentHookProps<HookProps> {
+  renderId: number
+}
+
+
+export function ContentHook<HookProps>(props: ContentHookProps<HookProps>) { // TODO: rename to CustomContentHook?
+  return (
+    <CustomContentRenderContext.Consumer>
+      {(renderId) => (
+        <ContentHookInner renderId={renderId} {...props} />
+      )}
+    </CustomContentRenderContext.Consumer>
+  )
+}
+
+
+class ContentHookInner<HookProps> extends BaseComponent<ContentHookInnerProps<HookProps>> {
 
   private innerElRef = createRef()
   private customContentInfo: {
@@ -101,13 +118,7 @@ export class ContentHook<HookProps> extends BaseComponent<ContentHookProps<HookP
 
 
   render() {
-    return (
-      <CustomContentRenderContext.Consumer>
-        {() => (
-          this.props.children(this.innerElRef, this.renderInnerContent())
-        )}
-      </CustomContentRenderContext.Consumer>
-    )
+    return this.props.children(this.innerElRef, this.renderInnerContent())
   }
 
 
