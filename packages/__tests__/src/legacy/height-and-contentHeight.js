@@ -309,6 +309,22 @@ import '../lib/dom-misc'
   })
 
 
+  it('no height oscillation happens', function() {
+    let $container = $(
+      '<div style="width:301px;height:300px;overflow-y:auto">' +
+      '<div style="margin:0"></div>' +
+      '</div>'
+    ).appendTo('body')
+
+    // will freeze browser if bug exists :)
+    initCalendar({
+      headerToolbar: false,
+      initialView: 'dayGridMonth',
+      aspectRatio: 1
+    }, $container.find('div')[0])
+  })
+
+
   function repeatClone(srcObj, times) {
     var a = []
     var i
