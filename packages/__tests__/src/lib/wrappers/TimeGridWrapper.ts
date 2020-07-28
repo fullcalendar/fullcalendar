@@ -53,6 +53,16 @@ export class TimeGridWrapper {
   }
 
 
+  getMainSlotTable() {
+    return $('.fc-timegrid-slots > table')[0]
+  }
+
+
+  getSeparateSlotAxisTable() {
+    return $('.fc-timegrid-axis-chunk > table')[0]
+  }
+
+
   getSlotElByTime(timeMs) {
     let date = parseUtcDate('2016-01-01')
     date = new Date(date.valueOf() + timeMs)

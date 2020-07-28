@@ -9,6 +9,10 @@
   & .fc-timegrid-slot { // a <td>
     height: 1.5em;
     border-bottom: 0; // each cell owns its top border
+
+    &:empty:before {
+      content: '\00a0'; // make sure there's at least an empty space to create height for height syncing
+    }
   }
 
   & .fc-timegrid-slot-minor {
