@@ -92,6 +92,29 @@ describe('dayGrid advanced event rendering', function() {
     expect(dayGridWrapper.isEventListItem(eventEl)).toBe(false)
   })
 
+  // https://github.com/fullcalendar/fullcalendar/issues/5634
+  it('does not render split multi-day event as list-item', function() {
+    let calendar = initCalendar({
+      initialView: 'dayGridMonth',
+      initialDate: '2020-05-01',
+      eventDisplay: 'auto',
+      events: [
+        {
+          title: 'event',
+          start: '2020-05-09T12:00:00',
+          end: '2020-05-10T12:00:00'
+        }
+      ]
+    })
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEls = dayGridWrapper.getEventEls()
+
+    expect(eventEls.length).toBe(2)
+    expect(dayGridWrapper.isEventListItem(eventEls[0])).toBe(false)
+    expect(dayGridWrapper.isEventListItem(eventEls[0])).toBe(false)
+  })
+
   it('render only block when eventDislay:block', function() {
     let calendar = initCalendar({
       eventDisplay: 'block',

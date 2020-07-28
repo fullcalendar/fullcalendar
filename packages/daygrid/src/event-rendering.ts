@@ -16,6 +16,8 @@ export function hasListItemDisplay(seg: TableSeg) {
   return display === 'list-item' || (
     display === 'auto' &&
     !seg.eventRange.def.allDay &&
-    seg.firstCol === seg.lastCol // can't be multi-day
+    seg.firstCol === seg.lastCol && // can't be multi-day
+    seg.isStart && // "
+    seg.isEnd // "
   )
 }
