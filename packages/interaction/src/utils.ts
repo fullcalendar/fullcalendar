@@ -14,6 +14,8 @@ export type EventLeaveArg = EventReceiveLeaveArg
 export interface EventReceiveLeaveArg { // will this become public?
   draggedEl: HTMLElement
   event: EventApi
+  relatedEvents: EventApi[]
+  revert: () => void
   view: ViewApi
 }
 

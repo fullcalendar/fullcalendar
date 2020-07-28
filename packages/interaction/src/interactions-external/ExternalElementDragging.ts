@@ -141,9 +141,11 @@ export class ExternalElementDragging {
       })
 
       if (dragMeta.create) {
+        let addingEvents = eventTupleToStore(droppableEvent)
+
         receivingContext.dispatch({
           type: 'MERGE_EVENTS',
-          eventStore: eventTupleToStore(droppableEvent)
+          eventStore: addingEvents
         })
 
         if (pev.isTouch) {
@@ -155,12 +157,19 @@ export class ExternalElementDragging {
 
         // signal that an external event landed
         receivingContext.emitter.trigger('eventReceive', {
-          draggedEl: pev.subjectEl as HTMLElement,
           event: new EventApi(
             receivingContext,
             droppableEvent.def,
             droppableEvent.instance
           ),
+          relatedEvents: [],
+          revert() {
+            receivingContext.dispatch({
+              type: 'REMOVE_EVENTS',
+              eventStore: addingEvents
+            })
+          },
+          draggedEl: pev.subjectEl as HTMLElement,
           view: finalView
         })
       }

@@ -54,6 +54,8 @@ describe('dragging events between calendars', function() {
         triggerNames.push('eventLeave')
         expect(info.draggedEl).toBe(eventEl)
         expect(info.event.id).toBe('a')
+        expect(typeof info.revert).toBe('function')
+        expect(Array.isArray(info.relatedEvents)).toBe(true)
       }
     })
 
@@ -79,6 +81,8 @@ describe('dragging events between calendars', function() {
         triggerNames.push('eventReceive')
         expect(info.draggedEl).toBe(eventEl)
         expect(info.event.start).toEqualDate('2019-01-05')
+        expect(typeof info.revert).toBe('function')
+        expect(Array.isArray(info.relatedEvents)).toBe(true)
       }
     })
 
