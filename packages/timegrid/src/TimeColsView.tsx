@@ -216,7 +216,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
             // TODO: make this now-indicator arrow more DRY with TimeColsContent
             return (
               <div className='fc-timegrid-axis-chunk'>
-                <table>
+                <table style={{ height: arg.expandRows ? arg.clientHeight : '' }}>
                   {arg.tableColGroupNode}
                   <tbody>
                     <TimeBodyAxis slatMetas={slatMetas} />
