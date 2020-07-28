@@ -98,8 +98,11 @@ export function durationsEqual(d0: Duration, d1: Duration): boolean {
     d0.milliseconds === d1.milliseconds
 }
 
-export function isSingleDay(dur: Duration) {
-  return dur.years === 0 && dur.months === 0 && dur.days === 1 && dur.milliseconds === 0
+export function asCleanDays(dur: Duration) {
+  if (!dur.years && !dur.months && !dur.milliseconds) {
+    return dur.days
+  }
+  return 0
 }
 
 

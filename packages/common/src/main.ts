@@ -118,7 +118,7 @@ export { DateSpan, DateSpanApi, DatePointApi, isDateSpansEqual } from './structs
 export { DateMarker, addDays, startOfDay, addMs, addWeeks, diffWeeks, diffWholeWeeks, diffWholeDays, diffDayAndTime, diffDays, isValidDate } from './datelib/marker'
 export {
   Duration, createDuration,
-  isSingleDay, multiplyDuration, addDurations,
+  asCleanDays, multiplyDuration, addDurations,
   asRoughMinutes, asRoughSeconds, asRoughMs,
   wholeDivideDurations, greatestDurationDenominator
 } from './datelib/duration'
