@@ -317,11 +317,14 @@ import '../lib/dom-misc'
     ).appendTo('body')
 
     // will freeze browser if bug exists :)
-    initCalendar({
+    let calendar = initCalendar({
       headerToolbar: false,
       initialView: 'dayGridMonth',
       aspectRatio: 1
     }, $container.find('div')[0])
+
+    calendar.destroy()
+    $container.remove()
   })
 
 
