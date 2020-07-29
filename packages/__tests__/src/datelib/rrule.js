@@ -298,7 +298,7 @@ describe('rrule plugin', function() {
   // utils
 
   function buildLocalRRuleDateStr(inputStr) { // produces strings like '20200101123030'
-    return parseLocalDate(inputStr).toISOString().replace('.000', '').replace(/[\-\:]/g, '')
+    return parseLocalDate(inputStr).toISOString().replace('.000', '').replace(/[-:]/g, '')
   }
 
   function getSortedEvents() {
