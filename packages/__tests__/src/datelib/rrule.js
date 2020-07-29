@@ -10,39 +10,6 @@ describe('rrule plugin', function() {
     timeZone: 'UTC'
   })
 
-  it('expands events when given an rrule string', function() {
-    initCalendar({
-      events: [
-        {
-          rrule: 'DTSTART:20180904T130000\nRRULE:FREQ=WEEKLY'
-        }
-      ]
-    })
-    let events = getSortedEvents()
-    expect(events.length).toBe(5)
-    expect(events[0].start).toEqualDate('2018-09-04T13:00:00Z')
-    expect(events[0].end).toBe(null)
-    expect(events[1].start).toEqualDate('2018-09-11T13:00:00Z')
-    expect(events[2].start).toEqualDate('2018-09-18T13:00:00Z')
-    expect(events[3].start).toEqualDate('2018-09-25T13:00:00Z')
-    expect(events[4].start).toEqualDate('2018-10-02T13:00:00Z')
-  })
-
-  it('respects allDay when an rrule string', function() {
-    initCalendar({
-      events: [
-        {
-          allDay: true,
-          rrule: 'DTSTART:20180904T130000\nRRULE:FREQ=WEEKLY'
-        }
-      ]
-    })
-    let events = getSortedEvents()
-    expect(events[0].start).toEqualDate('2018-09-04') // should round down
-    expect(events[0].allDay).toBe(true)
-    expect(events[0].extendedProps).toEqual({}) // didnt accumulate allDay or rrule props
-  })
-
   it('expands events when given an rrule object', function() {
     initCalendar({
       events: [
@@ -83,21 +50,6 @@ describe('rrule plugin', function() {
     expect(events[0].start).toEqualDate('2018-12-13')
   })
 
-  // https://github.com/fullcalendar/fullcalendar/issues/4955
-  it('can expand monthly recurrence when given an rrule string', function() {
-    initCalendar({
-      defaultView: 'dayGridMonth',
-      now: '2018-12-25T12:00:00',
-      events: [ {
-        rrule: 'DTSTART:20181101\nRRULE:FREQ=MONTHLY;COUNT=13;BYMONTHDAY=13'
-      } ]
-    })
-
-    let events = currentCalendar.getEvents()
-    expect(events.length).toBe(1)
-    expect(events[0].start).toEqualDate('2018-12-13')
-  })
-
   it('expands events until a date', function() {
     initCalendar({
       events: [
@@ -119,7 +71,6 @@ describe('rrule plugin', function() {
     expect(events[3].start).toEqualDate('2018-09-25T13:00:00Z')
   })
 
-  // https://github.com/fullcalendar/fullcalendar/issues/4596
   it('expands a range that starts exactly at the current view\'s start', function() {
     initCalendar({
       initialDate: '2019-04-02',
@@ -236,46 +187,104 @@ describe('rrule plugin', function() {
     expect(events[0].allDay).toBe(false)
   })
 
-  // https://github.com/fullcalendar/fullcalendar/issues/4955
-  it('can generate local dates when given an rrule string', function() {
-    const localDateToUTCIsoString = parseLocalDate('2018-09-04T05:00:00').toISOString()
-    const modified = localDateToUTCIsoString.replace('.000', '').replace(/[\-\:]/g, '')
-    initCalendar({
-      timeZone: 'local',
-      events: [
-        {
-          rrule: `DTSTART:${modified}\nRRULE:FREQ=WEEKLY`,
-        }
-      ]
+
+  describe('when given an rrule string', function() {
+
+    it('expands', function() {
+      initCalendar({
+        events: [
+          {
+            rrule: 'DTSTART:20180904T130000\nRRULE:FREQ=WEEKLY'
+          }
+        ]
+      })
+
+      let events = getSortedEvents()
+      expect(events.length).toBe(5)
+      expect(events[0].start).toEqualDate('2018-09-04T13:00:00Z')
+      expect(events[0].end).toBe(null)
+      expect(events[1].start).toEqualDate('2018-09-11T13:00:00Z')
+      expect(events[2].start).toEqualDate('2018-09-18T13:00:00Z')
+      expect(events[3].start).toEqualDate('2018-09-25T13:00:00Z')
+      expect(events[4].start).toEqualDate('2018-10-02T13:00:00Z')
     })
-    let events = getSortedEvents()
-    expect(events.length).toBe(5)
-    expect(events[0].start).toEqualLocalDate('2018-09-04T05:00:00')
-    expect(events[0].end).toBe(null)
-    expect(events[0].allDay).toBe(false)
+
+    it('respects allDay', function() {
+      initCalendar({
+        events: [
+          {
+            allDay: true,
+            rrule: 'DTSTART:20180904T130000\nRRULE:FREQ=WEEKLY'
+          }
+        ]
+      })
+
+      let events = getSortedEvents()
+      expect(events[0].start).toEqualDate('2018-09-04') // should round down
+      expect(events[0].allDay).toBe(true)
+      expect(events[0].extendedProps).toEqual({}) // didnt accumulate allDay or rrule props
+    })
+
+    it('can expand monthly recurrence', function() {
+      initCalendar({
+        initialView: 'dayGridMonth',
+        now: '2018-12-25T12:00:00',
+        events: [ {
+          rrule: 'DTSTART:20181101\nRRULE:FREQ=MONTHLY;COUNT=13;BYMONTHDAY=13'
+        } ]
+      })
+
+      let events = currentCalendar.getEvents()
+      expect(events.length).toBe(1)
+      expect(events[0].start).toEqualDate('2018-12-13')
+    })
+
+    it('can generate local dates', function() {
+      let localStart = buildLocalRRuleDateStr('2018-09-04T05:00:00')
+
+      initCalendar({
+        timeZone: 'local',
+        events: [
+          {
+            rrule: `DTSTART:${localStart}\nRRULE:FREQ=WEEKLY`,
+          }
+        ]
+      })
+
+      let events = getSortedEvents()
+      expect(events.length).toBe(5)
+      expect(events[0].start).toEqualLocalDate('2018-09-04T05:00:00')
+      expect(events[0].end).toBe(null)
+      expect(events[0].allDay).toBe(false)
+    })
+
+    it('can generate local dates, including EXDATE', function() {
+      let localStart = buildLocalRRuleDateStr('2018-09-04T05:00:00')
+      let localExdate = buildLocalRRuleDateStr('2018-09-05T05:00:00')
+
+      initCalendar({
+        timeZone: 'local',
+        events: [
+          {
+            rrule: `DTSTART:${localStart}\nRRULE:FREQ=WEEKLY\nEXDATE:${localExdate}`,
+          }
+        ]
+      })
+      let events = getSortedEvents()
+      expect(events.length).toBe(5)
+      expect(events[0].start).toEqualLocalDate('2018-09-04T05:00:00')
+      expect(events[0].end).toBe(null)
+      expect(events[0].allDay).toBe(false)
+    })
+
   })
 
-  // https://github.com/fullcalendar/fullcalendar/issues/4955
-  it('can generate local dates when given an rrule string including EXDATE', function() {
-    const localDateToUTCIsoString = parseLocalDate('2018-09-04T05:00:00').toISOString()
-    const modified = localDateToUTCIsoString.replace('.000', '').replace(/[\-\:]/g, '')
 
-    const localExdate = parseLocalDate('2018-09-05T05:00:00').toISOString().replace('.000', '').replace(/[\-\:]/g, '')
+  // utils
 
-    initCalendar({
-      timeZone: 'local',
-      events: [
-        {
-          rrule: `DTSTART:${modified}\nRRULE:FREQ=WEEKLY\nEXDATE:${localExdate}`,
-        }
-      ]
-    })
-    let events = getSortedEvents()
-    expect(events.length).toBe(5)
-    expect(events[0].start).toEqualLocalDate('2018-09-04T05:00:00')
-    expect(events[0].end).toBe(null)
-    expect(events[0].allDay).toBe(false)
-  })
+  function buildLocalRRuleDateStr(inputStr) { // produces strings like '20200101123030'
+    return parseLocalDate(inputStr).toISOString().replace('.000', '').replace(/[\-\:]/g, '')
+  }
 
   function getSortedEvents() {
     let events = currentCalendar.getEvents()
