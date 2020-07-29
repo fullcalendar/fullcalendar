@@ -1,20 +1,10 @@
 import { Dictionary } from '../options'
-import { VNode, render } from '../vdom'
 
 
 export function removeElement(el: HTMLElement) { // removes nodes in addition to elements. bad name
   if (el.parentNode) {
     el.parentNode.removeChild(el)
   }
-}
-
-export function renderVirtual(v: VNode): HTMLElement { // TODO: use elsewhere?
-  let parentEl = document.createElement('div')
-  render(
-    v as any, // React only specifically accepts a vdom *element*, which we don't have a type for
-    parentEl
-  )
-  return parentEl.firstChild as HTMLElement
 }
 
 

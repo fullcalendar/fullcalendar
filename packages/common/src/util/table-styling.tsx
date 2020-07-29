@@ -1,6 +1,3 @@
-import { createElement } from '../vdom'
-import { renderVirtual } from './dom-manip'
-
 
 let canVGrowWithinCell: boolean
 
@@ -14,18 +11,13 @@ export function getCanVGrowWithinCell() {
 
 
 function computeCanVGrowWithinCell() {
-  // TODO: abstraction for creating these temporary detection-based els
-  let el = renderVirtual(
-    <div style={{ position: 'absolute', top: 0, left: 0 }}>
-      <table style={{ height: 100 }}>
-        <tr>
-          <td>
-            <div style={{ height: '100%' }}></div>
-          </td>
-        </tr>
-      </table>
-    </div>
-  )
+  let el = document.createElement('div')
+  el.style.position = 'absolute'
+  el.style.top = '0px'
+  el.style.left = '0px'
+  el.innerHTML = '<div><table><tr><td><div></div></td></tr></table></div>'
+  el.querySelector('table').style.height = '100px'
+  el.querySelector('div').style.height = '100%'
 
   document.body.appendChild(el)
 
