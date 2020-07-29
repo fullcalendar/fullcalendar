@@ -10,7 +10,7 @@
   "type": "module",
   "main": "main.js",
   "types": "main.d.ts",
-  "module": "main.combo.js",
+  "browser": "main.combo.js",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {
