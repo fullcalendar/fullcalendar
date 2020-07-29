@@ -52,7 +52,9 @@ function parseRRule(input, dateEnv: DateEnv) {
   let rrule
 
   if (typeof input === 'string') {
-    rrule = rrulestr(input)
+    let preparseData = preparseRRuleStr(input, dateEnv)
+    rrule = rrulestr(preparseData.outStr)
+    allDayGuess = preparseData.isTimeUnspecified
 
   } else if (typeof input === 'object' && input) { // non-null object
     let refined = { ...input } // copy
@@ -96,12 +98,41 @@ function parseRRule(input, dateEnv: DateEnv) {
   return null
 }
 
+
+function preparseRRuleStr(str, dateEnv: DateEnv) {
+  let isTimeUnspecified: boolean | null = null
+
+  function processAndReplace(whole: string, introPart: string, datePart: string) {
+    let res = dateEnv.parse(datePart)
+    if (res) {
+      if (res.isTimeUnspecified) {
+        isTimeUnspecified = true
+      }
+      return introPart + formatRRuleDate(res.marker)
+    } else {
+      return whole
+    }
+  }
+
+  str = str.replace(/\b(DTSTART:)([^\n]*)/, processAndReplace)
+  str = str.replace(/\b(UNTIL=)([^;]*)/, processAndReplace)
+
+  return { outStr: str, isTimeUnspecified }
+}
+
+
+function formatRRuleDate(date: DateMarker) { // like '20200101T123030Z'
+  return date.toISOString().replace(/[-:]/g, '').replace('.000', '')
+}
+
+
 function convertConstants(input) {
   if (Array.isArray(input)) {
     return input.map(convertConstant)
   }
   return convertConstant(input)
 }
+
 
 function convertConstant(input) {
   if (typeof input === 'string') {
