@@ -23,7 +23,7 @@ export interface CustomButtonInput {
   icon?: string
   themeIcon?: string
   bootstrapFontAwesome?: string
-  click?(element: HTMLElement): void
+  click?(ev: MouseEvent, element: HTMLElement): void
 }
 
 export interface ButtonIconsInput {

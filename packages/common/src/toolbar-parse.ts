@@ -3,7 +3,7 @@ import { Theme } from './theme/Theme'
 import { mapHash } from './util/object'
 import { CalendarApi } from './CalendarApi'
 import { CalendarOptionsRefined, CalendarOptions } from './options'
-import { ToolbarInput, ToolbarModel, ToolbarWidget } from './toolbar-struct'
+import { ToolbarInput, ToolbarModel, ToolbarWidget, CustomButtonInput } from './toolbar-struct'
 
 
 export function parseToolbars(
@@ -62,7 +62,7 @@ function parseSection(
         return { buttonName }
 
       } else {
-        let customButtonProps
+        let customButtonProps: CustomButtonInput
         let viewSpec: ViewSpec
         let buttonClick
         let buttonIcon // only one of these will be set
@@ -71,7 +71,7 @@ function parseSection(
         if ((customButtonProps = calendarCustomButtons[buttonName])) {
           buttonClick = function(ev: UIEvent) {
             if (customButtonProps.click) {
-              customButtonProps.click.call(ev.target, ev) // TODO: correct to use `target`?
+              customButtonProps.click.call(ev.target, ev, ev.target)
             }
           };
           (buttonIcon = theme.getCustomButtonIconClass(customButtonProps)) ||
