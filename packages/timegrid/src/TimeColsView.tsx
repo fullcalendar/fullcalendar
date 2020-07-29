@@ -243,6 +243,8 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
                           </NowIndicatorRoot>
                         )
                       }
+
+                      return null
                     }}
                   </NowTimer>
                 </div>
