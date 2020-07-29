@@ -39,8 +39,6 @@ $daygrid-popover-z: 8;
   // cell top
 
   & .fc-daygrid-day-top {
-    position: relative;
-    z-index: $daygrid-topbottom-z;
     display: flex;
     flex-direction: row-reverse;
   }
@@ -52,6 +50,8 @@ $daygrid-popover-z: 8;
   // day number (within cell top)
 
   & .fc-daygrid-day-number {
+    position: relative;
+    z-index: $daygrid-topbottom-z;
     padding: 4px;
   }
 
@@ -125,13 +125,13 @@ $daygrid-popover-z: 8;
   // cell bottom (within day-events)
 
   & .fc-daygrid-day-bottom {
-    position: relative;
-    z-index: $daygrid-topbottom-z;
     font-size: .85em;
     margin: 2px 3px 0;
   }
 
   & .fc-daygrid-more-link {
+    position: relative;
+    z-index: $daygrid-topbottom-z;
     cursor: pointer;
   }
 
