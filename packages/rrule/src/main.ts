@@ -30,18 +30,12 @@ let recurring: RecurringType<RRule> = {
     return null
   },
 
-  expand(rrule: RRule, framingRange: DateRange, dateEnv: DateEnv): DateMarker[] {
+  expand(rrule: RRule, framingRange: DateRange): DateMarker[] {
     // we WANT an inclusive start and in exclusive end, but the js rrule lib will only do either BOTH
     // inclusive or BOTH exclusive, which is stupid: https://github.com/jakubroztocil/rrule/issues/84
     // Workaround: make inclusive, which will generate extra occurences, and then trim.
-    if (rrule['fromString'] === true) {
-      return rrule.between(framingRange.start, framingRange.end, true)
-        .map(date => dateEnv.createMarker(date))
-        .filter(date => date.valueOf() < framingRange.end.valueOf())
-    } else {
-      return rrule.between(framingRange.start, framingRange.end, true)
-        .filter(date => date.valueOf() < framingRange.end.valueOf())
-    }
+    return rrule.between(framingRange.start, framingRange.end, true)
+      .filter(date => date.valueOf() < framingRange.end.valueOf())
   }
 
 }
@@ -59,7 +53,6 @@ function parseRRule(input, dateEnv: DateEnv) {
 
   if (typeof input === 'string') {
     rrule = rrulestr(input)
-    rrule.fromString = true
 
   } else if (typeof input === 'object' && input) { // non-null object
     let refined = { ...input } // copy
@@ -94,7 +87,6 @@ function parseRRule(input, dateEnv: DateEnv) {
     }
 
     rrule = new RRule(refined)
-    rrule.fromString = false
   }
 
   if (rrule) {

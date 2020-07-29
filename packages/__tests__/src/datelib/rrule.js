@@ -225,7 +225,7 @@ describe('rrule plugin', function() {
       expect(events[0].extendedProps).toEqual({}) // didnt accumulate allDay or rrule props
     })
 
-    it('can expand monthly recurrence', function() {
+    it('can expand monthly recurrence in UTC', function() {
       initCalendar({
         initialView: 'dayGridMonth',
         now: '2018-12-25T12:00:00',
@@ -237,6 +237,21 @@ describe('rrule plugin', function() {
       let events = currentCalendar.getEvents()
       expect(events.length).toBe(1)
       expect(events[0].start).toEqualDate('2018-12-13')
+    })
+
+    it('can expand monthly recurrence in local timeZone', function() {
+      initCalendar({
+        initialView: 'dayGridMonth',
+        now: '2018-12-25T12:00:00',
+        timeZone: 'local',
+        events: [ {
+          rrule: 'DTSTART:20181101\nRRULE:FREQ=MONTHLY;COUNT=13;BYMONTHDAY=13'
+        } ]
+      })
+
+      let events = currentCalendar.getEvents()
+      expect(events.length).toBe(1)
+      expect(events[0].start).toEqualLocalDate('2018-12-13')
     })
 
     it('can generate local dates', function() {
