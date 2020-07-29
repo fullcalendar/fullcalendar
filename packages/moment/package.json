@@ -14,8 +14,11 @@
   "devDependencies": {
     "moment": "^2.24.0"
   },
+  "type": "module",
   "main": "main.js",
   "types": "main.d.ts",
+  "jsdelivr": "main.global.min.js",
+  "browserGlobal": "FullCalendarMoment",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {

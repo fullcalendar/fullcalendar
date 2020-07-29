@@ -14,8 +14,11 @@
   "devDependencies": {
     "rrule": "^2.6.0"
   },
+  "type": "module",
   "main": "main.js",
   "types": "main.d.ts",
+  "jsdelivr": "main.global.min.js",
+  "browserGlobal": "FullCalendarRRule",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {

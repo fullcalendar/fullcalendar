@@ -9,8 +9,11 @@
     "preact": "^10.0.5",
     "tslib": "^2.0.0"
   },
+  "type": "module",
   "main": "main.js",
   "types": "main.d.ts",
+  "jsdelivr": "main.global.min.js",
+  "browserGlobal": "FullCalendar",
   "sideEffects": true,
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",

@@ -14,8 +14,8 @@
     "@fullcalendar/google-calendar": "~5.1.0"
   },
   "main": "main.js",
-  "unpkg": "main.min.js",
-  "types": "main.d.ts",
+  "jsdelivr": "main.min.js",
+  "browserGlobal": "FullCalendar",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {

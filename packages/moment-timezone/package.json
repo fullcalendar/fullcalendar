@@ -16,8 +16,11 @@
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26"
   },
+  "type": "module",
   "main": "main.js",
   "types": "main.d.ts",
+  "jsdelivr": "main.global.min.js",
+  "browserGlobal": "FullCalendarMomentTimezone",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {
