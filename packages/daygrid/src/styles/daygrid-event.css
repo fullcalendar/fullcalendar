@@ -24,17 +24,16 @@
 // --- the dot style of event ---
 
 .fc-daygrid-dot-event {
-  display: block;
+  display: flex;
+  align-items: center;
   padding: 2px 0;
-  overflow: hidden;
 
   & .fc-event-title {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0; // important for allowing to shrink all the way
+    overflow: hidden;
     font-weight: bold;
-  }
-
-  & .fc-event-time,
-  & .fc-event-title {
-    display: inline-block; // better than inline, for sitting next to dot
   }
 
   &:hover,
@@ -42,10 +41,15 @@
     background: rgba(0, 0, 0, 0.1);
   }
 
+  &.fc-event-selected:before {
+    // expand hit area
+    top: -10px;
+    bottom: -10px;
+  }
+
 }
 
 .fc-daygrid-event-dot { // the actual dot
-  display: inline-block;
   margin: 0 4px;
   box-sizing: content-box;
   width: 0;
