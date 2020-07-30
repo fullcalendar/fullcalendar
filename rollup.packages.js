@@ -1,10 +1,11 @@
-const fs = require('fs')
 const path = require('path')
+const nodeResolve = require('@rollup/plugin-node-resolve').default
+const alias = require('@rollup/plugin-alias')
 const dts = require('rollup-plugin-dts').default
 const sourceMapLoader = require('rollup-plugin-sourcemaps')
 const postcss = require('rollup-plugin-postcss')
 const { checkNoSymlinks, buildBanner } = require('./scripts/lib/new')
-const { externalizeStylesheets, externalizeNonRelative, injectReleaseDate } = require('./scripts/lib/new-rollup')
+const { externalizeStylesheets, externalizeNonRelative, injectReleaseDate, buildAliasMap, removeStylesheetImports } = require('./scripts/lib/new-rollup')
 
 
 /*
@@ -17,9 +18,33 @@ compiles from TSC files
 const { publicPackageStructs } = require('./scripts/lib/package-index')
 checkNoSymlinks(publicPackageStructs)
 
+
+let pkgsWithBrowserGlobal = []
+let browserGlobalByPkg = {}
+for (let struct of publicPackageStructs) {
+  if (struct.meta.browserGlobal) {
+    pkgsWithBrowserGlobal.push(struct)
+    browserGlobalByPkg[struct.name] = struct.meta.browserGlobal
+  }
+}
+
+browserGlobalByPkg['@fullcalendar/common'] = 'FullCalendar'
+
+const THIRD_PARTY_BROWSER_GLOBALS = {
+  // preact: 'Preact', // we actually want this inlined
+  rrule: 'rrule',
+  moment: 'moment',
+  'moment-timezone': 'moment'
+}
+let allGlobals = { ...THIRD_PARTY_BROWSER_GLOBALS, ...browserGlobalByPkg }
+let externalList = Object.keys(allGlobals)
+let externalListNoCommon = externalList.filter((name) => name !== '@fullcalendar/common')
+let aliasMap = buildAliasMap(publicPackageStructs)
+
+
 module.exports = [
 
-  // for JS
+  // for JS (ESM)
   ...publicPackageStructs.map((struct) => {
     return {
       input: path.join(struct.dir, struct.mainTscJs),
@@ -41,6 +66,31 @@ module.exports = [
       ]
     }
   }),
+
+  // for global variable JS
+  ...pkgsWithBrowserGlobal.map((struct) => {
+    return {
+      input: path.join(struct.dir, struct.mainGlobalTscJs),
+      external: struct.name === '@fullcalendar/core' ? externalListNoCommon : externalList, // if core, inline common
+      output: {
+        format: 'iife',
+        name: struct.meta.browserGlobal,
+        exports: 'named',
+        file: path.join(struct.dir, struct.mainDistJs.replace('.js', '.global.js')),
+        banner: buildBanner(struct.isPremium),
+        globals: allGlobals
+      },
+      plugins: [ // same plugins that rollup.bundle.js uses
+        removeStylesheetImports(),
+        alias({
+          entries: aliasMap // TODO: for packages like @fullcalendar/common which will be inlined
+        }),
+        nodeResolve(), // for tslib
+        injectReleaseDate()
+      ]
+    }
+  }),
+
 
   // for DTS
   ...publicPackageStructs.map((struct) => {

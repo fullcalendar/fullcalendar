@@ -1,5 +1,6 @@
 const path = require('path')
 const globby = require('globby')
+const fs = require('fs')
 
 
 let configPaths = globby.sync([
@@ -22,7 +23,9 @@ function buildStruct(configPath) {
   let mainDistDts = config.types || 'index.d.ts'
   let mainName = path.basename(mainDistJs, '.js')
   let mainSrc = path.join('src', mainName + '.ts')
+  let mainGlobalSrc = path.join('src', mainName + '.global.ts') // might not exist
   let mainTscJs = path.join('tsc', mainName + '.js')
+  let mainGlobalTscJs = path.join('tsc', mainName + '.global.js') // might not exist
   let mainTscDts = path.join('tsc', mainName + '.d.ts')
 
   return {
@@ -34,6 +37,7 @@ function buildStruct(configPath) {
     mainDistDts,
     mainSrc,
     mainTscJs,
+    mainGlobalTscJs: fs.existsSync(path.join(dir, mainGlobalSrc)) ? mainGlobalTscJs : mainTscJs,
     mainTscDts,
     meta: config
   }

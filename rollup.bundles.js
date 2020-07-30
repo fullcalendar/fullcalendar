@@ -27,7 +27,7 @@ module.exports = bundleStructs.map((struct) => {
     plugins: [
       removeStylesheetImports(),
       alias({
-        entries: buildAliasMap(publicPackageStructs)
+        entries: buildAliasMap(publicPackageStructs) // TODO: do this outside loop
       }),
       nodeResolve(),
       injectReleaseDate()

@@ -11,6 +11,7 @@ exports.minifyBundleCss = minifyBundleCss
 function minifyBundleJs() {
   return src([
     'packages?(-premium)/bundle/*.js',
+    'packages?(-premium)/*/*.global.js',
     '!**/*.min.js' // avoid double minify
   ], { base: '.' })
     .pipe(
@@ -31,7 +32,7 @@ function minifyBundleJs() {
 
 function minifyBundleCss() {
   return src([
-    'packages?(-premium)/bundle/*.css',
+    'packages?(-premium)/*/*.css',
     '!**/*.min.css' // avoid double minify
   ], { base: '.' })
     .pipe(

@@ -38,9 +38,13 @@ module.exports = [
     input: 'packages/core/src/locales-all.ts',
     output: bundleDirs.map((bundleDir) => ({
       format: 'iife',
-      name: 'FullCalendar',
+      name: 'FullCalendar', // for bundleWrapLocalesAll
       file: path.join(bundleDir, 'locales-all.js')
-    })),
+    })).concat({
+      format: 'iife',
+      name: 'FullCalendar', // for bundleWrapLocalesAll
+      file: path.join('packages/core/locales-all.global.js') // FOR CORE
+    }),
     plugins: [
       sucraseInstance,
       bundleWrapLocalesAll()
@@ -64,9 +68,13 @@ module.exports = [
     input: srcLocaleFile,
     output: bundleDirs.map((bundleDir) => ({
       format: 'iife',
-      name: 'FullCalendar',
+      name: 'FullCalendar', // for bundleWrapLocalesAll
       file: path.join(bundleDir, 'locales', path.basename(srcLocaleFile, '.ts') + '.js')
-    })),
+    })).concat({
+      format: 'iife',
+      name: 'FullCalendar', // for bundleWrapLocalesAll
+      file: path.join('packages/core/locales', path.basename(srcLocaleFile, '.ts') + '.global.js') // FOR CORE
+    }),
     plugins: [
       sucraseInstance,
       bundleWrapLocalesEach()
