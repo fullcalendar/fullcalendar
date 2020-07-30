@@ -12,7 +12,6 @@
   "type": "module",
   "main": "main.js",
   "types": "main.d.ts",
-  "browser": "main.combo.js",
   "jsdelivr": "main.global.min.js",
   "browserGlobal": "FullCalendarTimeGrid",
   "homepage": "https://fullcalendar.io/",
