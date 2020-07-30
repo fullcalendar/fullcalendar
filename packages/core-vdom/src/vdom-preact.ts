@@ -22,7 +22,7 @@ declare global {
   }
 }
 
-window.FullCalendarVDom = {
+(typeof globalThis !== 'undefined' ? globalThis : window).FullCalendarVDom = { // TODO: streamline when killing IE11 support
   Component: preact.Component,
   createElement: preact.createElement,
   render: preact.render,

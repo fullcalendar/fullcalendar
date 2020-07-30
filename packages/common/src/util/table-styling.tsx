@@ -11,6 +11,13 @@ export function getCanVGrowWithinCell() {
 
 
 function computeCanVGrowWithinCell() {
+
+  // for SSR, because this function is call immediately at top-level
+  // TODO: just make this logic execute top-level, immediately, instead of doing lazily
+  if (typeof document === 'undefined') {
+    return true
+  }
+
   let el = document.createElement('div')
   el.style.position = 'absolute'
   el.style.top = '0px'
