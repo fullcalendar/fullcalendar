@@ -9,6 +9,9 @@
     "preact": "^10.0.5",
     "tslib": "^2.0.0"
   },
+  "bundledDependencies": [
+    "@fullcalendar/core-vdom"
+  ],
   "type": "module",
   "main": "main.js",
   "types": "main.d.ts",
