@@ -1,4 +1,34 @@
 
+v5.2.0 (2020-07-30)
+-------------------
+
+features:
+- indicate which row (or format) is being rendered in slotLabelContent (#5516)
+- nepali locale (#5574)
+
+bugfixes:
+- compatible with server-side rendering (SSR) (#4784)
+- background events don't fire eventClick in daygrid when clicked on day header (#5560)
+- background events don't fire eventClick in timegrid (#5579)
+- bigger touch hit area for selected list-item events in daygrid (#5635)
+- CustomButtonInput click argument type is incorrect (#5432)
+- parse rrule strings the same as objects (#5326)
+- navLinks are not clickable if slotLabelFormat is a moment format (#5317)
+- unswitch CSS variables in v-event.css (#5552)
+- time slots not aligned to labels with dayMinWidth and Bootstrap theme (#5600)
+- expandRows broken for time slat labels when horizontal scrolling (#5674)
+- render method not rerendering resourceLabelContent (#5586)
+- eventReceive/eventLeave is missing revert and relatedEvents (#5610)
+- daygrid event changes between list-item and block, depending on start date (#5634)
+- default scrollTime is not appropriate for month/year view (#5645)
+- naturalBound is null with CSP (#5556)
+- does not support Content Security Policy (CSP) nonce, only unsafe-inline css (#4317)
+- RTL timeline scrolling messed up with nowIndicator (#5632)
+- scrollTime does not always work when changing views (#5351)
+- (p)react maximum recursion with specific resize/scrollbars (#5558, #5606)
+- dayGridMonth overflows in Firefox (#5524)
+
+
 v5.1.0 (2020-06-29)
 -------------------
 
