@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "fullcalendar",
-  "version": "5.2.0",
+  "version": "5.2.1",
   "title": "FullCalendar",
   "description": "Full-sized drag & drop event calendar",
   "keywords": [
