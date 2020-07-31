@@ -22,7 +22,7 @@ function computeCanVGrowWithinCell() {
   el.style.position = 'absolute'
   el.style.top = '0px'
   el.style.left = '0px'
-  el.innerHTML = '<div><table><tr><td><div></div></td></tr></table></div>'
+  el.innerHTML = '<table><tr><td><div></div></td></tr></table>'
   el.querySelector('table').style.height = '100px'
   el.querySelector('div').style.height = '100%'
 
