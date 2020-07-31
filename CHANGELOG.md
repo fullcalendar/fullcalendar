@@ -3,6 +3,7 @@ v5.2.0 (2020-07-30)
 -------------------
 
 features:
+- provide browser-global JS file for all packages (#5617)
 - indicate which row (or format) is being rendered in slotLabelContent (#5516)
 - nepali locale (#5574)
 
