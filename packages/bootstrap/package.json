@@ -1,11 +1,11 @@
 {
   "name": "@fullcalendar/bootstrap",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "title": "FullCalendar Bootstrap Plugin",
   "description": "Bootstrap 4 theming for your calendar",
   "docs": "https://fullcalendar.io/docs/bootstrap-theme",
   "dependencies": {
-    "@fullcalendar/common": "~5.1.0",
+    "@fullcalendar/common": "~5.2.0",
     "tslib": "^2.0.0"
   },
   "type": "module",

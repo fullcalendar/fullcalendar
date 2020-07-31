@@ -1,11 +1,11 @@
 {
   "name": "@fullcalendar/moment-timezone",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "title": "FullCalendar Moment Timezone Plugin",
   "description": "A connector to the moment-timezone library",
   "docs": "https://fullcalendar.io/docs/moment-plugins#moment-timezone",
   "dependencies": {
-    "@fullcalendar/common": "~5.1.0",
+    "@fullcalendar/common": "~5.2.0",
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
