@@ -1,4 +1,10 @@
 
+next
+----
+
+fix luxon connector browser-global JS file including actual luxon lib
+
+
 v5.2.0 (2020-07-30)
 -------------------
 

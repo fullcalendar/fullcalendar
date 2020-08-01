@@ -34,7 +34,8 @@ const THIRD_PARTY_BROWSER_GLOBALS = {
   // preact: 'Preact', // we actually want this inlined
   rrule: 'rrule',
   moment: 'moment',
-  'moment-timezone': 'moment'
+  'moment-timezone': 'moment',
+  luxon: 'luxon'
 }
 let allGlobals = { ...THIRD_PARTY_BROWSER_GLOBALS, ...browserGlobalByPkg }
 let externalList = Object.keys(allGlobals)
