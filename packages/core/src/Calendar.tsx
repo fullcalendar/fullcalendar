@@ -87,12 +87,19 @@ export class Calendar extends CalendarApi {
 
 
   render() {
-    if (!this.isRendering) {
+    let wasRendering = this.isRendering
+
+    if (!wasRendering) {
       this.isRendering = true
     } else {
       this.customContentRenderId++
     }
+
     this.renderRunner.request()
+
+    if (wasRendering) {
+      this.updateSize()
+    }
   }
 
 
