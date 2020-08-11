@@ -13,6 +13,11 @@ export class DayGridWrapper {
   }
 
 
+  getRootTableEl() {
+    return $(this.el).find('> table')[0] as HTMLElement
+  }
+
+
   getAllDayEls() {
     return findElements(this.el, '.fc-day[data-date]')
   }
