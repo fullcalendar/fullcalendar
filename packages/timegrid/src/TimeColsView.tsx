@@ -351,7 +351,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
               >
                 <a
                   ref={innerElRef}
-                  className='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion'
+                  className='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion fc-scrollgrid-sync-inner'
                   {...navLinkAttrs}
                 >
                   {innerContent}
@@ -400,7 +400,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
             'fc-scrollgrid-shrink'
           ].concat(classNames).join(' ')}>
             <div className={'fc-timegrid-axis-frame fc-scrollgrid-shrink-frame' + (rowHeight == null ? ' fc-timegrid-axis-frame-liquid' : '')} style={{ height: rowHeight }}>
-              <span className='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion' ref={innerElRef}>
+              <span className='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion fc-scrollgrid-sync-inner' ref={innerElRef}>
                 {innerContent}
               </span>
             </div>
