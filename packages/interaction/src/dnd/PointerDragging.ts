@@ -145,14 +145,14 @@ export class PointerDragging {
 
       // unlike mouse, need to attach to target, not document
       // https://stackoverflow.com/a/45760014
-      let target = ev.target as HTMLElement
+      let { subjectEl } = this
 
       if (!this.shouldIgnoreMove) {
-        target.addEventListener('touchmove', this.handleTouchMove)
+        subjectEl.addEventListener('touchmove', this.handleTouchMove)
       }
 
-      target.addEventListener('touchend', this.handleTouchEnd)
-      target.addEventListener('touchcancel', this.handleTouchEnd) // treat it as a touch end
+      subjectEl.addEventListener('touchend', this.handleTouchEnd)
+      subjectEl.addEventListener('touchcancel', this.handleTouchEnd) // treat it as a touch end
 
       // attach a handler to get called when ANY scroll action happens on the page.
       // this was impossible to do with normal on/off because 'scroll' doesn't bubble.
@@ -174,11 +174,11 @@ export class PointerDragging {
 
   handleTouchEnd = (ev: TouchEvent) => {
     if (this.isDragging) { // done to guard against touchend followed by touchcancel
-      let target = ev.target as HTMLElement
+      let { subjectEl } = this
 
-      target.removeEventListener('touchmove', this.handleTouchMove)
-      target.removeEventListener('touchend', this.handleTouchEnd)
-      target.removeEventListener('touchcancel', this.handleTouchEnd)
+      subjectEl.removeEventListener('touchmove', this.handleTouchMove)
+      subjectEl.removeEventListener('touchend', this.handleTouchEnd)
+      subjectEl.removeEventListener('touchcancel', this.handleTouchEnd)
       window.removeEventListener('scroll', this.handleTouchScroll, true) // useCaptured=true
 
       this.emitter.trigger('pointerup', this.createEventFromTouch(ev))
