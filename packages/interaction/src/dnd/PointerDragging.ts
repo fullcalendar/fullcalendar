@@ -23,7 +23,6 @@ export class PointerDragging {
 
   containerEl: EventTarget
   subjectEl: HTMLElement | null = null
-  downEl: HTMLElement | null = null
   emitter: Emitter<any>
 
   // options that can be directly assigned by caller
@@ -66,7 +65,6 @@ export class PointerDragging {
       (!this.handleSelector || elementClosest(downEl, this.handleSelector))
     ) {
       this.subjectEl = subjectEl
-      this.downEl = downEl
       this.isDragging = true // do this first so cancelTouchScroll will work
       this.wasTouchScroll = false
 
@@ -80,7 +78,6 @@ export class PointerDragging {
     isWindowTouchMoveCancelled = false
     this.isDragging = false
     this.subjectEl = null
-    this.downEl = null
     // keep wasTouchScroll around for later access
     this.destroyScrollWatch()
   }

@@ -39,12 +39,13 @@ export class DateClicking extends Interaction {
     this.dragging.destroy()
   }
 
-  handlePointerDown = (ev: PointerDragEvent) => {
+  handlePointerDown = (pev: PointerDragEvent) => {
     let { dragging } = this
+    let downEl = pev.origEvent.target as HTMLElement
 
     // do this in pointerdown (not dragend) because DOM might be mutated by the time dragend is fired
     dragging.setIgnoreMove(
-      !this.component.isValidDateDownEl(dragging.pointer.downEl!)
+      !this.component.isValidDateDownEl(downEl)
     )
   }
 

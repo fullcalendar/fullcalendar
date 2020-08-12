@@ -11,11 +11,14 @@ export class UnselectAuto {
 
   documentPointer: PointerDragging // for unfocusing
   isRecentPointerDateSelect = false // wish we could use a selector to detect date selection, but uses hit system
+  matchesCancel = false
+  matchesEvent = false
 
   constructor(private context: CalendarContext) {
     let documentPointer = this.documentPointer = new PointerDragging(document)
     documentPointer.shouldIgnoreMove = true
     documentPointer.shouldWatchScroll = false
+    documentPointer.emitter.on('pointerdown', this.onDocumentPointerDown)
     documentPointer.emitter.on('pointerup', this.onDocumentPointerUp)
 
     /*
@@ -35,6 +38,14 @@ export class UnselectAuto {
     }
   }
 
+  onDocumentPointerDown = (pev: PointerDragEvent) => {
+    let unselectCancel = this.context.options.unselectCancel
+    let downEl = pev.origEvent.target as HTMLElement
+
+    this.matchesCancel = !!elementClosest(downEl, unselectCancel)
+    this.matchesEvent = !!elementClosest(downEl, EventDragging.SELECTOR) // interaction started on an event?
+  }
+
   onDocumentPointerUp = (pev: PointerDragEvent) => {
     let { context } = this
     let { documentPointer } = this
@@ -48,16 +59,15 @@ export class UnselectAuto {
         !this.isRecentPointerDateSelect // a new pointer-initiated date selection since last onDocumentPointerUp?
       ) {
         let unselectAuto = context.options.unselectAuto
-        let unselectCancel = context.options.unselectCancel
 
-        if (unselectAuto && (!unselectAuto || !elementClosest(documentPointer.downEl, unselectCancel))) {
+        if (unselectAuto && (!unselectAuto || !this.matchesCancel)) {
           context.calendarApi.unselect(pev)
         }
       }
 
       if (
         calendarState.eventSelection && // an existing event selected?
-        !elementClosest(documentPointer.downEl, EventDragging.SELECTOR) // interaction DIDN'T start on an event
+        !this.matchesEvent // interaction DIDN'T start on an event
       ) {
         context.dispatch({ type: 'UNSELECT_EVENT' })
       }
