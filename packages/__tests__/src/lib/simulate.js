@@ -124,9 +124,10 @@ var dragStackCnt = 0
 
 
 $.simulate.prototype.simulateDrag = function() {
-  var targetNode = this.target
-  var targetEl = $(targetNode)
   var options = $.extend({}, DRAG_DEFAULTS, this.options)
+  var targetNode = this.target // raw DOM node
+  var targetEl = $(targetNode) // jq object
+  var dragStartEl = options.dragStartNode ? $(options.dragStartNode) : targetEl // jq object
   var dx = options.dx
   var dy = options.dy
   var duration = options.duration
@@ -141,8 +142,8 @@ $.simulate.prototype.simulateDrag = function() {
   if (options.point) {
     startPoint = options.point
   } else {
-    localPoint = normalizeElPoint(options.localPoint, targetEl)
-    offset = targetEl.offset()
+    localPoint = normalizeElPoint(options.localPoint, dragStartEl)
+    offset = dragStartEl.offset()
     startPoint = {
       left: offset.left + localPoint.left,
       top: offset.top + localPoint.top
@@ -230,7 +231,11 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
 
     // simulate a drag-start only if another drag isn't already happening
     if (dragStackCnt === 1) {
-      self.simulateEvent(targetNode, isTouch ? 'touchstart' : 'mousedown', clientCoords)
+      self.simulateEvent(
+        options.dragStartNode || targetNode, // can have an inner drag-start el. targetNode will still be source of emitted events
+        isTouch ? 'touchstart' : 'mousedown',
+        clientCoords
+      )
     }
 
     var delay = options.delay || 0
