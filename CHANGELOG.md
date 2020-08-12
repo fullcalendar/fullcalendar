@@ -1,6 +1,6 @@
 
-next
-----
+v5.3.0 (2020-08-12)
+-------------------
 
 bugfixes:
 - timelineDay with maxTime after 24:00, drag-n-drop behavior (#3900)
