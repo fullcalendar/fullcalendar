@@ -230,7 +230,7 @@ export class DayGridWrapper {
   }
 
 
-  dragEventToDate(eventEl: HTMLElement, startDate, endDate, isTouch?, dragStartNode?) {
+  dragEventToDate(eventEl: HTMLElement, startDate, endDate, isTouch?) {
     return new Promise((resolve) => {
       if (!startDate) {
         let rect1 = this.getDayEl(endDate).getBoundingClientRect()
@@ -238,7 +238,6 @@ export class DayGridWrapper {
 
         $(eventEl).simulate('drag', {
           isTouch: isTouch || false,
-          dragStartNode,
           delay: isTouch ? 200 : 0, // bad to hardcode ms
           end: point1,
           onRelease: () => resolve()

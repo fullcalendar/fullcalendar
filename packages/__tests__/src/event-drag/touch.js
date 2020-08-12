@@ -8,7 +8,7 @@ describe('event touch dragging', function() {
     let calendar = initCalendar({
       initialDate: '2020-08-12',
       editable: true,
-      longPressDelay: 100, // dragEventToDate waits 200. BAD
+      longPressDelay: 100, // dragEventToDate waits 200. TODO: no more hardcoding
       events: [
         { title: 'event', start: '2020-08-12' }
       ],
@@ -18,11 +18,10 @@ describe('event touch dragging', function() {
     let eventEl = gridWrapper.getEventEls()[0]
 
     let dragging = gridWrapper.dragEventToDate(
-      eventEl,
+      eventEl.querySelector('i'),
       null, // don't specify start date. start drag on center of given element
       '2020-08-13',
-      true,
-      eventEl.querySelector('i')
+      true
     )
 
     waitEventDrag(calendar, dragging).then((event) => {
