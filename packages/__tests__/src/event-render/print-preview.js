@@ -31,4 +31,28 @@ describe('print preview', function() {
     })
   })
 
+  describeOptions('initialView', {
+    'with timeGrid view': 'timeGridWeek',
+    'with dayGrid view': 'dayGridDay'
+  }, function() {
+
+    // https://github.com/fullcalendar/fullcalendar/issues/5709
+    it('orders by start time when in actually printing', function(done) {
+      let calendar = initCalendar()
+      calendar.trigger('_beforeprint')
+
+      setTimeout(function() {
+        let calendarWrapper = new CalendarWrapper(calendar)
+        let eventEls = calendarWrapper.getEventEls()
+
+        let ids = eventEls.map(function(el) {
+          return el.getAttribute('data-id')
+        })
+
+        expect(ids).toEqual([ '1', '2' ])
+        done()
+      })
+    })
+  })
+
 })

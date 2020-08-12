@@ -1,6 +1,6 @@
 import {
   Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta, DateRange, Fragment, DayCellRoot, NowIndicatorRoot,
-  DayCellContent, BgEvent, renderFill, DateProfile, config, buildEventRangeKey
+  DayCellContent, BgEvent, renderFill, DateProfile, config, buildEventRangeKey, sortEventSegs
 } from '@fullcalendar/common'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
@@ -116,7 +116,10 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
 
   renderPrintFgSegs(segs: TimeColsSeg[]) {
-    let { props } = this
+    let { props, context } = this
+
+    // not DRY
+    segs = sortEventSegs(segs, context.options.eventOrder) as TimeColsSeg[]
 
     return segs.map((seg) => (
       <div
