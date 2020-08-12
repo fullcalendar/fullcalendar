@@ -2,7 +2,15 @@
 next
 ----
 
-fix luxon connector browser-global JS file including actual luxon lib
+bugfixes:
+- timelineDay with maxTime after 24:00, drag-n-drop behavior (#3900)
+- Resizing on touch devices loses selection (#5706)
+- Alignment of events in dayGridWeek when weekNumbers:true (#5708)
+- Events are not printed in order according to their start time (#5709)
+- scrollTime does not always work on prev/next (#5351)
+- render method not rerendering resourceLabelContent (#5586)
+- timeGrid with dayMinWidth, weekNumber cell collapses (#5684)
+- fix luxon connector browser-global JS file including actual luxon lib
 
 
 v5.2.1 (2020-07-30)
