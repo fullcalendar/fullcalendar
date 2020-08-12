@@ -122,8 +122,6 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
             false // date-selecting (because mirror is never drawn for date selection)
           )
 
-          let showWeekNumber = props.showWeekNumbers && col === 0
-
           return (
             <TableCell
               key={cell.key}
@@ -131,8 +129,9 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               innerElRef={this.frameElRefs.createRef(cell.key) /* FF <td> problem, but okay to use for left/right. TODO: rename prop */}
               dateProfile={props.dateProfile}
               date={cell.date}
-              showDayNumber={props.showDayNumbers || showWeekNumber /* for spacing, we need to force day-numbers if week numbers */}
-              showWeekNumber={showWeekNumber}
+              showDayNumber={props.showDayNumbers}
+              showWeekNumber={props.showWeekNumbers && col === 0}
+              forceDayTop={props.showWeekNumbers /* even displaying weeknum for row, not necessarily day */}
               todayRange={props.todayRange}
               extraHookProps={cell.extraHookProps}
               extraDataAttrs={cell.extraDataAttrs}

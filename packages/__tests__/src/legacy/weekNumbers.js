@@ -82,4 +82,31 @@ describe('weekNumbers', function() {
 
   })
 
+  describe('when using in dayGrid view', function() {
+    pushOptions({
+      initialView: 'dayGridWeek'
+    })
+
+    // https://github.com/fullcalendar/fullcalendar/issues/5708
+    it('displays events evenly', function() {
+      let calendar = initCalendar({
+        weekNumbers: true,
+        initialDate: '2020-08-07',
+        events: [
+          { title: 'Event 1', start: '2020-08-02' },
+          { title: 'Event 2', start: '2020-08-03' }
+        ]
+      })
+      let gridWrapper = new DayGridViewWrapper(calendar).dayGrid
+      let eventEls = gridWrapper.getEventEls()
+
+      expect(
+        Math.abs(
+          eventEls[0].getBoundingClientRect().top -
+          eventEls[1].getBoundingClientRect().top
+        )
+      ).toBeLessThan(1)
+    })
+  })
+
 })

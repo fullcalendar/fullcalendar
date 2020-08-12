@@ -20,6 +20,7 @@ import {
   ViewApi,
   Dictionary,
   MountArg,
+  Fragment,
 } from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
 
@@ -41,6 +42,7 @@ export interface TableCellProps {
   moreMarginTop: number
   showDayNumber: boolean
   showWeekNumber: boolean
+  forceDayTop: boolean
   todayRange: DateRange
   buildMoreLinkText: (num: number) => string
   onMoreClick?: (arg: MoreLinkArg) => void
@@ -138,6 +140,7 @@ export class TableCell extends DateComponent<TableCellProps> {
                   date={date}
                   dateProfile={dateProfile}
                   showDayNumber={props.showDayNumber}
+                  forceDayTop={props.forceDayTop}
                   todayRange={props.todayRange}
                   extraHookProps={props.extraHookProps}
                 />
@@ -222,6 +225,7 @@ interface TableCellTopProps {
   date: DateMarker
   dateProfile: DateProfile
   showDayNumber: boolean
+  forceDayTop: boolean // hack to force-create an element with height (created by a nbsp)
   todayRange: DateRange
   extraHookProps?: Dictionary
 }
@@ -245,10 +249,10 @@ class TableCellTop extends BaseComponent<TableCellTopProps> {
         defaultContent={renderTopInner}
       >
         {(innerElRef, innerContent) => (
-          innerContent &&
+          (innerContent || props.forceDayTop) &&
             <div className='fc-daygrid-day-top' ref={innerElRef}>
               <a className='fc-daygrid-day-number' {...navLinkAttrs}>
-                {innerContent}
+                {innerContent || <Fragment>&nbsp;</Fragment>}
               </a>
             </div>
         )}
