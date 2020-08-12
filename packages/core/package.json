@@ -5,7 +5,7 @@
   "description": "Provides core functionality, including the Calendar class",
   "docs": "https://fullcalendar.io/docs/initialize-es6",
   "dependencies": {
-    "@fullcalendar/common": "~5.2.0",
+    "@fullcalendar/common": "~5.3.0",
     "preact": "^10.0.5",
     "tslib": "^2.0.0"
   },
