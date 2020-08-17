@@ -288,9 +288,9 @@ export class CalendarDataManager {
     }
 
     // TODO: use propSetHandlers in plugin system
-    if (!prevLoadingLevel && loadingLevel) {
+    if (!prevLoadingLevel && newState.loadingLevel) {
       emitter.trigger('loading', true)
-    } else if (prevLoadingLevel && !loadingLevel) {
+    } else if (prevLoadingLevel && !newState.loadingLevel) {
       emitter.trigger('loading', false)
     }
 
