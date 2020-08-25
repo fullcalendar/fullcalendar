@@ -34,6 +34,7 @@ A HORIZONTAL event
     right: 0; // for sticky
     max-width: 100%; // clip overflow on this element
     overflow: hidden;
+    text-overflow: ellipsis;  //  display an ellipsis ('…') for long title
   }
 
   &.fc-event-selected:before {
