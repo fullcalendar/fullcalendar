@@ -216,8 +216,11 @@ export const BASE_OPTION_REFINERS = {
   noEventsText: String,
 
   //TRYB extended
-  dayCellBorderClassName: String,
-  dayCellStyle: identity as Identity<Object>
+  dayCellStyle: identity as Identity<Object>,
+  dayGridDayFrameStyle: identity as Identity<any>,
+  dayGridDayTopStyle: identity as Identity<any>,
+  hideMoreContentLink: Boolean,
+  hideEventContent: Boolean
 }
 
 type BuiltInBaseOptionRefiners = typeof BASE_OPTION_REFINERS

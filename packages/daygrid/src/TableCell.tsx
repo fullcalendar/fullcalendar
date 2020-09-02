@@ -122,7 +122,9 @@ export class TableCell extends DateComponent<TableCellProps> {
             {...props.extraDataAttrs}
             style={ options.dayCellStyle ? options.dayCellStyle : { } }
           >
-            <div className='fc-daygrid-day-frame fc-scrollgrid-sync-inner' ref={props.innerElRef /* different from hook system! RENAME */}>
+            <div className='fc-daygrid-day-frame fc-scrollgrid-sync-inner'
+                 ref={props.innerElRef /* different from hook system! RENAME */}
+                 style={ options.dayGridDayFrameStyle ? options.dayGridDayFrameStyle : { } }>
               {props.showWeekNumber &&
                 <WeekNumberRoot date={date} defaultFormat={DEFAULT_WEEK_NUM_FORMAT}>
                   {(rootElRef, classNames, innerElRef, innerContent) => (
@@ -146,13 +148,14 @@ export class TableCell extends DateComponent<TableCellProps> {
                   extraHookProps={props.extraHookProps}
                 />
               }
+
               <div
                 className='fc-daygrid-day-events'
                 ref={props.fgContentElRef}
                 style={{ paddingBottom: props.fgPaddingBottom }}
               >
-                {props.fgContent}
-                {Boolean(props.moreCnt) &&
+                {!options.hideEventContent && props.fgContent }
+                {Boolean(props.moreCnt && !options.hideMoreContentLink) &&
                   <div className='fc-daygrid-day-bottom' style={{ marginTop: props.moreMarginTop }}>
                     <RenderHook<MoreLinkContentArg> // needed?
                       hookProps={hookProps}
@@ -236,7 +239,8 @@ class TableCellTop extends BaseComponent<TableCellTopProps> {
   render() {
     let { props } = this
 
-    let navLinkAttrs = this.context.options.navLinks
+    const options = this.context.options;
+    let navLinkAttrs = options.navLinks
       ? { 'data-navlink': buildNavLinkData(props.date), tabIndex: 0 }
       : {}
 
@@ -251,7 +255,8 @@ class TableCellTop extends BaseComponent<TableCellTopProps> {
       >
         {(innerElRef, innerContent) => (
           (innerContent || props.forceDayTop) &&
-            <div className='fc-daygrid-day-top' ref={innerElRef}>
+            <div className='fc-daygrid-day-top' ref={innerElRef}
+                 style={ options.dayGridDayTopStyle ? options.dayGridDayTopStyle : { } }>
               <a className='fc-daygrid-day-number' {...navLinkAttrs}>
                 {innerContent || <Fragment>&nbsp;</Fragment>}
               </a>

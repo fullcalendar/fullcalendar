@@ -33,10 +33,6 @@ export function getDayClassNames(meta: DateMeta, theme: Theme, context?: any) {
     'fc-day-' + DAY_IDS[meta.dow]
   ]
 
-  if (context && context.options.dayCellBorderClassName) {
-    classNames.push(context.options.dayCellBorderClassName)
-  }
-
   if (meta.isDisabled) {
     classNames.push('fc-day-disabled')
 

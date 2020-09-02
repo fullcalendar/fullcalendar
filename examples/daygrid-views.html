@@ -75,8 +75,11 @@
           start: '2020-06-28'
         }
       ],
-      dayCellBorderClassName: 'transparent_border',
-      dayCellStyle: { border: '5px solid white' }
+      dayCellStyle: { border: '5px solid white' },
+      hideMoreContentLink: true,
+      hideEventContent: true,
+      dayGridDayTopStyle: { display: 'flex', 'flex-direction': 'row', 'justify-content': 'center', 'align-content': 'center' },
+      dayGridDayFrameStyle: { display: 'flex', 'flex-direction': 'column', 'justify-content': 'center', 'align-content': 'center' },
     });
 
     calendar.render();
