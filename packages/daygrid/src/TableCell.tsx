@@ -120,6 +120,7 @@ export class TableCell extends DateComponent<TableCellProps> {
             className={[ 'fc-daygrid-day' ].concat(classNames, props.extraClassNames || []).join(' ')}
             {...rootDataAttrs}
             {...props.extraDataAttrs}
+            style={ options.dayCellStyle ? options.dayCellStyle : { } }
           >
             <div className='fc-daygrid-day-frame fc-scrollgrid-sync-inner' ref={props.innerElRef /* different from hook system! RENAME */}>
               {props.showWeekNumber &&

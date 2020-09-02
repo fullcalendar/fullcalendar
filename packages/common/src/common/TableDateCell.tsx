@@ -121,7 +121,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
     }
 
     let classNames = [ CLASS_NAME ].concat(
-      getDayClassNames(dateMeta, theme),
+      getDayClassNames(dateMeta, theme, this.context),
       props.extraClassNames || []
     )
 

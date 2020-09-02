@@ -68,7 +68,7 @@ export class DayCellRoot extends BaseComponent<DayCellRootProps> {
       dateEnv: context.dateEnv
     })
 
-    let classNames = getDayClassNames(hookProps, context.theme).concat(
+    let classNames = getDayClassNames(hookProps, context.theme, context).concat(
       hookProps.isDisabled
         ? [] // don't use custom classNames if disabled
         : this.normalizeClassNames(options.dayCellClassNames, hookProps)

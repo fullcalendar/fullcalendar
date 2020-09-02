@@ -213,7 +213,11 @@ export const BASE_OPTION_REFINERS = {
   titleFormat: identity as Identity<FormatterInput>, // DONT parse just yet. we need to inject titleSeparator
 
   // only used by list-view, but languages define the value, so we need it in base options
-  noEventsText: String
+  noEventsText: String,
+
+  //TRYB extended
+  dayCellBorderClassName: String,
+  dayCellStyle: identity as Identity<Object>
 }
 
 type BuiltInBaseOptionRefiners = typeof BASE_OPTION_REFINERS

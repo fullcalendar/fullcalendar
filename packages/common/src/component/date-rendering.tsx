@@ -26,11 +26,16 @@ export function getDateMeta(date: DateMarker, todayRange?: DateRange, nowDate?: 
 }
 
 
-export function getDayClassNames(meta: DateMeta, theme: Theme) {
+export function getDayClassNames(meta: DateMeta, theme: Theme, context?: any) {
+
   let classNames: string[] = [
     'fc-day',
     'fc-day-' + DAY_IDS[meta.dow]
   ]
+
+  if (context && context.options.dayCellBorderClassName) {
+    classNames.push(context.options.dayCellBorderClassName)
+  }
 
   if (meta.isDisabled) {
     classNames.push('fc-day-disabled')

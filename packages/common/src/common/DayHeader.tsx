@@ -28,7 +28,7 @@ export class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: rename t
     let { dates, dateProfile, datesRepDistinctDays, renderIntro } = this.props
 
     let dayHeaderFormat = this.createDayHeaderFormatter(
-      context.options.dayHeaderFormat,
+      context.options.dayHeaderFormat, //TODO: this is how you pass custom css
       datesRepDistinctDays,
       dates.length
     )
