@@ -7,11 +7,9 @@ comment: >
 
 issueConfigs:
 - content:
-  - "Reduced Test Case"
   - "http"
   - "Bug Description"
 - content:
-  - "Reduced Test Case"
   - "not reproducible with a link"
   - "Bug Description"
 - content:
