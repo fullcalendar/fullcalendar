@@ -5,7 +5,7 @@ const dts = require('rollup-plugin-dts').default
 const sourceMapLoader = require('rollup-plugin-sourcemaps')
 const postcss = require('rollup-plugin-postcss')
 const { checkNoSymlinks, buildBanner } = require('./scripts/lib/new')
-const { externalizeStylesheets, externalizeNonRelative, injectReleaseDate, buildAliasMap, removeStylesheetImports } = require('./scripts/lib/new-rollup')
+const { externalizeStylesheets, externalizeNonRelative, injectReleaseDateAndVersion, buildAliasMap, removeStylesheetImports } = require('./scripts/lib/new-rollup')
 
 
 /*
@@ -63,7 +63,7 @@ module.exports = [
           extract: true
         }),
         transplantCss(struct.mainName),
-        injectReleaseDate()
+        injectReleaseDateAndVersion()
       ]
     }
   }),
@@ -87,7 +87,7 @@ module.exports = [
           entries: aliasMap // TODO: for packages like @fullcalendar/common which will be inlined
         }),
         nodeResolve(), // for tslib
-        injectReleaseDate()
+        injectReleaseDateAndVersion()
       ]
     }
   }),

@@ -1,12 +1,13 @@
 const path = require('path')
 const replace = require('@rollup/plugin-replace')
+const rootPkgMeta = require('../../package.json')
 
 
 exports.externalizeStylesheets = externalizeStylesheets
 exports.externalizeNonRelative = externalizeNonRelative
 exports.externalizeRelative = externalizeRelative
 exports.buildAliasMap = buildAliasMap
-exports.injectReleaseDate = injectReleaseDate
+exports.injectReleaseDateAndVersion = injectReleaseDateAndVersion
 exports.removeStylesheetImports = removeStylesheetImports
 
 
@@ -66,11 +67,12 @@ function externalizeRelative() {
 }
 
 
-function injectReleaseDate() {
+function injectReleaseDateAndVersion() {
   return replace({
     delimiters: [ '<%= ', ' %>' ],
     values: {
-      releaseDate: new Date().toISOString().replace(/T.*/, '') // just YYYY-MM-DD
+      releaseDate: new Date().toISOString().replace(/T.*/, ''), // just YYYY-MM-DD
+      version: rootPkgMeta.version
     }
   })
 }
