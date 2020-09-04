@@ -115,6 +115,7 @@ function preparseRRuleStr(str, dateEnv: DateEnv) {
   }
 
   str = str.replace(/\b(DTSTART:)([^\n]*)/, processAndReplace)
+  str = str.replace(/\b(EXDATE:)([^\n]*)/, processAndReplace)
   str = str.replace(/\b(UNTIL=)([^;]*)/, processAndReplace)
 
   return { outStr: str, isTimeUnspecified }

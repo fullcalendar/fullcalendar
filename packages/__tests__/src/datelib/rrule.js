@@ -285,6 +285,21 @@ describe('rrule plugin', function() {
       expect(events[0].start).toEqualDate('2018-12-01')
     })
 
+    it('can expand weekly UTC-timed recurrence in local timeZone, with exclusion', function() {
+      initCalendar({
+        initialView: 'dayGridMonth',
+        now: '2018-12-25T12:00:00',
+        timeZone: 'local',
+        events: [ {
+          rrule: 'DTSTART:20181201T000000Z\nRRULE:FREQ=WEEKLY\nEXDATE:20181208T000000Z'
+        } ]
+      })
+
+      let events = currentCalendar.getEvents()
+      expect(events.length).toBe(5)
+      expect(events[0].start).toEqualDate('2018-12-01')
+    })
+
     it('can generate local dates', function() {
       let localStart = buildLocalRRuleDateStr('2018-09-04T05:00:00')
 
