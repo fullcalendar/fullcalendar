@@ -229,6 +229,7 @@ describe('rrule plugin', function() {
       initCalendar({
         initialView: 'dayGridMonth',
         now: '2018-12-25T12:00:00',
+        timeZone: 'UTC',
         events: [ {
           rrule: 'DTSTART:20181101\nRRULE:FREQ=MONTHLY;COUNT=13;BYMONTHDAY=13'
         } ]
@@ -252,6 +253,36 @@ describe('rrule plugin', function() {
       let events = currentCalendar.getEvents()
       expect(events.length).toBe(1)
       expect(events[0].start).toEqualLocalDate('2018-12-13')
+    })
+
+    it('can expand weekly timed recurrence in local timeZone', function() {
+      initCalendar({
+        initialView: 'dayGridMonth',
+        now: '2018-12-25T12:00:00',
+        timeZone: 'local',
+        events: [ {
+          rrule: 'DTSTART:20181201T000000\nRRULE:FREQ=WEEKLY'
+        } ]
+      })
+
+      let events = currentCalendar.getEvents()
+      expect(events.length).toBe(6)
+      expect(events[0].start).toEqualLocalDate('2018-12-01')
+    })
+
+    it('can expand weekly UTC-timed recurrence in local timeZone', function() {
+      initCalendar({
+        initialView: 'dayGridMonth',
+        now: '2018-12-25T12:00:00',
+        timeZone: 'local',
+        events: [ {
+          rrule: 'DTSTART:20181201T000000Z\nRRULE:FREQ=WEEKLY'
+        } ]
+      })
+
+      let events = currentCalendar.getEvents()
+      expect(events.length).toBe(6)
+      expect(events[0].start).toEqualDate('2018-12-01')
     })
 
     it('can generate local dates', function() {
