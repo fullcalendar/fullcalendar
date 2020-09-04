@@ -218,7 +218,7 @@ function limitByMaxRows(hiddenCnts, segIsHidden, colPlacements, dayMaxEventRows)
 populates the given hiddenCnts/segIsHidden, which are supplied empty.
 TODO: return them instead
 */
-function limitEvents(hiddenCnts, segIsHidden, colPlacements, moreLinkConsumesLevel, isPlacementInBounds) {
+function limitEvents(hiddenCnts, segIsHidden, colPlacements, _moreLinkConsumesLevel, isPlacementInBounds) {
   let colCnt = hiddenCnts.length
   let segIsVisible = {} as any // TODO: instead, use segIsHidden with true/false?
   let visibleColPlacements = [] // will mirror colPlacements
@@ -236,7 +236,7 @@ function limitEvents(hiddenCnts, segIsHidden, colPlacements, moreLinkConsumesLev
       if (isPlacementInBounds(placement, level)) {
         recordVisible(placement)
       } else {
-        recordHidden(placement)
+        recordHidden(placement, level, _moreLinkConsumesLevel)
       }
 
       // only considered a level if the seg had height
@@ -259,7 +259,7 @@ function limitEvents(hiddenCnts, segIsHidden, colPlacements, moreLinkConsumesLev
     }
   }
 
-  function recordHidden(placement) {
+  function recordHidden(placement, currentLevel, moreLinkConsumesLevel) {
     let { seg } = placement
     let { instanceId } = seg.eventRange.instance
 
@@ -270,10 +270,14 @@ function limitEvents(hiddenCnts, segIsHidden, colPlacements, moreLinkConsumesLev
         let hiddenCnt = ++hiddenCnts[col]
 
         if (moreLinkConsumesLevel && hiddenCnt === 1) {
-          let lastVisiblePlacement = visibleColPlacements[col].pop()
+          let doomedLevel = currentLevel - 1
 
-          if (lastVisiblePlacement) {
-            recordHidden(lastVisiblePlacement)
+          while (visibleColPlacements[col].length > doomedLevel) {
+            recordHidden(
+              visibleColPlacements[col].pop(), // removes
+              visibleColPlacements[col].length, // will execute after the pop. will be the index of the removed placement
+              false
+            )
           }
         }
       }

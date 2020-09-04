@@ -28,6 +28,30 @@ describe('dayGrid advanced event rendering', function() {
     expect(anyElsIntersect(eventEls)).toBe(false)
   })
 
+  // https://github.com/fullcalendar/fullcalendar/issues/5771
+  it('renders more-links correctly when first obscured event is longer than event before it', function() {
+    let calendar = initCalendar({
+      initialView: 'dayGridMonth',
+      initialDate: '2020-08-01',
+      dayMaxEventRows: 3,
+      events: [
+        { title: 'big1', start: '2020-07-23', end: '2020-07-28' },
+        { title: 'small1', start: '2020-07-24', end: '2020-07-27' },
+        { title: 'small2', start: '2020-07-24', end: '2020-07-27' },
+        { title: 'big2', start: '2020-07-25', end: '2020-07-28' }
+      ]
+    })
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEls = dayGridWrapper.getEventEls()
+    let visibleEventEls = filterVisibleEls(eventEls)
+    let moreLinkEls = dayGridWrapper.getMoreEls()
+
+    expect(visibleEventEls.length).toBe(2)
+    expect(moreLinkEls.length).toBe(2)
+    expect(anyElsIntersect(visibleEventEls.concat(moreLinkEls))).toBe(false)
+  })
+
   it('won\'t intersect when doing custom rendering', function() {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
