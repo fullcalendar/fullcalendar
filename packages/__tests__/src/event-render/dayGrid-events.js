@@ -52,6 +52,31 @@ describe('dayGrid advanced event rendering', function() {
     expect(anyElsIntersect(visibleEventEls.concat(moreLinkEls))).toBe(false)
   })
 
+  // https://github.com/fullcalendar/fullcalendar/issues/5790
+  it('positions more-links correctly in columns that have empty space', function() {
+    let calendar = initCalendar({
+      initialView: 'dayGridMonth',
+      initialDate: '2020-09-01',
+      dayMaxEventRows: 4,
+      events: [
+        { start: '2020-08-30', end: '2020-09-04' },
+        { start: '2020-08-31', end: '2020-09-03' },
+        { start: '2020-09-01', end: '2020-09-04' },
+        { start: '2020-09-02', end: '2020-09-04' },
+        { start: '2020-09-02', end: '2020-09-04' },
+      ]
+    })
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEls = dayGridWrapper.getEventEls()
+    let visibleEventEls = filterVisibleEls(eventEls)
+    let moreLinkEls = dayGridWrapper.getMoreEls()
+
+    expect(visibleEventEls.length).toBe(3)
+    expect(moreLinkEls.length).toBe(2)
+    expect(anyElsIntersect(visibleEventEls.concat(moreLinkEls))).toBe(false)
+  })
+
   it('won\'t intersect when doing custom rendering', function() {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',

@@ -64,7 +64,7 @@ export function computeFgSegPlacement( // for one row. TODO: print mode?
   for (let col = 0; col < colCnt; col++) {
     let placements = colPlacements[col]
     let currentNonAbsBottom = 0
-    let runningAbsHeight = 0
+    let currentAbsHeight = 0
 
     for (let placement of placements) {
       let seg = placement.seg
@@ -78,20 +78,20 @@ export function computeFgSegPlacement( // for one row. TODO: print mode?
           segMarginTops[seg.eventRange.instance.instanceId] =
             placement.top - currentNonAbsBottom // from previous seg bottom
 
-          runningAbsHeight = 0
+          currentAbsHeight = 0
           currentNonAbsBottom = placement.bottom
 
         } else { // multi-col event, abs positioned
-          runningAbsHeight += placement.bottom - placement.top
+          currentAbsHeight = placement.bottom - currentNonAbsBottom
         }
       }
     }
 
-    if (runningAbsHeight) {
+    if (currentAbsHeight) {
       if (moreCnts[col]) {
-        moreTops[col] = runningAbsHeight
+        moreTops[col] = currentAbsHeight
       } else {
-        paddingBottoms[col] = runningAbsHeight
+        paddingBottoms[col] = currentAbsHeight
       }
     }
   }
