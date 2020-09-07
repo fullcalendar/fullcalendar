@@ -75,6 +75,11 @@ describe('dayGrid advanced event rendering', function() {
     expect(visibleEventEls.length).toBe(3)
     expect(moreLinkEls.length).toBe(2)
     expect(anyElsIntersect(visibleEventEls.concat(moreLinkEls))).toBe(false)
+
+    expect(Math.abs(
+      moreLinkEls[0].getBoundingClientRect().top -
+      moreLinkEls[1].getBoundingClientRect().top
+    )).toBeLessThan(1)
   })
 
   it('won\'t intersect when doing custom rendering', function() {
