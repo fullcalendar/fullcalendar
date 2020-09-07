@@ -1,4 +1,10 @@
 
+v5.3.2 (2020-09-06)
+-------------------
+
+fix: more-link sometimes incorrectly positioned behind events (#5790)
+
+
 v5.3.1 (2020-09-04)
 -------------------
 
