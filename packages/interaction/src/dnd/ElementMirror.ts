@@ -1,4 +1,4 @@
-import { removeElement, applyStyle, whenTransitionDone, Rect } from '@fullcalendar/common'
+import { removeElement, applyStyle, whenTransitionDone, Point } from '@fullcalendar/common'
 
 // Returns the left/top offset of an element relative to the document body
 function getClientPosition(el) {
@@ -31,7 +31,7 @@ export class ElementMirror {
   deltaY?: number
   sourceEl: HTMLElement | null = null
   mirrorEl: HTMLElement | null = null
-  sourceElRect: Rect | null = null // screen coords relative to viewport
+  sourceElPosition: Point | null = null // screen coords relative to viewport
 
   // options that can be set directly by caller
   parentNode: HTMLElement = document.body
@@ -40,7 +40,7 @@ export class ElementMirror {
 
   start(sourceEl: HTMLElement, pageX: number, pageY: number) {
     this.sourceEl = sourceEl
-    this.sourceElRect = getClientPosition(sourceEl)
+    this.sourceElPosition = getClientPosition(sourceEl)
     this.origScreenX = pageX - window.pageXOffset
     this.origScreenY = pageY - window.pageYOffset
     this.deltaX = 0
@@ -98,15 +98,15 @@ export class ElementMirror {
 
   doRevertAnimation(callback: () => void, revertDuration: number) {
     let mirrorEl = this.mirrorEl!
-    let finalSourceElRect = getClientPosition(this.sourceEl) // because autoscrolling might have happened
+    let finalSourceElPosition = getClientPosition(this.sourceEl) // because autoscrolling might have happened
 
     mirrorEl.style.transition =
       'top ' + revertDuration + 'ms,' +
       'left ' + revertDuration + 'ms'
 
     applyStyle(mirrorEl, {
-      left: finalSourceElRect.left,
-      top: finalSourceElRect.top
+      left: finalSourceElPosition.left,
+      top: finalSourceElPosition.top
     })
 
     whenTransitionDone(mirrorEl, () => {
@@ -127,8 +127,8 @@ export class ElementMirror {
   updateElPosition() {
     if (this.sourceEl && this.isVisible) {
       applyStyle(this.getMirrorEl(), {
-        left: this.sourceElRect!.left + this.deltaX!,
-        top: this.sourceElRect!.top + this.deltaY!
+        left: this.sourceElPosition!.left + this.deltaX!,
+        top: this.sourceElPosition!.top + this.deltaY!
       })
     }
   }
