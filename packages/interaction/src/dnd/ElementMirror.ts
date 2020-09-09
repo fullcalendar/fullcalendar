@@ -117,10 +117,10 @@ export class ElementMirror {
   }
 
   getMirrorEl(): HTMLElement {
-    let sourceElRect = this.sourceElRect!
     let mirrorEl = this.mirrorEl
 
     if (!mirrorEl) {
+      let sourceElRect = this.sourceEl!.getBoundingClientRect()
       mirrorEl = this.mirrorEl = this.sourceEl!.cloneNode(true) as HTMLElement // cloneChildren=true
 
       // we don't want long taps or any mouse interaction causing selection/menus.
