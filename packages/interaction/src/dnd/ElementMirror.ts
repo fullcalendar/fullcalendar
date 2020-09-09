@@ -1,5 +1,22 @@
 import { removeElement, applyStyle, whenTransitionDone, Rect } from '@fullcalendar/common'
 
+// Returns the left/top offset of an element relative to the document body
+function getClientPosition(el) {
+  function getOffset(el, left = 0, top = 0) {
+    if (!el || el.offsetParent === document.body) {
+      return { left, top }
+    }
+
+    return getOffset(
+      el.offsetParent,
+      left + el.offsetLeft - el.scrollLeft,
+      top + el.offsetTop - el.scrollTop
+    )
+  }
+
+  return getOffset(el)
+}
+
 /*
 An effect in which an element follows the movement of a pointer across the screen.
 The moving element is a clone of some other element.
@@ -23,7 +40,7 @@ export class ElementMirror {
 
   start(sourceEl: HTMLElement, pageX: number, pageY: number) {
     this.sourceEl = sourceEl
-    this.sourceElRect = this.sourceEl.getBoundingClientRect()
+    this.sourceElRect = getClientPosition(sourceEl)
     this.origScreenX = pageX - window.pageXOffset
     this.origScreenY = pageY - window.pageYOffset
     this.deltaX = 0
@@ -81,7 +98,7 @@ export class ElementMirror {
 
   doRevertAnimation(callback: () => void, revertDuration: number) {
     let mirrorEl = this.mirrorEl!
-    let finalSourceElRect = this.sourceEl!.getBoundingClientRect() // because autoscrolling might have happened
+    let finalSourceElRect = getClientPosition(this.sourceEl) // because autoscrolling might have happened
 
     mirrorEl.style.transition =
       'top ' + revertDuration + 'ms,' +
