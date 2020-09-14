@@ -1,20 +1,13 @@
 import { removeElement, applyStyle, whenTransitionDone, Point } from '@fullcalendar/common'
 
-// Returns the left/top offset of an element relative to the document body
-function getClientPosition(el) {
-  function getOffset(el, left = 0, top = 0) {
-    if (!el || el.offsetParent === document.body) {
-      return { left, top }
-    }
+function getClientPosition(el, containerEl) {
+  const containerRect = containerEl.getBoundingClientRect();
+  const rect = el.getBoundingClientRect();
 
-    return getOffset(
-      el.offsetParent,
-      left + el.offsetLeft - el.scrollLeft,
-      top + el.offsetTop - el.scrollTop
-    )
+  return {
+      left: rect.left - containerRect.left,
+      top: rect.top - containerRect.top
   }
-
-  return getOffset(el)
 }
 
 /*
@@ -40,17 +33,17 @@ export class ElementMirror {
 
   start(sourceEl: HTMLElement, pageX: number, pageY: number) {
     this.sourceEl = sourceEl
-    this.sourceElPosition = getClientPosition(sourceEl)
-    this.origScreenX = pageX - window.pageXOffset
-    this.origScreenY = pageY - window.pageYOffset
+    this.sourceElPosition = getClientPosition(sourceEl, this.parentNode)
+    this.origScreenX = pageX
+    this.origScreenY = pageY
     this.deltaX = 0
     this.deltaY = 0
     this.updateElPosition()
   }
 
   handleMove(pageX: number, pageY: number) {
-    this.deltaX = (pageX - window.pageXOffset) - this.origScreenX!
-    this.deltaY = (pageY - window.pageYOffset) - this.origScreenY!
+    this.deltaX = pageX - this.origScreenX!
+    this.deltaY = pageY - this.origScreenY!
     this.updateElPosition()
   }
 
@@ -98,7 +91,7 @@ export class ElementMirror {
 
   doRevertAnimation(callback: () => void, revertDuration: number) {
     let mirrorEl = this.mirrorEl!
-    let finalSourceElPosition = getClientPosition(this.sourceEl) // because autoscrolling might have happened
+    let finalSourceElPosition = getClientPosition(this.sourceEl, this.parentNode) // because autoscrolling might have happened
 
     mirrorEl.style.transition =
       'top ' + revertDuration + 'ms,' +
@@ -147,7 +140,7 @@ export class ElementMirror {
       mirrorEl.classList.add('fc-event-dragging')
 
       applyStyle(mirrorEl, {
-        position: 'fixed',
+        position: 'absolute',
         zIndex: this.zIndex,
         visibility: '', // in case original element was hidden by the drag effect
         boxSizing: 'border-box', // for easy width/height

@@ -79,7 +79,7 @@ export class FeaturefulElementDragging extends ElementDragging {
         // actions related to initiating dragstart+dragmove+dragend...
 
         this.mirror.setIsVisible(false) // reset. caller must set-visible
-        this.mirror.start(ev.subjectEl as HTMLElement, ev.pageX, ev.pageY) // must happen on first pointer down
+        this.mirror.start(ev.subjectEl as HTMLElement, ev.relativeX, ev.relativeY) // must happen on first pointer down
 
         this.startDelay(ev)
 
@@ -110,7 +110,7 @@ export class FeaturefulElementDragging extends ElementDragging {
 
         // a real pointer move? (not one simulated by scrolling)
         if (ev.origEvent.type !== 'scroll') {
-          this.mirror.handleMove(ev.pageX, ev.pageY)
+          this.mirror.handleMove(ev.relativeX, ev.relativeY)
           this.autoScroller.handleMove(ev.pageX, ev.pageY)
         }
 

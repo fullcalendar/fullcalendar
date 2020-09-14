@@ -1,4 +1,4 @@
-import { config, elementClosest, Emitter, PointerDragEvent } from '@fullcalendar/common'
+import { config, elementClosest, Emitter, PointerDragEvent, Rect } from '@fullcalendar/common'
 
 config.touchMouseIgnoreWait = 500
 
@@ -37,6 +37,8 @@ export class PointerDragging {
   wasTouchScroll: boolean = false
   origPageX: number
   origPageY: number
+  origCurrentTarget: HTMLElement
+  origCurrentTargetRect: Rect
   prevPageX: number
   prevPageY: number
   prevScrollX: number // at time of last pointer pageX/pageY capture
@@ -254,6 +256,10 @@ export class PointerDragging {
     if (isFirst) {
       this.origPageX = ev.pageX
       this.origPageY = ev.pageY
+      this.origCurrentTarget = ev.currentTarget as HTMLElement
+      this.origCurrentTargetRect = this.origCurrentTarget.getBoundingClientRect 
+        ? this.origCurrentTarget.getBoundingClientRect()
+        : { left: 0, top: 0 }
     } else {
       deltaX = ev.pageX - this.origPageX
       deltaY = ev.pageY - this.origPageY
@@ -266,7 +272,9 @@ export class PointerDragging {
       pageX: ev.pageX,
       pageY: ev.pageY,
       deltaX,
-      deltaY
+      deltaY,
+      relativeX: ev.clientX - this.origCurrentTargetRect.left - this.origCurrentTarget.clientLeft + this.origCurrentTarget.scrollLeft - window.pageXOffset,
+      relativeY: ev.clientY - this.origCurrentTargetRect.top - this.origCurrentTarget.clientTop + this.origCurrentTarget.scrollTop - window.pageYOffset
     }
   }
 
