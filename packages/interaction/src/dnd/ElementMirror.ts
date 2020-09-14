@@ -18,8 +18,8 @@ Must call start + handleMove + stop.
 export class ElementMirror {
 
   isVisible: boolean = false // must be explicitly enabled
-  origScreenX?: number
-  origScreenY?: number
+  offsetX?: number
+  offsetY?: number
   deltaX?: number
   deltaY?: number
   sourceEl: HTMLElement | null = null
@@ -31,19 +31,19 @@ export class ElementMirror {
   zIndex: number = 9999
   revertDuration: number = 0
 
-  start(sourceEl: HTMLElement, pageX: number, pageY: number) {
+  start(sourceEl: HTMLElement, relativeX: number, relativeY: number) {
     this.sourceEl = sourceEl
     this.sourceElPosition = getClientPosition(sourceEl, this.parentNode)
-    this.origScreenX = pageX
-    this.origScreenY = pageY
+    this.offsetX = relativeX
+    this.offsetY = relativeY
     this.deltaX = 0
     this.deltaY = 0
     this.updateElPosition()
   }
 
-  handleMove(pageX: number, pageY: number) {
-    this.deltaX = pageX - this.origScreenX!
-    this.deltaY = pageY - this.origScreenY!
+  handleMove(relativeX: number, relativeY: number) {
+    this.deltaX = relativeX - this.offsetX!
+    this.deltaY = relativeY - this.offsetY!
     this.updateElPosition()
   }
 
