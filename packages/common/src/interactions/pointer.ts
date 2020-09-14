@@ -6,5 +6,7 @@ export interface PointerDragEvent {
   pageX: number
   pageY: number
   deltaX: number
-  deltaY: number
+  deltaY: number,
+  relativeX: number,
+  relativeY: number
 }

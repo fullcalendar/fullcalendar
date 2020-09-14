@@ -1,4 +1,4 @@
-import { config, elementClosest, Emitter, PointerDragEvent, Rect } from '@fullcalendar/common'
+import { config, elementClosest, Emitter, PointerDragEvent, Point } from '@fullcalendar/common'
 
 config.touchMouseIgnoreWait = 500
 
@@ -38,7 +38,7 @@ export class PointerDragging {
   origPageX: number
   origPageY: number
   origCurrentTarget: HTMLElement
-  origCurrentTargetRect: Rect
+  origCurrentTargetOffset: Point
   prevPageX: number
   prevPageY: number
   prevScrollX: number // at time of last pointer pageX/pageY capture
@@ -233,7 +233,9 @@ export class PointerDragging {
         pageX,
         pageY,
         deltaX: pageX - this.origPageX,
-        deltaY: pageY - this.origPageY
+        deltaY: pageY - this.origPageY,
+        relativeX: 0, // not sure what to do here
+        relativeY: 0  // not sure what to do here
       } as PointerDragEvent)
     }
   }
@@ -257,7 +259,7 @@ export class PointerDragging {
       this.origPageX = ev.pageX
       this.origPageY = ev.pageY
       this.origCurrentTarget = ev.currentTarget as HTMLElement
-      this.origCurrentTargetRect = this.origCurrentTarget.getBoundingClientRect 
+      this.origCurrentTargetOffset = this.origCurrentTarget.getBoundingClientRect 
         ? this.origCurrentTarget.getBoundingClientRect()
         : { left: 0, top: 0 }
     } else {
@@ -273,8 +275,8 @@ export class PointerDragging {
       pageY: ev.pageY,
       deltaX,
       deltaY,
-      relativeX: ev.clientX - this.origCurrentTargetRect.left - this.origCurrentTarget.clientLeft + this.origCurrentTarget.scrollLeft - window.pageXOffset,
-      relativeY: ev.clientY - this.origCurrentTargetRect.top - this.origCurrentTarget.clientTop + this.origCurrentTarget.scrollTop - window.pageYOffset
+      relativeX: ev.clientX - this.origCurrentTargetOffset.left - this.origCurrentTarget.clientLeft + this.origCurrentTarget.scrollLeft - window.pageXOffset,
+      relativeY: ev.clientY - this.origCurrentTargetOffset.top - this.origCurrentTarget.clientTop + this.origCurrentTarget.scrollTop - window.pageYOffset
     }
   }
 
@@ -311,7 +313,9 @@ export class PointerDragging {
       pageX,
       pageY,
       deltaX,
-      deltaY
+      deltaY,
+      relativeX: 0, // not sure what to do for touch
+      relativeY: 0  // not sure what to do for touch
     }
   }
 
