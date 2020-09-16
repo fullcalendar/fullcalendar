@@ -423,7 +423,7 @@ describe('eventDrop', function() {
   })
 
   // Initialize a calendar, run a drag, and do type-checking of all arguments for all handlers.
-  // TODO: more descrimination instead of just checking for 'object'
+  // TODO: more discrimination instead of just checking for 'object'
   function initCalendarWithSpies(options) {
 
     options.eventDragStart = (arg) => {

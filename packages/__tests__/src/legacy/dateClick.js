@@ -27,7 +27,7 @@ describe('dateClick', function() {
           let calendar = initCalendar({
             dateClick(arg) {
               expect(arg.date instanceof Date).toEqual(true)
-              expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+              expect(typeof arg.jsEvent).toEqual('object') // TODO: more discrimination
               expect(typeof arg.view).toEqual('object') // "
               expect(arg.allDay).toEqual(true)
               expect(arg.date).toEqualDate('2014-05-07')
@@ -49,7 +49,7 @@ describe('dateClick', function() {
           let calendar = initCalendar({
             dateClick(arg) {
               expect(arg.date instanceof Date).toEqual(true)
-              expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+              expect(typeof arg.jsEvent).toEqual('object') // TODO: more discrimination
               expect(typeof arg.view).toEqual('object') // "
               expect(arg.allDay).toEqual(true)
               expect(arg.date).toEqualDate('2014-05-28')
@@ -67,7 +67,7 @@ describe('dateClick', function() {
             scrollTime: '07:00:00',
             dateClick(arg) {
               expect(arg.date instanceof Date).toEqual(true)
-              expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+              expect(typeof arg.jsEvent).toEqual('object') // TODO: more discrimination
               expect(typeof arg.view).toEqual('object') // "
               expect(arg.allDay).toEqual(false)
               expect(arg.date).toEqualDate('2014-05-28T09:00:00Z')
@@ -87,7 +87,7 @@ describe('dateClick', function() {
             slotMinTime: '02:00:00',
             dateClick(arg) {
               expect(arg.date instanceof Date).toEqual(true)
-              expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+              expect(typeof arg.jsEvent).toEqual('object') // TODO: more discrimination
               expect(typeof arg.view).toEqual('object') // "
               expect(arg.allDay).toEqual(false)
               expect(arg.date).toEqualDate('2014-05-28T11:00:00Z')
@@ -106,7 +106,7 @@ describe('dateClick', function() {
             scrollTime: '23:00:00',
             dateClick(arg) {
               expect(arg.date instanceof Date).toEqual(true)
-              expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+              expect(typeof arg.jsEvent).toEqual('object') // TODO: more discrimination
               expect(typeof arg.view).toEqual('object') // "
               expect(arg.allDay).toEqual(false)
               expect(arg.date).toEqualDate('2014-05-28T23:30:00Z')
@@ -143,7 +143,7 @@ describe('dateClick', function() {
       let calendar = initCalendar({
         dateClick(arg) {
           expect(arg.date instanceof Date).toEqual(true)
-          expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+          expect(typeof arg.jsEvent).toEqual('object') // TODO: more discrimination
           expect(typeof arg.view).toEqual('object') // "
           expect(arg.allDay).toEqual(true)
           expect(arg.date).toEqualDate('2014-05-07')
@@ -179,7 +179,7 @@ describe('dateClick', function() {
       let calendar = initCalendar({
         dateClick(arg) {
           expect(arg.date instanceof Date).toEqual(true)
-          expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+          expect(typeof arg.jsEvent).toEqual('object') // TODO: more discrimination
           expect(typeof arg.view).toEqual('object') // "
           expect(arg.allDay).toEqual(true)
           expect(arg.date).toEqualDate('2014-05-07')
