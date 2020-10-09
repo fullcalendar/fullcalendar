@@ -2,6 +2,7 @@ import { EventInput, EventInputTransformer } from './event-parse'
 import { EventSourceFunc } from '../event-sources/func-event-source'
 import { EventSource, EventSourceSuccessResponseHandler, EventSourceErrorResponseHandler } from './event-source'
 import { JSON_FEED_EVENT_SOURCE_REFINERS } from '../event-sources/json-feed-event-source-refiners'
+import { ICAL_FEED_EVENT_SOURCE_REFINERS } from '../event-sources/ical-feed-event-source-refiners'
 import { CalendarContext } from '../CalendarContext'
 import { guid } from '../util/misc'
 import { EVENT_UI_REFINERS, createEventUi, EventUiInput, EventUiRefined } from '../component/event-ui'
@@ -20,7 +21,7 @@ const EVENT_SOURCE_REFINERS = { // does NOT include EVENT_UI_REFINERS
   failure: identity as Identity<EventSourceErrorResponseHandler>,
 }
 
-type BuiltInEventSourceRefiners = typeof EVENT_SOURCE_REFINERS & typeof JSON_FEED_EVENT_SOURCE_REFINERS
+type BuiltInEventSourceRefiners = typeof EVENT_SOURCE_REFINERS & typeof JSON_FEED_EVENT_SOURCE_REFINERS & typeof ICAL_FEED_EVENT_SOURCE_REFINERS 
 
 export interface EventSourceRefiners extends BuiltInEventSourceRefiners {
   // for extending
