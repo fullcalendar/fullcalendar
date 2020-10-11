@@ -15,7 +15,7 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
   parseMeta(refined) {
     if (refined.feedUrl) {
       return {
-        feedUrl: refined.url,
+        feedUrl: refined.feedUrl,
         method: (refined.method || 'GET').toUpperCase(),
       }
     }

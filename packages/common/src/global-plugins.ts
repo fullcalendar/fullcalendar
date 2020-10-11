@@ -3,6 +3,7 @@ import { createPlugin } from './plugin-system'
 import { arrayEventSourcePlugin } from './event-sources/array-event-source'
 import { funcEventSourcePlugin } from './event-sources/func-event-source'
 import { jsonFeedEventSourcePlugin } from './event-sources/json-feed-event-source'
+import { iCalFeedEventSourcePlugin } from './event-sources/ical-feed-event-source'
 import { simpleRecurringEventsPlugin } from './structs/recurring-event-simple'
 import { changeHandlerPlugin } from './option-change-handlers'
 import { handleDateProfile } from './dates-set'
@@ -18,6 +19,7 @@ export const globalPlugins: PluginDef[] = [ // TODO: make a const?
   arrayEventSourcePlugin,
   funcEventSourcePlugin,
   jsonFeedEventSourcePlugin,
+  iCalFeedEventSourcePlugin,
   simpleRecurringEventsPlugin,
   changeHandlerPlugin,
   createPlugin({ // misc...
