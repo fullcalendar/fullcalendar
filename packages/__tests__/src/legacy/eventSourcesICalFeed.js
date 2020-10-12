@@ -2,6 +2,8 @@ import XHRMock from 'xhr-mock'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 describe('addICalEventSource', function() {
+  const ICAL_MIME_TYPE = 'text/calendar'
+
   // This is a bit gross to dump straight in the test. Could it be pulled out
   // to a separate file, or put somewhere neater?
   const ICAL_FEED = `
@@ -45,43 +47,23 @@ END:VEVENT
     XHRMock.teardown()
   })
 
-  it('correctly adds an array source', function(done) {
-    XHRMock.get(/^mock.ics/, function(req, res) {
+  it('correctly adds an ical feed source', async (done) => {
+    XHRMock.get('/mock.ics', function(req, res) {
       expect(req.url().query).toEqual({})
 
-      done()
       return res.status(200)
-        .header('content-type', 'application/json')
+        .header('content-type', ICAL_MIME_TYPE)
         .body(ICAL_FEED)
     })
-    go(
-      function() {
-        currentCalendar.addEventSource(iCalFeedSource)
-      },
-      null,
-      done
-    )
-  })
 
-  function go(addFunc, extraTestFunc, doneFunc) {
-    initCalendar()
-    addFunc()
-
-    checkAllEvents()
-    if (extraTestFunc) {
-      extraTestFunc()
-    }
-
-    setTimeout(function() {
-
+    const calendar = initCalendar()
+    
+    calendar.addEventSource(iCalFeedSource)
+    setTimeout(() => {
       checkAllEvents()
-      if (extraTestFunc) {
-        extraTestFunc()
-      }
-
-      doneFunc()
-    }, 0)
-  }
+      done()
+    }, 200)
+  })
 
   // Checks to make sure all events have been rendered and that the calendar
   // has internal info on all the events.
