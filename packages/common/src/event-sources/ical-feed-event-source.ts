@@ -3,7 +3,10 @@ import { __assign } from 'tslib'
 import { createPlugin } from '../plugin-system'
 import { ICAL_FEED_EVENT_SOURCE_REFINERS } from './ical-feed-event-source-refiners'
 
-export function requestICal(url: string, successCallback, failureCallback) {
+type Success = (text: string, xhr: XMLHttpRequest) => void
+type Failure = (error: string, xhr: XMLHttpRequest) => void
+
+export function requestICal(url: string, successCallback: Success, failureCallback: Failure) {
 
   const xhr = new XMLHttpRequest()
   xhr.open('GET', url, true)
