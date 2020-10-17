@@ -1,9 +1,10 @@
+import ICAL from 'ical.js'
 import { EventSourceDef } from '../structs/event-source-def'
 import { __assign } from 'tslib'
 import { createPlugin } from '../plugin-system'
 import { ICAL_FEED_EVENT_SOURCE_REFINERS } from './ical-feed-event-source-refiners'
 
-type Success = (text: string, xhr: XMLHttpRequest) => void
+type Success = (rawFeed: string, xhr: XMLHttpRequest) => void
 type Failure = (error: string, xhr: XMLHttpRequest) => void
 
 export function requestICal(url: string, successCallback: Success, failureCallback: Failure) {
@@ -51,17 +52,28 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
 
     return new Promise((resolve, reject) => {
       requestICal(meta.feedUrl,
-        (_, xhr) => {
-          const rawEvents = [
+        (rawFeed, xhr) => {
+          try {
+
+          const iCalFeed = ICAL.parse(rawFeed)
+          const iCalComponent = new ICAL.Component(iCalFeed);
+          const vevent1 = iCalComponent.getFirstSubcomponent("vevent");
+          const event = new ICAL.Event(vevent1);
+
+          const events = [
             {
-              title: 'id-123',
-              start: '2019-04-10T10:30:00Z',
-              end: '2019-04-13T17:00Z',
+              title: event.summary,
+              start: event.startDate.toJSDate(),
+              end: event.endDate.toJSDate(),
             },
           ]
 
-          success({ rawEvents, xhr })
+          success({ rawEvents: events, xhr })
           resolve()
+          } catch(error) {
+            console.log(error)
+            throw error
+          }
         },
         (errorMessage, xhr) => {
           failure({ message: errorMessage, xhr })

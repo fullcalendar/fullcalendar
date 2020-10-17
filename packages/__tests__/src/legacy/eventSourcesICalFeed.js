@@ -27,6 +27,7 @@ STATUS:CONFIRMED
 SUMMARY:Multi-day conference
 TRANSP:OPAQUE
 END:VEVENT
+END:VCALENDAR
 `
 
   const iCalFeedSource = {
