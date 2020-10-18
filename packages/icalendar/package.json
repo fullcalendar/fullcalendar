@@ -1,18 +1,19 @@
 {
-  "name": "@fullcalendar/google-calendar",
+  "name": "@fullcalendar/icalendar",
   "version": "5.3.1",
-  "title": "FullCalendar Google Calendar Plugin",
-  "description": "Fetch events from a public Google Calendar feed",
-  "docs": "https://fullcalendar.io/docs/google-calendar",
+  "title": "FullCalendar iCalendar Plugin",
+  "description": "Fetch events from a public iCalendar / .ics feed",
+  "docs": "https://fullcalendar.io/docs/icalendar",
   "dependencies": {
     "@fullcalendar/common": "~5.3.1",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "ical.js": "^1.4.0"
   },
   "type": "module",
   "main": "main.js",
   "types": "main.d.ts",
   "jsdelivr": "main.global.min.js",
-  "browserGlobal": "FullCalendarGoogleCalendar",
+  "browserGlobal": "FullCalendarICalendar",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {
@@ -22,8 +23,8 @@
   },
   "license": "MIT",
   "author": {
-    "name": "Adam Shaw",
-    "email": "arshaw@arshaw.com",
-    "url": "http://arshaw.com/"
+    "name": "NJ Pearman",
+    "email": "n.pearman@gmail.com",
+    "url": "https://github.com/njpearman/"
   }
 }

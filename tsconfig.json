@@ -12,6 +12,7 @@
     { "path": "packages/list" },
     { "path": "packages/bootstrap" },
     { "path": "packages/google-calendar" },
+    { "path": "packages/icalendar" },
     { "path": "packages/luxon" },
     { "path": "packages/moment" },
     { "path": "packages/moment-timezone" },

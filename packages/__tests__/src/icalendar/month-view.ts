@@ -1,5 +1,8 @@
 import XHRMock from 'xhr-mock'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import dayGridMonth from '@fullcalendar/daygrid'
+import { EventSourceInput } from '@fullcalendar/core'
+import iCalendarPlugin from '../../../icalendar/main'
 
 describe('addICalEventSource', function() {
   const ICAL_MIME_TYPE = 'text/calendar'
@@ -30,14 +33,10 @@ END:VEVENT
 END:VCALENDAR
 `
 
-  const iCalFeedSource = {
-    feedUrl: '/mock.ics',
-    method: 'GET',
-  }
-
   pushOptions({
+    plugins: [ iCalendarPlugin, dayGridMonth ],
     initialDate: '2019-04-10', // the start of the three-day event in the feed
-    initialView: 'dayGridMonth'
+    initialView: 'dayGridMonth',
   })
 
   beforeEach(function() {
@@ -58,8 +57,13 @@ END:VCALENDAR
     })
 
     const calendar = initCalendar()
+
+    calendar.addEventSource(
+      { 
+        feedUrl: '/mock.ics',
+      } as EventSourceInput
+    )
     
-    calendar.addEventSource(iCalFeedSource)
     setTimeout(() => {
       checkAllEvents()
       done()
