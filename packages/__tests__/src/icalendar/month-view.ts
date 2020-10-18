@@ -4,34 +4,10 @@ import dayGridMonth from '@fullcalendar/daygrid'
 import { EventSourceInput } from '@fullcalendar/core'
 import iCalendarPlugin from '../../../icalendar/main'
 
-describe('addICalEventSource', function() {
-  const ICAL_MIME_TYPE = 'text/calendar'
+import singleCalendar from './data/singleCalendar'
 
-  // This is a bit gross to dump straight in the test. Could it be pulled out
-  // to a separate file, or put somewhere neater?
-  const ICAL_FEED = `
-BEGIN:VCALENDAR
-VERSION:2.0
-CALSCALE:GREGORIAN
-METHOD:PUBLISH
-X-WR-CALNAME:events@fullcalendar.test
-X-WR-TIMEZONE:Europe/Paris
-BEGIN:VEVENT
-DTSTART;VALUE=DATE:20190410
-DTEND;VALUE=DATE:20190413
-DTSTAMP:20201006T124223Z
-UID:5pll5td7cag5rkdm988j2d0vc7@google.com
-CREATED:20190408T110429Z
-DESCRIPTION:
-LAST-MODIFIED:20190409T110738Z
-LOCATION:
-SEQUENCE:0
-STATUS:CONFIRMED
-SUMMARY:Multi-day conference
-TRANSP:OPAQUE
-END:VEVENT
-END:VCALENDAR
-`
+fdescribe('addICalEventSource', function() {
+  const ICAL_MIME_TYPE = 'text/calendar'
 
   pushOptions({
     plugins: [ iCalendarPlugin, dayGridMonth ],
@@ -53,7 +29,7 @@ END:VCALENDAR
 
       return res.status(200)
         .header('content-type', ICAL_MIME_TYPE)
-        .body(ICAL_FEED)
+        .body(singleCalendar)
     })
 
     const calendar = initCalendar()
