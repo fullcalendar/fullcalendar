@@ -56,16 +56,16 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
 
           const iCalFeed = ICAL.parse(rawFeed)
           const iCalComponent = new ICAL.Component(iCalFeed);
-          const vevent1 = iCalComponent.getFirstSubcomponent("vevent");
-          const event = new ICAL.Event(vevent1);
+          const vevents = iCalComponent.getAllSubcomponents("vevent");
+          const events = vevents.map((vevent) => {
+            const event = new ICAL.Event(vevent)
 
-          const events = [
-            {
+            return {
               title: event.summary,
               start: event.startDate.toJSDate(),
               end: event.endDate.toJSDate(),
-            },
-          ]
+            }
+          })
 
           success({ rawEvents: events, xhr })
           resolve()
