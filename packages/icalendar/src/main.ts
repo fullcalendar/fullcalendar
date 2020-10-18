@@ -1,8 +1,7 @@
 import ICAL from 'ical.js'
-import { EventSourceDef } from '../structs/event-source-def'
 import { __assign } from 'tslib'
-import { createPlugin } from '../plugin-system'
-import { ICAL_FEED_EVENT_SOURCE_REFINERS } from './ical-feed-event-source-refiners'
+import { createPlugin, EventSourceDef } from '@fullcalendar/common'
+import { EVENT_SOURCE_REFINERS } from './event-source-refiners'
 
 type Success = (rawFeed: string, xhr: XMLHttpRequest) => void
 type Failure = (error: string, xhr: XMLHttpRequest) => void
@@ -86,6 +85,6 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
 
 
 export default createPlugin({
-  eventSourceRefiners: ICAL_FEED_EVENT_SOURCE_REFINERS,
+  eventSourceRefiners: EVENT_SOURCE_REFINERS,
   eventSourceDefs: [ eventSourceDef ]
 })
