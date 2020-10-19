@@ -49,22 +49,26 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
       requestICal(meta.feedUrl,
         (rawFeed, xhr) => {
           try {
+            const iCalFeed = ICAL.parse(rawFeed)
+            const iCalComponent = new ICAL.Component(iCalFeed);
+            const vevents = iCalComponent.getAllSubcomponents("vevent");
+            const events = vevents.map((vevent) => {
+              try {
+								const event = new ICAL.Event(vevent)
 
-          const iCalFeed = ICAL.parse(rawFeed)
-          const iCalComponent = new ICAL.Component(iCalFeed);
-          const vevents = iCalComponent.getAllSubcomponents("vevent");
-          const events = vevents.map((vevent) => {
-            const event = new ICAL.Event(vevent)
+								return {
+									title: event.summary,
+									start: event.startDate.toJSDate(),
+									end: event.endDate.toJSDate(),
+								}
+              } catch(error) {
+                console.log(`Unable to process item in calendar: ${error}.`)
+                return null
+              }
+            }).filter((item: any) => { return item !== null })
 
-            return {
-              title: event.summary,
-              start: event.startDate.toJSDate(),
-              end: event.endDate.toJSDate(),
-            }
-          })
-
-          success({ rawEvents: events, xhr })
-          resolve()
+            success({ rawEvents: events, xhr })
+            resolve()
           } catch(error) {
             console.log(error)
             throw error
