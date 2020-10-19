@@ -13,11 +13,7 @@ export function requestICal(url: string, successCallback: Success, failureCallba
 
   xhr.onload = function() {
     if (xhr.status >= 200 && xhr.status < 400) {
-
-      const iCalFeed = xhr.responseText
-      console.log(iCalFeed)
-
-      successCallback(iCalFeed, xhr)
+      successCallback(xhr.responseText, xhr)
     } else {
       failureCallback('Request failed', xhr)
     }

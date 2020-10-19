@@ -6,6 +6,8 @@ import iCalendarPlugin from '../../../icalendar/main'
 
 import singleEvent from './data/singleEvent'
 import multipleEvents from './data/multipleEvents'
+import oneHourMeeting from './data/oneHourMeeting'
+import recurringWeeklyMeeting from './data/recurringWeeklyMeeting'
 
 describe('addICalEventSource', function() {
   const ICAL_MIME_TYPE = 'text/calendar'
@@ -20,7 +22,7 @@ describe('addICalEventSource', function() {
 
   afterEach(function() { XHRMock.teardown() })
 
-  it('correctly adds a single event', async (done) => {
+  it('correctly adds a single multi-day event', async (done) => {
     loadICalendarWith(singleEvent, () => {
       setTimeout(() => {
         assertEventCount(1)
@@ -29,7 +31,7 @@ describe('addICalEventSource', function() {
     })
   })
 
-  it('correctly adds multiple events', async (done) => {
+  it('correctly adds multiple multi-day events', async (done) => {
     loadICalendarWith(multipleEvents, () => {
       setTimeout(() => {
         assertEventCount(2)
@@ -37,6 +39,24 @@ describe('addICalEventSource', function() {
       }, 200)
     })
   })
+
+  it('correctly adds a one-hour long meeting', async (done) => {
+    loadICalendarWith(oneHourMeeting, () => {
+      setTimeout(() => {
+        assertEventCount(1)
+        done()
+      }, 200)
+    })
+	})
+
+  it('correctly adds a repeating weekly meeting', async (done) => {
+    loadICalendarWith(recurringWeeklyMeeting, () => {
+      setTimeout(() => {
+        assertEventCount(5)
+        done()
+      }, 200)
+    })
+	})
 
   function loadICalendarWith(rawICal: string, assertions: () => void) {
     const feedUrl = '/mock.ics'
@@ -58,7 +78,7 @@ describe('addICalEventSource', function() {
 
   // Checks to make sure all events have been rendered and that the calendar
   // has internal info on all the events.
-  function assertEventCount(expectedCount) {
+  function assertEventCount(expectedCount: number) {
     expect(currentCalendar.getEvents().length).toEqual(expectedCount)
 
     let calendarWrapper = new CalendarWrapper(currentCalendar)
