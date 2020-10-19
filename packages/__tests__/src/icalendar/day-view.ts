@@ -1,46 +1,26 @@
 import XHRMock from 'xhr-mock'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
-import dayGridMonth from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
 import { EventSourceInput } from '@fullcalendar/core'
 import iCalendarPlugin from '../../../icalendar/main'
 
-import singleEvent from './data/singleEvent'
-import multipleEvents from './data/multipleEvents'
-import multipleEventsOneMunged from './data/multipleEventsOneMunged'
 import oneHourMeeting from './data/oneHourMeeting'
 import recurringWeeklyMeeting from './data/recurringWeeklyMeeting'
 import mungedOneHourMeeting from './data/mungedOneHourMeeting'
+import meetingWithMungedStart from './data/meetingWithMungedStart'
 
-describe('addICalEventSource with month view', function() {
+describe('addICalEventSource with week view', function() {
   const ICAL_MIME_TYPE = 'text/calendar'
 
   pushOptions({
-    plugins: [ iCalendarPlugin, dayGridMonth ],
-    initialDate: '2019-04-10', // the start of the three-day event in the feed
-    initialView: 'dayGridMonth',
+    plugins: [ iCalendarPlugin, timeGridPlugin ],
+    initialDate: '2019-04-15', // The start of the week for oneHourMeeting
+    initialView: 'timeGridWeek',
   })
 
   beforeEach(function() { XHRMock.setup() })
 
   afterEach(function() { XHRMock.teardown() })
-
-  it('correctly adds a single multi-day event', async (done) => {
-    loadICalendarWith(singleEvent, () => {
-      setTimeout(() => {
-        assertEventCount(1)
-        done()
-      }, 200)
-    })
-  })
-
-  it('correctly adds multiple multi-day events', async (done) => {
-    loadICalendarWith(multipleEvents, () => {
-      setTimeout(() => {
-        assertEventCount(2)
-        done()
-      }, 200)
-    })
-  })
 
   it('correctly adds a one-hour long meeting', async (done) => {
     loadICalendarWith(oneHourMeeting, () => {
@@ -54,27 +34,27 @@ describe('addICalEventSource with month view', function() {
   it('correctly adds a repeating weekly meeting', async (done) => {
     loadICalendarWith(recurringWeeklyMeeting, () => {
       setTimeout(() => {
-        assertEventCount(5)
+        assertEventCount(1)
         done()
       }, 200)
     })
 	})
 
   it('ignores a munged event', async (done) => {
-	  loadICalendarWith(mungedOneHourMeeting, () => {
-		  setTimeout(() => {
-			  assertEventCount(0)
-				done()
-			}, 200)
+    loadICalendarWith(mungedOneHourMeeting, () => {
+      setTimeout(() => {
+        assertEventCount(0)
+        done()
+      }, 200)
 		})
 	})
 
-  it('adds a valid event and ignores a munged event', async (done) => {
-	  loadICalendarWith(multipleEventsOneMunged, () => {
-		  setTimeout(() => {
-			  assertEventCount(1)
-				done()
-			}, 200)
+  it('ignores a meeting with a munged start', async (done) => {
+    loadICalendarWith(meetingWithMungedStart, () => {
+      setTimeout(() => {
+        assertEventCount(0)
+        done()
+      }, 200)
 		})
 	})
 
