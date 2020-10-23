@@ -16,7 +16,8 @@ describe('addICalEventSource with week view', function() {
   pushOptions({
     plugins: [ iCalendarPlugin, timeGridPlugin ],
     initialDate: '2019-04-15', // The start of the week for oneHourMeeting
-    initialView: 'timeGridWeek',
+    initialView: 'timeGridDay',
+    timeZone: 'Europe/Paris',
   })
 
   beforeEach(function() { XHRMock.setup() })
