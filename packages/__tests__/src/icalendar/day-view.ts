@@ -8,6 +8,7 @@ import oneHourMeeting from './data/oneHourMeeting'
 import recurringWeeklyMeeting from './data/recurringWeeklyMeeting'
 import mungedOneHourMeeting from './data/mungedOneHourMeeting'
 import meetingWithMungedStart from './data/meetingWithMungedStart'
+import alldayEvent from './data/alldayEvent'
 
 describe('addICalEventSource with week view', function() {
   const ICAL_MIME_TYPE = 'text/calendar'
@@ -39,6 +40,16 @@ describe('addICalEventSource with week view', function() {
       }, 200)
     })
 	})
+
+  it('adds an all day event', async (done) => {
+    loadICalendarWith(alldayEvent, () => {
+      setTimeout(() => {
+        assertEventCount(1)
+        currentCalendar.getEvents().forEach(event => expect(event.allDay).toBeTruthy())
+        done()
+      })
+    })
+  })
 
   it('ignores a munged event', async (done) => {
     loadICalendarWith(mungedOneHourMeeting, () => {
