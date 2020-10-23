@@ -4,8 +4,9 @@ import dayGridMonth from '@fullcalendar/daygrid'
 import { EventSourceInput } from '@fullcalendar/core'
 import iCalendarPlugin from '../../../icalendar/main'
 
-import singleEvent from './data/singleEvent'
-import multipleEvents from './data/multipleEvents'
+import alldayEvent from './data/alldayEvent'
+import multidayEvent from './data/multidayEvent'
+import multipleMultidayEvents from './data/multipleMultidayEvents'
 import multipleEventsOneMunged from './data/multipleEventsOneMunged'
 import oneHourMeeting from './data/oneHourMeeting'
 import recurringWeeklyMeeting from './data/recurringWeeklyMeeting'
@@ -24,19 +25,31 @@ describe('addICalEventSource with month view', function() {
 
   afterEach(function() { XHRMock.teardown() })
 
-  it('correctly adds a single multi-day event', async (done) => {
-    loadICalendarWith(singleEvent, () => {
+  it('correctly adds an all day event', async (done) => {
+    loadICalendarWith(alldayEvent, () => {
       setTimeout(() => {
         assertEventCount(1)
+        currentCalendar.getEvents().forEach(event => expect(event.allDay).toBeTruthy())
+        done()
+      }, 200)
+    })
+  })
+
+  it('correctly adds a single multi-day event', async (done) => {
+    loadICalendarWith(multidayEvent, () => {
+      setTimeout(() => {
+        assertEventCount(1)
+        currentCalendar.getEvents().forEach(event => expect(event.allDay).toBeTruthy())
         done()
       }, 200)
     })
   })
 
   it('correctly adds multiple multi-day events', async (done) => {
-    loadICalendarWith(multipleEvents, () => {
+    loadICalendarWith(multipleMultidayEvents, () => {
       setTimeout(() => {
         assertEventCount(2)
+        currentCalendar.getEvents().forEach(event => expect(event.allDay).toBeTruthy())
         done()
       }, 200)
     })
@@ -46,6 +59,7 @@ describe('addICalEventSource with month view', function() {
     loadICalendarWith(oneHourMeeting, () => {
       setTimeout(() => {
         assertEventCount(1)
+        currentCalendar.getEvents().forEach(event => expect(event.allDay).not.toBeTruthy())
         done()
       }, 200)
     })

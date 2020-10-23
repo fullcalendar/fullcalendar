@@ -56,11 +56,27 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
               try {
 								const event = new ICAL.Event(vevent)
 
-								return {
-									title: event.summary,
-									start: event.startDate.toJSDate(),
-									end: event.endDate.toJSDate(),
-								}
+                if (event.startDate.isDate && event.endDate == null) {
+                  return {
+                    title: event.summary,
+                    start: event.startDate.toJSDate(),
+                    end: event.startDate.addDuration({days: 1}).toJSDate(),
+                    allDay: true,
+                  }
+                } else if (event.startDate.isDate && event.endDate.isDate) {
+                  return {
+                    title: event.summary,
+                    start: event.startDate.toJSDate(),
+                    end: event.endDate.toJSDate(),
+                    allDay: true,
+                  }
+                } else {
+                  return {
+                    title: event.summary,
+                    start: event.startDate.toJSDate(),
+                    end: event.endDate.toJSDate(),
+                  }
+                }
               } catch(error) {
                 console.log(`Unable to process item in calendar: ${error}.`)
                 return null
