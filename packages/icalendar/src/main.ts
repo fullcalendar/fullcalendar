@@ -55,26 +55,27 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
             const events = vevents.map((vevent) => {
               try {
 								const event = new ICAL.Event(vevent)
+                const fcEvent = {
+                  title: event.summary,
+                  start: event.startDate.toString(),
+                }
 
-                if (event.startDate.isDate && event.endDate == null) {
+                if (event.startDate.isDate && event.endDate === null) {
                   return {
-                    title: event.summary,
-                    start: event.startDate.toJSDate(),
-                    end: event.startDate.addDuration({days: 1}).toJSDate(),
+                    ...fcEvent,
+                    end: event.startDate.addDuration({days: 1}).toString(),
                     allDay: true,
                   }
                 } else if (event.startDate.isDate && event.endDate.isDate) {
                   return {
-                    title: event.summary,
-                    start: event.startDate.toJSDate(),
-                    end: event.endDate.toJSDate(),
+                    ...fcEvent,
+                    end: event.endDate.toString(),
                     allDay: true,
                   }
                 } else {
                   return {
-                    title: event.summary,
-                    start: event.startDate.toJSDate(),
-                    end: event.endDate.toJSDate(),
+                    ...fcEvent,
+                    end: event.endDate.toString(),
                   }
                 }
               } catch(error) {
