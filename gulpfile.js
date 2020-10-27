@@ -127,7 +127,7 @@ exports.test = series(
   parallel(
     testsIndexWatch,
     execParallel({
-      webpack: 'webpack --config webpack.tests.js --env.PACKAGE_MODE=src --watch',
+      webpack: 'webpack --config webpack.tests.js --env PACKAGE_MODE=src --watch',
       karma: 'karma start karma.config.js'
     })
   )
@@ -138,7 +138,7 @@ exports.test = series(
 exports.testCi = series(
   linkVDomLib, // looks at FULLCALENDAR_FORCE_REACT (doesn't matter?)
   testsIndex,
-  execTask(`webpack --config webpack.tests.js --env.PACKAGE_MODE=${process.env.FULLCALENDAR_FORCE_REACT ? 'src' : 'dist'}`), // react-mode cant do dist-mode
+  execTask(`webpack --config webpack.tests.js --env PACKAGE_MODE=${process.env.FULLCALENDAR_FORCE_REACT ? 'src' : 'dist'}`), // react-mode cant do dist-mode
   execTask('karma start karma.config.js ci')
 )
 

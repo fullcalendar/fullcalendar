@@ -10,15 +10,9 @@ const IS_CI = Boolean(process.env.CI)
 globby.sync('*', { cwd: PROJECTS_ROOT, onlyDirectories: true }).forEach(function(exampleDir) { // will match ONLY directories
   let exampleName = exampleDir.replace(/\/$/, '')
 
-  if (IS_CI && exampleName.match('angular')) {
+  if (!exampleName.match('webpack')) {
     console.log(
-      'Skipping angular example project because we sometimes get a "Maximum call stack size exceeded" when "flattening the source-map"\n' +
-      'TODO: come up with a solution for v5'
-    )
-
-  } else if (exampleName === 'vue-vuex' || exampleName === 'react-mobx-typescript') {
-    console.log(
-      `Skipping ${exampleName} because it doesn\'t work with hoisting yet.`
+      `Skipping all example projects except webpack for now.`
     )
 
   } else {

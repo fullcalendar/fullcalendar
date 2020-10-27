@@ -32,6 +32,8 @@
       "example-projects/*"
     ],
     "nohoist": [
+      "@fullcalendar/angular/**",
+      "@fullcalendar/vue/**",
       "**/codelyzer",
       "**/karma*",
       "**/@vue/cli-service"
