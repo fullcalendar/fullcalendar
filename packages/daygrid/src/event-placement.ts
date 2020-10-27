@@ -269,7 +269,7 @@ function limitEvents(hiddenCnts, segIsHidden, colPlacements, _moreLinkConsumesLe
       for (let col = seg.firstCol; col <= seg.lastCol; col++) {
         let hiddenCnt = ++hiddenCnts[col]
 
-        if (moreLinkConsumesLevel && hiddenCnt === 1) {
+        if (moreLinkConsumesLevel && hiddenCnt === 1 && currentLevel > 0) {
           let doomedLevel = currentLevel - 1
 
           while (visibleColPlacements[col].length > doomedLevel) {

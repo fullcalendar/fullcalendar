@@ -219,4 +219,30 @@ describe('dayGrid advanced event rendering', function() {
     $container.remove()
   })
 
+  // https://github.com/fullcalendar/fullcalendar/issues/5850
+  it('does not have JS error when dayMaxEventRows and almost no height', function() {
+    initCalendar({
+      height: '100%',
+      eventDisplay: 'block',
+      dayMaxEventRows: true,
+      events: [
+        { start: '2020-05-02T02:00:00', title: 'event a' }
+      ]
+    })
+  })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/5863
+  it('does not have JS error when dayMaxEventRows and almost no height', function() {
+    let $container = $('<div style="width:100px" />').appendTo('body')
+    initCalendar({
+      height: '100%',
+      eventDisplay: 'block',
+      dayMaxEventRows: true,
+      events: [
+        { start: '2020-05-02T02:00:00', title: 'event a' }
+      ]
+    }, $container[0])
+    $container.remove()
+  })
+
 })
