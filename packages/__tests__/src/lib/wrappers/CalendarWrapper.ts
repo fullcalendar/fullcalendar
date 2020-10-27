@@ -109,8 +109,8 @@ export class CalendarWrapper {
   }
 
 
-  hasLicenseMessage() {
-    return $('.fc-license-message', this.calendar.el).is(':visible')
+  getLicenseMessage() {
+    return $('.fc-license-message', this.calendar.el).text()
   }
 
 
