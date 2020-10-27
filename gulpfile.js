@@ -94,7 +94,7 @@ exports.build = series(
   execTask('tsc -b --verbose'),
   localesDts,
   removeTscDevLinks,
-  execTask('webpack --config webpack.bundles.js --env.NO_SOURCE_MAPS'), // always compile from SRC
+  execTask('webpack --config webpack.bundles.js --env NO_SOURCE_MAPS'), // always compile from SRC
   execTask('rollup -c rollup.locales.js'),
   process.env.FULLCALENDAR_FORCE_REACT
     ? async function() {} // rollup doesn't know how to make bundles for react-mode
