@@ -338,6 +338,24 @@ describe('rrule plugin', function() {
       expect(events[0].allDay).toBe(false)
     })
 
+    // https://github.com/fullcalendar/fullcalendar/issues/5726
+    it('can generate local dates, including EXDATE, when BYDAY and TZ shifting', function() {
+      initCalendar({
+        timeZone: 'local',
+        initialDate: '2020-09-10',
+        events: [
+          {
+            rrule: "DTSTART:20200915T030000Z\nRRULE:FREQ=WEEKLY;BYDAY=SA\nEXDATE:20201003T030000Z",
+          }
+        ]
+      })
+      let events = getSortedEvents()
+      expect(events.length).toBe(3)
+      expect(events[0].start).toEqualDate('2020-09-19T03:00:00')
+      expect(events[1].start).toEqualDate('2020-09-26T03:00:00')
+      expect(events[2].start).toEqualDate('2020-10-10T03:00:00')
+    })
+
   })
 
 
