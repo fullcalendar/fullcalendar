@@ -8,6 +8,10 @@ import {
   DropArg, EventReceiveArg, EventLeaveArg
 } from './api-type-deps'
 
+export const OPTION_REFINERS = {
+  fixedMirrorParent: identity as Identity<HTMLElement>
+}
+
 export const LISTENER_REFINERS = {
   dateClick: identity as Identity<(arg: DateClickArg) => void>,
   eventDragStart: identity as Identity<(arg: EventDragStartArg) => void>,

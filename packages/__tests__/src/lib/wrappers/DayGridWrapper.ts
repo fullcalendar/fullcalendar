@@ -23,6 +23,11 @@ export class DayGridWrapper {
   }
 
 
+  getMirrorEls() {
+    return findElements(this.el, '.fc-event.fc-event-mirror')
+  }
+
+
   getDayEl(date) {
     if (typeof date === 'string') {
       date = new Date(date)
@@ -230,7 +235,7 @@ export class DayGridWrapper {
   }
 
 
-  dragEventToDate(eventEl: HTMLElement, startDate, endDate, isTouch?) {
+  dragEventToDate(eventEl: HTMLElement, startDate, endDate, isTouch?, onBeforeRelease?) {
     return new Promise((resolve) => {
       if (!startDate) {
         let rect1 = this.getDayEl(endDate).getBoundingClientRect()
@@ -240,6 +245,7 @@ export class DayGridWrapper {
           isTouch: isTouch || false,
           delay: isTouch ? 200 : 0, // bad to hardcode ms
           end: point1,
+          onBeforeRelease,
           onRelease: () => resolve()
         })
       } else {
@@ -255,6 +261,7 @@ export class DayGridWrapper {
           delay: isTouch ? 200 : 0, // bad to hardcode ms
           point: point0,
           end: point1,
+          onBeforeRelease,
           onRelease: () => resolve()
         })
       }
