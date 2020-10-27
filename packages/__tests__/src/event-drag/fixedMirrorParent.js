@@ -7,7 +7,7 @@ describe('fixedMirrorParent', function() {
     initialDate: '2020-10-26'
   })
 
-  fit('changes the mirror\'s parent element', function(done) {
+  it('changes the mirror\'s parent element', function(done) {
     let calendar = initCalendar({
       editable: true,
       fixedMirrorParent: document.body,
