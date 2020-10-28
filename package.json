@@ -40,6 +40,7 @@
     ]
   },
   "scripts": {
+    "postinstall": "cd packages-contrib/angular && npm install",
     "build": "gulp build",
     "watch": "gulp watch",
     "clean": "./scripts/clean.sh",
