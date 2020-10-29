@@ -1,0 +1,10 @@
+{
+  "typescript.tsdk": ".yarn/sdks/typescript/lib",
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true
+  },
+  "eslint.nodePath": ".yarn/sdks",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "stylelint.stylelintPath": ".yarn/sdks/stylelint/lib/index.js"
+}
