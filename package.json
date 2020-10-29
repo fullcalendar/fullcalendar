@@ -32,6 +32,9 @@
       "example-projects/*"
     ]
   },
+  "resolutions": {
+    "karma": "patch:karma@^5.2.3#./karma-patch.diff"
+  },
   "scripts": {
     "build": "gulp build",
     "watch": "gulp watch",
