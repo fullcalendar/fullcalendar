@@ -1,4 +1,11 @@
 
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
 # make sure this links mirrors what's in scripts/clean
 
 /archives
