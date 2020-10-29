@@ -30,11 +30,6 @@
       "packages-premium/*",
       "packages-contrib/*",
       "example-projects/*"
-    ],
-    "nohoist": [
-      "**/codelyzer",
-      "**/karma*",
-      "**/@vue/cli-service"
     ]
   },
   "scripts": {
