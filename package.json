@@ -77,7 +77,7 @@
     "gulp-terser": "^1.2.0",
     "gulp-zip": "^5.0.0",
     "handlebars": "^4.1.2",
-    "html-webpack-plugin": "^4.3.0",
+    "html-webpack-plugin": "^4.5.0",
     "jasmine-core": "2.5.2",
     "karma": "^0.13.22",
     "karma-chrome-launcher": "^2.2.0",
@@ -104,8 +104,8 @@
     "stylelint": "^13.6.1",
     "ts-loader": "^7.0.4",
     "typescript": "^3.9.3",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11",
+    "webpack": "^5.3.1",
+    "webpack-cli": "^4.1.0",
     "yarn": "1.18.0"
   }
 }
