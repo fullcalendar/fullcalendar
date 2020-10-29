@@ -6,7 +6,7 @@
   "docs": "https://fullcalendar.io/docs/rrule-plugin",
   "dependencies": {
     "@fullcalendar/common": "~5.3.1",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.3"
   },
   "peerDependencies": {
     "rrule": "^2.6.0"

@@ -20,7 +20,7 @@
     "jquery": "^3.4.0",
     "jquery-simulate": "github:jquery/jquery-simulate",
     "moment": "^2.24.0",
-    "tslib": "^2.0.0",
+    "tslib": "^2.0.3",
     "xhr-mock": "^2.5.1"
   },
   "devDependencies": {

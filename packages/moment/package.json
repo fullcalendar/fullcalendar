@@ -6,7 +6,7 @@
   "docs": "https://fullcalendar.io/docs/moment-plugin",
   "dependencies": {
     "@fullcalendar/common": "~5.3.1",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.3"
   },
   "peerDependencies": {
     "moment": "^2.24.0"

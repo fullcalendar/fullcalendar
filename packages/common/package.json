@@ -5,7 +5,7 @@
   "description": "internal package",
   "docs": "https://fullcalendar.io/docs",
   "dependencies": {
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.3"
   },
   "type": "module",
   "main": "main.js",

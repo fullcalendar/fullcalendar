@@ -7,6 +7,6 @@
   "types": "tsc/vdom.d.ts",
   "dependencies": {
     "preact": "^10.5.5",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.3"
   }
 }
