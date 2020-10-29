@@ -12974,6 +12974,9 @@ fsevents@~2.1.2:
     "@fullcalendar/scrollgrid": ~5.3.1
     "@fullcalendar/timegrid": ~5.3.1
     "@fullcalendar/timeline": ~5.3.1
+    "@types/jasmine": ^3.3.12
+    "@types/jasmine-jquery": ^1.5.33
+    "@types/jquery": ^3.3.29
     fullcalendar-tests: "*"
     tslib: ^2.0.0
     xhr-mock: ^2.5.1
@@ -13017,6 +13020,9 @@ fsevents@~2.1.2:
     "@fullcalendar/moment-timezone": ~5.3.1
     "@fullcalendar/rrule": ~5.3.1
     "@fullcalendar/timegrid": ~5.3.1
+    "@types/jasmine": ^3.3.12
+    "@types/jasmine-jquery": ^1.5.33
+    "@types/jquery": ^3.3.29
     components-jqueryui: "github:components/jqueryui"
     jasmine-jquery: ^2.1.1
     jquery: ^3.4.0
@@ -13037,9 +13043,6 @@ fsevents@~2.1.2:
     "@rollup/plugin-node-resolve": ^8.4.0
     "@rollup/plugin-replace": ^2.3.3
     "@rollup/plugin-sucrase": ^3.1.0
-    "@types/jasmine": ^3.3.12
-    "@types/jasmine-jquery": ^1.5.33
-    "@types/jquery": ^3.3.29
     "@types/luxon": ^1.12.0
     "@types/node": ^12.12.14
     "@typescript-eslint/eslint-plugin": ^3.1.0
