@@ -3765,6 +3765,9 @@ __metadata:
 "@fullcalendar/core-vdom@workspace:packages/core-vdom":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/core-vdom@workspace:packages/core-vdom"
+  dependencies:
+    preact: ^10.5.5
+    tslib: ^2.0.0
   languageName: unknown
   linkType: soft
 
@@ -21666,6 +21669,13 @@ fsevents@~2.1.2:
   version: 10.4.1
   resolution: "preact@npm:10.4.1"
   checksum: d15530d7043eda87afe900e534cf37417a77deb2be343c38532af59ab4e7cdaf6333a2d495ea9e9faec2b37b144736eb2db98823c86e809da96361e63cd8042e
+  languageName: node
+  linkType: hard
+
+"preact@npm:^10.5.5":
+  version: 10.5.5
+  resolution: "preact@npm:10.5.5"
+  checksum: f44c12f61e1ae0dd3691d291559b7bc41a664193650d3156fd02f1541722bf6cb07bf885e8dd31b7023e5683cdc1a42fe5fba4934433f5811b338e24698d1dc1
   languageName: node
   linkType: hard
 
