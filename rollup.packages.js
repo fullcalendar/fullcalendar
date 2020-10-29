@@ -56,7 +56,7 @@ module.exports = [
         banner: buildBanner(struct.isPremium)
       },
       plugins: [
-        externalizeVDom(),
+        externalizeVDom('.js'),
         externalizeNonRelative(),
         sourceMapLoader(), // load from transpiled-via-tsc JS files
         postcss({ // will use postcss.config.js
@@ -104,7 +104,7 @@ module.exports = [
       plugins: [
         fixDtsCodeIn(),
         ensurePremiumCommonAmbient(),
-        externalizeVDom(),
+        externalizeVDom(''),
         externalizeStylesheets(),
         externalizeNonRelative(),
         dts(),
@@ -139,7 +139,7 @@ function transplantCss(fileName) { // fileName w/o extension
 }
 
 
-function externalizeVDom() {
+function externalizeVDom(extension) {
   return {
     resolveId(id, importer) {
       if (/\/vdom$/.test(id) || id.match(/^(preact|react|react-dom)$/)) {
@@ -147,7 +147,7 @@ function externalizeVDom() {
           importer.match('packages/common') ||
           importer.match('packages/core')
         ) {
-          return { id: './vdom', external: true, moduleSideEffects: true }
+          return { id: './vdom' + extension, external: true, moduleSideEffects: true }
         } else {
           return { id: '@fullcalendar/common', external: true, moduleSideEffects: true }
         }
