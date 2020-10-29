@@ -3254,7 +3254,7 @@ __metadata:
     jasmine-spec-reporter: ~5.0.0
     rxjs: ~6.5.4
     ts-node: ~7.0.0
-    tslib: ^2.0.0
+    tslib: ^2.0.3
     tslint: ~6.1.0
     typescript: ~3.9.7
     zone.js: ~0.10.2
@@ -3697,7 +3697,7 @@ __metadata:
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     "@fullcalendar/premium-common": ~5.3.1
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -3740,7 +3740,7 @@ __metadata:
     protractor: ~7.0.0
     rxjs: ~6.5.4
     ts-node: ~8.5.4
-    tslib: ^2.0.0
+    tslib: ^2.0.3
     tslint: ~6.1.0
     typescript: 3.9.7
     zone.js: ~0.10.3
@@ -3754,7 +3754,7 @@ __metadata:
     "@fullcalendar/common": ~5.3.1
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -3764,7 +3764,7 @@ __metadata:
   dependencies:
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -3773,7 +3773,7 @@ __metadata:
   resolution: "@fullcalendar/core-vdom@workspace:packages/core-vdom"
   dependencies:
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -3784,7 +3784,7 @@ __metadata:
     "@fullcalendar/common": ~5.3.1
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     preact: ^10.0.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -3795,7 +3795,7 @@ __metadata:
     "@fullcalendar/common": ~5.3.1
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -3806,7 +3806,7 @@ __metadata:
     "@fullcalendar/common": ~5.3.1
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -3817,7 +3817,7 @@ __metadata:
     "@fullcalendar/common": ~5.3.1
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -3828,7 +3828,7 @@ __metadata:
     "@fullcalendar/common": ~5.3.1
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -3840,7 +3840,7 @@ __metadata:
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     luxon: ^1.12.1
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   peerDependencies:
     luxon: ^1.12.1
   languageName: unknown
@@ -3855,7 +3855,7 @@ __metadata:
     moment: ^2.24.0
     moment-timezone: ^0.5.26
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   peerDependencies:
     moment: ^2.24.0
     moment-timezone: ^0.5.26
@@ -3870,7 +3870,7 @@ __metadata:
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     moment: ^2.24.0
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   peerDependencies:
     moment: ^2.24.0
   languageName: unknown
@@ -3883,7 +3883,7 @@ __metadata:
     "@fullcalendar/common": ~5.3.1
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -3924,7 +3924,7 @@ __metadata:
     react-testing-library: ^6.0.2
     rollup: ^1.31.0
     rollup-plugin-postcss: ^2.0.3
-    tslib: ^2.0.0
+    tslib: ^2.0.3
     typescript: ^3.8.3
   peerDependencies:
     react: ^16.7.0
@@ -3940,7 +3940,7 @@ __metadata:
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     "@fullcalendar/premium-common": ~5.3.1
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -3954,7 +3954,7 @@ __metadata:
     "@fullcalendar/premium-common": ~5.3.1
     "@fullcalendar/resource-common": ~5.3.1
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -3969,7 +3969,7 @@ __metadata:
     "@fullcalendar/resource-daygrid": ~5.3.1
     "@fullcalendar/timegrid": ~5.3.1
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -3984,7 +3984,7 @@ __metadata:
     "@fullcalendar/scrollgrid": ~5.3.1
     "@fullcalendar/timeline": ~5.3.1
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -3996,7 +3996,7 @@ __metadata:
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     preact: ^10.5.5
     rrule: ^2.6.0
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   peerDependencies:
     rrule: ^2.6.0
   languageName: unknown
@@ -4010,7 +4010,7 @@ __metadata:
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     "@fullcalendar/premium-common": ~5.3.1
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -4022,7 +4022,7 @@ __metadata:
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     "@fullcalendar/daygrid": ~5.3.1
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -4035,7 +4035,7 @@ __metadata:
     "@fullcalendar/premium-common": ~5.3.1
     "@fullcalendar/scrollgrid": ~5.3.1
     preact: ^10.5.5
-    tslib: ^2.0.0
+    tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
@@ -4064,7 +4064,7 @@ __metadata:
     source-map-loader: ^1.1.1
     style-loader: ^2.0.0
     terser: ^4.8.0
-    tslib: ^2.0.0
+    tslib: ^2.0.3
     typescript: ^3.8.3
     vue: ^2.6.11
     vue-loader: ^15.9.4
@@ -8204,17 +8204,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:2.4.2, chalk@npm:^2.0.0, chalk@npm:^2.0.1, chalk@npm:^2.1.0, chalk@npm:^2.3.0, chalk@npm:^2.3.1, chalk@npm:^2.3.2, chalk@npm:^2.4.1, chalk@npm:^2.4.2":
-  version: 2.4.2
-  resolution: "chalk@npm:2.4.2"
-  dependencies:
-    ansi-styles: ^3.2.1
-    escape-string-regexp: ^1.0.5
-    supports-color: ^5.3.0
-  checksum: 22c7b7b5bc761c882bb6516454a1a671923f1c53ff972860065aa0b28a195f230163c1d46ee88bcc7a03e5539177d896457d8bc727de7f244c6e87032743038e
-  languageName: node
-  linkType: hard
-
 "chalk@npm:4.0.0, chalk@npm:^4.0.0":
   version: 4.0.0
   resolution: "chalk@npm:4.0.0"
@@ -8248,6 +8237,17 @@ __metadata:
     strip-ansi: ^3.0.0
     supports-color: ^2.0.0
   checksum: bc2df54f6da63d0918254aa2d79dd87f75442e35c751b07f5ca37e5886dd0963472e37ee8c5fa6da27710fdfa0e10779c72be4a6c860c67e96769ba63ee2901e
+  languageName: node
+  linkType: hard
+
+"chalk@npm:^2.0.0, chalk@npm:^2.0.1, chalk@npm:^2.1.0, chalk@npm:^2.3.0, chalk@npm:^2.3.1, chalk@npm:^2.3.2, chalk@npm:^2.4.1, chalk@npm:^2.4.2":
+  version: 2.4.2
+  resolution: "chalk@npm:2.4.2"
+  dependencies:
+    ansi-styles: ^3.2.1
+    escape-string-regexp: ^1.0.5
+    supports-color: ^5.3.0
+  checksum: 22c7b7b5bc761c882bb6516454a1a671923f1c53ff972860065aa0b28a195f230163c1d46ee88bcc7a03e5539177d896457d8bc727de7f244c6e87032743038e
   languageName: node
   linkType: hard
 
@@ -9435,7 +9435,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:6.0.5, cross-spawn@npm:^6.0.0, cross-spawn@npm:^6.0.4, cross-spawn@npm:^6.0.5":
+"cross-spawn@npm:^5.0.1":
+  version: 5.1.0
+  resolution: "cross-spawn@npm:5.1.0"
+  dependencies:
+    lru-cache: ^4.0.1
+    shebang-command: ^1.2.0
+    which: ^1.2.9
+  checksum: 96018c42a94a2f69e27c11688db638c343109e4eda5cc6586a83a1d2f102ef2ef4d184919593036748d386ddb67cc3e66658fefec85a4659958cde792f1a9ddc
+  languageName: node
+  linkType: hard
+
+"cross-spawn@npm:^6.0.0, cross-spawn@npm:^6.0.4, cross-spawn@npm:^6.0.5":
   version: 6.0.5
   resolution: "cross-spawn@npm:6.0.5"
   dependencies:
@@ -9445,17 +9456,6 @@ __metadata:
     shebang-command: ^1.2.0
     which: ^1.2.9
   checksum: 05fbbf957d9b81dc05fd799a238f6aacc2e7cc9783fff3f0e00439a97d6f269c90482571cbf1eeea17200fd119161a2d1f88aa49a8110b176e04f2a70825284f
-  languageName: node
-  linkType: hard
-
-"cross-spawn@npm:^5.0.1":
-  version: 5.1.0
-  resolution: "cross-spawn@npm:5.1.0"
-  dependencies:
-    lru-cache: ^4.0.1
-    shebang-command: ^1.2.0
-    which: ^1.2.9
-  checksum: 96018c42a94a2f69e27c11688db638c343109e4eda5cc6586a83a1d2f102ef2ef4d184919593036748d386ddb67cc3e66658fefec85a4659958cde792f1a9ddc
   languageName: node
   linkType: hard
 
@@ -11108,17 +11108,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enhanced-resolve@npm:4.1.0":
-  version: 4.1.0
-  resolution: "enhanced-resolve@npm:4.1.0"
-  dependencies:
-    graceful-fs: ^4.1.2
-    memory-fs: ^0.4.0
-    tapable: ^1.0.0
-  checksum: a2c570450cb552aff2edb5e115ba950e7895941be4f6625b320804502ae4d8ee46a6fb040ff9454335bd933b36d1db457da5869852bb7f5041209979a747dafc
-  languageName: node
-  linkType: hard
-
 "enhanced-resolve@npm:4.1.1, enhanced-resolve@npm:^4.0.0, enhanced-resolve@npm:^4.1.0":
   version: 4.1.1
   resolution: "enhanced-resolve@npm:4.1.1"
@@ -12606,18 +12595,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"findup-sync@npm:3.0.0, findup-sync@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "findup-sync@npm:3.0.0"
-  dependencies:
-    detect-file: ^1.0.0
-    is-glob: ^4.0.0
-    micromatch: ^3.0.4
-    resolve-dir: ^1.0.1
-  checksum: be03bd98fc3f6666933b958e690b3913ac932496d55db13379de93657d86073c18ec53e7438ffe3adf98b606830c3d4645fae985e857645dd8a56983188abade
-  languageName: node
-  linkType: hard
-
 "findup-sync@npm:^2.0.0":
   version: 2.0.0
   resolution: "findup-sync@npm:2.0.0"
@@ -12627,6 +12604,18 @@ __metadata:
     micromatch: ^3.0.4
     resolve-dir: ^1.0.1
   checksum: 34497dd1f567e47124ddf5f7eba98f8cfaa5dd34f7253cb1d972d2205926dd8cbf385b57957acd72e61c2760dbd2e69a330a454449a85dfc5d1d0d7ebfbce9af
+  languageName: node
+  linkType: hard
+
+"findup-sync@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "findup-sync@npm:3.0.0"
+  dependencies:
+    detect-file: ^1.0.0
+    is-glob: ^4.0.0
+    micromatch: ^3.0.4
+    resolve-dir: ^1.0.1
+  checksum: be03bd98fc3f6666933b958e690b3913ac932496d55db13379de93657d86073c18ec53e7438ffe3adf98b606830c3d4645fae985e857645dd8a56983188abade
   languageName: node
   linkType: hard
 
@@ -12978,7 +12967,7 @@ fsevents@~2.1.2:
     "@types/jasmine-jquery": ^1.5.33
     "@types/jquery": ^3.3.29
     fullcalendar-tests: "*"
-    tslib: ^2.0.0
+    tslib: ^2.0.3
     xhr-mock: ^2.5.1
   languageName: unknown
   linkType: soft
@@ -13028,7 +13017,7 @@ fsevents@~2.1.2:
     jquery: ^3.4.0
     jquery-simulate: "github:jquery/jquery-simulate"
     moment: ^2.24.0
-    tslib: ^2.0.0
+    tslib: ^2.0.3
     xhr-mock: ^2.5.1
   languageName: unknown
   linkType: soft
@@ -13067,7 +13056,7 @@ fsevents@~2.1.2:
     gulp-terser: ^1.2.0
     gulp-zip: ^5.0.0
     handlebars: ^4.1.2
-    html-webpack-plugin: ^4.3.0
+    html-webpack-plugin: ^4.5.0
     jasmine-core: 2.5.2
     karma: ^0.13.22
     karma-chrome-launcher: ^2.2.0
@@ -13094,8 +13083,8 @@ fsevents@~2.1.2:
     stylelint: ^13.6.1
     ts-loader: ^7.0.4
     typescript: ^3.9.3
-    webpack: ^4.43.0
-    webpack-cli: ^3.3.11
+    webpack: ^5.3.1
+    webpack-cli: ^4.1.0
     yarn: 1.18.0
   languageName: unknown
   linkType: soft
@@ -13449,15 +13438,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"global-modules@npm:2.0.0, global-modules@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "global-modules@npm:2.0.0"
-  dependencies:
-    global-prefix: ^3.0.0
-  checksum: 27e41b03a8d340637806ae30540b934f2fd1f3f3d1d73b86ab8a622c972a69faa0f63473325318af5a5bd9d429d76fb1f1c9445a6e8797ec01de307f3876cd42
-  languageName: node
-  linkType: hard
-
 "global-modules@npm:^1.0.0":
   version: 1.0.0
   resolution: "global-modules@npm:1.0.0"
@@ -13466,6 +13446,15 @@ fsevents@~2.1.2:
     is-windows: ^1.0.1
     resolve-dir: ^1.0.0
   checksum: 89fb699eee43823ce94e2dbcb5f7607e1de4f3e37b897a65b59720fa7284424b5f94b67f449a5f259e7a96e2bf851a1582ec31deb7f89b5336c9318ed95fcfe8
+  languageName: node
+  linkType: hard
+
+"global-modules@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "global-modules@npm:2.0.0"
+  dependencies:
+    global-prefix: ^3.0.0
+  checksum: 27e41b03a8d340637806ae30540b934f2fd1f3f3d1d73b86ab8a622c972a69faa0f63473325318af5a5bd9d429d76fb1f1c9445a6e8797ec01de307f3876cd42
   languageName: node
   linkType: hard
 
@@ -14811,7 +14800,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"import-local@npm:2.0.0, import-local@npm:^2.0.0":
+"import-local@npm:^2.0.0":
   version: 2.0.0
   resolution: "import-local@npm:2.0.0"
   dependencies:
@@ -15017,7 +15006,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"interpret@npm:1.2.0, interpret@npm:^1.0.0, interpret@npm:^1.1.0":
+"interpret@npm:^1.0.0, interpret@npm:^1.1.0":
   version: 1.2.0
   resolution: "interpret@npm:1.2.0"
   checksum: 06d0dd4af01f9d0a99af8fb20c888db99e7c1bd28835951646a7e426dd99ccfffb9d06ad2e8f7cb60dd2ecc3e5bc61fe83e04c2cc47d92c7b144ff935673463c
@@ -17810,7 +17799,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"memory-fs@npm:^0.4.0, memory-fs@npm:^0.4.1":
+"memory-fs@npm:^0.4.1":
   version: 0.4.1
   resolution: "memory-fs@npm:0.4.1"
   dependencies:
@@ -19713,7 +19702,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"os-locale@npm:^3.0.0, os-locale@npm:^3.1.0":
+"os-locale@npm:^3.0.0":
   version: 3.1.0
   resolution: "os-locale@npm:3.1.0"
   dependencies:
@@ -25222,15 +25211,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"supports-color@npm:6.1.0, supports-color@npm:^6.1.0":
-  version: 6.1.0
-  resolution: "supports-color@npm:6.1.0"
-  dependencies:
-    has-flag: ^3.0.0
-  checksum: 86821571295ad9f808d5e0149f13c2b0ca6faaf1325c427b369e6f4b2b1e4759046b7a4ea0e3c3c7f2546035fa2fb0d6a90f31c6c4f751eaedbcdc1b983a08cc
-  languageName: node
-  linkType: hard
-
 "supports-color@npm:^0.2.0":
   version: 0.2.0
   resolution: "supports-color@npm:0.2.0"
@@ -25271,6 +25251,15 @@ fsevents@~2.1.2:
   dependencies:
     has-flag: ^3.0.0
   checksum: edacee6425498440744c418be94b0660181aad2a1828bcf2be85c42bd385da2fd8b2b358d9b62b0c5b03ff5cd3e992458d7b8f879d9fb42f2201fe05a4848a29
+  languageName: node
+  linkType: hard
+
+"supports-color@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "supports-color@npm:6.1.0"
+  dependencies:
+    has-flag: ^3.0.0
+  checksum: 86821571295ad9f808d5e0149f13c2b0ca6faaf1325c427b369e6f4b2b1e4759046b7a4ea0e3c3c7f2546035fa2fb0d6a90f31c6c4f751eaedbcdc1b983a08cc
   languageName: node
   linkType: hard
 
@@ -26108,6 +26097,13 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"tslib@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "tslib@npm:2.0.3"
+  checksum: 447bfca5deaa157806c3f77eaba74d05dd0b38b014e47ce79d98b5c77ce7d91b00a687ba13ca1b5a74d35ca1098ac7a072c0a97fad06f0266612f2a03a6c8e8f
+  languageName: node
+  linkType: hard
+
 "tslint@npm:^5.20.1":
   version: 5.20.1
   resolution: "tslint@npm:5.20.1"
@@ -26926,13 +26922,6 @@ typescript@^3.9.3:
   languageName: node
   linkType: hard
 
-"v8-compile-cache@npm:2.0.3":
-  version: 2.0.3
-  resolution: "v8-compile-cache@npm:2.0.3"
-  checksum: 8898e61408fc76e4812197fc2569df6f382a2845b843f7838d16d71e3e1b3b8b02261bce8666f77c6f8d16b503b32be246c835da2d952517af3724025cfdb970
-  languageName: node
-  linkType: hard
-
 "v8-compile-cache@npm:^2.0.0, v8-compile-cache@npm:^2.0.3, v8-compile-cache@npm:^2.1.1":
   version: 2.1.1
   resolution: "v8-compile-cache@npm:2.1.1"
@@ -27554,29 +27543,6 @@ typescript@^3.9.3:
   languageName: node
   linkType: hard
 
-"webpack-cli@npm:^3.3.11":
-  version: 3.3.11
-  resolution: "webpack-cli@npm:3.3.11"
-  dependencies:
-    chalk: 2.4.2
-    cross-spawn: 6.0.5
-    enhanced-resolve: 4.1.0
-    findup-sync: 3.0.0
-    global-modules: 2.0.0
-    import-local: 2.0.0
-    interpret: 1.2.0
-    loader-utils: 1.2.3
-    supports-color: 6.1.0
-    v8-compile-cache: 2.0.3
-    yargs: 13.2.4
-  peerDependencies:
-    webpack: 4.x.x
-  bin:
-    webpack-cli: ./bin/cli.js
-  checksum: 3d835a5c7e811159c7fbe0cd8911890c8ad7dc54f4c60b1cdd07073ea7fa67818259383f793f3d21c2a5fdfba3d26a74c0e0983d207b20d5c1b36a35dd2299fa
-  languageName: node
-  linkType: hard
-
 "webpack-cli@npm:^4.1.0":
   version: 4.1.0
   resolution: "webpack-cli@npm:4.1.0"
@@ -27768,7 +27734,7 @@ typescript@^3.9.3:
   languageName: node
   linkType: hard
 
-"webpack@npm:4.43.0, webpack@npm:^4.43.0":
+"webpack@npm:4.43.0":
   version: 4.43.0
   resolution: "webpack@npm:4.43.0"
   dependencies:
@@ -27877,7 +27843,7 @@ typescript@^3.9.3:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.3.0":
+"webpack@npm:^5.3.0, webpack@npm:^5.3.1":
   version: 5.3.1
   resolution: "webpack@npm:5.3.1"
   dependencies:
@@ -28433,7 +28399,7 @@ typescript@^3.9.3:
   languageName: node
   linkType: hard
 
-"yargs-parser@npm:^13.1.0, yargs-parser@npm:^13.1.2":
+"yargs-parser@npm:^13.1.2":
   version: 13.1.2
   resolution: "yargs-parser@npm:13.1.2"
   dependencies:
@@ -28459,25 +28425,6 @@ typescript@^3.9.3:
   dependencies:
     camelcase: ^3.0.0
   checksum: 504bd83dcc09f47d7e2d7d740b50060ee205eab31375025f3b51ef319d442832bdb46fa54f2d52ae8c203b597116575396cc3ca0bd5eccde395823f5e16d9158
-  languageName: node
-  linkType: hard
-
-"yargs@npm:13.2.4":
-  version: 13.2.4
-  resolution: "yargs@npm:13.2.4"
-  dependencies:
-    cliui: ^5.0.0
-    find-up: ^3.0.0
-    get-caller-file: ^2.0.1
-    os-locale: ^3.1.0
-    require-directory: ^2.1.1
-    require-main-filename: ^2.0.0
-    set-blocking: ^2.0.0
-    string-width: ^3.0.0
-    which-module: ^2.0.0
-    y18n: ^4.0.0
-    yargs-parser: ^13.1.0
-  checksum: a0be3e8df5b91bc19e11ce0a7234db69e9d50e6d284a06bdb3547fb5f26eaa234720c3b8db75abdd358d442ef0db91ee2065e0c28e29617f535f0a26b791225c
   languageName: node
   linkType: hard
 
