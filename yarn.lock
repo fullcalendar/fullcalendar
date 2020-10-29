@@ -3694,7 +3694,9 @@ __metadata:
   resolution: "@fullcalendar/adaptive@workspace:packages-premium/adaptive"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     "@fullcalendar/premium-common": ~5.3.1
+    preact: ^10.5.5
     tslib: ^2.0.0
   languageName: unknown
   linkType: soft
@@ -3750,6 +3752,8 @@ __metadata:
   resolution: "@fullcalendar/bootstrap@workspace:packages/bootstrap"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
+    preact: ^10.5.5
     tslib: ^2.0.0
   languageName: unknown
   linkType: soft
@@ -3758,6 +3762,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar/common@workspace:packages/common"
   dependencies:
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
+    preact: ^10.5.5
     tslib: ^2.0.0
   languageName: unknown
   linkType: soft
@@ -3776,6 +3782,7 @@ __metadata:
   resolution: "@fullcalendar/core@workspace:packages/core"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     preact: ^10.0.5
     tslib: ^2.0.0
   languageName: unknown
@@ -3786,6 +3793,8 @@ __metadata:
   resolution: "@fullcalendar/daygrid@workspace:packages/daygrid"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
+    preact: ^10.5.5
     tslib: ^2.0.0
   languageName: unknown
   linkType: soft
@@ -3795,6 +3804,8 @@ __metadata:
   resolution: "@fullcalendar/google-calendar@workspace:packages/google-calendar"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
+    preact: ^10.5.5
     tslib: ^2.0.0
   languageName: unknown
   linkType: soft
@@ -3804,6 +3815,8 @@ __metadata:
   resolution: "@fullcalendar/interaction@workspace:packages/interaction"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
+    preact: ^10.5.5
     tslib: ^2.0.0
   languageName: unknown
   linkType: soft
@@ -3813,6 +3826,8 @@ __metadata:
   resolution: "@fullcalendar/list@workspace:packages/list"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
+    preact: ^10.5.5
     tslib: ^2.0.0
   languageName: unknown
   linkType: soft
@@ -3822,7 +3837,9 @@ __metadata:
   resolution: "@fullcalendar/luxon@workspace:packages/luxon"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     luxon: ^1.12.1
+    preact: ^10.5.5
     tslib: ^2.0.0
   peerDependencies:
     luxon: ^1.12.1
@@ -3834,8 +3851,10 @@ __metadata:
   resolution: "@fullcalendar/moment-timezone@workspace:packages/moment-timezone"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     moment: ^2.24.0
     moment-timezone: ^0.5.26
+    preact: ^10.5.5
     tslib: ^2.0.0
   peerDependencies:
     moment: ^2.24.0
@@ -3848,7 +3867,9 @@ __metadata:
   resolution: "@fullcalendar/moment@workspace:packages/moment"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     moment: ^2.24.0
+    preact: ^10.5.5
     tslib: ^2.0.0
   peerDependencies:
     moment: ^2.24.0
@@ -3860,6 +3881,8 @@ __metadata:
   resolution: "@fullcalendar/premium-common@workspace:packages-premium/premium-common"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
+    preact: ^10.5.5
     tslib: ^2.0.0
   languageName: unknown
   linkType: soft
@@ -3914,7 +3937,9 @@ __metadata:
   resolution: "@fullcalendar/resource-common@workspace:packages-premium/resource-common"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     "@fullcalendar/premium-common": ~5.3.1
+    preact: ^10.5.5
     tslib: ^2.0.0
   languageName: unknown
   linkType: soft
@@ -3924,9 +3949,11 @@ __metadata:
   resolution: "@fullcalendar/resource-daygrid@workspace:packages-premium/resource-daygrid"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     "@fullcalendar/daygrid": ~5.3.1
     "@fullcalendar/premium-common": ~5.3.1
     "@fullcalendar/resource-common": ~5.3.1
+    preact: ^10.5.5
     tslib: ^2.0.0
   languageName: unknown
   linkType: soft
@@ -3936,10 +3963,12 @@ __metadata:
   resolution: "@fullcalendar/resource-timegrid@workspace:packages-premium/resource-timegrid"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     "@fullcalendar/premium-common": ~5.3.1
     "@fullcalendar/resource-common": ~5.3.1
     "@fullcalendar/resource-daygrid": ~5.3.1
     "@fullcalendar/timegrid": ~5.3.1
+    preact: ^10.5.5
     tslib: ^2.0.0
   languageName: unknown
   linkType: soft
@@ -3949,10 +3978,12 @@ __metadata:
   resolution: "@fullcalendar/resource-timeline@workspace:packages-premium/resource-timeline"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     "@fullcalendar/premium-common": ~5.3.1
     "@fullcalendar/resource-common": ~5.3.1
     "@fullcalendar/scrollgrid": ~5.3.1
     "@fullcalendar/timeline": ~5.3.1
+    preact: ^10.5.5
     tslib: ^2.0.0
   languageName: unknown
   linkType: soft
@@ -3962,6 +3993,8 @@ __metadata:
   resolution: "@fullcalendar/rrule@workspace:packages/rrule"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
+    preact: ^10.5.5
     rrule: ^2.6.0
     tslib: ^2.0.0
   peerDependencies:
@@ -3974,7 +4007,9 @@ __metadata:
   resolution: "@fullcalendar/scrollgrid@workspace:packages-premium/scrollgrid"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     "@fullcalendar/premium-common": ~5.3.1
+    preact: ^10.5.5
     tslib: ^2.0.0
   languageName: unknown
   linkType: soft
@@ -3984,7 +4019,9 @@ __metadata:
   resolution: "@fullcalendar/timegrid@workspace:packages/timegrid"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     "@fullcalendar/daygrid": ~5.3.1
+    preact: ^10.5.5
     tslib: ^2.0.0
   languageName: unknown
   linkType: soft
@@ -3994,8 +4031,10 @@ __metadata:
   resolution: "@fullcalendar/timeline@workspace:packages-premium/timeline"
   dependencies:
     "@fullcalendar/common": ~5.3.1
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom"
     "@fullcalendar/premium-common": ~5.3.1
     "@fullcalendar/scrollgrid": ~5.3.1
+    preact: ^10.5.5
     tslib: ^2.0.0
   languageName: unknown
   linkType: soft
