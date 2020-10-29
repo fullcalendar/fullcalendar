@@ -15,7 +15,7 @@ yarn run lintBuilt
 yarn run archive
 yarn run test:ci
 
-./scripts/packages-contrib-ci.js
+./scripts/packages-contrib-ci.sh
 # ./scripts/example-projects-build.js # TODO: renable!!!
 
 # rebuild because building angular example project modifies
