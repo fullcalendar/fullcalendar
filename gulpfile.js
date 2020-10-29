@@ -28,10 +28,6 @@ const linkPkgSubdirs = exports.linkPkgSubdirs = series(
   // but we want other packages to reference it by its dist/fullcalendar folder
   execTask('rm -f node_modules/@fullcalendar/angular'),
   execTask('ln -s ../../packages-contrib/angular/dist/fullcalendar node_modules/@fullcalendar/angular'),
-
-  // same concept for fullcalendar-tests
-  execTask('rm -f node_modules/fullcalendar-tests'),
-  execTask('ln -s ../packages/__tests__/tsc node_modules/fullcalendar-tests')
 )
 
 
@@ -94,7 +90,7 @@ exports.build = series(
   execTask('tsc -b --verbose'),
   localesDts,
   removeTscDevLinks,
-  execTask('webpack --config webpack.bundles.js --env.NO_SOURCE_MAPS'), // always compile from SRC
+  execTask('webpack --config webpack.bundles.js --env NO_SOURCE_MAPS'), // always compile from SRC
   execTask('rollup -c rollup.locales.js'),
   process.env.FULLCALENDAR_FORCE_REACT
     ? async function() {} // rollup doesn't know how to make bundles for react-mode
@@ -127,7 +123,7 @@ exports.test = series(
   parallel(
     testsIndexWatch,
     execParallel({
-      webpack: 'webpack --config webpack.tests.js --env.PACKAGE_MODE=src --watch',
+      webpack: 'webpack --config webpack.tests.js --env PACKAGE_MODE=src --watch',
       karma: 'karma start karma.config.js'
     })
   )
@@ -138,7 +134,7 @@ exports.test = series(
 exports.testCi = series(
   linkVDomLib, // looks at FULLCALENDAR_FORCE_REACT (doesn't matter?)
   testsIndex,
-  execTask(`webpack --config webpack.tests.js --env.PACKAGE_MODE=${process.env.FULLCALENDAR_FORCE_REACT ? 'src' : 'dist'}`), // react-mode cant do dist-mode
+  execTask(`webpack --config webpack.tests.js --env PACKAGE_MODE=${process.env.FULLCALENDAR_FORCE_REACT ? 'src' : 'dist'}`), // react-mode cant do dist-mode
   execTask('karma start karma.config.js ci')
 )
 

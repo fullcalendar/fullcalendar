@@ -8,8 +8,8 @@ const { buildAliasMap } = require('./scripts/lib/new-webpack')
 
 
 /*
-webpack --config webpack.tests.js --env.PACKAGE_MODE=src
-webpack --config webpack.tests.js --env.PACKAGE_MODE=dist
+webpack --config webpack.tests.js --env PACKAGE_MODE=src
+webpack --config webpack.tests.js --env PACKAGE_MODE=dist
 */
 module.exports = (env) => {
   let packageMode = env.PACKAGE_MODE
@@ -35,6 +35,12 @@ module.exports = (env) => {
     },
     module: {
       rules: [
+        {
+          test: /\.m?js$/,
+          resolve: {
+            fullySpecified: false // solves annoying errors about extensions. REVISIT
+          }
+        },
         {
           test: /\.tsx?$/,
           use: [
