@@ -12,6 +12,8 @@
     "rrule": "^2.6.0"
   },
   "devDependencies": {
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom",
+    "preact": "^10.5.5",
     "rrule": "^2.6.0"
   },
   "type": "module",

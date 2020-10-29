@@ -12,7 +12,9 @@
     "luxon": "^1.12.1"
   },
   "devDependencies": {
-    "luxon": "^1.12.1"
+    "@fullcalendar/core-vdom": "workspace:packages/core-vdom",
+    "luxon": "^1.12.1",
+    "preact": "^10.5.5"
   },
   "type": "module",
   "main": "main.js",
