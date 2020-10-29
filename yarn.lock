@@ -3734,7 +3734,6 @@ __metadata:
     "@types/jasmine": ~3.5.0
     "@types/jasminewd2": ~2.0.3
     "@types/node": ^12.11.1
-    "@yarnpkg/pnpify": ^2.3.3
     codelyzer: ^6.0.0
     core-js: ^3.6.2
     fast-deep-equal: ^3.1.1
@@ -3919,6 +3918,7 @@ __metadata:
     concurrently: ^5.3.0
     eslint: ^7.2.0
     eslint-config-standard: ^14.1.1
+    eslint-import-resolver-node: ^0.3.4
     eslint-plugin-import: ^2.21.1
     eslint-plugin-node: ^11.1.0
     eslint-plugin-promise: ^4.2.1
@@ -4079,7 +4079,8 @@ __metadata:
     vue: ^2.6.11
     vue-loader: ^15.9.4
     vue-template-compiler: ^2.6.11
-    webpack: ^4.44.2
+    webpack: ^5.3.2
+    webpack-cli: ^4.1.0
   peerDependencies:
     vue: ^2.6.11
   languageName: unknown
@@ -11485,6 +11486,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-import-resolver-node@npm:^0.3.4":
+  version: 0.3.4
+  resolution: "eslint-import-resolver-node@npm:0.3.4"
+  dependencies:
+    debug: ^2.6.9
+    resolve: ^1.13.1
+  checksum: 825e34e662c988ece8229e6956a95f12d2fa19265b429e3e3db14e58bfe72e270c999cda0cfc690793ed6e6a3e49ffa8df0e0a8842d668a1f0f7de5ae1aa36f9
+  languageName: node
+  linkType: hard
+
 "eslint-loader@npm:^2.2.1":
   version: 2.2.1
   resolution: "eslint-loader@npm:2.2.1"
@@ -13015,6 +13026,7 @@ fsevents@~2.1.2:
     "@types/node": ^12.12.14
     "@typescript-eslint/eslint-plugin": ^3.1.0
     "@typescript-eslint/parser": ^3.1.0
+    "@yarnpkg/pnpify": ^2.3.3
     autoprefixer: ^9.8.4
     bootstrap: ^3.4.1
     chokidar: ^2.1.5
@@ -16409,7 +16421,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"karma@npm:^5.2.3":
+karma@^5.2.3:
   version: 5.2.3
   resolution: "karma@npm:5.2.3"
   dependencies:
@@ -16439,6 +16451,39 @@ fsevents@~2.1.2:
   bin:
     karma: bin/karma
   checksum: 94aa9ad87a3092c638a6a13e0854aabeb90015ec7a3505b11e558d21b51c8be22f865e2a2827e3dc77326baaf7dfdd7993a2defc8fc585af3f8741de86621909
+  languageName: node
+  linkType: hard
+
+"karma@patch:karma@^5.2.3#./karma-patch.diff::locator=fullcalendar-workspace%40workspace%3A.":
+  version: 5.2.3
+  resolution: "karma@patch:karma@npm%3A5.2.3#./karma-patch.diff::version=5.2.3&hash=638e7b&locator=fullcalendar-workspace%40workspace%3A."
+  dependencies:
+    body-parser: ^1.19.0
+    braces: ^3.0.2
+    chokidar: ^3.4.2
+    colors: ^1.4.0
+    connect: ^3.7.0
+    di: ^0.0.1
+    dom-serialize: ^2.2.1
+    glob: ^7.1.6
+    graceful-fs: ^4.2.4
+    http-proxy: ^1.18.1
+    isbinaryfile: ^4.0.6
+    lodash: ^4.17.19
+    log4js: ^6.2.1
+    mime: ^2.4.5
+    minimatch: ^3.0.4
+    qjobs: ^1.2.0
+    range-parser: ^1.2.1
+    rimraf: ^3.0.2
+    socket.io: ^2.3.0
+    source-map: ^0.6.1
+    tmp: 0.2.1
+    ua-parser-js: 0.7.22
+    yargs: ^15.3.1
+  bin:
+    karma: bin/karma
+  checksum: 36b7cdfa4e4f93de11ef88c3cc3f94abef829c43e2031fb21362280046203ee8e40b84b72637edb6810a6ad5d71715b1b94c9944181414e6fead0ad18c9b2900
   languageName: node
   linkType: hard
 
@@ -27520,44 +27565,6 @@ typescript@^3.9.3:
   languageName: node
   linkType: hard
 
-"webpack@npm:^4.44.2":
-  version: 4.44.2
-  resolution: "webpack@npm:4.44.2"
-  dependencies:
-    "@webassemblyjs/ast": 1.9.0
-    "@webassemblyjs/helper-module-context": 1.9.0
-    "@webassemblyjs/wasm-edit": 1.9.0
-    "@webassemblyjs/wasm-parser": 1.9.0
-    acorn: ^6.4.1
-    ajv: ^6.10.2
-    ajv-keywords: ^3.4.1
-    chrome-trace-event: ^1.0.2
-    enhanced-resolve: ^4.3.0
-    eslint-scope: ^4.0.3
-    json-parse-better-errors: ^1.0.2
-    loader-runner: ^2.4.0
-    loader-utils: ^1.2.3
-    memory-fs: ^0.4.1
-    micromatch: ^3.1.10
-    mkdirp: ^0.5.3
-    neo-async: ^2.6.1
-    node-libs-browser: ^2.2.1
-    schema-utils: ^1.0.0
-    tapable: ^1.1.3
-    terser-webpack-plugin: ^1.4.3
-    watchpack: ^1.7.4
-    webpack-sources: ^1.4.1
-  peerDependenciesMeta:
-    webpack-cli:
-      optional: true
-    webpack-command:
-      optional: true
-  bin:
-    webpack: bin/webpack.js
-  checksum: cb4a9051d64df00494d18afd379d26669b96309f3f41e89e55b8531d99d67060bf8b262a996dbcdc2cda99adfb6c1c2bd9966630d329b09f9f9aa9fc732a3259
-  languageName: node
-  linkType: hard
-
 "webpack@npm:^5.3.0, webpack@npm:^5.3.1":
   version: 5.3.1
   resolution: "webpack@npm:5.3.1"
@@ -27592,6 +27599,43 @@ typescript@^3.9.3:
   bin:
     webpack: bin/webpack.js
   checksum: a3e4155261d69a06c225e523c8a581ead5ce3e2009c88277a3e667b6b2a2564ecca761bf8b3144ec64bd652144ac5189f4f058bc6ea7c9e4739829ea9260a2f9
+  languageName: node
+  linkType: hard
+
+"webpack@npm:^5.3.2":
+  version: 5.3.2
+  resolution: "webpack@npm:5.3.2"
+  dependencies:
+    "@types/eslint-scope": ^3.7.0
+    "@types/estree": ^0.0.45
+    "@webassemblyjs/ast": 1.9.0
+    "@webassemblyjs/helper-module-context": 1.9.0
+    "@webassemblyjs/wasm-edit": 1.9.0
+    "@webassemblyjs/wasm-parser": 1.9.0
+    acorn: ^8.0.4
+    browserslist: ^4.14.5
+    chrome-trace-event: ^1.0.2
+    enhanced-resolve: ^5.3.1
+    eslint-scope: ^5.1.1
+    events: ^3.2.0
+    glob-to-regexp: ^0.4.1
+    graceful-fs: ^4.2.4
+    json-parse-better-errors: ^1.0.2
+    loader-runner: ^4.1.0
+    mime-types: ^2.1.27
+    neo-async: ^2.6.2
+    pkg-dir: ^4.2.0
+    schema-utils: ^3.0.0
+    tapable: ^2.0.0
+    terser-webpack-plugin: ^5.0.3
+    watchpack: ^2.0.0
+    webpack-sources: ^2.1.1
+  peerDependenciesMeta:
+    webpack-cli:
+      optional: true
+  bin:
+    webpack: bin/webpack.js
+  checksum: 334a24989d164e4652f6afd2ca2302ecd7d3fd5a963164f60e368ca812b5036fff9b1b6bdbf0257b94a4bbe401ccc0d2922b262631011ec2bcbcc810bcae88a3
   languageName: node
   linkType: hard
 
