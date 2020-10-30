@@ -450,8 +450,8 @@ exports.lintPackageMeta = function() {
       success = false
     }
 
-    if (meta.module) {
-      console.warn(`${struct.name} should NOT have a 'module' entry`)
+    if (!meta.module) {
+      console.warn(`${struct.name} should have a 'module' entry`)
       success = false
     }
 
