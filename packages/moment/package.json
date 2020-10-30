@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom",
-    "moment": "^2.24.0",
+    "moment": "^2.29.1",
     "preact": "^10.5.5"
   },
   "main": "main.cjs.js",
