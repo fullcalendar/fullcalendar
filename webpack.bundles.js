@@ -26,12 +26,6 @@ module.exports = (env) => {
     module: {
       rules: [
         {
-          test: /\.m?js$/,
-          resolve: {
-            fullySpecified: false // solves annoying errors about extensions. REVISIT
-          }
-        },
-        {
           test: /\.tsx?$/,
           use: [
             { loader: 'ts-loader', options: { transpileOnly: true } }
