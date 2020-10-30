@@ -93,6 +93,7 @@
     "mkdirp": "^0.5.1",
     "moment": "^2.29.1",
     "moment-locales-webpack-plugin": "^1.2.0",
+    "moment-timezone": "^0.5.31",
     "moment-timezone-data-webpack-plugin": "^1.3.0",
     "postcss": "^7.0.30",
     "postcss-advanced-variables": "^3.0.1",
