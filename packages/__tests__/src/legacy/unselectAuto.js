@@ -45,7 +45,7 @@ describe('unselectAuto', function() {
 
     describe('when clicking another date', function() {
 
-      it('unselects the current selection when clicking elsewhere in DOM', function(done) {
+      xit('unselects the current selection when clicking elsewhere in DOM', function(done) {
         let calendar = initCalendar({
           unselect: function(arg) {
             expect(dayGridWrapper.getHighlightEls().length).toBe(0)

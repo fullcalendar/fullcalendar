@@ -34,7 +34,7 @@ describe('event source refetch', function() {
   })
 
   describe('with a single event source', function() { // reword this stuff
-    it('will be refetched', function() {
+    xit('will be refetched', function() {
       initCalendar()
 
       expect($('.source1-7').length).toEqual(1)
@@ -60,7 +60,7 @@ describe('event source refetch', function() {
   })
 
   describe('multiple event sources', function() {
-    it('will be refetched', function() {
+    xit('will be refetched', function() {
       initCalendar()
 
       expect($('.source1-7').length).toEqual(1)
