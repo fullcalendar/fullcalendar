@@ -20,6 +20,13 @@ module.exports = function(config) {
     // base path, that will be used to resolve files and exclude
     basePath: '',
 
+    plugins: [
+      require('karma-chrome-launcher'),
+      require('karma-jasmine'),
+      require('karma-sourcemap-loader'),
+      require('karma-verbose-reporter')
+    ],
+
     // frameworks to use
     frameworks: [ 'jasmine' ],
 
