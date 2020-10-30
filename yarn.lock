@@ -13035,6 +13035,7 @@ fsevents@~2.1.2:
     css-loader: ^3.5.3
     dragula: ^3.7.2
     eslint: ^7.2.0
+    eslint-import-resolver-node: ^0.3.4
     eslint-plugin-import: ^2.21.1
     eslint-plugin-react: ^7.20.0
     glob: ^7.1.3
