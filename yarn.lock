@@ -3866,8 +3866,8 @@ __metadata:
     preact: ^10.5.5
     tslib: ^2.0.3
   peerDependencies:
-    moment: ^2.24.0
-    moment-timezone: ^0.5.26
+    moment: ^2.29.1
+    moment-timezone: ^0.5.31
   languageName: unknown
   linkType: soft
 
@@ -3881,7 +3881,7 @@ __metadata:
     preact: ^10.5.5
     tslib: ^2.0.3
   peerDependencies:
-    moment: ^2.24.0
+    moment: ^2.29.1
   languageName: unknown
   linkType: soft
 
@@ -18220,13 +18220,6 @@ karma@^5.2.3:
   dependencies:
     moment: ">= 2.9.0"
   checksum: db8c241301530919ea3091b75c067c1b919973619bed0f3b0c009eb94e44da726452a1382c099d55a876407fd4e22802b45bc51f96c5cbfbb7fbbfa6660079e8
-  languageName: node
-  linkType: hard
-
-"moment@npm:>= 2.9.0":
-  version: 2.25.3
-  resolution: "moment@npm:2.25.3"
-  checksum: 416971ff3c663c850d56095cbfb01a2c153ecc7f3511772c1ff7e09a7be0105e135e8227aba0b82dd058efa8747271906cebe3f75cf4a1c4b17ed1b568003103
   languageName: node
   linkType: hard
 

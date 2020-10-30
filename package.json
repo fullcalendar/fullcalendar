@@ -33,7 +33,8 @@
     ]
   },
   "resolutions": {
-    "karma": "patch:karma@^5.2.3#./karma-patch.diff"
+    "karma": "patch:karma@^5.2.3#./karma-patch.diff",
+    "moment": "^2.29.1"
   },
   "scripts": {
     "build": "gulp build",

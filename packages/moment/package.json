@@ -9,7 +9,7 @@
     "tslib": "^2.0.3"
   },
   "peerDependencies": {
-    "moment": "^2.24.0"
+    "moment": "^2.29.1"
   },
   "devDependencies": {
     "@fullcalendar/core-vdom": "workspace:packages/core-vdom",
