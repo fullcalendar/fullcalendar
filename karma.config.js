@@ -33,6 +33,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'tmp/tests/config.js',
+      'tmp/tests/*vendors*.js',
       'tmp/tests/*all*.js'
     ],
 
