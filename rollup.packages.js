@@ -5,7 +5,10 @@ const dts = require('rollup-plugin-dts').default
 const sourceMapLoader = require('rollup-plugin-sourcemaps')
 const postcss = require('rollup-plugin-postcss')
 const { checkNoSymlinks, buildBanner } = require('./scripts/lib/new')
-const { externalizeStylesheets, externalizeNonRelative, injectReleaseDateAndVersion, buildAliasMap, removeStylesheetImports } = require('./scripts/lib/new-rollup')
+const {
+  externalizeStylesheets, externalizeNonRelative, injectReleaseDateAndVersion,
+  buildAliasMap, removeStylesheetImports, removeEmptyImports
+} = require('./scripts/lib/new-rollup')
 
 
 /*
@@ -56,7 +59,7 @@ module.exports = [
         banner: buildBanner(struct.isPremium)
       },
       plugins: [
-        externalizeVDom('.js'),
+        externalizeVDom(),
         externalizeNonRelative(),
         sourceMapLoader(), // load from transpiled-via-tsc JS files
         postcss({ // will use postcss.config.js
@@ -64,6 +67,25 @@ module.exports = [
         }),
         transplantCss(struct.mainName),
         injectReleaseDateAndVersion()
+      ]
+    }
+  }),
+
+  // for JS (CJS)
+  ...publicPackageStructs.map((struct) => {
+    return {
+      input: path.join(struct.dir, struct.mainTscJs),
+      output: [{
+        format: 'cjs',
+        exports: 'named',
+        file: path.join(struct.dir, struct.mainDistJs.replace('.js', '.cjs.js')),
+        banner: buildBanner(struct.isPremium)
+      }],
+      plugins: [
+        externalizeNonRelative(),
+        removeStylesheetImports(),
+        injectReleaseDateAndVersion(),
+        removeEmptyImports() // because of removeStylesheetImports and CJS
       ]
     }
   }),
@@ -104,7 +126,7 @@ module.exports = [
       plugins: [
         fixDtsCodeIn(),
         ensurePremiumCommonAmbient(),
-        externalizeVDom(''),
+        externalizeVDom(),
         externalizeStylesheets(),
         externalizeNonRelative(),
         dts(),
@@ -139,7 +161,7 @@ function transplantCss(fileName) { // fileName w/o extension
 }
 
 
-function externalizeVDom(extension) {
+function externalizeVDom() {
   return {
     resolveId(id, importer) {
       if (/\/vdom$/.test(id) || id.match(/^(preact|react|react-dom)$/)) {
@@ -147,7 +169,7 @@ function externalizeVDom(extension) {
           importer.match('packages/common') ||
           importer.match('packages/core')
         ) {
-          return { id: './vdom' + extension, external: true, moduleSideEffects: true }
+          return { id: './vdom', external: true, moduleSideEffects: true }
         } else {
           return { id: '@fullcalendar/common', external: true, moduleSideEffects: true }
         }

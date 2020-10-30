@@ -9,6 +9,7 @@ exports.externalizeRelative = externalizeRelative
 exports.buildAliasMap = buildAliasMap
 exports.injectReleaseDateAndVersion = injectReleaseDateAndVersion
 exports.removeStylesheetImports = removeStylesheetImports
+exports.removeEmptyImports = removeEmptyImports
 
 
 function externalizeStylesheets() {
@@ -73,6 +74,17 @@ function injectReleaseDateAndVersion() {
     values: {
       releaseDate: new Date().toISOString().replace(/T.*/, ''), // just YYYY-MM-DD
       version: rootPkgMeta.version
+    }
+  })
+}
+
+
+function removeEmptyImports() {
+  return replace({
+    delimiters: ['', ''], // ignore word boundaries
+    values: {
+      'require(\'\')': '',
+      'require("")': ''
     }
   })
 }

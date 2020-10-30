@@ -16,8 +16,8 @@
     "luxon": "^1.12.1",
     "preact": "^10.5.5"
   },
-  "type": "module",
-  "main": "main.js",
+  "main": "main.cjs.js",
+  "module": "main.js",
   "types": "main.d.ts",
   "jsdelivr": "main.global.min.js",
   "browserGlobal": "FullCalendarLuxon",

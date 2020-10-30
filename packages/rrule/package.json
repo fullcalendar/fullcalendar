@@ -16,8 +16,8 @@
     "preact": "^10.5.5",
     "rrule": "^2.6.0"
   },
-  "type": "module",
-  "main": "main.js",
+  "main": "main.cjs.js",
+  "module": "main.js",
   "types": "main.d.ts",
   "jsdelivr": "main.global.min.js",
   "browserGlobal": "FullCalendarRRule",

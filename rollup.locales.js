@@ -24,7 +24,8 @@ module.exports = [
   {
     input: 'packages/core/src/locales-all.ts',
     output: {
-      format: 'es',
+      format: 'cjs',
+      exports: 'named',
       file: 'packages/core/locales-all.js'
     },
     plugins: [
@@ -55,7 +56,8 @@ module.exports = [
   ...srcLocaleFiles.map((srcLocaleFile) => ({
     input: srcLocaleFile,
     output: {
-      format: 'es',
+      format: 'cjs',
+      exports: 'named',
       file: path.join('packages/core/locales', path.basename(srcLocaleFile, '.ts') + '.js')
     },
     plugins: [

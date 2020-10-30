@@ -18,8 +18,8 @@
     "moment-timezone": "^0.5.26",
     "preact": "^10.5.5"
   },
-  "type": "module",
-  "main": "main.js",
+  "main": "main.cjs.js",
+  "module": "main.js",
   "types": "main.d.ts",
   "jsdelivr": "main.global.min.js",
   "browserGlobal": "FullCalendarMomentTimezone",

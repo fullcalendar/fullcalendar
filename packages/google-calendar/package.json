@@ -8,8 +8,8 @@
     "@fullcalendar/common": "~5.3.1",
     "tslib": "^2.0.3"
   },
-  "type": "module",
-  "main": "main.js",
+  "main": "main.cjs.js",
+  "module": "main.js",
   "types": "main.d.ts",
   "jsdelivr": "main.global.min.js",
   "browserGlobal": "FullCalendarGoogleCalendar",
