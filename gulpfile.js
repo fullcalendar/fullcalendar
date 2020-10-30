@@ -118,6 +118,8 @@ exports.watch = series(
   )
 )
 
+exports.testsIndex = testsIndex
+
 exports.test = series(
   testsIndex,
   parallel(
