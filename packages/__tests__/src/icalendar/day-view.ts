@@ -24,7 +24,7 @@ describe('addICalEventSource with week view', function() {
 
   afterEach(function() { XHRMock.teardown() })
 
-  it('correctly adds a one-hour long meeting', async (done) => {
+  it('correctly adds a one-hour long meeting', (done) => {
     loadICalendarWith(oneHourMeeting, () => {
       setTimeout(() => {
         assertEventCount(1)
@@ -33,7 +33,7 @@ describe('addICalEventSource with week view', function() {
     })
 	})
 
-  it('correctly adds a repeating weekly meeting', async (done) => {
+  it('correctly adds a repeating weekly meeting', (done) => {
     loadICalendarWith(recurringWeeklyMeeting, () => {
       setTimeout(() => {
         assertEventCount(1)
@@ -42,7 +42,7 @@ describe('addICalEventSource with week view', function() {
     })
 	})
 
-  it('adds an all day event', async (done) => {
+  it('adds an all day event', (done) => {
     loadICalendarWith(alldayEvent, () => {
       setTimeout(() => {
         assertEventCount(1)
@@ -52,7 +52,7 @@ describe('addICalEventSource with week view', function() {
     })
   })
 
-  it('ignores a munged event', async (done) => {
+  it('ignores a munged event', (done) => {
     loadICalendarWith(mungedOneHourMeeting, () => {
       setTimeout(() => {
         assertEventCount(0)
@@ -61,7 +61,7 @@ describe('addICalEventSource with week view', function() {
 		})
 	})
 
-  it('ignores a meeting with a munged start', async (done) => {
+  it('ignores a meeting with a munged start', (done) => {
     loadICalendarWith(meetingWithMungedStart, () => {
       setTimeout(() => {
         assertEventCount(0)

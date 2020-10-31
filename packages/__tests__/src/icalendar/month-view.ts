@@ -25,7 +25,7 @@ describe('addICalEventSource with month view', function() {
 
   afterEach(function() { XHRMock.teardown() })
 
-  it('correctly adds an all day event', async (done) => {
+  it('correctly adds an all day event', (done) => {
     loadICalendarWith(alldayEvent, () => {
       setTimeout(() => {
         assertEventCount(1)
@@ -35,7 +35,7 @@ describe('addICalEventSource with month view', function() {
     })
   })
 
-  it('correctly adds a single multi-day event', async (done) => {
+  it('correctly adds a single multi-day event', (done) => {
     loadICalendarWith(multidayEvent, () => {
       setTimeout(() => {
         assertEventCount(1)
@@ -45,7 +45,7 @@ describe('addICalEventSource with month view', function() {
     })
   })
 
-  it('correctly adds multiple multi-day events', async (done) => {
+  it('correctly adds multiple multi-day events', (done) => {
     loadICalendarWith(multipleMultidayEvents, () => {
       setTimeout(() => {
         assertEventCount(2)
@@ -55,7 +55,7 @@ describe('addICalEventSource with month view', function() {
     })
   })
 
-  it('correctly adds a one-hour long meeting', async (done) => {
+  it('correctly adds a one-hour long meeting', (done) => {
     loadICalendarWith(oneHourMeeting, () => {
       setTimeout(() => {
         assertEventCount(1)
@@ -65,7 +65,7 @@ describe('addICalEventSource with month view', function() {
     })
 	})
 
-  it('correctly adds a repeating weekly meeting', async (done) => {
+  it('correctly adds a repeating weekly meeting', (done) => {
     loadICalendarWith(recurringWeeklyMeeting, () => {
       setTimeout(() => {
         assertEventCount(5)
@@ -74,7 +74,7 @@ describe('addICalEventSource with month view', function() {
     })
 	})
 
-  it('ignores a munged event', async (done) => {
+  it('ignores a munged event', (done) => {
 	  loadICalendarWith(mungedOneHourMeeting, () => {
 		  setTimeout(() => {
 			  assertEventCount(0)
@@ -83,7 +83,7 @@ describe('addICalEventSource with month view', function() {
 		})
 	})
 
-  it('adds a valid event and ignores a munged event', async (done) => {
+  it('adds a valid event and ignores a munged event', (done) => {
 	  loadICalendarWith(multipleEventsOneMunged, () => {
 		  setTimeout(() => {
 			  assertEventCount(1)
