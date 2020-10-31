@@ -1,6 +1,5 @@
 import ICAL from 'ical.js'
-import { __assign } from 'tslib'
-import { createPlugin, EventSourceDef } from '@fullcalendar/common'
+import { createPlugin, EventSourceDef, EventInput } from '@fullcalendar/common'
 import { EVENT_SOURCE_REFINERS } from './event-source-refiners'
 
 type Success = (rawFeed: string, xhr: XMLHttpRequest) => void
@@ -30,6 +29,51 @@ interface ICalFeedMeta {
   extraParams?: any
 }
 
+let buildIcalEvents = (rawFeed: string): ICAL.Event[] => {
+  try {
+    const iCalFeed = ICAL.parse(rawFeed)
+    const iCalComponent = new ICAL.Component(iCalFeed);
+    return iCalComponent.getAllSubcomponents("vevent");
+  } catch (err) {
+    console.log(`Error parsing feed: ${err}`)
+    return []
+  }
+}
+
+let buildEvents = (vevents: ICAL.Event[]): EventInput[] => {
+  return vevents.map((vevent) => {
+    const event = new ICAL.Event(vevent)
+    
+    const fcEvent = {
+      title: event.summary,
+      start: event.startDate.toString(),
+    }
+
+    try {
+      if (event.startDate.isDate && event.endDate === null) {
+        return {
+          ...fcEvent,
+          end: event.startDate.addDuration({days: 1}).toString(),
+          allDay: true,
+        }
+      } else if (event.startDate.isDate && event.endDate.isDate) {
+        return {
+          ...fcEvent,
+          end: event.endDate.toString(),
+          allDay: true,
+        }
+      } else {
+        return {
+          ...fcEvent,
+          end: event.endDate.toString(),
+        }
+      }
+    } catch(error) {
+      console.log(`Unable to process item in calendar: ${error}.`)
+      return null
+    }
+  }).filter((item: EventInput | null) => { return item !== null })
+}
 
 let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
 
@@ -48,48 +92,11 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
     return new Promise((resolve, reject) => {
       requestICal(meta.feedUrl,
         (rawFeed, xhr) => {
-          try {
-            const iCalFeed = ICAL.parse(rawFeed)
-            const iCalComponent = new ICAL.Component(iCalFeed);
-            const vevents = iCalComponent.getAllSubcomponents("vevent");
-            const events = vevents.map((vevent) => {
-              try {
-								const event = new ICAL.Event(vevent)
-                const fcEvent = {
-                  title: event.summary,
-                  start: event.startDate.toString(),
-                }
+          const icalEvents = buildIcalEvents(rawFeed)
+          const events = buildEvents(icalEvents)
 
-                if (event.startDate.isDate && event.endDate === null) {
-                  return {
-                    ...fcEvent,
-                    end: event.startDate.addDuration({days: 1}).toString(),
-                    allDay: true,
-                  }
-                } else if (event.startDate.isDate && event.endDate.isDate) {
-                  return {
-                    ...fcEvent,
-                    end: event.endDate.toString(),
-                    allDay: true,
-                  }
-                } else {
-                  return {
-                    ...fcEvent,
-                    end: event.endDate.toString(),
-                  }
-                }
-              } catch(error) {
-                console.log(`Unable to process item in calendar: ${error}.`)
-                return null
-              }
-            }).filter((item: any) => { return item !== null })
-
-            success({ rawEvents: events, xhr })
-            resolve()
-          } catch(error) {
-            console.log(error)
-            throw error
-          }
+          success({ rawEvents: events, xhr })
+          resolve()
         },
         (errorMessage, xhr) => {
           failure({ message: errorMessage, xhr })
