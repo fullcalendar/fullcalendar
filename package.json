@@ -37,7 +37,7 @@
     "moment": "^2.29.1"
   },
   "scripts": {
-    "preinstall": "./script/preinstall.sh",
+    "preinstall": "./scripts/preinstall.sh",
     "build": "gulp build",
     "watch": "gulp watch",
     "clean": "./scripts/clean.sh",
