@@ -29,6 +29,7 @@
       "packages/*",
       "packages-premium/*",
       "packages-contrib/*",
+      "packages-contrib/angular/dist/fullcalendar",
       "example-projects/*"
     ]
   },

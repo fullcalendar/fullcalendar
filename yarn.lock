@@ -3710,49 +3710,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/angular@^5.0.0, @fullcalendar/angular@workspace:packages-contrib/angular":
+"@fullcalendar/angular@^5.0.0, @fullcalendar/angular@workspace:packages-contrib/angular/dist/fullcalendar":
   version: 0.0.0-use.local
-  resolution: "@fullcalendar/angular@workspace:packages-contrib/angular"
+  resolution: "@fullcalendar/angular@workspace:packages-contrib/angular/dist/fullcalendar"
   dependencies:
-    "@angular-devkit/build-angular": ~0.1000.6
-    "@angular-devkit/build-ng-packagr": ~0.1000.6
-    "@angular/animations": ~10.0.9
-    "@angular/cli": ~10.0.6
-    "@angular/common": ~10.0.9
-    "@angular/compiler": ~10.0.9
-    "@angular/compiler-cli": ~10.0.9
-    "@angular/core": ~10.0.9
-    "@angular/forms": ~10.0.9
-    "@angular/language-service": ~10.0.9
-    "@angular/platform-browser": ~10.0.9
-    "@angular/platform-browser-dynamic": ~10.0.9
-    "@angular/router": ~10.0.9
     "@fullcalendar/core": ~5.3.1
-    "@fullcalendar/daygrid": ~5.3.1
-    "@fullcalendar/interaction": ~5.3.1
-    "@fullcalendar/timegrid": ~5.3.1
-    "@types/jasmine": ~3.5.0
-    "@types/jasminewd2": ~2.0.3
-    "@types/node": ^12.11.1
-    codelyzer: ^6.0.0
-    core-js: ^3.6.2
     fast-deep-equal: ^3.1.1
-    fullcalendar-scheduler: ~5.3.1
-    jasmine-core: ~3.5.0
-    jasmine-spec-reporter: ~5.0.0
-    karma: ^5.2.3
-    karma-chrome-launcher: ^3.1.0
-    karma-coverage-istanbul-reporter: ~3.0.2
-    karma-jasmine: ^4.0.1
-    karma-jasmine-html-reporter: ^1.5.0
-    ng-packagr: ^10.0.0
-    protractor: ~7.0.0
-    rxjs: ~6.5.4
-    ts-node: ~8.5.4
-    tslib: ^2.0.3
-    tslint: ~6.1.0
-    typescript: 3.9.7
-    zone.js: ~0.10.3
+    tslib: ^2.0.0
+  peerDependencies:
+    "@angular/common": 9 - 10
+    "@angular/core": 9 - 10
   languageName: unknown
   linkType: soft
 
@@ -12937,6 +12904,52 @@ fsevents@~2.1.2:
   checksum: 8977781884d06c5bcb97b5f909efdce9683c925f2a0ce7e098d2cdffe2e0a0a50b1868547bb94dca75428c06535a4a70517a7bb3bb5a974d93bf9ffc067291eb
   languageName: node
   linkType: hard
+
+"fullcalendar-angular-workspace@workspace:packages-contrib/angular":
+  version: 0.0.0-use.local
+  resolution: "fullcalendar-angular-workspace@workspace:packages-contrib/angular"
+  dependencies:
+    "@angular-devkit/build-angular": ~0.1000.6
+    "@angular-devkit/build-ng-packagr": ~0.1000.6
+    "@angular/animations": ~10.0.9
+    "@angular/cli": ~10.0.6
+    "@angular/common": ~10.0.9
+    "@angular/compiler": ~10.0.9
+    "@angular/compiler-cli": ~10.0.9
+    "@angular/core": ~10.0.9
+    "@angular/forms": ~10.0.9
+    "@angular/language-service": ~10.0.9
+    "@angular/platform-browser": ~10.0.9
+    "@angular/platform-browser-dynamic": ~10.0.9
+    "@angular/router": ~10.0.9
+    "@fullcalendar/core": ~5.3.1
+    "@fullcalendar/daygrid": ~5.3.1
+    "@fullcalendar/interaction": ~5.3.1
+    "@fullcalendar/timegrid": ~5.3.1
+    "@types/jasmine": ~3.5.0
+    "@types/jasminewd2": ~2.0.3
+    "@types/node": ^12.11.1
+    codelyzer: ^6.0.0
+    core-js: ^3.6.2
+    fast-deep-equal: ^3.1.1
+    fullcalendar-scheduler: ~5.3.1
+    jasmine-core: ~3.5.0
+    jasmine-spec-reporter: ~5.0.0
+    karma: ^5.2.3
+    karma-chrome-launcher: ^3.1.0
+    karma-coverage-istanbul-reporter: ~3.0.2
+    karma-jasmine: ^4.0.1
+    karma-jasmine-html-reporter: ^1.5.0
+    ng-packagr: ^10.0.0
+    protractor: ~7.0.0
+    rxjs: ~6.5.4
+    ts-node: ~8.5.4
+    tslib: ^2.0.3
+    tslint: ~6.1.0
+    typescript: 3.9.7
+    zone.js: ~0.10.3
+  languageName: unknown
+  linkType: soft
 
 "fullcalendar-scheduler-tests@workspace:packages-premium/__tests__":
   version: 0.0.0-use.local
