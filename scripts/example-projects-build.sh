@@ -16,14 +16,23 @@ do
   case "$project_name" in
 
     vue-typescript)
+      # uses vue-cli-service, which is webpack 4
       echo "SKIPPING $project_name FOR NOW" ;;
+
     vue-vuex)
+      # uses vue-cli-service, which is webpack 4
       echo "SKIPPING $project_name FOR NOW" ;;
+
     next)
+      # problems ignoring fc's CSS files. can't ignore
       echo "SKIPPING $project_name FOR NOW" ;;
+
     nuxt)
+      # nuxt cli uses webpack 4
       echo "SKIPPING $project_name FOR NOW" ;;
+
     parcel)
+      # parcel just doesn't support pnp
       echo "SKIPPING $project_name FOR NOW" ;;
 
     angular)
