@@ -82,6 +82,7 @@ module.exports = [
         banner: buildBanner(struct.isPremium)
       }],
       plugins: [
+        externalizeVDom('.cjs'),
         externalizeNonRelative(),
         removeStylesheetImports(),
         injectReleaseDateAndVersion(),
@@ -89,6 +90,29 @@ module.exports = [
       ]
     }
   }),
+  // NOTE: see copyVDomMisc in gulp
+  {
+    input: 'packages/core-vdom/tsc/vdom.js',
+    output: {
+      format: 'cjs',
+      exports: 'named',
+      file: 'packages/core/vdom.cjs.js'
+    },
+    plugins: [
+      externalizeNonRelative()
+    ]
+  },
+  {
+    input: 'packages/common/tsc/vdom.js',
+    output: {
+      format: 'cjs',
+      exports: 'named',
+      file: 'packages/common/vdom.cjs.js'
+    },
+    plugins: [
+      externalizeNonRelative()
+    ]
+  },
 
   // for global variable JS
   ...pkgsWithBrowserGlobal.map((struct) => {
@@ -161,7 +185,7 @@ function transplantCss(fileName) { // fileName w/o extension
 }
 
 
-function externalizeVDom() {
+function externalizeVDom(addExtension) {
   return {
     resolveId(id, importer) {
       if (/\/vdom$/.test(id) || id.match(/^(preact|react|react-dom)$/)) {
@@ -169,7 +193,7 @@ function externalizeVDom() {
           importer.match('packages/common') ||
           importer.match('packages/core')
         ) {
-          return { id: './vdom', external: true, moduleSideEffects: true }
+          return { id: './vdom' + (addExtension || ''), external: true, moduleSideEffects: true }
         } else {
           return { id: '@fullcalendar/common', external: true, moduleSideEffects: true }
         }
