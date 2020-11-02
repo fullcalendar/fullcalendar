@@ -4050,7 +4050,7 @@ __metadata:
     webpack: ^5.3.2
     webpack-cli: ^4.1.0
   peerDependencies:
-    vue: ^2.6.11
+    vue: ^2.6.12
   languageName: unknown
   linkType: soft
 
@@ -4265,7 +4265,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/builder@npm:2.14.4":
+"@nuxt/builder@npm:*, @nuxt/builder@npm:2.14.4":
   version: 2.14.4
   resolution: "@nuxt/builder@npm:2.14.4"
   dependencies:
@@ -4354,7 +4354,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/core@npm:2.14.4":
+"@nuxt/config@npm:2.14.7":
+  version: 2.14.7
+  resolution: "@nuxt/config@npm:2.14.7"
+  dependencies:
+    "@nuxt/utils": 2.14.7
+    consola: ^2.15.0
+    create-require: ^1.0.2
+    defu: ^2.0.4
+    destr: ^1.0.0
+    dotenv: ^8.2.0
+    esm: ^3.2.25
+    jiti: ^0.1.11
+    rc9: ^1.0.0
+    std-env: ^2.2.1
+  checksum: eac30f925a3243ce1652b30a98786e17e5f29cc5feb430847827a3f908c22bd5f9f4d6aef912055c772a20f18866073cadce2a8069cff972e22f2332def8c0aa
+  languageName: node
+  linkType: hard
+
+"@nuxt/core@npm:*, @nuxt/core@npm:2.14.4":
   version: 2.14.4
   resolution: "@nuxt/core@npm:2.14.4"
   dependencies:
@@ -4397,7 +4415,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/generator@npm:2.14.4":
+"@nuxt/generator@npm:*, @nuxt/generator@npm:2.14.4":
   version: 2.14.4
   resolution: "@nuxt/generator@npm:2.14.4"
   dependencies:
@@ -4434,6 +4452,32 @@ __metadata:
   bin:
     opencollective: bin/opencollective.js
   checksum: e62cc641c28d1dcca62ff4b3680e9f8b50f81532eee38c911da6e3670dbc13bd29e7e8dae3edc28a523430f9b3d613d4490045db70ded6327ada9124ead45981
+  languageName: node
+  linkType: hard
+
+"@nuxt/server@npm:*":
+  version: 2.14.7
+  resolution: "@nuxt/server@npm:2.14.7"
+  dependencies:
+    "@nuxt/config": 2.14.7
+    "@nuxt/utils": 2.14.7
+    "@nuxt/vue-renderer": 2.14.7
+    "@nuxtjs/youch": ^4.2.3
+    chalk: ^3.0.0
+    compression: ^1.7.4
+    connect: ^3.7.0
+    consola: ^2.15.0
+    etag: ^1.8.1
+    fresh: ^0.5.2
+    fs-extra: ^8.1.0
+    ip: ^1.1.5
+    launch-editor-middleware: ^2.2.1
+    on-headers: ^1.0.2
+    pify: ^4.0.1
+    serve-placeholder: ^1.2.2
+    serve-static: ^1.14.1
+    server-destroy: ^1.0.1
+  checksum: 48e9006c1982cefb263ae82b60e99a019d9e79e081ada05ecc09f2c5ee6a2d6df6558f92b342d6beb30b84b7fe2d52c34151620e0e42e28a48dc5259002aa7c0
   languageName: node
   linkType: hard
 
@@ -4521,6 +4565,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nuxt/utils@npm:2.14.7":
+  version: 2.14.7
+  resolution: "@nuxt/utils@npm:2.14.7"
+  dependencies:
+    consola: ^2.15.0
+    fs-extra: ^8.1.0
+    hash-sum: ^2.0.0
+    proper-lockfile: ^4.1.1
+    semver: ^7.3.2
+    serialize-javascript: ^5.0.1
+    signal-exit: ^3.0.3
+    ua-parser-js: ^0.7.22
+  checksum: c47eef1e8ff181197211711613a17d58bc4642ea216b8f83ddcf9a09b4a91e4491978de9c06f37315f94c20188e5d90b15a4bcfb8c61b6d9ecaf28d4d4bde6f7
+  languageName: node
+  linkType: hard
+
 "@nuxt/vue-app@npm:2.14.4":
   version: 2.14.4
   resolution: "@nuxt/vue-app@npm:2.14.4"
@@ -4554,7 +4614,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/webpack@npm:2.14.4":
+"@nuxt/vue-renderer@npm:2.14.7":
+  version: 2.14.7
+  resolution: "@nuxt/vue-renderer@npm:2.14.7"
+  dependencies:
+    "@nuxt/devalue": ^1.2.4
+    "@nuxt/utils": 2.14.7
+    consola: ^2.15.0
+    fs-extra: ^8.1.0
+    lru-cache: ^5.1.1
+    vue: ^2.6.12
+    vue-meta: ^2.4.0
+    vue-server-renderer: ^2.6.12
+  checksum: 4c7ec3faa4e58fd44d067d74c65ae274b246e6d5fe447c35b7d835b720482d29da23a6648ddf7134e849ff0936d256bf6a76e2805f7f548fec3eb694338e24dc
+  languageName: node
+  linkType: hard
+
+"@nuxt/webpack@npm:*, @nuxt/webpack@npm:2.14.4":
   version: 2.14.4
   resolution: "@nuxt/webpack@npm:2.14.4"
   dependencies:
@@ -26308,7 +26384,7 @@ typescript@^3.9.3:
   languageName: node
   linkType: hard
 
-"ua-parser-js@npm:0.7.22":
+"ua-parser-js@npm:0.7.22, ua-parser-js@npm:^0.7.22":
   version: 0.7.22
   resolution: "ua-parser-js@npm:0.7.22"
   checksum: c14272a0261bacd6d9daecc8bd2d48d6e5c68d27d5978e10fb27cbbeb07ee0d427786436e4db8ca7ce92ba4bf0399dda647c1f98fbb77ee2fec8f3b7b8244999
