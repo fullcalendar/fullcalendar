@@ -3432,7 +3432,7 @@ __metadata:
     ts-node: ~7.0.0
     tslib: ^2.0.3
     tslint: ~6.1.0
-    typescript: ~3.9.7
+    typescript: ^4.0.5
     zone.js: ~0.10.2
   languageName: unknown
   linkType: soft
@@ -3525,7 +3525,7 @@ __metadata:
     mini-css-extract-plugin: ^1.2.0
     moment-locales-webpack-plugin: ^1.2.0
     ts-loader: ^8.0.7
-    typescript: ^3.2.4
+    typescript: ^4.0.5
     webpack: ^5.3.0
     webpack-cli: ^4.1.0
   languageName: unknown
@@ -3609,7 +3609,7 @@ __metadata:
     react-dom: ^16.13.1
     style-loader: ^2.0.0
     ts-loader: ^8.0.7
-    typescript: ^3.4.1
+    typescript: ^4.0.5
     webpack: ^5.3.0
     webpack-cli: ^4.1.0
     webpack-dev-server: ^3.11.0
@@ -3664,7 +3664,7 @@ __metadata:
     react-dom: ^16.7.0
     style-loader: ^2.0.0
     ts-loader: ^8.0.7
-    typescript: ^3.4.1
+    typescript: ^4.0.5
     webpack: ^5.3.0
     webpack-cli: ^4.1.0
     webpack-dev-server: ^3.11.0
@@ -3746,7 +3746,7 @@ __metadata:
     css-loader: ^4.3.0
     mini-css-extract-plugin: ^1.2.0
     ts-loader: ^8.0.7
-    typescript: ^3.2.4
+    typescript: ^4.0.5
     webpack: ^5.3.0
     webpack-cli: ^4.1.0
   languageName: unknown
@@ -3764,7 +3764,7 @@ __metadata:
     css-loader: ^4.3.0
     mini-css-extract-plugin: ^1.2.0
     ts-loader: ^8.0.7
-    typescript: ^3.2.4
+    typescript: ^4.0.5
     webpack: ^5.3.0
     webpack-cli: ^4.1.0
   languageName: unknown
@@ -3781,7 +3781,7 @@ __metadata:
     "@vue/cli-plugin-typescript": ~4.4.0
     "@vue/cli-service": ^4.5.8
     tslib: ^2.0.3
-    typescript: ~3.9.3
+    typescript: ^4.0.5
     vue: ^2.6.12
     vue-class-component: ^7.2.6
     vue-property-decorator: ^9.0.2
@@ -4067,7 +4067,7 @@ __metadata:
     rollup: ^1.31.0
     rollup-plugin-postcss: ^2.0.3
     tslib: ^2.0.3
-    typescript: ^3.8.3
+    typescript: ^4.0.5
   peerDependencies:
     react: ^16.7.0
     react-dom: ^16.7.0
@@ -4207,7 +4207,7 @@ __metadata:
     style-loader: ^2.0.0
     terser: ^4.8.0
     tslib: ^2.0.3
-    typescript: ^3.8.3
+    typescript: ^4.0.5
     vue: ^2.6.12
     vue-loader: ^15.9.5
     vue-template-compiler: ^2.6.12
@@ -13243,7 +13243,7 @@ fsevents@~2.1.2:
     ts-node: ~8.5.4
     tslib: ^2.0.3
     tslint: ~6.1.0
-    typescript: 3.9.7
+    typescript: ^4.0.5
     zone.js: ~0.10.3
   languageName: unknown
   linkType: soft
@@ -13379,7 +13379,7 @@ fsevents@~2.1.2:
     postcss-loader: ^3.0.0
     postcss-nesting: ^7.0.1
     rollup: ^2.21.0
-    rollup-plugin-dts: ^1.4.9
+    rollup-plugin-dts: ^1.4.13
     rollup-plugin-postcss: ^3.1.3
     rollup-plugin-sourcemaps: ^0.6.2
     semver: ^7.3.2
@@ -13387,7 +13387,7 @@ fsevents@~2.1.2:
     style-loader: ^1.2.1
     stylelint: ^13.6.1
     ts-loader: ^7.0.4
-    typescript: ^3.9.3
+    typescript: ^4.0.5
     webpack: ^5.3.1
     webpack-cli: ^4.1.0
     yarn: 1.18.0
@@ -23299,7 +23299,7 @@ karma@^5.2.3:
   languageName: node
   linkType: hard
 
-"rollup-plugin-dts@npm:^1.4.9":
+"rollup-plugin-dts@npm:^1.4.13":
   version: 1.4.13
   resolution: "rollup-plugin-dts@npm:1.4.13"
   dependencies:
@@ -26373,43 +26373,23 @@ karma@^5.2.3:
   languageName: node
   linkType: hard
 
-"typescript@3.9.7, typescript@^3.2.4, typescript@^3.4.1, typescript@^3.9.3, typescript@~3.9.3, typescript@~3.9.7":
-  version: 3.9.7
-  resolution: "typescript@npm:3.9.7"
+typescript@^4.0.5:
+  version: 4.0.5
+  resolution: "typescript@npm:4.0.5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10848a9c35fd8c70a8792b8bd9485317534bcd58768793d3b7d9c7486e9fd30cf345f83fa2a324e0bf6088bc8a4d8d061d58fda38b18c2ff187cf01fbbff6267
+  checksum: ce94d4bbb914cc9d6fbd42e1476ab18c3292b262b8ba7ba76cd167a858545207a604e75bf1efbb75b8654c8f85deaa19795c3ef00098d7612855139b4ecc0240
   languageName: node
   linkType: hard
 
-typescript@^3.8.3:
-  version: 3.9.5
-  resolution: "typescript@npm:3.9.5"
+"typescript@patch:typescript@^4.0.5#builtin<compat/typescript>":
+  version: 4.0.5
+  resolution: "typescript@patch:typescript@npm%3A4.0.5#builtin<compat/typescript>::version=4.0.5&hash=5bf698"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 15618435493667083eb43dc7b36c4d3dd47fd9e9c8a14f0ac4019bbf6124b6cc518b6ed506400913db1bf50831207ee8201b5d827680076930b562923f4f18a0
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@3.9.7#builtin<compat/typescript>, typescript@patch:typescript@^3.2.4#builtin<compat/typescript>, typescript@patch:typescript@^3.4.1#builtin<compat/typescript>, typescript@patch:typescript@^3.9.3#builtin<compat/typescript>, typescript@patch:typescript@~3.9.3#builtin<compat/typescript>, typescript@patch:typescript@~3.9.7#builtin<compat/typescript>":
-  version: 3.9.7
-  resolution: "typescript@patch:typescript@npm%3A3.9.7#builtin<compat/typescript>::version=3.9.7&hash=5bf698"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: f0d3d9c987860c7c458229ab6dd7e3d322405db36b70abccba610b5efd9f9451e4e67a3fc7983c0d3741033c1f1a8d7aa859a1510caa8f20fad762fc39648bfa
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@^3.8.3#builtin<compat/typescript>":
-  version: 3.9.5
-  resolution: "typescript@patch:typescript@npm%3A3.9.5#builtin<compat/typescript>::version=3.9.5&hash=5bf698"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 452cdd20d801630727433a990652c1e65f5eb5586383dda60f178b4fbda5c7951256f9aa31327c73722af9b1b664e3a53d724aabfd8a68866e9b1631818f004c
+  checksum: d4be0bd2a2050b2d7b132cb2a40329178f181543e9d2ac6d1f06babd9f047208558a736a7effdeb28759ae2e815f070b61d10ee2f02cc93a6221a1490f21ffce
   languageName: node
   linkType: hard
 
