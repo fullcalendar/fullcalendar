@@ -21,17 +21,6 @@ const semver = require('semver')
 exports.archive = require('./scripts/lib/archive')
 
 
-
-// const linkPkgSubdirs = exports.linkPkgSubdirs = series(
-//   // rewire the @fullcalendar/angular package.
-//   // we still want yarn to install its dependencies,
-//   // but we want other packages to reference it by its dist/fullcalendar folder
-//   execTask('rm -f node_modules/@fullcalendar/angular'),
-//   execTask('ln -s ../../packages-contrib/angular/dist/fullcalendar node_modules/@fullcalendar/angular'),
-// )
-
-
-
 /*
 copy over the vdom files that were externalized by rollup.
 we externalize these for two reasons:
@@ -83,7 +72,6 @@ function removeSimpleComments() { // like a gulp plugin
 
 
 exports.build = series(
-  // linkPkgSubdirs,
   linkVDomLib,
   series(removeTscDevLinks, writeTscDevLinks), // for tsc
   localesAllSrc, // before tsc
@@ -102,7 +90,6 @@ exports.build = series(
 )
 
 exports.watch = series(
-  // linkPkgSubdirs,
   linkVDomLib,
   series(removeTscDevLinks, writeTscDevLinks), // for tsc
   localesAllSrc, // before tsc
