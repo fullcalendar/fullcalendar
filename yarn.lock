@@ -13232,18 +13232,18 @@ fsevents@~2.1.2:
     fullcalendar-scheduler: ~5.3.1
     jasmine-core: ~3.5.0
     jasmine-spec-reporter: ~5.0.0
-    karma: ^5.2.3
-    karma-chrome-launcher: ^3.1.0
+    karma: ~5.0.0
+    karma-chrome-launcher: ~3.1.0
     karma-coverage-istanbul-reporter: ~3.0.2
-    karma-jasmine: ^4.0.1
+    karma-jasmine: ~3.3.0
     karma-jasmine-html-reporter: ^1.5.0
     ng-packagr: ^10.0.0
     protractor: ~7.0.0
     rxjs: ~6.5.4
     ts-node: ~8.5.4
-    tslib: ^2.0.3
+    tslib: ^2.0.0
     tslint: ~6.1.0
-    typescript: ^4.0.5
+    typescript: 3.9.7
     zone.js: ~0.10.3
   languageName: unknown
   linkType: soft
@@ -16178,6 +16178,13 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"jasmine-core@npm:^3.5.0, jasmine-core@npm:~3.5.0":
+  version: 3.5.0
+  resolution: "jasmine-core@npm:3.5.0"
+  checksum: 04b3922443dcf9d75aab94100a2759c10daadeb5c37e22a5659c67afeea7eff9999acc7c222c59668b4838b725a87e0a252d0b208fb38419b642854f52c23e14
+  languageName: node
+  linkType: hard
+
 "jasmine-core@npm:^3.6.0":
   version: 3.6.0
   resolution: "jasmine-core@npm:3.6.0"
@@ -16189,13 +16196,6 @@ fsevents@~2.1.2:
   version: 2.8.0
   resolution: "jasmine-core@npm:2.8.0"
   checksum: eb8160899e2e046b4ca1d384d89d8073a44852c401293777fde998c35fe26193a3c9dfab5705a33ed18e4721250599d9f225afd9b294e1e8a739dce430770b9e
-  languageName: node
-  linkType: hard
-
-"jasmine-core@npm:~3.5.0":
-  version: 3.5.0
-  resolution: "jasmine-core@npm:3.5.0"
-  checksum: 04b3922443dcf9d75aab94100a2759c10daadeb5c37e22a5659c67afeea7eff9999acc7c222c59668b4838b725a87e0a252d0b208fb38419b642854f52c23e14
   languageName: node
   linkType: hard
 
@@ -16611,7 +16611,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"karma-chrome-launcher@npm:^3.1.0":
+"karma-chrome-launcher@npm:^3.1.0, karma-chrome-launcher@npm:~3.1.0":
   version: 3.1.0
   resolution: "karma-chrome-launcher@npm:3.1.0"
   dependencies:
@@ -16652,6 +16652,17 @@ fsevents@~2.1.2:
   peerDependencies:
     karma: "*"
   checksum: ddef1154631dae4337394f89c566aa64f5fa5ea1c357f3372455e54f973671a98471bafca1cc00482869958cad397a6bbb46bed089e048af1a8ffed1fdc758d0
+  languageName: node
+  linkType: hard
+
+"karma-jasmine@npm:~3.3.0":
+  version: 3.3.1
+  resolution: "karma-jasmine@npm:3.3.1"
+  dependencies:
+    jasmine-core: ^3.5.0
+  peerDependencies:
+    karma: "*"
+  checksum: 5eda66e5ced7d0f900d5effcd885a2c1a3b95eb0d96f854e0afdf403dbde8593c020e4c8c01e2c3bc62511fed24e71c122d3986decdf6eebc61d7ce26748a6b6
   languageName: node
   linkType: hard
 
@@ -26373,6 +26384,16 @@ karma@^5.2.3:
   languageName: node
   linkType: hard
 
+typescript@3.9.7:
+  version: 3.9.7
+  resolution: "typescript@npm:3.9.7"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10848a9c35fd8c70a8792b8bd9485317534bcd58768793d3b7d9c7486e9fd30cf345f83fa2a324e0bf6088bc8a4d8d061d58fda38b18c2ff187cf01fbbff6267
+  languageName: node
+  linkType: hard
+
 typescript@^4.0.5:
   version: 4.0.5
   resolution: "typescript@npm:4.0.5"
@@ -26380,6 +26401,16 @@ typescript@^4.0.5:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: ce94d4bbb914cc9d6fbd42e1476ab18c3292b262b8ba7ba76cd167a858545207a604e75bf1efbb75b8654c8f85deaa19795c3ef00098d7612855139b4ecc0240
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@3.9.7#builtin<compat/typescript>":
+  version: 3.9.7
+  resolution: "typescript@patch:typescript@npm%3A3.9.7#builtin<compat/typescript>::version=3.9.7&hash=5bf698"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: f0d3d9c987860c7c458229ab6dd7e3d322405db36b70abccba610b5efd9f9451e4e67a3fc7983c0d3741033c1f1a8d7aa859a1510caa8f20fad762fc39648bfa
   languageName: node
   linkType: hard
 
