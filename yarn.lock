@@ -3432,7 +3432,7 @@ __metadata:
     ts-node: ~7.0.0
     tslib: ^2.0.3
     tslint: ~6.1.0
-    typescript: ^4.0.5
+    typescript: ~3.9.7
     zone.js: ~0.10.2
   languageName: unknown
   linkType: soft
@@ -26384,7 +26384,7 @@ karma@^5.2.3:
   languageName: node
   linkType: hard
 
-typescript@3.9.7:
+"typescript@3.9.7, typescript@~3.9.7":
   version: 3.9.7
   resolution: "typescript@npm:3.9.7"
   bin:
@@ -26404,7 +26404,7 @@ typescript@^4.0.5:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@3.9.7#builtin<compat/typescript>":
+"typescript@patch:typescript@3.9.7#builtin<compat/typescript>, typescript@patch:typescript@~3.9.7#builtin<compat/typescript>":
   version: 3.9.7
   resolution: "typescript@patch:typescript@npm%3A3.9.7#builtin<compat/typescript>::version=3.9.7&hash=5bf698"
   bin:
