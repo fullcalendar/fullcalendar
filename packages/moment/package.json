@@ -12,7 +12,7 @@
     "moment": "^2.29.1"
   },
   "devDependencies": {
-    "@fullcalendar/core-vdom": "workspace:packages/core-vdom",
+    "@fullcalendar/core-vdom": "*",
     "moment": "^2.29.1",
     "preact": "^10.5.5"
   },

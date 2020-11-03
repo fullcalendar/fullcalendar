@@ -24,7 +24,7 @@
     "url": "http://arshaw.com/"
   },
   "devDependencies": {
-    "@fullcalendar/core-vdom": "workspace:packages/core-vdom",
+    "@fullcalendar/core-vdom": "*",
     "preact": "^10.5.5"
   }
 }

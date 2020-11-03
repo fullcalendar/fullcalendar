@@ -13,7 +13,7 @@
     "moment-timezone": "^0.5.31"
   },
   "devDependencies": {
-    "@fullcalendar/core-vdom": "workspace:packages/core-vdom",
+    "@fullcalendar/core-vdom": "*",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.31",
     "preact": "^10.5.5"
