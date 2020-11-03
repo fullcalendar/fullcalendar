@@ -16,24 +16,39 @@ do
   case "$project_name" in
 
     next)
-      # problems ignoring fc's CSS files. can't ignore
-      echo "SKIPPING $project_name FOR NOW" ;;
-
-    vue-typescript)
-      # uses vue-cli-service, which is webpack 4
-      echo "SKIPPING $project_name FOR NOW" ;;
-
-    vue-vuex)
-      # uses vue-cli-service, which is webpack 4
-      echo "SKIPPING $project_name FOR NOW" ;;
+      cd "$project_name"
+      npm install
+      npm run build
+      cd -
+      ;;
 
     nuxt)
-      # nuxt cli uses webpack 4
-      echo "SKIPPING $project_name FOR NOW" ;;
+      cd "$project_name"
+      npm install
+      npm run build
+      cd -
+      ;;
+
+    vue-typescript)
+      cd "$project_name"
+      npm install
+      npm run build
+      cd -
+      ;;
+
+    vue-vuex)
+      cd "$project_name"
+      npm install
+      npm run build
+      cd -
+      ;;
 
     parcel)
-      # parcel just doesn't support pnp
-      echo "SKIPPING $project_name FOR NOW" ;;
+      cd "$project_name"
+      npm install
+      npm run build
+      cd -
+      ;;
 
     angular)
       yarn pnpify --cwd angular yarn build

@@ -29,7 +29,12 @@
     "packages-premium/*",
     "packages-contrib/*",
     "packages-contrib/angular/dist/fullcalendar",
-    "example-projects/*"
+    "example-projects/*",
+    "!example-projects/next",
+    "!example-projects/nuxt",
+    "!example-projects/vue-vuex",
+    "!example-projects/vue-typescript",
+    "!example-projects/parcel"
   ],
   "resolutions": {
     "karma": "patch:karma@^5.2.3#./karma-patch.diff",
