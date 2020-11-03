@@ -24,15 +24,13 @@
     "url": "http://arshaw.com/"
   },
   "copyright": "2020 Adam Shaw",
-  "workspaces": {
-    "packages": [
-      "packages/*",
-      "packages-premium/*",
-      "packages-contrib/*",
-      "packages-contrib/angular/dist/fullcalendar",
-      "example-projects/*"
-    ]
-  },
+  "workspaces": [
+    "packages/*",
+    "packages-premium/*",
+    "packages-contrib/*",
+    "packages-contrib/angular/dist/fullcalendar",
+    "example-projects/*"
+  ],
   "resolutions": {
     "karma": "patch:karma@^5.2.3#./karma-patch.diff",
     "moment": "^2.29.1"
