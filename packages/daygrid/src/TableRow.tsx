@@ -293,7 +293,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   }
 
 
-  renderFillSegs(segs: TableSeg[], fillType: string) {
+  renderFillSegs(segs: TableSeg[], fillType: string): VNode {
     let { isRtl } = this.context
     let { todayRange } = this.props
     let { framePositions } = this.state

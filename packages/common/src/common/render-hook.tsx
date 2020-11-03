@@ -1,4 +1,4 @@
-import { Ref, createRef, ComponentChildren, createElement, RefObject, createContext } from '../vdom'
+import { Ref, createRef, ComponentChildren, createElement, RefObject, createContext, Context } from '../vdom'
 import { setRef, BaseComponent } from '../vdom-util'
 import { isPropsEqual } from '../util/object'
 import { parseClassNames, ClassNamesInput } from '../util/html'
@@ -77,7 +77,7 @@ export type CustomContentGenerator<HookProps> = CustomContent | ((hookProps: Hoo
 export type DefaultContentGenerator<HookProps> = (hookProps: HookProps) => ComponentChildren // TODO: rename to be about function, not default. use in above type
 
 // for forcing rerender of components that use the ContentHook
-export const CustomContentRenderContext = createContext<number>(0)
+export const CustomContentRenderContext: Context<number> = createContext<number>(0)
 
 
 export interface ContentHookProps<HookProps> {

@@ -476,10 +476,10 @@ export class CalendarDataManager {
     warnUnknownOptions(extra)
 
     let dateProfileGenerator = this.buildDateProfileGenerator({
-      dateProfileGeneratorClass: viewSpec.optionDefaults.dateProfileGeneratorClass,
+      dateProfileGeneratorClass: viewSpec.optionDefaults.dateProfileGeneratorClass as any,
       duration: viewSpec.duration,
       durationUnit: viewSpec.durationUnit,
-      usesMinMaxTime: viewSpec.optionDefaults.usesMinMaxTime,
+      usesMinMaxTime: viewSpec.optionDefaults.usesMinMaxTime as any,
       dateEnv: optionsData.dateEnv,
       calendarApi: this.props.calendarApi, // should come from elsewhere?
       slotMinTime: refinedOptions.slotMinTime,

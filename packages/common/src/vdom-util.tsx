@@ -9,7 +9,7 @@ export abstract class PureComponent<Props=Dictionary, State=Dictionary> extends 
 
   static addPropsEquality = addPropsEquality
   static addStateEquality = addStateEquality
-  static contextType = ViewContextType
+  static contextType: any = ViewContextType
 
   context: ViewContext
   propEquality: EqualityFuncs<Props>
@@ -35,7 +35,7 @@ PureComponent.prototype.stateEquality = {}
 
 export abstract class BaseComponent<Props=Dictionary, State=Dictionary> extends PureComponent<Props, State> {
 
-  static contextType = ViewContextType
+  static contextType: any = ViewContextType
   context: ViewContext
 
 }

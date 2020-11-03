@@ -9,7 +9,7 @@ import { DateMarker } from './datelib/marker'
 import { CalendarData } from './reducers/data-types'
 import { ViewPropsTransformerClass } from './plugin-system-struct'
 import { __assign } from 'tslib'
-import { createElement, createRef, VUIEvent, Fragment } from './vdom'
+import { createElement, createRef, VUIEvent, Fragment, VNode } from './vdom'
 import { buildDelegationHandler } from './util/dom-event'
 import { ViewContainer } from './ViewContainer'
 import { Interaction, InteractionSettingsInput, InteractionClass, parseInteractionSettings, interactionSettingsStore } from './interactions/interaction'
@@ -190,7 +190,7 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
   }
 
 
-  buildAppendContent() {
+  buildAppendContent(): VNode {
     let { props } = this
 
     let children = props.pluginHooks.viewContainerAppends.map(

@@ -1,5 +1,5 @@
 import { Seg } from '../component/DateComponent'
-import { ComponentChildren, createElement, Ref, createRef } from '../vdom'
+import { ComponentChildren, createElement, Ref, createRef, RefObject } from '../vdom'
 import { EventApi } from '../api/EventApi'
 import { computeSegDraggable, computeSegStartResizable, computeSegEndResizable, setElSeg } from '../component/event-rendering'
 import { EventContentArg, getEventClassNames } from '../component/event-rendering'
@@ -35,7 +35,7 @@ export interface EventRootProps extends MinimalEventProps {
 
 export class EventRoot extends BaseComponent<EventRootProps> {
 
-  elRef = createRef<HTMLElement>()
+  elRef: RefObject<HTMLElement> = createRef<HTMLElement>()
 
 
   render() {
