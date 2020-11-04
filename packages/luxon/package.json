@@ -5,14 +5,14 @@
   "description": "A connector to the Luxon date library",
   "docs": "https://fullcalendar.io/docs/luxon-plugin",
   "dependencies": {
-    "@fullcalendar/common": "~5.3.1",
+    "@fullcalendar/common": "workspace:~5.3.1",
     "tslib": "^2.0.3"
   },
   "peerDependencies": {
     "luxon": "^1.12.1"
   },
   "devDependencies": {
-    "@fullcalendar/core-preact": "workspace:packages/core-preact",
+    "@fullcalendar/core-preact": "workspace:*",
     "luxon": "^1.12.1"
   },
   "main": "main.cjs.js",

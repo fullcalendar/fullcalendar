@@ -5,8 +5,8 @@
   "description": "Display your events on a grid of time slots",
   "docs": "https://fullcalendar.io/docs/timegrid-view",
   "dependencies": {
-    "@fullcalendar/common": "~5.3.1",
-    "@fullcalendar/daygrid": "~5.3.1",
+    "@fullcalendar/common": "workspace:~5.3.1",
+    "@fullcalendar/daygrid": "workspace:~5.3.1",
     "tslib": "^2.0.3"
   },
   "main": "main.cjs.js",
@@ -28,6 +28,6 @@
     "url": "http://arshaw.com/"
   },
   "devDependencies": {
-    "@fullcalendar/core-preact": "workspace:packages/core-preact"
+    "@fullcalendar/core-preact": "workspace:*"
   }
 }

@@ -5,14 +5,14 @@
   "description": "A connector to the MomentJS date library",
   "docs": "https://fullcalendar.io/docs/moment-plugin",
   "dependencies": {
-    "@fullcalendar/common": "~5.3.1",
+    "@fullcalendar/common": "workspace:~5.3.1",
     "tslib": "^2.0.3"
   },
   "peerDependencies": {
     "moment": "^2.29.1"
   },
   "devDependencies": {
-    "@fullcalendar/core-preact": "workspace:packages/core-preact",
+    "@fullcalendar/core-preact": "workspace:*",
     "moment": "^2.29.1"
   },
   "main": "main.cjs.js",

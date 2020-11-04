@@ -5,7 +5,7 @@
   "description": "Bootstrap 4 theming for your calendar",
   "docs": "https://fullcalendar.io/docs/bootstrap-theme",
   "dependencies": {
-    "@fullcalendar/common": "~5.3.1",
+    "@fullcalendar/common": "workspace:~5.3.1",
     "tslib": "^2.0.3"
   },
   "main": "main.cjs.js",
@@ -27,6 +27,6 @@
     "url": "http://arshaw.com/"
   },
   "devDependencies": {
-    "@fullcalendar/core-preact": "workspace:packages/core-preact"
+    "@fullcalendar/core-preact": "workspace:*"
   }
 }
