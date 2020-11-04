@@ -9324,7 +9324,6 @@ fsevents@~2.1.2:
     typescript: ^4.0.5
     webpack: ^5.3.1
     webpack-cli: ^4.1.0
-    yarn: 1.18.0
   languageName: unknown
   linkType: soft
 
@@ -21413,16 +21412,6 @@ typescript@^4.0.5:
     y18n: ^3.2.1
     yargs-parser: 5.0.0-security.0
   checksum: 62bb2345031bbb3dd99626a62fd94caa0c13610c53b3d914792f387432c7c7d49432d85ea9eb6339092aca5788a2f1184507826f98c3af277e1e2202ae1d9341
-  languageName: node
-  linkType: hard
-
-"yarn@npm:1.18.0":
-  version: 1.18.0
-  resolution: "yarn@npm:1.18.0"
-  bin:
-    yarn: ./bin/yarn.js
-    yarnpkg: ./bin/yarn.js
-  checksum: 55df4ef2907a3bbcf1dbbae9f960526646991c4754cd97d37bed7ba78f4af62b10569082085f58808f05bff6a7bcaafad1f1637b28a6b6aae611a302cb4472b9
   languageName: node
   linkType: hard
 
