@@ -18,4 +18,7 @@ env:
   global:
     - TZ="America/Los_Angeles" # for Headless Chrome. otherwise will be UTC, bad for tests
 
+# by default, travis tries --frozen-lockfile flag, which is deprecated
+install: yarn install
+
 script: yarn run ci
