@@ -14,10 +14,8 @@ yarn run build
 yarn run lintBuilt
 yarn run archive
 yarn run test:ci
-
-./scripts/packages-contrib-ci.sh
-./scripts/example-projects-build.sh
-# ./scripts/example-projects-build.js # TODO: renable!!!
+yarn run contrib:ci
+yarn run ex:build
 
 # # rebuild because building angular example project modifies
 # # the @fullcalendar/angular dist files unfortunately
