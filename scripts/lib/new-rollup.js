@@ -46,10 +46,10 @@ function buildAliasMap(structs) {
 }
 
 
-function externalizeNonRelative() {
+function externalizeNonRelative(except) {
   return {
     resolveId(id, importer) {
-      if (importer && !/^\./.test(id)) {
+      if (importer && !/^\./.test(id) && (!except || id !== except)) {
         return { id, external: true }
       }
     }

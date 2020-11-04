@@ -13,10 +13,9 @@
     "moment-timezone": "^0.5.31"
   },
   "devDependencies": {
-    "@fullcalendar/core-vdom": "*",
+    "@fullcalendar/core-preact": "workspace:packages/core-preact",
     "moment": "^2.29.1",
-    "moment-timezone": "^0.5.31",
-    "preact": "^10.5.5"
+    "moment-timezone": "^0.5.31"
   },
   "main": "main.cjs.js",
   "module": "main.js",

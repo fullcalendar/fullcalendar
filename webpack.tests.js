@@ -11,16 +11,7 @@ const { publicPackageStructs } = require('./scripts/lib/package-index')
 const { buildAliasMap } = require('./scripts/lib/new-webpack')
 
 
-/*
-webpack --config webpack.tests.js --env PACKAGE_MODE=src
-webpack --config webpack.tests.js --env PACKAGE_MODE=dist
-*/
 module.exports = (env) => {
-  let packageMode = env.PACKAGE_MODE
-
-  if (packageMode !== 'src' && packageMode !== 'dist') {
-    throw new Error(`Invalid FC package mode: '${packageMode}'`)
-  }
 
   return {
     mode: 'development',
@@ -35,7 +26,7 @@ module.exports = (env) => {
     },
     resolve: {
       extensions: [ '.ts', '.tsx', '.js' ],
-      alias: packageMode === 'src' ? buildAliasMap(publicPackageStructs) : {}
+      alias: buildAliasMap(publicPackageStructs)
     },
     module: {
       rules: [

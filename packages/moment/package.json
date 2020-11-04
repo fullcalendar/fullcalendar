@@ -12,9 +12,8 @@
     "moment": "^2.29.1"
   },
   "devDependencies": {
-    "@fullcalendar/core-vdom": "*",
-    "moment": "^2.29.1",
-    "preact": "^10.5.5"
+    "@fullcalendar/core-preact": "workspace:packages/core-preact",
+    "moment": "^2.29.1"
   },
   "main": "main.cjs.js",
   "module": "main.js",

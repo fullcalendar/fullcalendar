@@ -90,27 +90,42 @@ module.exports = [
       ]
     }
   }),
-  // NOTE: see copyVDomMisc in gulp
+
+  // vdom from @fullcalendar/core-preact
   {
-    input: 'packages/core-vdom/tsc/vdom.js',
-    output: {
-      format: 'cjs',
-      exports: 'named',
-      file: 'packages/core/vdom.cjs.js'
-    },
+    input: 'packages/core/tsc/vdom.js',
+    output: [
+      {
+        format: 'cjs',
+        exports: 'named',
+        file: 'packages/core/vdom.cjs.js'
+      },
+      {
+        format: 'esm',
+        file: 'packages/core/vdom.js'
+      }
+    ],
     plugins: [
-      externalizeNonRelative()
+      externalizeNonRelative('@fullcalendar/core-preact'),
+      nodeResolve()
     ]
   },
   {
     input: 'packages/common/tsc/vdom.js',
-    output: {
-      format: 'cjs',
-      exports: 'named',
-      file: 'packages/common/vdom.cjs.js'
-    },
+    output: [
+      {
+        format: 'cjs',
+        exports: 'named',
+        file: 'packages/common/vdom.cjs.js'
+      },
+      {
+        format: 'esm',
+        file: 'packages/common/vdom.js'
+      }
+    ],
     plugins: [
-      externalizeNonRelative()
+      externalizeNonRelative('@fullcalendar/core-preact'),
+      nodeResolve()
     ]
   },
 

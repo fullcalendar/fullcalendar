@@ -28,8 +28,8 @@ we externalize these for two reasons:
  - rollup-plugin-dts was choking on the namespace declarations in the tsc-generated vdom.d.ts files.
 */
 const VDOM_FILE_MAP = {
-  'packages/core-vdom/tsc/vdom.{js,d.ts}': 'packages/core',
-  'packages/common/tsc/vdom.{js,d.ts}': 'packages/common'
+  'packages/core-preact/tsc/vdom.d.ts': 'packages/core',
+  'packages/common/tsc/vdom.d.ts': 'packages/common'
 }
 
 const copyVDomMisc = exports.copyVDomMisc = parallelMap(
@@ -72,7 +72,6 @@ function removeSimpleComments() { // like a gulp plugin
 
 
 exports.build = series(
-  linkVDomLib,
   series(removeTscDevLinks, writeTscDevLinks), // for tsc
   localesAllSrc, // before tsc
   execTask('tsc -b --verbose'),
@@ -80,9 +79,7 @@ exports.build = series(
   removeTscDevLinks,
   execTask('webpack --config webpack.bundles.js --env NO_SOURCE_MAPS'), // always compile from SRC
   execTask('rollup -c rollup.locales.js'),
-  process.env.FULLCALENDAR_FORCE_REACT
-    ? async function() {} // rollup doesn't know how to make bundles for react-mode
-    : execTask('rollup -c rollup.bundles.js'), // needs tsc, needs removeTscDevLinks
+  execTask('rollup -c rollup.bundles.js'),
   execTask('rollup -c rollup.packages.js'),
   copyVDomMisc,
   minifyBundleJs,
@@ -90,7 +87,6 @@ exports.build = series(
 )
 
 exports.watch = series(
-  linkVDomLib,
   series(removeTscDevLinks, writeTscDevLinks), // for tsc
   localesAllSrc, // before tsc
   execTask('tsc -b --verbose'), // initial run
@@ -112,18 +108,15 @@ exports.test = series(
   parallel(
     testsIndexWatch,
     execParallel({
-      webpack: 'webpack --config webpack.tests.js --env PACKAGE_MODE=src --watch',
+      webpack: 'webpack --config webpack.tests.js --watch',
       karma: 'karma start karma.config.js'
     })
   )
 )
 
-// note: if you want FULLCALENDAR_FORCE_REACT, you need to rebuild first, because of core-vdom
-// TODO: rename FULLCALENDAR_FORCE_REACT to FORCE_TESTS_FROM_SOURCE for this case?
 exports.testCi = series(
-  linkVDomLib, // looks at FULLCALENDAR_FORCE_REACT (doesn't matter?)
   testsIndex,
-  execTask(`webpack --config webpack.tests.js --env PACKAGE_MODE=${process.env.FULLCALENDAR_FORCE_REACT ? 'src' : 'dist'}`), // react-mode cant do dist-mode
+  execTask('webpack --config webpack.tests.js'),
   execTask('karma start karma.config.js ci')
 )
 
@@ -187,43 +180,6 @@ async function removeTscDevLinks() {
 
 
 
-// depends on FULLCALENDAR_FORCE_REACT
-
-exports.linkVDomLib = linkVDomLib
-
-async function linkVDomLib() {
-  let pkgRoot = 'packages/core-vdom'
-  let outPath = path.join(pkgRoot, 'src/vdom.ts')
-  let newTarget = process.env.FULLCALENDAR_FORCE_REACT
-    ? '../../../packages-contrib/react/src/vdom.ts' // relative to outPath
-    : 'vdom-preact.ts'
-
-  if (process.env.FULLCALENDAR_FORCE_REACT) {
-    console.log()
-    console.log('CONNECTING TO REACT')
-    console.log()
-  }
-
-  let currentTarget
-  try {
-    currentTarget = fs.readlinkSync(outPath)
-  } catch(ex) {} // if doesn't exist
-
-  if (currentTarget && currentTarget !== newTarget) {
-    exec([ 'rm', '-rf', outPath ])
-    currentTarget = null
-
-    console.log('Clearing tsbuildinfo because vdom symlink changed') // TODO: use gulp warn util?
-    exec([ 'rm', '-rf', path.join(pkgRoot, 'tsconfig.tsbuildinfo') ])
-  }
-
-  if (!currentTarget) { // i.e. no existing symlink
-    exec([ 'ln', '-s', newTarget, outPath ])
-  }
-}
-
-
-
 
 const exec2 = require('./scripts/lib/shell').sync
 
@@ -264,6 +220,11 @@ async function testsIndex() {
 
   let mainFiles = globby.sync('packages*/__tests__/src/main.{js,ts}')
   files = mainFiles.concat(files)
+
+  // need 'contrib:ci' to have already been run
+  if (process.env.FULLCALENDAR_FORCE_REACT) {
+    files = [ 'packages-contrib/react/dist/vdom.js' ].concat(files)
+  }
 
   let code =
     files.map(
@@ -327,7 +288,7 @@ exports.eslint = function() {
   let anyFailures = false
 
   for (let struct of allStructs) {
-    if (struct.name !== '@fullcalendar/core-vdom') {
+    if (struct.name !== '@fullcalendar/core-preact') {
       let cmd = [
         'eslint', '--config', 'eslint.config.js',
         path.join(struct.dir, 'src'),

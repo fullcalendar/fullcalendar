@@ -3125,14 +3125,14 @@ __metadata:
     "@fullcalendar/interaction": ^5.0.0
     "@fullcalendar/react": ^5.0.0
     "@fullcalendar/timegrid": ^5.0.0
-    "@types/react": ^16.9.36
-    "@types/react-dom": ^16.9.8
+    "@types/react": ^16.9.55
+    "@types/react-dom": ^16.9.9
     css-loader: ^4.3.0
     html-webpack-plugin: ^4.5.0
     mobx: ^5.15.4
     mobx-react-lite: ^2.0.7
-    react: ^16.13.1
-    react-dom: ^16.13.1
+    react: ^17.0.1
+    react-dom: ^17.0.1
     style-loader: ^2.0.0
     ts-loader: ^8.0.7
     typescript: ^4.0.5
@@ -3161,8 +3161,8 @@ __metadata:
     babel-loader: ^8.1.0
     css-loader: ^4.3.0
     html-webpack-plugin: ^4.5.0
-    react: ^16.7.0
-    react-dom: ^16.7.0
+    react: ^17.0.1
+    react-dom: ^17.0.1
     react-redux: ^7.2.0
     redux: ^4.0.5
     redux-thunk: ^2.3.0
@@ -3182,12 +3182,12 @@ __metadata:
     "@fullcalendar/interaction": ^5.0.0
     "@fullcalendar/react": ^5.0.0
     "@fullcalendar/timegrid": ^5.0.0
-    "@types/react": ^16.9.32
-    "@types/react-dom": ^16.9.6
+    "@types/react": ^16.9.55
+    "@types/react-dom": ^16.9.9
     css-loader: ^4.3.0
     html-webpack-plugin: ^4.5.0
-    react: ^16.7.0
-    react-dom: ^16.7.0
+    react: ^17.0.1
+    react-dom: ^17.0.1
     style-loader: ^2.0.0
     ts-loader: ^8.0.7
     typescript: ^4.0.5
@@ -3216,8 +3216,8 @@ __metadata:
     babel-loader: ^8.1.0
     css-loader: ^4.3.0
     html-webpack-plugin: ^4.5.0
-    react: ^16.7.0
-    react-dom: ^16.7.0
+    react: ^17.0.1
+    react-dom: ^17.0.1
     style-loader: ^2.0.0
     webpack: ^5.3.0
     webpack-cli: ^4.1.0
@@ -3356,9 +3356,8 @@ __metadata:
   resolution: "@fullcalendar/adaptive@workspace:packages-premium/adaptive"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     "@fullcalendar/premium-common": ~5.3.1
-    preact: ^10.5.5
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
@@ -3381,8 +3380,7 @@ __metadata:
   resolution: "@fullcalendar/bootstrap@workspace:packages/bootstrap"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
-    preact: ^10.5.5
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
@@ -3391,17 +3389,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar/common@workspace:packages/common"
   dependencies:
-    "@fullcalendar/core-vdom": "*"
-    preact: ^10.5.5
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/core-vdom@*, @fullcalendar/core-vdom@workspace:packages/core-vdom":
+"@fullcalendar/core-preact@workspace:packages/core-preact":
   version: 0.0.0-use.local
-  resolution: "@fullcalendar/core-vdom@workspace:packages/core-vdom"
+  resolution: "@fullcalendar/core-preact@workspace:packages/core-preact"
   dependencies:
-    preact: ^10.5.5
+    preact: ^10.0.5
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
@@ -3411,7 +3408,7 @@ __metadata:
   resolution: "@fullcalendar/core@workspace:packages/core"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     preact: ^10.0.5
     tslib: ^2.0.3
   languageName: unknown
@@ -3422,8 +3419,7 @@ __metadata:
   resolution: "@fullcalendar/daygrid@workspace:packages/daygrid"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
-    preact: ^10.5.5
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
@@ -3433,8 +3429,7 @@ __metadata:
   resolution: "@fullcalendar/google-calendar@workspace:packages/google-calendar"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
-    preact: ^10.5.5
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
@@ -3444,8 +3439,7 @@ __metadata:
   resolution: "@fullcalendar/interaction@workspace:packages/interaction"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
-    preact: ^10.5.5
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
@@ -3455,8 +3449,7 @@ __metadata:
   resolution: "@fullcalendar/list@workspace:packages/list"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
-    preact: ^10.5.5
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
@@ -3466,9 +3459,8 @@ __metadata:
   resolution: "@fullcalendar/luxon@workspace:packages/luxon"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     luxon: ^1.12.1
-    preact: ^10.5.5
     tslib: ^2.0.3
   peerDependencies:
     luxon: ^1.12.1
@@ -3480,10 +3472,9 @@ __metadata:
   resolution: "@fullcalendar/moment-timezone@workspace:packages/moment-timezone"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     moment: ^2.29.1
     moment-timezone: ^0.5.31
-    preact: ^10.5.5
     tslib: ^2.0.3
   peerDependencies:
     moment: ^2.29.1
@@ -3496,9 +3487,8 @@ __metadata:
   resolution: "@fullcalendar/moment@workspace:packages/moment"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     moment: ^2.29.1
-    preact: ^10.5.5
     tslib: ^2.0.3
   peerDependencies:
     moment: ^2.29.1
@@ -3510,8 +3500,7 @@ __metadata:
   resolution: "@fullcalendar/premium-common@workspace:packages-premium/premium-common"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
-    preact: ^10.5.5
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
@@ -3530,8 +3519,8 @@ __metadata:
     "@rollup/plugin-json": ^4.0.3
     "@rollup/plugin-node-resolve": ^7.1.3
     "@rollup/plugin-replace": ^2.3.2
-    "@types/react": ^16.9.32
-    "@types/react-dom": ^16.9.6
+    "@types/react": ^16.9.55
+    "@types/react-dom": ^16.9.9
     "@typescript-eslint/eslint-plugin": ^3.1.0
     "@typescript-eslint/parser": ^3.1.0
     babel-eslint: ^10.1.0
@@ -3549,8 +3538,8 @@ __metadata:
     karma-jasmine: ^4.0.1
     karma-sourcemap-loader: ^0.3.8
     karma-spec-reporter: ^0.0.32
-    react: ^16.13.1
-    react-dom: ^16.13.1
+    react: ^17.0.1
+    react-dom: ^17.0.1
     react-testing-library: ^6.0.2
     rollup: ^1.31.0
     rollup-plugin-postcss: ^2.0.3
@@ -3567,9 +3556,8 @@ __metadata:
   resolution: "@fullcalendar/resource-common@workspace:packages-premium/resource-common"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     "@fullcalendar/premium-common": ~5.3.1
-    preact: ^10.5.5
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
@@ -3579,11 +3567,10 @@ __metadata:
   resolution: "@fullcalendar/resource-daygrid@workspace:packages-premium/resource-daygrid"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     "@fullcalendar/daygrid": ~5.3.1
     "@fullcalendar/premium-common": ~5.3.1
     "@fullcalendar/resource-common": ~5.3.1
-    preact: ^10.5.5
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
@@ -3593,12 +3580,11 @@ __metadata:
   resolution: "@fullcalendar/resource-timegrid@workspace:packages-premium/resource-timegrid"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     "@fullcalendar/premium-common": ~5.3.1
     "@fullcalendar/resource-common": ~5.3.1
     "@fullcalendar/resource-daygrid": ~5.3.1
     "@fullcalendar/timegrid": ~5.3.1
-    preact: ^10.5.5
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
@@ -3608,12 +3594,11 @@ __metadata:
   resolution: "@fullcalendar/resource-timeline@workspace:packages-premium/resource-timeline"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     "@fullcalendar/premium-common": ~5.3.1
     "@fullcalendar/resource-common": ~5.3.1
     "@fullcalendar/scrollgrid": ~5.3.1
     "@fullcalendar/timeline": ~5.3.1
-    preact: ^10.5.5
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
@@ -3623,8 +3608,7 @@ __metadata:
   resolution: "@fullcalendar/rrule@workspace:packages/rrule"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
-    preact: ^10.5.5
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     rrule: ^2.6.0
     tslib: ^2.0.3
   peerDependencies:
@@ -3637,9 +3621,8 @@ __metadata:
   resolution: "@fullcalendar/scrollgrid@workspace:packages-premium/scrollgrid"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     "@fullcalendar/premium-common": ~5.3.1
-    preact: ^10.5.5
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
@@ -3649,9 +3632,8 @@ __metadata:
   resolution: "@fullcalendar/timegrid@workspace:packages/timegrid"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     "@fullcalendar/daygrid": ~5.3.1
-    preact: ^10.5.5
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
@@ -3661,10 +3643,9 @@ __metadata:
   resolution: "@fullcalendar/timeline@workspace:packages-premium/timeline"
   dependencies:
     "@fullcalendar/common": ~5.3.1
-    "@fullcalendar/core-vdom": "*"
+    "@fullcalendar/core-preact": "workspace:packages/core-preact"
     "@fullcalendar/premium-common": ~5.3.1
     "@fullcalendar/scrollgrid": ~5.3.1
-    preact: ^10.5.5
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
@@ -4351,16 +4332,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^16.9.6":
-  version: 16.9.7
-  resolution: "@types/react-dom@npm:16.9.7"
-  dependencies:
-    "@types/react": "*"
-  checksum: 472d58af8c533702bf64e607119f17458d92af12d7f77bab5d87d4f9c95fdb1f678a412cbc35dfb493efacc114e28f27391cf81f7aad496af1b1ab556339fb64
-  languageName: node
-  linkType: hard
-
-"@types/react-dom@npm:^16.9.8":
+"@types/react-dom@npm:^16.9.9":
   version: 16.9.9
   resolution: "@types/react-dom@npm:16.9.9"
   dependencies:
@@ -4369,7 +4341,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^16.9.32":
+"@types/react@npm:*":
   version: 16.9.34
   resolution: "@types/react@npm:16.9.34"
   dependencies:
@@ -4379,7 +4351,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^16.9.36":
+"@types/react@npm:^16.9.55":
   version: 16.9.55
   resolution: "@types/react@npm:16.9.55"
   dependencies:
@@ -17449,13 +17421,6 @@ karma@^5.2.3:
   languageName: node
   linkType: hard
 
-"preact@npm:^10.5.5":
-  version: 10.5.5
-  resolution: "preact@npm:10.5.5"
-  checksum: f44c12f61e1ae0dd3691d291559b7bc41a664193650d3156fd02f1541722bf6cb07bf885e8dd31b7023e5683cdc1a42fe5fba4934433f5811b338e24698d1dc1
-  languageName: node
-  linkType: hard
-
 "prelude-ls@npm:^1.2.1":
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
@@ -17613,7 +17578,7 @@ karma@^5.2.3:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.6.2, prop-types@npm:^15.7.2":
+"prop-types@npm:^15.7.2":
   version: 15.7.2
   resolution: "prop-types@npm:15.7.2"
   dependencies:
@@ -17893,31 +17858,16 @@ karma@^5.2.3:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.13.1":
-  version: 16.13.1
-  resolution: "react-dom@npm:16.13.1"
+"react-dom@npm:^17.0.1":
+  version: 17.0.1
+  resolution: "react-dom@npm:17.0.1"
   dependencies:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
-    prop-types: ^15.6.2
-    scheduler: ^0.19.1
+    scheduler: ^0.20.1
   peerDependencies:
-    react: ^16.13.1
-  checksum: fb5c3ad41360c6a8674f33916aa895d05e79d063d31a6963074220c1cda9e07e880799d01670b4ebd570b4d3457584f13cc898b5033a05641e8e801f5611607e
-  languageName: node
-  linkType: hard
-
-"react-dom@npm:^16.7.0":
-  version: 16.14.0
-  resolution: "react-dom@npm:16.14.0"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-    prop-types: ^15.6.2
-    scheduler: ^0.19.1
-  peerDependencies:
-    react: ^16.14.0
-  checksum: a13558f0e7c6d1a98684214460bcd4b9005500015b5048fb1b0d2856786b8764dbc713e6b078a5b1a56e17866400e1d862183c7a0a513ae8351de11f6f6749d2
+    react: 17.0.1
+  checksum: 6a70028fbe3c95e0056c5e8ce065b4a9b8d4ff3bffde9b016454072bde5e4b012af7668ca45b7235ace428267d5be5237b68ea87ce8c296e54e81a8d678a4355
   languageName: node
   linkType: hard
 
@@ -17962,25 +17912,13 @@ karma@^5.2.3:
   languageName: node
   linkType: hard
 
-"react@npm:^16.13.1":
-  version: 16.13.1
-  resolution: "react@npm:16.13.1"
+"react@npm:^17.0.1":
+  version: 17.0.1
+  resolution: "react@npm:17.0.1"
   dependencies:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
-    prop-types: ^15.6.2
-  checksum: 13dcc9ba8a7521ecc3d7e69998dbc5703ae9515308d06a94a474ad34b42f1fc109372265e924a8c9b11d20fa1828407c290b8f61617c36734c4ca907ae7e5f45
-  languageName: node
-  linkType: hard
-
-"react@npm:^16.7.0":
-  version: 16.14.0
-  resolution: "react@npm:16.14.0"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-    prop-types: ^15.6.2
-  checksum: 2769580b22952a52de3b5b2ea0f09cb904030b762d759739f49ab4da0b1f550e5c087ce3728c4be90f423d09481e0c075483c0c30b1ea9c549445c8b12020fd3
+  checksum: a76d86ec973eb4b25a46071ac7f974adfd66ed89ad1db63043be1d976ec25417520a210e6d724b0ad937422b706afcf9962cedda9e92125992a8c0e8a95f2051
   languageName: node
   linkType: hard
 
@@ -19136,13 +19074,13 @@ karma@^5.2.3:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.19.1":
-  version: 0.19.1
-  resolution: "scheduler@npm:0.19.1"
+"scheduler@npm:^0.20.1":
+  version: 0.20.1
+  resolution: "scheduler@npm:0.20.1"
   dependencies:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
-  checksum: 804f990b9f370cca6d42b65f3cba2cc2bfed4973ee5623bed1ea36a6627842db8c891e2e5ac003f06f9ee892d1d3396921e27fa077346caf0213af05776e8dee
+  checksum: 377b4ad0d8313c4548bac7374bc38409e9d142799979ce396787efa04d1bcabf2591540f243f2131e3df8e56e7f5b29c5415248523e88ecb60f13a32db2e076f
   languageName: node
   linkType: hard
 
