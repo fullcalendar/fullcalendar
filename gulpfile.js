@@ -108,7 +108,7 @@ exports.test = series(
   parallel(
     testsIndexWatch,
     execParallel({
-      webpack: 'webpack --config webpack.tests.js --watch',
+      webpack: 'webpack --config webpack.tests.js --watch --env PACKAGES_FROM_SOURCE',
       karma: 'karma start karma.config.js'
     })
   )

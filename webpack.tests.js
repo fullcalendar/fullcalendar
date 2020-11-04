@@ -4,7 +4,6 @@ require('@yarnpkg/pnpify').patchFs()
 
 const path = require('path')
 const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin')
 const MomentTimezoneDataPlugin = require('moment-timezone-data-webpack-plugin')
 const { publicPackageStructs } = require('./scripts/lib/package-index')
@@ -12,21 +11,18 @@ const { buildAliasMap } = require('./scripts/lib/new-webpack')
 
 
 module.exports = (env) => {
+  let fromSrc = env && env.PACKAGES_FROM_SOURCE
 
   return {
     mode: 'development',
-    devtool: false, // because we already have SourceMapDevToolPlugin
-    entry: {
-      'all': './tmp/tests/index.js',
-      // 'scrollgrid': './packages-premium/__tests__/src/scrollgrid.tsx'
-    },
+    entry: './tmp/tests/index.js',
     output: {
-      filename: '[name].js',
+      filename: 'all.js',
       path: path.join(__dirname, 'tmp/tests')
     },
     resolve: {
       extensions: [ '.ts', '.tsx', '.js' ],
-      alias: buildAliasMap(publicPackageStructs)
+      alias: fromSrc ? buildAliasMap(publicPackageStructs) : {}
     },
     module: {
       rules: [
@@ -46,21 +42,7 @@ module.exports = (env) => {
         }
       ]
     },
-    optimization: {
-      splitChunks: { // will automatically create a 'vendors' chunk with /node_modules/ packages
-        chunks: 'all' // apply to sync and async chunks (we only do sync)
-      }
-    },
     plugins: [
-      new webpack.SourceMapDevToolPlugin({ // inlined by default
-        exclude: /vendors/ // don't make sourcemaps for the vendors chunk
-      }),
-      new HtmlWebpackPlugin({ // writes an html file with all necessary chunks
-        // chunks: [ 'scrollgrid' ],
-        // filename: 'scrollgrid.html',
-        chunks: [ 'all' ],
-        filename: 'all.html'
-      }),
       new webpack.ProvidePlugin({
         $: 'jquery',
         jQuery: 'jquery'

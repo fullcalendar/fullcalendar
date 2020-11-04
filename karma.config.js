@@ -1,4 +1,4 @@
-const { writeFileSync, readFileSync } = require('./scripts/lib/util')
+const { writeFileSync } = require('./scripts/lib/util')
 
 let cmdArgs = process.argv.slice(2)
 let isRealCiEnv = Boolean(process.env.CI)
@@ -33,9 +33,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'tmp/tests/config.js',
-      ...getJsFilesFromHtml('tmp/tests/all.html').map((shortPath) => (
-        'tmp/tests/' + shortPath
-      ))
+      'tmp/tests/all.js',
     ],
 
     // make console errors aware of source files
@@ -73,9 +71,13 @@ module.exports = function(config) {
 }
 
 
-function getJsFilesFromHtml(htmlPath) {
-  let html = readFileSync(htmlPath)
-  let matches = [ ...html.matchAll(/src=['"]([^'"]*)['"]/g) ] // iterator->array
+// ...getJsFilesFromHtml('tmp/tests/all.html').map((shortPath) => (
+//   'tmp/tests/' + shortPath
+// ))
 
-  return matches.map((match) => match[1])
-}
+// function getJsFilesFromHtml(htmlPath) {
+//   let html = readFileSync(htmlPath)
+//   let matches = [ ...html.matchAll(/src=['"]([^'"]*)['"]/g) ] // iterator->array
+
+//   return matches.map((match) => match[1])
+// }
