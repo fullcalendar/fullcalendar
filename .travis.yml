@@ -18,4 +18,4 @@ env:
   global:
     - TZ="America/Los_Angeles" # for Headless Chrome. otherwise will be UTC, bad for tests
 
-script: npm run ci
+script: yarn run ci
