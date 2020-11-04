@@ -25,20 +25,20 @@ for (let projName of projNames) {
         [ 'yarn', 'run', 'ex:npm', projName, 'build' ],
         { cwd: rootDir, exitOnError: true, live: true }
       )
-      break;
+      break
 
     case 'angular':
       exec.sync(
         [ 'yarn', 'run', 'ex:pnp', projName, 'build' ],
         { cwd: rootDir, exitOnError: true, live: true }
       )
-      break;
+      break
 
     default:
       exec.sync(
         [ 'yarn', 'run', 'build' ],
         { cwd: projDir, exitOnError: true, live: true }
       )
-      break;
+      break
   }
 }
