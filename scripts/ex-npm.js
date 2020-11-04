@@ -1,4 +1,5 @@
 const path = require('path')
+const globby = require('globby')
 const exec = require('./lib/shell')
 const workspaceUtil = require('./lib/workspace-util')
 
@@ -13,43 +14,48 @@ if (!projName) {
 }
 
 let projDir = path.join(exDir, projName)
-let projMeta = require(path.join(projDir, 'package.json'))
-let depNames = Object.keys({ ...projMeta.dependencies, ...projMeta.devDependencies })
-let pkgNameToLocationHash = workspaceUtil.getPkgNameToLocationHash()
+let fcPkgRootDir = path.join(projDir, 'node_modules', '@fullcalendar')
+
+function resetFcPkgs(pkgNameToLocationHash) {
+  let fcPkgShortNames = globby.sync('*', { cwd: fcPkgRootDir, onlyFiles: false })
+
+  for (let fcPkgShortName of fcPkgShortNames) {
+    exec.sync(
+      [ 'rm', '-rf', fcPkgShortName ],
+      { cwd: fcPkgRootDir, exitOnError: true }
+    )
+
+    if (pkgNameToLocationHash) {
+      let fcPkgName = `@fullcalendar/${fcPkgShortName}`
+      let fcPkgLocation = pkgNameToLocationHash[fcPkgName]
+
+      if (!fcPkgLocation) {
+        throw new Error(`Could not find location for package ${fcPkgName}`)
+      }
+
+      exec.sync(
+        [ 'cp', '-r', path.join(rootDir, fcPkgLocation), fcPkgShortName ],
+        { cwd: fcPkgRootDir, exitOnError: true }
+      )
+    }
+  }
+}
+
+resetFcPkgs() // deletes all @fullcalendar/* packages
 
 exec.sync(
   'npm install',
   { cwd: projDir, exitOnError: true, live: true }
 )
 
-for (let depName of depNames) {
-  let depLocation = pkgNameToLocationHash[depName]
-
-  if (depLocation) {
-    let linkPath = path.join('node_modules', depName)
-
-    exec.sync(
-      [ 'rm', '-rf', linkPath ],
-      { cwd: projDir, exitOnError: true }
-    )
-    exec.sync(
-      [ 'mkdir', '-p', path.dirname(linkPath) ],
-      { cwd: projDir, exitOnError: true }
-    )
-    exec.sync(
-      [ 'ln', '-s', path.join(rootDir, depLocation), linkPath ],
-      { cwd: projDir, exitOnError: true }
-    )
-  }
-}
+resetFcPkgs(workspaceUtil.getPkgNameToLocationHash())
 
 if (runCmd) {
   exec.sync(
     [ 'npm', 'run', runCmd ],
     { cwd: projDir, exitOnError: true, live: true, env: {
       ...process.env,
-      NODE_OPTIONS: '', // prevent yarn from injecting pnp script
-      NODE_PRESERVE_SYMLINKS: '1'
+      NODE_OPTIONS: '' // prevent yarn from injecting pnp script
     } }
   )
 }
