@@ -114,7 +114,7 @@ export function isColPropsEqual(cols0: ColProps[], cols1: ColProps[]) {
 }
 
 
-export function renderMicroColGroup(cols: ColProps[], shrinkWidth?: number) {
+export function renderMicroColGroup(cols: ColProps[], shrinkWidth?: number): VNode {
   let colNodes: VNode[] = []
 
   /*

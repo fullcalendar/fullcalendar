@@ -9,6 +9,7 @@ exports.externalizeRelative = externalizeRelative
 exports.buildAliasMap = buildAliasMap
 exports.injectReleaseDateAndVersion = injectReleaseDateAndVersion
 exports.removeStylesheetImports = removeStylesheetImports
+exports.removeEmptyImports = removeEmptyImports
 
 
 function externalizeStylesheets() {
@@ -45,10 +46,10 @@ function buildAliasMap(structs) {
 }
 
 
-function externalizeNonRelative() {
+function externalizeNonRelative(except) {
   return {
     resolveId(id, importer) {
-      if (importer && !/^\./.test(id)) {
+      if (importer && !/^\./.test(id) && (!except || id !== except)) {
         return { id, external: true }
       }
     }
@@ -73,6 +74,17 @@ function injectReleaseDateAndVersion() {
     values: {
       releaseDate: new Date().toISOString().replace(/T.*/, ''), // just YYYY-MM-DD
       version: rootPkgMeta.version
+    }
+  })
+}
+
+
+function removeEmptyImports() {
+  return replace({
+    delimiters: ['', ''], // ignore word boundaries
+    values: {
+      'require(\'\')': '',
+      'require("")': ''
     }
   })
 }

@@ -13,7 +13,7 @@ let testStructs = exports.testStructs = configPaths.filter((path) => isTest(path
 exports.allStructs = packageStructs.concat(bundleStructs, testStructs)
 
 
-exports.publicPackageStructs = packageStructs.filter((struct) => struct.name !== '@fullcalendar/core-vdom') // not a good way to do this
+exports.publicPackageStructs = packageStructs.filter((struct) => struct.name !== '@fullcalendar/core-preact') // not a good way to do this
 
 
 function buildStruct(configPath) {

@@ -4,7 +4,7 @@
     "rootDir": "src",
     "outDir": "tsc"
   },
-  "files": [
-    "src/vdom.ts"
+  "include": [
+    "src/**/*"
   ]
 }

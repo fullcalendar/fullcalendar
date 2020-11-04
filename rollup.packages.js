@@ -5,7 +5,10 @@ const dts = require('rollup-plugin-dts').default
 const sourceMapLoader = require('rollup-plugin-sourcemaps')
 const postcss = require('rollup-plugin-postcss')
 const { checkNoSymlinks, buildBanner } = require('./scripts/lib/new')
-const { externalizeStylesheets, externalizeNonRelative, injectReleaseDateAndVersion, buildAliasMap, removeStylesheetImports } = require('./scripts/lib/new-rollup')
+const {
+  externalizeStylesheets, externalizeNonRelative, injectReleaseDateAndVersion,
+  buildAliasMap, removeStylesheetImports, removeEmptyImports
+} = require('./scripts/lib/new-rollup')
 
 
 /*
@@ -67,6 +70,64 @@ module.exports = [
       ]
     }
   }),
+
+  // for JS (CJS)
+  ...publicPackageStructs.map((struct) => {
+    return {
+      input: path.join(struct.dir, struct.mainTscJs),
+      output: [{
+        format: 'cjs',
+        exports: 'named',
+        file: path.join(struct.dir, struct.mainDistJs.replace('.js', '.cjs.js')),
+        banner: buildBanner(struct.isPremium)
+      }],
+      plugins: [
+        externalizeVDom('.cjs'),
+        externalizeNonRelative(),
+        removeStylesheetImports(),
+        injectReleaseDateAndVersion(),
+        removeEmptyImports() // because of removeStylesheetImports and CJS
+      ]
+    }
+  }),
+
+  // vdom from @fullcalendar/core-preact
+  {
+    input: 'packages/core/tsc/vdom.js',
+    output: [
+      {
+        format: 'cjs',
+        exports: 'named',
+        file: 'packages/core/vdom.cjs.js'
+      },
+      {
+        format: 'esm',
+        file: 'packages/core/vdom.js'
+      }
+    ],
+    plugins: [
+      externalizeNonRelative('@fullcalendar/core-preact'),
+      nodeResolve()
+    ]
+  },
+  {
+    input: 'packages/common/tsc/vdom.js',
+    output: [
+      {
+        format: 'cjs',
+        exports: 'named',
+        file: 'packages/common/vdom.cjs.js'
+      },
+      {
+        format: 'esm',
+        file: 'packages/common/vdom.js'
+      }
+    ],
+    plugins: [
+      externalizeNonRelative('@fullcalendar/core-preact'),
+      nodeResolve()
+    ]
+  },
 
   // for global variable JS
   ...pkgsWithBrowserGlobal.map((struct) => {
@@ -139,7 +200,7 @@ function transplantCss(fileName) { // fileName w/o extension
 }
 
 
-function externalizeVDom(extension) {
+function externalizeVDom(addExtension) {
   return {
     resolveId(id, importer) {
       if (/\/vdom$/.test(id) || id.match(/^(preact|react|react-dom)$/)) {
@@ -147,7 +208,7 @@ function externalizeVDom(extension) {
           importer.match('packages/common') ||
           importer.match('packages/core')
         ) {
-          return { id: './vdom' + extension, external: true, moduleSideEffects: true }
+          return { id: './vdom' + (addExtension || ''), external: true, moduleSideEffects: true }
         } else {
           return { id: '@fullcalendar/common', external: true, moduleSideEffects: true }
         }

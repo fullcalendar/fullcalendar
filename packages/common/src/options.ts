@@ -370,7 +370,9 @@ function isBoolComplexEqual(a, b) {
 // view-specific options
 // ---------------------
 
-export const VIEW_OPTION_REFINERS = {
+export const VIEW_OPTION_REFINERS: {
+  [name: string]: any
+} = {
   type: String,
   component: identity as Identity<ViewComponentType>,
   buttonText: String,

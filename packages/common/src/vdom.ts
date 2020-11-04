@@ -1,5 +1,5 @@
 
-/// <reference types="@fullcalendar/core-vdom" />
+/// <reference types="@fullcalendar/core-preact" />
 
 if (typeof FullCalendarVDom === 'undefined') {
   throw new Error(

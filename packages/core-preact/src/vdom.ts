@@ -22,14 +22,22 @@ declare global {
   }
 }
 
-(typeof globalThis !== 'undefined' ? globalThis : window).FullCalendarVDom = { // TODO: streamline when killing IE11 support
-  Component: preact.Component,
-  createElement: preact.createElement,
-  render: preact.render,
-  createRef: preact.createRef,
-  Fragment: preact.Fragment,
-  createContext, // custom implementation
-  flushToDom
+
+let globalObj = typeof globalThis !== 'undefined' ? globalThis : window // // TODO: streamline when killing IE11 support
+
+if (globalObj.FullCalendarVDom) {
+  console.log('FullCalendar VDOM already loaded')
+
+} else {
+  globalObj.FullCalendarVDom = {
+    Component: preact.Component,
+    createElement: preact.createElement,
+    render: preact.render,
+    createRef: preact.createRef,
+    Fragment: preact.Fragment,
+    createContext, // custom implementation
+    flushToDom
+  }
 }
 
 

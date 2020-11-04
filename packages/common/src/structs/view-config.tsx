@@ -45,8 +45,8 @@ function parseViewConfig(input: ViewConfigInput): ViewConfig {
   }
 
   return {
-    superType: rawOptions.type,
-    component,
+    superType: rawOptions.type as any,
+    component: component as any,
     rawOptions // includes type and component too :(
   }
 }
@@ -74,10 +74,10 @@ function createViewHookComponent(options: ViewOptions) {
               return (
                 <RenderHook
                   hookProps={hookProps}
-                  classNames={options.classNames}
-                  content={options.content}
-                  didMount={options.didMount}
-                  willUnmount={options.willUnmount}
+                  classNames={options.classNames as any}
+                  content={options.content as any}
+                  didMount={options.didMount as any}
+                  willUnmount={options.willUnmount as any}
                   elRef={rootElRef}
                 >
                   {(rootElRef, customClassNames, innerElRef, innerContent) => (

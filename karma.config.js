@@ -20,13 +20,20 @@ module.exports = function(config) {
     // base path, that will be used to resolve files and exclude
     basePath: '',
 
+    plugins: [
+      require('karma-chrome-launcher'),
+      require('karma-jasmine'),
+      require('karma-sourcemap-loader'),
+      require('karma-verbose-reporter')
+    ],
+
     // frameworks to use
     frameworks: [ 'jasmine' ],
 
     // list of files / patterns to load in the browser
     files: [
       'tmp/tests/config.js',
-      'tmp/tests/*all*.js'
+      'tmp/tests/all.js',
     ],
 
     // make console errors aware of source files
@@ -62,3 +69,15 @@ module.exports = function(config) {
     }
   })
 }
+
+
+// ...getJsFilesFromHtml('tmp/tests/all.html').map((shortPath) => (
+//   'tmp/tests/' + shortPath
+// ))
+
+// function getJsFilesFromHtml(htmlPath) {
+//   let html = readFileSync(htmlPath)
+//   let matches = [ ...html.matchAll(/src=['"]([^'"]*)['"]/g) ] // iterator->array
+
+//   return matches.map((match) => match[1])
+// }

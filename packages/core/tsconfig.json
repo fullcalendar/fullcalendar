@@ -8,7 +8,7 @@
     "src/**/*"
   ],
   "references": [
-    { "path": "../core-vdom" },
+    { "path": "../core-preact" },
     { "path": "../common" }
   ]
 }

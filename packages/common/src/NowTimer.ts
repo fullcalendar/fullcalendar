@@ -19,7 +19,7 @@ interface NowTimerState {
 
 export class NowTimer extends Component<NowTimerProps, NowTimerState> {
 
-  static contextType = ViewContextType
+  static contextType: any = ViewContextType
   context: ViewContext // do this for all components that use the context!!!
 
   initialNowDate: DateMarker

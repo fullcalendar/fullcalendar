@@ -66,7 +66,7 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
 
   let queryButtonText = function(optionsSubset) {
     let buttonTextMap = optionsSubset.buttonText || {}
-    let buttonTextKey = viewDef.defaults.buttonTextKey
+    let buttonTextKey = viewDef.defaults.buttonTextKey as string
 
     if (buttonTextKey != null && buttonTextMap[buttonTextKey] != null) {
       return buttonTextMap[buttonTextKey]
