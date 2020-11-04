@@ -4,7 +4,11 @@ const globby = require('globby')
 
 let rootDir = path.resolve(__dirname, '..')
 let exDir = path.join(rootDir, 'example-projects')
-let projNames = globby.sync('*', { cwd: exDir, onlyDirectories: true })
+let projNames = process.argv.slice(2)
+
+if (!projNames.length) {
+  projNames = globby.sync('*', { cwd: exDir, onlyDirectories: true })
+}
 
 for (let projName of projNames) {
   let projDir = path.join(exDir, projName)
