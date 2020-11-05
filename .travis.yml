@@ -18,9 +18,9 @@ env:
   global:
     - TZ="America/Los_Angeles" # for Headless Chrome. otherwise will be UTC, bad for tests
   jobs:
-    - SCRIPT=ci:lint
-    - SCRIPT=ci:test
-    - SCRIPT=ci:contrib
+    # - SCRIPT=ci:lint
+    # - SCRIPT=ci:test
+    # - SCRIPT=ci:contrib
     - SCRIPT=ci:ex
 
 # by default, travis tries --frozen-lockfile flag, which is deprecated

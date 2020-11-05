@@ -51,6 +51,8 @@ exec.sync(
 resetFcPkgs(workspaceUtil.getPkgNameToLocationHash())
 
 if (runCmd) {
+  console.log('ENV!!!', process.env)
+
   exec.sync(
     [ 'npm', 'run', runCmd ],
     { cwd: projDir, exitOnError: true, live: true, env: {
