@@ -16,7 +16,6 @@ for (let projName of projNames) {
   console.log('')
   console.log('PROJECT:', projName)
   console.log(projDir)
-  console.log('')
 
   switch(projName) {
 
@@ -25,6 +24,8 @@ for (let projName of projNames) {
     case 'vue-typescript':
     case 'vue-vuex':
     case 'parcel':
+      console.log('Using NPM simulation')
+      console.log()
       exec.sync(
         [ 'yarn', 'run', 'ex:npm', projName, 'build' ],
         { cwd: rootDir, exitOnError: true, live: true }
@@ -32,6 +33,8 @@ for (let projName of projNames) {
       break
 
     case 'angular':
+      console.log('Using PnP simulation')
+      console.log()
       exec.sync(
         [ 'yarn', 'run', 'ex:pnp', projName, 'build' ],
         { cwd: rootDir, exitOnError: true, live: true }
@@ -39,10 +42,14 @@ for (let projName of projNames) {
       break
 
     default:
+      console.log('Normal Yarn execution')
+      console.log()
       exec.sync(
         [ 'yarn', 'run', 'build' ],
         { cwd: projDir, exitOnError: true, live: true }
       )
       break
   }
+
+  console.log('')
 }
