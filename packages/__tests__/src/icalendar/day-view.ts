@@ -10,6 +10,7 @@ import mungedOneHourMeeting from './data/mungedOneHourMeeting'
 import meetingWithMungedStart from './data/meetingWithMungedStart'
 import alldayEvent from './data/alldayEvent'
 import timedMeetingWithoutEnd from './data/timedMeetingWithoutEnd'
+import timedMeetingWithDuration from './data/timedMeetingWithDuration'
 
 describe('addICalEventSource with week view', function() {
   const ICAL_MIME_TYPE = 'text/calendar'
@@ -92,6 +93,24 @@ describe('addICalEventSource with week view', function() {
       })
   })
 
+  it('does not override iCal DURATION in VEVENT', (done) => {
+    loadICalendarWith(timedMeetingWithDuration,
+      () => {
+        setTimeout(() => {
+          assertEventCount(1)
+          // check that event has been given a two day length
+          const event = currentCalendar.getEvents()[0]
+          expect(event.end.getHours()).toEqual(event.start.getHours() + 4)
+          done()
+        }, 100)
+      },
+      (source) => {
+        initCalendar({
+          forceEventDuration: true,
+          defaultTimedEventDuration: '03:00',
+        }).addEventSource(source)
+      })
+  })
   function loadICalendarWith(rawICal: string, assertions: () => void, calendarSetup?: (source: EventSourceInput) => void) {
     const feedUrl = '/mock.ics'
 
