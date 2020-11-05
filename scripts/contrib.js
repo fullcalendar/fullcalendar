@@ -31,12 +31,13 @@ for (let projName of projNames) {
   switch(projName) {
 
     case 'angular':
-      console.log('Using NPM simulation')
+      console.log('Using PnP simulation')
       console.log('')
       exec.sync(
         [ 'yarn', 'pnpify', '--cwd', projName, 'yarn', 'run', runCmd ],
         { cwd: contribRootDir, exitOnError: true, live: true }
       )
+      break
 
     default:
       console.log('Normal Yarn execution')
