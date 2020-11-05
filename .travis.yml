@@ -2,7 +2,7 @@
 sudo: false # route build to the container-based infrastructure for a faster build
 
 language: node_js
-node_js: 13
+node_js: 13 # higher versions of node have troubles with deasync (a transitive dependency)
 
 cache:
   npm: false # don't do node_modules
