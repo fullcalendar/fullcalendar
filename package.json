@@ -54,7 +54,11 @@
     "test": "gulp test",
     "test:ci": "gulp testCi",
     "archive": "gulp archive",
-    "ci": "./scripts/ci.sh",
+    "ci:all": "./scripts/ci-all.sh",
+    "ci:test": "yarn run build && yarn run test:ci",
+    "ci:test:react": "yarn run build && FULLCALENDAR_FORCE_REACT=1 yarn run test:ci",
+    "ci:lint": "yarn run lint && yarn run build && yarn run lintBuilt",
+    "ci:contrib-n-ex": "yarn run build && yarn run contrib:ci && yarn run ex:build",
     "preversion": "./scripts/update-example-dates.sh && yarn run clean",
     "version": "yarn run ci && yarn run archive",
     "postversion": "echo 'EXEC: git push --recurse-submodules=on-demand' && echo 'STILL NEED TO PUSH ALL TAGS'"
