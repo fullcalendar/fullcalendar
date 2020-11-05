@@ -45,14 +45,15 @@ resetFcPkgs() // deletes all @fullcalendar/* packages
 
 exec.sync(
   'npm install',
-  { cwd: projDir, exitOnError: true, live: true }
+  { cwd: projDir, exitOnError: true, live: true, env: {
+    ...process.env,
+    NODE_OPTIONS: '' // prevent yarn from injecting pnp script
+  } }
 )
 
 resetFcPkgs(workspaceUtil.getPkgNameToLocationHash())
 
 if (runCmd) {
-  console.log('ENV!!!', process.env)
-
   exec.sync(
     [ 'npm', 'run', runCmd ],
     { cwd: projDir, exitOnError: true, live: true, env: {
