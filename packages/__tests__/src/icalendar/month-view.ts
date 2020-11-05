@@ -92,7 +92,26 @@ describe('addICalEventSource with month view', function() {
 		})
 	})
 
-  function loadICalendarWith(rawICal: string, assertions: () => void) {
+  fit('defaultAllDayEventDuration does not override ical default all day length of one day', (done) => {
+    loadICalendarWith(alldayEvent,
+      () => {
+        setTimeout(() => {
+          assertEventCount(1)
+          // check that event has been given a two day length
+          const event = currentCalendar.getEvents()[0]
+          expect(event.end.getDate()).toEqual(event.start.getDate() + 1)
+          done()
+        }, 100)
+      },
+      (source) => {
+        initCalendar({
+          forceEventDuration: true,
+          defaultAllDayEventDuration: { days: 2 },
+        }).addEventSource(source)
+      })
+  })
+
+  function loadICalendarWith(rawICal: string, assertions: () => void, calendarSetup?: (source: EventSourceInput) => void) {
     const feedUrl = '/mock.ics'
 
     XHRMock.get(feedUrl, function(req, res) {
@@ -103,9 +122,13 @@ describe('addICalEventSource with month view', function() {
         .body(rawICal)
     })
 
-    initCalendar().addEventSource(
-      { feedUrl } as EventSourceInput
-    )
+    const source = { feedUrl } as EventSourceInput
+
+    if (calendarSetup) {
+      calendarSetup(source)
+    } else {
+      initCalendar().addEventSource(source)
+    }
 
     assertions()
   }

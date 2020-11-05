@@ -44,30 +44,26 @@ let buildEvents = (vevents: ICAL.Event[]): EventInput[] => {
   return vevents.map((vevent) => {
     const event = new ICAL.Event(vevent)
     
+    if (!event.startDate) {
+      // no start date so corrupt / invalid event
+      return null;
+    }
+
     const fcEvent = {
       title: event.summary,
       start: event.startDate.toString(),
+      end: (event.endDate ? event.endDate.toString() : null),
     }
 
     try {
-      if (event.startDate.isDate && event.endDate === null) {
+      if (event.startDate.isDate) {
         return {
           ...fcEvent,
-          end: event.startDate.addDuration({days: 1}).toString(),
           allDay: true,
-        }
-      } else if (event.startDate.isDate && event.endDate.isDate) {
-        return {
-          ...fcEvent,
-          end: event.endDate.toString(),
-          allDay: true,
-        }
-      } else {
-        return {
-          ...fcEvent,
-          end: event.endDate.toString(),
         }
       }
+      
+      return fcEvent
     } catch(error) {
       console.log(`Unable to process item in calendar: ${error}.`)
       return null
