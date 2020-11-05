@@ -19,11 +19,20 @@ for (let projName of projNames) {
 
   switch(projName) {
 
+    case 'parcel':
+      // problem with parcel+deasync on node 15
+      // https://github.com/parcel-bundler/parcel/issues/5294
+      if (process.env.CI) {
+        console.log('Skipping in CI environment')
+        console.log()
+        continue
+      }
+      // otherwise, fall through...
+
     case 'next':
     case 'nuxt':
     case 'vue-typescript':
     case 'vue-vuex':
-    case 'parcel':
       console.log('Using NPM simulation')
       console.log()
       exec.sync(
