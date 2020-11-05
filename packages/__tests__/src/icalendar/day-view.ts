@@ -30,7 +30,7 @@ describe('addICalEventSource with week view', function() {
       setTimeout(() => {
         assertEventCount(1)
         done()
-      }, 200)
+      }, 100)
     })
 	})
 
@@ -41,7 +41,7 @@ describe('addICalEventSource with week view', function() {
       setTimeout(() => {
         assertEventCount(1)
         done()
-      }, 200)
+      }, 100)
     })
 	})
 
@@ -60,7 +60,7 @@ describe('addICalEventSource with week view', function() {
       setTimeout(() => {
         assertEventCount(0)
         done()
-      }, 200)
+      }, 100)
 		})
 	})
 
@@ -69,11 +69,11 @@ describe('addICalEventSource with week view', function() {
       setTimeout(() => {
         assertEventCount(0)
         done()
-      }, 200)
+      }, 100)
 		})
 	})
 
-  fit('sets default duration when no end or duration included in the VEVENT', (done) => {
+  it('sets default duration when no end or duration included in the VEVENT', (done) => {
     loadICalendarWith(timedMeetingWithoutEnd,
       () => {
         setTimeout(() => {

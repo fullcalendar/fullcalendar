@@ -31,7 +31,7 @@ describe('addICalEventSource with month view', function() {
         assertEventCount(1)
         currentCalendar.getEvents().forEach(event => expect(event.allDay).toBeTruthy())
         done()
-      }, 200)
+      }, 100)
     })
   })
 
@@ -41,7 +41,7 @@ describe('addICalEventSource with month view', function() {
         assertEventCount(1)
         currentCalendar.getEvents().forEach(event => expect(event.allDay).toBeTruthy())
         done()
-      }, 200)
+      }, 100)
     })
   })
 
@@ -51,7 +51,7 @@ describe('addICalEventSource with month view', function() {
         assertEventCount(2)
         currentCalendar.getEvents().forEach(event => expect(event.allDay).toBeTruthy())
         done()
-      }, 200)
+      }, 100)
     })
   })
 
@@ -61,7 +61,7 @@ describe('addICalEventSource with month view', function() {
         assertEventCount(1)
         currentCalendar.getEvents().forEach(event => expect(event.allDay).not.toBeTruthy())
         done()
-      }, 200)
+      }, 100)
     })
 	})
 
@@ -70,7 +70,7 @@ describe('addICalEventSource with month view', function() {
       setTimeout(() => {
         assertEventCount(5)
         done()
-      }, 200)
+      }, 100)
     })
 	})
 
@@ -79,7 +79,7 @@ describe('addICalEventSource with month view', function() {
 		  setTimeout(() => {
 			  assertEventCount(0)
 				done()
-			}, 200)
+			}, 100)
 		})
 	})
 
@@ -88,11 +88,11 @@ describe('addICalEventSource with month view', function() {
 		  setTimeout(() => {
 			  assertEventCount(1)
 				done()
-			}, 200)
+			}, 100)
 		})
 	})
 
-  fit('defaultAllDayEventDuration does not override ical default all day length of one day', (done) => {
+  it('defaultAllDayEventDuration does not override ical default all day length of one day', (done) => {
     loadICalendarWith(alldayEvent,
       () => {
         setTimeout(() => {
