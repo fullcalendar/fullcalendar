@@ -1,10 +1,8 @@
 
 const IGNORED_EVENTS = {
-  load: true, // ignore when jQuery detaches the load event from the window
-  message: true, // react dev tools attaches this on first component render
-  copy: true, // "
-  paste: true // "
+  load: true // ignore when jQuery detaches the load event from the window
 }
+
 
 export class ListenerCounter {
 

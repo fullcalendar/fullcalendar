@@ -1,4 +1,5 @@
 import { ListenerCounter } from '../lib/ListenerCounter'
+import { primeVDomContainer } from '../lib/vdom-misc'
 
 describe('destroy', function() {
 
@@ -49,6 +50,8 @@ describe('destroy', function() {
   }, function(viewName) {
     it('leaves no handlers attached to DOM', function() {
       var $el = $('<div>').appendTo('body')
+      primeVDomContainer($el[0])
+
       var elHandlerCounter = new ListenerCounter($el[0])
       var docHandlerCounter = new ListenerCounter(document)
 
