@@ -1,4 +1,11 @@
 
+v5.4.0
+------
+
+- better compatibility with Webpack 5, deeming `resolve.fullySpecified` unnecessary (#5822)
+- dist files now include a CJS file. ESM is still used by default in most environments (#5929)
+
+
 v5.3.2 (2020-09-06)
 -------------------
 
