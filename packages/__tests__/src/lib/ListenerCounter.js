@@ -1,4 +1,11 @@
 
+const IGNORED_EVENTS = {
+  load: true, // ignore when jQuery detaches the load event from the window
+  message: true, // react dev tools attaches this on first component render
+  copy: true, // "
+  paste: true // "
+}
+
 export class ListenerCounter {
 
   constructor(el) {
@@ -12,13 +19,15 @@ export class ListenerCounter {
     let origAddEventListened = el.addEventListener
     let origRemoveEventListener = el.removeEventListener
 
-    el.addEventListener = function() {
-      t.delta++
+    el.addEventListener = function(eventName) {
+      if (!IGNORED_EVENTS[eventName]) {
+        t.delta++
+      }
       return origAddEventListened.apply(el, arguments)
     }
 
-    el.removeEventListener = function(name) {
-      if (name !== 'load') { // ignore when jQuery detaches the load event from the window
+    el.removeEventListener = function(eventName) {
+      if (!IGNORED_EVENTS[eventName]) {
         t.delta--
       }
       return origRemoveEventListener.apply(el, arguments)
