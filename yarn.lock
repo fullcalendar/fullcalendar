@@ -1970,6 +1970,7 @@ __metadata:
     "@fullcalendar/timegrid": ^5.0.0
     css-loader: ^4.3.0
     mini-css-extract-plugin: ^1.2.0
+    moment: ^2.29.1
     moment-locales-webpack-plugin: ^1.2.0
     ts-loader: ^8.0.7
     typescript: ^4.0.5
@@ -1990,6 +1991,7 @@ __metadata:
     "@fullcalendar/timegrid": ^5.0.0
     css-loader: ^4.3.0
     mini-css-extract-plugin: ^1.2.0
+    moment: ^2.29.1
     moment-locales-webpack-plugin: ^1.2.0
     webpack: ^5.3.0
     webpack-cli: ^4.1.0
@@ -2008,10 +2010,10 @@ __metadata:
     "@types/react-dom": ^16.9.9
     css-loader: ^4.3.0
     html-webpack-plugin: ^4.5.0
-    mobx: ^5.15.4
-    mobx-react-lite: ^2.0.7
-    react: ^17.0.1
-    react-dom: ^17.0.1
+    mobx: ^6.0.3
+    mobx-react-lite: ^3.0.1
+    react: ^16.14.0
+    react-dom: ^16.14.0
     style-loader: ^2.0.0
     ts-loader: ^8.0.7
     typescript: ^4.0.5
@@ -13575,25 +13577,25 @@ karma@^5.2.3:
   languageName: node
   linkType: hard
 
-"mobx-react-lite@npm:^2.0.7":
-  version: 2.2.2
-  resolution: "mobx-react-lite@npm:2.2.2"
+"mobx-react-lite@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "mobx-react-lite@npm:3.0.1"
   peerDependencies:
-    mobx: ^4.0.0 || ^5.0.0
+    mobx: ^6.0.0
     react: ^16.8.0
   peerDependenciesMeta:
     react-dom:
       optional: true
     react-native:
       optional: true
-  checksum: 8e354b54c691b5d2cdff413e9aee6ffddb2e7865272d1364118f4ba745e9e6ac026a345888ad69d216261309da04e3798f45f7d35fc6b2ed3c55530ec2ca5b20
+  checksum: 17f16d1bd38f8b621d8011905a782a8363b645024ee8b0a63f27e0e67fc0580e60aacf1faff70cfe9bb5704d0c0b7a12659b85562647ef6000994278d9eddc44
   languageName: node
   linkType: hard
 
-"mobx@npm:^5.15.4":
-  version: 5.15.7
-  resolution: "mobx@npm:5.15.7"
-  checksum: 4e92f8d96394e2f34452fa63aa89f5a4501ae98b083cb1605e80b8b9941a756ea06a6e0093c7e58d975fcfbd3c44eb64c2296b1b983182cd3f92fd18f753992d
+"mobx@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "mobx@npm:6.0.3"
+  checksum: d529e13f01c39646e794d9bd1a222751fe8b4533355d30d9a88fff34aa220f031e722491c4d4408279af30fb038a3648f6466e532c4c29cb1d13cf750ec47580
   languageName: node
   linkType: hard
 
@@ -13631,7 +13633,7 @@ karma@^5.2.3:
   languageName: node
   linkType: hard
 
-"moment@npm:^2.29.1":
+"moment@npm:>= 2.9.0, moment@npm:^2.29.1":
   version: 2.29.1
   resolution: "moment@npm:2.29.1"
   checksum: 86729013febf7160de5b93da69273dd304d674b0224f9544b3abd09a87671ddd2cdd57598261ce57588910d63747ffd5590965e83c790d8bf327083c0e0a06e0
@@ -16042,7 +16044,7 @@ karma@^5.2.3:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.7.2":
+"prop-types@npm:^15.6.2, prop-types@npm:^15.7.2":
   version: 15.7.2
   resolution: "prop-types@npm:15.7.2"
   dependencies:
@@ -16308,6 +16310,20 @@ karma@^5.2.3:
   languageName: node
   linkType: hard
 
+"react-dom@npm:^16.14.0":
+  version: 16.14.0
+  resolution: "react-dom@npm:16.14.0"
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+    prop-types: ^15.6.2
+    scheduler: ^0.19.1
+  peerDependencies:
+    react: ^16.14.0
+  checksum: a13558f0e7c6d1a98684214460bcd4b9005500015b5048fb1b0d2856786b8764dbc713e6b078a5b1a56e17866400e1d862183c7a0a513ae8351de11f6f6749d2
+  languageName: node
+  linkType: hard
+
 "react-dom@npm:^17.0.1":
   version: 17.0.1
   resolution: "react-dom@npm:17.0.1"
@@ -16359,6 +16375,17 @@ karma@^5.2.3:
     react: "*"
     react-dom: "*"
   checksum: 8dc5aa9ec7e8c8f2b08a4b2488700c895a20ee736b10f9b2d2face1fe426572d7ee1eeba7ef5d80d8f3364a4412eb0336a351cfab097d958e6ed092a87150872
+  languageName: node
+  linkType: hard
+
+"react@npm:^16.14.0":
+  version: 16.14.0
+  resolution: "react@npm:16.14.0"
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+    prop-types: ^15.6.2
+  checksum: 2769580b22952a52de3b5b2ea0f09cb904030b762d759739f49ab4da0b1f550e5c087ce3728c4be90f423d09481e0c075483c0c30b1ea9c549445c8b12020fd3
   languageName: node
   linkType: hard
 
@@ -17502,6 +17529,16 @@ karma@^5.2.3:
   version: 1.2.4
   resolution: "sax@npm:1.2.4"
   checksum: 9d7668d69105e89e2c1a4b2fdc12c72e1a2f78b825f7b4a8a2ea5cdfebf70920bd17715bed55264c3b3959616a0695f8ad2d098bf6944fbd0953ee9c695dceef
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.19.1":
+  version: 0.19.1
+  resolution: "scheduler@npm:0.19.1"
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+  checksum: 804f990b9f370cca6d42b65f3cba2cc2bfed4973ee5623bed1ea36a6627842db8c891e2e5ac003f06f9ee892d1d3396921e27fa077346caf0213af05776e8dee
   languageName: node
   linkType: hard
 
