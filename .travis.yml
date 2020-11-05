@@ -18,12 +18,12 @@ env:
   global:
     - TZ="America/Los_Angeles" # for Headless Chrome. otherwise will be UTC, bad for tests
   jobs:
-    - SCRIPT_NAME="ci:lint"
-    - SCRIPT_NAME="ci:test"
-    - SCRIPT_NAME="ci:contrib"
-    - SCRIPT_NAME="ci:ex"
+    - SCRIPT=ci:lint
+    - SCRIPT=ci:test
+    - SCRIPT=ci:contrib
+    - SCRIPT=ci:ex
 
 # by default, travis tries --frozen-lockfile flag, which is deprecated
 install: yarn install
 
-script: yarn run $SCRIPT_NAME
+script: yarn run $SCRIPT
