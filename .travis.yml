@@ -2,7 +2,7 @@
 sudo: false # route build to the container-based infrastructure for a faster build
 
 language: node_js
-node_js: node # the latest stable
+node_js: 13
 
 cache:
   npm: false # don't do node_modules
