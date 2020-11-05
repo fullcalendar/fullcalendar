@@ -33,7 +33,7 @@ Please edit the original files in the `packages/core/locales/` directory.
 
 ## Getting Set Up
 
-You will need [Git][git], [Node][node] and NPM installed.
+You will need [Git][git], [Node][node] and [Yarn][yarn] installed.
 
 Then, clone FullCalendar's git repo:
 
@@ -44,7 +44,7 @@ The recursive flag will clone all submodules as well. fullcalendar-scheduler and
 Enter the directory and install FullCalendar's dependencies:
 
 	cd fullcalendar
-	npm install
+	yarn install
 
 *NOTE:* The install command will take a LONG time. We are working to fix this.
 
@@ -53,28 +53,28 @@ Enter the directory and install FullCalendar's dependencies:
 
 After you make code changes, you'll want to compile the JS/CSS so that it can be previewed from the tests and examples. You can either manually rebuild each time you make a change:
 
-	npm run build
+	yarn build
 
 Or, you can run a script that automatically rebuilds whenever you save a source file:
 
-	npm run watch
+	yarn watch
 
 If you want to clean up the generated files, run:
 
-	npm run clean
+	yarn clean
 
 
 ## Running Test
 
-To run the Karma tests, you must first run `npm run watch`. Then, in separate console, run:
+To run the Karma tests, you must first run `yarn watch`. Then, in separate console, run:
 
-  npm run test
+  yarn test
 
 You will be given a URL to visit in your browser. When you visit this URL the tests will automatically run.
 
 If you want to execute the tests headlessly, run:
 
-  npm run test:single
+  yarn test:ci
 
 
 ## Git
@@ -116,16 +116,23 @@ Notes about whitespace:
 
 Run the command line tool to automatically check your style:
 
-	npm run lint
+	yarn lint
 
 
 ## Before Submitting your Code
 
 If you have edited code (including **tests** and **translations**) and would like to submit a pull request, please make sure you have done the following:
 
-1. Conformed to the style guide (successfully run `npm run lint`)
+1. Conformed to the style guide (successfully run `yarn lint`)
 
 2. Written automated tests. View the [Automated Test Readme]
+
+
+## Special Notes
+
+`karma-patch.dif` is a patch to Karma, applied by Yarn, to fix this bug with PnP usage:
+https://github.com/karma-runner/karma/issues/3530
+
 
 
 [Codepen/JSFiddle]: http://fullcalendar.io/wiki/Reporting-Bugs/
@@ -134,5 +141,6 @@ If you have edited code (including **tests** and **translations**) and would lik
 [MomentJS locale data]: https://github.com/moment/moment/tree/develop/locale
 [git]: http://git-scm.com/
 [node]: http://nodejs.org/
+[yarn]: https://yarnpkg.com/
 [Google JavaScript Style Guide]: https://google.github.io/styleguide/jsguide.html
 [Automated Test Readme]: https://github.com/fullcalendar/fullcalendar/wiki/Automated-Tests

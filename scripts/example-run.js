@@ -30,11 +30,11 @@ for (let projName of projNames) {
 
   switch(projName) {
 
-    case 'next':
-    case 'nuxt':
-    case 'vue-typescript':
-    case 'vue-vuex':
-    case 'parcel':
+    case 'next': // somehow incompatible with babel-plugin-transform-require-ignore. REVISIT
+    case 'nuxt': // nuxt cli tool uses webpack 4
+    case 'vue-typescript': // vue cli tool uses webpack 4
+    case 'vue-vuex': // vue cli tool uses webpack 4
+    case 'parcel': // doesn't support pnp yet. parcel 2 WILL
       console.log('Using NPM simulation')
       console.log()
       exec.sync(
