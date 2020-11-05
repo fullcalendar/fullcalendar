@@ -43,7 +43,7 @@
   "scripts": {
     "build": "gulp build",
     "watch": "gulp watch",
-    "contrib:ci": "./scripts/contrib-ci.sh",
+    "contrib": "node ./scripts/contrib.js",
     "example": "node ./scripts/example.js",
     "example:npm": "node ./scripts/example-npm.js",
     "example:pnp": "node ./scripts/example-pnp.js",
@@ -57,8 +57,8 @@
     "ci:all": "./scripts/ci-all.sh",
     "ci:lint": "yarn run lint && yarn run build && yarn run lintBuilt",
     "ci:test": "yarn run build && yarn run test:ci",
-    "ci:contrib": "yarn run build && yarn run contrib:ci && FULLCALENDAR_FORCE_REACT=1 yarn run test:ci",
-    "ci:examples": "yarn run build && yarn run contrib:ci && yarn run example all build",
+    "ci:contrib": "yarn run build && yarn run contrib all ci && FULLCALENDAR_FORCE_REACT=1 yarn run test:ci",
+    "ci:examples": "yarn run build && yarn run contrib all build && yarn run example all build",
     "preversion": "./scripts/update-example-dates.sh && yarn run clean",
     "version": "yarn run ci && yarn run archive",
     "postversion": "echo 'EXEC: git push --recurse-submodules=on-demand' && echo 'STILL NEED TO PUSH ALL TAGS'"

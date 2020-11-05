@@ -3,7 +3,7 @@ const exec = require('./lib/shell')
 const globby = require('globby')
 
 let rootDir = path.resolve(__dirname, '..')
-let examplesDir = path.join(rootDir, 'example-projects')
+let contribRootDir = path.join(rootDir, 'packages-contrib')
 let givenProjName = process.argv[2]
 let runCmd = process.argv[3]
 
@@ -18,49 +18,30 @@ if (!runCmd) {
 }
 
 let projNames = givenProjName === 'all' ?
-  globby.sync('*', { cwd: examplesDir, onlyDirectories: true }) :
+  globby.sync('*', { cwd: contribRootDir, onlyDirectories: true }) :
   [ givenProjName ]
 
 for (let projName of projNames) {
-  let projDir = path.join(examplesDir, projName)
+  let projDir = path.join(contribRootDir, projName)
 
   console.log('')
   console.log('PROJECT:', projName)
   console.log(projDir)
+  console.log('')
 
   switch(projName) {
 
-    case 'next':
-    case 'nuxt':
-    case 'vue-typescript':
-    case 'vue-vuex':
-    case 'parcel':
-      console.log('Using NPM simulation')
-      console.log()
-      exec.sync(
-        [ 'yarn', 'run', 'example:npm', projName, runCmd ],
-        { cwd: rootDir, exitOnError: true, live: true }
-      )
-      break
-
     case 'angular':
-      console.log('Using PnP simulation')
-      console.log()
       exec.sync(
-        [ 'yarn', 'run', 'example:pnp', projName, runCmd ],
-        { cwd: rootDir, exitOnError: true, live: true }
+        [ 'yarn', 'pnpify', '--cwd', projName, 'yarn', 'run', runCmd ],
+        { cwd: contribRootDir, exitOnError: true, live: true }
       )
-      break
 
     default:
-      console.log('Normal Yarn execution')
-      console.log()
       exec.sync(
         [ 'yarn', 'run', runCmd ],
         { cwd: projDir, exitOnError: true, live: true }
       )
       break
   }
-
-  console.log('')
 }
