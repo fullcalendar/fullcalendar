@@ -57,8 +57,8 @@
     "ci:all": "./scripts/ci-all.sh",
     "ci:lint": "yarn run lint && yarn run build && yarn run lintBuilt",
     "ci:test": "yarn run build && yarn run test:ci",
-    "ci:contrib": "yarn run build && yarn run contrib all ci && FULLCALENDAR_FORCE_REACT=1 yarn run test:ci",
-    "ci:examples": "yarn run build && yarn run contrib all build && yarn run example all build",
+    "ci:contrib": "yarn run build && yarn run contrib:run all ci && FULLCALENDAR_FORCE_REACT=1 yarn run test:ci",
+    "ci:examples": "yarn run build && yarn run contrib:run all build && yarn run example:run all build",
     "preversion": "./scripts/update-example-dates.sh && yarn run clean",
     "version": "yarn run ci && yarn run archive",
     "postversion": "echo 'EXEC: git push --recurse-submodules=on-demand' && echo 'STILL NEED TO PUSH ALL TAGS'"
