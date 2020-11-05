@@ -23,7 +23,5 @@ env:
     - SCRIPT=ci:contrib
     - SCRIPT=ci:examples
 
-# by default, travis tries --frozen-lockfile flag, which is deprecated
-install: yarn install
-
+install: yarn install # by default, travis tries --frozen-lockfile flag, which is deprecated
 script: yarn run $SCRIPT
