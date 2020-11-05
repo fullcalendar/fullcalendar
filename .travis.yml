@@ -20,8 +20,8 @@ env:
   jobs:
     - SCRIPT_NAME="ci:lint"
     - SCRIPT_NAME="ci:test"
-    - SCRIPT_NAME="ci:test:react"
-    - SCRIPT_NAME="ci:contrib-n-ex"
+    - SCRIPT_NAME="ci:contrib"
+    - SCRIPT_NAME="ci:ex"
 
 # by default, travis tries --frozen-lockfile flag, which is deprecated
 install: yarn install
