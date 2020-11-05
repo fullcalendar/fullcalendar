@@ -27,17 +27,20 @@ for (let projName of projNames) {
   console.log('')
   console.log('PROJECT:', projName)
   console.log(projDir)
-  console.log('')
 
   switch(projName) {
 
     case 'angular':
+      console.log('Using NPM simulation')
+      console.log('')
       exec.sync(
         [ 'yarn', 'pnpify', '--cwd', projName, 'yarn', 'run', runCmd ],
         { cwd: contribRootDir, exitOnError: true, live: true }
       )
 
     default:
+      console.log('Normal Yarn execution')
+      console.log('')
       exec.sync(
         [ 'yarn', 'run', runCmd ],
         { cwd: projDir, exitOnError: true, live: true }

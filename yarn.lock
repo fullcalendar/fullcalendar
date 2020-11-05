@@ -2540,6 +2540,7 @@ __metadata:
     "@fullcalendar/core": ~5.3.1
     "@fullcalendar/daygrid": ~5.3.1
     "@rollup/plugin-node-resolve": ^8.4.0
+    "@types/estree": ^0.0.45
     "@types/node": 14.10.0
     "@vue/test-utils": ^1.0.3
     babel-loader: ^8.1.0
