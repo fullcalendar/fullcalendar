@@ -1,6 +1,6 @@
 import { ListenerCounter } from '../lib/ListenerCounter'
 
-xdescribe('destroy', function() {
+describe('destroy', function() {
 
   describe('when calendar is LTR', function() {
     it('cleans up all classNames on the root element', function() {
