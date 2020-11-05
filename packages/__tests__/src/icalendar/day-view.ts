@@ -9,6 +9,7 @@ import recurringWeeklyMeeting from './data/recurringWeeklyMeeting'
 import mungedOneHourMeeting from './data/mungedOneHourMeeting'
 import meetingWithMungedStart from './data/meetingWithMungedStart'
 import alldayEvent from './data/alldayEvent'
+import timedMeetingWithoutEnd from './data/timedMeetingWithoutEnd'
 
 describe('addICalEventSource with week view', function() {
   const ICAL_MIME_TYPE = 'text/calendar'
@@ -33,7 +34,9 @@ describe('addICalEventSource with week view', function() {
     })
 	})
 
-  it('correctly adds a repeating weekly meeting', (done) => {
+  xit('correctly adds a repeating weekly meeting', (done) => {
+    // I want to test that the event for the current week is visible but 
+    // am unsure how to do this.
     loadICalendarWith(recurringWeeklyMeeting, () => {
       setTimeout(() => {
         assertEventCount(1)
@@ -70,7 +73,26 @@ describe('addICalEventSource with week view', function() {
 		})
 	})
 
-  function loadICalendarWith(rawICal: string, assertions: () => void) {
+  fit('sets default duration when no end or duration included in the VEVENT', (done) => {
+    loadICalendarWith(timedMeetingWithoutEnd,
+      () => {
+        setTimeout(() => {
+          assertEventCount(1)
+          // check that event has been given a two day length
+          const event = currentCalendar.getEvents()[0]
+          expect(event.end.getHours()).toEqual(event.start.getHours() + 3)
+          done()
+        }, 100)
+      },
+      (source) => {
+        initCalendar({
+          forceEventDuration: true,
+          defaultTimedEventDuration: '03:00',
+        }).addEventSource(source)
+      })
+  })
+
+  function loadICalendarWith(rawICal: string, assertions: () => void, calendarSetup?: (source: EventSourceInput) => void) {
     const feedUrl = '/mock.ics'
 
     XHRMock.get(feedUrl, function(req, res) {
@@ -81,9 +103,13 @@ describe('addICalEventSource with week view', function() {
         .body(rawICal)
     })
 
-    initCalendar().addEventSource(
-      { feedUrl } as EventSourceInput
-    )
+    const source = { feedUrl } as EventSourceInput
+
+    if (calendarSetup) {
+      calendarSetup(source)
+    } else {
+      initCalendar().addEventSource(source)
+    }
 
     assertions()
   }
