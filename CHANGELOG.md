@@ -2,6 +2,11 @@
 v5.4.0
 ------
 
+- new fixedMirrorParent settings for drag-n-drop. workaround for #4673
+- rrule exclusion doesn't work while adding the 'Z' char for RRule datetimes (#5726)
+- fix JS error when using dayMaxEventRows on small screens (#5850, #5863)
+- export types for ResourceFunc and ResourceInput (#5797)
+- more descriptive license key warning (#5910)
 - better compatibility with Webpack 5, deeming `resolve.fullySpecified` unnecessary (#5822)
 - dist files now include a CJS file. ESM is still used by default in most environments (#5929)
 
