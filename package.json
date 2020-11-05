@@ -37,14 +37,13 @@
     "!example-projects/parcel"
   ],
   "resolutions": {
-    "karma": "patch:karma@^5.2.3#./karma-patch.diff",
-    "moment": "^2.29.1"
+    "karma": "patch:karma@^5.2.3#./karma-patch.diff"
   },
   "scripts": {
     "build": "gulp build",
     "watch": "gulp watch",
-    "contrib": "node ./scripts/contrib.js",
-    "example": "node ./scripts/example.js",
+    "contrib:run": "node ./scripts/contrib-run.js",
+    "example:run": "node ./scripts/example-run.js",
     "example:npm": "node ./scripts/example-npm.js",
     "example:pnp": "node ./scripts/example-pnp.js",
     "example:open": "./script/example-open.sh",
