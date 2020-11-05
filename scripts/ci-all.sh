@@ -9,6 +9,6 @@ yarn run build
 yarn run lintBuilt
 yarn run archive
 yarn run contrib:ci
-yarn run ex:build
+yarn run example all build
 yarn run test:ci
 FULLCALENDAR_FORCE_REACT=1 yarn run test:ci

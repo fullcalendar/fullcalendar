@@ -21,7 +21,7 @@ env:
     # - SCRIPT=ci:lint
     # - SCRIPT=ci:test
     # - SCRIPT=ci:contrib
-    - SCRIPT=ci:ex
+    - SCRIPT=ci:examples
 
 # by default, travis tries --frozen-lockfile flag, which is deprecated
 install: yarn install

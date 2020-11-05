@@ -4,11 +4,22 @@ const globby = require('globby')
 
 let rootDir = path.resolve(__dirname, '..')
 let exDir = path.join(rootDir, 'example-projects')
-let projNames = process.argv.slice(2)
+let givenProjName = process.argv[2]
+let runCmd = process.argv[3]
 
-if (!projNames.length) {
-  projNames = globby.sync('*', { cwd: exDir, onlyDirectories: true })
+if (!givenProjName) {
+  console.error('Must specify an example-project name, or "all"')
+  process.exit(1)
 }
+
+if (!runCmd) {
+  console.error('Must specify a run command')
+  process.exit(1)
+}
+
+let projNames = givenProjName === 'all' ?
+  globby.sync('*', { cwd: exDir, onlyDirectories: true }) :
+  [ givenProjName ]
 
 for (let projName of projNames) {
   let projDir = path.join(exDir, projName)
@@ -19,24 +30,15 @@ for (let projName of projNames) {
 
   switch(projName) {
 
-    case 'parcel':
-      // problem with parcel+deasync on node 15
-      // https://github.com/parcel-bundler/parcel/issues/5294
-      if (process.env.CI) {
-        console.log('Skipping in CI environment')
-        console.log()
-        continue
-      }
-      // otherwise, fall through...
-
     case 'next':
     case 'nuxt':
     case 'vue-typescript':
     case 'vue-vuex':
+    case 'parcel':
       console.log('Using NPM simulation')
       console.log()
       exec.sync(
-        [ 'yarn', 'run', 'ex:npm', projName, 'build' ],
+        [ 'yarn', 'run', 'example:npm', projName, runCmd ],
         { cwd: rootDir, exitOnError: true, live: true }
       )
       break
@@ -45,7 +47,7 @@ for (let projName of projNames) {
       console.log('Using PnP simulation')
       console.log()
       exec.sync(
-        [ 'yarn', 'run', 'ex:pnp', projName, 'build' ],
+        [ 'yarn', 'run', 'example:pnp', projName, runCmd ],
         { cwd: rootDir, exitOnError: true, live: true }
       )
       break
@@ -54,7 +56,7 @@ for (let projName of projNames) {
       console.log('Normal Yarn execution')
       console.log()
       exec.sync(
-        [ 'yarn', 'run', 'build' ],
+        [ 'yarn', 'run', runCmd ],
         { cwd: projDir, exitOnError: true, live: true }
       )
       break
