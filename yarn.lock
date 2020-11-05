@@ -12125,9 +12125,9 @@ karma@^5.2.3:
   languageName: node
   linkType: hard
 
-"karma@patch:karma@^5.2.3#./karma-patch.diff::locator=fullcalendar-workspace%40workspace%3A.":
+"karma@patch:karma@^5.2.3#./scripts/karma-patch/patch.diff::locator=fullcalendar-workspace%40workspace%3A.":
   version: 5.2.3
-  resolution: "karma@patch:karma@npm%3A5.2.3#./karma-patch.diff::version=5.2.3&hash=638e7b&locator=fullcalendar-workspace%40workspace%3A."
+  resolution: "karma@patch:karma@npm%3A5.2.3#./scripts/karma-patch/patch.diff::version=5.2.3&hash=638e7b&locator=fullcalendar-workspace%40workspace%3A."
   dependencies:
     body-parser: ^1.19.0
     braces: ^3.0.2

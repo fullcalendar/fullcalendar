@@ -128,12 +128,6 @@ If you have edited code (including **tests** and **translations**) and would lik
 2. Written automated tests. View the [Automated Test Readme]
 
 
-## Special Notes
-
-`karma-patch.dif` is a patch to Karma, applied by Yarn, to fix this bug with PnP usage:
-https://github.com/karma-runner/karma/issues/3530
-
-
 
 [Codepen/JSFiddle]: http://fullcalendar.io/wiki/Reporting-Bugs/
 [Issue Tracker]: https://github.com/fullcalendar/fullcalendar/issues

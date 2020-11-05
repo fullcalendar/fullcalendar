@@ -37,7 +37,7 @@
     "!example-projects/parcel"
   ],
   "resolutions": {
-    "karma": "patch:karma@^5.2.3#./karma-patch.diff"
+    "karma": "patch:karma@^5.2.3#./scripts/karma-patch/patch.diff"
   },
   "scripts": {
     "build": "gulp build",
