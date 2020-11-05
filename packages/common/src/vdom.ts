@@ -22,3 +22,4 @@ export import Fragment = FullCalendarVDom.Fragment
 export import createContext = FullCalendarVDom.createContext
 export import VUIEvent = FullCalendarVDom.VUIEvent
 export import flushToDom = FullCalendarVDom.flushToDom
+export import unmountComponentAtNode = FullCalendarVDom.unmountComponentAtNode

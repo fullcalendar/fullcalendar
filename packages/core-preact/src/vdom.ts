@@ -19,6 +19,7 @@ declare global {
     export import createContext = preact.createContext
     export type VUIEvent = UIEvent
     export function flushToDom(): void
+    export function unmountComponentAtNode(node: HTMLElement): void
   }
 }
 
@@ -36,7 +37,8 @@ if (globalObj.FullCalendarVDom) {
     createRef: preact.createRef,
     Fragment: preact.Fragment,
     createContext, // custom implementation
-    flushToDom
+    flushToDom,
+    unmountComponentAtNode
   }
 }
 
@@ -104,4 +106,9 @@ function createContext<T>(defaultValue: T) {
   }
 
   return ContextType
+}
+
+
+function unmountComponentAtNode(node: HTMLElement) {
+  preact.render(null, node)
 }

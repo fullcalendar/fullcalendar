@@ -1,7 +1,7 @@
 import {
   CalendarOptions, Action, CalendarContent, render, createElement, DelayedRunner, CssDimValue, applyStyleProp,
   CalendarApi, CalendarRoot, isArraysEqual, CalendarDataManager, CalendarData,
-  CustomContentRenderContext, flushToDom
+  CustomContentRenderContext, flushToDom, unmountComponentAtNode
  } from '@fullcalendar/common'
 
 
@@ -77,7 +77,7 @@ export class Calendar extends CalendarApi {
 
     } else if (this.isRendered) {
       this.isRendered = false
-      render(null, this.el)
+      unmountComponentAtNode(this.el)
       this.setClassNames([])
       this.setHeight('')
     }
