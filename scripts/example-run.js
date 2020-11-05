@@ -30,6 +30,12 @@ for (let projName of projNames) {
 
   switch(projName) {
 
+    /*
+    each of these projects need to be built with old-fashioned npm-install in their individual directories.
+    to exclude them from yarn workspaces and cache their directories in CI, keep these files in sync:
+      - package.json
+      - .travis.yml
+    */
     case 'next': // somehow incompatible with babel-plugin-transform-require-ignore. REVISIT
     case 'nuxt': // nuxt cli tool uses webpack 4
     case 'vue-typescript': // vue cli tool uses webpack 4
