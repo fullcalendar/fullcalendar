@@ -74,7 +74,7 @@ describe('addICalEventSource with week view', function() {
 		})
 	})
 
-  it('sets default duration when no end or duration included in the VEVENT', (done) => {
+  it('sets default duration when forceEventDuration is enabled and no end or duration included in the VEVENT', (done) => {
     loadICalendarWith(timedMeetingWithoutEnd,
       () => {
         setTimeout(() => {
@@ -93,6 +93,24 @@ describe('addICalEventSource with week view', function() {
       })
   })
 
+  it('sets end to null when forceEventDuration is disabled and no end or duration included in the VEVENT', (done) => {
+    loadICalendarWith(timedMeetingWithoutEnd,
+      () => {
+        setTimeout(() => {
+          assertEventCount(1)
+          // check that event has been given a two day length
+          const event = currentCalendar.getEvents()[0]
+          expect(event.end).toBeNull()
+          done()
+        }, 100)
+      },
+      (source) => {
+        initCalendar({
+          defaultTimedEventDuration: '03:00',
+        }).addEventSource(source)
+      })
+  })
+  
   it('does not override iCal DURATION in VEVENT', (done) => {
     loadICalendarWith(timedMeetingWithDuration,
       () => {
