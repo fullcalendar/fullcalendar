@@ -23,12 +23,16 @@ describe('unselectAuto', function() {
     describe('when clicking away', function() {
 
       it('unselects the current selection when clicking elsewhere in DOM', function(done) {
+        let isDone = false // hack against dragging continuing after destroy
         let calendar = initCalendar({
           unselect: function(arg) {
-            expect(dayGridWrapper.getHighlightEls().length).toBe(0)
-            expect('currentTarget' in arg.jsEvent).toBe(true) // a JS event
-            expect(typeof arg.view).toBe('object')
-            done()
+            if (!isDone) {
+              expect(dayGridWrapper.getHighlightEls().length).toBe(0)
+              expect('currentTarget' in arg.jsEvent).toBe(true) // a JS event
+              expect(typeof arg.view).toBe('object')
+              isDone = true
+              done()
+            }
           }
         })
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -45,13 +49,17 @@ describe('unselectAuto', function() {
 
     describe('when clicking another date', function() {
 
-      xit('unselects the current selection when clicking elsewhere in DOM', function(done) {
+      it('unselects the current selection when clicking elsewhere in DOM', function(done) {
+        let isDone = false // hack against dragging continuing after destroy
         let calendar = initCalendar({
           unselect: function(arg) {
-            expect(dayGridWrapper.getHighlightEls().length).toBe(0)
-            expect('currentTarget' in arg.jsEvent).toBe(true) // a JS event
-            expect(typeof arg.view).toBe('object')
-            done()
+            if (!isDone) {
+              expect(dayGridWrapper.getHighlightEls().length).toBe(0)
+              expect('currentTarget' in arg.jsEvent).toBe(true) // a JS event
+              expect(typeof arg.view).toBe('object')
+              isDone = true
+              done()
+            }
           }
         })
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
