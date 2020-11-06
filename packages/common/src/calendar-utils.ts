@@ -20,7 +20,7 @@ export interface DateSelectionApi extends DateSpanApi {
 export type DatePointTransform = (dateSpan: DateSpan, context: CalendarContext) => any
 export type DateSpanTransform = (dateSpan: DateSpan, context: CalendarContext) => any
 
-export type CalendarInteraction = { destroy() }
+export type CalendarInteraction = { destroy: () => void }
 export type CalendarInteractionClass = { new(context: CalendarContext): CalendarInteraction }
 
 export type OptionChangeHandler = (propValue: any, context: CalendarContext) => void

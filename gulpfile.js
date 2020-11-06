@@ -290,9 +290,13 @@ exports.eslint = function() {
   for (let struct of allStructs) {
     if (struct.name !== '@fullcalendar/core-preact') {
       let cmd = [
-        'eslint', '--config', 'eslint.config.js',
-        path.join(struct.dir, 'src'),
-        '--ext', '.ts,.tsx,.js,.jsx'
+        'eslint',
+        '--config', 'eslint.config.js',
+        '--ext', '.ts,.tsx,.js,.jsx',
+        '--parser-options', JSON.stringify({
+          project: path.join(struct.dir, 'tsconfig.json')
+        }),
+        path.join(struct.dir, 'src')
       ]
 
       console.log('Running eslint on', struct.name, '...')
