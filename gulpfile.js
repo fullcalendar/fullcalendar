@@ -15,6 +15,7 @@ const { minifyBundleJs, minifyBundleCss } = require('./scripts/lib/minify')
 const modify = require('gulp-modify-file')
 const { allStructs, publicPackageStructs } = require('./scripts/lib/package-index')
 const semver = require('semver')
+const { eslintAll } = require('./scripts/eslint-dir')
 
 
 
@@ -284,40 +285,6 @@ const exec3 = require('./scripts/lib/shell').sync.withOptions({
 })
 
 
-exports.eslint = function() {
-  let anyFailures = false
-
-  for (let struct of allStructs) {
-    if (struct.name !== '@fullcalendar/core-preact') {
-      let cmd = [
-        'eslint',
-        '--config', 'eslint.config.js',
-        '--ext', '.ts,.tsx,.js,.jsx',
-        '--parser-options', JSON.stringify({
-          project: path.join(struct.dir, 'tsconfig.json')
-        }),
-        path.join(struct.dir, 'src')
-      ]
-
-      console.log('Running eslint on', struct.name, '...')
-      console.log(cmd.join(' '))
-      console.log()
-
-      let { success } = exec3(cmd)
-      if (!success) {
-        anyFailures = true
-      }
-    }
-  }
-
-  if (anyFailures) {
-    return Promise.reject(new Error('At least one linting job failed'))
-  }
-
-  return Promise.resolve()
-}
-
-
 exports.lintBuiltCss = function() {
   let anyFailures = false
 
@@ -433,5 +400,8 @@ exports.lintPackageMeta = function() {
 }
 
 
-exports.lint = series(exports.lintPackageMeta, exports.eslint)
+exports.lint = series(exports.lintPackageMeta, () => {
+  return eslintAll() ? Promise.resolve() : Promise.reject()
+})
+
 exports.lintBuilt = series(exports.lintBuiltCss, exports.lintBuiltDts)
