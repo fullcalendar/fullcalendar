@@ -135,8 +135,8 @@ export class CalendarApi {
     let state = this.getCurrentData()
     let spec
 
-    let cleanedViewType = viewType || 'day' // day is default zoom
-    spec = state.viewSpecs[cleanedViewType] || this.getUnitViewSpec(cleanedViewType)
+    viewType = viewType || 'day' // day is default zoom
+    spec = state.viewSpecs[viewType] || this.getUnitViewSpec(viewType)
 
     this.unselect()
 
@@ -163,9 +163,7 @@ export class CalendarApi {
     let spec
 
     for (let viewType in viewSpecs) {
-      if (viewSpecs.hasOwnProperty(viewType)) {
-        viewTypes.push(viewType)
-      }
+      viewTypes.push(viewType)
     }
 
     for (i = 0; i < viewTypes.length; i += 1) {
@@ -356,7 +354,7 @@ export class CalendarApi {
       eventSource = sourceInput.internalEventSource
     } else if (typeof sourceInput === 'boolean') {
       if (sourceInput) { // true. part of the first event source
-        eventSource = hashValuesToArray(state.eventSources)[0]
+        [eventSource] = hashValuesToArray(state.eventSources)
       }
     } else if (sourceInput != null) { // an ID. accepts a number too
       let sourceApi = this.getEventSourceById(sourceInput) // TODO: use an internal function
@@ -407,23 +405,21 @@ export class CalendarApi {
   getEventById(id: string): EventApi | null {
     let state = this.getCurrentData()
     let { defs, instances } = state.eventStore
-    let cleanedId = String(id)
+    id = String(id)
 
     for (let defId in defs) {
-      if (defs.hasOwnProperty(defId)) {
-        let def = defs[defId]
+      let def = defs[defId]
 
-        if (def.publicId === cleanedId) {
-          if (def.recurringDef) {
-            return new EventApi(state, def, null)
-          }
+      if (def.publicId === id) {
+        if (def.recurringDef) {
+          return new EventApi(state, def, null)
+        }
 
-          for (let instanceId in instances) {
-            let instance = instances[instanceId]
+        for (let instanceId in instances) {
+          let instance = instances[instanceId]
 
-            if (instance.defId === def.defId) {
-              return new EventApi(state, def, instance)
-            }
+          if (instance.defId === def.defId) {
+            return new EventApi(state, def, instance)
           }
         }
       }
@@ -451,9 +447,7 @@ export class CalendarApi {
     let sourceApis: EventSourceApi[] = []
 
     for (let internalId in sourceHash) {
-      if (sourceHash.hasOwnProperty(internalId)) {
-        sourceApis.push(new EventSourceApi(state, sourceHash[internalId]))
-      }
+      sourceApis.push(new EventSourceApi(state, sourceHash[internalId]))
     }
 
     return sourceApis
@@ -462,10 +456,10 @@ export class CalendarApi {
   getEventSourceById(id: string): EventSourceApi | null {
     let state = this.getCurrentData()
     let sourceHash = state.eventSources
-    let cleanedId = String(id)
+    id = String(id)
 
     for (let sourceId in sourceHash) {
-      if (sourceHash[sourceId].publicId === cleanedId) {
+      if (sourceHash[sourceId].publicId === id) {
         return new EventSourceApi(state, sourceHash[sourceId])
       }
     }

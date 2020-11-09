@@ -56,13 +56,10 @@ export type ReducerFunc = ( // TODO: rename to CalendarDataInjector. move view-p
   context: CalendarContext & CalendarDataManagerState // more than just context
 ) => Dictionary
 
-
 // in future refactor, do the redux-style function(state=initial) for initial-state
 // also, whatever is happening in constructor, have it happen in action queue too
 
-
 export class CalendarDataManager {
-
   private computeOptionsData = memoize(this._computeOptionsData)
   private computeCurrentViewData = memoize(this._computeCurrentViewData)
   private organizeRawLocales = memoize(organizeRawLocales)
@@ -91,7 +88,6 @@ export class CalendarDataManager {
   private currentViewOptionsInput: ViewOptions = {}
   private currentViewOptionsRefined: ViewOptionsRefined = ({} as any)
   public currentCalendarOptionsRefiners: any = {}
-
 
   constructor(props: CalendarDataManagerProps) {
     this.props = props

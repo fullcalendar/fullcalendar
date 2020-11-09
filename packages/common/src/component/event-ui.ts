@@ -23,6 +23,19 @@ export const EVENT_UI_REFINERS = {
   textColor: String,
 }
 
+const EMPTY_EVENT_UI: EventUi = {
+  display: null,
+  startEditable: null,
+  durationEditable: null,
+  constraints: [],
+  overlap: null,
+  allows: [],
+  backgroundColor: '',
+  borderColor: '',
+  textColor: '',
+  classNames: [],
+}
+
 type BuiltInEventUiRefiners = typeof EVENT_UI_REFINERS
 
 interface EventUiRefiners extends BuiltInEventUiRefiners {
@@ -82,17 +95,4 @@ function combineTwoEventUis(item0: EventUi, item1: EventUi): EventUi { // hash1 
     textColor: item1.textColor || item0.textColor,
     classNames: item0.classNames.concat(item1.classNames),
   }
-}
-
-const EMPTY_EVENT_UI: EventUi = {
-  display: null,
-  startEditable: null,
-  durationEditable: null,
-  constraints: [],
-  overlap: null,
-  allows: [],
-  backgroundColor: '',
-  borderColor: '',
-  textColor: '',
-  classNames: [],
 }

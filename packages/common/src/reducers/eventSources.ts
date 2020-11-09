@@ -19,7 +19,12 @@ export function initEventSources(calendarOptions, dateProfile: DateProfile, cont
   )
 }
 
-export function reduceEventSources(eventSources: EventSourceHash, action: Action, dateProfile: DateProfile, context: CalendarContext): EventSourceHash {
+export function reduceEventSources(
+  eventSources: EventSourceHash,
+  action: Action,
+  dateProfile: DateProfile,
+  context: CalendarContext
+): EventSourceHash {
   let activeRange = dateProfile ? dateProfile.activeRange : null // need this check?
 
   switch (action.type) {
@@ -83,7 +88,12 @@ export function computeEventSourceLoadingLevel(eventSources: EventSourceHash): n
   return cnt
 }
 
-function addSources(eventSourceHash: EventSourceHash, sources: EventSource<any>[], fetchRange: DateRange | null, context: CalendarContext): EventSourceHash {
+function addSources(
+  eventSourceHash: EventSourceHash,
+  sources: EventSource<any>[],
+  fetchRange: DateRange | null,
+  context: CalendarContext,
+): EventSourceHash {
   let hash: EventSourceHash = {}
 
   for (let source of sources) {

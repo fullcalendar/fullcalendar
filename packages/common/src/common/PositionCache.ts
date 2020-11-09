@@ -1,4 +1,3 @@
-
 /*
 Records offset information for a set of elements, relative to an origin element.
 Can record the left/right OR the top/bottom OR both.
@@ -15,7 +14,6 @@ export class PositionCache {
   rights: any
   tops: any
   bottoms: any
-
 
   constructor(originEl: HTMLElement, els: HTMLElement[], isHorizontal: boolean, isVertical: boolean) {
     this.els = els
@@ -73,6 +71,8 @@ export class PositionCache {
         return i
       }
     }
+
+    return undefined // TODO: better
   }
 
   // Given a top offset (from document top), returns the index of the el that it vertically intersects.
@@ -87,6 +87,8 @@ export class PositionCache {
         return i
       }
     }
+
+    return undefined // TODO: better
   }
 
   // Gets the width of the element at the given index

@@ -199,7 +199,7 @@ export function arrayToUtcDate(a) {
     a = a.concat([0])
   }
 
-  return new Date(Date.UTC.apply(Date, a))
+  return new Date(Date.UTC(...(a as [any, any])))
 }
 
 // Other Utils

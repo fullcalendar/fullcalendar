@@ -20,7 +20,6 @@ import {
 } from '../api-type-deps'
 
 export class EventApi {
-
   _context: CalendarContext
   _def: EventDef
   _instance: EventInstance | null
@@ -342,7 +341,6 @@ export class EventApi {
   // NOTE: user can't modify these because Object.freeze was called in event-def parsing
   get classNames() { return this._def.ui.classNames }
   get extendedProps() { return this._def.extendedProps }
-
 
   toPlainObject(settings: { collapseExtendedProps?: boolean, collapseColor?: boolean } = {}): Dictionary {
     let def = this._def

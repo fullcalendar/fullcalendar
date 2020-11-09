@@ -1,8 +1,14 @@
 import { Seg } from '../component/DateComponent'
 import { ComponentChildren, createElement, Ref, createRef, RefObject } from '../vdom'
 import { EventApi } from '../api/EventApi'
-import { computeSegDraggable, computeSegStartResizable, computeSegEndResizable, setElSeg, EventContentArg, getEventClassNames } from '../component/event-rendering'
-
+import {
+  computeSegDraggable,
+  computeSegStartResizable,
+  computeSegEndResizable,
+  setElSeg,
+  EventContentArg,
+  getEventClassNames
+} from '../component/event-rendering'
 import { RenderHook } from './render-hook'
 import { BaseComponent } from '../vdom-util'
 

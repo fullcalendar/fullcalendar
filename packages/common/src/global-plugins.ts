@@ -14,7 +14,7 @@ import { removeElement } from './util/dom-manip'
 this array is exposed on the root namespace so that UMD plugins can add to it.
 see the rollup-bundles script.
 */
-export let globalPlugins: PluginDef[] = [ // TODO: make a const?
+export const globalPlugins: PluginDef[] = [ // TODO: make a const?
   arrayEventSourcePlugin,
   funcEventSourcePlugin,
   jsonFeedEventSourcePlugin,

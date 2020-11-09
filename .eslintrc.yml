@@ -4,9 +4,11 @@
     react:
       version: detect
   rules:
+    '@typescript-eslint/indent': off # because https://github.com/typescript-eslint/typescript-eslint/issues/1824
     '@typescript-eslint/lines-between-class-members':
       - error
       - exceptAfterSingleLine: true
+    '@typescript-eslint/no-unused-vars': off # TODO: reenable
     '@typescript-eslint/no-use-before-define':
       - error
       - variables: true
@@ -17,14 +19,28 @@
       - never
     class-methods-use-this:
       - off
+    default-case: off
+    guard-for-in: off # TODO: reenable
     import/no-cycle: off # TODO: reenable. disabled because circular deps are hard to fix right now
     import/prefer-default-export: off # named exports much better for .d.ts files
+    import/export: off # kept saying 'Multiple exports of name...'. why?
+    jsx-a11y/anchor-is-valid: off
+    jsx-a11y/click-events-have-key-events: off
+    jsx-a11y/no-static-element-interactions: off
     max-len:
       - error
       - code: 140
+    new-cap: off
+    no-cond-assign:
+      - error
+      - except-parens
     no-console:
       - error
       - allow: ['warn', 'error']
+    no-multi-assign: off
+    no-nested-ternary: off
+    no-param-reassign: off
+    no-restricted-globals: off # waiting for IE11 death b/c isNaN is needed (not Number.isNaN)
     no-restricted-syntax: off # was restricting for...of statements. a mistake it seems. REVISIT
     no-underscore-dangle: off # important for pseudo-private properties
     object-curly-newline:
@@ -33,5 +49,8 @@
           multiline: true
     operator-linebreak: off # prevents JSX if statements looking correct. REVISIT for other uses
     prefer-const: off # TODO: revisit
+    react/destructuring-assignment: off
     react/jsx-props-no-spreading: off # more acceptable in preact, b/c no proptype filtering
     react/react-in-jsx-scope: off # because we use preact
+    react/sort-comp: off
+    react/static-property-placement: off # typescript transpilation makes this a non-issue

@@ -22,7 +22,12 @@ export interface EventMutation {
 }
 
 // applies the mutation to ALL defs/instances within the event store
-export function applyMutationToEventStore(eventStore: EventStore, eventConfigBase: EventUiHash, mutation: EventMutation, context: CalendarContext): EventStore {
+export function applyMutationToEventStore(
+  eventStore: EventStore,
+  eventConfigBase: EventUiHash,
+  mutation: EventMutation,
+  context: CalendarContext
+): EventStore {
   let eventConfigs = compileEventUis(eventStore.defs, eventConfigBase)
   let dest = createEmptyEventStore()
 

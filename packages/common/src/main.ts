@@ -75,7 +75,14 @@ export { parseClassNames } from './util/html'
 
 export { getCanVGrowWithinCell } from './util/table-styling'
 
-export { EventStore, filterEventStoreDefs, createEmptyEventStore, mergeEventStores, getRelevantEvents, eventTupleToStore } from './structs/event-store'
+export {
+  EventStore,
+  filterEventStoreDefs,
+  createEmptyEventStore,
+  mergeEventStores,
+  getRelevantEvents,
+  eventTupleToStore
+} from './structs/event-store'
 export { EventUiHash, EventUi, combineEventUis, createEventUi } from './component/event-ui'
 export { Splitter, SplittableProps } from './component/event-splitting'
 export { getDayClassNames, getDateMeta, DateMeta, getSlotClassNames } from './component/date-rendering'
@@ -114,7 +121,19 @@ export { ViewDef } from './structs/view-def'
 export { ViewSpec } from './structs/view-spec'
 export { DateSpan, DateSpanApi, DatePointApi, isDateSpansEqual } from './structs/date-span'
 
-export { DateMarker, addDays, startOfDay, addMs, addWeeks, diffWeeks, diffWholeWeeks, diffWholeDays, diffDayAndTime, diffDays, isValidDate } from './datelib/marker'
+export {
+  DateMarker,
+  addDays,
+  startOfDay,
+  addMs,
+  addWeeks,
+  diffWeeks,
+  diffWholeWeeks,
+  diffWholeDays,
+  diffDayAndTime,
+  diffDays,
+  isValidDate,
+} from './datelib/marker'
 export {
   Duration, createDuration,
   asCleanDays, multiplyDuration, addDurations,
@@ -143,7 +162,13 @@ export { EventSourceDef } from './structs/event-source-def'
 export { EventSource, EventSourceHash } from './structs/event-source'
 export { EventSourceRefiners, EventSourceRefined } from './structs/event-source-parse'
 
-export { Interaction, InteractionSettings, interactionSettingsToStore, interactionSettingsStore, InteractionSettingsStore } from './interactions/interaction'
+export {
+  Interaction,
+  InteractionSettings,
+  interactionSettingsToStore,
+  interactionSettingsStore,
+  InteractionSettingsStore,
+} from './interactions/interaction'
 export { PointerDragEvent } from './interactions/pointer'
 export { Hit } from './interactions/hit'
 export { dateSelectionJoinTransformer } from './interactions/date-selecting'
@@ -167,7 +192,8 @@ export { CalendarRoot } from './CalendarRoot'
 
 export { DayHeader } from './common/DayHeader'
 export { computeFallbackHeaderFormat } from './common/table-utils'
-export { TableDateCell, TableDowCell } from './common/TableDateCell'
+export { TableDateCell } from './common/TableDateCell'
+export { TableDowCell } from './common/TableDowCell'
 
 export { DaySeriesModel } from './common/DaySeriesModel'
 
@@ -216,13 +242,14 @@ export { NowTimer } from './NowTimer'
 export { ScrollResponder, ScrollRequest } from './ScrollResponder'
 export { globalPlugins } from './global-plugins'
 export {
-  RenderHook, RenderHookProps, RenderHookPropsChildren, MountHook, MountHookProps, buildClassNameNormalizer, ContentHook, CustomContentRenderContext,
-  ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler, MountArg,
+  RenderHook, RenderHookProps, RenderHookPropsChildren, MountHook, MountHookProps, buildClassNameNormalizer, ContentHook,
+  CustomContentRenderContext, ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler, MountArg,
 } from './common/render-hook'
 export { StandardEvent, StandardEventProps } from './common/StandardEvent'
 export { NowIndicatorRoot, NowIndicatorRootProps } from './common/NowIndicatorRoot'
 
-export { DayCellRoot, DayCellRootProps, DayCellContent, DayCellContentProps, DayCellContentArg } from './common/DayCellRoot'
+export { DayCellRoot, DayCellRootProps, DayCellContentArg } from './common/DayCellRoot'
+export { DayCellContent, DayCellContentProps } from './common/DayCellContent'
 export { EventRoot, MinimalEventProps } from './common/EventRoot'
 export { renderFill, BgEvent, BgEventProps } from './common/bg-fill'
 export { WeekNumberRoot, WeekNumberRootProps } from './common/WeekNumberRoot'

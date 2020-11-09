@@ -142,20 +142,20 @@ function buildFormattingFunc(
   let standardDatePropCnt = Object.keys(standardDateProps).length
 
   if (standardDatePropCnt === 1 && standardDateProps.timeZoneName === 'short') {
-    return function (date: ZonedMarker) {
-      return formatTimeZoneOffset(date.timeZoneOffset)
-    }
+    return (date: ZonedMarker) => (
+      formatTimeZoneOffset(date.timeZoneOffset)
+    )
   }
 
   if (standardDatePropCnt === 0 && extendedSettings.week) {
-    return function (date: ZonedMarker) {
-      return formatWeekNumber(
+    return (date: ZonedMarker) => (
+      formatWeekNumber(
         context.computeWeekNumber(date.marker),
         context.weekText,
         context.locale,
         extendedSettings.week,
       )
-    }
+    )
   }
 
   return buildNativeFormattingFunc(standardDateProps, extendedSettings, context)

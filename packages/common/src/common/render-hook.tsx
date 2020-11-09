@@ -1,7 +1,13 @@
+/* eslint max-classes-per-file: "off" */
+
 import { Ref, createRef, ComponentChildren, createElement, RefObject, createContext, Context } from '../vdom'
 import { setRef, BaseComponent } from '../vdom-util'
 import { isPropsEqual } from '../util/object'
 import { parseClassNames, ClassNamesInput } from '../util/html'
+
+export type MountArg<ContentArg> = ContentArg & { el: HTMLElement }
+export type DidMountHandler<TheMountArg extends { el: HTMLElement }> = (mountArg: TheMountArg) => void
+export type WillUnmountHandler<TheMountArg extends { el: HTMLElement }> = (mountArg: TheMountArg) => void
 
 export interface RenderHookProps<ContentArg> {
   hookProps: ContentArg
@@ -66,7 +72,9 @@ export interface ObjCustomContent {
 
 export type CustomContent = ComponentChildren | ObjCustomContent
 export type CustomContentGenerator<HookProps> = CustomContent | ((hookProps: HookProps) => CustomContent)
-export type DefaultContentGenerator<HookProps> = (hookProps: HookProps) => ComponentChildren // TODO: rename to be about function, not default. use in above type
+
+export type DefaultContentGenerator<HookProps> = (hookProps: HookProps) => ComponentChildren
+// TODO: rename to be about function, not default. use in above type
 
 // for forcing rerender of components that use the ContentHook
 export const CustomContentRenderContext: Context<number> = createContext<number>(0)
@@ -165,10 +173,6 @@ class ContentHookInner<HookProps> extends BaseComponent<ContentHookInnerProps<Ho
   }
 }
 
-export type MountArg<ContentArg> = ContentArg & { el: HTMLElement }
-export type DidMountHandler<MountArg extends { el: HTMLElement }> = (mountArg: MountArg) => void
-export type WillUnmountHandler<MountArg extends { el: HTMLElement }> = (mountArg: MountArg) => void
-
 export interface MountHookProps<ContentArg> {
   hookProps: ContentArg
   didMount: DidMountHandler<MountArg<ContentArg>>
@@ -186,12 +190,18 @@ export class MountHook<ContentArg> extends BaseComponent<MountHookProps<ContentA
 
   componentDidMount() {
     let callback = this.props.didMount
-    callback && callback({ ...this.props.hookProps, el: this.rootEl })
+
+    if (callback) {
+      callback({ ...this.props.hookProps, el: this.rootEl })
+    }
   }
 
   componentWillUnmount() {
     let callback = this.props.willUnmount
-    callback && callback({ ...this.props.hookProps, el: this.rootEl })
+
+    if (callback) {
+      callback({ ...this.props.hookProps, el: this.rootEl })
+    }
   }
 
   private handleRootEl = (rootEl: HTMLElement) => {

@@ -1,6 +1,14 @@
 import { DateMarker, startOfDay, addDays } from './datelib/marker'
 import { Duration, createDuration, asRoughDays, asRoughMs, greatestDurationDenominator } from './datelib/duration'
-import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, parseRange, DateRangeInput } from './datelib/date-range'
+import {
+  DateRange,
+  OpenDateRange,
+  constrainMarkerToRange,
+  intersectRanges,
+  rangesIntersect,
+  parseRange,
+  DateRangeInput,
+} from './datelib/date-range'
 import { DateEnv, DateInput } from './datelib/env'
 import { computeVisibleDayRange } from './util/date'
 import { getNow } from './reducers/current-date'
@@ -298,7 +306,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     do {
       end = addDays(end, 1)
       if (!this.isHiddenDay(end)) {
-        runningCount++
+        runningCount += 1
       }
     } while (runningCount < dayCount)
 
@@ -383,7 +391,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
       if (
         !(isHiddenDayHash[i] = hiddenDays.indexOf(i) !== -1)
       ) {
-        dayCnt++
+        dayCnt += 1
       }
     }
 

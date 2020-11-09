@@ -322,6 +322,7 @@ export class DateEnv {
     if (unit === 'second') {
       return startOfSecond(m)
     }
+    return null
   }
 
   startOfYear(m: DateMarker): DateMarker {

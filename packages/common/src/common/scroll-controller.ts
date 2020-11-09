@@ -1,3 +1,4 @@
+/* eslint max-classes-per-file: "off" */
 
 /*
 An object for getting/setting scroll-related information for an element.

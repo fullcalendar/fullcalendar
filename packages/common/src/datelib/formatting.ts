@@ -17,4 +17,6 @@ export function createFormatter(input: FormatterInput): DateFormatter {
   if (typeof input === 'function') {
     return new FuncFormatter(input as FuncFormatterFunc)
   }
+
+  return null
 }

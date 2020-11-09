@@ -17,7 +17,7 @@ import {
   InteractionSettingsInput,
   InteractionClass,
   parseInteractionSettings,
-  interactionSettingsStore
+  interactionSettingsStore,
 } from './interactions/interaction'
 import { DateComponent } from './component/DateComponent'
 import { EventClicking } from './interactions/EventClicking'
@@ -123,7 +123,7 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
     let { props } = this
 
     this.calendarInteractions = props.pluginHooks.calendarInteractions
-      .map((calendarInteractionClass) => new calendarInteractionClass(props))
+      .map((CalendarInteractionClass) => new CalendarInteractionClass(props))
 
     window.addEventListener('resize', this.handleWindowResize)
 
@@ -234,7 +234,7 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
     let interactionClasses: InteractionClass[] = DEFAULT_INTERACTIONS.concat(
       this.props.pluginHooks.componentInteractions,
     )
-    let interactions = interactionClasses.map((interactionClass) => new interactionClass(settings))
+    let interactions = interactionClasses.map((TheInteractionClass) => new TheInteractionClass(settings))
 
     this.interactionsStore[component.uid] = interactions
     interactionSettingsStore[component.uid] = settings
@@ -295,5 +295,5 @@ function buildToolbarProps(
 // -----------------------------------------------------------------------------------------------------------------
 
 function buildViewPropTransformers(theClasses: ViewPropsTransformerClass[]) {
-  return theClasses.map((theClass) => new theClass())
+  return theClasses.map((TheClass) => new TheClass())
 }

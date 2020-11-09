@@ -15,16 +15,12 @@ interface NowTimerState {
   todayRange: DateRange
 }
 
-
 export class NowTimer extends Component<NowTimerProps, NowTimerState> {
-
   static contextType: any = ViewContextType
   context: ViewContext // do this for all components that use the context!!!
-
   initialNowDate: DateMarker
   initialNowQueriedMs: number
   timeoutId: any
-
 
   constructor(props: NowTimerProps, context: ViewContext) {
     super(props, context)
