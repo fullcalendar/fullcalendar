@@ -88,7 +88,7 @@ export function buildEventSourceRefiners(context: CalendarContext) {
 function buildEventSourceMeta(raw: EventSourceRefined, context: CalendarContext) {
   let defs = context.pluginHooks.eventSourceDefs
 
-  for (let i = defs.length - 1; i >= 0; i--) { // later-added plugins take precedence
+  for (let i = defs.length - 1; i >= 0; i -= 1) { // later-added plugins take precedence
     let def = defs[i]
     let meta = def.parseMeta(raw)
 

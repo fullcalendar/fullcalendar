@@ -10,7 +10,7 @@ export function mergeProps(propObjs, complexPropsMap?): any {
       let complexObjs = []
 
       // collect the trailing object values, stopping when a non-object is discovered
-      for (let i = propObjs.length - 1; i >= 0; i--) {
+      for (let i = propObjs.length - 1; i >= 0; i -= 1) {
         let val = propObjs[i][name]
 
         if (typeof val === 'object' && val) { // non-null object
@@ -29,7 +29,7 @@ export function mergeProps(propObjs, complexPropsMap?): any {
   }
 
   // copy values into the destination, going from last to first
-  for (let i = propObjs.length - 1; i >= 0; i--) {
+  for (let i = propObjs.length - 1; i >= 0; i -= 1) {
     let props = propObjs[i]
 
     for (let name in props) {
