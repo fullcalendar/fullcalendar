@@ -12,7 +12,13 @@ import { ViewPropsTransformerClass } from './plugin-system-struct'
 import { createElement, createRef, VUIEvent, Fragment, VNode } from './vdom'
 import { buildDelegationHandler } from './util/dom-event'
 import { ViewContainer } from './ViewContainer'
-import { Interaction, InteractionSettingsInput, InteractionClass, parseInteractionSettings, interactionSettingsStore } from './interactions/interaction'
+import {
+  Interaction,
+  InteractionSettingsInput,
+  InteractionClass,
+  parseInteractionSettings,
+  interactionSettingsStore
+} from './interactions/interaction'
 import { DateComponent } from './component/DateComponent'
 import { EventClicking } from './interactions/EventClicking'
 import { EventHovering } from './interactions/EventHovering'
@@ -21,17 +27,12 @@ import { CalendarInteraction } from './calendar-utils'
 import { DelayedRunner } from './util/runner'
 import { PureComponent } from './vdom-util'
 
-
 export interface CalendarContentProps extends CalendarData {
   forPrint: boolean
   isHeightAuto: boolean
 }
 
-
 export class CalendarContent extends PureComponent<CalendarContentProps> {
-
-  context: never
-
   private buildViewContext = memoize(buildViewContext)
   private buildViewPropTransformers = memoize(buildViewPropTransformers)
   private buildToolbarProps = memoize(buildToolbarProps)
@@ -40,7 +41,6 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
   private footerRef = createRef<Toolbar>()
   private interactionsStore: { [componentUid: string]: Interaction[] } = {}
   private calendarInteractions: CalendarInteraction[]
-
 
   /*
   renders INSIDE of an outer div
