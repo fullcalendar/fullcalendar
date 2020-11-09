@@ -5,15 +5,12 @@ TODO: somehow infer OtherArgs from masterCallback?
 TODO: infer RefType from masterCallback if provided
 */
 export class RefMap<RefType> {
-
   public currentMap: { [key: string]: RefType } = {}
   private depths: { [key: string]: number } = {}
   private callbackMap: { [key: string]: (val: RefType | null) => void } = {}
 
-
   constructor(public masterCallback?: (val: RefType | null, key: string) => void) {
   }
-
 
   createRef(key: string | number) {
     let refCallback = this.callbackMap[key]

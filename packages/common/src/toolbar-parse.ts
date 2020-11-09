@@ -95,6 +95,6 @@ function parseSection(
 
         return { buttonName, buttonClick, buttonIcon, buttonText }
       })
-    )
+    ),
   )
 }

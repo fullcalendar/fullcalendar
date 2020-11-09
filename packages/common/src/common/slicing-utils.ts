@@ -33,7 +33,6 @@ export interface SlicedProps<SegType extends Seg> {
 }
 
 export abstract class Slicer<SegType extends Seg, ExtraArgs extends any[] = []> {
-
   private sliceBusinessHours = memoize(this._sliceBusinessHours)
   private sliceDateSelection = memoize(this._sliceDateSpan)
   private sliceEventStore = memoize(this._sliceEventStore)

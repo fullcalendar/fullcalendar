@@ -4,7 +4,6 @@ Can record the left/right OR the top/bottom OR both.
 Provides methods for querying the cache by position.
 */
 export class PositionCache {
-
   els: HTMLElement[] // assumed to be siblings
   originClientRect: ClientRect
 

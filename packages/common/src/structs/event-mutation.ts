@@ -26,7 +26,7 @@ export function applyMutationToEventStore(
   eventStore: EventStore,
   eventConfigBase: EventUiHash,
   mutation: EventMutation,
-  context: CalendarContext
+  context: CalendarContext,
 ): EventStore {
   let eventConfigs = compileEventUis(eventStore.defs, eventConfigBase)
   let dest = createEmptyEventStore()

@@ -41,7 +41,6 @@ export interface NativeFormatterOptions extends Intl.DateTimeFormatOptions {
 }
 
 export class NativeFormatter implements DateFormatter {
-
   standardDateProps: any
   extendedSettings: any
   severity: number

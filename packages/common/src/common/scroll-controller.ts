@@ -6,7 +6,6 @@ Internally, this is done very differently for window versus DOM element,
 so this object serves as a common interface.
 */
 export abstract class ScrollController {
-
   abstract getScrollTop(): number
   abstract getScrollLeft(): number
   abstract setScrollTop(top: number): void

@@ -35,7 +35,6 @@ export interface DayCellRootProps {
 }
 
 export class DayCellRoot extends BaseComponent<DayCellRootProps> {
-
   refineHookProps = memoizeObjArg(refineDayCellHookProps)
   normalizeClassNames = buildClassNameNormalizer<DayCellContentArg>()
 

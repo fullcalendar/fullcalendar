@@ -7,7 +7,7 @@ import {
   computeSegEndResizable,
   setElSeg,
   EventContentArg,
-  getEventClassNames
+  getEventClassNames,
 } from '../component/event-rendering'
 import { RenderHook } from './render-hook'
 import { BaseComponent } from '../vdom-util'

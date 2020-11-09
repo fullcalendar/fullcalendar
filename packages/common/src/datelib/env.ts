@@ -35,9 +35,7 @@ export interface DateMarkerMeta {
   forcedTzo: number | null
 }
 
-
 export class DateEnv {
-
   timeZone: string
   namedTimeZoneImpl: NamedTimeZoneImpl
   canComputeOffset: boolean
@@ -50,7 +48,6 @@ export class DateEnv {
   weekText: string // DON'T LIKE how options are confused with local
   cmdFormatter?: CmdFormatterFunc
   defaultSeparator: string
-
 
   constructor(settings: DateEnvSettings) {
     let timeZone = this.timeZone = settings.timeZone

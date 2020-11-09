@@ -81,7 +81,7 @@ export {
   createEmptyEventStore,
   mergeEventStores,
   getRelevantEvents,
-  eventTupleToStore
+  eventTupleToStore,
 } from './structs/event-store'
 export { EventUiHash, EventUi, combineEventUis, createEventUi } from './component/event-ui'
 export { Splitter, SplittableProps } from './component/event-splitting'

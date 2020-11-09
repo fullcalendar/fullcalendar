@@ -10,7 +10,6 @@ export class Theme {
   iconOverrideCustomButtonOption: any // the name of the setting, *within* each customButtons object, to use for icons
   iconOverridePrefix: string
 
-
   constructor(calendarOptions: CalendarOptionsRefined) {
     if (this.iconOverrideOption) {
       this.setIconOverride(

@@ -19,7 +19,6 @@ export interface DayTableCell {
 }
 
 export class DayTableModel {
-
   rowCnt: number
   colCnt: number
   cells: DayTableCell[][]

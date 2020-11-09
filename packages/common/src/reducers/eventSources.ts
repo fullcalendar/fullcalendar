@@ -23,7 +23,7 @@ export function reduceEventSources(
   eventSources: EventSourceHash,
   action: Action,
   dateProfile: DateProfile,
-  context: CalendarContext
+  context: CalendarContext,
 ): EventSourceHash {
   let activeRange = dateProfile ? dateProfile.activeRange : null // need this check?
 
