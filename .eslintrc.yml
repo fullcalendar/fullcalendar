@@ -1,0 +1,37 @@
+---
+  extends: airbnb-typescript
+  settings:
+    react:
+      version: detect
+  rules:
+    '@typescript-eslint/lines-between-class-members':
+      - error
+      - exceptAfterSingleLine: true
+    '@typescript-eslint/no-use-before-define':
+      - error
+      - variables: true
+        functions: false # disable. i love hoisting functions
+        classes: false #
+    '@typescript-eslint/semi': # don't allow semicolons
+      - error
+      - never
+    class-methods-use-this:
+      - off
+    import/no-cycle: off # TODO: reenable. disabled because circular deps are hard to fix right now
+    import/prefer-default-export: off # named exports much better for .d.ts files
+    max-len:
+      - error
+      - code: 140
+    no-console:
+      - error
+      - allow: ['warn', 'error']
+    no-restricted-syntax: off # was restricting for...of statements. a mistake it seems. REVISIT
+    no-underscore-dangle: off # important for pseudo-private properties
+    object-curly-newline:
+      - error
+      - ImportDeclaration: # newlines were required within `import` statements? disable. pretty sure this was a mistake
+          multiline: true
+    operator-linebreak: off # prevents JSX if statements looking correct. REVISIT for other uses
+    prefer-const: off # TODO: revisit
+    react/jsx-props-no-spreading: off # more acceptable in preact, b/c no proptype filtering
+    react/react-in-jsx-scope: off # because we use preact

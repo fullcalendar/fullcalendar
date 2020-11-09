@@ -11,7 +11,7 @@ exports.eslintAll = eslintAll
 function eslintDir(dir) {
   let cmd = [
     'eslint',
-    '--config', 'eslint.config.js',
+    '--config', '.eslintrc.yml',
     '--ext', '.ts,.tsx,.js,.jsx',
     '--parser-options', JSON.stringify({
       project: path.join(dir, 'tsconfig.json')
