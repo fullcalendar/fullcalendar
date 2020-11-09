@@ -30,22 +30,24 @@ export interface Duration {
   specifiedWeeks?: boolean
 }
 
-const INTERNAL_UNITS = [ 'years', 'months', 'days', 'milliseconds' ]
+const INTERNAL_UNITS = ['years', 'months', 'days', 'milliseconds']
 const PARSE_RE = /^(-?)(?:(\d+)\.)?(\d+):(\d\d)(?::(\d\d)(?:\.(\d\d\d))?)?/
-
 
 // Parsing and Creation
 
 export function createDuration(input: DurationInput, unit?: string): Duration | null {
   if (typeof input === 'string') {
     return parseString(input)
-  } else if (typeof input === 'object' && input) { // non-null object
-    return parseObject(input)
-  } else if (typeof input === 'number') {
-    return parseObject({ [unit || 'milliseconds']: input })
-  } else {
-    return null
   }
+
+  if (typeof input === 'object' && input) { // non-null object
+    return parseObject(input)
+  }
+
+  if (typeof input === 'number') {
+    return parseObject({ [unit || 'milliseconds']: input })
+  }
+  return null
 }
 
 function parseString(s: string): Duration {
@@ -61,7 +63,7 @@ function parseString(s: string): Duration {
         (m[4] ? parseInt(m[4], 10) : 0) * 60 * 1000 + // minutes
         (m[5] ? parseInt(m[5], 10) : 0) * 1000 + // seconds
         (m[6] ? parseInt(m[6], 10) : 0) // ms
-      )
+      ),
     }
   }
   return null
@@ -76,7 +78,7 @@ function parseObject(obj: DurationObjectInput): Duration {
       (obj.hours || obj.hour || 0) * 60 * 60 * 1000 + // hours
       (obj.minutes || obj.minute || 0) * 60 * 1000 + // minutes
       (obj.seconds || obj.second || 0) * 1000 + // seconds
-      (obj.milliseconds || obj.millisecond || obj.ms || 0) // ms
+      (obj.milliseconds || obj.millisecond || obj.ms || 0), // ms
   }
 
   let weeks = obj.weeks || obj.week
@@ -87,7 +89,6 @@ function parseObject(obj: DurationObjectInput): Duration {
 
   return duration
 }
-
 
 // Equality
 
@@ -105,7 +106,6 @@ export function asCleanDays(dur: Duration) {
   return 0
 }
 
-
 // Simple Math
 
 export function addDurations(d0: Duration, d1: Duration) {
@@ -113,7 +113,7 @@ export function addDurations(d0: Duration, d1: Duration) {
     years: d0.years + d1.years,
     months: d0.months + d1.months,
     days: d0.days + d1.days,
-    milliseconds: d0.milliseconds + d1.milliseconds
+    milliseconds: d0.milliseconds + d1.milliseconds,
   }
 }
 
@@ -122,7 +122,7 @@ export function subtractDurations(d1: Duration, d0: Duration): Duration {
     years: d1.years - d0.years,
     months: d1.months - d0.months,
     days: d1.days - d0.days,
-    milliseconds: d1.milliseconds - d0.milliseconds
+    milliseconds: d1.milliseconds - d0.milliseconds,
   }
 }
 
@@ -131,10 +131,9 @@ export function multiplyDuration(d: Duration, n: number) {
     years: d.years * n,
     months: d.months * n,
     days: d.days * n,
-    milliseconds: d.milliseconds * n
+    milliseconds: d.milliseconds * n,
   }
 }
-
 
 // Conversions
 // "Rough" because they are based on average-case Gregorian months/years
@@ -170,7 +169,6 @@ export function asRoughMs(dur: Duration) {
     dur.milliseconds
 }
 
-
 // Advanced Math
 
 export function wholeDivideDurations(numerator: Duration, denominator: Duration): number {
@@ -187,7 +185,6 @@ export function wholeDivideDurations(numerator: Duration, denominator: Duration)
       }
 
       res = localRes
-
     } else if (numerator[unit]) {
       // needs to divide by something but can't!
       return null

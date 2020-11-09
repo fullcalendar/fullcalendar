@@ -1,3 +1,4 @@
+import { __assign } from 'tslib'
 import { EventDef } from '../structs/event-def'
 import { EVENT_NON_DATE_REFINERS, EVENT_DATE_REFINERS } from '../structs/event-parse'
 import { EventInstance } from '../structs/event-instance'
@@ -8,7 +9,6 @@ import { createDuration, durationsEqual } from '../datelib/duration'
 import { createFormatter } from '../datelib/formatting'
 import { CalendarContext } from '../CalendarContext'
 import { getRelevantEvents, EventStore } from '../structs/event-store'
-import { __assign } from 'tslib'
 import { Dictionary } from '../options'
 
 // public
@@ -16,17 +16,16 @@ import {
   DateInput,
   DurationInput,
   FormatterInput,
-  EventSourceApi
+  EventSourceApi,
 } from '../api-type-deps'
-
 
 export class EventApi {
 
   _context: CalendarContext
   _def: EventDef
   _instance: EventInstance | null
-    // instance will be null if expressing a recurring event that has no current instances,
-    // OR if trying to validate an incoming external event that has no dates assigned
+  // instance will be null if expressing a recurring event that has no current instances,
+  // OR if trying to validate an incoming external event that has no dates assigned
 
   constructor(context: CalendarContext, def: EventDef, instance?: EventInstance) {
     this._context = context
@@ -38,17 +37,14 @@ export class EventApi {
   TODO: make event struct more responsible for this
   */
   setProp(name: string, val: string) {
-
     if (name in EVENT_DATE_REFINERS) {
-      console.warn(`Could not set date-related prop 'name'. Use one of the date-related methods instead.`)
-
+      console.warn('Could not set date-related prop \'name\'. Use one of the date-related methods instead.')
     } else if (name in EVENT_NON_DATE_REFINERS) {
       val = EVENT_NON_DATE_REFINERS[name](val)
 
       this.mutate({
-        standardProps: { [name]: val }
+        standardProps: { [name]: val },
       })
-
     } else if (name in EVENT_UI_REFINERS) {
       let ui = EVENT_UI_REFINERS[name](val)
 
@@ -61,9 +57,8 @@ export class EventApi {
       }
 
       this.mutate({
-        standardProps: { ui }
+        standardProps: { ui },
       })
-
     } else {
       console.warn(`Could not set prop '${name}'. Use setExtendedProp instead.`)
     }
@@ -71,7 +66,7 @@ export class EventApi {
 
   setExtendedProp(name: string, val: any) {
     this.mutate({
-      extendedProps: { [name]: val }
+      extendedProps: { [name]: val },
     })
   }
 
@@ -150,7 +145,6 @@ export class EventApi {
         } else {
           this.mutate({ startDelta, endDelta, standardProps })
         }
-
       } else { // means "clear the end"
         standardProps.hasEnd = false
         this.mutate({ datesDelta: startDelta, standardProps })
@@ -184,7 +178,7 @@ export class EventApi {
 
   setAllDay(allDay: boolean, options: { maintainDuration?: boolean } = {}) {
     let standardProps = { allDay } as any
-    let maintainDuration = options.maintainDuration
+    let { maintainDuration } = options
 
     if (maintainDuration == null) {
       maintainDuration = this._context.options.allDayMaintainDuration
@@ -205,13 +199,12 @@ export class EventApi {
     if (this._def.hasEnd) {
       return dateEnv.formatRange(instance.range.start, instance.range.end, formatter, {
         forcedStartTzo: instance.forcedStartTzo,
-        forcedEndTzo: instance.forcedEndTzo
-      })
-    } else {
-      return dateEnv.format(instance.range.start, formatter, {
-        forcedTzo: instance.forcedStartTzo
+        forcedEndTzo: instance.forcedEndTzo,
       })
     }
+    return dateEnv.format(instance.range.start, formatter, {
+      forcedTzo: instance.forcedStartTzo,
+    })
   }
 
   mutate(mutation: EventMutation) { // meant to be private. but plugins need access
@@ -233,8 +226,8 @@ export class EventApi {
           backgroundColor: '',
           borderColor: '',
           textColor: '',
-          classNames: []
-        }
+          classNames: [],
+        },
       } as EventUiHash
 
       relevantEvents = applyMutationToEventStore(relevantEvents, eventConfigBase, mutation, context)
@@ -245,7 +238,7 @@ export class EventApi {
 
       context.dispatch({
         type: 'MERGE_EVENTS',
-        eventStore: relevantEvents
+        eventStore: relevantEvents,
       })
 
       context.emitter.trigger('eventChange', {
@@ -255,9 +248,9 @@ export class EventApi {
         revert() {
           context.dispatch({
             type: 'REMOVE_EVENTS',
-            eventStore: relevantEvents
+            eventStore: relevantEvents,
           })
-        }
+        },
       })
     }
   }
@@ -268,7 +261,7 @@ export class EventApi {
 
     context.dispatch({
       type: 'REMOVE_EVENTS',
-      eventStore: asStore
+      eventStore: asStore,
     })
 
     context.emitter.trigger('eventRemove', {
@@ -277,19 +270,19 @@ export class EventApi {
       revert() {
         context.dispatch({
           type: 'MERGE_EVENTS',
-          eventStore: asStore
+          eventStore: asStore,
         })
-      }
+      },
     })
   }
 
   get source(): EventSourceApi | null {
-    let sourceId = this._def.sourceId
+    let { sourceId } = this._def
 
     if (sourceId) {
       return new EventSourceApi(
         this._context,
-        this._context.getCurrentData().eventSources[sourceId]
+        this._context.getCurrentData().eventSources[sourceId],
       )
     }
     return null
@@ -312,7 +305,7 @@ export class EventApi {
     if (instance) {
       return this._context.dateEnv.formatIso(instance.range.start, {
         omitTime: this._def.allDay,
-        forcedTzo: instance.forcedStartTzo
+        forcedTzo: instance.forcedStartTzo,
       })
     }
     return ''
@@ -323,7 +316,7 @@ export class EventApi {
     if (instance && this._def.hasEnd) {
       return this._context.dateEnv.formatIso(instance.range.end, {
         omitTime: this._def.allDay,
-        forcedTzo: instance.forcedEndTzo
+        forcedTzo: instance.forcedEndTzo,
       })
     }
     return ''
@@ -390,7 +383,6 @@ export class EventApi {
 
     if (settings.collapseColor && ui.backgroundColor && ui.backgroundColor === ui.borderColor) {
       res.color = ui.backgroundColor
-
     } else {
       if (ui.backgroundColor) {
         res.backgroundColor = ui.backgroundColor
@@ -419,13 +411,10 @@ export class EventApi {
     return res
   }
 
-
   toJSON() {
     return this.toPlainObject()
   }
-
 }
-
 
 export function eventApiToStore(eventApi: EventApi): EventStore {
   let def = eventApi._def
@@ -435,10 +424,9 @@ export function eventApiToStore(eventApi: EventApi): EventStore {
     defs: { [def.defId]: def },
     instances: instance
       ? { [instance.instanceId]: instance }
-      : {}
+      : {},
   }
 }
-
 
 export function buildEventApis(eventStore: EventStore, context: CalendarContext, excludeInstance?: EventInstance): EventApi[] {
   let { defs, instances } = eventStore

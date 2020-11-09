@@ -1,7 +1,6 @@
 import { CalendarOptionsRefined } from '../options'
 
 export class Theme {
-
   // settings. default values are set after the class
   classes: any
   iconClasses: any
@@ -15,11 +14,10 @@ export class Theme {
   constructor(calendarOptions: CalendarOptionsRefined) {
     if (this.iconOverrideOption) {
       this.setIconOverride(
-        calendarOptions[this.iconOverrideOption]
+        calendarOptions[this.iconOverrideOption],
       )
     }
   }
-
 
   setIconOverride(iconOverrideHash) {
     let iconClassesCopy
@@ -30,17 +28,15 @@ export class Theme {
 
       for (buttonName in iconOverrideHash) {
         iconClassesCopy[buttonName] = this.applyIconOverridePrefix(
-          iconOverrideHash[buttonName]
+          iconOverrideHash[buttonName],
         )
       }
 
       this.iconClasses = iconClassesCopy
-
     } else if (iconOverrideHash === false) {
       this.iconClasses = {}
     }
   }
-
 
   applyIconOverridePrefix(className) {
     let prefix = this.iconOverridePrefix
@@ -52,29 +48,25 @@ export class Theme {
     return className
   }
 
-
   getClass(key) {
     return this.classes[key] || ''
   }
-
 
   getIconClass(buttonName, isRtl?: boolean) {
     let className
 
     if (isRtl && this.rtlIconClasses) {
       className = this.rtlIconClasses[buttonName] || this.iconClasses[buttonName]
-
     } else {
       className = this.iconClasses[buttonName]
     }
 
     if (className) {
-      return this.baseIconClass + ' ' + className
+      return `${this.baseIconClass} ${className}`
     }
 
     return ''
   }
-
 
   getCustomButtonIconClass(customButtonProps) {
     let className
@@ -83,13 +75,12 @@ export class Theme {
       className = customButtonProps[this.iconOverrideCustomButtonOption]
 
       if (className) {
-        return this.baseIconClass + ' ' + this.applyIconOverridePrefix(className)
+        return `${this.baseIconClass} ${this.applyIconOverridePrefix(className)}`
       }
     }
 
     return ''
   }
-
 }
 
 Theme.prototype.classes = {}

@@ -1,14 +1,11 @@
-
-
 export class DelayedRunner {
-
   private isRunning = false
   private isDirty = false
   private pauseDepths: { [scope: string]: number } = {}
   private timeoutId: number = 0
 
   constructor(
-    private drainedOption?: () => void
+    private drainedOption?: () => void,
   ) {
   }
 
@@ -23,7 +20,7 @@ export class DelayedRunner {
       } else {
         this.timeoutId = setTimeout( // NOT OPTIMAL! TODO: look at debounce
           this.tryDrain.bind(this),
-          delay
+          delay,
         ) as unknown as number
       }
     }
@@ -41,10 +38,8 @@ export class DelayedRunner {
     let { pauseDepths } = this
 
     if (scope in pauseDepths) {
-
       if (force) {
         delete pauseDepths[scope]
-
       } else {
         let depth = --pauseDepths[scope]
 
@@ -92,18 +87,16 @@ export class DelayedRunner {
       this.drainedOption()
     }
   }
-
 }
 
-
 export class TaskRunner<Task> { // this class USES the DelayedRunner
-
   private queue: Task[] = []
+
   private delayedRunner: DelayedRunner // will most likely be used WITHOUT any delay
 
   constructor(
     private runTaskOption?: (task: Task) => void,
-    private drainedOption?: (completedTasks: Task[]) => void
+    private drainedOption?: (completedTasks: Task[]) => void,
   ) {
     this.delayedRunner = new DelayedRunner(this.drain.bind(this))
   }
@@ -148,5 +141,4 @@ export class TaskRunner<Task> { // this class USES the DelayedRunner
       this.drainedOption(completedTasks)
     }
   }
-
 }

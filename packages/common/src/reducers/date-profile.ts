@@ -3,12 +3,10 @@ import { Action } from './Action'
 import { DateMarker } from '../datelib/marker'
 import { rangeContainsMarker } from '../datelib/date-range'
 
-
 export function reduceDateProfile(currentDateProfile: DateProfile | null, action: Action, currentDate: DateMarker, dateProfileGenerator: DateProfileGenerator): DateProfile {
   let dp: DateProfile
 
   switch (action.type) {
-
     case 'CHANGE_VIEW_TYPE':
       return dateProfileGenerator.build(action.dateMarker || currentDate)
 

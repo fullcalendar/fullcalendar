@@ -12,7 +12,6 @@ import { memoizeObjArg } from '../util/memoize'
 import { DateEnv } from '../datelib/env'
 import { Dictionary } from '../options'
 
-
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 
 interface DayCellHookPropsInput {
@@ -32,7 +31,6 @@ export interface DayCellContentArg extends DateMeta {
   [extraProp: string]: any // so can include a resource
 }
 export type DayCellMountArg = MountArg<DayCellContentArg>
-
 
 export interface DayCellRootProps {
   elRef?: Ref<any>
@@ -65,17 +63,17 @@ export class DayCellRoot extends BaseComponent<DayCellRootProps> {
       showDayNumber: props.showDayNumber,
       extraProps: props.extraHookProps,
       viewApi: context.viewApi,
-      dateEnv: context.dateEnv
+      dateEnv: context.dateEnv,
     })
 
     let classNames = getDayClassNames(hookProps, context.theme).concat(
       hookProps.isDisabled
         ? [] // don't use custom classNames if disabled
-        : this.normalizeClassNames(options.dayCellClassNames, hookProps)
+        : this.normalizeClassNames(options.dayCellClassNames, hookProps),
     )
 
     let dataAttrs = hookProps.isDisabled ? {} : {
-      'data-date': formatDayString(props.date)
+      'data-date': formatDayString(props.date),
     }
 
     return (
@@ -89,9 +87,7 @@ export class DayCellRoot extends BaseComponent<DayCellRootProps> {
       </MountHook>
     )
   }
-
 }
-
 
 export interface DayCellContentProps {
   date: DateMarker
@@ -107,7 +103,6 @@ export interface DayCellContentProps {
 }
 
 export class DayCellContent extends BaseComponent<DayCellContentProps> {
-
   render() {
     let { props, context } = this
     let { options } = context
@@ -118,7 +113,7 @@ export class DayCellContent extends BaseComponent<DayCellContentProps> {
       showDayNumber: props.showDayNumber,
       extraProps: props.extraHookProps,
       viewApi: context.viewApi,
-      dateEnv: context.dateEnv
+      dateEnv: context.dateEnv,
     })
 
     return (
@@ -131,9 +126,7 @@ export class DayCellContent extends BaseComponent<DayCellContentProps> {
       </ContentHook>
     )
   }
-
 }
-
 
 function refineHookProps(raw: DayCellHookPropsInput): DayCellContentArg {
   let { date, dateEnv } = raw
@@ -144,6 +137,6 @@ function refineHookProps(raw: DayCellHookPropsInput): DayCellContentArg {
     view: raw.viewApi,
     ...dayMeta,
     dayNumberText: raw.showDayNumber ? dateEnv.format(date, DAY_NUM_FORMAT) : '',
-    ...raw.extraProps
+    ...raw.extraProps,
   }
 }

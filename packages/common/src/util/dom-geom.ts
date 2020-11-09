@@ -16,7 +16,6 @@ export interface EdgeInfo {
   paddingBottom?: number
 }
 
-
 export function computeEdges(el: HTMLElement, getPadding = false): EdgeInfo { // cache somehow?
   let computedStyle = window.getComputedStyle(el)
   let borderLeft = parseInt(computedStyle.borderLeftWidth, 10) || 0
@@ -34,7 +33,7 @@ export function computeEdges(el: HTMLElement, getPadding = false): EdgeInfo { //
     borderBottom,
     scrollbarBottom,
     scrollbarLeft: 0,
-    scrollbarRight: 0
+    scrollbarRight: 0,
   }
 
   if (getIsRtlScrollbarOnLeft() && computedStyle.direction === 'rtl') { // is the scrollbar on the left side?
@@ -53,7 +52,6 @@ export function computeEdges(el: HTMLElement, getPadding = false): EdgeInfo { //
   return res
 }
 
-
 export function computeInnerRect(el, goWithinPadding = false, doFromWindowViewport?: boolean) {
   let outerRect = doFromWindowViewport ? el.getBoundingClientRect() : computeRect(el)
   let edges = computeEdges(el, goWithinPadding)
@@ -61,7 +59,7 @@ export function computeInnerRect(el, goWithinPadding = false, doFromWindowViewpo
     left: outerRect.left + edges.borderLeft + edges.scrollbarLeft,
     right: outerRect.right - edges.borderRight - edges.scrollbarRight,
     top: outerRect.top + edges.borderTop,
-    bottom: outerRect.bottom - edges.borderBottom - edges.scrollbarBottom
+    bottom: outerRect.bottom - edges.borderBottom - edges.scrollbarBottom,
   }
 
   if (goWithinPadding) {
@@ -74,7 +72,6 @@ export function computeInnerRect(el, goWithinPadding = false, doFromWindowViewpo
   return res
 }
 
-
 export function computeRect(el): Rect {
   let rect = el.getBoundingClientRect()
 
@@ -82,15 +79,13 @@ export function computeRect(el): Rect {
     left: rect.left + window.pageXOffset,
     top: rect.top + window.pageYOffset,
     right: rect.right + window.pageXOffset,
-    bottom: rect.bottom + window.pageYOffset
+    bottom: rect.bottom + window.pageYOffset,
   }
 }
-
 
 export function computeHeightAndMargins(el: HTMLElement) {
   return el.getBoundingClientRect().height + computeVMargins(el)
 }
-
 
 export function computeVMargins(el: HTMLElement) {
   let computed = window.getComputedStyle(el)
@@ -98,7 +93,6 @@ export function computeVMargins(el: HTMLElement) {
   return parseInt(computed.marginTop, 10) +
     parseInt(computed.marginBottom, 10)
 }
-
 
 // does not return window
 export function getClippingParents(el: HTMLElement): HTMLElement[] {

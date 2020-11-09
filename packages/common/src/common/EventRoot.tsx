@@ -1,16 +1,15 @@
 import { Seg } from '../component/DateComponent'
 import { ComponentChildren, createElement, Ref, createRef, RefObject } from '../vdom'
 import { EventApi } from '../api/EventApi'
-import { computeSegDraggable, computeSegStartResizable, computeSegEndResizable, setElSeg } from '../component/event-rendering'
-import { EventContentArg, getEventClassNames } from '../component/event-rendering'
+import { computeSegDraggable, computeSegStartResizable, computeSegEndResizable, setElSeg, EventContentArg, getEventClassNames } from '../component/event-rendering'
+
 import { RenderHook } from './render-hook'
 import { BaseComponent } from '../vdom-util'
 
-
 export interface MinimalEventProps {
   seg: Seg
-  isDragging: boolean      // rename to isMirrorDragging? make optional?
-  isResizing: boolean      // rename to isMirrorResizing? make optional?
+  isDragging: boolean // rename to isMirrorDragging? make optional?
+  isResizing: boolean // rename to isMirrorResizing? make optional?
   isDateSelecting: boolean // rename to isMirrorDateSelecting? make optional?
   isSelected: boolean
   isPast: boolean
@@ -32,11 +31,8 @@ export interface EventRootProps extends MinimalEventProps {
   ) => ComponentChildren
 }
 
-
 export class EventRoot extends BaseComponent<EventRootProps> {
-
   elRef: RefObject<HTMLElement> = createRef<HTMLElement>()
-
 
   render() {
     let { props, context } = this
@@ -63,7 +59,7 @@ export class EventRoot extends BaseComponent<EventRootProps> {
       isToday: Boolean(props.isToday), // TODO: don't cast. getDateMeta does it
       isSelected: Boolean(props.isSelected),
       isDragging: Boolean(props.isDragging),
-      isResizing: Boolean(props.isResizing)
+      isResizing: Boolean(props.isResizing),
     }
 
     let standardClassNames = getEventClassNames(hookProps).concat(ui.classNames)
@@ -79,17 +75,15 @@ export class EventRoot extends BaseComponent<EventRootProps> {
         elRef={this.elRef}
       >
         {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
-          rootElRef, standardClassNames.concat(customClassNames), innerElRef, innerContent, hookProps
+          rootElRef, standardClassNames.concat(customClassNames), innerElRef, innerContent, hookProps,
         )}
       </RenderHook>
     )
   }
 
-
   componentDidMount() {
     setElSeg(this.elRef.current, this.props.seg)
   }
-
 
   /*
   need to re-assign seg to the element if seg changes, even if the element is the same
@@ -101,5 +95,4 @@ export class EventRoot extends BaseComponent<EventRootProps> {
       setElSeg(this.elRef.current, seg)
     }
   }
-
 }

@@ -15,10 +15,8 @@ export type EventSourceError = {
   [otherProp: string]: any
 }
 
-
 export type EventSourceSuccessResponseHandler = (this: CalendarApi, rawData: any, response: any) => EventInput[] | void
 export type EventSourceErrorResponseHandler = (error: EventSourceError) => void
-
 
 export interface EventSource<Meta> {
   _raw: any
@@ -37,9 +35,7 @@ export interface EventSource<Meta> {
   extendedProps: Dictionary // undocumented
 }
 
-
 export type EventSourceHash = { [sourceId: string]: EventSource<any> }
-
 
 export type EventSourceFetcher<Meta> = (
   arg: {

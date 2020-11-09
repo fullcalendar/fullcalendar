@@ -5,10 +5,7 @@ import { organizeRawLocales, buildLocale } from './datelib/locale'
 import { BASE_OPTION_DEFAULTS } from './options'
 
 // public
-import {
-  DateInput
-} from './api-type-deps'
-
+import { DateInput } from './api-type-deps'
 
 export interface FormatDateOptions extends NativeFormatterOptions {
   locale?: string
@@ -18,7 +15,6 @@ export interface FormatRangeOptions extends FormatDateOptions {
   separator?: string
   isEndExclusive?: boolean
 }
-
 
 export function formatDate(dateInput: DateInput, options: FormatDateOptions = {}) {
   let dateEnv = buildDateEnv(options)
@@ -30,15 +26,14 @@ export function formatDate(dateInput: DateInput, options: FormatDateOptions = {}
   }
 
   return dateEnv.format(dateMeta.marker, formatter, {
-    forcedTzo: dateMeta.forcedTzo
+    forcedTzo: dateMeta.forcedTzo,
   })
 }
-
 
 export function formatRange(
   startInput: DateInput,
   endInput: DateInput,
-  options: FormatRangeOptions // mixture of env and formatter settings
+  options: FormatRangeOptions, // mixture of env and formatter settings
 ) {
   let dateEnv = buildDateEnv(typeof options === 'object' && options ? options : {}) // pass in if non-null object
   let formatter = createFormatter(options)
@@ -53,10 +48,9 @@ export function formatRange(
     forcedStartTzo: startMeta.forcedTzo,
     forcedEndTzo: endMeta.forcedTzo,
     isEndExclusive: options.isEndExclusive,
-    defaultSeparator: BASE_OPTION_DEFAULTS.defaultRangeSeparator
+    defaultSeparator: BASE_OPTION_DEFAULTS.defaultRangeSeparator,
   })
 }
-
 
 // TODO: more DRY and optimized
 function buildDateEnv(settings: FormatRangeOptions) {
@@ -66,6 +60,6 @@ function buildDateEnv(settings: FormatRangeOptions) {
     timeZone: BASE_OPTION_DEFAULTS.timeZone,
     calendarSystem: 'gregory',
     ...settings,
-    locale
+    locale,
   })
 }

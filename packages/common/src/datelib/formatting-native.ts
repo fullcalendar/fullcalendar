@@ -11,7 +11,7 @@ const EXTENDED_SETTINGS_AND_SEVERITIES = {
   separator: 0, // 0 = not applicable
   omitZeroMinute: 0,
   meridiem: 0, // like am/pm
-  omitCommas: 0
+  omitCommas: 0,
 }
 
 const STANDARD_DATE_PROP_SEVERITIES = {
@@ -23,7 +23,7 @@ const STANDARD_DATE_PROP_SEVERITIES = {
   weekday: 2,
   hour: 1,
   minute: 1,
-  second: 1
+  second: 1,
 }
 
 const MERIDIEM_RE = /\s*([ap])\.?m\.?/i // eats up leading spaces too
@@ -31,7 +31,6 @@ const COMMA_RE = /,/g // we need re for globalness
 const MULTI_SPACE_RE = /\s+/g
 const LTR_RE = /\u200e/g // control character
 const UTC_RE = /UTC|GMT/
-
 
 export interface NativeFormatterOptions extends Intl.DateTimeFormatOptions {
   week?: 'short' | 'narrow' | 'numeric'
@@ -133,29 +132,28 @@ export class NativeFormatter implements DateFormatter {
         return 'time' // really?
     }
   }
-
 }
 
 function buildFormattingFunc(
   standardDateProps,
   extendedSettings,
-  context: DateFormattingContext
+  context: DateFormattingContext,
 ): (date: ZonedMarker) => string {
   let standardDatePropCnt = Object.keys(standardDateProps).length
 
   if (standardDatePropCnt === 1 && standardDateProps.timeZoneName === 'short') {
-    return function(date: ZonedMarker) {
+    return function (date: ZonedMarker) {
       return formatTimeZoneOffset(date.timeZoneOffset)
     }
   }
 
   if (standardDatePropCnt === 0 && extendedSettings.week) {
-    return function(date: ZonedMarker) {
+    return function (date: ZonedMarker) {
       return formatWeekNumber(
         context.computeWeekNumber(date.marker),
         context.weekText,
         context.locale,
-        extendedSettings.week
+        extendedSettings.week,
       )
     }
   }
@@ -166,7 +164,7 @@ function buildFormattingFunc(
 function buildNativeFormattingFunc(
   standardDateProps,
   extendedSettings,
-  context: DateFormattingContext
+  context: DateFormattingContext,
 ): (date: ZonedMarker) => string {
   standardDateProps = { ...standardDateProps } // copy
   extendedSettings = { ...extendedSettings } // copy
@@ -184,8 +182,8 @@ function buildNativeFormattingFunc(
     zeroFormat = new Intl.DateTimeFormat(context.locale.codes, zeroProps)
   }
 
-  return function(date: ZonedMarker) {
-    let marker = date.marker
+  return function (date: ZonedMarker) {
+    let { marker } = date
     let format
 
     if (zeroFormat && !marker.getUTCMinutes()) {
@@ -201,7 +199,6 @@ function buildNativeFormattingFunc(
 }
 
 function sanitizeSettings(standardDateProps, extendedSettings) {
-
   // deal with a browser inconsistency where formatting the timezone
   // requires that the hour/minute be present.
   if (standardDateProps.timeZoneName) {
@@ -225,7 +222,6 @@ function sanitizeSettings(standardDateProps, extendedSettings) {
 }
 
 function postProcess(s: string, date: ZonedMarker, standardDateProps, extendedSettings, context: DateFormattingContext): string {
-
   s = s.replace(LTR_RE, '') // remove left-to-right control chars. do first. good for other regexes
 
   if (standardDateProps.timeZoneName === 'short') {
@@ -233,7 +229,7 @@ function postProcess(s: string, date: ZonedMarker, standardDateProps, extendedSe
       s,
       (context.timeZone === 'UTC' || date.timeZoneOffset == null) ?
         'UTC' : // important to normalize for IE, which does "GMT"
-        formatTimeZoneOffset(date.timeZoneOffset)
+        formatTimeZoneOffset(date.timeZoneOffset),
     )
   }
 
@@ -251,17 +247,11 @@ function postProcess(s: string, date: ZonedMarker, standardDateProps, extendedSe
   if (extendedSettings.meridiem === false) {
     s = s.replace(MERIDIEM_RE, '').trim()
   } else if (extendedSettings.meridiem === 'narrow') { // a/p
-    s = s.replace(MERIDIEM_RE, function(m0, m1) {
-      return m1.toLocaleLowerCase()
-    })
+    s = s.replace(MERIDIEM_RE, (m0, m1) => m1.toLocaleLowerCase())
   } else if (extendedSettings.meridiem === 'short') { // am/pm
-    s = s.replace(MERIDIEM_RE, function(m0, m1) {
-      return m1.toLocaleLowerCase() + 'm'
-    })
+    s = s.replace(MERIDIEM_RE, (m0, m1) => `${m1.toLocaleLowerCase()}m`)
   } else if (extendedSettings.meridiem === 'lowercase') { // other meridiem transformers already converted to lowercase
-    s = s.replace(MERIDIEM_RE, function(m0) {
-      return m0.toLocaleLowerCase()
-    })
+    s = s.replace(MERIDIEM_RE, (m0) => m0.toLocaleLowerCase())
   }
 
   s = s.replace(MULTI_SPACE_RE, ' ')
@@ -273,14 +263,14 @@ function postProcess(s: string, date: ZonedMarker, standardDateProps, extendedSe
 function injectTzoStr(s: string, tzoStr: string): string {
   let replaced = false
 
-  s = s.replace(UTC_RE, function() {
+  s = s.replace(UTC_RE, () => {
     replaced = true
     return tzoStr
   })
 
   // IE11 doesn't include UTC/GMT in the original string, so append to end
   if (!replaced) {
-    s += ' ' + tzoStr
+    s += ` ${tzoStr}`
   }
 
   return s
@@ -304,7 +294,6 @@ function formatWeekNumber(num: number, weekText: string, locale: Locale, display
 
   return parts.join('')
 }
-
 
 // Range Formatting Utils
 
@@ -343,10 +332,8 @@ function computePartialFormattingOptions(options, biggestUnit) {
 }
 
 function findCommonInsertion(full0, partial0, full1, partial1) {
-
   let i0 = 0
   while (i0 < full0.length) {
-
     let found0 = full0.indexOf(partial0, i0)
     if (found0 === -1) {
       break
@@ -358,7 +345,6 @@ function findCommonInsertion(full0, partial0, full1, partial1) {
 
     let i1 = 0
     while (i1 < full1.length) {
-
       let found1 = full1.indexOf(partial1, i1)
       if (found1 === -1) {
         break
@@ -371,7 +357,7 @@ function findCommonInsertion(full0, partial0, full1, partial1) {
       if (before0 === before1 && after0 === after1) {
         return {
           before: before0,
-          after: after0
+          after: after0,
         }
       }
     }

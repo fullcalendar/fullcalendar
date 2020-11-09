@@ -61,7 +61,7 @@ export interface DatePointApi {
 const STANDARD_PROPS = {
   start: identity as Identity<DateInput>,
   end: identity as Identity<DateInput>,
-  allDay: Boolean
+  allDay: Boolean,
 }
 
 export function parseDateSpan(raw: DateSpanInput, dateEnv: DateEnv, defaultDuration?: Duration): DateSpan | null {
@@ -75,9 +75,8 @@ export function parseDateSpan(raw: DateSpanInput, dateEnv: DateEnv, defaultDurat
   if (!range.end) {
     if (defaultDuration == null) {
       return null
-    } else {
-      range.end = dateEnv.add(range.start, defaultDuration)
     }
+    range.end = dateEnv.add(range.start, defaultDuration)
   }
 
   return span as DateSpan
@@ -91,7 +90,7 @@ export function parseOpenDateSpan(raw: OpenDateSpanInput, dateEnv: DateEnv): Ope
   let { refined: standardProps, extra } = refineProps(raw, STANDARD_PROPS)
   let startMeta = standardProps.start ? dateEnv.createMarkerMeta(standardProps.start) : null
   let endMeta = standardProps.end ? dateEnv.createMarkerMeta(standardProps.end) : null
-  let allDay = standardProps.allDay
+  let { allDay } = standardProps
 
   if (allDay == null) {
     allDay = (startMeta && startMeta.isTimeUnspecified) &&
@@ -104,7 +103,7 @@ export function parseOpenDateSpan(raw: OpenDateSpanInput, dateEnv: DateEnv): Ope
       end: endMeta ? endMeta.marker : null,
     },
     allDay,
-    ...extra
+    ...extra,
   }
 }
 
@@ -116,7 +115,6 @@ export function isDateSpansEqual(span0: DateSpan, span1: DateSpan): boolean {
 
 // the NON-DATE-RELATED props
 function isSpanPropsEqual(span0: DateSpan, span1: DateSpan): boolean {
-
   for (let propName in span1) {
     if (propName !== 'range' && propName !== 'allDay') {
       if (span0[propName] !== span1[propName]) {
@@ -139,14 +137,14 @@ function isSpanPropsEqual(span0: DateSpan, span1: DateSpan): boolean {
 export function buildDateSpanApi(span: DateSpan, dateEnv: DateEnv): DateSpanApi {
   return {
     ...buildRangeApi(span.range, dateEnv, span.allDay),
-    allDay: span.allDay
+    allDay: span.allDay,
   }
 }
 
 export function buildRangeApiWithTimeZone(range: DateRange, dateEnv: DateEnv, omitTime?: boolean): RangeApiWithTimeZone {
   return {
     ...buildRangeApi(range, dateEnv, omitTime),
-    timeZone: dateEnv.timeZone
+    timeZone: dateEnv.timeZone,
   }
 }
 
@@ -155,7 +153,7 @@ export function buildRangeApi(range: DateRange, dateEnv: DateEnv, omitTime?: boo
     start: dateEnv.toDate(range.start),
     end: dateEnv.toDate(range.end),
     startStr: dateEnv.formatIso(range.start, { omitTime }),
-    endStr: dateEnv.formatIso(range.end, { omitTime })
+    endStr: dateEnv.formatIso(range.end, { omitTime }),
   }
 }
 
@@ -167,7 +165,7 @@ export function fabricateEventRange(dateSpan: DateSpan, eventUiBases: EventUiHas
     '', // sourceId
     dateSpan.allDay,
     true, // hasEnd
-    context
+    context,
   )
 
   return {
@@ -176,6 +174,6 @@ export function fabricateEventRange(dateSpan: DateSpan, eventUiBases: EventUiHas
     instance: createEventInstance(def.defId, dateSpan.range),
     range: dateSpan.range,
     isStart: true,
-    isEnd: true
+    isEnd: true,
   }
 }

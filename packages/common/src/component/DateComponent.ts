@@ -38,7 +38,6 @@ PURPOSES:
 - interface for dragging and hits
 */
 export abstract class DateComponent<Props=Dictionary, State=Dictionary> extends BaseComponent<Props, State> {
-
   uid = guid()
 
   // IN SCHEDULER: allowAcrossResources
@@ -48,26 +47,22 @@ export abstract class DateComponent<Props=Dictionary, State=Dictionary> extends 
   // TODO: port isTimeScale into same system?
   largeUnit: any
 
-
   // Hit System
   // -----------------------------------------------------------------------------------------------------------------
 
-
   prepareHits() {
   }
-
 
   queryHit(positionLeft: number, positionTop: number, elWidth: number, elHeight: number): Hit | null {
     return null // this should be abstract
   }
 
-
   // Validation
   // -----------------------------------------------------------------------------------------------------------------
 
   isInteractionValid(interaction: EventInteractionState) {
-    let dateProfile = (this.props as any).dateProfile // HACK
-    let instances = interaction.mutatedEvents.instances
+    let { dateProfile } = this.props as any // HACK
+    let { instances } = interaction.mutatedEvents
 
     if (dateProfile) { // HACK for MorePopover
       for (let instanceId in instances) {
@@ -81,7 +76,7 @@ export abstract class DateComponent<Props=Dictionary, State=Dictionary> extends 
   }
 
   isDateSelectionValid(selection: DateSpan): boolean {
-    let dateProfile = (this.props as any).dateProfile // HACK
+    let { dateProfile } = this.props as any // HACK
 
     if (
       dateProfile && // HACK for MorePopover
@@ -92,7 +87,6 @@ export abstract class DateComponent<Props=Dictionary, State=Dictionary> extends 
 
     return isDateSelectionValid(selection, this.context)
   }
-
 
   // Pointer Interaction Utils
   // -----------------------------------------------------------------------------------------------------------------
@@ -106,7 +100,6 @@ export abstract class DateComponent<Props=Dictionary, State=Dictionary> extends 
       // it's a HACK because it only supports a popover as the nested component.
   }
 
-
   isValidDateDownEl(el: HTMLElement) {
     return !elementClosest(el, '.fc-event:not(.fc-bg-event)') &&
       !elementClosest(el, '.fc-daygrid-more-link') && // a "more.." link
@@ -114,14 +107,11 @@ export abstract class DateComponent<Props=Dictionary, State=Dictionary> extends 
       !this.isInPopover(el)
   }
 
-
   isPopover() { // HACK. should be overridden by any components that know that they live within a popover
     return false
   }
 
-
   isInPopover(el: HTMLElement) {
     return Boolean(elementClosest(el, '.fc-popover'))
   }
-
 }

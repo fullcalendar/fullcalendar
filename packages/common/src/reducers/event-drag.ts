@@ -1,7 +1,6 @@
 import { Action } from './Action'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 
-
 export function reduceEventDrag(currentDrag: EventInteractionState | null, action: Action): EventInteractionState | null {
   let newDrag: EventInteractionState
 
@@ -15,7 +14,7 @@ export function reduceEventDrag(currentDrag: EventInteractionState | null, actio
       return {
         affectedEvents: newDrag.affectedEvents,
         mutatedEvents: newDrag.mutatedEvents,
-        isEvent: newDrag.isEvent
+        isEvent: newDrag.isEvent,
       }
 
     default:

@@ -2,7 +2,6 @@ import { BaseComponent, setRef } from './vdom-util'
 import { ComponentChildren, Ref, createElement, VUIEvent } from './vdom'
 import { CssDimValue } from './scrollgrid/util'
 
-
 export interface ViewContainerProps {
   liquid?: boolean
   height?: CssDimValue
@@ -16,13 +15,12 @@ interface ViewContainerState {
   availableWidth: number | null
 }
 
-
 // TODO: do function component?
 export class ViewContainer extends BaseComponent<ViewContainerProps, ViewContainerState> {
-
   el: HTMLElement
+
   state: ViewContainerState = {
-    availableWidth: null
+    availableWidth: null,
   }
 
   render() {
@@ -33,7 +31,7 @@ export class ViewContainer extends BaseComponent<ViewContainerProps, ViewContain
       'fc-view-harness',
       (aspectRatio || props.liquid || props.height)
         ? 'fc-view-harness-active' // harness controls the height
-        : 'fc-view-harness-passive' // let the view do the height
+        : 'fc-view-harness-passive', // let the view do the height
     ]
     let height: CssDimValue = ''
     let paddingBottom: CssDimValue = ''
@@ -46,7 +44,7 @@ export class ViewContainer extends BaseComponent<ViewContainerProps, ViewContain
         // because will cause lots of unnecessary scrollbars within scrollgrid.
         // BETTER: don't start rendering ANYTHING yet until we know container width
         // NOTE: why not always use paddingBottom? Causes height oscillation (issue 5606)
-        paddingBottom = (1 / aspectRatio) * 100 + '%'
+        paddingBottom = `${(1 / aspectRatio) * 100}%`
       }
     } else {
       height = props.height || ''
@@ -56,8 +54,11 @@ export class ViewContainer extends BaseComponent<ViewContainerProps, ViewContain
       <div
         ref={this.handleEl}
         onClick={props.onClick}
-        className={classNames.join(' ')} style={{ height, paddingBottom }}
-      >{props.children}</div>
+        className={classNames.join(' ')}
+        style={{ height, paddingBottom }}
+      >
+        {props.children}
+      </div>
     )
   }
 
@@ -87,6 +88,4 @@ export class ViewContainer extends BaseComponent<ViewContainerProps, ViewContain
       this.setState({ availableWidth: this.el.offsetWidth })
     }
   }
-
-
 }

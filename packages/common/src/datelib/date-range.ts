@@ -43,7 +43,7 @@ export function parseRange(input: DateRangeInput, dateEnv: DateEnv): OpenDateRan
 // Will return a new array result.
 export function invertRanges(ranges: DateRange[], constraintRange: DateRange): DateRange[] {
   let invertedRanges: DateRange[] = []
-  let start = constraintRange.start // the end of the previous range. the start of the new range
+  let { start } = constraintRange // the end of the previous range. the start of the new range
   let i
   let dateRange
 
@@ -76,8 +76,7 @@ function compareRanges(range0: DateRange, range1: DateRange) {
 }
 
 export function intersectRanges(range0: OpenDateRange, range1: OpenDateRange): OpenDateRange {
-  let start = range0.start
-  let end = range0.end
+  let { start, end } = range0
   let newRange = null
 
   if (range1.start !== null) {

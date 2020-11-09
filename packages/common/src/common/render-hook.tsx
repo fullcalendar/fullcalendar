@@ -3,7 +3,6 @@ import { setRef, BaseComponent } from '../vdom-util'
 import { isPropsEqual } from '../util/object'
 import { parseClassNames, ClassNamesInput } from '../util/html'
 
-
 export interface RenderHookProps<ContentArg> {
   hookProps: ContentArg
   classNames: ClassNamesGenerator<ContentArg>
@@ -26,12 +25,9 @@ export interface ContentTypeHandlers {
   [contentKey: string]: () => (el: HTMLElement, contentVal: any) => void
 }
 
-
 // NOTE: in JSX, you should always use this class with <HookProps> arg. otherwise, will default to any???
 export class RenderHook<HookProps> extends BaseComponent<RenderHookProps<HookProps>> {
-
   private rootElRef = createRef()
-
 
   render() {
     let { props } = this
@@ -45,14 +41,13 @@ export class RenderHook<HookProps> extends BaseComponent<RenderHookProps<HookPro
               rootElRef,
               normalizeClassNames(props.classNames, hookProps),
               innerElRef,
-              innerContent
+              innerContent,
             )}
           </ContentHook>
         )}
       </MountHook>
     )
   }
-
 
   handleRootEl = (el: HTMLElement | null) => {
     setRef(this.rootElRef, el)
@@ -61,10 +56,7 @@ export class RenderHook<HookProps> extends BaseComponent<RenderHookProps<HookPro
       setRef(this.props.elRef, el)
     }
   }
-
 }
-
-
 
 export interface ObjCustomContent {
   html: string
@@ -78,7 +70,6 @@ export type DefaultContentGenerator<HookProps> = (hookProps: HookProps) => Compo
 
 // for forcing rerender of components that use the ContentHook
 export const CustomContentRenderContext: Context<number> = createContext<number>(0)
-
 
 export interface ContentHookProps<HookProps> {
   hookProps: HookProps
@@ -95,7 +86,6 @@ interface ContentHookInnerProps<HookProps> extends ContentHookProps<HookProps> {
   renderId: number
 }
 
-
 export function ContentHook<HookProps>(props: ContentHookProps<HookProps>) { // TODO: rename to CustomContentHook?
   return (
     <CustomContentRenderContext.Consumer>
@@ -106,31 +96,26 @@ export function ContentHook<HookProps>(props: ContentHookProps<HookProps>) { // 
   )
 }
 
-
 class ContentHookInner<HookProps> extends BaseComponent<ContentHookInnerProps<HookProps>> {
-
   private innerElRef = createRef()
+
   private customContentInfo: {
     contentKey: string
     contentVal: any
     handler: (el: HTMLElement, contentVal: any) => void
   }
 
-
   render() {
     return this.props.children(this.innerElRef, this.renderInnerContent())
   }
-
 
   componentDidMount() {
     this.updateCustomContent()
   }
 
-
   componentDidUpdate() {
     this.updateCustomContent()
   }
-
 
   private renderInnerContent() {
     let { contentTypeHandlers } = this.context.pluginHooks
@@ -144,20 +129,16 @@ class ContentHookInner<HookProps> extends BaseComponent<ContentHookInnerProps<Ho
     }
 
     if (innerContent !== undefined) { // we allow custom content handlers to return nothing
-
       if (customContentInfo) {
         customContentInfo.contentVal = innerContent[customContentInfo.contentKey]
-
       } else if (typeof innerContent === 'object') {
-
         // look for a prop that would indicate a custom content handler is needed
         for (let contentKey in contentTypeHandlers) {
-
           if (innerContent[contentKey] !== undefined) {
             customContentInfo = this.customContentInfo = {
               contentKey,
               contentVal: innerContent[contentKey],
-              handler: contentTypeHandlers[contentKey]()
+              handler: contentTypeHandlers[contentKey](),
             }
             break
           }
@@ -174,20 +155,15 @@ class ContentHookInner<HookProps> extends BaseComponent<ContentHookInnerProps<Ho
     return innerContentVDom
   }
 
-
   private updateCustomContent() {
     if (this.customContentInfo) {
       this.customContentInfo.handler(
         this.innerElRef.current || this.props.backupElRef.current, // the element to render into
-        this.customContentInfo.contentVal
+        this.customContentInfo.contentVal,
       )
     }
   }
-
 }
-
-
-
 
 export type MountArg<ContentArg> = ContentArg & { el: HTMLElement }
 export type DidMountHandler<MountArg extends { el: HTMLElement }> = (mountArg: MountArg) => void
@@ -202,26 +178,21 @@ export interface MountHookProps<ContentArg> {
 }
 
 export class MountHook<ContentArg> extends BaseComponent<MountHookProps<ContentArg>> {
-
   rootEl: HTMLElement
-
 
   render() {
     return this.props.children(this.handleRootEl)
   }
-
 
   componentDidMount() {
     let callback = this.props.didMount
     callback && callback({ ...this.props.hookProps, el: this.rootEl })
   }
 
-
   componentWillUnmount() {
     let callback = this.props.willUnmount
     callback && callback({ ...this.props.hookProps, el: this.rootEl })
   }
-
 
   private handleRootEl = (rootEl: HTMLElement) => {
     this.rootEl = rootEl
@@ -230,16 +201,14 @@ export class MountHook<ContentArg> extends BaseComponent<MountHookProps<ContentA
       setRef(this.props.elRef, rootEl)
     }
   }
-
 }
-
 
 export function buildClassNameNormalizer<HookProps>() { // TODO: general deep-memoizer?
   let currentGenerator: ClassNamesGenerator<HookProps>
   let currentHookProps: HookProps
   let currentClassNames: string[] = []
 
-  return function(generator: ClassNamesGenerator<HookProps>, hookProps: HookProps) {
+  return function (generator: ClassNamesGenerator<HookProps>, hookProps: HookProps) {
     if (!currentHookProps || !isPropsEqual(currentHookProps, hookProps) || generator !== currentGenerator) {
       currentGenerator = generator
       currentHookProps = hookProps
@@ -250,12 +219,9 @@ export function buildClassNameNormalizer<HookProps>() { // TODO: general deep-me
   }
 }
 
-
 export type ClassNamesGenerator<HookProps> = ClassNamesInput | ((hookProps: HookProps) => ClassNamesInput)
 
-
 function normalizeClassNames<HookProps>(classNames: ClassNamesGenerator<HookProps>, hookProps: HookProps): string[] {
-
   if (typeof classNames === 'function') {
     classNames = classNames(hookProps)
   }
@@ -263,11 +229,9 @@ function normalizeClassNames<HookProps>(classNames: ClassNamesGenerator<HookProp
   return parseClassNames(classNames)
 }
 
-
 function normalizeContent(input, hookProps) {
   if (typeof input === 'function') {
     return input(hookProps, createElement) // give the function the vdom-creation func
-  } else {
-    return input
   }
+  return input
 }

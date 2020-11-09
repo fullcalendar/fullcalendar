@@ -46,11 +46,9 @@ export abstract class ScrollController {
   canScrollRight() {
     return this.getScrollLeft() < this.getMaxScrollLeft()
   }
-
 }
 
 export class ElementScrollController extends ScrollController {
-
   el: HTMLElement
 
   constructor(el: HTMLElement) {
@@ -89,11 +87,9 @@ export class ElementScrollController extends ScrollController {
   getClientWidth() {
     return this.el.clientWidth
   }
-
 }
 
 export class WindowScrollController extends ScrollController {
-
   getScrollTop() {
     return window.pageYOffset
   }
@@ -125,5 +121,4 @@ export class WindowScrollController extends ScrollController {
   getClientWidth() {
     return document.documentElement.clientWidth
   }
-
 }

@@ -2,7 +2,6 @@ import { createElement, ComponentChildren, Ref } from '../vdom'
 import { BaseComponent, setRef } from '../vdom-util'
 import { CssDimValue, ScrollerLike } from './util'
 
-
 export type OverflowValue = 'auto' | 'hidden' | 'scroll' | 'visible'
 
 export interface ScrollerProps {
@@ -20,17 +19,14 @@ export interface ScrollerProps {
 
 const VISIBLE_HIDDEN_RE = /^(visible|hidden)$/
 
-
 export class Scroller extends BaseComponent<ScrollerProps> implements ScrollerLike {
-
   private el: HTMLElement // TODO: just use this.base?
-
 
   render() {
     let { props } = this
     let { liquid, liquidIsAbsolute } = props
     let isAbsolute = liquid && liquidIsAbsolute
-    let className = [ 'fc-scroller' ]
+    let className = ['fc-scroller']
 
     if (liquid) {
       if (liquidIsAbsolute) {
@@ -41,26 +37,30 @@ export class Scroller extends BaseComponent<ScrollerProps> implements ScrollerLi
     }
 
     return (
-      <div ref={this.handleEl} className={className.join(' ')} style={{
-        overflowX: props.overflowX,
-        overflowY: props.overflowY,
-        left: (isAbsolute && -(props.overcomeLeft || 0)) || '',
-        right: (isAbsolute && -(props.overcomeRight || 0)) || '',
-        bottom: (isAbsolute && -(props.overcomeBottom || 0)) || '',
-        marginLeft: (!isAbsolute && -(props.overcomeLeft || 0)) || '',
-        marginRight: (!isAbsolute && -(props.overcomeRight || 0)) || '',
-        marginBottom: (!isAbsolute && -(props.overcomeBottom || 0)) || '',
-        maxHeight: props.maxHeight || ''
-      }}>{props.children}</div>
+      <div
+        ref={this.handleEl}
+        className={className.join(' ')}
+        style={{
+          overflowX: props.overflowX,
+          overflowY: props.overflowY,
+          left: (isAbsolute && -(props.overcomeLeft || 0)) || '',
+          right: (isAbsolute && -(props.overcomeRight || 0)) || '',
+          bottom: (isAbsolute && -(props.overcomeBottom || 0)) || '',
+          marginLeft: (!isAbsolute && -(props.overcomeLeft || 0)) || '',
+          marginRight: (!isAbsolute && -(props.overcomeRight || 0)) || '',
+          marginBottom: (!isAbsolute && -(props.overcomeBottom || 0)) || '',
+          maxHeight: props.maxHeight || '',
+        }}
+      >
+        {props.children}
+      </div>
     )
   }
-
 
   handleEl = (el: HTMLElement) => {
     this.el = el
     setRef(this.props.elRef, el)
   }
-
 
   needsXScrolling() {
     if (VISIBLE_HIDDEN_RE.test(this.props.overflowX)) {
@@ -86,7 +86,6 @@ export class Scroller extends BaseComponent<ScrollerProps> implements ScrollerLi
     return false
   }
 
-
   needsYScrolling() {
     if (VISIBLE_HIDDEN_RE.test(this.props.overflowY)) {
       return false
@@ -111,22 +110,17 @@ export class Scroller extends BaseComponent<ScrollerProps> implements ScrollerLi
     return false
   }
 
-
   getXScrollbarWidth() {
     if (VISIBLE_HIDDEN_RE.test(this.props.overflowX)) {
       return 0
-    } else {
-      return this.el.offsetHeight - this.el.clientHeight // only works because we guarantee no borders. TODO: add to CSS with important?
     }
+    return this.el.offsetHeight - this.el.clientHeight // only works because we guarantee no borders. TODO: add to CSS with important?
   }
-
 
   getYScrollbarWidth() {
     if (VISIBLE_HIDDEN_RE.test(this.props.overflowY)) {
       return 0
-    } else {
-      return this.el.offsetWidth - this.el.clientWidth // only works because we guarantee no borders. TODO: add to CSS with important?
     }
+    return this.el.offsetWidth - this.el.clientWidth // only works because we guarantee no borders. TODO: add to CSS with important?
   }
-
 }

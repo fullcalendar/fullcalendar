@@ -9,7 +9,6 @@ import { createPlugin } from '../plugin-system'
 import { SIMPLE_RECURRING_REFINERS } from './recurring-event-simple-refiners'
 import './recurring-event-simple-declare'
 
-
 /*
 An implementation of recurring events that only supports every-day or weekly recurrences.
 */
@@ -22,18 +21,16 @@ interface SimpleRecurringData {
   endRecur: DateMarker | null
 }
 
-
 let recurring: RecurringType<SimpleRecurringData> = {
 
   parse(refined: EventRefined, dateEnv: DateEnv) {
-
     if (refined.daysOfWeek || refined.startTime || refined.endTime || refined.startRecur || refined.endRecur) {
       let recurringData: SimpleRecurringData = {
         daysOfWeek: refined.daysOfWeek || null,
         startTime: refined.startTime || null,
         endTime: refined.endTime || null,
         startRecur: refined.startRecur ? dateEnv.createMarker(refined.startRecur) : null,
-        endRecur: refined.endRecur ? dateEnv.createMarker(refined.endRecur) : null
+        endRecur: refined.endRecur ? dateEnv.createMarker(refined.endRecur) : null,
       }
 
       let duration: Duration
@@ -48,7 +45,7 @@ let recurring: RecurringType<SimpleRecurringData> = {
       return {
         allDayGuess: Boolean(!refined.startTime && !refined.endTime),
         duration,
-        typeData: recurringData // doesn't need endTime anymore but oh well
+        typeData: recurringData, // doesn't need endTime anymore but oh well
       }
     }
 
@@ -58,7 +55,7 @@ let recurring: RecurringType<SimpleRecurringData> = {
   expand(typeData: SimpleRecurringData, framingRange: DateRange, dateEnv: DateEnv): DateMarker[] {
     let clippedFramingRange = intersectRanges(
       framingRange,
-      { start: typeData.startRecur, end: typeData.endRecur }
+      { start: typeData.startRecur, end: typeData.endRecur },
     )
 
     if (clippedFramingRange) {
@@ -66,27 +63,24 @@ let recurring: RecurringType<SimpleRecurringData> = {
         typeData.daysOfWeek,
         typeData.startTime,
         clippedFramingRange,
-        dateEnv
+        dateEnv,
       )
-    } else {
-      return []
     }
-  }
+    return []
+  },
 
 }
 
-
 export const simpleRecurringEventsPlugin = createPlugin({
-  recurringTypes: [ recurring ],
-  eventRefiners: SIMPLE_RECURRING_REFINERS
+  recurringTypes: [recurring],
+  eventRefiners: SIMPLE_RECURRING_REFINERS,
 })
-
 
 function expandRanges(
   daysOfWeek: number[] | null,
   startTime: Duration | null,
   framingRange: DateRange,
-  dateEnv: DateEnv
+  dateEnv: DateEnv,
 ): DateMarker[] {
   let dowHash: { [num: string]: true } | null = daysOfWeek ? arrayToHash(daysOfWeek) : null
   let dayMarker = startOfDay(framingRange.start)
@@ -98,7 +92,6 @@ function expandRanges(
 
     // if everyday, or this particular day-of-week
     if (!dowHash || dowHash[dayMarker.getUTCDay()]) {
-
       if (startTime) {
         instanceStart = dateEnv.add(dayMarker, startTime)
       } else {

@@ -1,11 +1,9 @@
-
 import { ComponentChildren, createElement, Fragment } from '../vdom'
 import { BaseComponent } from '../vdom-util'
 import { buildSegTimeText, EventContentArg } from '../component/event-rendering'
 import { EventRoot, MinimalEventProps } from './EventRoot'
 import { Seg } from '../component/DateComponent'
 import { DateFormatter } from '../datelib/DateFormatter'
-
 
 export interface StandardEventProps extends MinimalEventProps {
   extraClassNames: string[]
@@ -17,10 +15,8 @@ export interface StandardEventProps extends MinimalEventProps {
   defaultContent?: (hookProps: EventContentArg) => ComponentChildren // not used by anyone yet
 }
 
-
 // should not be a purecomponent
 export class StandardEvent extends BaseComponent<StandardEventProps> {
-
   render() {
     let { props, context } = this
     let { seg } = props
@@ -30,7 +26,7 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
       timeFormat,
       context,
       props.defaultDisplayEventTime,
-      props.defaultDisplayEventEnd
+      props.defaultDisplayEventEnd,
     )
 
     return (
@@ -53,37 +49,33 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
             className={props.extraClassNames.concat(classNames).join(' ')}
             style={{
               borderColor: hookProps.borderColor,
-              backgroundColor: hookProps.backgroundColor
+              backgroundColor: hookProps.backgroundColor,
             }}
             ref={rootElRef}
             {...getSegAnchorAttrs(seg)}
           >
-            <div className='fc-event-main' ref={innerElRef} style={{ color: hookProps.textColor }}>
+            <div className="fc-event-main" ref={innerElRef} style={{ color: hookProps.textColor }}>
               {innerContent}
             </div>
             {hookProps.isStartResizable &&
-              <div className='fc-event-resizer fc-event-resizer-start' />
-            }
+              <div className="fc-event-resizer fc-event-resizer-start" />}
             {hookProps.isEndResizable &&
-              <div className='fc-event-resizer fc-event-resizer-end' />
-            }
+              <div className="fc-event-resizer fc-event-resizer-end" />}
           </a>
         )}
       </EventRoot>
     )
   }
-
 }
-
 
 function renderInnerContent(innerProps: EventContentArg) {
   return (
-    <div className='fc-event-main-frame'>
-      {innerProps.timeText &&
-        <div className='fc-event-time'>{innerProps.timeText}</div>
-      }
-      <div className='fc-event-title-container'>
-        <div className='fc-event-title fc-sticky'>
+    <div className="fc-event-main-frame">
+      {innerProps.timeText && (
+        <div className="fc-event-time">{innerProps.timeText}</div>
+      )}
+      <div className="fc-event-title-container">
+        <div className="fc-event-title fc-sticky">
           {innerProps.event.title || <Fragment>&nbsp;</Fragment>}
         </div>
       </div>
@@ -91,8 +83,7 @@ function renderInnerContent(innerProps: EventContentArg) {
   )
 }
 
-
 function getSegAnchorAttrs(seg: Seg) {
-  let url = seg.eventRange.def.url
+  let { url } = seg.eventRange.def
   return url ? { href: url } : {}
 }

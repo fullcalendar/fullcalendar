@@ -8,7 +8,6 @@ export interface CalendarSystem {
   markerToArray(d: DateMarker): number[]
 }
 
-
 let calendarSystemClassMap = {}
 
 export function registerCalendarSystem(name, theClass) {
@@ -19,9 +18,7 @@ export function createCalendarSystem(name) {
   return new calendarSystemClassMap[name]()
 }
 
-
 class GregorianCalendarSystem implements CalendarSystem {
-
   getMarkerYear(d: DateMarker) {
     return d.getUTCFullYear()
   }
@@ -41,7 +38,6 @@ class GregorianCalendarSystem implements CalendarSystem {
   markerToArray(marker) {
     return dateToUtcArray(marker)
   }
-
 }
 
 registerCalendarSystem('gregory', GregorianCalendarSystem)

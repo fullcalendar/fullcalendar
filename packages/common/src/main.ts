@@ -1,4 +1,3 @@
-
 import './main.css'
 
 // exports
@@ -18,7 +17,7 @@ export { // things for plugins. everything else is exported in api-type-deps
   BASE_OPTION_DEFAULTS, BASE_OPTION_REFINERS, identity, Identity, Dictionary, refineProps,
   BaseOptionRefiners, BaseOptionsRefined, CalendarOptionRefiners, CalendarOptionsRefined,
   ViewOptionRefiners, ViewOptionsRefined, RawOptionsFromRefiners, RefinedOptionsFromRefiners,
-  CalendarListenerRefiners
+  CalendarListenerRefiners,
 } from './options'
 
 export { EventDef, EventDefHash } from './structs/event-def'
@@ -37,18 +36,18 @@ export {
   compareNumbers, enableCursor, disableCursor,
   guid,
   computeSmallestCellWidth,
-  OrderSpec
+  OrderSpec,
 } from './util/misc'
 
 export {
   computeVisibleDayRange,
   isMultiDayRange,
-  diffDates
+  diffDates,
 } from './util/date'
 
 export {
   removeExact,
-  isArraysEqual
+  isArraysEqual,
 } from './util/array'
 
 export { memoize, memoizeObjArg, memoizeArraylike, memoizeHashlike } from './util/memoize'
@@ -58,7 +57,7 @@ export {
   Rect, pointInsideRect,
   constrainPoint,
   getRectCenter, diffPoints, Point,
-  translateRect
+  translateRect,
 } from './util/geom'
 
 export { mapHash, filterHash, isPropsEqual, compareObjs, buildHashFromArray, collectFromHash, getUnequalProps } from './util/object'
@@ -70,7 +69,7 @@ export {
   applyStyle,
   applyStyleProp,
   elementMatches,
-  elementClosest
+  elementClosest,
 } from './util/dom-manip'
 export { parseClassNames } from './util/html'
 
@@ -85,7 +84,7 @@ export { buildNavLinkData } from './common/nav-link'
 export {
   preventDefault,
   listenBySelector,
-  whenTransitionDone
+  whenTransitionDone,
 } from './util/dom-event'
 
 export {
@@ -93,7 +92,7 @@ export {
   computeEdges,
   computeHeightAndMargins,
   getClippingParents,
-  computeRect
+  computeRect,
 } from './util/dom-geom'
 
 export { unpromisify } from './util/promise'
@@ -120,21 +119,21 @@ export {
   Duration, createDuration,
   asCleanDays, multiplyDuration, addDurations,
   asRoughMinutes, asRoughSeconds, asRoughMs,
-  wholeDivideDurations, greatestDurationDenominator
+  wholeDivideDurations, greatestDurationDenominator,
 } from './datelib/duration'
 export { DateEnv, DateMarkerMeta } from './datelib/env'
 
 export {
   createFormatter,
-  FormatterInput
+  FormatterInput,
 } from './datelib/formatting'
 export {
   DateFormatter,
-  VerboseFormattingArg
+  VerboseFormattingArg,
 } from './datelib/DateFormatter'
 export {
   formatIsoTimeString,
-  formatDayString
+  formatDayString,
 } from './datelib/formatting-utils'
 export { NamedTimeZoneImpl } from './datelib/timezone'
 export { parse as parseMarker } from './datelib/parsing'
@@ -178,7 +177,7 @@ export {
   computeSegDraggable, computeSegStartResizable, computeSegEndResizable,
   getEventClassNames, buildSegTimeText,
   buildSegCompareObj, sortEventSegs,
-  getSegMeta, EventContentArg, buildEventRangeKey
+  getSegMeta, EventContentArg, buildEventRangeKey,
 } from './component/event-rendering'
 
 export { DayTableModel, DayTableSeg, DayTableCell } from './common/DayTableModel'
@@ -206,7 +205,7 @@ export {
   isColPropsEqual,
   renderScrollShim,
   getStickyFooterScrollbar,
-  getStickyHeaderDates
+  getStickyHeaderDates,
 } from './scrollgrid/util'
 export { Scroller, ScrollerProps, OverflowValue } from './scrollgrid/Scroller'
 export { getScrollbarWidths } from './util/scrollbar-width'
@@ -218,7 +217,7 @@ export { ScrollResponder, ScrollRequest } from './ScrollResponder'
 export { globalPlugins } from './global-plugins'
 export {
   RenderHook, RenderHookProps, RenderHookPropsChildren, MountHook, MountHookProps, buildClassNameNormalizer, ContentHook, CustomContentRenderContext,
-  ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler, MountArg
+  ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler, MountArg,
 } from './common/render-hook'
 export { StandardEvent, StandardEventProps } from './common/StandardEvent'
 export { NowIndicatorRoot, NowIndicatorRootProps } from './common/NowIndicatorRoot'

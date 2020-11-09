@@ -6,7 +6,6 @@ import { Theme } from './theme/Theme'
 import { getCanVGrowWithinCell } from './util/table-styling'
 import { Emitter } from './common/Emitter'
 
-
 export interface CalendarRootProps {
   options: CalendarOptions
   theme: Theme
@@ -18,13 +17,10 @@ interface CalendarRootState {
   forPrint: boolean
 }
 
-
 export class CalendarRoot extends BaseComponent<CalendarRootProps, CalendarRootState> {
-
   state = {
-    forPrint: false
+    forPrint: false,
   }
-
 
   render() {
     let { props } = this
@@ -37,8 +33,8 @@ export class CalendarRoot extends BaseComponent<CalendarRootProps, CalendarRootS
     let classNames: string[] = [
       'fc',
       forPrint ? 'fc-media-print' : 'fc-media-screen',
-      'fc-direction-' + options.direction,
-      props.theme.getClass('root')
+      `fc-direction-${options.direction}`,
+      props.theme.getClass('root'),
     ]
 
     if (!getCanVGrowWithinCell()) {
@@ -48,13 +44,11 @@ export class CalendarRoot extends BaseComponent<CalendarRootProps, CalendarRootS
     return props.children(classNames, height, isHeightAuto, forPrint)
   }
 
-
   componentDidMount() {
     let { emitter } = this.props
     emitter.on('_beforeprint', this.handleBeforePrint)
     emitter.on('_afterprint', this.handleAfterPrint)
   }
-
 
   componentWillUnmount() {
     let { emitter } = this.props
@@ -62,14 +56,11 @@ export class CalendarRoot extends BaseComponent<CalendarRootProps, CalendarRootS
     emitter.off('_afterprint', this.handleAfterPrint)
   }
 
-
   handleBeforePrint = () => {
     this.setState({ forPrint: true })
   }
 
-
   handleAfterPrint = () => {
     this.setState({ forPrint: false })
   }
-
 }

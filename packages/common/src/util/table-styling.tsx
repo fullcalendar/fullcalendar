@@ -1,6 +1,4 @@
-
 let canVGrowWithinCell: boolean
-
 
 export function getCanVGrowWithinCell() {
   if (canVGrowWithinCell == null) {
@@ -9,9 +7,7 @@ export function getCanVGrowWithinCell() {
   return canVGrowWithinCell
 }
 
-
 function computeCanVGrowWithinCell() {
-
   // for SSR, because this function is call immediately at top-level
   // TODO: just make this logic execute top-level, immediately, instead of doing lazily
   if (typeof document === 'undefined') {

@@ -11,7 +11,6 @@ import { DateProfile } from '../DateProfileGenerator'
 import { DayHeaderContentArg } from '../render-hook-misc'
 import { Dictionary } from '../options'
 
-
 export interface TableDateCellProps {
   date: DateMarker
   dateProfile: DateProfile
@@ -26,17 +25,15 @@ export interface TableDateCellProps {
 
 const CLASS_NAME = 'fc-col-header-cell' // do the cushion too? no
 
-
 export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD name for this class now. used in the Header
-
   render() {
     let { dateEnv, options, theme, viewApi } = this.context
     let { props } = this
     let { date, dateProfile } = props
     let dayMeta = getDateMeta(date, props.todayRange, null, dateProfile)
 
-    let classNames = [ CLASS_NAME ].concat(
-      getDayClassNames(dayMeta, theme)
+    let classNames = [CLASS_NAME].concat(
+      getDayClassNames(dayMeta, theme),
     )
     let text = dateEnv.format(date, props.dayHeaderFormat)
 
@@ -50,7 +47,7 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
       view: viewApi,
       ...props.extraHookProps,
       text,
-      ...dayMeta
+      ...dayMeta,
     }
 
     return (
@@ -70,28 +67,26 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
             colSpan={props.colSpan}
             {...props.extraDataAttrs}
           >
-            <div className='fc-scrollgrid-sync-inner'>
-              {!dayMeta.isDisabled &&
+            <div className="fc-scrollgrid-sync-inner">
+              {!dayMeta.isDisabled && (
                 <a
                   ref={innerElRef}
                   className={[
                     'fc-col-header-cell-cushion',
-                    props.isSticky ? 'fc-sticky' : ''
+                    props.isSticky ? 'fc-sticky' : '',
                   ].join(' ')}
                   {...navLinkAttrs}
                 >
                   {innerContent}
                 </a>
-              }
+              )}
             </div>
           </th>
         )}
       </RenderHook>
     )
   }
-
 }
-
 
 export interface TableDowCellProps {
   dow: number
@@ -104,7 +99,6 @@ export interface TableDowCellProps {
 }
 
 export class TableDowCell extends BaseComponent<TableDowCellProps> {
-
   render() {
     let { props } = this
     let { dateEnv, theme, viewApi, options } = this.context
@@ -117,12 +111,12 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
       isFuture: false,
       isPast: false,
       isToday: false,
-      isOther: false
+      isOther: false,
     }
 
-    let classNames = [ CLASS_NAME ].concat(
+    let classNames = [CLASS_NAME].concat(
       getDayClassNames(dateMeta, theme),
-      props.extraClassNames || []
+      props.extraClassNames || [],
     )
 
     let text = dateEnv.format(date, props.dayHeaderFormat)
@@ -132,7 +126,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
       ...dateMeta,
       view: viewApi,
       ...props.extraHookProps,
-      text
+      text,
     }
 
     return (
@@ -151,11 +145,11 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
             colSpan={props.colSpan}
             {...props.extraDataAttrs}
           >
-            <div className='fc-scrollgrid-sync-inner'>
+            <div className="fc-scrollgrid-sync-inner">
               <a
                 className={[
                   'fc-col-header-cell-cushion',
-                  props.isSticky ? 'fc-sticky' : ''
+                  props.isSticky ? 'fc-sticky' : '',
                 ].join(' ')}
                 ref={innerElRef}
               >
@@ -167,9 +161,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
       </RenderHook>
     )
   }
-
 }
-
 
 function renderInner(hookProps: DayHeaderContentArg) {
   return hookProps.text

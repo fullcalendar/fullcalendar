@@ -1,8 +1,6 @@
-import { removeElement, applyStyle } from '../util/dom-manip'
-
+import { removeElement, applyStyle } from './dom-manip'
 
 let _isRtlScrollbarOnLeft: boolean | null = null
-
 
 export function getIsRtlScrollbarOnLeft() { // responsible for caching the computation
   if (_isRtlScrollbarOnLeft === null) {
@@ -10,7 +8,6 @@ export function getIsRtlScrollbarOnLeft() { // responsible for caching the compu
   }
   return _isRtlScrollbarOnLeft
 }
-
 
 function computeIsRtlScrollbarOnLeft() { // creates an offscreen test element, then removes it
   let outerEl = document.createElement('div')
@@ -21,7 +18,7 @@ function computeIsRtlScrollbarOnLeft() { // creates an offscreen test element, t
     border: 0,
     padding: 0,
     overflow: 'scroll',
-    direction: 'rtl'
+    direction: 'rtl',
   })
   outerEl.innerHTML = '<div></div>'
 

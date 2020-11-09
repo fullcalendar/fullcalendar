@@ -4,7 +4,6 @@ import { RenderHook, RenderHookPropsChildren, MountArg } from './render-hook'
 import { createElement } from '../vdom'
 import { DateFormatter } from '../datelib/DateFormatter'
 
-
 export interface WeekNumberRootProps {
   date: DateMarker
   defaultFormat: DateFormatter
@@ -17,7 +16,6 @@ export interface WeekNumberContentArg {
   date: Date
 }
 export type WeekNumberMountArg = MountArg<WeekNumberContentArg>
-
 
 export const WeekNumberRoot = (props: WeekNumberRootProps) => (
   <ViewContextType.Consumer>
@@ -44,7 +42,6 @@ export const WeekNumberRoot = (props: WeekNumberRootProps) => (
     }}
   </ViewContextType.Consumer>
 )
-
 
 function renderInner(innerProps) {
   return innerProps.text

@@ -27,17 +27,15 @@ export interface ViewConfig {
 
 export type ViewConfigHash = { [viewType: string]: ViewConfig }
 
-
 export function parseViewConfigs(inputs: ViewConfigInputHash): ViewConfigHash {
   return mapHash(inputs, parseViewConfig)
 }
-
 
 function parseViewConfig(input: ViewConfigInput): ViewConfig {
   let rawOptions: ViewOptions = typeof input === 'function' ?
     { component: input } :
     input
-  let component = rawOptions.component
+  let { component } = rawOptions
 
   if (rawOptions.content) {
     component = createViewHookComponent(rawOptions)
@@ -47,10 +45,9 @@ function parseViewConfig(input: ViewConfigInput): ViewConfig {
   return {
     superType: rawOptions.type as any,
     component: component as any,
-    rawOptions // includes type and component too :(
+    rawOptions, // includes type and component too :(
   }
 }
-
 
 export interface SpecificViewContentArg extends ViewProps {
   nextDayThreshold: Duration
@@ -58,9 +55,8 @@ export interface SpecificViewContentArg extends ViewProps {
 
 export type SpecificViewMountArg = MountArg<SpecificViewContentArg>
 
-
 function createViewHookComponent(options: ViewOptions) {
-  return function(viewProps: ViewProps) {
+  return function (viewProps: ViewProps) {
     return (
       <ViewContextType.Consumer>
         {(context: ViewContext) => (
@@ -68,7 +64,7 @@ function createViewHookComponent(options: ViewOptions) {
             {(rootElRef, viewClassNames) => {
               let hookProps: SpecificViewContentArg = {
                 ...viewProps,
-                nextDayThreshold: context.options.nextDayThreshold
+                nextDayThreshold: context.options.nextDayThreshold,
               }
 
               return (

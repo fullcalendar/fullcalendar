@@ -1,7 +1,6 @@
 import { DateMarker } from './marker'
 import { CalendarSystem } from './calendar-system'
 
-
 export interface ZonedMarker {
   marker: DateMarker,
   timeZoneOffset: number
@@ -18,7 +17,6 @@ export interface ExpandedZonedMarker extends ZonedMarker {
   millisecond: number
 }
 
-
 export function expandZonedMarker(dateInfo: ZonedMarker, calendarSystem: CalendarSystem): ExpandedZonedMarker {
   let a = calendarSystem.markerToArray(dateInfo.marker)
 
@@ -32,6 +30,6 @@ export function expandZonedMarker(dateInfo: ZonedMarker, calendarSystem: Calenda
     hour: a[3],
     minute: a[4],
     second: a[5],
-    millisecond: a[6]
+    millisecond: a[6],
   }
 }

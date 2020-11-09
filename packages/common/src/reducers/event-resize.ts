@@ -1,7 +1,6 @@
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { Action } from './Action'
 
-
 export function reduceEventResize(currentResize: EventInteractionState | null, action: Action): EventInteractionState | null {
   let newResize: EventInteractionState
 
@@ -15,7 +14,7 @@ export function reduceEventResize(currentResize: EventInteractionState | null, a
       return {
         affectedEvents: newResize.affectedEvents,
         mutatedEvents: newResize.mutatedEvents,
-        isEvent: newResize.isEvent
+        isEvent: newResize.isEvent,
       }
 
     default:

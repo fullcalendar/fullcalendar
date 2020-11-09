@@ -1,6 +1,5 @@
 import { isValidDate } from './marker'
 
-
 const ISO_RE = /^\s*(\d{4})(-?(\d{2})(-?(\d{2})([T ](\d{2}):?(\d{2})(:?(\d{2})(\.(\d+))?)?(Z|(([-+])(\d{2})(:?(\d{2}))?))?)?)?)?$/
 
 export function parse(str) {
@@ -14,7 +13,7 @@ export function parse(str) {
       Number(m[7] || 0),
       Number(m[8] || 0),
       Number(m[10] || 0),
-      m[12] ? Number('0.' + m[12]) * 1000 : 0
+      m[12] ? Number(`0.${m[12]}`) * 1000 : 0,
     ))
 
     if (isValidDate(marker)) {
@@ -30,7 +29,7 @@ export function parse(str) {
       return {
         marker,
         isTimeUnspecified: !m[6],
-        timeZoneOffset
+        timeZoneOffset,
       }
     }
   }

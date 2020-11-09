@@ -31,7 +31,6 @@ export class PositionCache {
     }
   }
 
-
   // Populates the left/right internal coordinate arrays
   buildElHorizontals(originClientLeft: number) {
     let lefts = []
@@ -46,7 +45,6 @@ export class PositionCache {
     this.lefts = lefts
     this.rights = rights
   }
-
 
   // Populates the top/bottom internal coordinate arrays
   buildElVerticals(originClientTop: number) {
@@ -63,12 +61,10 @@ export class PositionCache {
     this.bottoms = bottoms
   }
 
-
   // Given a left offset (from document left), returns the index of the el that it horizontally intersects.
   // If no intersection is made, returns undefined.
   leftToIndex(leftPosition: number) {
-    let lefts = this.lefts
-    let rights = this.rights
+    let { lefts, rights } = this
     let len = lefts.length
     let i
 
@@ -79,12 +75,10 @@ export class PositionCache {
     }
   }
 
-
   // Given a top offset (from document top), returns the index of the el that it vertically intersects.
   // If no intersection is made, returns undefined.
   topToIndex(topPosition: number) {
-    let tops = this.tops
-    let bottoms = this.bottoms
+    let { tops, bottoms } = this
     let len = tops.length
     let i
 
@@ -95,16 +89,13 @@ export class PositionCache {
     }
   }
 
-
   // Gets the width of the element at the given index
   getWidth(leftIndex: number) {
     return this.rights[leftIndex] - this.lefts[leftIndex]
   }
 
-
   // Gets the height of the element at the given index
   getHeight(topIndex: number) {
     return this.bottoms[topIndex] - this.tops[topIndex]
   }
-
 }

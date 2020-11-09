@@ -5,24 +5,23 @@ import { CalendarContext } from '../CalendarContext'
 // import {} from './api-type-deps'
 
 export class EventSourceApi {
-
   constructor(
     private context: CalendarContext,
-    public internalEventSource: EventSource<any> // rename?
+    public internalEventSource: EventSource<any>, // rename?
   ) {
   }
 
   remove() {
     this.context.dispatch({
       type: 'REMOVE_EVENT_SOURCE',
-      sourceId: this.internalEventSource.sourceId
+      sourceId: this.internalEventSource.sourceId,
     })
   }
 
   refetch() {
     this.context.dispatch({
       type: 'FETCH_EVENT_SOURCES',
-      sourceIds: [ this.internalEventSource.sourceId ]
+      sourceIds: [this.internalEventSource.sourceId],
     })
   }
 
@@ -34,5 +33,4 @@ export class EventSourceApi {
   get url(): string {
     return this.internalEventSource.meta.url
   }
-
 }

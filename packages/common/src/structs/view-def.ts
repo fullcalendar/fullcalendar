@@ -47,7 +47,7 @@ function buildViewDef(viewType: string, hash: ViewDefHash, defaultConfigs: ViewC
   let defaultConfig = defaultConfigs[viewType]
   let overrideConfig = overrideConfigs[viewType]
 
-  let queryProp = function(name) {
+  let queryProp = function (name) {
     return (defaultConfig && defaultConfig[name] !== null) ? defaultConfig[name] :
       ((overrideConfig && overrideConfig[name] !== null) ? overrideConfig[name] : null)
   }
@@ -57,7 +57,6 @@ function buildViewDef(viewType: string, hash: ViewDefHash, defaultConfigs: ViewC
   let superDef: ViewDef | null = null
 
   if (superType) {
-
     if (superType === viewType) {
       throw new Error('Can\'t have a custom view type that references itself')
     }
@@ -78,11 +77,11 @@ function buildViewDef(viewType: string, hash: ViewDefHash, defaultConfigs: ViewC
     component: theComponent,
     defaults: {
       ...(superDef ? superDef.defaults : {}),
-      ...(defaultConfig ? defaultConfig.rawOptions : {})
+      ...(defaultConfig ? defaultConfig.rawOptions : {}),
     },
     overrides: {
       ...(superDef ? superDef.overrides : {}),
-      ...(overrideConfig ? overrideConfig.rawOptions : {})
-    }
+      ...(overrideConfig ? overrideConfig.rawOptions : {}),
+    },
   }
 }

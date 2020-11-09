@@ -6,9 +6,11 @@ export function computeFallbackHeaderFormat(datesRepDistinctDays: boolean, dayCn
   // put just the day numbers will be in each cell
   if (!datesRepDistinctDays || dayCnt > 10) {
     return createFormatter({ weekday: 'short' }) // "Sat"
-  } else if (dayCnt > 1) {
-    return createFormatter({ weekday: 'short', month: 'numeric', day: 'numeric', omitCommas: true }) // "Sat 11/12"
-  } else {
-    return createFormatter({ weekday: 'long' }) // "Saturday"
   }
+
+  if (dayCnt > 1) {
+    return createFormatter({ weekday: 'short', month: 'numeric', day: 'numeric', omitCommas: true }) // "Sat 11/12"
+  }
+
+  return createFormatter({ weekday: 'long' }) // "Saturday"
 }

@@ -8,7 +8,7 @@ import {
   createEmptyEventStore,
   filterEventStoreDefs,
   excludeSubEventStore,
-  parseEvents
+  parseEvents,
 } from '../structs/event-store'
 import { Action } from './Action'
 import { EventSourceHash, EventSource } from '../structs/event-source'
@@ -18,10 +18,8 @@ import { DateEnv } from '../datelib/env'
 import { CalendarContext } from '../CalendarContext'
 import { expandRecurring } from '../structs/recurring-event'
 
-
 export function reduceEventStore(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, context: CalendarContext): EventStore {
   switch (action.type) {
-
     case 'RECEIVE_EVENTS': // raw
       return receiveRawEvents(
         eventStore,
@@ -29,7 +27,7 @@ export function reduceEventStore(eventStore: EventStore, action: Action, eventSo
         action.fetchId,
         action.fetchRange,
         action.rawEvents,
-        context
+        context,
       )
 
     case 'ADD_EVENTS': // already parsed, but not expanded
@@ -37,7 +35,7 @@ export function reduceEventStore(eventStore: EventStore, action: Action, eventSo
         eventStore,
         action.eventStore, // new ones
         dateProfile ? dateProfile.activeRange : null,
-        context
+        context,
       )
 
     case 'MERGE_EVENTS': // already parsed and expanded
@@ -49,9 +47,8 @@ export function reduceEventStore(eventStore: EventStore, action: Action, eventSo
     case 'CHANGE_VIEW_TYPE':
       if (dateProfile) {
         return expandRecurring(eventStore, dateProfile.activeRange, context)
-      } else {
-        return eventStore
       }
+      return eventStore
 
     case 'REMOVE_EVENTS':
       return excludeSubEventStore(eventStore, action.eventStore)
@@ -72,25 +69,22 @@ export function reduceEventStore(eventStore: EventStore, action: Action, eventSo
   }
 }
 
-
 function receiveRawEvents(
   eventStore: EventStore,
   eventSource: EventSource<any>,
   fetchId: string,
   fetchRange: DateRange | null,
   rawEvents: EventInput[],
-  context: CalendarContext
+  context: CalendarContext,
 ): EventStore {
-
   if (
     eventSource && // not already removed
     fetchId === eventSource.latestFetchId // TODO: wish this logic was always in event-sources
   ) {
-
     let subset = parseEvents(
       transformRawEvents(rawEvents, eventSource, context),
       eventSource,
-      context
+      context,
     )
 
     if (fetchRange) {
@@ -99,13 +93,12 @@ function receiveRawEvents(
 
     return mergeEventStores(
       excludeEventsBySourceId(eventStore, eventSource.sourceId),
-      subset
+      subset,
     )
   }
 
   return eventStore
 }
-
 
 function transformRawEvents(rawEvents, eventSource: EventSource<any>, context: CalendarContext) {
   let calEachTransform = context.options.eventDataTransform
@@ -121,7 +114,6 @@ function transformRawEvents(rawEvents, eventSource: EventSource<any>, context: C
 
   return rawEvents
 }
-
 
 function transformEachRawEvent(rawEvents, func) {
   let refinedEvents
@@ -145,9 +137,7 @@ function transformEachRawEvent(rawEvents, func) {
   return refinedEvents
 }
 
-
 function addEvent(eventStore: EventStore, subset: EventStore, expandRange: DateRange | null, context: CalendarContext): EventStore {
-
   if (expandRange) {
     subset = expandRecurring(subset, expandRange, context)
   }
@@ -155,45 +145,37 @@ function addEvent(eventStore: EventStore, subset: EventStore, expandRange: DateR
   return mergeEventStores(eventStore, subset)
 }
 
-
 export function rezoneEventStoreDates(eventStore: EventStore, oldDateEnv: DateEnv, newDateEnv: DateEnv): EventStore {
-  let defs = eventStore.defs
+  let { defs } = eventStore
 
-  let instances = mapHash(eventStore.instances, function(instance: EventInstance): EventInstance {
+  let instances = mapHash(eventStore.instances, (instance: EventInstance): EventInstance => {
     let def = defs[instance.defId]
 
     if (def.allDay || def.recurringDef) {
       return instance // isn't dependent on timezone
-    } else {
-      return {
-        ...instance,
-        range: {
-          start: newDateEnv.createMarker(oldDateEnv.toDate(instance.range.start, instance.forcedStartTzo)),
-          end: newDateEnv.createMarker(oldDateEnv.toDate(instance.range.end, instance.forcedEndTzo))
-        },
-        forcedStartTzo: newDateEnv.canComputeOffset ? null : instance.forcedStartTzo,
-        forcedEndTzo: newDateEnv.canComputeOffset ? null : instance.forcedEndTzo
-      }
+    }
+    return {
+      ...instance,
+      range: {
+        start: newDateEnv.createMarker(oldDateEnv.toDate(instance.range.start, instance.forcedStartTzo)),
+        end: newDateEnv.createMarker(oldDateEnv.toDate(instance.range.end, instance.forcedEndTzo)),
+      },
+      forcedStartTzo: newDateEnv.canComputeOffset ? null : instance.forcedStartTzo,
+      forcedEndTzo: newDateEnv.canComputeOffset ? null : instance.forcedEndTzo,
     }
   })
 
   return { defs, instances }
 }
 
-
 function excludeEventsBySourceId(eventStore: EventStore, sourceId: string) {
-  return filterEventStoreDefs(eventStore, function(eventDef: EventDef) {
-    return eventDef.sourceId !== sourceId
-  })
+  return filterEventStoreDefs(eventStore, (eventDef: EventDef) => eventDef.sourceId !== sourceId)
 }
-
 
 // QUESTION: why not just return instances? do a general object-property-exclusion util
 export function excludeInstances(eventStore: EventStore, removals: EventInstanceHash): EventStore {
   return {
     defs: eventStore.defs,
-    instances: filterHash(eventStore.instances, function(instance: EventInstance) {
-      return !removals[instance.instanceId]
-    })
+    instances: filterHash(eventStore.instances, (instance: EventInstance) => !removals[instance.instanceId]),
   }
 }

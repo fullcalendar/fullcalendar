@@ -5,5 +5,5 @@ export const JSON_FEED_EVENT_SOURCE_REFINERS = {
   extraParams: identity as Identity<Dictionary | (() => Dictionary)>,
   startParam: String,
   endParam: String,
-  timeZoneParam: String
+  timeZoneParam: String,
 }

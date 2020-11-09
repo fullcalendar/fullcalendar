@@ -50,7 +50,7 @@ export function buildViewContext(
   emitter: Emitter<CalendarListeners>,
   calendarApi: CalendarApi,
   registerInteractiveComponent: (component: DateComponent<any>, settingsInput: InteractionSettingsInput) => void,
-  unregisterInteractiveComponent: (component: DateComponent<any>) => void
+  unregisterInteractiveComponent: (component: DateComponent<any>) => void,
 ): ViewContext {
   return {
     dateEnv,
@@ -75,10 +75,10 @@ export function buildViewContext(
       return new ScrollResponder(
         execFunc,
         emitter,
-        createDuration(viewOptions.scrollTime)
+        createDuration(viewOptions.scrollTime),
       )
     },
     registerInteractiveComponent,
-    unregisterInteractiveComponent
+    unregisterInteractiveComponent,
   }
 }

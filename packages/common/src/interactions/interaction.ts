@@ -1,8 +1,6 @@
 import { DateComponent } from '../component/DateComponent'
 
-
 export abstract class Interaction {
-
   component: DateComponent<any>
 
   constructor(settings: InteractionSettings) {
@@ -11,11 +9,9 @@ export abstract class Interaction {
 
   destroy() {
   }
-
 }
 
 export type InteractionClass = { new(settings: InteractionSettings): Interaction }
-
 
 export interface InteractionSettingsInput {
   el: HTMLElement
@@ -33,19 +29,17 @@ export type InteractionSettingsStore = { [componenUid: string]: InteractionSetti
 
 export function parseInteractionSettings(component: DateComponent<any>, input: InteractionSettingsInput): InteractionSettings {
   return {
-    component: component,
+    component,
     el: input.el,
-    useEventCenter: input.useEventCenter != null ? input.useEventCenter : true
+    useEventCenter: input.useEventCenter != null ? input.useEventCenter : true,
   }
 }
 
 export function interactionSettingsToStore(settings: InteractionSettings) {
   return {
-    [settings.component.uid]: settings
+    [settings.component.uid]: settings,
   }
 }
-
-
 
 // global state
 export let interactionSettingsStore: InteractionSettingsStore = {}

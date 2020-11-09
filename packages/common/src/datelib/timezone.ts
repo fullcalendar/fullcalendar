@@ -1,6 +1,4 @@
-
 export abstract class NamedTimeZoneImpl {
-
   timeZoneName: string
 
   constructor(timeZoneName: string) {
@@ -8,6 +6,7 @@ export abstract class NamedTimeZoneImpl {
   }
 
   abstract offsetForArray(a: number[]): number
+
   abstract timestampToArray(ms: number): number[]
 }
 

@@ -6,9 +6,7 @@ import { isPropsEqual } from '../util/object'
 import { isArraysEqual } from '../util/array'
 import { BaseOptionsRefined } from '../options'
 
-
 export type CssDimValue = string | number // TODO: move to more general file
-
 
 export interface ColProps {
   width?: CssDimValue
@@ -50,7 +48,6 @@ export interface ChunkContentCallbackArgs { // TODO: util for wrapping tables!?
   reportRowHeightChange: (rowEl: HTMLElement, isStable: boolean) => void
 }
 
-
 export function computeShrinkWidth(chunkEls: HTMLElement[]) { // all in same COL!
   let shrinkCells = findElements(chunkEls, '.fc-scrollgrid-shrink')
   let largestWidth = 0
@@ -58,34 +55,30 @@ export function computeShrinkWidth(chunkEls: HTMLElement[]) { // all in same COL
   for (let shrinkCell of shrinkCells) {
     largestWidth = Math.max(
       largestWidth,
-      computeSmallestCellWidth(shrinkCell)
+      computeSmallestCellWidth(shrinkCell),
     )
   }
 
   return Math.ceil(largestWidth) // <table> elements work best with integers. round up to ensure contents fits
 }
 
-
 export interface ScrollerLike { // have scrollers implement?
   needsYScrolling(): boolean
   needsXScrolling(): boolean
 }
 
-
 export function getSectionHasLiquidHeight(props: { liquid: boolean }, sectionConfig: SectionConfig) {
   return props.liquid && sectionConfig.liquid // does the section do liquid-height? (need to have whole scrollgrid liquid-height as well)
 }
-
 
 export function getAllowYScrolling(props: { liquid: boolean }, sectionConfig: SectionConfig) {
   return sectionConfig.maxHeight != null || // if its possible for the height to max out, we might need scrollbars
     getSectionHasLiquidHeight(props, sectionConfig) // if the section is liquid height, it might condense enough to require scrollbars
 }
 
-
 // TODO: ONLY use `arg`. force out internal function to use same API
 export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: ChunkConfig, arg: ChunkContentCallbackArgs) {
-  let expandRows = arg.expandRows
+  let { expandRows } = arg
 
   let content: VNode = typeof chunkConfig.content === 'function' ?
     chunkConfig.content(arg) :
@@ -93,26 +86,23 @@ export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: Ch
       {
         className: [
           chunkConfig.tableClassName,
-          sectionConfig.syncRowHeights ? 'fc-scrollgrid-sync-table' : ''
+          sectionConfig.syncRowHeights ? 'fc-scrollgrid-sync-table' : '',
         ].join(' '),
         style: {
           minWidth: arg.tableMinWidth, // because colMinWidths arent enough
           width: arg.clientWidth,
-          height: expandRows ? arg.clientHeight : '' // css `height` on a <table> serves as a min-height
-        }
+          height: expandRows ? arg.clientHeight : '', // css `height` on a <table> serves as a min-height
+        },
       },
       arg.tableColGroupNode,
-      createElement('tbody', {}, typeof chunkConfig.rowContent === 'function' ? chunkConfig.rowContent(arg) : chunkConfig.rowContent)
-    )
+      createElement('tbody', {}, typeof chunkConfig.rowContent === 'function' ? chunkConfig.rowContent(arg) : chunkConfig.rowContent))
 
   return content
 }
 
-
 export function isColPropsEqual(cols0: ColProps[], cols1: ColProps[]) {
   return isArraysEqual(cols0, cols1, isPropsEqual)
 }
-
 
 export function renderMicroColGroup(cols: ColProps[], shrinkWidth?: number): VNode {
   let colNodes: VNode[] = []
@@ -130,9 +120,9 @@ export function renderMicroColGroup(cols: ColProps[], shrinkWidth?: number): VNo
         <col
           style={{
             width: colProps.width === 'shrink' ? sanitizeShrinkWidth(shrinkWidth) : (colProps.width || ''),
-            minWidth: colProps.minWidth || ''
+            minWidth: colProps.minWidth || '',
           }}
-        />
+        />,
       )
     }
   }
@@ -140,13 +130,11 @@ export function renderMicroColGroup(cols: ColProps[], shrinkWidth?: number): VNo
   return createElement('colgroup', {}, ...colNodes)
 }
 
-
 export function sanitizeShrinkWidth(shrinkWidth?: number) {
   /* why 4? if we do 0, it will kill any border, which are needed for computeSmallestCellWidth
   4 accounts for 2 2-pixel borders. TODO: better solution? */
   return shrinkWidth == null ? 4 : shrinkWidth
 }
-
 
 export function hasShrinkWidth(cols: ColProps[]) {
   for (let col of cols) {
@@ -158,11 +146,10 @@ export function hasShrinkWidth(cols: ColProps[]) {
   return false
 }
 
-
 export function getScrollGridClassNames(liquid: boolean, context: ViewContext) {
   let classNames = [
     'fc-scrollgrid',
-    context.theme.getClass('table')
+    context.theme.getClass('table'),
   ]
 
   if (liquid) {
@@ -172,12 +159,11 @@ export function getScrollGridClassNames(liquid: boolean, context: ViewContext) {
   return classNames
 }
 
-
 export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGrow: boolean) {
   let classNames = [
     'fc-scrollgrid-section',
-    'fc-scrollgrid-section-' + sectionConfig.type,
-    sectionConfig.className // used?
+    `fc-scrollgrid-section-${sectionConfig.type}`,
+    sectionConfig.className, // used?
   ]
 
   if (wholeTableVGrow && sectionConfig.liquid && sectionConfig.maxHeight == null) {
@@ -191,16 +177,17 @@ export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGr
   return classNames
 }
 
-
 export function renderScrollShim(arg: ChunkContentCallbackArgs) {
   return (
-    <div className='fc-scrollgrid-sticky-shim' style={{
-      width: arg.clientWidth,
-      minWidth: arg.tableMinWidth
-    }} />
+    <div
+      className="fc-scrollgrid-sticky-shim"
+      style={{
+        width: arg.clientWidth,
+        minWidth: arg.tableMinWidth,
+      }}
+    />
   )
 }
-
 
 export function getStickyHeaderDates(options: BaseOptionsRefined) {
   let { stickyHeaderDates } = options
@@ -211,7 +198,6 @@ export function getStickyHeaderDates(options: BaseOptionsRefined) {
 
   return stickyHeaderDates
 }
-
 
 export function getStickyFooterScrollbar(options: BaseOptionsRefined) {
   let { stickyFooterScrollbar } = options

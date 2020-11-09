@@ -16,7 +16,6 @@ export interface EventClickArg {
 Detects when the user clicks on an event within a DateComponent
 */
 export class EventClicking extends Interaction {
-
   constructor(settings: InteractionSettings) {
     super(settings)
 
@@ -24,7 +23,7 @@ export class EventClicking extends Interaction {
       settings.el,
       'click',
       '.fc-event', // on both fg and bg events
-      this.handleSegClick
+      this.handleSegClick,
     )
   }
 
@@ -37,7 +36,6 @@ export class EventClicking extends Interaction {
       seg && // might be the <div> surrounding the more link
       component.isValidSegDownEl(ev.target as HTMLElement)
     ) {
-
       // our way to simulate a link click for elements that can't be <a> tags
       // grab before trigger fired in case trigger trashes DOM thru rerendering
       let hasUrlContainer = elementClosest(ev.target as HTMLElement, '.fc-event-forced-url')
@@ -48,10 +46,10 @@ export class EventClicking extends Interaction {
         event: new EventApi(
           component.context,
           seg.eventRange.def,
-          seg.eventRange.instance
+          seg.eventRange.instance,
         ),
         jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
-        view: context.viewApi
+        view: context.viewApi,
       } as EventClickArg)
 
       if (url && !ev.defaultPrevented) {
@@ -59,5 +57,4 @@ export class EventClicking extends Interaction {
       }
     }
   }
-
 }

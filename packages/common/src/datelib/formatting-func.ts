@@ -1,12 +1,9 @@
 import { DateFormatter, DateFormattingContext, createVerboseFormattingArg, VerboseFormattingArg } from './DateFormatter'
 import { ZonedMarker } from './zoned-marker'
 
-
 export type FuncFormatterFunc = (arg: VerboseFormattingArg) => string
 
-
 export class FuncFormatter implements DateFormatter {
-
   func: FuncFormatterFunc
 
   constructor(func: FuncFormatterFunc) {
@@ -20,5 +17,4 @@ export class FuncFormatter implements DateFormatter {
   formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext, betterDefaultSeparator?: string) {
     return this.func(createVerboseFormattingArg(start, end, context, betterDefaultSeparator))
   }
-
 }

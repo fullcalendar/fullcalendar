@@ -2,7 +2,6 @@ import { SectionConfig, ChunkConfig, ColProps, CssDimValue } from './util'
 import { Component, Ref } from '../vdom'
 import { ViewContext } from '../ViewContext'
 
-
 export interface ScrollGridProps {
   colGroups?: ColGroupConfig[]
   sections: ScrollGridSectionConfig[]
@@ -23,7 +22,6 @@ export interface ColGroupConfig {
   width?: CssDimValue
   cols: ColProps[]
 }
-
 
 export type ScrollGridImpl = {
   new(props: ScrollGridProps, context: ViewContext): Component<ScrollGridProps>

@@ -3,10 +3,8 @@ import { Duration, asRoughMs, createDuration } from '../datelib/duration'
 import { DateEnv } from '../datelib/env'
 import { DateRange, OpenDateRange } from '../datelib/date-range'
 
-
 /* Date stuff that doesn't belong in datelib core
 ----------------------------------------------------------------------------------------------------------------------*/
-
 
 // given a timed range, computes an all-day range that has the same exact duration,
 // but whose start time is aligned with the start of the day.
@@ -16,7 +14,6 @@ export function computeAlignedDayRange(timedRange: DateRange): DateRange {
   let end = addDays(start, dayCnt)
   return { start, end }
 }
-
 
 // given a timed range, computes an all-day range based on how for the end date bleeds into the next day
 // TODO: give nextDayThreshold a default arg
@@ -49,7 +46,6 @@ export function computeVisibleDayRange(timedRange: OpenDateRange, nextDayThresho
   return { start: startDay, end: endDay }
 }
 
-
 // spans from one day into another?
 export function isMultiDayRange(range: DateRange) {
   let visibleRange = computeVisibleDayRange(range)
@@ -57,13 +53,14 @@ export function isMultiDayRange(range: DateRange) {
   return diffDays(visibleRange.start, visibleRange.end) > 1
 }
 
-
 export function diffDates(date0: DateMarker, date1: DateMarker, dateEnv: DateEnv, largeUnit?: string) {
   if (largeUnit === 'year') {
     return createDuration(dateEnv.diffWholeYears(date0, date1), 'year')!
-  } else if (largeUnit === 'month') {
-    return createDuration(dateEnv.diffWholeMonths(date0, date1), 'month')!
-  } else {
-    return diffDayAndTime(date0, date1) // returns a duration
   }
+
+  if (largeUnit === 'month') {
+    return createDuration(dateEnv.diffWholeMonths(date0, date1), 'month')!
+  }
+
+  return diffDayAndTime(date0, date1) // returns a duration
 }

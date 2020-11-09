@@ -1,3 +1,4 @@
+import { __assign } from 'tslib'
 import { EventStore, createEmptyEventStore } from '../structs/event-store'
 import { EventDef } from '../structs/event-def'
 import { EventInteractionState } from '../interactions/event-interaction-state'
@@ -5,7 +6,6 @@ import { mapHash } from '../util/object'
 import { memoize } from '../util/memoize'
 import { EventUiHash, EventUi, combineEventUis } from './event-ui'
 import { DateSpan } from '../structs/date-span'
-import { __assign } from 'tslib'
 
 export interface SplittableProps {
   businessHours: EventStore | null // is this really allowed to be null?
@@ -44,9 +44,7 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
     let eventResizes = this.splitEventResize(props.eventResize)
     let splitProps: { [key: string]: SplittableProps } = {}
 
-    this.eventUiBuilders = mapHash(keyInfos, (info, key) => {
-      return this.eventUiBuilders[key] || memoize(buildEventUiForKey)
-    })
+    this.eventUiBuilders = mapHash(keyInfos, (info, key) => this.eventUiBuilders[key] || memoize(buildEventUiForKey))
 
     for (let key in keyInfos) {
       let keyInfo = keyInfos[key]
@@ -60,7 +58,7 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
         eventUiBases: buildEventUi(props.eventUiBases[''], keyInfo.ui, individualUi[key]),
         eventSelection: eventStore.instances[props.eventSelection] ? props.eventSelection : '',
         eventDrag: eventDrags[key] || null,
-        eventResize: eventResizes[key] || null
+        eventResize: eventResizes[key] || null,
       }
     }
 
@@ -82,9 +80,7 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
   }
 
   private _getKeysForEventDefs(eventStore: EventStore) {
-    return mapHash(eventStore.defs, (eventDef: EventDef) => {
-      return this.getKeysForEventDef(eventDef)
-    })
+    return mapHash(eventStore.defs, (eventDef: EventDef) => this.getKeysForEventDef(eventDef))
   }
 
   private _splitEventStore(eventStore: EventStore, defKeys): { [key: string]: EventStore } {
@@ -93,7 +89,6 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
 
     for (let defId in defs) {
       for (let key of defKeys[defId]) {
-
         if (!splitStores[key]) {
           splitStores[key] = createEmptyEventStore()
         }
@@ -106,7 +101,6 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
       let instance = instances[instanceId]
 
       for (let key of defKeys[instance.defId]) {
-
         if (splitStores[key]) { // must have already been created
           splitStores[key].instances[instanceId] = instance
         }
@@ -122,7 +116,6 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
     for (let defId in eventUiBases) {
       if (defId) { // not the '' key
         for (let key of defKeys[defId]) {
-
           if (!splitHashes[key]) {
             splitHashes[key] = {}
           }
@@ -141,19 +134,19 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
     if (interaction) {
       let affectedStores = this._splitEventStore(
         interaction.affectedEvents,
-        this._getKeysForEventDefs(interaction.affectedEvents) // can't use cached. might be events from other calendar
+        this._getKeysForEventDefs(interaction.affectedEvents), // can't use cached. might be events from other calendar
       )
 
       // can't rely on defKeys because event data is mutated
       let mutatedKeysByDefId = this._getKeysForEventDefs(interaction.mutatedEvents)
       let mutatedStores = this._splitEventStore(interaction.mutatedEvents, mutatedKeysByDefId)
 
-      let populate = function(key) {
+      let populate = function (key) {
         if (!splitStates[key]) {
           splitStates[key] = {
             affectedEvents: affectedStores[key] || EMPTY_EVENT_STORE,
             mutatedEvents: mutatedStores[key] || EMPTY_EVENT_STORE,
-            isEvent: interaction.isEvent
+            isEvent: interaction.isEvent,
           }
         }
       }
@@ -169,7 +162,6 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
 
     return splitStates
   }
-
 }
 
 function buildEventUiForKey(allUi: EventUi | null, eventUiForKey: EventUi | null, individualUi: EventUiHash | null) {
@@ -184,7 +176,7 @@ function buildEventUiForKey(allUi: EventUi | null, eventUiForKey: EventUi | null
   }
 
   let stuff = {
-    '': combineEventUis(baseParts)
+    '': combineEventUis(baseParts),
   }
 
   if (individualUi) {

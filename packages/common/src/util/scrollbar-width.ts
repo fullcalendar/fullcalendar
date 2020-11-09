@@ -1,11 +1,9 @@
-
 export interface ScrollbarWidths {
   x: number
   y: number // TODO: rename to vertical. less confusing when dealing with width/height verbage
 }
 
 let _scrollbarWidths: ScrollbarWidths | undefined
-
 
 export function getScrollbarWidths() { // TODO: way to force recompute?
   if (!_scrollbarWidths) {
@@ -14,7 +12,6 @@ export function getScrollbarWidths() { // TODO: way to force recompute?
 
   return _scrollbarWidths
 }
-
 
 function computeScrollbarWidths(): ScrollbarWidths {
   let el = document.createElement('div')
@@ -25,11 +22,10 @@ function computeScrollbarWidths(): ScrollbarWidths {
   return res
 }
 
-
 // WARNING: will include border
 export function computeScrollbarWidthsForEl(el: HTMLElement): ScrollbarWidths {
   return {
     x: el.offsetHeight - el.clientHeight,
-    y: el.offsetWidth - el.clientWidth
+    y: el.offsetWidth - el.clientWidth,
   }
 }

@@ -14,9 +14,7 @@ subclasses must emit:
 - dragend
 */
 export abstract class ElementDragging { // TODO: rename to *Interface?
-
   emitter: Emitter<any>
-
 
   constructor(el: HTMLElement, selector?: string) {
     this.emitter = new Emitter()
@@ -39,7 +37,6 @@ export abstract class ElementDragging { // TODO: rename to *Interface?
   setAutoScrollEnabled(bool: boolean) {
     // optional
   }
-
 }
 
 export type ElementDraggingClass = { new(el: HTMLElement, selector?: string): ElementDragging }

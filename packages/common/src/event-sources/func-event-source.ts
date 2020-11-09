@@ -17,7 +17,6 @@ export type EventSourceFunc = (
   failureCallback: (error: EventSourceError) => void
 ) => (void | PromiseLike<EventInput[]>)
 
-
 let eventSourceDef: EventSourceDef<EventSourceFunc> = {
 
   parseMeta(refined) {
@@ -28,20 +27,20 @@ let eventSourceDef: EventSourceDef<EventSourceFunc> = {
   },
 
   fetch(arg, success, failure) {
-    let dateEnv = arg.context.dateEnv
+    let { dateEnv } = arg.context
     let func = arg.eventSource.meta
 
     unpromisify(
       func.bind(null, buildRangeApiWithTimeZone(arg.range, dateEnv)),
-      function(rawEvents) { // success
+      (rawEvents) => { // success
         success({ rawEvents }) // needs an object response
       },
-      failure // send errorObj directly to failure callback
+      failure, // send errorObj directly to failure callback
     )
-  }
+  },
 
 }
 
 export const funcEventSourcePlugin = createPlugin({
-  eventSourceDefs: [ eventSourceDef ]
+  eventSourceDefs: [eventSourceDef],
 })

@@ -2,7 +2,6 @@ import { createElement, VNode } from './vdom'
 import { BaseComponent } from './vdom-util'
 import { ToolbarModel, ToolbarWidget } from './toolbar-struct'
 
-
 export interface ToolbarProps extends ToolbarContent {
   extraClassName: string // wish this could be array, but easier for pureness
   model: ToolbarModel
@@ -16,13 +15,12 @@ export interface ToolbarContent {
   isNextEnabled: boolean
 }
 
-
 export class Toolbar extends BaseComponent<ToolbarProps> {
-
   render() {
     let { model, extraClassName } = this.props
     let forceLtr = false
-    let startContent, endContent
+    let startContent
+    let endContent
     let centerContent = model.center
 
     if (model.left) {
@@ -42,7 +40,7 @@ export class Toolbar extends BaseComponent<ToolbarProps> {
     let classNames = [
       extraClassName || '',
       'fc-toolbar',
-      forceLtr ? 'fc-toolbar-ltr' : ''
+      forceLtr ? 'fc-toolbar-ltr' : '',
     ]
 
     return (
@@ -53,7 +51,6 @@ export class Toolbar extends BaseComponent<ToolbarProps> {
       </div>
     )
   }
-
 
   renderSection(key: string, widgetGroups: ToolbarWidget[][]) {
     let { props } = this
@@ -70,22 +67,18 @@ export class Toolbar extends BaseComponent<ToolbarProps> {
       />
     )
   }
-
 }
-
 
 interface ToolbarSectionProps extends ToolbarContent {
   widgetGroups: ToolbarWidget[][]
 }
 
 class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
-
   render() {
     let children = this.props.widgetGroups.map((widgetGroup) => this.renderWidgetGroup(widgetGroup))
 
     return createElement('div', { className: 'fc-toolbar-chunk' }, ...children)
   }
-
 
   renderWidgetGroup(widgetGroup: ToolbarWidget[]) {
     let { props } = this
@@ -99,13 +92,12 @@ class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
       if (buttonName === 'title') {
         isOnlyButtons = false
         children.push(
-          <h2 className='fc-toolbar-title'>{props.title}</h2>
+          <h2 className="fc-toolbar-title">{props.title}</h2>,
         )
-
       } else {
         let ariaAttrs = buttonIcon ? { 'aria-label': buttonName } : {}
 
-        let buttonClasses = [ 'fc-' + buttonName + '-button', theme.getClass('button') ]
+        let buttonClasses = [`fc-${buttonName}-button`, theme.getClass('button')]
         if (buttonName === props.activeButton) {
           buttonClasses.push(theme.getClass('buttonActive'))
         }
@@ -120,9 +112,11 @@ class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
             disabled={isDisabled}
             className={buttonClasses.join(' ')}
             onClick={buttonClick}
-            type='button'
-            { ...ariaAttrs }
-          >{ buttonText || (buttonIcon ? <span className={buttonIcon} /> : '')}</button>
+            type="button"
+            {...ariaAttrs}
+          >
+            {buttonText || (buttonIcon ? <span className={buttonIcon} /> : '')}
+          </button>,
         )
       }
     }
@@ -131,10 +125,7 @@ class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
       let groupClassName = (isOnlyButtons && theme.getClass('buttonGroup')) || ''
 
       return createElement('div', { className: groupClassName }, ...children)
-
-    } else {
-      return children[0]
     }
+    return children[0]
   }
-
 }

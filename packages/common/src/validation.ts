@@ -12,20 +12,16 @@ import { buildDateSpanApiWithContext } from './calendar-utils'
 import { Constraint } from './structs/constraint'
 import { expandRecurring } from './structs/recurring-event'
 
-
 // high-level segmenting-aware tester functions
 // ------------------------------------------------------------------------------------------------------------------------
-
 
 export function isInteractionValid(interaction: EventInteractionState, context: CalendarContext) {
   return isNewPropsValid({ eventDrag: interaction }, context) // HACK: the eventDrag props is used for ALL interactions
 }
 
-
 export function isDateSelectionValid(dateSelection: DateSpan, context: CalendarContext) {
   return isNewPropsValid({ dateSelection }, context)
 }
-
 
 function isNewPropsValid(newProps, context: CalendarContext) {
   let calendarState = context.getCurrentData()
@@ -38,15 +34,13 @@ function isNewPropsValid(newProps, context: CalendarContext) {
     eventSelection: '',
     eventDrag: null,
     eventResize: null,
-    ...newProps
+    ...newProps,
   }
 
   return (context.pluginHooks.isPropsValid || isPropsValid)(props, context)
 }
 
-
 export function isPropsValid(state: SplittableProps, context: CalendarContext, dateSpanMeta = {}, filterConfig?): boolean {
-
   if (state.eventDrag && !isInteractionPropsValid(state, context, dateSpanMeta, filterConfig)) {
     return false
   }
@@ -57,7 +51,6 @@ export function isPropsValid(state: SplittableProps, context: CalendarContext, d
 
   return true
 }
-
 
 // Moving Event Validation
 // ------------------------------------------------------------------------------------------------------------------------
@@ -73,7 +66,7 @@ function isInteractionPropsValid(state: SplittableProps, context: CalendarContex
     subjectDefs,
     interaction.isEvent ?
       state.eventUiBases :
-      { '': currentState.selectionConfig } // if not a real event, validate as a selection
+      { '': currentState.selectionConfig }, // if not a real event, validate as a selection
   )
 
   if (filterConfig) {
@@ -119,7 +112,7 @@ function isInteractionPropsValid(state: SplittableProps, context: CalendarContex
 
         if (eventOverlapFunc && !eventOverlapFunc(
           new EventApi(context, otherDefs[otherInstance.defId], otherInstance), // still event
-          new EventApi(context, subjectDef, subjectInstance) // moving event
+          new EventApi(context, subjectDef, subjectInstance), // moving event
         )) {
           return false
         }
@@ -131,11 +124,10 @@ function isInteractionPropsValid(state: SplittableProps, context: CalendarContex
     let calendarEventStore = currentState.eventStore // need global-to-calendar, not local to component (splittable)state
 
     for (let subjectAllow of subjectConfig.allows) {
-
       let subjectDateSpan: DateSpan = {
         ...dateSpanMeta,
         range: subjectInstance.range,
-        allDay: subjectDef.allDay
+        allDay: subjectDef.allDay,
       }
 
       let origDef = calendarEventStore.defs[subjectDef.defId]
@@ -144,24 +136,21 @@ function isInteractionPropsValid(state: SplittableProps, context: CalendarContex
 
       if (origDef) { // was previously in the calendar
         eventApi = new EventApi(context, origDef, origInstance)
-
       } else { // was an external event
         eventApi = new EventApi(context, subjectDef) // no instance, because had no dates
       }
 
       if (!subjectAllow(
         buildDateSpanApiWithContext(subjectDateSpan, context),
-        eventApi
+        eventApi,
       )) {
         return false
       }
     }
-
   }
 
   return true
 }
-
 
 // Date Selection Validation
 // ------------------------------------------------------------------------------------------------------------------------
@@ -194,14 +183,13 @@ function isDateSelectionPropsValid(state: SplittableProps, context: CalendarCont
 
     // intersect! evaluate
     if (rangesIntersect(selectionRange, relevantInstance.range)) {
-
       if (selectionConfig.overlap === false) {
         return false
       }
 
       if (selectOverlapFunc && !selectOverlapFunc(
         new EventApi(context, relevantDefs[relevantInstance.defId], relevantInstance),
-        null
+        null,
       )) {
         return false
       }
@@ -210,12 +198,11 @@ function isDateSelectionPropsValid(state: SplittableProps, context: CalendarCont
 
   // allow (a function)
   for (let selectionAllow of selectionConfig.allows) {
-
     let fullDateSpan = { ...dateSpanMeta, ...selection }
 
     if (!selectionAllow(
       buildDateSpanApiWithContext(fullDateSpan, context),
-      null
+      null,
     )) {
       return false
     }
@@ -223,7 +210,6 @@ function isDateSelectionPropsValid(state: SplittableProps, context: CalendarCont
 
   return true
 }
-
 
 // Constraint Utils
 // ------------------------------------------------------------------------------------------------------------------------
@@ -233,12 +219,12 @@ function allConstraintsPass(
   subjectRange: DateRange,
   otherEventStore: EventStore,
   businessHoursUnexpanded: EventStore,
-  context: CalendarContext
+  context: CalendarContext,
 ): boolean {
   for (let constraint of constraints) {
     if (!anyRangesContainRange(
       constraintToRanges(constraint, subjectRange, otherEventStore, businessHoursUnexpanded, context),
-      subjectRange
+      subjectRange,
     )) {
       return false
     }
@@ -252,24 +238,23 @@ function constraintToRanges(
   subjectRange: DateRange, // for expanding a recurring constraint, or expanding business hours
   otherEventStore: EventStore, // for if constraint is an even group ID
   businessHoursUnexpanded: EventStore, // for if constraint is 'businessHours'
-  context: CalendarContext // for expanding businesshours
+  context: CalendarContext, // for expanding businesshours
 ): OpenDateRange[] {
-
   if (constraint === 'businessHours') {
     return eventStoreToRanges(
-      expandRecurring(businessHoursUnexpanded, subjectRange, context)
+      expandRecurring(businessHoursUnexpanded, subjectRange, context),
     )
+  }
 
-  } else if (typeof constraint === 'string') { // an group ID
+  if (typeof constraint === 'string') { // an group ID
     return eventStoreToRanges(
-      filterEventStoreDefs(otherEventStore, function(eventDef) {
-        return eventDef.groupId === constraint
-      })
+      filterEventStoreDefs(otherEventStore, (eventDef) => eventDef.groupId === constraint),
     )
+  }
 
-  } else if (typeof constraint === 'object' && constraint) { // non-null object
+  if (typeof constraint === 'object' && constraint) { // non-null object
     return eventStoreToRanges(
-      expandRecurring(constraint, subjectRange, context)
+      expandRecurring(constraint, subjectRange, context),
     )
   }
 
@@ -290,7 +275,6 @@ function eventStoreToRanges(eventStore: EventStore): DateRange[] {
 
 // TODO: move to geom file?
 function anyRangesContainRange(outerRanges: DateRange[], innerRange: DateRange): boolean {
-
   for (let outerRange of outerRanges) {
     if (rangeContainsRange(outerRange, innerRange)) {
       return true

@@ -4,7 +4,6 @@ import { ViewContext, ViewContextType } from '../ViewContext'
 import { createElement } from '../vdom'
 import { ViewApi } from '../ViewApi'
 
-
 export interface NowIndicatorRootProps {
   isAxis: boolean
   date: DateMarker
@@ -19,7 +18,6 @@ export interface NowIndicatorContentArg {
 
 export type NowIndicatorMountArg = MountArg<NowIndicatorContentArg>
 
-
 export const NowIndicatorRoot = (props: NowIndicatorRootProps) => (
   <ViewContextType.Consumer>
     {(context: ViewContext) => {
@@ -27,7 +25,7 @@ export const NowIndicatorRoot = (props: NowIndicatorRootProps) => (
       let hookProps: NowIndicatorContentArg = {
         isAxis: props.isAxis,
         date: context.dateEnv.toDate(props.date),
-        view: context.viewApi
+        view: context.viewApi,
       }
 
       return (

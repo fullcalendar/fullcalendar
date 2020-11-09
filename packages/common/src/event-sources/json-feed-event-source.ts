@@ -1,11 +1,10 @@
+import { __assign } from 'tslib'
 import { requestJson } from '../util/requestJson'
 import { CalendarContext } from '../CalendarContext'
 import { EventSourceDef } from '../structs/event-source-def'
 import { DateRange } from '../datelib/date-range'
-import { __assign } from 'tslib'
 import { createPlugin } from '../plugin-system'
 import { JSON_FEED_EVENT_SOURCE_REFINERS } from './json-feed-event-source-refiners'
-
 
 interface JsonFeedMeta {
   url: string
@@ -15,7 +14,6 @@ interface JsonFeedMeta {
   endParam?: string
   timeZoneParam?: string
 }
-
 
 let eventSourceDef: EventSourceDef<JsonFeedMeta> = {
 
@@ -27,35 +25,33 @@ let eventSourceDef: EventSourceDef<JsonFeedMeta> = {
         extraParams: refined.extraParams,
         startParam: refined.startParam,
         endParam: refined.endParam,
-        timeZoneParam: refined.timeZoneParam
+        timeZoneParam: refined.timeZoneParam,
       }
     }
     return null
   },
 
   fetch(arg, success, failure) {
-    let meta: JsonFeedMeta = arg.eventSource.meta
+    let { meta } = arg.eventSource
     let requestParams = buildRequestParams(meta, arg.range, arg.context)
 
     requestJson(
       meta.method, meta.url, requestParams,
-      function(rawEvents, xhr) {
+      (rawEvents, xhr) => {
         success({ rawEvents, xhr })
       },
-      function(errorMessage, xhr) {
+      (errorMessage, xhr) => {
         failure({ message: errorMessage, xhr })
-      }
+      },
     )
-  }
+  },
 
 }
 
-
 export const jsonFeedEventSourcePlugin = createPlugin({
   eventSourceRefiners: JSON_FEED_EVENT_SOURCE_REFINERS,
-  eventSourceDefs: [ eventSourceDef ]
+  eventSourceDefs: [eventSourceDef],
 })
-
 
 function buildRequestParams(meta: JsonFeedMeta, range: DateRange, context: CalendarContext) {
   let { dateEnv, options } = context

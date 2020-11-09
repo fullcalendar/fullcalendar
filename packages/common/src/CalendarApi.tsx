@@ -30,9 +30,7 @@ import {
   ViewApi,
 } from './api-type-deps'
 
-
 export class CalendarApi {
-
   currentDataManager?: CalendarDataManager // will be set by CalendarDataManager
 
   getCurrentData() {
@@ -45,43 +43,35 @@ export class CalendarApi {
 
   get view(): ViewApi { return this.getCurrentData().viewApi } // for public API
 
-
   batchRendering(callback: () => void) { // subclasses should implement
     callback()
   }
-
 
   updateSize() { // public
     this.trigger('_resize', true)
   }
 
-
   // Options
   // -----------------------------------------------------------------------------------------------------------------
-
 
   setOption<OptionName extends keyof CalendarOptions>(name: OptionName, val: CalendarOptions[OptionName]) {
     this.dispatch({
       type: 'SET_OPTION',
       optionName: name,
-      rawOptionValue: val
+      rawOptionValue: val,
     })
   }
-
 
   getOption<OptionName extends keyof CalendarOptions>(name: OptionName): CalendarOptions[OptionName] { // getter, used externally. WTF TS
     return this.currentDataManager!.currentCalendarOptionsInput[name]
   }
 
-
   getAvailableLocaleCodes() {
     return Object.keys(this.getCurrentData().availableRawLocales)
   }
 
-
   // Trigger
   // -----------------------------------------------------------------------------------------------------------------
-
 
   on<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, handler: CalendarListeners[ListenerName]) {
     let { currentDataManager } = this
@@ -93,28 +83,23 @@ export class CalendarApi {
     }
   }
 
-
   off<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, handler: CalendarListeners[ListenerName]) {
     this.currentDataManager!.emitter.off(handlerName, handler)
   }
-
 
   // not meant for public use
   trigger<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, ...args: Parameters<CalendarListeners[ListenerName]>) {
     this.currentDataManager!.emitter.trigger(handlerName, ...args)
   }
 
-
   // View
   // -----------------------------------------------------------------------------------------------------------------
-
 
   changeView(viewType: string, dateOrRange?: DateRangeInput | DateInput) {
     this.batchRendering(() => {
       this.unselect()
 
       if (dateOrRange) {
-
         if ((dateOrRange as DateRangeInput).start && (dateOrRange as DateRangeInput).end) { // a range
           this.dispatch({
             type: 'CHANGE_VIEW_TYPE',
@@ -123,28 +108,25 @@ export class CalendarApi {
           this.dispatch({ // not very efficient to do two dispatches
             type: 'SET_OPTION',
             optionName: 'visibleRange',
-            rawOptionValue: dateOrRange
+            rawOptionValue: dateOrRange,
           })
-
         } else {
           let { dateEnv } = this.getCurrentData()
 
           this.dispatch({
             type: 'CHANGE_VIEW_TYPE',
             viewType,
-            dateMarker: dateEnv.createMarker(dateOrRange as DateInput)
+            dateMarker: dateEnv.createMarker(dateOrRange as DateInput),
           })
         }
-
       } else {
         this.dispatch({
           type: 'CHANGE_VIEW_TYPE',
-          viewType
+          viewType,
         })
       }
     })
   }
-
 
   // Forces navigation to a view for the given date.
   // `viewType` can be a specific view name or a generic one like "week" or "day".
@@ -162,17 +144,15 @@ export class CalendarApi {
       this.dispatch({
         type: 'CHANGE_VIEW_TYPE',
         viewType: spec.type,
-        dateMarker
+        dateMarker,
       })
-
     } else {
       this.dispatch({
         type: 'CHANGE_DATE',
-        dateMarker
+        dateMarker,
       })
     }
   }
-
 
   // Given a duration singular unit, like "week" or "day", finds a matching view spec.
   // Preference is given to views that have corresponding buttons.
@@ -196,32 +176,27 @@ export class CalendarApi {
     }
   }
 
-
   // Current Date
   // -----------------------------------------------------------------------------------------------------------------
-
 
   prev() {
     this.unselect()
     this.dispatch({ type: 'PREV' })
   }
 
-
   next() {
     this.unselect()
     this.dispatch({ type: 'NEXT' })
   }
-
 
   prevYear() {
     let state = this.getCurrentData()
     this.unselect()
     this.dispatch({
       type: 'CHANGE_DATE',
-      dateMarker: state.dateEnv.addYears(state.currentDate, -1)
+      dateMarker: state.dateEnv.addYears(state.currentDate, -1),
     })
   }
-
 
   nextYear() {
     let state = this.getCurrentData()
@@ -229,10 +204,9 @@ export class CalendarApi {
     this.unselect()
     this.dispatch({
       type: 'CHANGE_DATE',
-      dateMarker: state.dateEnv.addYears(state.currentDate, 1)
+      dateMarker: state.dateEnv.addYears(state.currentDate, 1),
     })
   }
-
 
   today() {
     let state = this.getCurrentData()
@@ -240,10 +214,9 @@ export class CalendarApi {
     this.unselect()
     this.dispatch({
       type: 'CHANGE_DATE',
-      dateMarker: getNow(state.calendarOptions.now, state.dateEnv)
+      dateMarker: getNow(state.calendarOptions.now, state.dateEnv),
     })
   }
-
 
   gotoDate(zonedDateInput) {
     let state = this.getCurrentData()
@@ -251,10 +224,9 @@ export class CalendarApi {
     this.unselect()
     this.dispatch({
       type: 'CHANGE_DATE',
-      dateMarker: state.dateEnv.createMarker(zonedDateInput)
+      dateMarker: state.dateEnv.createMarker(zonedDateInput),
     })
   }
-
 
   incrementDate(deltaInput) { // is public facing
     let state = this.getCurrentData()
@@ -264,11 +236,10 @@ export class CalendarApi {
       this.unselect()
       this.dispatch({
         type: 'CHANGE_DATE',
-        dateMarker: state.dateEnv.add(state.currentDate, delta)
+        dateMarker: state.dateEnv.add(state.currentDate, delta),
       })
     }
   }
-
 
   // for external API
   getDate(): Date {
@@ -276,20 +247,17 @@ export class CalendarApi {
     return state.dateEnv.toDate(state.currentDate)
   }
 
-
   // Date Formatting Utils
   // -----------------------------------------------------------------------------------------------------------------
-
 
   formatDate(d: DateInput, formatter): string {
     let { dateEnv } = this.getCurrentData()
 
     return dateEnv.format(
       dateEnv.createMarker(d),
-      createFormatter(formatter)
+      createFormatter(formatter),
     )
   }
-
 
   // `settings` is for formatter AND isEndExclusive
   formatRange(d0: DateInput, d1: DateInput, settings) {
@@ -299,10 +267,9 @@ export class CalendarApi {
       dateEnv.createMarker(d0),
       dateEnv.createMarker(d1),
       createFormatter(settings),
-      settings
+      settings,
     )
   }
-
 
   formatIso(d: DateInput, omitTime?: boolean) {
     let { dateEnv } = this.getCurrentData()
@@ -310,10 +277,8 @@ export class CalendarApi {
     return dateEnv.formatIso(dateEnv.createMarker(d), { omitTime })
   }
 
-
   // Date Selection / Event Selection / DayClick
   // -----------------------------------------------------------------------------------------------------------------
-
 
   // this public method receives start/end dates in any format, with any timezone
   // NOTE: args were changed from v3
@@ -326,13 +291,13 @@ export class CalendarApi {
       } else {
         selectionInput = {
           start: dateOrObj,
-          end: null
+          end: null,
         }
       }
     } else {
       selectionInput = {
         start: dateOrObj,
-        end: endDate
+        end: endDate,
       } as DateSpanInput
     }
 
@@ -340,7 +305,7 @@ export class CalendarApi {
     let selection = parseDateSpan(
       selectionInput,
       state.dateEnv,
-      createDuration({ days: 1 }) // TODO: cache this?
+      createDuration({ days: 1 }), // TODO: cache this?
     )
 
     if (selection) { // throw parse error otherwise?
@@ -348,7 +313,6 @@ export class CalendarApi {
       triggerDateSelect(selection, null, state)
     }
   }
-
 
   // public method
   unselect(pev?: PointerDragEvent) {
@@ -360,13 +324,10 @@ export class CalendarApi {
     }
   }
 
-
   // Public Events API
   // -----------------------------------------------------------------------------------------------------------------
 
-
   addEvent(eventInput: EventInput, sourceInput?: EventSourceApi | string | boolean): EventApi | null {
-
     if (eventInput instanceof EventApi) {
       let def = eventInput._def
       let instance = eventInput._instance
@@ -376,7 +337,7 @@ export class CalendarApi {
       if (!currentData.eventStore.defs[def.defId]) {
         this.dispatch({
           type: 'ADD_EVENTS',
-          eventStore: eventTupleToStore({ def, instance }) // TODO: better util for two args?
+          eventStore: eventTupleToStore({ def, instance }), // TODO: better util for two args?
         })
         this.triggerEventAdd(eventInput)
       }
@@ -389,21 +350,18 @@ export class CalendarApi {
 
     if (sourceInput instanceof EventSourceApi) {
       eventSource = sourceInput.internalEventSource
-
     } else if (typeof sourceInput === 'boolean') {
       if (sourceInput) { // true. part of the first event source
         eventSource = hashValuesToArray(state.eventSources)[0]
       }
-
     } else if (sourceInput != null) { // an ID. accepts a number too
       let sourceApi = this.getEventSourceById(sourceInput) // TODO: use an internal function
 
       if (!sourceApi) {
-        console.warn('Could not find an event source with ID "' + sourceInput + '"') // TODO: test
+        console.warn(`Could not find an event source with ID "${sourceInput}"`) // TODO: test
         return null
-      } else {
-        eventSource = sourceApi.internalEventSource
       }
+      eventSource = sourceApi.internalEventSource
     }
 
     let tuple = parseEvent(eventInput, eventSource, state, false)
@@ -412,11 +370,11 @@ export class CalendarApi {
       let newEventApi = new EventApi(
         state,
         tuple.def,
-        tuple.def.recurringDef ? null : tuple.instance
+        tuple.def.recurringDef ? null : tuple.instance,
       )
       this.dispatch({
         type: 'ADD_EVENTS',
-        eventStore: eventTupleToStore(tuple)
+        eventStore: eventTupleToStore(tuple),
       })
       this.triggerEventAdd(newEventApi)
 
@@ -425,7 +383,6 @@ export class CalendarApi {
 
     return null
   }
-
 
   private triggerEventAdd(eventApi: EventApi) {
     let { emitter } = this.getCurrentData()
@@ -436,12 +393,11 @@ export class CalendarApi {
       revert: () => {
         this.dispatch({
           type: 'REMOVE_EVENTS',
-          eventStore: eventApiToStore(eventApi)
+          eventStore: eventApiToStore(eventApi),
         })
-      }
+      },
     })
   }
-
 
   // TODO: optimize
   getEventById(id: string): EventApi | null {
@@ -454,17 +410,15 @@ export class CalendarApi {
       let def = defs[defId]
 
       if (def.publicId === id) {
-
         if (def.recurringDef) {
           return new EventApi(state, def, null)
-        } else {
+        }
 
-          for (let instanceId in instances) {
-            let instance = instances[instanceId]
+        for (let instanceId in instances) {
+          let instance = instances[instanceId]
 
-            if (instance.defId === def.defId) {
-              return new EventApi(state, def, instance)
-            }
+          if (instance.defId === def.defId) {
+            return new EventApi(state, def, instance)
           }
         }
       }
@@ -473,22 +427,18 @@ export class CalendarApi {
     return null
   }
 
-
   getEvents(): EventApi[] {
     let currentData = this.getCurrentData()
 
     return buildEventApis(currentData.eventStore, currentData)
   }
 
-
   removeAllEvents() {
     this.dispatch({ type: 'REMOVE_ALL_EVENTS' })
   }
 
-
   // Public Event Sources API
   // -----------------------------------------------------------------------------------------------------------------
-
 
   getEventSources(): EventSourceApi[] {
     let state = this.getCurrentData()
@@ -501,7 +451,6 @@ export class CalendarApi {
 
     return sourceApis
   }
-
 
   getEventSourceById(id: string): EventSourceApi | null {
     let state = this.getCurrentData()
@@ -518,17 +467,15 @@ export class CalendarApi {
     return null
   }
 
-
   addEventSource(sourceInput: EventSourceInput): EventSourceApi {
     let state = this.getCurrentData()
 
     if (sourceInput instanceof EventSourceApi) {
-
       // not already present? don't want to add an old snapshot
       if (!state.eventSources[sourceInput.internalEventSource.sourceId]) {
         this.dispatch({
           type: 'ADD_EVENT_SOURCES',
-          sources: [ sourceInput.internalEventSource ]
+          sources: [sourceInput.internalEventSource],
         })
       }
 
@@ -538,7 +485,7 @@ export class CalendarApi {
     let eventSource = parseEventSource(sourceInput, state)
 
     if (eventSource) { // TODO: error otherwise?
-      this.dispatch({ type: 'ADD_EVENT_SOURCES', sources: [ eventSource ] })
+      this.dispatch({ type: 'ADD_EVENT_SOURCES', sources: [eventSource] })
 
       return new EventSourceApi(state, eventSource)
     }
@@ -546,16 +493,13 @@ export class CalendarApi {
     return null
   }
 
-
   removeAllEventSources() {
     this.dispatch({ type: 'REMOVE_ALL_EVENT_SOURCES' })
   }
 
-
   refetchEvents() {
     this.dispatch({ type: 'FETCH_EVENT_SOURCES' })
   }
-
 
   // Scroll
   // -----------------------------------------------------------------------------------------------------------------
@@ -567,5 +511,4 @@ export class CalendarApi {
       this.trigger('_scrollRequest', { time })
     }
   }
-
 }

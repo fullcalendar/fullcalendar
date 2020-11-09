@@ -6,7 +6,6 @@ import { DateSpan } from './structs/date-span'
 import { EventInteractionState } from './interactions/event-interaction-state'
 import { Duration } from './datelib/duration'
 
-
 export interface ViewProps {
   dateProfile: DateProfile
   businessHours: EventStore
@@ -20,7 +19,6 @@ export interface ViewProps {
   forPrint: boolean
 }
 
-
 // HELPERS
 
 /*
@@ -32,6 +30,6 @@ export function sliceEvents(props: ViewProps & { dateProfile: DateProfile, nextD
     props.eventStore,
     props.eventUiBases,
     props.dateProfile.activeRange,
-    allDay ? props.nextDayThreshold : null
+    allDay ? props.nextDayThreshold : null,
   ).fg
 }

@@ -7,7 +7,6 @@ import { guid } from '../util/misc'
 import { EVENT_UI_REFINERS, createEventUi, EventUiInput, EventUiRefined } from '../component/event-ui'
 import { identity, Identity, RawOptionsFromRefiners, refineProps, RefinedOptionsFromRefiners } from '../options'
 
-
 const EVENT_SOURCE_REFINERS = { // does NOT include EVENT_UI_REFINERS
   id: String,
   defaultAllDay: Boolean,
@@ -40,20 +39,17 @@ export type EventSourceRefined =
   EventUiRefined &
   RefinedOptionsFromRefiners<Required<EventSourceRefiners>> // Required hack
 
-
 export function parseEventSource(
   raw: EventSourceInput,
   context: CalendarContext,
-  refiners = buildEventSourceRefiners(context)
+  refiners = buildEventSourceRefiners(context),
 ): EventSource<any> | null {
   let rawObj: EventSourceInputObject
 
   if (typeof raw === 'string') {
     rawObj = { url: raw }
-
   } else if (typeof raw === 'function' || Array.isArray(raw)) {
     rawObj = { events: raw }
-
   } else if (typeof raw === 'object' && raw) { // not null
     rawObj = raw
   }
@@ -77,7 +73,7 @@ export function parseEventSource(
         sourceDefId: metaRes.sourceDefId,
         meta: metaRes.meta,
         ui: createEventUi(refined, context),
-        extendedProps: extra
+        extendedProps: extra,
       }
     }
   }
@@ -85,11 +81,9 @@ export function parseEventSource(
   return null
 }
 
-
 export function buildEventSourceRefiners(context: CalendarContext) {
   return { ...EVENT_UI_REFINERS, ...EVENT_SOURCE_REFINERS, ...context.pluginHooks.eventSourceRefiners }
 }
-
 
 function buildEventSourceMeta(raw: EventSourceRefined, context: CalendarContext) {
   let defs = context.pluginHooks.eventSourceDefs

@@ -1,9 +1,8 @@
-
 /// <reference types="@fullcalendar/core-preact" />
 
 if (typeof FullCalendarVDom === 'undefined') {
   throw new Error(
-    'Please import the top-level fullcalendar lib before attempting to import a plugin.'
+    'Please import the top-level fullcalendar lib before attempting to import a plugin.',
   )
 }
 

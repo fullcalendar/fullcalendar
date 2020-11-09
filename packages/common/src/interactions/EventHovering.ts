@@ -16,8 +16,8 @@ Triggers events and adds/removes core classNames when the user's pointer
 enters/leaves event-elements of a component.
 */
 export class EventHovering extends Interaction {
-
   removeHoverListeners: () => void
+
   currentSegEl: HTMLElement
 
   constructor(settings: InteractionSettings) {
@@ -27,7 +27,7 @@ export class EventHovering extends Interaction {
       settings.el,
       '.fc-event', // on both fg and bg events
       this.handleSegEnter,
-      this.handleSegLeave
+      this.handleSegLeave,
     )
   }
 
@@ -67,12 +67,11 @@ export class EventHovering extends Interaction {
         event: new EventApi(
           context,
           seg.eventRange.def,
-          seg.eventRange.instance
+          seg.eventRange.instance,
         ),
         jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
-        view: context.viewApi
+        view: context.viewApi,
       } as EventHoveringArg)
     }
   }
-
 }

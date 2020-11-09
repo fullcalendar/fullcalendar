@@ -2,23 +2,18 @@ import { isArraysEqual } from './array'
 import { isPropsEqual } from './object'
 import { Dictionary } from '../options'
 
-
 export function memoize<Args extends any[], Res>(
   workerFunc: (...args: Args) => Res,
   resEquality?: (res0: Res, res1: Res) => boolean,
-  teardownFunc?: (res: Res) => void
+  teardownFunc?: (res: Res) => void,
 ): (...args: Args) => Res {
-
   let currentArgs: Args | undefined
   let currentRes: Res | undefined
 
-  return function(...newArgs: Args) {
-
+  return function (...newArgs: Args) {
     if (!currentArgs) {
       currentRes = workerFunc.apply(this, newArgs)
-
     } else if (!isArraysEqual(currentArgs, newArgs)) {
-
       if (teardownFunc) {
         teardownFunc(currentRes)
       }
@@ -36,23 +31,18 @@ export function memoize<Args extends any[], Res>(
   }
 }
 
-
 export function memoizeObjArg<Arg extends Dictionary, Res>(
   workerFunc: (arg: Arg) => Res,
   resEquality?: (res0: Res, res1: Res) => boolean,
-  teardownFunc?: (res: Res) => void
+  teardownFunc?: (res: Res) => void,
 ): (arg: Arg) => Res {
-
   let currentArg: Arg | undefined
   let currentRes: Res | undefined
 
-  return function(newArg: Arg) {
-
+  return function (newArg: Arg) {
     if (!currentArg) {
       currentRes = workerFunc.call(this, newArg)
-
     } else if (!isPropsEqual(currentArg, newArg)) {
-
       if (teardownFunc) {
         teardownFunc(currentRes)
       }
@@ -70,31 +60,25 @@ export function memoizeObjArg<Arg extends Dictionary, Res>(
   }
 }
 
-
 export function memoizeArraylike<Args extends any[], Res>( // used at all?
   workerFunc: (...args: Args) => Res,
   resEquality?: (res0: Res, res1: Res) => boolean,
-  teardownFunc?: (res: Res) => void
+  teardownFunc?: (res: Res) => void,
 ): (argSets: Args[]) => Res[] {
-
   let currentArgSets: Args[] = []
   let currentResults: Res[] = []
 
-  return function(newArgSets: Args[]) {
+  return function (newArgSets: Args[]) {
     let currentLen = currentArgSets.length
     let newLen = newArgSets.length
     let i = 0
 
     for (; i < currentLen; i++) {
-
       if (!newArgSets[i]) { // one of the old sets no longer exists
         if (teardownFunc) {
           teardownFunc(currentResults[i])
         }
-
-      }
-      else if (!isArraysEqual(currentArgSets[i], newArgSets[i])) {
-
+      } else if (!isArraysEqual(currentArgSets[i], newArgSets[i])) {
         if (teardownFunc) {
           teardownFunc(currentResults[i])
         }
@@ -118,26 +102,21 @@ export function memoizeArraylike<Args extends any[], Res>( // used at all?
   }
 }
 
-
 export function memoizeHashlike<Args extends any[], Res>( // used?
   workerFunc: (...args: Args) => Res,
   resEquality?: (res0: Res, res1: Res) => boolean,
-  teardownFunc?: (res: Res) => void // TODO: change arg order
+  teardownFunc?: (res: Res) => void, // TODO: change arg order
 ): (argHash: { [key: string]: Args }) => { [key: string]: Res } {
-
   let currentArgHash: { [key: string]: Args } = {}
   let currentResHash: { [key: string]: Res } = {}
 
-  return function(newArgHash: { [key: string]: Args }) {
+  return function (newArgHash: { [key: string]: Args }) {
     let newResHash: { [key: string]: Res } = {}
 
     for (let key in newArgHash) {
-
       if (!currentResHash[key]) {
         newResHash[key] = workerFunc.apply(this, newArgHash[key])
-
       } else if (!isArraysEqual(currentArgHash[key], newArgHash[key])) {
-
         if (teardownFunc) {
           teardownFunc(currentResHash[key])
         }
@@ -147,7 +126,6 @@ export function memoizeHashlike<Args extends any[], Res>( // used?
         newResHash[key] = (resEquality && resEquality(res, currentResHash[key]))
           ? currentResHash[key]
           : res
-
       } else {
         newResHash[key] = currentResHash[key]
       }

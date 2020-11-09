@@ -2,9 +2,7 @@ import { guid } from './util/misc'
 import { PluginDefInput, PluginDef, PluginHooks } from './plugin-system-struct'
 import { isArraysEqual } from './util/array'
 
-
 // TODO: easier way to add new hooks? need to update a million things
-
 
 export function createPlugin(input: PluginDefInput): PluginDef {
   return {
@@ -42,10 +40,9 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     contentTypeHandlers: input.contentTypeHandlers || {},
     listenerRefiners: input.listenerRefiners || {},
     optionRefiners: input.optionRefiners || {},
-    propSetHandlers: input.propSetHandlers || {}
+    propSetHandlers: input.propSetHandlers || {},
   }
 }
-
 
 function buildPluginHooks(pluginDefs: PluginDef[], globalDefs: PluginDef[]): PluginHooks {
   let isAdded: { [pluginId: string]: boolean } = {}
@@ -82,7 +79,7 @@ function buildPluginHooks(pluginDefs: PluginDef[], globalDefs: PluginDef[]): Plu
     contentTypeHandlers: {},
     listenerRefiners: {},
     optionRefiners: {},
-    propSetHandlers: {}
+    propSetHandlers: {},
   }
 
   function addDefs(defs: PluginDef[]) {
@@ -104,13 +101,12 @@ function buildPluginHooks(pluginDefs: PluginDef[], globalDefs: PluginDef[]): Plu
   return hooks
 }
 
-
 export function buildBuildPluginHooks() { // memoizes
   let currentOverrideDefs: PluginDef[] = []
   let currentGlobalDefs: PluginDef[] = []
   let currentHooks: PluginHooks
 
-  return function(overrideDefs: PluginDef[], globalDefs: PluginDef[]) {
+  return function (overrideDefs: PluginDef[], globalDefs: PluginDef[]) {
     if (!currentHooks || !isArraysEqual(overrideDefs, currentOverrideDefs) || !isArraysEqual(globalDefs, currentGlobalDefs)) {
       currentHooks = buildPluginHooks(overrideDefs, globalDefs)
     }
@@ -119,7 +115,6 @@ export function buildBuildPluginHooks() { // memoizes
     return currentHooks
   }
 }
-
 
 function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
   return {
@@ -155,6 +150,6 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     contentTypeHandlers: { ...hooks0.contentTypeHandlers, ...hooks1.contentTypeHandlers },
     listenerRefiners: { ...hooks0.listenerRefiners, ...hooks1.listenerRefiners },
     optionRefiners: { ...hooks0.optionRefiners, ...hooks1.optionRefiners },
-    propSetHandlers: { ...hooks0.propSetHandlers, ...hooks1.propSetHandlers }
+    propSetHandlers: { ...hooks0.propSetHandlers, ...hooks1.propSetHandlers },
   }
 }

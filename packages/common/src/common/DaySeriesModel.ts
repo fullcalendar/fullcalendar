@@ -17,7 +17,7 @@ export class DaySeriesModel {
 
   constructor(range: DateRange, dateProfileGenerator: DateProfileGenerator) {
     let date: DateMarker = range.start
-    let end: DateMarker = range.end
+    let { end } = range
     let indices: number[] = []
     let dates: DateMarker[] = []
     let dayIndex = -1
@@ -54,11 +54,10 @@ export class DaySeriesModel {
         firstIndex: clippedFirstIndex,
         lastIndex: clippedLastIndex,
         isStart: firstIndex === clippedFirstIndex,
-        isEnd: lastIndex === clippedLastIndex
+        isEnd: lastIndex === clippedLastIndex,
       }
-    } else {
-      return null
     }
+    return null
   }
 
   // Given a date, returns its chronolocial cell-index from the first cell of the grid.
@@ -67,16 +66,17 @@ export class DaySeriesModel {
   // If after the last offset, returns an offset past the last cell offset.
   // Only works for *start* dates of cells. Will not work for exclusive end dates for cells.
   private getDateDayIndex(date: DateMarker) {
-    let indices = this.indices
+    let { indices } = this
     let dayOffset = Math.floor(diffDays(this.dates[0], date))
 
     if (dayOffset < 0) {
       return indices[0] - 1
-    } else if (dayOffset >= indices.length) {
-      return indices[indices.length - 1] + 1
-    } else {
-      return indices[dayOffset]
     }
-  }
 
+    if (dayOffset >= indices.length) {
+      return indices[indices.length - 1] + 1
+    }
+
+    return indices[dayOffset]
+  }
 }

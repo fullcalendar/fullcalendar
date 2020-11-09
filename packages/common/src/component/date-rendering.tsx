@@ -3,7 +3,6 @@ import { rangeContainsMarker, DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
 import { Theme } from '../theme/Theme'
 
-
 export interface DateMeta {
   dow: number
   isDisabled: boolean
@@ -13,7 +12,6 @@ export interface DateMeta {
   isFuture: boolean
 }
 
-
 export function getDateMeta(date: DateMarker, todayRange?: DateRange, nowDate?: DateMarker, dateProfile?: DateProfile): DateMeta {
   return {
     dow: date.getUTCDay(),
@@ -21,22 +19,19 @@ export function getDateMeta(date: DateMarker, todayRange?: DateRange, nowDate?: 
     isOther: Boolean(dateProfile && !rangeContainsMarker(dateProfile.currentRange, date)),
     isToday: Boolean(todayRange && rangeContainsMarker(todayRange, date)),
     isPast: Boolean(nowDate ? (date < nowDate) : todayRange ? (date < todayRange.start) : false),
-    isFuture: Boolean(nowDate ? (date > nowDate) : todayRange ? (date >= todayRange.end) : false)
+    isFuture: Boolean(nowDate ? (date > nowDate) : todayRange ? (date >= todayRange.end) : false),
   }
 }
-
 
 export function getDayClassNames(meta: DateMeta, theme: Theme) {
   let classNames: string[] = [
     'fc-day',
-    'fc-day-' + DAY_IDS[meta.dow]
+    `fc-day-${DAY_IDS[meta.dow]}`,
   ]
 
   if (meta.isDisabled) {
     classNames.push('fc-day-disabled')
-
   } else {
-
     if (meta.isToday) {
       classNames.push('fc-day-today')
       classNames.push(theme.getClass('today'))
@@ -58,18 +53,15 @@ export function getDayClassNames(meta: DateMeta, theme: Theme) {
   return classNames
 }
 
-
 export function getSlotClassNames(meta: DateMeta, theme: Theme) {
   let classNames: string[] = [
     'fc-slot',
-    'fc-slot-' + DAY_IDS[meta.dow]
+    `fc-slot-${DAY_IDS[meta.dow]}`,
   ]
 
   if (meta.isDisabled) {
     classNames.push('fc-slot-disabled')
-
   } else {
-
     if (meta.isToday) {
       classNames.push('fc-slot-today')
       classNames.push(theme.getClass('today'))

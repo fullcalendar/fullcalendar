@@ -22,7 +22,7 @@ export function createVerboseFormattingArg(start: ZonedMarker, end: ZonedMarker,
     end: endInfo,
     timeZone: context.timeZone,
     localeCodes: context.locale.codes,
-    defaultSeparator: betterDefaultSeparator || context.defaultSeparator
+    defaultSeparator: betterDefaultSeparator || context.defaultSeparator,
   }
 }
 

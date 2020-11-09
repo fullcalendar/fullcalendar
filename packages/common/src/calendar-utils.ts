@@ -1,10 +1,9 @@
+import { __assign } from 'tslib'
 import { PointerDragEvent } from './interactions/pointer'
 import { buildDateSpanApi, DateSpanApi, DatePointApi, DateSpan } from './structs/date-span'
 import { CalendarContext } from './CalendarContext'
-import { __assign } from 'tslib'
 import { ViewApi } from './ViewApi'
 import { DateMarker, startOfDay } from './datelib/marker'
-
 
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement
@@ -26,8 +25,6 @@ export type CalendarInteractionClass = { new(context: CalendarContext): Calendar
 export type OptionChangeHandler = (propValue: any, context: CalendarContext) => void
 export type OptionChangeHandlerMap = { [propName: string]: OptionChangeHandler }
 
-
-
 export interface DateSelectArg extends DateSpanApi {
   jsEvent: MouseEvent | null
   view: ViewApi
@@ -37,11 +34,9 @@ export function triggerDateSelect(selection: DateSpan, pev: PointerDragEvent | n
   context.emitter.trigger('select', {
     ...buildDateSpanApiWithContext(selection, context),
     jsEvent: pev ? pev.origEvent as MouseEvent : null, // Is this always a mouse event? See #4655
-    view: context.viewApi || context.calendarApi.view
+    view: context.viewApi || context.calendarApi.view,
   } as DateSelectArg)
 }
-
-
 
 export interface DateUnselectArg {
   jsEvent: MouseEvent
@@ -51,11 +46,9 @@ export interface DateUnselectArg {
 export function triggerDateUnselect(pev: PointerDragEvent | null, context: CalendarContext & { viewApi?: ViewApi }) {
   context.emitter.trigger('unselect', {
     jsEvent: pev ? pev.origEvent : null,
-    view: context.viewApi || context.calendarApi.view
+    view: context.viewApi || context.calendarApi.view,
   } as DateUnselectArg)
 }
-
-
 
 export function buildDateSpanApiWithContext(dateSpan: DateSpan, context: CalendarContext) {
   let props = {} as DateSpanApi
@@ -68,8 +61,6 @@ export function buildDateSpanApiWithContext(dateSpan: DateSpan, context: Calenda
 
   return props
 }
-
-
 
 // Given an event's allDay status and start date, return what its fallback end date should be.
 // TODO: rename to computeDefaultEventEnd

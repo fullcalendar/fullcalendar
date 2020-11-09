@@ -2,8 +2,7 @@ import { Duration } from './duration'
 
 export type DateMarker = Date
 
-export const DAY_IDS = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ]
-
+export const DAY_IDS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
 
 // Adding
 
@@ -24,7 +23,6 @@ export function addMs(m: DateMarker, n: number) {
   a[6] += n
   return arrayToUtcDate(a)
 }
-
 
 // Diffing (all return floats)
 // TODO: why not use ranges?
@@ -57,10 +55,9 @@ export function diffDayAndTime(m0: DateMarker, m1: DateMarker): Duration {
     years: 0,
     months: 0,
     days: Math.round(diffDays(m0day, m1day)),
-    milliseconds: (m1.valueOf() - m1day.valueOf()) - (m0.valueOf() - m0day.valueOf())
+    milliseconds: (m1.valueOf() - m1day.valueOf()) - (m0.valueOf() - m0day.valueOf()),
   }
 }
-
 
 // Diffing Whole Units
 
@@ -81,14 +78,13 @@ export function diffWholeDays(m0: DateMarker, m1: DateMarker): number {
   return null
 }
 
-
 // Start-Of
 
 export function startOfDay(m: DateMarker): DateMarker {
   return arrayToUtcDate([
     m.getUTCFullYear(),
     m.getUTCMonth(),
-    m.getUTCDate()
+    m.getUTCDate(),
   ])
 }
 
@@ -97,7 +93,7 @@ export function startOfHour(m: DateMarker) {
     m.getUTCFullYear(),
     m.getUTCMonth(),
     m.getUTCDate(),
-    m.getUTCHours()
+    m.getUTCHours(),
   ])
 }
 
@@ -107,7 +103,7 @@ export function startOfMinute(m: DateMarker) {
     m.getUTCMonth(),
     m.getUTCDate(),
     m.getUTCHours(),
-    m.getUTCMinutes()
+    m.getUTCMinutes(),
   ])
 }
 
@@ -118,10 +114,9 @@ export function startOfSecond(m: DateMarker) {
     m.getUTCDate(),
     m.getUTCHours(),
     m.getUTCMinutes(),
-    m.getUTCSeconds()
+    m.getUTCSeconds(),
   ])
 }
-
 
 // Week Computation
 
@@ -142,7 +137,7 @@ export function weekOfYear(marker, dow, doy) {
 }
 
 function weekOfGivenYear(marker, year, dow, doy) {
-  let firstWeekStart = arrayToUtcDate([ year, 0, 1 + firstWeekOffset(year, dow, doy) ])
+  let firstWeekStart = arrayToUtcDate([year, 0, 1 + firstWeekOffset(year, dow, doy)])
   let dayStart = startOfDay(marker)
   let days = Math.round(diffDays(firstWeekStart, dayStart))
 
@@ -151,16 +146,14 @@ function weekOfGivenYear(marker, year, dow, doy) {
 
 // start-of-first-week - start-of-year
 function firstWeekOffset(year, dow, doy) {
-
   // first-week day -- which january is always in the first week (4 for iso, 1 for other)
   let fwd = 7 + dow - doy
 
   // first-week day local weekday -- which local weekday is fwd
-  let fwdlw = (7 + arrayToUtcDate([ year, 0, fwd ]).getUTCDay() - dow) % 7
+  let fwdlw = (7 + arrayToUtcDate([year, 0, fwd]).getUTCDay() - dow) % 7
 
   return -fwdlw + fwd - 1
 }
-
 
 // Array Conversion
 
@@ -172,7 +165,7 @@ export function dateToLocalArray(date) {
     date.getHours(),
     date.getMinutes(),
     date.getSeconds(),
-    date.getMilliseconds()
+    date.getMilliseconds(),
   ]
 }
 
@@ -183,7 +176,7 @@ export function arrayToLocalDate(a) {
     a[2] == null ? 1 : a[2], // day of month
     a[3] || 0,
     a[4] || 0,
-    a[5] || 0
+    a[5] || 0,
   )
 }
 
@@ -195,21 +188,19 @@ export function dateToUtcArray(date) {
     date.getUTCHours(),
     date.getUTCMinutes(),
     date.getUTCSeconds(),
-    date.getUTCMilliseconds()
+    date.getUTCMilliseconds(),
   ]
 }
 
 export function arrayToUtcDate(a) {
-
   // according to web standards (and Safari), a month index is required.
   // massage if only given a year.
   if (a.length === 1) {
-    a = a.concat([ 0 ])
+    a = a.concat([0])
   }
 
   return new Date(Date.UTC.apply(Date, a))
 }
-
 
 // Other Utils
 

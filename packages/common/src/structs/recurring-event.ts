@@ -24,19 +24,17 @@ export interface RecurringType<RecurringData> {
   expand: (typeData: any, framingRange: DateRange, dateEnv: DateEnv) => DateMarker[]
 }
 
-
 export function parseRecurring(
   refined: EventRefined,
   defaultAllDay: boolean | null,
   dateEnv: DateEnv,
-  recurringTypes: RecurringType<any>[]
+  recurringTypes: RecurringType<any>[],
 ) {
   for (let i = 0; i < recurringTypes.length; i++) {
     let parsed = recurringTypes[i].parse(refined, dateEnv)
 
     if (parsed) {
-
-      let allDay = refined.allDay
+      let { allDay } = refined
       if (allDay == null) {
         allDay = defaultAllDay
         if (allDay == null) {
@@ -51,7 +49,7 @@ export function parseRecurring(
         allDay,
         duration: parsed.duration,
         typeData: parsed.typeData,
-        typeId: i
+        typeId: i,
       }
     }
   }
@@ -59,22 +57,19 @@ export function parseRecurring(
   return null
 }
 
-
 export function expandRecurring(eventStore: EventStore, framingRange: DateRange, context: CalendarContext): EventStore {
   let { dateEnv, pluginHooks, options } = context
   let { defs, instances } = eventStore
 
   // remove existing recurring instances
   // TODO: bad. always expand events as a second step
-  instances = filterHash(instances, function(instance: EventInstance) {
-    return !defs[instance.defId].recurringDef
-  })
+  instances = filterHash(instances, (instance: EventInstance) => !defs[instance.defId].recurringDef)
 
   for (let defId in defs) {
     let def = defs[defId]
 
     if (def.recurringDef) {
-      let duration = def.recurringDef.duration
+      let { duration } = def.recurringDef
 
       if (!duration) {
         duration = def.allDay ?
@@ -87,7 +82,7 @@ export function expandRecurring(eventStore: EventStore, framingRange: DateRange,
       for (let start of starts) {
         let instance = createEventInstance(defId, {
           start,
-          end: dateEnv.add(start, duration)
+          end: dateEnv.add(start, duration),
         })
         instances[instance.instanceId] = instance
       }
@@ -97,7 +92,6 @@ export function expandRecurring(eventStore: EventStore, framingRange: DateRange,
   return { defs, instances }
 }
 
-
 /*
 Event MUST have a recurringDef
 */
@@ -106,16 +100,16 @@ function expandRecurringRanges(
   duration: Duration,
   framingRange: DateRange,
   dateEnv: DateEnv,
-  recurringTypes: RecurringType<any>[]
+  recurringTypes: RecurringType<any>[],
 ): DateMarker[] {
   let typeDef = recurringTypes[eventDef.recurringDef.typeId]
   let markers = typeDef.expand(
     eventDef.recurringDef.typeData,
     {
       start: dateEnv.subtract(framingRange.start, duration), // for when event starts before framing range and goes into
-      end: framingRange.end
+      end: framingRange.end,
     },
-    dateEnv
+    dateEnv,
   )
 
   // the recurrence plugins don't guarantee that all-day events are start-of-day, so we have to

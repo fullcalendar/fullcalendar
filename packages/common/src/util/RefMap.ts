@@ -27,7 +27,6 @@ export class RefMap<RefType> {
     return refCallback
   }
 
-
   handleValue = (val: RefType | null, key: string) => { // bind in case users want to pass it around
     let { depths, currentMap } = this
     let removed = false
@@ -38,7 +37,6 @@ export class RefMap<RefType> {
       currentMap[key] = val
       depths[key] = (depths[key] || 0) + 1
       added = true
-
     } else if (--depths[key] === 0) {
       delete currentMap[key]
       delete this.callbackMap[key]
@@ -55,21 +53,18 @@ export class RefMap<RefType> {
     }
   }
 
-
   // TODO: check callers that don't care about order. should use getAll instead
   // NOTE: this method has become less valuable now that we are encouraged to map order by some other index
   // TODO: provide ONE array-export function, buildArray, which fails on non-numeric indexes. caller can manipulate and "collect"
   collect(
     startIndex?: number,
     endIndex?: number,
-    step?: number
+    step?: number,
   ) {
     return collectFromHash(this.currentMap, startIndex, endIndex, step)
   }
 
-
   getAll(): RefType[] { // returns in no partical order!
     return hashValuesToArray(this.currentMap)
   }
-
 }

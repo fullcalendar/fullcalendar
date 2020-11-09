@@ -62,7 +62,7 @@ export class DayTableModel {
 
       for (let col = 0; col < this.colCnt; col++) {
         cells.push(
-          this.buildCell(row, col)
+          this.buildCell(row, col),
         )
       }
 
@@ -76,7 +76,7 @@ export class DayTableModel {
     let date = this.daySeries.dates[row * this.colCnt + col]
     return {
       key: date.toISOString(),
-      date
+      date,
     }
   }
 
@@ -108,7 +108,7 @@ export class DayTableModel {
           firstCol: index % colCnt,
           lastCol: (nextIndex - 1) % colCnt,
           isStart: seriesSeg.isStart && index === firstIndex,
-          isEnd: seriesSeg.isEnd && (nextIndex - 1) === lastIndex
+          isEnd: seriesSeg.isEnd && (nextIndex - 1) === lastIndex,
         })
 
         index = nextIndex
@@ -117,5 +117,4 @@ export class DayTableModel {
 
     return segs
   }
-
 }

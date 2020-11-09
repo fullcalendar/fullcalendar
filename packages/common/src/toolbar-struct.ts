@@ -1,4 +1,3 @@
-
 export interface ToolbarModel {
   [sectionName: string]: ToolbarWidget[][]
 }

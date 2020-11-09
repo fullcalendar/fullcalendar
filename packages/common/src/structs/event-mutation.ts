@@ -44,7 +44,6 @@ export function applyMutationToEventStore(eventStore: EventStore, eventConfigBas
 
 export type eventDefMutationApplier = (eventDef: EventDef, mutation: EventMutation, context: CalendarContext) => void
 
-
 function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutation: EventMutation, context: CalendarContext): EventDef {
   let standardProps = mutation.standardProps || {}
 
@@ -62,7 +61,7 @@ function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutat
   let copy: EventDef = {
     ...eventDef,
     ...standardProps,
-    ui: { ...eventDef.ui, ...standardProps.ui } // the only prop we want to recursively overlay
+    ui: { ...eventDef.ui, ...standardProps.ui }, // the only prop we want to recursively overlay
   }
 
   if (mutation.extendedProps) {
@@ -80,13 +79,12 @@ function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutat
   return copy
 }
 
-
 function applyMutationToEventInstance(
   eventInstance: EventInstance,
   eventDef: EventDef, // must first be modified by applyMutationToEventDef
   eventConfig: EventUi,
   mutation: EventMutation,
-  context: CalendarContext
+  context: CalendarContext,
 ): EventInstance {
   let { dateEnv } = context
   let forceAllDay = mutation.standardProps && mutation.standardProps.allDay === true
@@ -100,28 +98,28 @@ function applyMutationToEventInstance(
   if (mutation.datesDelta && eventConfig.startEditable) {
     copy.range = {
       start: dateEnv.add(copy.range.start, mutation.datesDelta),
-      end: dateEnv.add(copy.range.end, mutation.datesDelta)
+      end: dateEnv.add(copy.range.end, mutation.datesDelta),
     }
   }
 
   if (mutation.startDelta && eventConfig.durationEditable) {
     copy.range = {
       start: dateEnv.add(copy.range.start, mutation.startDelta),
-      end: copy.range.end
+      end: copy.range.end,
     }
   }
 
   if (mutation.endDelta && eventConfig.durationEditable) {
     copy.range = {
       start: copy.range.start,
-      end: dateEnv.add(copy.range.end, mutation.endDelta)
+      end: dateEnv.add(copy.range.end, mutation.endDelta),
     }
   }
 
   if (clearEnd) {
     copy.range = {
       start: copy.range.start,
-      end: getDefaultEventEnd(eventDef.allDay, copy.range.start, context)
+      end: getDefaultEventEnd(eventDef.allDay, copy.range.start, context),
     }
   }
 
@@ -130,7 +128,7 @@ function applyMutationToEventInstance(
   if (eventDef.allDay) {
     copy.range = {
       start: startOfDay(copy.range.start),
-      end: startOfDay(copy.range.end)
+      end: startOfDay(copy.range.end),
     }
   }
 

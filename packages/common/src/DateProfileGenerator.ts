@@ -6,7 +6,6 @@ import { computeVisibleDayRange } from './util/date'
 import { getNow } from './reducers/current-date'
 import { CalendarApi } from './CalendarApi'
 
-
 export interface DateProfile {
   currentRange: DateRange // TODO: does this include slotMinTime/slotMaxTime?
   currentRangeUnit: string
@@ -49,22 +48,18 @@ export type DateProfileGeneratorClass = {
   new(props: DateProfileGeneratorProps): DateProfileGenerator
 }
 
-
 export class DateProfileGenerator { // only publicly used for isHiddenDay :(
-
   nowDate: DateMarker
-  isHiddenDayHash: boolean[]
 
+  isHiddenDayHash: boolean[]
 
   constructor(protected props: DateProfileGeneratorProps) {
     this.nowDate = getNow(props.nowInput, props.dateEnv)
     this.initHiddenDays()
   }
 
-
   /* Date Range Computation
   ------------------------------------------------------------------------------------------------------------------*/
-
 
   // Builds a structure with info about what the dates/ranges will be for the "prev" view.
   buildPrev(currentDateProfile: DateProfile, currentDate: DateMarker, forceToValid?: boolean): DateProfile {
@@ -72,12 +67,11 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
 
     let prevDate = dateEnv.subtract(
       dateEnv.startOf(currentDate, currentDateProfile.currentRangeUnit), // important for start-of-month
-      currentDateProfile.dateIncrement
+      currentDateProfile.dateIncrement,
     )
 
     return this.build(prevDate, -1, forceToValid)
   }
-
 
   // Builds a structure with info about what the dates/ranges will be for the "next" view.
   buildNext(currentDateProfile: DateProfile, currentDate: DateMarker, forceToValid?: boolean): DateProfile {
@@ -85,12 +79,11 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
 
     let nextDate = dateEnv.add(
       dateEnv.startOf(currentDate, currentDateProfile.currentRangeUnit), // important for start-of-month
-      currentDateProfile.dateIncrement
+      currentDateProfile.dateIncrement,
     )
 
     return this.build(nextDate, 1, forceToValid)
   }
-
 
   // Builds a structure holding dates/ranges for rendering around the given date.
   // Optional direction param indicates whether the date is being incremented/decremented
@@ -116,7 +109,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     renderRange = this.buildRenderRange(
       this.trimHiddenDays(currentInfo.range),
       currentInfo.unit,
-      isRangeAllDay
+      isRangeAllDay,
     )
     renderRange = this.trimHiddenDays(renderRange)
     activeRange = renderRange
@@ -135,7 +128,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     return {
       // constraint for where prev/next operations can go and where events can be dragged/resized to.
       // an object with optional start and end properties.
-      validRange: validRange,
+      validRange,
 
       // range the view is formally responsible for.
       // for example, a month view might have 1st-31st, excluding padded dates
@@ -163,11 +156,10 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
       isValid,
 
       // how far the current date will move for a prev/next operation
-      dateIncrement: this.buildDateIncrement(currentInfo.duration)
-        // pass a fallback (might be null) ^
+      dateIncrement: this.buildDateIncrement(currentInfo.duration),
+      // pass a fallback (might be null) ^
     }
   }
-
 
   // Builds an object with optional start/end properties.
   // Indicates the minimum/maximum dates to display.
@@ -181,7 +173,6 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     return this.refineRange(simpleInput) ||
       { start: null, end: null } // completely open-ended
   }
-
 
   // Builds a structure with info about the "current" range, the range that is
   // highlighted as being the current month for example.
@@ -209,24 +200,20 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
       range = this.buildRangeFromDuration(date, direction, duration, unit)
     }
 
-    return { duration: duration, unit: unit, range }
+    return { duration, unit, range }
   }
-
 
   getFallbackDuration(): Duration {
     return createDuration({ day: 1 })
   }
 
-
   // Returns a new activeRange to have time values (un-ambiguate)
   // slotMinTime or slotMaxTime causes the range to expand.
   adjustActiveRange(range: DateRange) {
     let { dateEnv, usesMinMaxTime, slotMinTime, slotMaxTime } = this.props
-    let start = range.start
-    let end = range.end
+    let { start, end } = range
 
     if (usesMinMaxTime) {
-
       // expand active range if slotMinTime is negative (why not when positive?)
       if (asRoughDays(slotMinTime) < 0) {
         start = startOfDay(start) // necessary?
@@ -243,7 +230,6 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
 
     return { start, end }
   }
-
 
   // Builds the "current" range when it is specified as an explicit duration.
   // `unit` is the already-computed greatestDurationDenominator unit of duration.
@@ -294,7 +280,6 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     return res
   }
 
-
   // Builds the "current" range when a dayCount is specified.
   buildRangeFromDayCount(date: DateMarker, direction, dayCount) {
     let { dateEnv, dateAlignment } = this.props
@@ -320,7 +305,6 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     return { start, end }
   }
 
-
   // Builds a normalized range object for the "visible" range,
   // which is a way to define the currentRange and activeRange at the same time.
   buildCustomVisibleRange(date: DateMarker) {
@@ -339,14 +323,12 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     return range
   }
 
-
   // Computes the range that will represent the element/cells for *rendering*,
   // but which may have voided days/times.
   // not responsible for trimming hidden days.
   buildRenderRange(currentRange: DateRange, currentRangeUnit, isRangeAllDay) {
     return currentRange
   }
-
 
   // Compute the duration value that should be added/substracted to the current date
   // when a prev/next operation happens.
@@ -356,18 +338,18 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
 
     if (dateIncrement) {
       return dateIncrement
-
-    } else if ((customAlignment = this.props.dateAlignment)) {
-      return createDuration(1, customAlignment)
-
-    } else if (fallback) {
-      return fallback
-
-    } else {
-      return createDuration({ days: 1 })
     }
-  }
 
+    if ((customAlignment = this.props.dateAlignment)) {
+      return createDuration(1, customAlignment)
+    }
+
+    if (fallback) {
+      return fallback
+    }
+
+    return createDuration({ days: 1 })
+  }
 
   refineRange(rangeInput: DateRangeInput | undefined): DateRange | null {
     if (rangeInput) {
@@ -383,10 +365,8 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     return null
   }
 
-
   /* Hidden Days
   ------------------------------------------------------------------------------------------------------------------*/
-
 
   // Initializes internal variables related to calculating hidden days-of-week
   initHiddenDays() {
@@ -414,12 +394,10 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     this.isHiddenDayHash = isHiddenDayHash
   }
 
-
   // Remove days from the beginning and end of the range that are computed as hidden.
   // If the whole range is trimmed off, returns null
   trimHiddenDays(range: DateRange): DateRange | null {
-    let start = range.start
-    let end = range.end
+    let { start, end } = range
 
     if (start) {
       start = this.skipHiddenDays(start)
@@ -436,7 +414,6 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     return null
   }
 
-
   // Is the current day hidden?
   // `day` is a day-of-week index (0-6), or a Date (used for UTC)
   isHiddenDay(day) {
@@ -445,7 +422,6 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     }
     return this.isHiddenDayHash[day]
   }
-
 
   // Incrementing the current day until it is no longer a hidden day, returning a copy.
   // DOES NOT CONSIDER validRange!
@@ -460,5 +436,4 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     }
     return date
   }
-
 }

@@ -18,7 +18,7 @@ export function requestJson(method: string, url: string, params: Dictionary, suc
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
   }
 
-  xhr.onload = function() {
+  xhr.onload = function () {
     if (xhr.status >= 200 && xhr.status < 400) {
       let parsed = false
       let res
@@ -35,13 +35,12 @@ export function requestJson(method: string, url: string, params: Dictionary, suc
       } else {
         failureCallback('Failure parsing JSON', xhr)
       }
-
     } else {
       failureCallback('Request failed', xhr)
     }
   }
 
-  xhr.onerror = function() {
+  xhr.onerror = function () {
     failureCallback('Request failed', xhr)
   }
 
@@ -58,7 +57,7 @@ function encodeParams(params) {
   let parts = []
 
   for (let key in params) {
-    parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
+    parts.push(`${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
   }
 
   return parts.join('&')

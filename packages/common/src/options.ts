@@ -37,9 +37,8 @@ import {
   ToolbarInput, CustomButtonInput, ButtonIconsInput, ButtonTextCompoundInput,
   EventContentArg, EventMountArg,
   DatesSetArg,
-  EventApi, EventAddArg, EventChangeArg, EventRemoveArg
+  EventApi, EventAddArg, EventChangeArg, EventRemoveArg,
 } from './api-type-deps'
-
 
 // base options
 // ------------
@@ -213,7 +212,7 @@ export const BASE_OPTION_REFINERS = {
   titleFormat: identity as Identity<FormatterInput>, // DONT parse just yet. we need to inject titleSeparator
 
   // only used by list-view, but languages define the value, so we need it in base options
-  noEventsText: String
+  noEventsText: String,
 }
 
 type BuiltInBaseOptionRefiners = typeof BASE_OPTION_REFINERS
@@ -242,7 +241,7 @@ export const BASE_OPTION_DEFAULTS = {
   headerToolbar: {
     start: 'title',
     center: '',
-    end: 'today prev,next'
+    end: 'today prev,next',
   },
   weekends: true,
   weekNumbers: false,
@@ -274,14 +273,13 @@ export const BASE_OPTION_DEFAULTS = {
   eventDragMinDistance: 5, // only applies to mouse
   expandRows: false,
   navLinks: false,
-  selectable: false
+  selectable: false,
 }
 
 export type BaseOptionsRefined = DefaultedRefinedOptions<
   RefinedOptionsFromRefiners<Required<BaseOptionRefiners>>, // Required is a hack for "Index signature is missing"
   keyof typeof BASE_OPTION_DEFAULTS
 >
-
 
 // calendar listeners
 // ------------------
@@ -307,7 +305,7 @@ export const CALENDAR_LISTENER_REFINERS = {
   _noEventDrop: identity as Identity<() => void>,
   _noEventResize: identity as Identity<() => void>,
   _resize: identity as Identity<(forced: boolean) => void>,
-  _scrollRequest: identity as Identity<(arg: any) => void>
+  _scrollRequest: identity as Identity<(arg: any) => void>,
 }
 
 type BuiltInCalendarListenerRefiners = typeof CALENDAR_LISTENER_REFINERS
@@ -319,7 +317,6 @@ export interface CalendarListenerRefiners extends BuiltInCalendarListenerRefiner
 type CalendarListenersLoose = RefinedOptionsFromRefiners<Required<CalendarListenerRefiners>> // Required hack
 export type CalendarListeners = Required<CalendarListenersLoose> // much more convenient for Emitters and whatnot
 
-
 // calendar-specific options
 // -------------------------
 
@@ -329,7 +326,7 @@ export const CALENDAR_OPTION_REFINERS = { // does not include base nor calendar 
   plugins: identity as Identity<PluginDef[]>,
   initialEvents: identity as Identity<EventSourceInput>,
   events: identity as Identity<EventSourceInput>,
-  eventSources: identity as Identity<EventSourceInput[]>
+  eventSources: identity as Identity<EventSourceInput[]>,
 }
 
 type BuiltInCalendarOptionRefiners = typeof CALENDAR_OPTION_REFINERS
@@ -354,18 +351,15 @@ export const COMPLEX_OPTION_COMPARATORS: {
   headerToolbar: isBoolComplexEqual,
   footerToolbar: isBoolComplexEqual,
   buttonText: isBoolComplexEqual,
-  buttonIcons: isBoolComplexEqual
+  buttonIcons: isBoolComplexEqual,
 }
 
 function isBoolComplexEqual(a, b) {
   if (typeof a === 'object' && typeof b === 'object' && a && b) { // both non-null objects
     return isPropsEqual(a, b)
-  } else {
-    return a === b
   }
+  return a === b
 }
-
-
 
 // view-specific options
 // ---------------------
@@ -382,7 +376,7 @@ export const VIEW_OPTION_REFINERS: {
   classNames: identity as Identity<ClassNamesGenerator<SpecificViewContentArg>>,
   content: identity as Identity<CustomContentGenerator<SpecificViewContentArg>>,
   didMount: identity as Identity<DidMountHandler<SpecificViewMountArg>>,
-  willUnmount: identity as Identity<WillUnmountHandler<SpecificViewMountArg>>
+  willUnmount: identity as Identity<WillUnmountHandler<SpecificViewMountArg>>,
 }
 
 type BuiltInViewOptionRefiners = typeof VIEW_OPTION_REFINERS
@@ -401,16 +395,12 @@ export type ViewOptionsRefined =
   CalendarListenersLoose &
   RefinedOptionsFromRefiners<Required<ViewOptionRefiners>> // Required hack
 
-
-
 // util funcs
 // ----------------------------------------------------------------------------------------------------
-
 
 export function mergeRawOptions(optionSets: Dictionary[]) {
   return mergeProps(optionSets, COMPLEX_OPTION_COMPARATORS)
 }
-
 
 export function refineProps<Refiners extends GenericRefiners, Raw extends RawOptionsFromRefiners<Refiners>>(input: Raw, refiners: Refiners): { refined: RefinedOptionsFromRefiners<Refiners>, extra: Dictionary } {
   let refined = {} as any
@@ -431,11 +421,8 @@ export function refineProps<Refiners extends GenericRefiners, Raw extends RawOpt
   return { refined, extra }
 }
 
-
-
 // definition utils
 // ----------------------------------------------------------------------------------------------------
-
 
 export type GenericRefiners = {
   [propName: string]: (input: any) => any
@@ -460,7 +447,6 @@ export type RefinedOptionsFromRefiners<Refiners extends GenericRefiners> = {
 export type DefaultedRefinedOptions<RefinedOptions extends Dictionary, DefaultKey extends keyof RefinedOptions> =
   Required<Pick<RefinedOptions, DefaultKey>> &
   Partial<Omit<RefinedOptions, DefaultKey>>
-
 
 export type Dictionary = Record<string, any>
 

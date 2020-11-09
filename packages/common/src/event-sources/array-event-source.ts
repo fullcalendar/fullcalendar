@@ -14,11 +14,11 @@ let eventSourceDef: EventSourceDef<EventInput[]> = {
 
   fetch(arg, success) {
     success({
-      rawEvents: arg.eventSource.meta
+      rawEvents: arg.eventSource.meta,
     })
-  }
+  },
 }
 
 export const arrayEventSourcePlugin = createPlugin({
-  eventSourceDefs: [ eventSourceDef ]
+  eventSourceDefs: [eventSourceDef],
 })
