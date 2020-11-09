@@ -85,7 +85,7 @@ function queryLocale(codeArg: LocaleCodeArg, available: LocaleInputMap): Locale 
 }
 
 function queryRawLocale(codes: string[], available: LocaleInputMap): LocaleInput {
-  for (let i = 0; i < codes.length; i++) {
+  for (let i = 0; i < codes.length; i += 1) {
     let parts = codes[i].toLocaleLowerCase().split('-')
 
     for (let j = parts.length; j > 0; j--) {

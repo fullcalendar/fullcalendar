@@ -387,7 +387,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
       hiddenDays.push(0, 6) // 0=sunday, 6=saturday
     }
 
-    for (i = 0; i < 7; i++) {
+    for (i = 0; i < 7; i += 1) {
       if (
         !(isHiddenDayHash[i] = hiddenDays.indexOf(i) !== -1)
       ) {

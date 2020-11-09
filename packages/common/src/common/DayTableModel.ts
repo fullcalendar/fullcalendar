@@ -35,7 +35,7 @@ export class DayTableModel {
     if (breakOnWeeks) {
       // count columns until the day-of-week repeats
       firstDay = dates[0].getUTCDay()
-      for (daysPerRow = 1; daysPerRow < dates.length; daysPerRow++) {
+      for (daysPerRow = 1; daysPerRow < dates.length; daysPerRow += 1) {
         if (dates[daysPerRow].getUTCDay() === firstDay) {
           break
         }
@@ -56,10 +56,10 @@ export class DayTableModel {
   private buildCells() {
     let rows = []
 
-    for (let row = 0; row < this.rowCnt; row++) {
+    for (let row = 0; row < this.rowCnt; row += 1) {
       let cells = []
 
-      for (let col = 0; col < this.colCnt; col++) {
+      for (let col = 0; col < this.colCnt; col += 1) {
         cells.push(
           this.buildCell(row, col),
         )
@@ -82,7 +82,7 @@ export class DayTableModel {
   private buildHeaderDates() {
     let dates = []
 
-    for (let col = 0; col < this.colCnt; col++) {
+    for (let col = 0; col < this.colCnt; col += 1) {
       dates.push(this.cells[0][col].date)
     }
 

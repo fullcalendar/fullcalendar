@@ -65,7 +65,7 @@ export class PositionCache {
     let len = lefts.length
     let i
 
-    for (i = 0; i < len; i++) {
+    for (i = 0; i < len; i += 1) {
       if (leftPosition >= lefts[i] && leftPosition < rights[i]) {
         return i
       }
@@ -81,7 +81,7 @@ export class PositionCache {
     let len = tops.length
     let i
 
-    for (i = 0; i < len; i++) {
+    for (i = 0; i < len; i += 1) {
       if (topPosition >= tops[i] && topPosition < bottoms[i]) {
         return i
       }

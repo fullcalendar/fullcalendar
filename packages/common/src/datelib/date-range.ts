@@ -50,7 +50,7 @@ export function invertRanges(ranges: DateRange[], constraintRange: DateRange): D
   // ranges need to be in order. required for our date-walking algorithm
   ranges.sort(compareRanges)
 
-  for (i = 0; i < ranges.length; i++) {
+  for (i = 0; i < ranges.length; i += 1) {
     dateRange = ranges[i]
 
     // add the span of time before the event (if there is any)

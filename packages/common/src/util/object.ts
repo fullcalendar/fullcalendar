@@ -80,7 +80,7 @@ export function arrayToHash(a): { [key: string]: true } { // TODO: rename to str
 export function buildHashFromArray<Item, ItemRes>(a: Item[], func: (item: Item, index: number) => [ string, ItemRes ]) {
   let hash: { [key: string]: ItemRes } = {}
 
-  for (let i = 0; i < a.length; i++) {
+  for (let i = 0; i < a.length; i += 1) {
     let tuple = func(a[i], i)
 
     hash[tuple[0]] = tuple[1]

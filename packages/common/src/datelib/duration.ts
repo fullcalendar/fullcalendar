@@ -174,7 +174,7 @@ export function asRoughMs(dur: Duration) {
 export function wholeDivideDurations(numerator: Duration, denominator: Duration): number {
   let res = null
 
-  for (let i = 0; i < INTERNAL_UNITS.length; i++) {
+  for (let i = 0; i < INTERNAL_UNITS.length; i += 1) {
     let unit = INTERNAL_UNITS[i]
 
     if (denominator[unit]) {

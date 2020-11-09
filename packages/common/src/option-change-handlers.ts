@@ -22,7 +22,7 @@ function handleEventSources(inputs, context: CalendarContext) {
   for (let input of inputs) {
     let inputFound = false
 
-    for (let i = 0; i < unfoundSources.length; i++) {
+    for (let i = 0; i < unfoundSources.length; i += 1) {
       if (unfoundSources[i]._raw === input) {
         unfoundSources.splice(i, 1) // delete
         inputFound = true

@@ -81,7 +81,7 @@ export function computeEventSourceLoadingLevel(eventSources: EventSourceHash): n
 
   for (let sourceId in eventSources) {
     if (eventSources[sourceId].isFetching) {
-      cnt++
+      cnt += 1
     }
   }
 

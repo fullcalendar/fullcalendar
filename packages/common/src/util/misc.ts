@@ -5,7 +5,7 @@ export type GenericHash = { [key: string]: any } // already did this somewhere
 let guidNumber = 0
 
 export function guid() {
-  return String(guidNumber++)
+  return String(guidNumber += 1)
 }
 
 /* FullCalendar-specific DOM Utilities
@@ -71,7 +71,7 @@ export function parseFieldSpecs<Subject>(input: FieldSpecInput<Subject>): OrderS
     tokens = input
   }
 
-  for (i = 0; i < tokens.length; i++) {
+  for (i = 0; i < tokens.length; i += 1) {
     token = tokens[i]
 
     if (typeof token === 'string') {
@@ -92,7 +92,7 @@ export function compareByFieldSpecs<Subject>(obj0: Subject, obj1: Subject, field
   let i
   let cmp
 
-  for (i = 0; i < fieldSpecs.length; i++) {
+  for (i = 0; i < fieldSpecs.length; i += 1) {
     cmp = compareByFieldSpec(obj0, obj1, fieldSpecs[i])
     if (cmp) {
       return cmp
@@ -150,7 +150,7 @@ export function isInt(n) {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 export function firstDefined(...args) {
-  for (let i = 0; i < args.length; i++) {
+  for (let i = 0; i < args.length; i += 1) {
     if (args[i] !== undefined) {
       return args[i]
     }

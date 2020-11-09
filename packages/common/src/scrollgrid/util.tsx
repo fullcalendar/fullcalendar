@@ -115,7 +115,7 @@ export function renderMicroColGroup(cols: ColProps[], shrinkWidth?: number): VNo
   for (let colProps of cols) {
     let span = colProps.span || 1
 
-    for (let i = 0; i < span; i++) {
+    for (let i = 0; i < span; i += 1) {
       colNodes.push(
         <col
           style={{

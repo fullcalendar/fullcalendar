@@ -8,9 +8,9 @@ export function removeMatching(array, testFunc) {
   while (i < array.length) {
     if (testFunc(array[i])) { // truthy value means *remove*
       array.splice(i, 1)
-      removeCnt++
+      removeCnt += 1
     } else {
-      i++
+      i += 1
     }
   }
 
@@ -24,9 +24,9 @@ export function removeExact(array, exactVal) {
   while (i < array.length) {
     if (array[i] === exactVal) {
       array.splice(i, 1)
-      removeCnt++
+      removeCnt += 1
     } else {
-      i++
+      i += 1
     }
   }
 
@@ -45,7 +45,7 @@ export function isArraysEqual(a0, a1, equalityFunc?: (v0, v1) => boolean) { // T
     return false
   }
 
-  for (i = 0; i < len; i++) {
+  for (i = 0; i < len; i += 1) {
     if (!(equalityFunc ? equalityFunc(a0[i], a1[i]) : a0[i] === a1[i])) {
       return false
     }

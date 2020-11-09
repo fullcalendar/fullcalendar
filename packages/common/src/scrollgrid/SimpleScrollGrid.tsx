@@ -62,17 +62,17 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
 
     while (configI < configCnt && (currentConfig = sectionConfigs[configI]).type === 'header') {
       headSectionNodes.push(this.renderSection(currentConfig, configI, microColGroupNode))
-      configI++
+      configI += 1
     }
 
     while (configI < configCnt && (currentConfig = sectionConfigs[configI]).type === 'body') {
       bodySectionNodes.push(this.renderSection(currentConfig, configI, microColGroupNode))
-      configI++
+      configI += 1
     }
 
     while (configI < configCnt && (currentConfig = sectionConfigs[configI]).type === 'footer') {
       footSectionNodes.push(this.renderSection(currentConfig, configI, microColGroupNode))
-      configI++
+      configI += 1
     }
 
     // firefox bug: when setting height on table and there is a thead or tfoot,
@@ -203,7 +203,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     let scrollerClientWidths: { [index: string]: number } = {}
     let scrollerClientHeights: { [index: string]: number } = {}
 
-    for (let sectionI = 0; sectionI < sectionCnt; sectionI++) { // along edge
+    for (let sectionI = 0; sectionI < sectionCnt; sectionI += 1) { // along edge
       let scroller = scrollerRefs.currentMap[sectionI]
 
       if (scroller && scroller.needsYScrolling()) {
@@ -212,7 +212,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
       }
     }
 
-    for (let sectionI = 0; sectionI < sectionCnt; sectionI++) { // along edge
+    for (let sectionI = 0; sectionI < sectionCnt; sectionI += 1) { // along edge
       let scrollerEl = scrollerElRefs.currentMap[sectionI]
 
       if (scrollerEl) {

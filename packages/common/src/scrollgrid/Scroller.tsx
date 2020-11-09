@@ -75,7 +75,7 @@ export class Scroller extends BaseComponent<ScrollerProps> implements ScrollerLi
     let realClientWidth = this.el.getBoundingClientRect().width - this.getYScrollbarWidth()
     let { children } = el
 
-    for (let i = 0; i < children.length; i++) {
+    for (let i = 0; i < children.length; i += 1) {
       let childEl = children[i]
 
       if (childEl.getBoundingClientRect().width > realClientWidth) {
@@ -99,7 +99,7 @@ export class Scroller extends BaseComponent<ScrollerProps> implements ScrollerLi
     let realClientHeight = this.el.getBoundingClientRect().height - this.getXScrollbarWidth()
     let { children } = el
 
-    for (let i = 0; i < children.length; i++) {
+    for (let i = 0; i < children.length; i += 1) {
       let childEl = children[i]
 
       if (childEl.getBoundingClientRect().height > realClientHeight) {

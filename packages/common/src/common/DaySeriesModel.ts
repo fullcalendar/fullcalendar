@@ -25,7 +25,7 @@ export class DaySeriesModel {
       if (dateProfileGenerator.isHiddenDay(date)) {
         indices.push(dayIndex + 0.5) // mark that it's between indices
       } else {
-        dayIndex++
+        dayIndex += 1
         indices.push(dayIndex)
         dates.push(date)
       }

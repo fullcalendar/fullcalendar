@@ -30,7 +30,7 @@ export function parseRecurring(
   dateEnv: DateEnv,
   recurringTypes: RecurringType<any>[],
 ) {
-  for (let i = 0; i < recurringTypes.length; i++) {
+  for (let i = 0; i < recurringTypes.length; i += 1) {
     let parsed = recurringTypes[i].parse(refined, dateEnv)
 
     if (parsed) {

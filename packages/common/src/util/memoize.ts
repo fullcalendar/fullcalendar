@@ -73,7 +73,7 @@ export function memoizeArraylike<Args extends any[], Res>( // used at all?
     let newLen = newArgSets.length
     let i = 0
 
-    for (; i < currentLen; i++) {
+    for (; i < currentLen; i += 1) {
       if (!newArgSets[i]) { // one of the old sets no longer exists
         if (teardownFunc) {
           teardownFunc(currentResults[i])
@@ -91,7 +91,7 @@ export function memoizeArraylike<Args extends any[], Res>( // used at all?
       }
     }
 
-    for (; i < newLen; i++) {
+    for (; i < newLen; i += 1) {
       currentResults[i] = workerFunc.apply(this, newArgSets[i])
     }
 

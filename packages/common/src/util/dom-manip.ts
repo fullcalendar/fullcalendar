@@ -41,10 +41,10 @@ export function findElements(container: HTMLElement[] | HTMLElement | NodeListOf
   let containers = container instanceof HTMLElement ? [container] : container
   let allMatches: HTMLElement[] = []
 
-  for (let i = 0; i < containers.length; i++) {
+  for (let i = 0; i < containers.length; i += 1) {
     let matches = containers[i].querySelectorAll(selector)
 
-    for (let j = 0; j < matches.length; j++) {
+    for (let j = 0; j < matches.length; j += 1) {
       allMatches.push(matches[j] as HTMLElement)
     }
   }
@@ -58,10 +58,10 @@ export function findDirectChildren(parent: HTMLElement[] | HTMLElement, selector
   let parents = parent instanceof HTMLElement ? [parent] : parent
   let allMatches = []
 
-  for (let i = 0; i < parents.length; i++) {
+  for (let i = 0; i < parents.length; i += 1) {
     let childNodes = parents[i].children // only ever elements
 
-    for (let j = 0; j < childNodes.length; j++) {
+    for (let j = 0; j < childNodes.length; j += 1) {
       let childNode = childNodes[j]
 
       if (!selector || elementMatches(childNode as HTMLElement, selector)) {
