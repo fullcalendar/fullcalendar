@@ -35,10 +35,10 @@ BootstrapTheme.prototype.iconOverrideOption = 'bootstrapFontAwesome' // TODO: ma
 BootstrapTheme.prototype.iconOverrideCustomButtonOption = 'bootstrapFontAwesome'
 BootstrapTheme.prototype.iconOverridePrefix = 'fa-'
 
-let plugin = createPlugin({
+const plugin = createPlugin({
   themeClasses: {
-    bootstrap: BootstrapTheme
-  }
+    bootstrap: BootstrapTheme,
+  },
 })
 
 export default plugin
