@@ -40,7 +40,7 @@ import { globalPlugins } from '../global-plugins'
 import { createEmptyEventStore } from '../structs/event-store'
 import { CalendarContext } from '../CalendarContext'
 import { CalendarDataManagerState, CalendarOptionsData, CalendarCurrentViewData, CalendarData } from './data-types'
-import { TaskRunner } from '../util/runner'
+import { TaskRunner } from '../util/TaskRunner'
 import { buildTitle } from './title-formatting'
 
 export interface CalendarDataManagerProps {
@@ -340,7 +340,11 @@ export class CalendarDataManager {
     }
   }
 
-  _computeOptionsData(optionOverrides: CalendarOptions, dynamicOptionOverrides: CalendarOptions, calendarApi: CalendarApi): CalendarOptionsData {
+  _computeOptionsData(
+    optionOverrides: CalendarOptions,
+    dynamicOptionOverrides: CalendarOptions,
+    calendarApi: CalendarApi,
+  ): CalendarOptionsData {
     // TODO: blacklist options that are handled by optionChangeHandlers
 
     let {
@@ -411,7 +415,11 @@ export class CalendarDataManager {
       if (optionName !== 'plugins') { // because plugins is special-cased
         if (
           raw[optionName] === currentRaw[optionName] ||
-          (COMPLEX_OPTION_COMPARATORS[optionName] && (optionName in currentRaw) && COMPLEX_OPTION_COMPARATORS[optionName](currentRaw[optionName], raw[optionName]))
+          (
+            COMPLEX_OPTION_COMPARATORS[optionName] &&
+            (optionName in currentRaw) &&
+            COMPLEX_OPTION_COMPARATORS[optionName](currentRaw[optionName], raw[optionName])
+          )
         ) {
           refined[optionName] = currentRefined[optionName]
         } else if (refiners[optionName]) {
@@ -438,7 +446,12 @@ export class CalendarDataManager {
     }
   }
 
-  _computeCurrentViewData(viewType: string, optionsData: CalendarOptionsData, optionOverrides: CalendarOptions, dynamicOptionOverrides: CalendarOptions): CalendarCurrentViewData {
+  _computeCurrentViewData(
+    viewType: string,
+    optionsData: CalendarOptionsData,
+    optionOverrides: CalendarOptions,
+    dynamicOptionOverrides: CalendarOptions,
+  ): CalendarCurrentViewData {
     let viewSpec = optionsData.viewSpecs[viewType]
 
     if (!viewSpec) {
@@ -482,7 +495,13 @@ export class CalendarDataManager {
     return { viewSpec, options: refinedOptions, dateProfileGenerator, viewApi }
   }
 
-  processRawViewOptions(viewSpec: ViewSpec, pluginHooks: PluginHooks, localeDefaults: CalendarOptions, optionOverrides: CalendarOptions, dynamicOptionOverrides: CalendarOptions) {
+  processRawViewOptions(
+    viewSpec: ViewSpec,
+    pluginHooks: PluginHooks,
+    localeDefaults: CalendarOptions,
+    optionOverrides: CalendarOptions,
+    dynamicOptionOverrides: CalendarOptions,
+  ) {
     let raw = mergeRawOptions([
       BASE_OPTION_DEFAULTS,
       viewSpec.optionDefaults,
@@ -599,40 +618,43 @@ function buildViewUiProps(calendarContext: CalendarContext) {
   let { options } = calendarContext
 
   return {
-    eventUiSingleBase: createEventUi({
-      display: options.eventDisplay,
-      editable: options.editable, // without "event" at start
-      startEditable: options.eventStartEditable,
-      durationEditable: options.eventDurationEditable,
-      constraint: options.eventConstraint,
-      overlap: typeof options.eventOverlap === 'boolean' ? options.eventOverlap : undefined,
-      allow: options.eventAllow,
-      backgroundColor: options.eventBackgroundColor,
-      borderColor: options.eventBorderColor,
-      textColor: options.eventTextColor,
-      color: options.eventColor
-      // classNames: options.eventClassNames // render hook will handle this
-    }, calendarContext),
-
-    selectionConfig: createEventUi({
-      constraint: options.selectConstraint,
-      overlap: typeof options.selectOverlap === 'boolean' ? options.selectOverlap : undefined,
-      allow: options.selectAllow
-    }, calendarContext)
+    eventUiSingleBase: createEventUi(
+      {
+        display: options.eventDisplay,
+        editable: options.editable, // without "event" at start
+        startEditable: options.eventStartEditable,
+        durationEditable: options.eventDurationEditable,
+        constraint: options.eventConstraint,
+        overlap: typeof options.eventOverlap === 'boolean' ? options.eventOverlap : undefined,
+        allow: options.eventAllow,
+        backgroundColor: options.eventBackgroundColor,
+        borderColor: options.eventBorderColor,
+        textColor: options.eventTextColor,
+        color: options.eventColor,
+        // classNames: options.eventClassNames // render hook will handle this
+      },
+      calendarContext,
+    ),
+    selectionConfig: createEventUi(
+      {
+        constraint: options.selectConstraint,
+        overlap: typeof options.selectOverlap === 'boolean' ? options.selectOverlap : undefined,
+        allow: options.selectAllow,
+      },
+      calendarContext,
+    ),
   }
 }
-
 
 function parseContextBusinessHours(calendarContext: CalendarContext) {
   return parseBusinessHours(calendarContext.options.businessHours, calendarContext)
 }
 
-
 function warnUnknownOptions(options: any, viewName?: string) {
   for (let optionName in options) {
     console.warn(
       `Unknown option '${optionName}'` +
-      (viewName ? ` for view '${viewName}'` : '')
+      (viewName ? ` for view '${viewName}'` : ''),
     )
   }
 }

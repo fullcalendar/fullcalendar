@@ -13,8 +13,24 @@ export function parseToolbars(
   calendarApi: CalendarApi,
 ) {
   let viewsWithButtons: string[] = []
-  let headerToolbar = calendarOptions.headerToolbar ? parseToolbar(calendarOptions.headerToolbar, calendarOptions, calendarOptionOverrides, theme, viewSpecs, calendarApi, viewsWithButtons) : null
-  let footerToolbar = calendarOptions.footerToolbar ? parseToolbar(calendarOptions.footerToolbar, calendarOptions, calendarOptionOverrides, theme, viewSpecs, calendarApi, viewsWithButtons) : null
+  let headerToolbar = calendarOptions.headerToolbar ? parseToolbar(
+    calendarOptions.headerToolbar,
+    calendarOptions,
+    calendarOptionOverrides,
+    theme,
+    viewSpecs,
+    calendarApi,
+    viewsWithButtons,
+  ) : null
+  let footerToolbar = calendarOptions.footerToolbar ? parseToolbar(
+    calendarOptions.footerToolbar,
+    calendarOptions,
+    calendarOptionOverrides,
+    theme,
+    viewSpecs,
+    calendarApi,
+    viewsWithButtons,
+  ) : null
 
   return { headerToolbar, footerToolbar, viewsWithButtons }
 }
@@ -66,7 +82,7 @@ function parseSection(
         let buttonText // "
 
         if ((customButtonProps = calendarCustomButtons[buttonName])) {
-          buttonClick = function (ev: UIEvent) {
+          buttonClick = (ev: UIEvent) => {
             if (customButtonProps.click) {
               customButtonProps.click.call(ev.target, ev, ev.target)
             }
@@ -77,14 +93,14 @@ function parseSection(
         } else if ((viewSpec = viewSpecs[buttonName])) {
           viewsWithButtons.push(buttonName)
 
-          buttonClick = function () {
+          buttonClick = () => {
             calendarApi.changeView(buttonName)
           };
           (buttonText = viewSpec.buttonTextOverride) ||
               (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
               (buttonText = viewSpec.buttonTextDefault)
         } else if (calendarApi[buttonName]) { // a calendarApi method
-          buttonClick = function () {
+          buttonClick = () => {
             calendarApi[buttonName]()
           };
           (buttonText = calendarButtonTextOverrides[buttonName]) ||

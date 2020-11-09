@@ -18,7 +18,13 @@ import { DateEnv } from '../datelib/env'
 import { CalendarContext } from '../CalendarContext'
 import { expandRecurring } from '../structs/recurring-event'
 
-export function reduceEventStore(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, context: CalendarContext): EventStore {
+export function reduceEventStore(
+  eventStore: EventStore,
+  action: Action,
+  eventSources: EventSourceHash,
+  dateProfile: DateProfile,
+  context: CalendarContext,
+): EventStore {
   switch (action.type) {
     case 'RECEIVE_EVENTS': // raw
       return receiveRawEvents(
@@ -57,9 +63,9 @@ export function reduceEventStore(eventStore: EventStore, action: Action, eventSo
       return excludeEventsBySourceId(eventStore, action.sourceId)
 
     case 'REMOVE_ALL_EVENT_SOURCES':
-      return filterEventStoreDefs(eventStore, function(eventDef: EventDef) {
-        return !eventDef.sourceId // only keep events with no source id
-      })
+      return filterEventStoreDefs(eventStore, (eventDef: EventDef) => (
+       !eventDef.sourceId // only keep events with no source id
+      ))
 
     case 'REMOVE_ALL_EVENTS':
       return createEmptyEventStore()

@@ -71,7 +71,14 @@ export function parseEvent(
   )
 
   if (recurringRes) {
-    let def = parseEventDef(refined, extra, eventSource ? eventSource.sourceId : '', recurringRes.allDay, Boolean(recurringRes.duration), context)
+    let def = parseEventDef(
+      refined,
+      extra,
+      eventSource ? eventSource.sourceId : '',
+      recurringRes.allDay,
+      Boolean(recurringRes.duration),
+      context,
+    )
 
     def.recurringDef = { // don't want all the props from recurringRes. TODO: more efficient way to do this
       typeId: recurringRes.typeId,
@@ -105,7 +112,14 @@ export function buildEventRefiners(context: CalendarContext) {
 Will NOT populate extendedProps with the leftover properties.
 Will NOT populate date-related props.
 */
-export function parseEventDef(refined: EventRefined, extra: Dictionary, sourceId: string, allDay: boolean, hasEnd: boolean, context: CalendarContext): EventDef {
+export function parseEventDef(
+  refined: EventRefined,
+  extra: Dictionary,
+  sourceId: string,
+  allDay: boolean,
+  hasEnd: boolean,
+  context: CalendarContext,
+): EventDef {
   let def: EventDef = {
     title: refined.title || '',
     groupId: refined.groupId || '',

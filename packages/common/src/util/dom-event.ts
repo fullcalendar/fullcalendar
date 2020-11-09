@@ -13,7 +13,7 @@ export function buildDelegationHandler<EventType extends (Event | VUIEvent)>(
   selector: string,
   handler: (ev: EventType, matchedTarget: HTMLElement) => void,
 ) {
-  return function (ev: EventType) {
+  return (ev: EventType) => {
     let matchedChild = elementClosest(ev.target as HTMLElement, selector)
 
     if (matchedChild) {
@@ -32,7 +32,7 @@ export function listenBySelector(
 
   container.addEventListener(eventType, attachedHandler)
 
-  return function () {
+  return () => {
     container.removeEventListener(eventType, attachedHandler)
   }
 }
@@ -45,14 +45,14 @@ export function listenToHoverBySelector(
 ) {
   let currentMatchedChild
 
-  return listenBySelector(container, 'mouseover', selector, (ev, matchedChild) => {
+  return listenBySelector(container, 'mouseover', selector, (mouseOverEv, matchedChild) => {
     if (matchedChild !== currentMatchedChild) {
       currentMatchedChild = matchedChild
-      onMouseEnter(ev, matchedChild)
+      onMouseEnter(mouseOverEv, matchedChild)
 
-      let realOnMouseLeave = (ev) => {
+      let realOnMouseLeave = (mouseLeaveEv) => {
         currentMatchedChild = null
-        onMouseLeave(ev, matchedChild)
+        onMouseLeave(mouseLeaveEv, matchedChild)
         matchedChild.removeEventListener('mouseleave', realOnMouseLeave)
       }
 
@@ -75,7 +75,7 @@ const transitionEventNames = [
 
 // triggered only when the next single subsequent transition finishes
 export function whenTransitionDone(el: HTMLElement, callback: (ev: Event) => void) {
-  let realCallback = function (ev) {
+  let realCallback = (ev) => {
     callback(ev)
     transitionEventNames.forEach((eventName) => {
       el.removeEventListener(eventName, realCallback)

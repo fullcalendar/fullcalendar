@@ -181,7 +181,7 @@ function buildNativeFormattingFunc(
     zeroFormat = new Intl.DateTimeFormat(context.locale.codes, zeroProps)
   }
 
-  return function (date: ZonedMarker) {
+  return (date: ZonedMarker) => {
     let { marker } = date
     let format
 

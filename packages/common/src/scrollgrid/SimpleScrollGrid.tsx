@@ -33,7 +33,10 @@ interface SimpleScrollGridState {
 
 export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, SimpleScrollGridState> {
   processCols = memoize((a) => a, isColPropsEqual) // so we get same `cols` props every time
-  renderMicroColGroup: typeof renderMicroColGroup = memoize(renderMicroColGroup) // yucky to memoize VNodes, but much more efficient for consumers
+
+  // yucky to memoize VNodes, but much more efficient for consumers
+  renderMicroColGroup: typeof renderMicroColGroup = memoize(renderMicroColGroup)
+
   scrollerRefs = new RefMap<Scroller>()
   scrollerElRefs = new RefMap<HTMLElement>(this._handleScrollerEl.bind(this))
 

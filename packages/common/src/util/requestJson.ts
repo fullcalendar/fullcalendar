@@ -18,7 +18,7 @@ export function requestJson(method: string, url: string, params: Dictionary, suc
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
   }
 
-  xhr.onload = function () {
+  xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 400) {
       let parsed = false
       let res
@@ -40,7 +40,7 @@ export function requestJson(method: string, url: string, params: Dictionary, suc
     }
   }
 
-  xhr.onerror = function () {
+  xhr.onerror = () => {
     failureCallback('Request failed', xhr)
   }
 

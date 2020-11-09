@@ -8,7 +8,9 @@
     '@typescript-eslint/lines-between-class-members':
       - error
       - exceptAfterSingleLine: true
+    '@typescript-eslint/naming-convention': off # TODO: reenable
     '@typescript-eslint/no-unused-vars': off # TODO: reenable
+    '@typescript-eslint/no-unused-expressions': off # TODO: reenable
     '@typescript-eslint/no-use-before-define':
       - error
       - variables: true
@@ -20,6 +22,7 @@
     class-methods-use-this:
       - off
     default-case: off
+    function-paren-newline: off # TODO: really tripping up. REENABLE
     guard-for-in: off # TODO: reenable
     import/no-cycle: off # TODO: reenable. disabled because circular deps are hard to fix right now
     import/prefer-default-export: off # named exports much better for .d.ts files
@@ -49,6 +52,8 @@
           multiline: true
     operator-linebreak: off # prevents JSX if statements looking correct. REVISIT for other uses
     prefer-const: off # TODO: revisit
+    prefer-destructuring: off # is too aggressive, sometimes doesn't make sense
+    prefer-template: off
     react/destructuring-assignment: off
     react/jsx-props-no-spreading: off # more acceptable in preact, b/c no proptype filtering
     react/react-in-jsx-scope: off # because we use preact

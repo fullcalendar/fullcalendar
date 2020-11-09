@@ -42,4 +42,4 @@ export function interactionSettingsToStore(settings: InteractionSettings) {
 }
 
 // global state
-export let interactionSettingsStore: InteractionSettingsStore = {}
+export const interactionSettingsStore: InteractionSettingsStore = {}

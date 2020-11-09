@@ -24,7 +24,7 @@ import { EventClicking } from './interactions/EventClicking'
 import { EventHovering } from './interactions/EventHovering'
 import { getNow } from './reducers/current-date'
 import { CalendarInteraction } from './calendar-utils'
-import { DelayedRunner } from './util/runner'
+import { DelayedRunner } from './util/DelayedRunner'
 import { PureComponent } from './vdom-util'
 
 export interface CalendarContentProps extends CalendarData {

@@ -139,7 +139,7 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
       let mutatedKeysByDefId = this._getKeysForEventDefs(interaction.mutatedEvents)
       let mutatedStores = this._splitEventStore(interaction.mutatedEvents, mutatedKeysByDefId)
 
-      let populate = function (key) {
+      let populate = (key) => {
         if (!splitStates[key]) {
           splitStates[key] = {
             affectedEvents: affectedStores[key] || EMPTY_EVENT_STORE,

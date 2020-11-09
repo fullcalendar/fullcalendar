@@ -218,7 +218,7 @@ export function buildClassNameNormalizer<HookProps>() { // TODO: general deep-me
   let currentHookProps: HookProps
   let currentClassNames: string[] = []
 
-  return function (generator: ClassNamesGenerator<HookProps>, hookProps: HookProps) {
+  return (generator: ClassNamesGenerator<HookProps>, hookProps: HookProps) => {
     if (!currentHookProps || !isPropsEqual(currentHookProps, hookProps) || generator !== currentGenerator) {
       currentGenerator = generator
       currentHookProps = hookProps

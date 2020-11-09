@@ -5,7 +5,8 @@ export type GenericHash = { [key: string]: any } // already did this somewhere
 let guidNumber = 0
 
 export function guid() {
-  return String(guidNumber += 1)
+  guidNumber += 1
+  return String(guidNumber)
 }
 
 /* FullCalendar-specific DOM Utilities
@@ -155,6 +156,7 @@ export function firstDefined(...args) {
       return args[i]
     }
   }
+  return undefined
 }
 
 /* FC-specific DOM dimension stuff

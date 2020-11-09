@@ -10,7 +10,7 @@ export function memoize<Args extends any[], Res>(
   let currentArgs: Args | undefined
   let currentRes: Res | undefined
 
-  return function (...newArgs: Args) {
+  return function (...newArgs: Args) { // eslint-disable-line func-names
     if (!currentArgs) {
       currentRes = workerFunc.apply(this, newArgs)
     } else if (!isArraysEqual(currentArgs, newArgs)) {
@@ -39,7 +39,7 @@ export function memoizeObjArg<Arg extends Dictionary, Res>(
   let currentArg: Arg | undefined
   let currentRes: Res | undefined
 
-  return function (newArg: Arg) {
+  return (newArg: Arg) => {
     if (!currentArg) {
       currentRes = workerFunc.call(this, newArg)
     } else if (!isPropsEqual(currentArg, newArg)) {
@@ -68,7 +68,7 @@ export function memoizeArraylike<Args extends any[], Res>( // used at all?
   let currentArgSets: Args[] = []
   let currentResults: Res[] = []
 
-  return function (newArgSets: Args[]) {
+  return (newArgSets: Args[]) => {
     let currentLen = currentArgSets.length
     let newLen = newArgSets.length
     let i = 0
@@ -110,7 +110,7 @@ export function memoizeHashlike<Args extends any[], Res>( // used?
   let currentArgHash: { [key: string]: Args } = {}
   let currentResHash: { [key: string]: Res } = {}
 
-  return function (newArgHash: { [key: string]: Args }) {
+  return (newArgHash: { [key: string]: Args }) => {
     let newResHash: { [key: string]: Res } = {}
 
     for (let key in newArgHash) {

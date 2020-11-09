@@ -30,14 +30,20 @@ export class RefMap<RefType> {
     let added = false
 
     if (val !== null) {
-      removed = (key in currentMap) // for bug... ACTUALLY: can probably do away with this now that callers don't share numeric indices anymore
+      // for bug... ACTUALLY: can probably do away with this now that callers don't share numeric indices anymore
+      removed = (key in currentMap)
+
       currentMap[key] = val
       depths[key] = (depths[key] || 0) + 1
       added = true
-    } else if (--depths[key] === 0) {
-      delete currentMap[key]
-      delete this.callbackMap[key]
-      removed = true
+    } else {
+      depths[key] -= 1
+
+      if (!depths[key]) {
+        delete currentMap[key]
+        delete this.callbackMap[key]
+        removed = true
+      }
     }
 
     if (this.masterCallback) {

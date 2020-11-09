@@ -6,17 +6,17 @@ export function unpromisify(func, success, failure?) {
   // guard against success/failure callbacks being called more than once
   // and guard against a promise AND callback being used together.
   let isResolved = false
-  let wrappedSuccess = function () {
+  let wrappedSuccess = function () { // eslint-disable-line func-names
     if (!isResolved) {
       isResolved = true
-      success.apply(this, arguments)
+      success.apply(this, arguments) // eslint-disable-line prefer-rest-params
     }
   }
-  let wrappedFailure = function () {
+  let wrappedFailure = function () { // eslint-disable-line func-names
     if (!isResolved) {
       isResolved = true
       if (failure) {
-        failure.apply(this, arguments)
+        failure.apply(this, arguments) // eslint-disable-line prefer-rest-params
       }
     }
   }

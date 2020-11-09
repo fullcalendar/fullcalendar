@@ -106,7 +106,7 @@ export function buildBuildPluginHooks() { // memoizes
   let currentGlobalDefs: PluginDef[] = []
   let currentHooks: PluginHooks
 
-  return function (overrideDefs: PluginDef[], globalDefs: PluginDef[]) {
+  return (overrideDefs: PluginDef[], globalDefs: PluginDef[]) => {
     if (!currentHooks || !isArraysEqual(overrideDefs, currentOverrideDefs) || !isArraysEqual(globalDefs, currentGlobalDefs)) {
       currentHooks = buildPluginHooks(overrideDefs, globalDefs)
     }

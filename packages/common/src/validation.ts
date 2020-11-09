@@ -73,7 +73,9 @@ function isInteractionPropsValid(state: SplittableProps, context: CalendarContex
     subjectConfigs = mapHash(subjectConfigs, filterConfig)
   }
 
-  let otherEventStore = excludeInstances(state.eventStore, interaction.affectedEvents.instances) // exclude the subject events. TODO: exclude defs too?
+  // exclude the subject events. TODO: exclude defs too?
+  let otherEventStore = excludeInstances(state.eventStore, interaction.affectedEvents.instances)
+
   let otherDefs = otherEventStore.defs
   let otherInstances = otherEventStore.instances
   let otherConfigs = compileEventUis(otherDefs, state.eventUiBases)

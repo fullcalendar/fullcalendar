@@ -1,3 +1,5 @@
+/* eslint max-classes-per-file: off */
+
 import { __assign } from 'tslib'
 import { Component, Ref } from './vdom'
 import { ViewContextType, ViewContext } from './ViewContext'
@@ -17,6 +19,7 @@ export abstract class PureComponent<Props=Dictionary, State=Dictionary> extends 
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     if (this.debug) {
+      // eslint-disable-next-line no-console
       console.log(getUnequalProps(nextProps, this.props), getUnequalProps(nextState, this.state))
     }
 

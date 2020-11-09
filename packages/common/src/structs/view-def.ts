@@ -29,7 +29,12 @@ export function compileViewDefs(defaultConfigs: ViewConfigHash, overrideConfigs:
   return hash
 }
 
-function ensureViewDef(viewType: string, hash: ViewDefHash, defaultConfigs: ViewConfigHash, overrideConfigs: ViewConfigHash): ViewDef | null {
+function ensureViewDef(
+  viewType: string,
+  hash: ViewDefHash,
+  defaultConfigs: ViewConfigHash,
+  overrideConfigs: ViewConfigHash,
+): ViewDef | null {
   if (hash[viewType]) {
     return hash[viewType]
   }
@@ -43,14 +48,19 @@ function ensureViewDef(viewType: string, hash: ViewDefHash, defaultConfigs: View
   return viewDef
 }
 
-function buildViewDef(viewType: string, hash: ViewDefHash, defaultConfigs: ViewConfigHash, overrideConfigs: ViewConfigHash): ViewDef | null {
+function buildViewDef(
+  viewType: string,
+  hash: ViewDefHash,
+  defaultConfigs: ViewConfigHash,
+  overrideConfigs: ViewConfigHash,
+): ViewDef | null {
   let defaultConfig = defaultConfigs[viewType]
   let overrideConfig = overrideConfigs[viewType]
 
-  let queryProp = function (name) {
-    return (defaultConfig && defaultConfig[name] !== null) ? defaultConfig[name] :
+  let queryProp = (name) => (
+    (defaultConfig && defaultConfig[name] !== null) ? defaultConfig[name] :
       ((overrideConfig && overrideConfig[name] !== null) ? overrideConfig[name] : null)
-  }
+  )
 
   let theComponent = queryProp('component') as ViewComponentType
   let superType = queryProp('superType') as string

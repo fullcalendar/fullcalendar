@@ -402,7 +402,13 @@ export function mergeRawOptions(optionSets: Dictionary[]) {
   return mergeProps(optionSets, COMPLEX_OPTION_COMPARATORS)
 }
 
-export function refineProps<Refiners extends GenericRefiners, Raw extends RawOptionsFromRefiners<Refiners>>(input: Raw, refiners: Refiners): { refined: RefinedOptionsFromRefiners<Refiners>, extra: Dictionary } {
+export function refineProps<Refiners extends GenericRefiners, Raw extends RawOptionsFromRefiners<Refiners>>(
+  input: Raw,
+  refiners: Refiners,
+): {
+  refined: RefinedOptionsFromRefiners<Refiners>,
+  extra: Dictionary,
+} {
   let refined = {} as any
   let extra = {} as any
 

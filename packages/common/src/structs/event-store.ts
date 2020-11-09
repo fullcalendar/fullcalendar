@@ -86,9 +86,9 @@ export function mergeEventStores(store0: EventStore, store1: EventStore): EventS
 
 export function filterEventStoreDefs(eventStore: EventStore, filterFunc: (eventDef: EventDef) => boolean): EventStore {
   let defs = filterHash(eventStore.defs, filterFunc)
-  let instances = filterHash(eventStore.instances, function(instance: EventInstance) {
-    return defs[instance.defId] // still exists?
-  })
+  let instances = filterHash(eventStore.instances, (instance: EventInstance) => (
+    defs[instance.defId] // still exists?
+  ))
   return { defs, instances }
 }
 
