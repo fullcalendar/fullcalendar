@@ -1,3 +1,5 @@
+/* eslint max-len: off */
+/* eslint no-trailing-spaces: off */
 
 // automatically generated
 

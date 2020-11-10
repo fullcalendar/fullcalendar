@@ -21,7 +21,7 @@ export class Calendar extends CalendarApi {
     this.el = el
     this.renderRunner = new DelayedRunner(this.handleRenderRequest)
 
-    new CalendarDataManager({
+    new CalendarDataManager({ // eslint-disable-line no-new
       optionOverrides,
       calendarApi: this,
       onAction: this.handleAction,
@@ -83,7 +83,7 @@ export class Calendar extends CalendarApi {
     if (!wasRendering) {
       this.isRendering = true
     } else {
-      this.customContentRenderId++
+      this.customContentRenderId += 1
     }
 
     this.renderRunner.request()
