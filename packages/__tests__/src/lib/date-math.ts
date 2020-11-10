@@ -1,9 +1,8 @@
-
 export function startOfLocalDay(date) {
   return new Date(
     date.getFullYear(),
     date.getMonth(),
-    date.getDate()
+    date.getDate(),
   )
 }
 
@@ -17,7 +16,7 @@ export function startOfUtcDay(date) {
   return new Date(Date.UTC(
     date.getUTCFullYear(),
     date.getUTCMonth(),
-    date.getUTCDate()
+    date.getUTCDate(),
   ))
 }
 

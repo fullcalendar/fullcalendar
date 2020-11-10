@@ -3,15 +3,14 @@ import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import '../lib/dom-misc'
 
-(function() {
-
-  [ 'height', 'contentHeight' ].forEach(function(heightProp) {
-    describe(heightProp, function() {
-      var $calendarEl
-      var heightEl // HTMLElement
-      var asAMethod
-      var heightPropDescriptions: { description: string, height: string | number, heightWrapper?: boolean }[] = [
-        { description: 'as a number', height: 600 }
+(function () {
+  ['height', 'contentHeight'].forEach((heightProp) => {
+    describe(heightProp, () => {
+      let $calendarEl
+      let heightEl // HTMLElement
+      let asAMethod
+      let heightPropDescriptions: { description: string, height: string | number, heightWrapper?: boolean }[] = [
+        { description: 'as a number', height: 600 },
       ]
 
       if (heightProp === 'height') {
@@ -19,14 +18,14 @@ import '../lib/dom-misc'
       }
 
       pushOptions({
-        initialDate: '2014-08-01'
+        initialDate: '2014-08-01',
       })
 
-      beforeEach(function() {
+      beforeEach(() => {
         $calendarEl = $('<div />').appendTo('body').width(900)
       })
 
-      afterEach(function() {
+      afterEach(() => {
         $calendarEl.remove()
       })
 
@@ -36,14 +35,12 @@ import '../lib/dom-misc'
         let calendar
 
         if (asAMethod) {
-
           calendar = initCalendar({}, $calendarEl[0])
           let calendarWrapper = new CalendarWrapper(calendar)
-          var dateEl = calendarWrapper.getFirstDateEl()
+          let dateEl = calendarWrapper.getFirstDateEl()
 
           calendar.setOption(heightProp, heightVal)
           expect(calendarWrapper.getFirstDateEl()).toBe(dateEl)
-
         } else {
           calendar = initCalendar({ [heightProp]: heightVal }, $calendarEl[0])
         }
@@ -58,40 +55,38 @@ import '../lib/dom-misc'
       }
 
       function expectHeight(heightVal) {
-        var diff = Math.abs(heightEl.offsetHeight - heightVal)
+        let diff = Math.abs(heightEl.offsetHeight - heightVal)
         expect(diff).toBeLessThan(2) // off-by-one or exactly the same. for zoom, and firefox
       }
 
       $.each({
         'as an init option': false,
-        'as a method': true
-      }, function(desc, bool) {
-        describe(desc, function() {
-
-          beforeEach(function() {
+        'as a method': true,
+      }, (desc, bool) => {
+        describe(desc, () => {
+          beforeEach(() => {
             asAMethod = bool
           })
 
-          describe('for ' + heightProp, function() {
-            describe('when in month view', function() {
+          describe('for ' + heightProp, () => {
+            describe('when in month view', () => {
               pushOptions({
-                initialView: 'dayGridMonth'
+                initialView: 'dayGridMonth',
               })
 
-              heightPropDescriptions.forEach(function(testInfo) {
-                describe(testInfo.description, function() {
-
+              heightPropDescriptions.forEach((testInfo) => {
+                describe(testInfo.description, () => {
                   if (testInfo.heightWrapper) {
-                    beforeEach(function() {
+                    beforeEach(() => {
                       $calendarEl.wrap('<div id="calendar-container" style="height: 600px;" />')
                     })
-                    afterEach(function() {
+                    afterEach(() => {
                       $('#calendar-container').remove()
                     })
                   }
 
-                  describe('when there are no events', function() {
-                    it('should be the specified height, with no scrollbars', function() {
+                  describe('when there are no events', () => {
+                    it('should be the specified height, with no scrollbars', () => {
                       let calendar = init(testInfo.height)
                       let viewWrapper = new DayGridViewWrapper(calendar)
                       let diff = Math.abs(heightEl.offsetHeight - 600)
@@ -101,12 +96,12 @@ import '../lib/dom-misc'
                     })
                   })
 
-                  describe('when there is one tall row of events', function() {
+                  describe('when there is one tall row of events', () => {
                     pushOptions({
-                      events: repeatClone({ title: 'event', start: '2014-08-04' }, 9)
+                      events: repeatClone({ title: 'event', start: '2014-08-04' }, 9),
                     })
 
-                    it('should take away height from other rows, but not do scrollbars', function() {
+                    it('should take away height from other rows, but not do scrollbars', () => {
                       let calendar = init(testInfo.height)
                       let viewWrapper = new DayGridViewWrapper(calendar)
                       let $rows = $(viewWrapper.dayGrid.getRowEls())
@@ -116,7 +111,7 @@ import '../lib/dom-misc'
 
                       expectHeight(600)
 
-                      $shortRows.each(function(i, node) {
+                      $shortRows.each((i, node) => {
                         let rowHeight = $(node).outerHeight()
                         let diff = Math.abs(rowHeight - shortHeight)
                         expect(diff).toBeLessThan(10) // all roughly the same
@@ -127,7 +122,7 @@ import '../lib/dom-misc'
                     })
                   })
 
-                  describe('when there are many tall rows of events', function() {
+                  describe('when there are many tall rows of events', () => {
                     pushOptions({
                       events: [].concat(
                         repeatClone({ title: 'event0', start: '2014-07-28' }, 9),
@@ -135,11 +130,11 @@ import '../lib/dom-misc'
                         repeatClone({ title: 'event2', start: '2014-08-11' }, 9),
                         repeatClone({ title: 'event3', start: '2014-08-18' }, 9),
                         repeatClone({ title: 'event4', start: '2014-08-25' }, 9),
-                        repeatClone({ title: 'event5', start: '2014-09-01' }, 9)
-                      )
+                        repeatClone({ title: 'event5', start: '2014-09-01' }, 9),
+                      ),
                     })
 
-                    it('height is correct and scrollbars show up', function() {
+                    it('height is correct and scrollbars show up', () => {
                       let calendar = init(testInfo.height)
                       let viewWrapper = new DayGridViewWrapper(calendar)
 
@@ -150,7 +145,7 @@ import '../lib/dom-misc'
                 })
               })
 
-              describe('as "auto", when there are many tall rows of events', function() {
+              describe('as "auto", when there are many tall rows of events', () => {
                 pushOptions({
                   events: [].concat(
                     repeatClone({ title: 'event0', start: '2014-07-28' }, 9),
@@ -158,11 +153,11 @@ import '../lib/dom-misc'
                     repeatClone({ title: 'event2', start: '2014-08-11' }, 9),
                     repeatClone({ title: 'event3', start: '2014-08-18' }, 9),
                     repeatClone({ title: 'event4', start: '2014-08-25' }, 9),
-                    repeatClone({ title: 'event5', start: '2014-09-01' }, 9)
-                  )
+                    repeatClone({ title: 'event5', start: '2014-09-01' }, 9),
+                  ),
                 })
 
-                it('height is really tall and there are no scrollbars', function() {
+                it('height is really tall and there are no scrollbars', () => {
                   let calendar = init('auto')
                   let viewWrapper = new DayGridViewWrapper(calendar)
 
@@ -172,25 +167,25 @@ import '../lib/dom-misc'
               })
             });
 
-            [ 'dayGridWeek', 'dayGridDay' ].forEach(function(viewName) {
-              describe('in ' + viewName + ' view', function() {
+            ['dayGridWeek', 'dayGridDay'].forEach((viewName) => {
+              describe('in ' + viewName + ' view', () => {
                 pushOptions({
-                  initialView: viewName
+                  initialView: viewName,
                 })
 
-                heightPropDescriptions.forEach(function(testInfo) {
-                  describe(testInfo.description, function() {
+                heightPropDescriptions.forEach((testInfo) => {
+                  describe(testInfo.description, () => {
                     if (testInfo.heightWrapper) {
-                      beforeEach(function() {
+                      beforeEach(() => {
                         $calendarEl.wrap('<div id="calendar-container" style="height: 600px;" />')
                       })
-                      afterEach(function() {
+                      afterEach(() => {
                         $('#calendar-container').remove()
                       })
                     }
 
-                    describe('when there are no events', function() {
-                      it('should be the specified height, with no scrollbars', function() {
+                    describe('when there are no events', () => {
+                      it('should be the specified height, with no scrollbars', () => {
                         let calendar = init(testInfo.height)
                         let viewWrapper = new DayGridViewWrapper(calendar)
 
@@ -199,12 +194,12 @@ import '../lib/dom-misc'
                       })
                     })
 
-                    describe('when there are many events', function() {
+                    describe('when there are many events', () => {
                       pushOptions({
-                        events: repeatClone({ title: 'event', start: '2014-08-01' }, 100)
+                        events: repeatClone({ title: 'event', start: '2014-08-01' }, 100),
                       })
 
-                      it('should have the correct height, with scrollbars', function() {
+                      it('should have the correct height, with scrollbars', () => {
                         let calendar = init(testInfo.height)
                         let viewWrapper = new DayGridViewWrapper(calendar)
 
@@ -215,11 +210,11 @@ import '../lib/dom-misc'
                   })
                 })
 
-                describe('as "auto", when there are many events', function() {
+                describe('as "auto", when there are many events', () => {
                   pushOptions({
-                    events: repeatClone({ title: 'event', start: '2014-08-01' }, 100)
+                    events: repeatClone({ title: 'event', start: '2014-08-01' }, 100),
                   })
-                  it('should be really tall with no scrollbars', function() {
+                  it('should be really tall with no scrollbars', () => {
                     let calendar = init('auto')
                     let viewWrapper = new DayGridViewWrapper(calendar)
 
@@ -230,35 +225,34 @@ import '../lib/dom-misc'
               })
             });
 
-            [ 'timeGridWeek', 'timeGridDay' ].forEach(function(viewName) {
-              describe('in ' + viewName + ' view', function() {
+            ['timeGridWeek', 'timeGridDay'].forEach((viewName) => {
+              describe('in ' + viewName + ' view', () => {
                 pushOptions({
-                  initialView: viewName
+                  initialView: viewName,
                 })
 
                 describeOptions({
                   'with no all-day section': { allDaySlot: false },
                   'with no all-day events': { },
-                  'with some all-day events': { events: repeatClone({ title: 'event', start: '2014-08-01' }, 6) }
-                }, function() {
-
-                  heightPropDescriptions.forEach(function(testInfo) {
-                    describe(testInfo.description, function() {
+                  'with some all-day events': { events: repeatClone({ title: 'event', start: '2014-08-01' }, 6) },
+                }, () => {
+                  heightPropDescriptions.forEach((testInfo) => {
+                    describe(testInfo.description, () => {
                       if (testInfo.heightWrapper) {
-                        beforeEach(function() {
+                        beforeEach(() => {
                           $calendarEl.wrap('<div id="calendar-container" style="height: 600px;" />')
                         })
-                        afterEach(function() {
+                        afterEach(() => {
                           $('#calendar-container').remove()
                         })
                       }
 
-                      describe('with many slots', function() {
+                      describe('with many slots', () => {
                         pushOptions({
                           slotMinTime: '00:00:00',
-                          slotMaxTime: '24:00:00'
+                          slotMaxTime: '24:00:00',
                         })
-                        it('should be the correct height, with scrollbars', function() {
+                        it('should be the correct height, with scrollbars', () => {
                           let calendar = init(testInfo.height)
                           let viewWrapper = new TimeGridViewWrapper(calendar)
 
@@ -269,12 +263,12 @@ import '../lib/dom-misc'
                     })
                   })
 
-                  describe('as "auto", with only a few slots', function() {
+                  describe('as "auto", with only a few slots', () => {
                     pushOptions({
                       slotMinTime: '06:00:00',
-                      slotMaxTime: '10:00:00'
+                      slotMaxTime: '10:00:00',
                     })
-                    it('should be really short with no scrollbars nor horizontal rule', function() {
+                    it('should be really short with no scrollbars nor horizontal rule', () => {
                       let calendar = init('auto')
                       let viewWrapper = new TimeGridViewWrapper(calendar)
 
@@ -283,13 +277,13 @@ import '../lib/dom-misc'
                     })
                   })
 
-                  describe('as a "auto", with many slots', function() {
+                  describe('as a "auto", with many slots', () => {
                     pushOptions({
                       slotMinTime: '00:00:00',
-                      slotMaxTime: '24:00:00'
+                      slotMaxTime: '24:00:00',
                     })
 
-                    it('should be really tall with no scrollbars nor horizontal rule', function() {
+                    it('should be really tall with no scrollbars nor horizontal rule', () => {
                       let calendar = init('auto')
                       let viewWrapper = new TimeGridViewWrapper(calendar)
 
@@ -306,29 +300,27 @@ import '../lib/dom-misc'
     })
   })
 
-
-  it('no height oscillation happens', function() {
+  it('no height oscillation happens', () => {
     let $container = $(
       '<div style="width:301px;height:300px;overflow-y:auto">' +
       '<div style="margin:0"></div>' +
-      '</div>'
+      '</div>',
     ).appendTo('body')
 
     // will freeze browser if bug exists :)
     let calendar = initCalendar({
       headerToolbar: false,
       initialView: 'dayGridMonth',
-      aspectRatio: 1
+      aspectRatio: 1,
     }, $container.find('div')[0])
 
     calendar.destroy()
     $container.remove()
   })
 
-
   function repeatClone(srcObj, times) {
-    var a = []
-    var i
+    let a = []
+    let i
 
     for (i = 0; i < times; i++) {
       a.push($.extend({}, srcObj))
@@ -336,5 +328,4 @@ import '../lib/dom-misc'
 
     return a
   }
-
-})()
+}())

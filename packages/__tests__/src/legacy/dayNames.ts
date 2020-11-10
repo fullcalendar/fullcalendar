@@ -1,37 +1,36 @@
-import { removeLtrCharCodes } from '../lib/string'
 import { addDays } from '@fullcalendar/core'
+import { removeLtrCharCodes } from '../lib/string'
 import { parseUtcDate } from '../lib/date-parsing'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-
-describe('day names', function() {
-  var sundayDate = parseUtcDate('2019-03-17')
-  var locales = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ]
+describe('day names', () => {
+  let sundayDate = parseUtcDate('2019-03-17')
+  let locales = ['es', 'fr', 'de', 'zh-cn', 'nl']
 
   pushOptions({
-    now: sundayDate
+    now: sundayDate,
   })
 
-  describe('when view is dayGridDay', function() {
+  describe('when view is dayGridDay', () => {
     pushOptions({
-      initialView: 'dayGridDay'
+      initialView: 'dayGridDay',
     })
 
-    describe('when locale is default', function() {
+    describe('when locale is default', () => {
       pushOptions({
-        locale: 'en'
+        locale: 'en',
       })
 
-      CalendarWrapper.DOW_CLASSNAMES.forEach(function(dowClassName, index) {
-        var dayDate = addDays(sundayDate, index)
-        var dayText = removeLtrCharCodes(
-          dayDate.toLocaleString('en', { weekday: 'long', timeZone: 'UTC' })
+      CalendarWrapper.DOW_CLASSNAMES.forEach((dowClassName, index) => {
+        let dayDate = addDays(sundayDate, index)
+        let dayText = removeLtrCharCodes(
+          dayDate.toLocaleString('en', { weekday: 'long', timeZone: 'UTC' }),
         )
 
-        it('should be ' + dayText, function() {
+        it('should be ' + dayText, () => {
           let calendar = initCalendar({
-            now: dayDate
+            now: dayDate,
           })
           let headerWrapper = new DayGridViewWrapper(calendar).header
           expect(headerWrapper.el.querySelector(`.${dowClassName}`)).toHaveText(dayText)
@@ -39,19 +38,18 @@ describe('day names', function() {
       })
     })
 
-    $.each(locales, function(index, locale) {
-      describe('when locale is ' + locale, function() {
-
-        CalendarWrapper.DOW_CLASSNAMES.forEach(function(dowClassName, index) {
-          var dayDate = addDays(sundayDate, index)
-          var dayText = removeLtrCharCodes(
-            dayDate.toLocaleString(locale, { weekday: 'long', timeZone: 'UTC' })
+    $.each(locales, (index, locale) => {
+      describe('when locale is ' + locale, () => {
+        CalendarWrapper.DOW_CLASSNAMES.forEach((dowClassName, index) => {
+          let dayDate = addDays(sundayDate, index)
+          let dayText = removeLtrCharCodes(
+            dayDate.toLocaleString(locale, { weekday: 'long', timeZone: 'UTC' }),
           )
 
-          it('should be the translation for ' + dayText, function() {
+          it('should be the translation for ' + dayText, () => {
             let calendar = initCalendar({
-              locale: locale,
-              now: dayDate
+              locale,
+              now: dayDate,
             })
             let headerWrapper = new DayGridViewWrapper(calendar).header
             expect(headerWrapper.el.querySelector(`.${dowClassName}`)).toHaveText(dayText)
@@ -60,5 +58,4 @@ describe('day names', function() {
       })
     })
   })
-
 })

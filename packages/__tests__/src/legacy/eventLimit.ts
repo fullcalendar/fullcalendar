@@ -1,53 +1,52 @@
-import { DayGridViewWrapper } from "../lib/wrappers/DayGridViewWrapper"
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { filterVisibleEls } from '../lib/dom-misc'
 
-describe('dayMaxEventRows', function() { // TODO: rename file
+describe('dayMaxEventRows', () => { // TODO: rename file
   pushOptions({
     initialDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
-    dayMaxEventRows: 3
+    dayMaxEventRows: 3,
   })
 
-  describe('as a number', function() {
-
+  describe('as a number', () => {
     describeOptions('initialView', {
       'when in month view': 'dayGridMonth',
       'when in dayGridWeek view': 'dayGridWeek',
-      'when in week view': 'timeGridWeek'
-    }, function(viewName) {
+      'when in week view': 'timeGridWeek',
+    }, (viewName) => {
       let ViewWrapper = viewName.match(/^dayGrid/) ? DayGridViewWrapper : TimeGridViewWrapper
 
-      it('doesn\'t display a more link when limit is more than the # of events', function() {
+      it('doesn\'t display a more link when limit is more than the # of events', () => {
         let calendar = initCalendar({
           events: [
             { title: 'event1', start: '2014-07-29' },
-            { title: 'event2', start: '2014-07-29' }
-          ]
+            { title: 'event2', start: '2014-07-29' },
+          ],
         })
         let dayGridWrapper = new ViewWrapper(calendar).dayGrid
         expect(dayGridWrapper.getMoreEls().length).toBe(0)
       })
 
-      it('doesn\'t display a more link when limit equal to the # of events', function() {
+      it('doesn\'t display a more link when limit equal to the # of events', () => {
         let calendar = initCalendar({
           events: [
             { title: 'event1', start: '2014-07-29' },
             { title: 'event2', start: '2014-07-29' },
-            { title: 'event2', start: '2014-07-29' }
-          ]
+            { title: 'event2', start: '2014-07-29' },
+          ],
         })
         let dayGridWrapper = new ViewWrapper(calendar).dayGrid
         expect(dayGridWrapper.getMoreEls().length).toBe(0)
       })
 
-      it('displays a more link when limit is less than the # of events', function() {
+      it('displays a more link when limit is less than the # of events', () => {
         let calendar = initCalendar({
           events: [
             { title: 'event1', start: '2014-07-29' },
             { title: 'event2', start: '2014-07-29' },
             { title: 'event2', start: '2014-07-29' },
-            { title: 'event2', start: '2014-07-29' }
-          ]
+            { title: 'event2', start: '2014-07-29' },
+          ],
         })
         let dayGridWrapper = new ViewWrapper(calendar).dayGrid
         let moreEls = dayGridWrapper.getMoreEls()
@@ -55,14 +54,14 @@ describe('dayMaxEventRows', function() { // TODO: rename file
         expect(moreEls[0]).toHaveText('+2 more')
       })
 
-      it('displays one more per day, when a multi-day event is above', function() {
+      it('displays one more per day, when a multi-day event is above', () => {
         let calendar = initCalendar({
           events: [
             { title: 'event1', start: '2014-07-29', end: '2014-07-31' },
             { title: 'event2', start: '2014-07-29', end: '2014-07-31' },
             { title: 'event2', start: '2014-07-29', end: '2014-07-31' },
-            { title: 'event2', start: '2014-07-29', end: '2014-07-31' }
-          ]
+            { title: 'event2', start: '2014-07-29', end: '2014-07-31' },
+          ],
         })
         let dayGridWrapper = new ViewWrapper(calendar).dayGrid
         let moreEls = dayGridWrapper.getMoreEls()
@@ -76,14 +75,14 @@ describe('dayMaxEventRows', function() { // TODO: rename file
 
       it('will render a link in a multi-day event\'s second column ' +
         'if it has already been hidden in the first',
-      function() {
+      () => {
         let calendar = initCalendar({
           events: [
             { title: 'event1', start: '2014-07-29', end: '2014-07-31' },
             { title: 'event2', start: '2014-07-29', end: '2014-07-31' },
             { title: 'event2', start: '2014-07-29', end: '2014-07-31' },
-            { title: 'event2', start: '2014-07-29' }
-          ]
+            { title: 'event2', start: '2014-07-29' },
+          ],
         })
         let dayGridWrapper = new ViewWrapper(calendar).dayGrid
         let moreEls = dayGridWrapper.getMoreEls()
@@ -97,14 +96,14 @@ describe('dayMaxEventRows', function() { // TODO: rename file
 
       it('will render a link in a multi-day event\'s second column ' +
         'if it has already been hidden in the first even if he second column hardly has any events',
-      function() {
+      () => {
         let calendar = initCalendar({
           events: [
             { title: 'event1', start: '2014-07-28', end: '2014-07-30' },
             { title: 'event2', start: '2014-07-28', end: '2014-07-30' },
             { title: 'event3', start: '2014-07-28', end: '2014-07-30' },
-            { title: 'event4', start: '2014-07-29', end: '2014-07-31' }
-          ]
+            { title: 'event4', start: '2014-07-29', end: '2014-07-31' },
+          ],
         })
         let dayGridWrapper = new ViewWrapper(calendar).dayGrid
         let moreEls = dayGridWrapper.getMoreEls()
@@ -114,14 +113,14 @@ describe('dayMaxEventRows', function() { // TODO: rename file
         expect(moreEls[0]).toBeBoundedBy(cells[1])
       })
 
-      it('will render a link in place of a hidden single day event, if covered by a multi-day', function() {
+      it('will render a link in place of a hidden single day event, if covered by a multi-day', () => {
         let calendar = initCalendar({
           events: [
             { title: 'event1', start: '2014-07-28', end: '2014-07-30' },
             { title: 'event2', start: '2014-07-28', end: '2014-07-30' },
             { title: 'event3', start: '2014-07-28' },
-            { title: 'event4', start: '2014-07-28' }
-          ]
+            { title: 'event4', start: '2014-07-28' },
+          ],
         })
         let dayGridWrapper = new ViewWrapper(calendar).dayGrid
         let cells = dayGridWrapper.getDayElsInRow(0)
@@ -133,14 +132,14 @@ describe('dayMaxEventRows', function() { // TODO: rename file
 
       it('will render a link in place of a hidden single day event, if covered by a multi-day ' +
         'and in its second column',
-      function() {
+      () => {
         let calendar = initCalendar({
           events: [
             { title: 'event1', start: '2014-07-28', end: '2014-07-30' },
             { title: 'event2', start: '2014-07-28', end: '2014-07-30' },
             { title: 'event3', start: '2014-07-29' },
-            { title: 'event4', start: '2014-07-29' }
-          ]
+            { title: 'event4', start: '2014-07-29' },
+          ],
         })
         let dayGridWrapper = new ViewWrapper(calendar).dayGrid
         let cells = dayGridWrapper.getDayElsInRow(0)
@@ -152,13 +151,12 @@ describe('dayMaxEventRows', function() { // TODO: rename file
     })
   })
 
-  describe('when auto', function() {
+  describe('when auto', () => {
     pushOptions({
-      dayMaxEvents: true
+      dayMaxEvents: true,
     })
 
-    describe('in month view', function() {
-
+    describe('in month view', () => {
       pushOptions({
         initialView: 'dayGridMonth',
         events: [
@@ -174,11 +172,11 @@ describe('dayMaxEventRows', function() { // TODO: rename file
           { title: 'event2', start: '2014-07-29' },
           { title: 'event2', start: '2014-07-29' },
           { title: 'event2', start: '2014-07-29' },
-          { title: 'event2', start: '2014-07-29' }
-        ]
+          { title: 'event2', start: '2014-07-29' },
+        ],
       })
 
-      it('renders the heights of all the rows the same, regardless of # of events', function() {
+      it('renders the heights of all the rows the same, regardless of # of events', () => {
         let calendar = initCalendar()
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
         let rowEls = dayGridWrapper.getRowEls()
@@ -194,7 +192,7 @@ describe('dayMaxEventRows', function() { // TODO: rename file
         })
       })
 
-      it('renders a more link when there are obviously too many events', function() {
+      it('renders a more link when there are obviously too many events', () => {
         let $el = $('<div id="calendar">').appendTo('body').width(800)
         let calendar = initCalendar({}, $el)
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -205,26 +203,25 @@ describe('dayMaxEventRows', function() { // TODO: rename file
 
     describeOptions('initialView', {
       'when in month view': 'dayGridMonth',
-      'when in dayGridWeek view': 'dayGridWeek'
-    }, function() {
-
-      it('doesn\'t render a more link where there should obviously not be a limit', function() {
+      'when in dayGridWeek view': 'dayGridWeek',
+    }, () => {
+      it('doesn\'t render a more link where there should obviously not be a limit', () => {
         let calendar = initCalendar({
           events: [
-            { title: 'event1', start: '2014-07-28', end: '2014-07-30' }
-          ]
+            { title: 'event1', start: '2014-07-28', end: '2014-07-30' },
+          ],
         })
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
         expect(dayGridWrapper.getMoreEls().length).toBe(0)
       })
     })
 
-    describe('in week view', function() {
+    describe('in week view', () => {
       pushOptions({
-        initialView: 'timeGridWeek'
+        initialView: 'timeGridWeek',
       })
 
-      it('behaves as if limit is 5', function() {
+      it('behaves as if limit is 5', () => {
         let calendar = initCalendar({
           events: [
             { title: 'event1', start: '2014-07-29' },
@@ -233,8 +230,8 @@ describe('dayMaxEventRows', function() { // TODO: rename file
             { title: 'event2', start: '2014-07-29' },
             { title: 'event2', start: '2014-07-29' },
             { title: 'event2', start: '2014-07-29' },
-            { title: 'event2', start: '2014-07-29' }
-          ]
+            { title: 'event2', start: '2014-07-29' },
+          ],
         })
         let dayGridWrapper = new TimeGridViewWrapper(calendar).dayGrid
         let eventEls = filterVisibleEls(dayGridWrapper.getEventEls())

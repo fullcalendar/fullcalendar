@@ -1,28 +1,27 @@
+import { addDays } from '@fullcalendar/core'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import { ListViewWrapper } from '../lib/wrappers/ListViewWrapper'
-import { addDays } from '@fullcalendar/core'
 
-describe('navLinks', function() {
+describe('navLinks', () => {
   pushOptions({
     now: '2016-08-20',
     navLinks: true,
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' // affects which view is jumped to by default
-    }
+      right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek', // affects which view is jumped to by default
+    },
   })
 
-  describeTimeZones(function(tz) {
-
-    describe('in month view', function() {
+  describeTimeZones((tz) => {
+    describe('in month view', () => {
       pushOptions({
-        initialView: 'dayGridMonth'
+        initialView: 'dayGridMonth',
       })
 
-      it('moves to day', function() {
+      it('moves to day', () => {
         let dateClickSpy = spyOnCalendarCallback('dateClick')
         let calendar = initCalendar()
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -33,10 +32,10 @@ describe('navLinks', function() {
       })
 
       // https://github.com/fullcalendar/fullcalendar/issues/4619
-      it('moves to day when no toolbars', function() {
+      it('moves to day when no toolbars', () => {
         let dateClickSpy = spyOnCalendarCallback('dateClick')
         let calendar = initCalendar({
-          headerToolbar: null
+          headerToolbar: null,
         })
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
@@ -46,7 +45,7 @@ describe('navLinks', function() {
       })
 
       // https://github.com/fullcalendar/fullcalendar/issues/3869
-      it('moves to two different days', function() {
+      it('moves to two different days', () => {
         let dateClickSpy = spyOnCalendarCallback('dateClick')
         let calendar = initCalendar()
 
@@ -61,10 +60,10 @@ describe('navLinks', function() {
         expectDayView(calendar, 'timeGridDay', tz.parseDate('2016-08-10'))
       })
 
-      it('moves to day specifically', function() {
+      it('moves to day specifically', () => {
         let dateClickSpy = spyOnCalendarCallback('dateClick')
         let calendar = initCalendar({
-          navLinkDayClick: 'day'
+          navLinkDayClick: 'day',
         })
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
@@ -73,10 +72,10 @@ describe('navLinks', function() {
         expect(dateClickSpy).not.toHaveBeenCalled()
       })
 
-      it('moves to dayGridDay specifically', function() {
+      it('moves to dayGridDay specifically', () => {
         let dateClickSpy = spyOnCalendarCallback('dateClick')
         let calendar = initCalendar({
-          navLinkDayClick: 'dayGridDay'
+          navLinkDayClick: 'dayGridDay',
         })
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
@@ -85,7 +84,7 @@ describe('navLinks', function() {
         expect(dateClickSpy).not.toHaveBeenCalled()
       })
 
-      it('executes a custom handler', function() {
+      it('executes a custom handler', () => {
         let dateClickSpy = spyOnCalendarCallback('dateClick')
         let navLinkDayClickSpy = spyOnCalendarCallback('navLinkDayClick', (date, ev) => {
           expect(date).toEqualDate(tz.parseDate('2016-08-09'))
@@ -99,12 +98,12 @@ describe('navLinks', function() {
         expect(navLinkDayClickSpy).toHaveBeenCalled()
       })
 
-      describe('with weekNumbers', function() {
+      describe('with weekNumbers', () => {
         pushOptions({
-          weekNumbers: true
+          weekNumbers: true,
         })
 
-        it('moves to week', function() {
+        it('moves to week', () => {
           let dateClickSpy = spyOnCalendarCallback('dateClick')
           let calendar = initCalendar()
           let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -115,7 +114,7 @@ describe('navLinks', function() {
         })
       })
 
-      it('does not have clickable day header', function() {
+      it('does not have clickable day header', () => {
         let calendar = initCalendar()
         let headerWrapper = new DayGridViewWrapper(calendar).header
 
@@ -124,12 +123,12 @@ describe('navLinks', function() {
     })
   })
 
-  describe('in week view', function() {
+  describe('in week view', () => {
     pushOptions({
-      initialView: 'timeGridWeek'
+      initialView: 'timeGridWeek',
     })
 
-    it('moves to day view', function() {
+    it('moves to day view', () => {
       let dateClickSpy = spyOnCalendarCallback('dateClick')
       let calendar = initCalendar()
       let headerWrapper = new TimeGridViewWrapper(calendar).header
@@ -140,18 +139,18 @@ describe('navLinks', function() {
     })
   })
 
-  describe('in listWeek', function() {
+  describe('in listWeek', () => {
     pushOptions({
       initialView: 'listWeek',
       events: [
         {
           title: 'event 1',
-          start: '2016-08-20'
-        }
-      ]
+          start: '2016-08-20',
+        },
+      ],
     })
 
-    it('moves to day view', function() {
+    it('moves to day view', () => {
       let dateClickSpy = spyOnCalendarCallback('dateClick')
       let calendar = initCalendar()
       let listWrapper = new ListViewWrapper(calendar)
@@ -162,15 +161,15 @@ describe('navLinks', function() {
     })
   })
 
-  describe('in day view', function() {
+  describe('in day view', () => {
     pushOptions({
-      initialView: 'timeGridDay'
+      initialView: 'timeGridDay',
     })
 
-    it('moves to week view', function() {
+    it('moves to week view', () => {
       let dateClickSpy = spyOnCalendarCallback('dateClick')
       let calendar = initCalendar({
-        weekNumbers: true
+        weekNumbers: true,
       })
       let viewWrapper = new TimeGridViewWrapper(calendar)
 
@@ -179,14 +178,13 @@ describe('navLinks', function() {
       expect(dateClickSpy).not.toHaveBeenCalled()
     })
 
-    it('does not have a clickable day header', function() {
+    it('does not have a clickable day header', () => {
       let calendar = initCalendar()
       let headerWrapper = new TimeGridViewWrapper(calendar).header
 
       expect(headerWrapper.getNavLinkEls().length).toBe(0)
     })
   })
-
 
   function expectDayView(calendar, viewName, dayDate) {
     let calendarWrapper = new CalendarWrapper(calendar)
@@ -198,7 +196,6 @@ describe('navLinks', function() {
     expect(addDays(end, -1)).toEqualDate(dayDate)
   }
 
-
   function expectWeekView(calendar, viewName, firstDayDate) {
     let calendarWrapper = new CalendarWrapper(calendar)
     let start = calendar.view.activeStart
@@ -208,5 +205,4 @@ describe('navLinks', function() {
     expect(start).toEqualDate(firstDayDate)
     expect(addDays(end, -7)).toEqualDate(firstDayDate)
   }
-
 })

@@ -2,14 +2,13 @@ import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { anyElsIntersect } from '../lib/dom-geom'
 import { filterVisibleEls } from '../lib/dom-misc'
 
-
-describe('dayGrid advanced event rendering', function() {
+describe('dayGrid advanced event rendering', () => {
   pushOptions({
-    initialDate: '2020-05-01'
+    initialDate: '2020-05-01',
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/5408
-  it('renders without intersecting', function() {
+  it('renders without intersecting', () => {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
       initialDate: '2020-05-01',
@@ -18,8 +17,8 @@ describe('dayGrid advanced event rendering', function() {
         { start: '2020-05-02', end: '2020-05-04', title: 'event b' },
         { start: '2020-05-03', end: '2020-05-05', title: 'event c' },
         { start: '2020-05-04', title: 'event d' },
-        { start: '2020-05-04', title: 'event e' }
-      ]
+        { start: '2020-05-04', title: 'event e' },
+      ],
     })
 
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -29,7 +28,7 @@ describe('dayGrid advanced event rendering', function() {
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/5771
-  it('renders more-links correctly when first obscured event is longer than event before it', function() {
+  it('renders more-links correctly when first obscured event is longer than event before it', () => {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
       initialDate: '2020-08-01',
@@ -38,8 +37,8 @@ describe('dayGrid advanced event rendering', function() {
         { title: 'big1', start: '2020-07-23', end: '2020-07-28' },
         { title: 'small1', start: '2020-07-24', end: '2020-07-27' },
         { title: 'small2', start: '2020-07-24', end: '2020-07-27' },
-        { title: 'big2', start: '2020-07-25', end: '2020-07-28' }
-      ]
+        { title: 'big2', start: '2020-07-25', end: '2020-07-28' },
+      ],
     })
 
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -53,7 +52,7 @@ describe('dayGrid advanced event rendering', function() {
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/5790
-  it('positions more-links correctly in columns that have empty space', function() {
+  it('positions more-links correctly in columns that have empty space', () => {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
       initialDate: '2020-09-01',
@@ -64,7 +63,7 @@ describe('dayGrid advanced event rendering', function() {
         { start: '2020-09-01', end: '2020-09-04' },
         { start: '2020-09-02', end: '2020-09-04' },
         { start: '2020-09-02', end: '2020-09-04' },
-      ]
+      ],
     })
 
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -78,27 +77,27 @@ describe('dayGrid advanced event rendering', function() {
 
     expect(Math.abs(
       moreLinkEls[0].getBoundingClientRect().top -
-      moreLinkEls[1].getBoundingClientRect().top
+      moreLinkEls[1].getBoundingClientRect().top,
     )).toBeLessThan(1)
   })
 
-  it('won\'t intersect when doing custom rendering', function() {
+  it('won\'t intersect when doing custom rendering', () => {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
       initialDate: '2020-06-01',
       events: [
         { start: '2020-06-04', end: '2020-06-08', title: 'event a' },
         { start: '2020-06-05', end: '2020-06-09', title: 'event b' },
-        { start: '2020-06-08T12:00:00', title: 'event c' }
+        { start: '2020-06-08T12:00:00', title: 'event c' },
       ],
       eventContent(arg) { // creates varying-height events, which revealed the bug
         return {
-          html:`
+          html: `
             <b>${arg.timeText}</b>
             <i>${arg.event.title}</i>
-          `
+          `,
         }
-      }
+      },
     })
 
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -107,26 +106,7 @@ describe('dayGrid advanced event rendering', function() {
     expect(anyElsIntersect(eventEls)).toBe(false)
   })
 
-  it('renders single-day timed event as list-item', function() {
-    let calendar = initCalendar({
-      initialView: 'dayGridMonth',
-      initialDate: '2020-05-01',
-      eventDisplay: 'auto',
-      events: [
-        {
-          title: 'event 1',
-          start: '2020-05-11T22:00:00'
-        }
-      ]
-    })
-
-    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
-    let eventEl = dayGridWrapper.getEventEls()[0]
-
-    expect(dayGridWrapper.isEventListItem(eventEl)).toBe(true)
-  })
-
-  it('does not render multi-day event as list-item', function() {
+  it('renders single-day timed event as list-item', () => {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
       initialDate: '2020-05-01',
@@ -135,9 +115,28 @@ describe('dayGrid advanced event rendering', function() {
         {
           title: 'event 1',
           start: '2020-05-11T22:00:00',
-          end: '2020-05-12T06:00:00'
-        }
-      ]
+        },
+      ],
+    })
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEl = dayGridWrapper.getEventEls()[0]
+
+    expect(dayGridWrapper.isEventListItem(eventEl)).toBe(true)
+  })
+
+  it('does not render multi-day event as list-item', () => {
+    let calendar = initCalendar({
+      initialView: 'dayGridMonth',
+      initialDate: '2020-05-01',
+      eventDisplay: 'auto',
+      events: [
+        {
+          title: 'event 1',
+          start: '2020-05-11T22:00:00',
+          end: '2020-05-12T06:00:00',
+        },
+      ],
     })
 
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -147,7 +146,7 @@ describe('dayGrid advanced event rendering', function() {
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/5634
-  it('does not render split multi-day event as list-item', function() {
+  it('does not render split multi-day event as list-item', () => {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
       initialDate: '2020-05-01',
@@ -156,9 +155,9 @@ describe('dayGrid advanced event rendering', function() {
         {
           title: 'event',
           start: '2020-05-09T12:00:00',
-          end: '2020-05-10T12:00:00'
-        }
-      ]
+          end: '2020-05-10T12:00:00',
+        },
+      ],
     })
 
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -169,12 +168,12 @@ describe('dayGrid advanced event rendering', function() {
     expect(dayGridWrapper.isEventListItem(eventEls[0])).toBe(false)
   })
 
-  it('render only block when eventDislay:block', function() {
+  it('render only block when eventDislay:block', () => {
     let calendar = initCalendar({
       eventDisplay: 'block',
       events: [
-        { start: '2020-05-02T02:00:00', title: 'event a' }
-      ]
+        { start: '2020-05-02T02:00:00', title: 'event a' },
+      ],
     })
 
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -183,11 +182,11 @@ describe('dayGrid advanced event rendering', function() {
     expect(dayGridWrapper.isEventListItem(eventEl)).toBe(false)
   })
 
-  it('adjusts more link when getting bigger then smaller with liquid height', function() {
+  it('adjusts more link when getting bigger then smaller with liquid height', () => {
     const LARGE_HEIGHT = 800
     const SMALL_HEIGHT = 500
     let $container = $(
-      `<div style="height:${LARGE_HEIGHT}px"><div></div></div>`
+      `<div style="height:${LARGE_HEIGHT}px"><div></div></div>`,
     ).appendTo('body')
 
     let calendar = initCalendar({
@@ -200,7 +199,7 @@ describe('dayGrid advanced event rendering', function() {
         { start: '2020-05-02', end: '2020-05-03', title: 'event d' },
         { start: '2020-05-02', end: '2020-05-03', title: 'event e' },
         { start: '2020-05-02', end: '2020-05-03', title: 'event f' },
-      ]
+      ],
     }, $container.find('div'))
 
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -220,29 +219,28 @@ describe('dayGrid advanced event rendering', function() {
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/5850
-  it('does not have JS error when dayMaxEventRows and almost no height', function() {
+  it('does not have JS error when dayMaxEventRows and almost no height', () => {
     initCalendar({
       height: '100%',
       eventDisplay: 'block',
       dayMaxEventRows: true,
       events: [
-        { start: '2020-05-02T02:00:00', title: 'event a' }
-      ]
+        { start: '2020-05-02T02:00:00', title: 'event a' },
+      ],
     })
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/5863
-  it('does not have JS error when dayMaxEventRows and almost no height', function() {
+  it('does not have JS error when dayMaxEventRows and almost no height', () => {
     let $container = $('<div style="width:100px" />').appendTo('body')
     initCalendar({
       height: '100%',
       eventDisplay: 'block',
       dayMaxEventRows: true,
       events: [
-        { start: '2020-05-02T02:00:00', title: 'event a' }
-      ]
+        { start: '2020-05-02T02:00:00', title: 'event a' },
+      ],
     }, $container[0])
     $container.remove()
   })
-
 })

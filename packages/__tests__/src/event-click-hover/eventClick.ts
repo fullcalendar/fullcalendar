@@ -1,15 +1,15 @@
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('eventClick', function() {
+describe('eventClick', () => {
   pushOptions({
     initialDate: '2018-08-31',
-    initialView: 'dayGridMonth'
+    initialView: 'dayGridMonth',
   })
 
-  it('receives correct args', function(done) {
+  it('receives correct args', (done) => {
     let calendar = initCalendar({
       events: [
-        { start: '2018-08-31' }
+        { start: '2018-08-31' },
       ],
       eventClick(arg) {
         expect(arg.el instanceof HTMLElement).toBe(true)
@@ -18,7 +18,7 @@ describe('eventClick', function() {
         expect(arg.jsEvent instanceof UIEvent).toBe(true)
         expect(typeof arg.view).toBe('object')
         done()
-      }
+      },
     })
 
     let eventEls = new CalendarWrapper(calendar).getEventEls()
@@ -27,15 +27,15 @@ describe('eventClick', function() {
     $(eventEls[0]).simulate('click')
   })
 
-  it('fires on a background event', function(done) {
+  it('fires on a background event', (done) => {
     let calendar = initCalendar({
       events: [
-        { start: '2018-08-31', display: 'background' }
+        { start: '2018-08-31', display: 'background' },
       ],
       eventClick(arg) {
         expect(arg.event.display).toBe('background')
         done()
-      }
+      },
     })
 
     let bgEventEls = new CalendarWrapper(calendar).getBgEventEls()
@@ -44,14 +44,14 @@ describe('eventClick', function() {
     $(bgEventEls[0]).simulate('click')
   })
 
-  it('works via touch', function(done) {
+  it('works via touch', (done) => {
     let calendar = initCalendar({
       events: [
-        { start: '2018-08-31' }
+        { start: '2018-08-31' },
       ],
       eventClick() {
         done()
-      }
+      },
     })
 
     let eventEls = new CalendarWrapper(calendar).getEventEls()
@@ -59,5 +59,4 @@ describe('eventClick', function() {
     expect(eventEls.length).toBe(1)
     $(eventEls[0]).simulate('click')
   })
-
 })

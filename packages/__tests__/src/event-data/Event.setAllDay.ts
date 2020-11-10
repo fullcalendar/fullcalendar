@@ -1,11 +1,10 @@
-describe('Event::setAllDay', function() {
-
-  describe('when setting from all-day to all-day', function() {
-    it('causes no change', function() {
+describe('Event::setAllDay', () => {
+  describe('when setting from all-day to all-day', () => {
+    it('causes no change', () => {
       initCalendar({
         events: [
-          { id: '1', start: '2018-09-03', end: '2018-09-05', allDay: true }
-        ]
+          { id: '1', start: '2018-09-03', end: '2018-09-05', allDay: true },
+        ],
       })
       let event = currentCalendar.getEventById('1')
       event.setAllDay(true)
@@ -15,12 +14,12 @@ describe('Event::setAllDay', function() {
     })
   })
 
-  describe('when setting from timed to timed', function() {
-    it('causes no change', function() {
+  describe('when setting from timed to timed', () => {
+    it('causes no change', () => {
       initCalendar({
         events: [
-          { id: '1', start: '2018-09-03T09:00:00', end: '2018-09-05T09:00:00', allDay: false }
-        ]
+          { id: '1', start: '2018-09-03T09:00:00', end: '2018-09-05T09:00:00', allDay: false },
+        ],
       })
       let event = currentCalendar.getEventById('1')
       event.setAllDay(false)
@@ -30,14 +29,13 @@ describe('Event::setAllDay', function() {
     })
   })
 
-  describe('when setting from all-day to timed', function() {
-
-    describe('when not maintaining duration', function() {
-      it('removes the end', function() {
+  describe('when setting from all-day to timed', () => {
+    describe('when not maintaining duration', () => {
+      it('removes the end', () => {
         initCalendar({
           events: [
-            { id: '1', start: '2018-09-03', end: '2018-09-05', allDay: true }
-          ]
+            { id: '1', start: '2018-09-03', end: '2018-09-05', allDay: true },
+          ],
         })
         let event = currentCalendar.getEventById('1')
         event.setAllDay(false)
@@ -47,12 +45,12 @@ describe('Event::setAllDay', function() {
       })
     })
 
-    describe('when maintaining duration', function() {
-      it('keeps exact duration', function() {
+    describe('when maintaining duration', () => {
+      it('keeps exact duration', () => {
         initCalendar({
           events: [
-            { id: '1', start: '2018-09-03', end: '2018-09-05', allDay: true }
-          ]
+            { id: '1', start: '2018-09-03', end: '2018-09-05', allDay: true },
+          ],
         })
         let event = currentCalendar.getEventById('1')
         event.setAllDay(false, { maintainDuration: true })
@@ -61,17 +59,15 @@ describe('Event::setAllDay', function() {
         expect(event.allDay).toBe(false)
       })
     })
-
   })
 
-  describe('when setting from timed to all-day', function() {
-
-    describe('when not maintaining duration', function() {
-      it('removes the end', function() {
+  describe('when setting from timed to all-day', () => {
+    describe('when not maintaining duration', () => {
+      it('removes the end', () => {
         initCalendar({
           events: [
-            { id: '1', start: '2018-09-03T09:00:00', end: '2018-09-05T09:00:00', allDay: false }
-          ]
+            { id: '1', start: '2018-09-03T09:00:00', end: '2018-09-05T09:00:00', allDay: false },
+          ],
         })
         let event = currentCalendar.getEventById('1')
         event.setAllDay(true)
@@ -81,12 +77,12 @@ describe('Event::setAllDay', function() {
       })
     })
 
-    describe('when maintaining duration', function() {
-      it('rounds the end down to the prev whole day', function() {
+    describe('when maintaining duration', () => {
+      it('rounds the end down to the prev whole day', () => {
         initCalendar({
           events: [
-            { id: '1', start: '2018-09-03T09:00:00', end: '2018-09-05T10:00:00', allDay: false }
-          ]
+            { id: '1', start: '2018-09-03T09:00:00', end: '2018-09-05T10:00:00', allDay: false },
+          ],
         })
         let event = currentCalendar.getEventById('1')
         event.setAllDay(true, { maintainDuration: true })
@@ -96,13 +92,13 @@ describe('Event::setAllDay', function() {
       })
     })
 
-    describe('when maintaining duration (from calendar setting)', function() {
-      it('rounds the end to the next whole day', function() {
+    describe('when maintaining duration (from calendar setting)', () => {
+      it('rounds the end to the next whole day', () => {
         initCalendar({
           allDayMaintainDuration: true,
           events: [
-            { id: '1', start: '2018-09-03T09:00:00', end: '2018-09-05T10:00:00', allDay: false }
-          ]
+            { id: '1', start: '2018-09-03T09:00:00', end: '2018-09-05T10:00:00', allDay: false },
+          ],
         })
         let event = currentCalendar.getEventById('1')
         event.setAllDay(true)
@@ -111,7 +107,5 @@ describe('Event::setAllDay', function() {
         expect(event.allDay).toBe(true)
       })
     })
-
   })
-
 })

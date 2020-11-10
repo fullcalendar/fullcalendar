@@ -1,47 +1,40 @@
-import { CalendarWrapper } from "../lib/wrappers/CalendarWrapper"
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('event fetching while date-navigating', function() {
-
+describe('event fetching while date-navigating', () => {
   // https://github.com/fullcalendar/fullcalendar/issues/4975
-  it('renders events when doing next() and then prev()', function(done) {
-
+  it('renders events when doing next() and then prev()', (done) => {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
       initialDate: '2020-02-11',
-      events: function(arg, callback) {
+      events(arg, callback) {
         if (arg.startStr.indexOf('2020-01-26') === 0) { // for Feb
-          setTimeout(function() {
+          setTimeout(() => {
             callback([
-              { start: '2020-02-15' } // middle of month
+              { start: '2020-02-15' }, // middle of month
             ])
           }, 100)
         } else if (arg.startStr.indexOf('2020-03-01') === 0) { // for March
-          setTimeout(function() {
+          setTimeout(() => {
             callback([
-              { start: '2020-03-15' } // middle of month
+              { start: '2020-03-15' }, // middle of month
             ])
           }, 100)
         } else {
           throw new Error('bad range')
         }
-      }
+      },
     })
     let calendarWrapper = new CalendarWrapper(calendar)
 
-    setTimeout(function() {
-
+    setTimeout(() => {
       currentCalendar.next()
-      setTimeout(function() {
-
+      setTimeout(() => {
         currentCalendar.prev()
-        setTimeout(function() {
-
+        setTimeout(() => {
           expect(calendarWrapper.getEventEls().length).toBe(1)
           done()
-
         }, 1000) // after everything
       }, 50) // before second fetch finishes
     }, 200) // let first fetch finish
   })
-
 })

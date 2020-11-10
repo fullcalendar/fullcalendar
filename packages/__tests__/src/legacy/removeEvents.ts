@@ -1,24 +1,23 @@
 import { EventInput } from '@fullcalendar/core'
-import { CalendarWrapper } from "../lib/wrappers/CalendarWrapper"
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('removeEvents', function() {
-
+describe('removeEvents', () => {
   pushOptions({
     initialDate: '2014-06-24',
-    initialView: 'dayGridMonth'
+    initialView: 'dayGridMonth',
   })
 
   function buildEventsWithoutIds(): EventInput[] {
     return [
       { title: 'event zero', start: '2014-06-24', className: 'event-zero' },
       { title: 'event one', start: '2014-06-24', className: 'event-non-zero event-one' },
-      { title: 'event two', start: '2014-06-24', className: 'event-non-zero event-two' }
+      { title: 'event two', start: '2014-06-24', className: 'event-non-zero event-two' },
     ]
   }
 
   function buildEventsWithIds() {
-    var events = buildEventsWithoutIds()
-    var i
+    let events = buildEventsWithoutIds()
+    let i
 
     for (i = 0; i < events.length; i++) {
       events[i].id = i
@@ -29,110 +28,107 @@ describe('removeEvents', function() {
 
   $.each({
     'when events without IDs': buildEventsWithoutIds,
-    'when events with IDs': buildEventsWithIds
-  }, function(desc, eventGenerator) {
-    describe(desc, function() {
-
-      it('can remove all events if no args specified', function(done) {
+    'when events with IDs': buildEventsWithIds,
+  }, (desc, eventGenerator) => {
+    describe(desc, () => {
+      it('can remove all events if no args specified', (done) => {
         go(
           eventGenerator(),
-          function() {
+          () => {
             currentCalendar.removeAllEvents()
           },
-          function() {
+          () => {
             expect(currentCalendar.getEvents().length).toEqual(0)
             let calendarWrapper = new CalendarWrapper(currentCalendar)
             expect(calendarWrapper.getEventEls().length).toEqual(0)
           },
-          done
+          done,
         )
       })
 
-      it('can remove events individually', function(done) {
+      it('can remove events individually', (done) => {
         go(
           eventGenerator(),
-          function() {
-            currentCalendar.getEvents().forEach(function(event) {
+          () => {
+            currentCalendar.getEvents().forEach((event) => {
               if ($.inArray('event-one', event.classNames) !== -1) {
                 event.remove()
               }
             })
           },
-          function() {
+          () => {
             expect(currentCalendar.getEvents().length).toEqual(2)
             let calendarWrapper = new CalendarWrapper(currentCalendar)
             expect(calendarWrapper.getEventEls().length).toEqual(2)
             expect($('.event-zero').length).toEqual(1)
             expect($('.event-two').length).toEqual(1)
           },
-          done
+          done,
         )
       })
-
     })
   })
 
-  it('can remove events with a numeric ID', function(done) {
+  it('can remove events with a numeric ID', (done) => {
     go(
       buildEventsWithIds(),
-      function() {
+      () => {
         currentCalendar.getEventById(1 as any).remove()
       },
-      function() {
+      () => {
         expect(currentCalendar.getEvents().length).toEqual(2)
         let calendarWrapper = new CalendarWrapper(currentCalendar)
         expect(calendarWrapper.getEventEls().length).toEqual(2)
         expect($('.event-zero').length).toEqual(1)
         expect($('.event-two').length).toEqual(1)
       },
-      done
+      done,
     )
   })
 
-  it('can remove events with a string ID', function(done) {
+  it('can remove events with a string ID', (done) => {
     go(
       buildEventsWithIds(),
-      function() {
+      () => {
         currentCalendar.getEventById('1').remove()
       },
-      function() {
+      () => {
         expect(currentCalendar.getEvents().length).toEqual(2)
         let calendarWrapper = new CalendarWrapper(currentCalendar)
         expect(calendarWrapper.getEventEls().length).toEqual(2)
         expect($('.event-zero').length).toEqual(1)
         expect($('.event-two').length).toEqual(1)
       },
-      done
+      done,
     )
   })
 
-  it('can remove an event with ID 0', function(done) { // for issue 2082
+  it('can remove an event with ID 0', (done) => { // for issue 2082
     go(
       buildEventsWithIds(),
-      function() {
+      () => {
         currentCalendar.getEventById(0 as any).remove()
       },
-      function() {
+      () => {
         expect(currentCalendar.getEvents().length).toEqual(2)
         let calendarWrapper = new CalendarWrapper(currentCalendar)
         expect(calendarWrapper.getEventEls().length).toEqual(2)
         expect($('.event-zero').length).toEqual(0)
         expect($('.event-non-zero').length).toEqual(2)
       },
-      done
+      done,
     )
   })
 
   // Verifies the actions in removeFunc executed correctly by calling checkFunc.
   function go(events, removeFunc, checkFunc, doneFunc) {
     initCalendar({
-      events
+      events,
     })
 
     checkAllEvents() // make sure all events initially rendered correctly
     removeFunc() // remove the events
-    setTimeout(function() { // because the event rerender will be queued because we're a level deep
-
+    setTimeout(() => { // because the event rerender will be queued because we're a level deep
       checkFunc() // check correctness
 
       // move the calendar back out of view, then back in
@@ -151,7 +147,6 @@ describe('removeEvents', function() {
     }, 0)
   }
 
-
   // Checks to make sure all events have been rendered and that the calendar
   // has internal info on all the events.
   function checkAllEvents() {
@@ -159,5 +154,4 @@ describe('removeEvents', function() {
     let calendarWrapper = new CalendarWrapper(currentCalendar)
     expect(calendarWrapper.getEventEls().length).toEqual(3)
   }
-
 })

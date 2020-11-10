@@ -1,28 +1,27 @@
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('slotMinTime', function() { // TODO: rename file
+describe('slotMinTime', () => { // TODO: rename file
   pushOptions({
     initialView: 'timeGridWeek',
     initialDate: '2017-03-22',
-    scrollTime: '00:00'
+    scrollTime: '00:00',
   })
 
-  describe('event rendering', function() {
-
-    describe('when event is within negative slotMinTime', function() {
+  describe('event rendering', () => {
+    describe('when event is within negative slotMinTime', () => {
       pushOptions({
         slotMinTime: { hours: -2 },
         events: [
-          { start: '2017-03-22T22:00:00', end: '2017-03-23T00:00:00' }
-        ]
+          { start: '2017-03-22T22:00:00', end: '2017-03-23T00:00:00' },
+        ],
       })
 
-      it('renders two event elements in the correct places', function() {
+      it('renders two event elements in the correct places', () => {
         let calendar = initCalendar()
         let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
         let res = timeGridWrapper.checkEventRendering(
           '2017-03-22T22:00:00Z',
-          '2017-03-23T00:00:00Z'
+          '2017-03-23T00:00:00Z',
         )
         expect(res.length).toBe(2)
         expect(res.isMatch).toBe(true)
@@ -30,7 +29,7 @@ describe('slotMinTime', function() { // TODO: rename file
     })
   })
 
-  it('can be changed dynamically', function() {
+  it('can be changed dynamically', () => {
     let calendar = initCalendar()
     currentCalendar.setOption('slotMinTime', '09:00')
 

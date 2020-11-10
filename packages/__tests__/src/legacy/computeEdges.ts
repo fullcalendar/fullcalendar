@@ -1,41 +1,40 @@
-import { getStockScrollbarWidths } from '../lib/dom-misc'
 import { computeEdges } from '@fullcalendar/core'
+import { getStockScrollbarWidths } from '../lib/dom-misc'
 
-describe('computeEdges', function() {
-
+describe('computeEdges', () => {
   defineTests(
     'when margin',
-    { margin: '5px 10px' }
+    { margin: '5px 10px' },
   )
   defineTests(
     'when padding',
-    { padding: '5px 10px' }
+    { padding: '5px 10px' },
   )
 
   defineTests(
     'when border',
-    { border: '5px solid red' }
+    { border: '5px solid red' },
   )
   defineTests(
     'when border and padding',
-    { border: '5px solid red', padding: '5px 10px' }
+    { border: '5px solid red', padding: '5px 10px' },
   )
 
   function defineTests(description, cssProps) {
-    describe(description, function() {
-      describe('when no scrolling', function() {
-        describe('when LTR', function() {
+    describe(description, () => {
+      describe('when no scrolling', () => {
+        describe('when LTR', () => {
           defineTest(false, 'ltr', cssProps)
         })
-        describe('when RTL', function() {
+        describe('when RTL', () => {
           defineTest(false, 'rtl', cssProps)
         })
       })
-      describe('when scrolling', function() {
-        describe('when LTR', function() {
+      describe('when scrolling', () => {
+        describe('when LTR', () => {
           defineTest(true, 'ltr', cssProps)
         })
-        describe('when RTL', function() {
+        describe('when RTL', () => {
           defineTest(true, 'rtl', cssProps)
         })
       })
@@ -43,9 +42,9 @@ describe('computeEdges', function() {
   }
 
   function defineTest(isScrolling, direction, cssProps) {
-    it('computes correct widths', function() {
-      var el = $(
-        '<div style="position:absolute" />'
+    it('computes correct widths', () => {
+      let el = $(
+        '<div style="position:absolute" />',
       )
         .css('overflow', isScrolling ? 'scroll' : 'hidden')
         .css('direction', direction)
@@ -53,8 +52,8 @@ describe('computeEdges', function() {
         .append('<div style="position:relative;width:100px;height:100px" />')
         .appendTo('body')
 
-      var edges = computeEdges(el[0])
-      var correctWidths
+      let edges = computeEdges(el[0])
+      let correctWidths
 
       if (isScrolling) {
         correctWidths = getStockScrollbarWidths(direction)

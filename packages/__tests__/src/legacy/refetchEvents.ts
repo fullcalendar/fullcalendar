@@ -1,38 +1,36 @@
-import { TimeGridViewWrapper } from "../lib/wrappers/TimeGridViewWrapper"
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('refetchEvents', function() {
-
+describe('refetchEvents', () => {
   // there IS a similar test in automated-better, but does month view
-  describe('when timeGrid events are rerendered', function() {
-
-    it('keeps scroll after refetchEvents', function(done) {
+  describe('when timeGrid events are rerendered', () => {
+    it('keeps scroll after refetchEvents', (done) => {
       let calendar = initCalendar({
         now: '2015-08-07',
         scrollTime: '00:00',
         height: 400, // makes this test more consistent across viewports
         initialView: 'timeGridDay',
-        events: function(arg, callback) {
-          setTimeout(function() {
+        events(arg, callback) {
+          setTimeout(() => {
             callback([
               { id: '1', resourceId: 'b', start: '2015-08-07T02:00:00', end: '2015-08-07T07:00:00', title: 'event 1' },
               { id: '2', resourceId: 'c', start: '2015-08-07T05:00:00', end: '2015-08-07T22:00:00', title: 'event 2' },
               { id: '3', resourceId: 'd', start: '2015-08-06', end: '2015-08-08', title: 'event 3' },
               { id: '4', resourceId: 'e', start: '2015-08-07T03:00:00', end: '2015-08-07T08:00:00', title: 'event 4' },
-              { id: '5', resourceId: 'f', start: '2015-08-07T00:30:00', end: '2015-08-07T02:30:00', title: 'event 5' }
+              { id: '5', resourceId: 'f', start: '2015-08-07T00:30:00', end: '2015-08-07T02:30:00', title: 'event 5' },
             ])
           }, 100)
-        }
+        },
       })
 
-      setTimeout(function() {
+      setTimeout(() => {
         let viewWrapper = new TimeGridViewWrapper(calendar)
         let scrollEl = viewWrapper.getScrollerEl()
 
         scrollEl.scrollTop = 100
-        setTimeout(function() {
+        setTimeout(() => {
           currentCalendar.refetchEvents()
 
-          setTimeout(function() {
+          setTimeout(() => {
             expect(scrollEl.scrollTop).toBe(100)
             done()
           }, 100)
@@ -41,38 +39,38 @@ describe('refetchEvents', function() {
     })
   })
 
-  describe('when there are multiple event sources', function() {
-    var fetchCount // affects events created in createEventGenerator
-    var eventSources
+  describe('when there are multiple event sources', () => {
+    let fetchCount // affects events created in createEventGenerator
+    let eventSources
 
     pushOptions({
       now: '2015-08-07',
-      initialView: 'timeGridWeek'
+      initialView: 'timeGridWeek',
     })
 
-    beforeEach(function() {
+    beforeEach(() => {
       fetchCount = 0
       eventSources = [
         {
           events: createEventGenerator(),
           color: 'green',
-          id: 'source1'
+          id: 'source1',
         },
         {
           events: createEventGenerator(),
           color: 'blue',
-          id: 'source2'
+          id: 'source2',
         },
         {
           events: createEventGenerator(),
           color: 'red',
-          id: 'source3'
-        }
+          id: 'source3',
+        },
       ]
     })
 
-    describe('and all events are fetched synchronously', function() {
-      it('all events are immediately updated', function(done) {
+    describe('and all events are fetched synchronously', () => {
+      it('all events are immediately updated', (done) => {
         initCalendar({ eventSources })
         fetchCount++
         currentCalendar.refetchEvents()
@@ -82,34 +80,33 @@ describe('refetchEvents', function() {
       })
     })
 
-    describe('and one event source is asynchronous', function() {
-      it('original events remain on the calendar until all events have been refetched', function(done) {
+    describe('and one event source is asynchronous', () => {
+      it('original events remain on the calendar until all events have been refetched', (done) => {
         // set a 100ms timeout on this event source
-        eventSources[0].events = function(arg, callback) {
-          var events = [
+        eventSources[0].events = function (arg, callback) {
+          let events = [
             { id: '1',
               start: '2015-08-07T02:00:00',
               end: '2015-08-07T03:00:00',
               title: 'event A',
-              className: 'fetch' + fetchCount
-            }
+              className: 'fetch' + fetchCount },
           ]
-          setTimeout(function() {
+          setTimeout(() => {
             callback(events)
           }, 100)
         }
 
         initCalendar({
-          eventSources: eventSources
+          eventSources,
         })
 
-        setTimeout(function() {
+        setTimeout(() => {
           fetchCount++
           currentCalendar.refetchEvents()
           expect($('.fetch0').length).toEqual(3) // original events still on the calendar
           expect($('.fetch1').length).toEqual(0) // new events not yet refetched
 
-          setTimeout(function() {
+          setTimeout(() => {
             expect($('.fetch0').length).toEqual(0)
             expect($('.fetch1').length).toEqual(3)
             done()
@@ -120,15 +117,15 @@ describe('refetchEvents', function() {
 
     // relies on fetchCount
     function createEventGenerator() {
-      return function(arg, callback) {
-        var events = [
+      return function (arg, callback) {
+        let events = [
           {
             id: 1,
             start: '2015-08-07T02:00:00',
             end: '2015-08-07T03:00:00',
             title: 'event A',
-            className: 'fetch' + fetchCount
-          }
+            className: 'fetch' + fetchCount,
+          },
         ]
         callback(events)
       }

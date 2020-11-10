@@ -1,14 +1,13 @@
-import { CalendarWrapper } from "../lib/wrappers/CalendarWrapper"
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('toolbar rendering', function() {
-
-  it('produces type="button" attributes', function() {
+describe('toolbar rendering', () => {
+  it('produces type="button" attributes', () => {
     let calendar = initCalendar({
       headerToolbar: {
         left: 'today',
         center: 'title',
-        right: 'prev,next'
-      }
+        right: 'prev,next',
+      },
     })
 
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -18,5 +17,4 @@ describe('toolbar rendering', function() {
     expect(todayButtonEl.getAttribute('type')).toBe('button')
     expect(prevButtonEl.getAttribute('type')).toBe('button')
   })
-
 })

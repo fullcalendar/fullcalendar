@@ -1,19 +1,18 @@
-import { CalendarWrapper } from "../lib/wrappers/CalendarWrapper"
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('removeEventSources', function() {
+describe('removeEventSources', () => {
   pushOptions({
     initialDate: '2014-08-01',
     initialView: 'timeGridDay',
     eventSources: [
       buildEventSource(1),
       buildEventSource(2),
-      buildEventSource(3)
-    ]
+      buildEventSource(3),
+    ],
   })
 
-  describe('when called with no arguments', function() {
-
-    it('removes all sources', function() {
+  describe('when called with no arguments', () => {
+    it('removes all sources', () => {
       let calendar = initCalendar()
       let calendarWrapper = new CalendarWrapper(calendar)
 
@@ -25,9 +24,8 @@ describe('removeEventSources', function() {
     })
   })
 
-  describe('when called with specific IDs', function() {
-
-    it('removes only events with matching sources', function() {
+  describe('when called with specific IDs', () => {
+    it('removes only events with matching sources', () => {
       let calendar = initCalendar()
       let calendarWrapper = new CalendarWrapper(calendar)
 
@@ -43,14 +41,14 @@ describe('removeEventSources', function() {
 
   function buildEventSource(id) {
     return {
-      id: id,
-      events: function(arg, callback) {
-        callback([ {
+      id,
+      events(arg, callback) {
+        callback([{
           title: 'event' + id,
           className: 'event' + id,
-          start: '2014-08-01T02:00:00'
-        } ])
-      }
+          start: '2014-08-01T02:00:00',
+        }])
+      },
     }
   }
 })

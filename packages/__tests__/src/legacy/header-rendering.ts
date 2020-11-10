@@ -1,64 +1,66 @@
-import { CalendarWrapper } from "../lib/wrappers/CalendarWrapper"
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('headerToolbar rendering', function() { // TODO: rename file
-
-  it('renders the default headerToolbar option', function() {
+describe('headerToolbar rendering', () => { // TODO: rename file
+  it('renders the default headerToolbar option', () => {
     let calendar = initCalendar()
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
     expect(toolbarWrapper.getSectionContent(0)).toEqual(
-      [ { type: 'title' } ]
+      [{ type: 'title' }],
     )
 
     expect(toolbarWrapper.getSectionContent(1)).toEqual([])
 
     expect(toolbarWrapper.getSectionContent(2)).toEqual([
       { type: 'button', name: 'today' },
-      { type: 'button-group', children: [
+      { type: 'button-group',
+children: [
         { type: 'button', name: 'prev' },
-        { type: 'button', name: 'next' }
-      ] }
+        { type: 'button', name: 'next' },
+      ] },
     ])
   })
 
-  it('renders a given headerToolbar option', function() {
+  it('renders a given headerToolbar option', () => {
     let calendar = initCalendar({
       headerToolbar: {
         left: 'next,prev',
         center: 'prevYear today nextYear timeGridDay,timeGridWeek',
-        right: 'title'
-      }
+        right: 'title',
+      },
     })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
     expect(toolbarWrapper.getSectionContent(0)).toEqual([
-      { type: 'button-group', children: [
+      { type: 'button-group',
+children: [
         { type: 'button', name: 'next' },
-        { type: 'button', name: 'prev' }
-      ] }
+        { type: 'button', name: 'prev' },
+      ] },
     ])
 
     expect(toolbarWrapper.getSectionContent(1)).toEqual([
       { type: 'button', name: 'prevYear' },
       { type: 'button', name: 'today' },
       { type: 'button', name: 'nextYear' },
-      { type: 'button-group', children: [
+      { type: 'button-group',
+children: [
         { type: 'button', name: 'timeGridDay' },
-        { type: 'button', name: 'timeGridWeek' }
-      ] }
+        { type: 'button', name: 'timeGridWeek' },
+      ] },
     ])
 
     expect(toolbarWrapper.getSectionContent(2)).toEqual([
-      { type: 'title' }
+      { type: 'title' },
     ])
   })
 
-  describe('when setting headerToolbar to false', function() {
+  describe('when setting headerToolbar to false', () => {
     pushOptions({
-      headerToolbar: false
+      headerToolbar: false,
     })
 
-    it('should not have headerToolbar', function() {
+    it('should not have headerToolbar', () => {
       let calendar = initCalendar()
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
@@ -66,7 +68,7 @@ describe('headerToolbar rendering', function() { // TODO: rename file
     })
   })
 
-  it('allow for dynamically changing', function() {
+  it('allow for dynamically changing', () => {
     let calendar = initCalendar()
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
     expect(toolbarWrapper).toBeTruthy()
@@ -78,38 +80,36 @@ describe('headerToolbar rendering', function() { // TODO: rename file
 
   describeOptions('direction', {
     'when direction is LTR': 'ltr',
-    'when direction is RTL': 'rtl'
-  }, function() {
-
-    it('renders left and right literally', function() {
+    'when direction is RTL': 'rtl',
+  }, () => {
+    it('renders left and right literally', () => {
       let calendar = initCalendar({
         headerToolbar: {
           left: 'prev',
           center: 'today',
-          right: 'next'
-        }
+          right: 'next',
+        },
       })
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
       expect(toolbarWrapper.getSectionContent(0)).toEqual([
-        { type: 'button', name: 'prev' }
+        { type: 'button', name: 'prev' },
       ])
 
       expect(toolbarWrapper.getSectionContent(1)).toEqual([
-        { type: 'button', name: 'today' }
+        { type: 'button', name: 'today' },
       ])
 
       expect(toolbarWrapper.getSectionContent(2)).toEqual([
-        { type: 'button', name: 'next' }
+        { type: 'button', name: 'next' },
       ])
     })
   })
 
-  describe('when calendar is within a form', function() {
-
-    it('should not submit the form when clicking the button', function(done) {
-      var unloadCalled = false
-      var el = $('<div id="calendar"/>')
+  describe('when calendar is within a form', () => {
+    it('should not submit the form when clicking the button', (done) => {
+      let unloadCalled = false
+      let el = $('<div id="calendar"/>')
         .wrap('<form action="https://google.com/"></form>')
         .appendTo('body')
 
@@ -129,14 +129,13 @@ describe('headerToolbar rendering', function() { // TODO: rename file
       let calendar = initCalendar({
         headerToolbar: {
           left: 'prev,next',
-          right: 'title'
-        }
+          right: 'title',
+        },
       }, el)
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
       $(toolbarWrapper.getButtonEl('next')).simulate('click')
-      setTimeout(function() { // wait to see if handler was called
-
+      setTimeout(() => { // wait to see if handler was called
         expect(unloadCalled).toBe(false)
         cleanup()
         done()

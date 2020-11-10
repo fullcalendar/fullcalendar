@@ -1,4 +1,3 @@
-
 import 'jquery-simulate/jquery.simulate.js'
 import 'jasmine-jquery'
 

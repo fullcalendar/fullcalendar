@@ -1,11 +1,9 @@
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
-
-describe('daygrid view with updated dimensions', function() {
-
-  it('reports correct dateClick after resize', function(done) {
+describe('daygrid view with updated dimensions', () => {
+  it('reports correct dateClick after resize', (done) => {
     let $wrapper = $(
-      '<div><div style="width:auto"></div></div>' // reset width b/c test css hardcodes it
+      '<div><div style="width:auto"></div></div>', // reset width b/c test css hardcodes it
     ).appendTo('body')
     $wrapper.width(200)
 
@@ -16,7 +14,7 @@ describe('daygrid view with updated dimensions', function() {
         expect(arg.date).toEqualDate('2019-04-02') // a Tues
         $wrapper.remove()
         done()
-      }
+      },
     }, $wrapper.children().get(0))
 
     $wrapper.width(400)

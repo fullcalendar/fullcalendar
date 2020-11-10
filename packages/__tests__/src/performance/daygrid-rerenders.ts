@@ -1,5 +1,4 @@
-
-it('daygrid view rerenders well', function(done) {
+it('daygrid view rerenders well', (done) => {
   let dayHeaderRenderCnt = 0
   let dayCellRenderCnt = 0
   let eventRenderCnt = 0
@@ -9,7 +8,7 @@ it('daygrid view rerenders well', function(done) {
     initialDate: '2017-10-04',
     windowResizeDelay: 0,
     events: [
-      { title: 'event 0', start: '2017-10-04' }
+      { title: 'event 0', start: '2017-10-04' },
     ],
     dayHeaderContent() {
       dayHeaderRenderCnt++
@@ -19,7 +18,7 @@ it('daygrid view rerenders well', function(done) {
     },
     eventContent() {
       eventRenderCnt++
-    }
+    },
   })
 
   function resetCounts() {
@@ -48,8 +47,7 @@ it('daygrid view rerenders well', function(done) {
 
   resetCounts()
   $(window).simulate('resize')
-  setTimeout(function() {
-
+  setTimeout(() => {
     expect(dayHeaderRenderCnt).toBe(0)
     expect(dayCellRenderCnt).toBe(0)
     expect(eventRenderCnt).toBe(0)

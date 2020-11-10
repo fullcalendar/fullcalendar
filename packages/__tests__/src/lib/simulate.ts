@@ -1,12 +1,12 @@
-
 /* General Utils
 ---------------------------------------------------------------------------------------------------------------------- */
 
-$.simulateByPoint = function(type, options) {
-  var docEl = $(document)
-  var point = options.point
-  var clientX, clientY
-  var node
+$.simulateByPoint = function (type, options) {
+  let docEl = $(document)
+  let point = options.point
+  let clientX
+  let clientY
+  let node
 
   if (point) {
     clientX = point.left - docEl.scrollLeft()
@@ -16,24 +16,22 @@ $.simulateByPoint = function(type, options) {
   }
 }
 
-
 /* Touch
 ---------------------------------------------------------------------------------------------------------------------- */
 
-var origSimulateEvent = $.simulate.prototype.simulateEvent
-var touchUID = Date.now()
+let origSimulateEvent = $.simulate.prototype.simulateEvent
+let touchUID = Date.now()
 
-$.simulate.prototype.simulateEvent = function(elem, type, options) {
+$.simulate.prototype.simulateEvent = function (elem, type, options) {
   if (elem === window && type === 'resize') {
     return this.simulateWindowResize()
-  } else if (/^touch/.test(type)) {
+  } if (/^touch/.test(type)) {
     return this.simulateTouchEvent(elem, type, options)
-  } else {
-    return origSimulateEvent.apply(this, arguments)
   }
+    return origSimulateEvent.apply(this, arguments)
 }
 
-$.simulate.prototype.simulateWindowResize = function() {
+$.simulate.prototype.simulateWindowResize = function () {
   // from https://stackoverflow.com/a/1818513/96342
   let event
 
@@ -53,9 +51,9 @@ $.simulate.prototype.simulateWindowResize = function() {
   this.dispatchEvent(window, 'resize', event)
 }
 
-$.simulate.prototype.simulateTouchEvent = function(elem, type, options) {
+$.simulate.prototype.simulateTouchEvent = function (elem, type, options) {
   // http://stackoverflow.com/a/29019278/96342
-  var event = document.createEvent('Event')
+  let event = document.createEvent('Event')
 
   event.initEvent(type, true, true); // cancelable, bubbleable
   (event as any).touches = [{
@@ -66,17 +64,17 @@ $.simulate.prototype.simulateTouchEvent = function(elem, type, options) {
     screenX: options.clientX,
     screenY: options.clientY,
     clientX: options.clientX,
-    clientY: options.clientY
+    clientY: options.clientY,
   }]
 
   this.dispatchEvent(elem, type, event, options)
 }
 
-$.simulateMouseClick = function(elem) {
-  var $elem = $(elem)
-  var clientCoords = {
+$.simulateMouseClick = function (elem) {
+  let $elem = $(elem)
+  let clientCoords = {
     clientX: $elem.offset().left + $elem.outerWidth() / 2,
-    clientY: $elem.offset().top + $elem.outerHeight() / 2
+    clientY: $elem.offset().top + $elem.outerHeight() / 2,
   }
   $elem.simulate('mousemove', clientCoords)
   $elem.simulate('mousedown', clientCoords)
@@ -84,11 +82,11 @@ $.simulateMouseClick = function(elem) {
   $elem.simulate('click', clientCoords)
 }
 
-$.simulateTouchClick = function(elem) {
-  var $elem = $(elem)
-  var clientCoords = {
+$.simulateTouchClick = function (elem) {
+  let $elem = $(elem)
+  let clientCoords = {
     clientX: $elem.offset().left + $elem.outerWidth() / 2,
-    clientY: $elem.offset().top + $elem.outerHeight() / 2
+    clientY: $elem.offset().top + $elem.outerHeight() / 2,
   }
   $elem.simulate('touchstart', clientCoords)
   $elem.simulate('touchend', clientCoords)
@@ -98,14 +96,13 @@ $.simulateTouchClick = function(elem) {
   $elem.simulate('click', clientCoords)
 }
 
-
 /* Drag-n-drop
 ---------------------------------------------------------------------------------------------------------------------- */
 
-var DEBUG_DELAY = 500
-var DEBUG_MIN_DURATION = 2000
-var DEBUG_MIN_MOVES = 100
-var DRAG_DEFAULTS = {
+let DEBUG_DELAY = 500
+let DEBUG_MIN_DURATION = 2000
+let DEBUG_MIN_MOVES = 100
+let DRAG_DEFAULTS = {
   point: null, // the start point
   localPoint: { left: '50%', top: '50%' },
   end: null, // can be a point or an el
@@ -113,25 +110,24 @@ var DRAG_DEFAULTS = {
   dx: 0,
   dy: 0,
   moves: 5,
-  duration: 100 // ms
+  duration: 100, // ms
 }
 
-var dragStackCnt = 0
+let dragStackCnt = 0
 
-
-$.simulate.prototype.simulateDrag = function() {
-  var options = $.extend({}, DRAG_DEFAULTS, this.options)
-  var targetNode = this.target // raw DOM node
-  var targetEl = $(targetNode) // jq object
-  var dx = options.dx
-  var dy = options.dy
-  var duration = options.duration
-  var moves = options.moves
-  var startPoint
-  var endEl
-  var endPoint
-  var localPoint
-  var offset
+$.simulate.prototype.simulateDrag = function () {
+  let options = $.extend({}, DRAG_DEFAULTS, this.options)
+  let targetNode = this.target // raw DOM node
+  let targetEl = $(targetNode) // jq object
+  let dx = options.dx
+  let dy = options.dy
+  let duration = options.duration
+  let moves = options.moves
+  let startPoint
+  let endEl
+  let endPoint
+  let localPoint
+  let offset
 
   // compute start point
   if (options.point) {
@@ -141,7 +137,7 @@ $.simulate.prototype.simulateDrag = function() {
     offset = targetEl.offset()
     startPoint = {
       left: offset.left + localPoint.left,
-      top: offset.top + localPoint.top
+      top: offset.top + localPoint.top,
     }
   }
 
@@ -155,7 +151,7 @@ $.simulate.prototype.simulateDrag = function() {
       offset = endEl.offset()
       endPoint = {
         left: offset.left + localPoint.left,
-        top: offset.top + localPoint.top
+        top: offset.top + localPoint.top,
       }
     }
   }
@@ -176,22 +172,21 @@ $.simulate.prototype.simulateDrag = function() {
     dy,
     moves,
     duration,
-    options
+    options,
   )
 }
 
-
 function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, options) {
-  var debug = options.debug
-  var isTouch = options.isTouch
-  var docNode = targetNode.ownerDocument
-  var docEl = $(docNode)
-  var waitTime = duration / moveCnt
-  var moveIndex = 0
-  var clientCoords
-  var intervalId
-  var dotEl
-  var dragId
+  let debug = options.debug
+  let isTouch = options.isTouch
+  let docNode = targetNode.ownerDocument
+  let docEl = $(docNode)
+  let waitTime = duration / moveCnt
+  let moveIndex = 0
+  let clientCoords
+  let intervalId
+  let dotEl
+  let dragId
 
   if (debug) {
     dotEl = $('<div>')
@@ -200,23 +195,23 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
         zIndex: 99999,
         border: '5px solid red',
         borderRadius: '5px',
-        margin: '-5px 0 0 -5px'
+        margin: '-5px 0 0 -5px',
       })
       .appendTo('body')
   }
 
   function updateCoords() {
-    var progress = moveIndex / moveCnt
-    var left = startPoint.left + dx * progress
-    var top = startPoint.top + dy * progress
+    let progress = moveIndex / moveCnt
+    let left = startPoint.left + dx * progress
+    let top = startPoint.top + dy * progress
 
     clientCoords = {
       clientX: left - docEl.scrollLeft(),
-      clientY: top - docEl.scrollTop()
+      clientY: top - docEl.scrollTop(),
     }
 
     if (debug) {
-      dotEl.css({ left: left, top: top })
+      dotEl.css({ left, top })
     }
   }
 
@@ -229,17 +224,17 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
       self.simulateEvent(
         targetNode, // can have an inner drag-start el. targetNode will still be source of emitted events
         isTouch ? 'touchstart' : 'mousedown',
-        clientCoords
+        clientCoords,
       )
     }
 
-    var delay = options.delay || 0
+    let delay = options.delay || 0
     if (debug) {
       delay = Math.max(delay, DEBUG_DELAY)
     }
 
     if (delay) {
-      setTimeout(function() {
+      setTimeout(() => {
         startMoving()
       }, delay)
     } else {
@@ -270,7 +265,7 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
   function stopMoving() {
     clearInterval(intervalId)
     if (debug) {
-      setTimeout(function() {
+      setTimeout(() => {
         dotEl.remove() // do this before calling stopDrag/callback. don't want dot picked up by elementFromPoint
         stopDrag()
       }, DEBUG_DELAY)
@@ -280,8 +275,7 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
   }
 
   function stopDrag() { // progress at 1, coords already up to date at this point
-
-    (options.onBeforeRelease || function() {})()
+    (options.onBeforeRelease || function () {})()
 
     // only simulate a drop if the current drag is still the active one.
     // otherwise, this means another drag has begun via onBeforeRelease.
@@ -303,18 +297,17 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
     // we wait because the there might be a FullCalendar drag interaction that finishes asynchronously
     // after the mouseend/touchend happens, and it's really convenient if our callback fires after that.
     setTimeout(
-      options.onRelease || options.callback || function() {}, // TODO: deprecate "callback" ?
-      0
+      options.onRelease || options.callback || (() => {}), // TODO: deprecate "callback" ?
+      0,
     )
   }
 
   startDrag()
 }
 
-
 function normalizeElPoint(point, el) {
-  var left = point.left
-  var top = point.top
+  let left = point.left
+  let top = point.top
 
   if (/%$/.test(left)) {
     left = parseInt(left) / 100 * el.outerWidth()
@@ -323,9 +316,8 @@ function normalizeElPoint(point, el) {
     top = parseInt(top) / 100 * el.outerHeight()
   }
 
-  return { left: left, top: top }
+  return { left, top }
 }
-
 
 function isPoint(input) {
   return typeof input === 'object' && // `in` operator only works on objects

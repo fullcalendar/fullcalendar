@@ -1,5 +1,4 @@
-
-it('list view rerenders well', function(done) {
+it('list view rerenders well', (done) => {
   let dayRenderCnt = 0
   let eventRenderCnt = 0
   let noEventsRenderCnt = 0
@@ -9,7 +8,7 @@ it('list view rerenders well', function(done) {
     initialDate: '2017-10-04',
     windowResizeDelay: 0,
     events: [
-      { title: 'event 0', start: '2017-10-04' }
+      { title: 'event 0', start: '2017-10-04' },
     ],
     dayHeaderContent() {
       dayRenderCnt++
@@ -19,7 +18,7 @@ it('list view rerenders well', function(done) {
     },
     noEventsContent() {
       noEventsRenderCnt++
-    }
+    },
   })
 
   function resetCounts() {
@@ -47,8 +46,7 @@ it('list view rerenders well', function(done) {
 
   resetCounts()
   $(window).simulate('resize')
-  setTimeout(function() {
-
+  setTimeout(() => {
     expect(dayRenderCnt).toBe(0)
     expect(eventRenderCnt).toBe(0)
     expect(noEventsRenderCnt).toBe(0)

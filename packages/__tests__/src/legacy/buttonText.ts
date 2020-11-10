@@ -1,20 +1,18 @@
 import frLocale from '@fullcalendar/core/locales/fr'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('button text', function() {
+describe('button text', () => {
   pushOptions({
     headerToolbar: {
       left: 'prevYear,prev,today,next,nextYear',
       center: '',
-      right: 'dayGridMonth,dayGridWeek,dayGridDay,timeGridWeek,timeGridDay'
-    }
+      right: 'dayGridMonth,dayGridWeek,dayGridDay,timeGridWeek,timeGridDay',
+    },
   })
 
-  describe('with default locale', function() {
-
-    describe('with default buttonIcons', function() {
-
-      it('should contain default text values', function() {
+  describe('with default locale', () => {
+    describe('with default buttonIcons', () => {
+      it('should contain default text values', () => {
         let calendar = initCalendar()
         let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
@@ -31,7 +29,7 @@ describe('button text', function() {
         expect(toolbarWrapper.getButtonInfo('dayGridDay').text).toBe('day')
       })
 
-      it('should contain specified text values', function() {
+      it('should contain specified text values', () => {
         let calendar = initCalendar({
           buttonText: {
             prev: '<-',
@@ -41,8 +39,8 @@ describe('button text', function() {
             today: 'tidei',
             month: 'mun',
             week: 'wiki',
-            day: 'dei'
-          }
+            day: 'dei',
+          },
         })
         let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
@@ -57,15 +55,14 @@ describe('button text', function() {
         expect(toolbarWrapper.getButtonInfo('dayGridDay').text).toBe('dei')
         expect(toolbarWrapper.getButtonInfo('timeGridWeek').text).toBe('wiki')
       })
-
     })
 
-    describe('with buttonIcons turned off', function() {
+    describe('with buttonIcons turned off', () => {
       pushOptions({
-        buttonIcons: false
+        buttonIcons: false,
       })
 
-      it('should contain default text values', function() {
+      it('should contain default text values', () => {
         let calendar = initCalendar()
         let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
@@ -82,7 +79,7 @@ describe('button text', function() {
         expect(toolbarWrapper.getButtonInfo('timeGridWeek').text).toBe('week')
       })
 
-      it('should contain specified text values', function() {
+      it('should contain specified text values', () => {
         let calendar = initCalendar({
           buttonText: {
             prev: '<-',
@@ -92,8 +89,8 @@ describe('button text', function() {
             today: 'tidei',
             month: 'mun',
             week: 'wiki',
-            day: 'dei'
-          }
+            day: 'dei',
+          },
         })
         let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
@@ -108,19 +105,16 @@ describe('button text', function() {
         expect(toolbarWrapper.getButtonInfo('dayGridDay').text).toBe('dei')
         expect(toolbarWrapper.getButtonInfo('timeGridWeek').text).toBe('wiki')
       })
-
     })
-
   })
 
-  describe('when locale is not default', function() {
+  describe('when locale is not default', () => {
     pushOptions({
-      locale: frLocale
+      locale: frLocale,
     })
 
-    describe('with default buttonIcons', function() {
-
-      it('should contain default text values', function() {
+    describe('with default buttonIcons', () => {
+      it('should contain default text values', () => {
         let calendar = initCalendar()
         let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
@@ -137,7 +131,7 @@ describe('button text', function() {
         expect(toolbarWrapper.getButtonInfo('timeGridWeek').text).toBe('Semaine')
       })
 
-      it('should contain specified text values', function() {
+      it('should contain specified text values', () => {
         let calendar = initCalendar({
           buttonText: {
             prev: '<-',
@@ -147,8 +141,8 @@ describe('button text', function() {
             today: 'tidei',
             month: 'mun',
             week: 'wiki',
-            day: 'dei'
-          }
+            day: 'dei',
+          },
         })
         let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
@@ -163,15 +157,14 @@ describe('button text', function() {
         expect(toolbarWrapper.getButtonInfo('dayGridDay').text).toBe('dei')
         expect(toolbarWrapper.getButtonInfo('timeGridWeek').text).toBe('wiki')
       })
-
     })
 
-    describe('with buttonIcons turned off', function() {
+    describe('with buttonIcons turned off', () => {
       pushOptions({
-        buttonIcons: false
+        buttonIcons: false,
       })
 
-      it('should contain default text values', function() {
+      it('should contain default text values', () => {
         let calendar = initCalendar()
         let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
@@ -190,7 +183,7 @@ describe('button text', function() {
         expect(toolbarWrapper.getButtonInfo('dayGridDay').text).toBe('Jour')
       })
 
-      it('should contain specified text values', function() {
+      it('should contain specified text values', () => {
         let calendar = initCalendar({
           buttonText: {
             prev: '<-',
@@ -200,8 +193,8 @@ describe('button text', function() {
             today: 'tidei',
             month: 'mun',
             week: 'wiki',
-            day: 'dei'
-          }
+            day: 'dei',
+          },
         })
         let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 

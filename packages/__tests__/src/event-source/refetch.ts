@@ -1,13 +1,12 @@
-describe('event source refetch', function() {
-
+describe('event source refetch', () => {
   const OPTIONS = {
     now: '2015-08-07',
     initialView: 'timeGridDay',
     scrollTime: '00:00',
   }
 
-  describe('with a single event source', function() { // reword this stuff
-    it('will be refetched', function() {
+  describe('with a single event source', () => { // reword this stuff
+    it('will be refetched', () => {
       let fetchConfig = { eventCount: 1, fetchId: 7 }
       let calendar = initWithSources(fetchConfig)
 
@@ -31,8 +30,8 @@ describe('event source refetch', function() {
     })
   })
 
-  describe('multiple event sources', function() {
-    it('will be refetched', function() {
+  describe('multiple event sources', () => {
+    it('will be refetched', () => {
       let fetchConfig = { eventCount: 1, fetchId: 7 }
       let calendar = initWithSources(fetchConfig)
 
@@ -58,8 +57,8 @@ describe('event source refetch', function() {
     })
   })
 
-  describe('when called while initial fetch is still pending', function() {
-    it('keeps old events and rerenders new', function(done) {
+  describe('when called while initial fetch is still pending', () => {
+    it('keeps old events and rerenders new', (done) => {
       let fetchConfig = { eventCount: 1, fetchId: 7, fetchDelay: 100 }
       let calendar = initWithSources(fetchConfig)
 
@@ -68,8 +67,7 @@ describe('event source refetch', function() {
       calendar.getEventSourceById('green0').refetch()
       calendar.getEventSourceById('green1').refetch()
 
-      setTimeout(function() {
-
+      setTimeout(() => {
         // events from unaffected sources remain
         expect($('.source2-7').length).toEqual(1)
 
@@ -86,7 +84,6 @@ describe('event source refetch', function() {
     })
   })
 
-
   function initWithSources(fetchConfig) {
     return initCalendar({
       ...OPTIONS,
@@ -94,38 +91,37 @@ describe('event source refetch', function() {
         {
           id: 'green0',
           events: createEventGenerator('source1-', fetchConfig),
-          color: 'green'
+          color: 'green',
         },
         {
           id: 'blue',
           events: createEventGenerator('source2-', fetchConfig),
-          color: 'blue'
+          color: 'blue',
         },
         {
           id: 'green1',
           events: createEventGenerator('source3-', fetchConfig),
-          color: 'green'
-        }
-      ]
+          color: 'green',
+        },
+      ],
     })
   }
 
-
   function createEventGenerator(classNamePrefix, fetchConfig) {
-    return function(arg, callback) {
-      var events = []
+    return function (arg, callback) {
+      let events = []
 
-      for (var i = 0; i <fetchConfig.eventCount; i++) {
+      for (let i = 0; i < fetchConfig.eventCount; i++) {
         events.push({
           start: '2015-08-07T02:00:00',
           end: '2015-08-07T03:00:00',
           className: classNamePrefix + fetchConfig.fetchId,
-          title: classNamePrefix + fetchConfig.fetchId // also make it the title
+          title: classNamePrefix + fetchConfig.fetchId, // also make it the title
         })
       }
 
       if (fetchConfig.fetchDelay) {
-        setTimeout(function() {
+        setTimeout(() => {
           callback(events)
         }, fetchConfig.fetchDelay)
       } else {

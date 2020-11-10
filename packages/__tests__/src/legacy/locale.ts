@@ -4,19 +4,19 @@ import arLocale from '@fullcalendar/core/locales/ar'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('locale', function() {
+describe('locale', () => {
   pushOptions({
-    locales: [ esLocale, frLocale, arLocale ]
+    locales: [esLocale, frLocale, arLocale],
   })
 
-  it('works when certain locale has no FC settings defined', function() {
+  it('works when certain locale has no FC settings defined', () => {
     let calendar = initCalendar({
       locale: 'en-asdf',
       initialView: 'timeGridWeek',
       initialDate: '2014-12-25',
       events: [
-        { title: 'Christmas', start: '2014-12-25T10:00:00' }
-      ]
+        { title: 'Christmas', start: '2014-12-25T10:00:00' },
+      ],
     })
     let headerWrapper = new TimeGridViewWrapper(calendar).header
 
@@ -29,11 +29,11 @@ describe('locale', function() {
     expect(eventInfo.timeText).toBe('10:00')
   })
 
-  it('allows dynamic setting', function() {
+  it('allows dynamic setting', () => {
     let calendar = initCalendar({
       locale: 'es',
       initialDate: '2016-07-10',
-      initialView: 'dayGridMonth'
+      initialView: 'dayGridMonth',
     })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
@@ -46,5 +46,4 @@ describe('locale', function() {
     currentCalendar.setOption('locale', 'ar') // NOTE: we had problems testing for RTL title text
     expect(calendar.getOption('direction')).toBe('rtl')
   })
-
 })

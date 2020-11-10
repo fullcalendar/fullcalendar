@@ -1,122 +1,118 @@
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('displayEventEnd', function() {
-
+describe('displayEventEnd', () => {
   pushOptions({
     initialDate: '2014-06-13',
     timeZone: 'UTC',
-    eventTimeFormat: { hour: 'numeric', minute: '2-digit' }
+    eventTimeFormat: { hour: 'numeric', minute: '2-digit' },
   })
 
   describeOptions('initialView', {
     'when in month view': 'dayGridMonth',
-    'when in week view': 'timeGridWeek'
-  }, function() {
-
-    describe('when off', function() {
-
+    'when in week view': 'timeGridWeek',
+  }, () => {
+    describe('when off', () => {
       pushOptions({
-        displayEventEnd: false
+        displayEventEnd: false,
       })
 
-      describe('with an all-day event', function() {
-        it('displays no time text', function() {
+      describe('with an all-day event', () => {
+        it('displays no time text', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               title: 'timed event',
               start: '2014-06-13',
               end: '2014-06-13',
-              allDay: true
-            } ]
+              allDay: true,
+            }],
           })
           expectEventTimeText(calendar, '')
         })
       })
 
-      describe('with a timed event with no end time', function() {
-        it('displays only the start time text', function() {
+      describe('with a timed event with no end time', () => {
+        it('displays only the start time text', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               title: 'timed event',
               start: '2014-06-13T01:00:00',
-              allDay: false
-            } ]
+              allDay: false,
+            }],
           })
           expectEventTimeText(calendar, '1:00 AM')
         })
       })
 
-      describe('with a timed event with an end time', function() {
-        it('displays only the start time text', function() {
+      describe('with a timed event with an end time', () => {
+        it('displays only the start time text', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               title: 'timed event',
               start: '2014-06-13T01:00:00',
               end: '2014-06-13T02:00:00',
-              allDay: false
-            } ]
+              allDay: false,
+            }],
           })
           expectEventTimeText(calendar, '1:00 AM')
         })
       })
     })
 
-    describe('when on', function() {
-
+    describe('when on', () => {
       pushOptions({
-        displayEventEnd: true
+        displayEventEnd: true,
       })
 
-      describe('with an all-day event', function() {
-        it('displays no time text', function() {
+      describe('with an all-day event', () => {
+        it('displays no time text', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               title: 'timed event',
               start: '2014-06-13',
               end: '2014-06-13',
-              allDay: true
-            } ]
+              allDay: true,
+            }],
           })
           expectEventTimeText(calendar, '')
         })
       })
 
-      describe('with a timed event with no end time', function() {
-        it('displays only the start time text', function() {
+      describe('with a timed event with no end time', () => {
+        it('displays only the start time text', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               title: 'timed event',
               start: '2014-06-13T01:00:00',
-              allDay: false
-            } ]
+              allDay: false,
+            }],
           })
           expectEventTimeText(calendar, '1:00 AM')
         })
       })
 
-      describe('with a timed event given an invalid end time', function() {
-        it('displays only the start time text', function() {
+      describe('with a timed event given an invalid end time', () => {
+        it('displays only the start time text', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               title: 'timed event',
               start: '2014-06-13T01:00:00',
               end: '2014-06-13T01:00:00',
-              allDay: false
-            } ]
+              allDay: false,
+            }],
           })
           expectEventTimeText(calendar, '1:00 AM')
         })
       })
 
-      describe('with a timed event with an end time', function() {
-        it('displays both the start and end time text', function() {
+      describe('with a timed event with an end time', () => {
+        it('displays both the start and end time text', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               title: 'timed event',
               start: '2014-06-13T01:00:00',
               end: '2014-06-13T02:00:00',
-              allDay: false
-            } ]
+              allDay: false,
+            }],
           })
           expectEventTimeText(calendar, '1:00 AM - 2:00 AM')
         })
@@ -131,5 +127,4 @@ describe('displayEventEnd', function() {
 
     expect(eventInfo.timeText).toBe(timeText)
   }
-
 })

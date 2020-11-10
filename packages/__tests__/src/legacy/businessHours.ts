@@ -4,16 +4,15 @@ import { doElsMatchSegs } from '../lib/segs'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-
-describe('businessHours', function() {
+describe('businessHours', () => {
   pushOptions({
     timeZone: 'UTC',
     initialDate: '2014-11-25',
     initialView: 'dayGridMonth',
-    businessHours: true
+    businessHours: true,
   })
 
-  it('doesn\'t break when starting out in a larger month time range', function() {
+  it('doesn\'t break when starting out in a larger month time range', () => {
     let calendar = initCalendar() // start out in the month range
 
     currentCalendar.changeView('timeGridWeek')
@@ -44,18 +43,16 @@ describe('businessHours', function() {
       { start: '2014-12-12T00:00', end: '2014-12-12T09:00' },
       { start: '2014-12-12T17:00', end: '2014-12-13T00:00' },
       // sat
-      { start: '2014-12-13T00:00', end: '2014-12-14T00:00' }
+      { start: '2014-12-13T00:00', end: '2014-12-14T00:00' },
     ])).toBe(true)
   })
 
-
-  describe('when used as a dynamic option', function() {
-    [ 'timeGridWeek', 'dayGridMonth' ].forEach(function(viewName) {
-
-      it('allows dynamic turning on', function() {
+  describe('when used as a dynamic option', () => {
+    ['timeGridWeek', 'dayGridMonth'].forEach((viewName) => {
+      it('allows dynamic turning on', () => {
         let calendar = initCalendar({
           initialView: viewName,
-          businessHours: false
+          businessHours: false,
         })
         let calendarWrapper = new CalendarWrapper(calendar)
 
@@ -64,10 +61,10 @@ describe('businessHours', function() {
         expect(calendarWrapper.getNonBusinessDayEls().length).toBeGreaterThan(0)
       })
 
-      it('allows dynamic turning off', function() {
+      it('allows dynamic turning off', () => {
         let calendar = initCalendar({
           initialView: viewName,
-          businessHours: true
+          businessHours: true,
         })
         let calendarWrapper = new CalendarWrapper(calendar)
 
@@ -78,25 +75,23 @@ describe('businessHours', function() {
     })
   })
 
-
-  describe('for multiple day-of-week definitions', function() {
-
-    it('rendes two day-of-week groups', function() {
+  describe('for multiple day-of-week definitions', () => {
+    it('rendes two day-of-week groups', () => {
       let calendar = initCalendar({
         initialDate: '2014-12-07',
         initialView: 'timeGridWeek',
         businessHours: [
           {
-            daysOfWeek: [ 1, 2, 3 ], // mon, tue, wed
+            daysOfWeek: [1, 2, 3], // mon, tue, wed
             startTime: '08:00',
-            endTime: '18:00'
+            endTime: '18:00',
           },
           {
-            daysOfWeek: [ 4, 5 ], // thu, fri
+            daysOfWeek: [4, 5], // thu, fri
             startTime: '10:00',
-            endTime: '16:00'
-          }
-        ]
+            endTime: '16:00',
+          },
+        ],
       })
 
       // timed area
@@ -119,11 +114,11 @@ describe('businessHours', function() {
         { start: '2014-12-12T00:00', end: '2014-12-12T10:00' },
         { start: '2014-12-12T16:00', end: '2014-12-13T00:00' },
         // sat
-        { start: '2014-12-13T00:00', end: '2014-12-14T00:00' }
+        { start: '2014-12-13T00:00', end: '2014-12-14T00:00' },
       ])).toBe(true)
     })
 
-    it('wont\'t process businessHour items that omit dow', function() {
+    it('wont\'t process businessHour items that omit dow', () => {
       let calendar = initCalendar({
         initialDate: '2014-12-07',
         initialView: 'timeGridWeek',
@@ -131,14 +126,14 @@ describe('businessHours', function() {
           {
             // invalid
             startTime: '08:00',
-            endTime: '18:00'
+            endTime: '18:00',
           },
           {
-            daysOfWeek: [ 4, 5 ], // thu, fri
+            daysOfWeek: [4, 5], // thu, fri
             startTime: '10:00',
-            endTime: '16:00'
-          }
-        ]
+            endTime: '16:00',
+          },
+        ],
       })
 
       // timed area
@@ -158,33 +153,30 @@ describe('businessHours', function() {
         { start: '2014-12-12T00:00', end: '2014-12-12T10:00' },
         { start: '2014-12-12T16:00', end: '2014-12-13T00:00' },
         // sat
-        { start: '2014-12-13T00:00', end: '2014-12-14T00:00' }
+        { start: '2014-12-13T00:00', end: '2014-12-14T00:00' },
       ])).toBe(true)
     })
   })
 
-
-  it('will grey-out a totally non-business-hour view', function() {
+  it('will grey-out a totally non-business-hour view', () => {
     let calendar = initCalendar({
       initialDate: '2016-07-23', // sat
       initialView: 'timeGridDay',
-      businessHours: true
+      businessHours: true,
     })
 
     // timed area
     expect(isTimeGridNonBusinessSegsRendered(calendar, [
-      { start: '2016-07-23T00:00', end: '2016-07-24T00:00' }
+      { start: '2016-07-23T00:00', end: '2016-07-24T00:00' },
     ])).toBe(true)
   })
-
 
   function isTimeGridNonBusinessSegsRendered(calendar, segs) {
     let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
     return doElsMatchSegs(
       timeGridWrapper.getNonBusinessDayEls(),
       segs,
-      timeGridWrapper.getRect.bind(timeGridWrapper)
+      timeGridWrapper.getRect.bind(timeGridWrapper),
     )
   }
-
 })

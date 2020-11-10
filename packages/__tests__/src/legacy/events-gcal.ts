@@ -12,8 +12,7 @@ if (SKIP_GCAL) {
 
 // eslint-disable-next-line
 SKIP_GCAL ||
-describe('Google Calendar plugin', function() {
-
+describe('Google Calendar plugin', () => {
   const API_KEY = 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE'
   const HOLIDAY_CALENDAR_ID = 'en.usa#holiday@group.v.calendar.google.com'
 
@@ -25,33 +24,32 @@ describe('Google Calendar plugin', function() {
   let oldConsoleWarn
 
   pushOptions({
-    plugins: [ googleCalendarPlugin, dayGridPlugin ],
+    plugins: [googleCalendarPlugin, dayGridPlugin],
     initialView: 'dayGridMonth',
-    initialDate: DEFAULT_MONTH + '-01'
+    initialDate: DEFAULT_MONTH + '-01',
   })
 
-  beforeEach(function() {
+  beforeEach(() => {
     // Intercept calls to console.warn
     currentWarnArgs = null
     oldConsoleWarn = console.warn
-    console.warn = function() {
+    console.warn = function () {
       currentWarnArgs = arguments
     }
   })
 
-  afterEach(function() {
+  afterEach(() => {
     console.warn = oldConsoleWarn
   })
 
-
-  it('request/receives correctly when local timezone', function(done) {
+  it('request/receives correctly when local timezone', (done) => {
     let calendar = initCalendar({
       googleCalendarApiKey: API_KEY,
       events: { googleCalendarId: HOLIDAY_CALENDAR_ID },
-      timeZone: 'local'
+      timeZone: 'local',
     })
 
-    afterEventsLoaded(calendar, function() {
+    afterEventsLoaded(calendar, () => {
       let events = calendar.getEvents()
       let i
 
@@ -64,14 +62,14 @@ describe('Google Calendar plugin', function() {
     })
   })
 
-  it('request/receives correctly when UTC timezone', function(done) {
+  it('request/receives correctly when UTC timezone', (done) => {
     let calendar = initCalendar({
       googleCalendarApiKey: API_KEY,
       events: { googleCalendarId: HOLIDAY_CALENDAR_ID },
-      timeZone: 'UTC'
+      timeZone: 'UTC',
     })
 
-    afterEventsLoaded(calendar, function() {
+    afterEventsLoaded(calendar, () => {
       let events = calendar.getEvents()
       let i
 
@@ -84,14 +82,14 @@ describe('Google Calendar plugin', function() {
     })
   })
 
-  it('request/receives correctly when named timezone, defaults to not editable', function(done) {
+  it('request/receives correctly when named timezone, defaults to not editable', (done) => {
     let calendar = initCalendar({
       googleCalendarApiKey: API_KEY,
       events: { googleCalendarId: HOLIDAY_CALENDAR_ID },
-      timeZone: 'America/New_York'
+      timeZone: 'America/New_York',
     })
 
-    afterEventsLoaded(calendar, function() {
+    afterEventsLoaded(calendar, () => {
       let events = calendar.getEvents()
       let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
       let eventEls = dayGridWrapper.getEventEls()
@@ -109,16 +107,16 @@ describe('Google Calendar plugin', function() {
     })
   })
 
-  it('allows editable to explicitly be set to true', function(done) {
+  it('allows editable to explicitly be set to true', (done) => {
     let calendar = initCalendar({
       googleCalendarApiKey: API_KEY,
       events: {
         googleCalendarId: HOLIDAY_CALENDAR_ID,
-        editable: true
-      }
+        editable: true,
+      },
     })
 
-    afterEventsLoaded(calendar, function() {
+    afterEventsLoaded(calendar, () => {
       let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
       let eventEls = dayGridWrapper.getEventEls()
 
@@ -132,29 +130,29 @@ describe('Google Calendar plugin', function() {
     })
   })
 
-  it('fetches events correctly when API key is in the event source', function(done) {
+  it('fetches events correctly when API key is in the event source', (done) => {
     let calendar = initCalendar({
       events: {
         googleCalendarId: HOLIDAY_CALENDAR_ID,
-        googleCalendarApiKey: API_KEY
-      }
+        googleCalendarApiKey: API_KEY,
+      },
     })
 
-    afterEventsLoaded(calendar, function() {
+    afterEventsLoaded(calendar, () => {
       let events = calendar.getEvents()
       expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     })
   })
 
-  describe('when not given an API key', function() {
-    it('calls error handlers, raises warning, and receives no events', function(done) {
+  describe('when not given an API key', () => {
+    it('calls error handlers, raises warning, and receives no events', (done) => {
       let options = {
         events: {
           failure(err) {
             expect(typeof err).toBe('object')
           },
-          googleCalendarId: HOLIDAY_CALENDAR_ID
+          googleCalendarId: HOLIDAY_CALENDAR_ID,
         },
         eventSourceFailure(err) {
           expect(typeof err).toBe('object')
@@ -166,7 +164,7 @@ describe('Google Calendar plugin', function() {
             expect(options.events.failure).toHaveBeenCalled()
             done()
           }, 0)
-        }
+        },
       }
 
       spyOn(options.events, 'failure').and.callThrough()
@@ -174,15 +172,15 @@ describe('Google Calendar plugin', function() {
     })
   })
 
-  describe('when given a bad API key', function() {
-    it('calls error handlers, raises warning, and receives no event', function(done) {
+  describe('when given a bad API key', () => {
+    it('calls error handlers, raises warning, and receives no event', (done) => {
       let options = {
         googleCalendarApiKey: 'asdfasdfasdf',
         events: {
-          failure: function(err) {
+          failure(err) {
             expect(typeof err).toBe('object')
           },
-          googleCalendarId: HOLIDAY_CALENDAR_ID
+          googleCalendarId: HOLIDAY_CALENDAR_ID,
         },
         eventSourceFailure(err) {
           expect(typeof err).toBe('object')
@@ -194,7 +192,7 @@ describe('Google Calendar plugin', function() {
             expect(options.events.failure).toHaveBeenCalled()
             done()
           }, 0)
-        }
+        },
       }
 
       spyOn(options.events, 'failure').and.callThrough()
@@ -202,7 +200,7 @@ describe('Google Calendar plugin', function() {
     })
   })
 
-  it('calls loading with true then false', function(done) {
+  it('calls loading with true then false', (done) => {
     let cmds = []
 
     initCalendar({
@@ -212,25 +210,24 @@ describe('Google Calendar plugin', function() {
         cmds.push(bool)
 
         if (cmds.length === 1) {
-          expect(cmds).toEqual([ true ])
+          expect(cmds).toEqual([true])
         } else if (cmds.length === 2) {
-          expect(cmds).toEqual([ true, false ])
+          expect(cmds).toEqual([true, false])
           done()
         }
-      }
+      },
     })
   })
 
-  describe('EventSource::remove', function() {
-
-    it('works when specifying only the Google Calendar ID', function(done) {
+  describe('EventSource::remove', () => {
+    it('works when specifying only the Google Calendar ID', (done) => {
       let called = false
       let calendar = initCalendar({
         googleCalendarApiKey: API_KEY,
-        eventSources: [ { googleCalendarId: HOLIDAY_CALENDAR_ID } ]
+        eventSources: [{ googleCalendarId: HOLIDAY_CALENDAR_ID }],
       })
 
-      afterEventsLoaded(calendar, function() {
+      afterEventsLoaded(calendar, () => {
         let events
 
         if (called) { return } // only the first time
@@ -239,7 +236,7 @@ describe('Google Calendar plugin', function() {
         events = calendar.getEvents()
         expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
 
-        setTimeout(function() {
+        setTimeout(() => {
           calendar.getEventSources()[0].remove()
           events = calendar.getEvents()
           expect(events.length).toBe(0)
@@ -248,15 +245,15 @@ describe('Google Calendar plugin', function() {
       })
     })
 
-    it('works when specifying a raw Google Calendar source object', function(done) {
+    it('works when specifying a raw Google Calendar source object', (done) => {
       let googleSource = { googleCalendarId: HOLIDAY_CALENDAR_ID }
       let called = false
       let calendar = initCalendar({
         googleCalendarApiKey: API_KEY,
-        eventSources: [ googleSource ]
+        eventSources: [googleSource],
       })
 
-      afterEventsLoaded(calendar, function() {
+      afterEventsLoaded(calendar, () => {
         let events
 
         if (called) { return } // only the first time
@@ -265,7 +262,7 @@ describe('Google Calendar plugin', function() {
         events = calendar.getEvents()
         expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
 
-        setTimeout(function() {
+        setTimeout(() => {
           calendar.getEventSources()[0].remove()
           events = calendar.getEvents()
           expect(events.length).toBe(0)
@@ -275,11 +272,9 @@ describe('Google Calendar plugin', function() {
     })
   })
 
-
   function afterEventsLoaded(calendar, callback) {
-    calendar.on('eventsSet', function() {
+    calendar.on('eventsSet', () => {
       setTimeout(callback) // because nothing is rendered yet when eventSourceSuccess fires
     })
   }
-
 })

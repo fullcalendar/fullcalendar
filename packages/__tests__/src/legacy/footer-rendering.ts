@@ -1,42 +1,42 @@
-import { CalendarWrapper } from "../lib/wrappers/CalendarWrapper"
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('footerToolbar rendering', function() { // TODO: rename file
+describe('footerToolbar rendering', () => { // TODO: rename file
   pushOptions({
     initialDate: '2014-06-04',
-    initialView: 'timeGridWeek'
+    initialView: 'timeGridWeek',
   })
 
-  describe('when supplying footerToolbar options', function() {
-    it('should append a footerToolbar element to the DOM', function() {
+  describe('when supplying footerToolbar options', () => {
+    it('should append a footerToolbar element to the DOM', () => {
       let calendar = initCalendar({
         footerToolbar: {
           left: 'next,prev',
           center: 'prevYear today nextYear timeGridDay,timeGridWeek',
-          right: 'title'
-        }
+          right: 'title',
+        },
       })
       let calendarWrapper = new CalendarWrapper(calendar)
       expect(calendarWrapper.footerToolbar).toBeTruthy()
     })
   })
 
-  describe('when setting footerToolbar to false', function() {
-    it('should not have footerToolbar table', function() {
+  describe('when setting footerToolbar to false', () => {
+    it('should not have footerToolbar table', () => {
       let calendar = initCalendar({
-        footerToolbar: false
+        footerToolbar: false,
       })
       let calendarWrapper = new CalendarWrapper(calendar)
       expect(calendarWrapper.footerToolbar).toBeFalsy()
     })
   })
 
-  it('allow for dynamically changing', function() {
+  it('allow for dynamically changing', () => {
     let calendar = initCalendar({
       footerToolbar: {
         left: 'next,prev',
         center: 'prevYear today nextYear timeGridDay,timeGridWeek',
-        right: 'title'
-      }
+        right: 'title',
+      },
     })
     let calendarWrapper = new CalendarWrapper(calendar)
     expect(calendarWrapper.footerToolbar).toBeTruthy()

@@ -3,22 +3,22 @@ import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import { waitEventResize } from '../lib/wrappers/interaction-util'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
-describe('event resize mirror', function() {
+describe('event resize mirror', () => {
   pushOptions({
     editable: true,
     initialDate: '2018-12-25',
-    eventDragMinDistance: 0 // so mirror will render immediately upon mousedown
+    eventDragMinDistance: 0, // so mirror will render immediately upon mousedown
   })
 
-  describe('in month view', function() {
+  describe('in month view', () => {
     pushOptions({
       initialView: 'dayGridMonth',
       events: [
-        { start: '2018-12-03', title: 'all day event' }
-      ]
+        { start: '2018-12-03', title: 'all day event' },
+      ],
     })
 
-    it('gets passed through render hooks', function(done) {
+    it('gets passed through render hooks', (done) => {
       let mirrorMountCalls = 0
       let mirrorContentCalls = 0
       let mirrorUnmountCalls = 0
@@ -38,14 +38,14 @@ describe('event resize mirror', function() {
           if (info.isMirror) {
             mirrorUnmountCalls++
           }
-        }
+        },
       })
 
       let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
       let resizing = dayGridWrapper.resizeEvent( // drag TWO days
         dayGridWrapper.getEventEls()[0],
         '2018-12-03',
-        '2018-12-05'
+        '2018-12-05',
       )
 
       waitEventResize(calendar, resizing).then(() => {
@@ -57,18 +57,18 @@ describe('event resize mirror', function() {
     })
   })
 
-  describe('in timeGrid view', function() {
+  describe('in timeGrid view', () => {
     pushOptions({
       initialView: 'timeGridWeek',
       scrollTime: '00:00',
       slotDuration: '01:00',
       snapDuration: '01:00',
       events: [
-        { start: '2018-12-25T01:00:00', end: '2018-12-25T02:00:00', title: 'timed event' }
-      ]
+        { start: '2018-12-25T01:00:00', end: '2018-12-25T02:00:00', title: 'timed event' },
+      ],
     })
 
-    it('gets passed through eventWillUnmount', function(done) {
+    it('gets passed through eventWillUnmount', (done) => {
       let mirrorMountCalls = 0
       let mirrorContentCalls = 0
       let mirrorUnmountCalls = 0
@@ -88,7 +88,7 @@ describe('event resize mirror', function() {
           if (info.isMirror) {
             mirrorUnmountCalls++
           }
-        }
+        },
       })
 
       let eventEl = new CalendarWrapper(calendar).getFirstEventEl()
@@ -96,7 +96,7 @@ describe('event resize mirror', function() {
       let resizing = timeGridWrapper.resizeEvent(
         eventEl,
         '2018-12-25T02:00:00',
-        '2018-12-25T04:00:00' // drag TWO snaps
+        '2018-12-25T04:00:00', // drag TWO snaps
       )
 
       waitEventResize(calendar, resizing).then(() => {
@@ -107,5 +107,4 @@ describe('event resize mirror', function() {
       })
     })
   })
-
 })

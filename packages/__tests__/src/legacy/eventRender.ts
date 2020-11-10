@@ -1,23 +1,22 @@
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
-describe('eventDidMount+eventContent', function() { // TODO: rename file
+describe('eventDidMount+eventContent', () => { // TODO: rename file
   pushOptions({
     initialDate: '2014-11-12',
     scrollTime: '00:00:00',
-    events: [ {
+    events: [{
       title: 'my event',
-      start: '2014-11-12T09:00:00'
-    } ]
+      start: '2014-11-12T09:00:00',
+    }],
   })
 
   describeOptions('initialView', {
     'when in day-grid': 'dayGridMonth',
-    'when in time-grid': 'timeGridWeek'
-  }, function() {
-
-    describe('with foreground event', function() {
-      it('receives correct args AND can modify the element', function() {
+    'when in time-grid': 'timeGridWeek',
+  }, () => {
+    describe('with foreground event', () => {
+      it('receives correct args AND can modify the element', () => {
         let options = {
           eventContent(arg) {
             expect(typeof arg.event).toBe('object')
@@ -28,7 +27,7 @@ describe('eventDidMount+eventContent', function() { // TODO: rename file
           },
           eventDidMount(arg) {
             $(arg.el).css('font-size', '20px')
-          }
+          },
         }
         spyOn(options, 'eventContent').and.callThrough()
         spyOn(options, 'eventDidMount').and.callThrough()
@@ -44,22 +43,22 @@ describe('eventDidMount+eventContent', function() { // TODO: rename file
     })
   })
 
-  describe('when in month view', function() {
+  describe('when in month view', () => {
     pushOptions({
       initialView: 'dayGridMonth',
-      events: [ {
+      events: [{
         title: 'my event',
-        start: '2014-11-12'
-      } ]
+        start: '2014-11-12',
+      }],
     })
 
-    describe('with a foreground event', function() {
-      it('can return a new element', function() {
+    describe('with a foreground event', () => {
+      it('can return a new element', () => {
         let options = {
           eventContent() {
-            let domNodes = $(`<div class="sup" style="background-color:green">sup g</div>`).get()
+            let domNodes = $('<div class="sup" style="background-color:green">sup g</div>').get()
             return { domNodes }
-          }
+          },
         }
         spyOn(options, 'eventContent').and.callThrough()
 
@@ -72,16 +71,16 @@ describe('eventDidMount+eventContent', function() { // TODO: rename file
       })
     })
 
-    describe('with an all-day background event', function() {
+    describe('with an all-day background event', () => {
       pushOptions({
-        events: [ {
+        events: [{
           title: 'my event',
           start: '2014-11-12',
-          display: 'background'
-        } ]
+          display: 'background',
+        }],
       })
 
-      it('receives correct args AND can modify the element', function() {
+      it('receives correct args AND can modify the element', () => {
         let options = {
           eventContent(arg) {
             expect(typeof arg.event).toBe('object')
@@ -91,7 +90,7 @@ describe('eventDidMount+eventContent', function() { // TODO: rename file
           },
           eventDidMount(arg) {
             $(arg.el).css('font-size', '20px')
-          }
+          },
         }
         spyOn(options, 'eventContent').and.callThrough()
         spyOn(options, 'eventDidMount').and.callThrough()

@@ -7,9 +7,9 @@ export const DEFAULT_PLUGINS = [
   interactionPlugin,
   dayGridPlugin,
   timeGridPlugin,
-  listPlugin
+  listPlugin,
 ]
 
 pushOptions({
-  plugins: DEFAULT_PLUGINS
+  plugins: DEFAULT_PLUGINS,
 })

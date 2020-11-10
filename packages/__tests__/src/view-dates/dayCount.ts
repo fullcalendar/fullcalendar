@@ -1,28 +1,28 @@
 import { expectActiveRange } from '../lib/ViewDateUtils'
 import { expectDay } from '../lib/ViewRenderUtils'
 
-describe('dayCount', function() {
+describe('dayCount', () => {
   pushOptions({
     initialDate: '2017-03-15', // wed
-    weekends: false
+    weekends: false,
   })
 
   describeOptions({
     'when specified as top-level options': {
       initialView: 'dayGrid',
-      dayCount: 5
+      dayCount: 5,
     },
     'when specified as custom view': {
       views: {
         myCustomView: {
           type: 'dayGrid',
-          dayCount: 5
-        }
+          dayCount: 5,
+        },
       },
-      initialView: 'myCustomView'
-    }
-  }, function() {
-    it('renders the exact day count', function() {
+      initialView: 'myCustomView',
+    },
+  }, () => {
+    it('renders the exact day count', () => {
       initCalendar()
       expectActiveRange('2017-03-15', '2017-03-22')
       expectDay('2017-03-15', true)
@@ -35,10 +35,10 @@ describe('dayCount', function() {
     })
   })
 
-  it('can span multiple weeks', function() {
+  it('can span multiple weeks', () => {
     initCalendar({
       initialView: 'timeGrid',
-      dayCount: 9
+      dayCount: 9,
     })
     expectActiveRange('2017-03-15', '2017-03-28')
     expectDay('2017-03-15', true)
@@ -56,27 +56,26 @@ describe('dayCount', function() {
     expectDay('2017-03-27', true)
   })
 
-  it('can navigate in reverse with a small dateIncrement split by hidden days', function() {
+  it('can navigate in reverse with a small dateIncrement split by hidden days', () => {
     initCalendar({
       initialDate: '2018-06-11',
       initialView: 'timeGridTwoDay',
       headerToolbar: {
         left: 'prev,next',
         center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay,timeGridTwoDay'
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,timeGridTwoDay',
       },
-      hiddenDays: [ 0, 6 ], // sunday, saturday
+      hiddenDays: [0, 6], // sunday, saturday
       views: {
         timeGridTwoDay: {
           type: 'timeGrid',
           dayCount: 2,
           dateIncrement: { days: 1 },
-          buttonText: '2 days'
-        }
-      }
+          buttonText: '2 days',
+        },
+      },
     })
     currentCalendar.prev()
     expectActiveRange('2018-06-08', '2018-06-12')
   })
-
 })

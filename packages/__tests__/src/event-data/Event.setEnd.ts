@@ -1,18 +1,18 @@
-describe('Event::setEnd', function() {
+describe('Event::setEnd', () => {
   pushOptions({
     now: '2018-09-03',
     timeZone: 'UTC',
-    defaultTimedEventDuration: '01:00'
+    defaultTimedEventDuration: '01:00',
   })
 
-  describe('when event doesn\'t have an end', function() {
+  describe('when event doesn\'t have an end', () => {
     pushOptions({
       events: [
-        { id: '1', start: '2018-09-10T00:00:00' }
-      ]
+        { id: '1', start: '2018-09-10T00:00:00' },
+      ],
     })
 
-    it('sets end and keeps start', function() {
+    it('sets end and keeps start', () => {
       initCalendar()
       let event = currentCalendar.getEventById('1')
       event.setEnd('2018-09-12T02:00:00')
@@ -21,14 +21,14 @@ describe('Event::setEnd', function() {
     })
   })
 
-  describe('when event does have an end', function() {
+  describe('when event does have an end', () => {
     pushOptions({
       events: [
-        { id: '1', start: '2018-09-10T00:00:00', end: '2018-09-11T00:00:00' }
-      ]
+        { id: '1', start: '2018-09-10T00:00:00', end: '2018-09-11T00:00:00' },
+      ],
     })
 
-    it('changes end and keeps start', function() {
+    it('changes end and keeps start', () => {
       initCalendar()
       let event = currentCalendar.getEventById('1')
       event.setEnd('2018-09-12T02:00:00')
@@ -37,12 +37,12 @@ describe('Event::setEnd', function() {
     })
   })
 
-  it('shortens related events of different duration by same delta', function() {
+  it('shortens related events of different duration by same delta', () => {
     initCalendar({
       events: [
         { id: '1', groupId: 'a', start: '2018-09-10T00:00:00', end: '2018-09-11T00:00:00' },
-        { id: '2', groupId: 'a', start: '2018-09-14T00:00:00', end: '2018-09-16T00:00:00' }
-      ]
+        { id: '2', groupId: 'a', start: '2018-09-14T00:00:00', end: '2018-09-16T00:00:00' },
+      ],
     })
 
     let event1 = currentCalendar.getEventById('1')
@@ -54,5 +54,4 @@ describe('Event::setEnd', function() {
     expect(event2.start).toEqualDate('2018-09-14T00:00:00Z')
     expect(event2.end).toEqualDate('2018-09-17T02:00:00Z')
   })
-
 })

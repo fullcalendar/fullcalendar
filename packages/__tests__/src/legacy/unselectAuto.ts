@@ -1,31 +1,30 @@
-import { DayGridViewWrapper } from "../lib/wrappers/DayGridViewWrapper"
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
-describe('unselectAuto', function() {
+describe('unselectAuto', () => {
   pushOptions({
     selectable: true,
     initialDate: '2014-12-25',
-    initialView: 'dayGridMonth'
+    initialView: 'dayGridMonth',
   })
 
-  beforeEach(function() {
+  beforeEach(() => {
     $('<div id="otherthing" />').appendTo('body')
   })
 
-  afterEach(function() {
+  afterEach(() => {
     $('#otherthing').remove()
   })
 
-  describe('when enabled', function() {
+  describe('when enabled', () => {
     pushOptions({
-      unselectAuto: true
+      unselectAuto: true,
     })
 
-    describe('when clicking away', function() {
-
-      it('unselects the current selection when clicking elsewhere in DOM', function(done) {
+    describe('when clicking away', () => {
+      it('unselects the current selection when clicking elsewhere in DOM', (done) => {
         let isDone = false // hack against dragging continuing after destroy
         let calendar = initCalendar({
-          unselect: function(arg) {
+          unselect(arg) {
             if (!isDone) {
               expect(dayGridWrapper.getHighlightEls().length).toBe(0)
               expect('currentTarget' in arg.jsEvent).toBe(true) // a JS event
@@ -33,7 +32,7 @@ describe('unselectAuto', function() {
               isDone = true
               done()
             }
-          }
+          },
         })
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
@@ -47,12 +46,11 @@ describe('unselectAuto', function() {
       })
     })
 
-    describe('when clicking another date', function() {
-
-      it('unselects the current selection when clicking elsewhere in DOM', function(done) {
+    describe('when clicking another date', () => {
+      it('unselects the current selection when clicking elsewhere in DOM', (done) => {
         let isDone = false // hack against dragging continuing after destroy
         let calendar = initCalendar({
-          unselect: function(arg) {
+          unselect(arg) {
             if (!isDone) {
               expect(dayGridWrapper.getHighlightEls().length).toBe(0)
               expect('currentTarget' in arg.jsEvent).toBe(true) // a JS event
@@ -60,7 +58,7 @@ describe('unselectAuto', function() {
               isDone = true
               done()
             }
-          }
+          },
         })
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
@@ -72,12 +70,12 @@ describe('unselectAuto', function() {
     })
   })
 
-  describe('when disabled', function() {
+  describe('when disabled', () => {
     pushOptions({
-      unselectAuto: false
+      unselectAuto: false,
     })
 
-    it('keeps current selection when clicking elsewhere in DOM', function(done) {
+    it('keeps current selection when clicking elsewhere in DOM', (done) => {
       let calendar = initCalendar()
       let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
@@ -89,7 +87,7 @@ describe('unselectAuto', function() {
         .simulate('mouseup')
         .simulate('click')
 
-      setTimeout(function() {
+      setTimeout(() => {
         expect(dayGridWrapper.getHighlightEls().length).toBeGreaterThan(0)
         done()
       })

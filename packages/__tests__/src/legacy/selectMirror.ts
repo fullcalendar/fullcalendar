@@ -1,19 +1,18 @@
-import { TimeGridViewWrapper } from "../lib/wrappers/TimeGridViewWrapper"
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('selectMirror', function() {
-
+describe('selectMirror', () => {
   pushOptions({
     initialDate: '2014-08-03',
     initialView: 'timeGridWeek',
     scrollTime: '00:00:00',
-    selectMirror: true
+    selectMirror: true,
   })
 
-  it('goes through eventDidMount', function() {
+  it('goes through eventDidMount', () => {
     let options = {
       eventDidMount(arg) {
         expect(arg.isMirror).toBe(true)
-      }
+      },
     }
 
     spyOn(options, 'eventDidMount').and.callThrough()

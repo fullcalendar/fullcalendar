@@ -1,38 +1,37 @@
 import { getRectCenter, subtractPoints, addPoints } from './geom'
 import { CalendarWrapper } from './wrappers/CalendarWrapper'
 
-
 export function resize(point0, point1, fromStart?, debug?) {
-  var eventEl = new CalendarWrapper(currentCalendar).getFirstEventEl()
+  let eventEl = new CalendarWrapper(currentCalendar).getFirstEventEl()
 
-  var $resizerEl = $(eventEl).find(
-    '.' + (fromStart ? CalendarWrapper.EVENT_START_RESIZER_CLASSNAME : CalendarWrapper.EVENT_END_RESIZER_CLASSNAME)
+  let $resizerEl = $(eventEl).find(
+    '.' + (fromStart ? CalendarWrapper.EVENT_START_RESIZER_CLASSNAME : CalendarWrapper.EVENT_END_RESIZER_CLASSNAME),
   ).css('display', 'block') // usually only displays on hover. force display
 
-  var resizerRect = $resizerEl[0].getBoundingClientRect()
-  var resizerCenter = getRectCenter(resizerRect)
+  let resizerRect = $resizerEl[0].getBoundingClientRect()
+  let resizerCenter = getRectCenter(resizerRect)
 
-  var vector = subtractPoints(
+  let vector = subtractPoints(
     resizerCenter,
-    point0
+    point0,
   )
-  var endPoint = addPoints(
+  let endPoint = addPoints(
     point1,
-    vector
+    vector,
   )
-  var deferred = $.Deferred()
+  let deferred = $.Deferred()
 
   $resizerEl.simulate('drag', {
     point: resizerCenter,
     end: endPoint,
-    debug: debug
+    debug,
   })
 
-  currentCalendar.on('eventResize', function(arg) {
+  currentCalendar.on('eventResize', (arg) => {
     deferred.resolve(arg)
   })
 
-  currentCalendar.on('_noEventResize', function() {
+  currentCalendar.on('_noEventResize', () => {
     deferred.resolve(false)
   })
 

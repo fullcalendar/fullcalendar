@@ -1,23 +1,22 @@
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { waitDateSelect } from '../lib/wrappers/interaction-util'
 
-describe('selectAllow', function() {
-
+describe('selectAllow', () => {
   pushOptions({
     now: '2016-09-04',
     initialView: 'timeGridWeek',
     scrollTime: '00:00',
-    selectable: true
+    selectable: true,
   })
 
-  it('disallows selecting when returning false', function(done) { // and given correct params
-    var options = {
-      selectAllow: function(selectInfo) {
+  it('disallows selecting when returning false', (done) => { // and given correct params
+    let options = {
+      selectAllow(selectInfo) {
         expect(typeof selectInfo).toBe('object')
         expect(selectInfo.start instanceof Date).toBe(true)
         expect(selectInfo.end instanceof Date).toBe(true)
         return false
-      }
+      },
     }
     spyOn(options, 'selectAllow').and.callThrough()
 
@@ -32,11 +31,11 @@ describe('selectAllow', function() {
     })
   })
 
-  it('allows selecting when returning true', function(done) {
-    var options = {
-      selectAllow: function(selectInfo) {
+  it('allows selecting when returning true', (done) => {
+    let options = {
+      selectAllow(selectInfo) {
         return true
-      }
+      },
     }
     spyOn(options, 'selectAllow').and.callThrough()
 

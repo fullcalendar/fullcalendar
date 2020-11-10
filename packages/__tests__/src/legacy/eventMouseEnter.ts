@@ -1,29 +1,27 @@
-describe('eventMouseEnter', function() {
+describe('eventMouseEnter', () => {
   pushOptions({
     initialDate: '2014-08-01',
-    scrollTime: '00:00:00'
-  })
-
-  ;[ 'dayGridMonth', 'timeGridWeek' ].forEach(function(viewName) {
-    describe('for ' + viewName + ' view', function() {
-
+    scrollTime: '00:00:00',
+  });
+['dayGridMonth', 'timeGridWeek'].forEach((viewName) => {
+    describe('for ' + viewName + ' view', () => {
       pushOptions({
-        initialView: viewName
+        initialView: viewName,
       })
 
-      it('doesn\'t trigger a eventMouseLeave when updating an event', function(done) {
+      it('doesn\'t trigger a eventMouseLeave when updating an event', (done) => {
         let options = {
-          events: [ {
+          events: [{
             title: 'event',
             start: '2014-08-02T01:00:00',
-            className: 'event'
-          } ],
-          eventMouseEnter: function(arg) {
+            className: 'event',
+          }],
+          eventMouseEnter(arg) {
             expect(typeof arg.event).toBe('object')
             expect(typeof arg.jsEvent).toBe('object')
             arg.event.setProp('title', 'YO')
           },
-          eventMouseLeave: function(arg) {}
+          eventMouseLeave(arg) {},
         }
 
         spyOn(options, 'eventMouseEnter')
@@ -32,7 +30,7 @@ describe('eventMouseEnter', function() {
         initCalendar(options)
         $('.event').simulate('mouseover')
 
-        setTimeout(function() {
+        setTimeout(() => {
           expect(options.eventMouseEnter).toHaveBeenCalled()
           expect(options.eventMouseLeave).not.toHaveBeenCalled()
           done()
@@ -41,15 +39,15 @@ describe('eventMouseEnter', function() {
     })
   })
 
-  it('gets fired for background events', function(done) {
+  it('gets fired for background events', (done) => {
     let mouseoverCalled = false
 
     initCalendar({
-      events: [ {
+      events: [{
         start: '2014-08-02',
         display: 'background',
-        className: 'event'
-      } ],
+        className: 'event',
+      }],
       eventMouseEnter(arg) {
         expect(arg.event.display).toBe('background')
         mouseoverCalled = true
@@ -57,7 +55,7 @@ describe('eventMouseEnter', function() {
       eventMouseLeave() {
         expect(mouseoverCalled).toBe(true)
         done()
-      }
+      },
     })
 
     $('.event')
@@ -65,5 +63,4 @@ describe('eventMouseEnter', function() {
       .simulate('mouseout')
       .simulate('mouseleave') // helps out listenBySelector
   })
-
 })

@@ -1,36 +1,36 @@
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('dayHeaders', function() { // TODO: rename file
+describe('dayHeaders', () => { // TODO: rename file
   pushOptions({
-    initialDate: '2014-05-11'
+    initialDate: '2014-05-11',
   })
 
   describeOptions('initialView', {
     'when month view': 'dayGridMonth',
     'when timeGrid view': 'timeGridDay',
-    'when dayGrid view': 'dayGridDay'
-  }, function(viewName) {
+    'when dayGrid view': 'dayGridDay',
+  }, (viewName) => {
     let ViewWrapper = viewName.match(/^dayGrid/) ? DayGridViewWrapper : TimeGridViewWrapper
 
-    describe('when on', function() {
+    describe('when on', () => {
       pushOptions({
-        dayHeaders: true
+        dayHeaders: true,
       })
 
-      it('should show header', function() {
+      it('should show header', () => {
         let calendar = initCalendar()
         let viewWrapper = new ViewWrapper(calendar)
         expect(viewWrapper.header).toBeTruthy()
       })
     })
 
-    describe('when off', function() {
+    describe('when off', () => {
       pushOptions({
-        dayHeaders: false
+        dayHeaders: false,
       })
 
-      it('should not show header', function() {
+      it('should not show header', () => {
         let calendar = initCalendar()
         let viewWrapper = new ViewWrapper(calendar)
         expect(viewWrapper.header).toBeFalsy()

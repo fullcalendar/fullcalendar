@@ -1,15 +1,14 @@
-
-describe('Event::moveDates', function() {
+describe('Event::moveDates', () => {
   pushOptions({
-    timeZone: 'UTC'
+    timeZone: 'UTC',
   })
 
-  describe('when event doesn\'t have an end', function() {
-    it('moves start and keeps end null', function() {
+  describe('when event doesn\'t have an end', () => {
+    it('moves start and keeps end null', () => {
       initCalendar({
         events: [
-          { id: '1', start: '2018-09-03T00:00:00' }
-        ]
+          { id: '1', start: '2018-09-03T00:00:00' },
+        ],
       })
       let event = currentCalendar.getEventById('1')
       event.moveDates({ days: 1, hours: 1 })
@@ -18,12 +17,12 @@ describe('Event::moveDates', function() {
     })
   })
 
-  describe('when event does have an end', function() {
-    it('moves start and end by same delta', function() {
+  describe('when event does have an end', () => {
+    it('moves start and end by same delta', () => {
       initCalendar({
         events: [
-          { id: '1', start: '2018-09-03T00:00:00', end: '2018-09-04T12:00:00' }
-        ]
+          { id: '1', start: '2018-09-03T00:00:00', end: '2018-09-04T12:00:00' },
+        ],
       })
       let event = currentCalendar.getEventById('1')
       event.moveDates({ days: 1, hours: 1 })
@@ -32,12 +31,12 @@ describe('Event::moveDates', function() {
     })
   })
 
-  it('moves related events of different duration by same delta', function() {
+  it('moves related events of different duration by same delta', () => {
     initCalendar({
       events: [
         { id: '1', groupId: 'a', start: '2018-09-03T00:00:00', end: '2018-09-04T12:00:00' },
-        { id: '2', groupId: 'a', start: '2018-10-03T00:00:00', end: '2018-10-04T12:00:00' }
-      ]
+        { id: '2', groupId: 'a', start: '2018-10-03T00:00:00', end: '2018-10-04T12:00:00' },
+      ],
     })
     let event1 = currentCalendar.getEventById('1')
     event1.moveDates({ days: 1, hours: 1 })
@@ -49,12 +48,12 @@ describe('Event::moveDates', function() {
     expect(event2.end).toEqualDate('2018-10-05T13:00:00Z')
   })
 
-  it('does not move unrelated events', function() {
+  it('does not move unrelated events', () => {
     initCalendar({
       events: [
         { id: '1', groupId: 'a', start: '2018-09-03T00:00:00', end: '2018-09-04T12:00:00' },
-        { id: '2', groupId: 'bbb', start: '2018-10-03T00:00:00', end: '2018-10-04T12:00:00' }
-      ]
+        { id: '2', groupId: 'bbb', start: '2018-10-03T00:00:00', end: '2018-10-04T12:00:00' },
+      ],
     })
     let event1 = currentCalendar.getEventById('1')
     event1.moveDates({ days: 1, hours: 1 })
@@ -65,5 +64,4 @@ describe('Event::moveDates', function() {
     expect(event2.start).toEqualDate('2018-10-03T00:00:00Z') // same
     expect(event2.end).toEqualDate('2018-10-04T12:00:00Z') // same
   })
-
 })

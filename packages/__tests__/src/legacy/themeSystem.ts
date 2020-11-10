@@ -3,18 +3,18 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('themeSystem', function() {
+describe('themeSystem', () => {
   pushOptions({
-    plugins: [ bootstrapPlugin, timeGridPlugin ],
+    plugins: [bootstrapPlugin, timeGridPlugin],
     initialView: 'timeGridWeek',
     headerToolbar: {
       left: 'title',
       center: '',
-      right: 'next'
-    }
+      right: 'next',
+    },
   })
 
-  it('can be changed dynamically', function() {
+  it('can be changed dynamically', () => {
     let calendar = initCalendar()
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
     let buttonInfo = toolbarWrapper.getButtonInfo('next')
@@ -47,7 +47,7 @@ describe('themeSystem', function() {
 
   // this tests the options setter with a single hash argument.
   // TODO: not best place for this.
-  it('can be change with other options', function() {
+  it('can be change with other options', () => {
     let calendar = initCalendar()
 
     expect(calendar.el).toHaveClass(CalendarWrapper.ROOT_CLASSNAME)
@@ -55,7 +55,7 @@ describe('themeSystem', function() {
     expect(calendar.el).not.toHaveClass(CalendarWrapper.BOOTSTRAP_CLASSNAME)
 
     // change option!
-    calendar.batchRendering(function() {
+    calendar.batchRendering(() => {
       calendar.setOption('themeSystem', 'bootstrap')
       calendar.setOption('businessHours', true)
     })

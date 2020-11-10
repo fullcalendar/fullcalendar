@@ -1,4 +1,3 @@
-
 /*
 NOTE: can't use Date.parse or new Date(str) to parse strings without timezones:
 https://stackoverflow.com/a/33909265/96342
@@ -12,16 +11,16 @@ export function parseUtcDate(str) {
 
   if (parts.length > 6) { // has timezone info. will correctly parse
     return new Date(str)
-  } else {
-    return new Date(Date.UTC(
-      parseInt(parts[0]),
-      parseInt(parts[1]) - 1,
-      parts[2] ? parseInt(parts[2]) : 0,
-      parts[3] ? parseInt(parts[3]) : 0,
-      parts[4] ? parseInt(parts[4]) : 0,
-      parts[5] ? parseInt(parts[5]) : 0
-    ))
   }
+
+  return new Date(Date.UTC(
+    parseInt(parts[0]),
+    parseInt(parts[1]) - 1,
+    parts[2] ? parseInt(parts[2]) : 0,
+    parts[3] ? parseInt(parts[3]) : 0,
+    parts[4] ? parseInt(parts[4]) : 0,
+    parts[5] ? parseInt(parts[5]) : 0,
+  ))
 }
 
 /*
@@ -39,7 +38,7 @@ export function parseLocalDate(str) {
       parts[2] ? parseInt(parts[2]) : 0,
       parts[3] ? parseInt(parts[3]) : 0,
       parts[4] ? parseInt(parts[4]) : 0,
-      parts[5] ? parseInt(parts[5]) : 0
+      parts[5] ? parseInt(parts[5]) : 0,
     )
   }
 }

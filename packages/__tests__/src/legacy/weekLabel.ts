@@ -1,47 +1,44 @@
 import esLocale from '@fullcalendar/core/locales/es'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('weekText', function() { // TODO: rename file
+describe('weekText', () => { // TODO: rename file
   pushOptions({
-    weekNumbers: true
-  })
-
-  ;[ 'timeGridWeek' ].forEach(function(viewName) {
-
-    describe('when views is ' + viewName, function() {
+    weekNumbers: true,
+  });
+['timeGridWeek'].forEach((viewName) => {
+    describe('when views is ' + viewName, () => {
       pushOptions({
-        initialView: viewName
+        initialView: viewName,
       })
 
-      it('renders correctly by default', function() {
+      it('renders correctly by default', () => {
         let calendar = initCalendar()
         expectWeekNumberTitle(calendar, 'W')
       })
 
-      it('renders correctly when unspecified and when locale is customized', function() {
+      it('renders correctly when unspecified and when locale is customized', () => {
         let calendar = initCalendar({
-          locale: esLocale
+          locale: esLocale,
         })
         expectWeekNumberTitle(calendar, 'Sm')
       })
 
-      it('renders correctly when customized and LTR', function() {
+      it('renders correctly when customized and LTR', () => {
         let calendar = initCalendar({
           direction: 'ltr',
-          weekText: 'YO'
+          weekText: 'YO',
         })
         expectWeekNumberTitle(calendar, 'YO')
       })
 
-      it('renders correctly when customized and RTL', function() {
+      it('renders correctly when customized and RTL', () => {
         let calendar = initCalendar({
           direction: 'rtl',
-          weekText: 'YO'
+          weekText: 'YO',
         })
         expectWeekNumberTitle(calendar, 'YO')
       })
     })
-
 
     function expectWeekNumberTitle(calendar, title) {
       let viewWrapper = new TimeGridViewWrapper(calendar)
@@ -50,6 +47,5 @@ describe('weekText', function() { // TODO: rename file
 
       expect(text).toBe(title)
     }
-
   })
 })

@@ -1,11 +1,8 @@
-
 const IGNORED_EVENTS = {
-  load: true // ignore when jQuery detaches the load event from the window
+  load: true, // ignore when jQuery detaches the load event from the window
 }
 
-
 export class ListenerCounter {
-
   el: HTMLElement
   delta = 0
   jQueryStartCount = 0
@@ -47,21 +44,18 @@ export class ListenerCounter {
   computeDelta() {
     return this.delta + (countJqueryListeners(this.el) - this.jQueryStartCount)
   }
-
 }
 
-
 function countJqueryListeners(el) {
-  var hash = getJqueryHandlerHash(el)
-  var cnt = 0
+  let hash = getJqueryHandlerHash(el)
+  let cnt = 0
 
-  $.each(hash, function(name, handlers) {
+  $.each(hash, (name, handlers) => {
     cnt += handlers.length
   })
 
   return cnt
 }
-
 
 function getJqueryHandlerHash(el) {
   return $._data($(el)[0], 'events') || {}

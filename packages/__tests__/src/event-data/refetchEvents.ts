@@ -1,12 +1,11 @@
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('refetchEvents', function() {
-
-  it('retains scroll when in month view', function() {
-    var el = $('<div id="calendar" style="width:300px"/>').appendTo('body')
-    var scrollEl
-    var scrollTop
+describe('refetchEvents', () => {
+  it('retains scroll when in month view', () => {
+    let el = $('<div id="calendar" style="width:300px"/>').appendTo('body')
+    let scrollEl
+    let scrollTop
 
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
@@ -19,8 +18,8 @@ describe('refetchEvents', function() {
         { start: '2017-04-04', title: 'event' },
         { start: '2017-04-04', title: 'event' },
         { start: '2017-04-04', title: 'event' },
-        { start: '2017-04-04', title: 'event' }
-      ]
+        { start: '2017-04-04', title: 'event' },
+      ],
     }, el)
 
     let calendarWrapper = new CalendarWrapper(calendar)

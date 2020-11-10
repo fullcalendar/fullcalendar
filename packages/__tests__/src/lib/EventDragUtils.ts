@@ -7,26 +7,26 @@ Given the rectangles of the origin and destination
 slot or day area.
 */
 export function drag(rect0, rect1, debug?) {
-  var eventEl = new CalendarWrapper(currentCalendar).getFirstEventEl()
+  let eventEl = new CalendarWrapper(currentCalendar).getFirstEventEl()
 
-  var eventRect = eventEl.getBoundingClientRect()
-  var point0 = getRectCenter(
-    intersectRects(eventRect, rect0)
+  let eventRect = eventEl.getBoundingClientRect()
+  let point0 = getRectCenter(
+    intersectRects(eventRect, rect0),
   )
-  var point1 = getRectCenter(rect1)
-  var deferred = $.Deferred()
+  let point1 = getRectCenter(rect1)
+  let deferred = $.Deferred()
 
   $(eventEl).simulate('drag', {
     point: point0,
     end: point1,
-    debug: debug
+    debug,
   })
 
-  currentCalendar.on('eventDrop', function(arg) {
+  currentCalendar.on('eventDrop', (arg) => {
     deferred.resolve(arg)
   })
 
-  currentCalendar.on('_noEventDrop', function() {
+  currentCalendar.on('_noEventDrop', () => {
     deferred.resolve(false)
   })
 
@@ -36,5 +36,5 @@ export function drag(rect0, rect1, debug?) {
 // makes the setTimeout's work.
 // also makes the tests faster.
 pushOptions({
-  dragRevertDuration: 0
+  dragRevertDuration: 0,
 })

@@ -1,8 +1,7 @@
-
 export function getRectCenter(rect) {
   return buildPoint(
     rect.left + rect.width / 2,
-    rect.top + rect.height / 2
+    rect.top + rect.height / 2,
   )
 }
 
@@ -11,7 +10,7 @@ export function intersectRects(rect0, rect1) {
     Math.max(rect0.left, rect1.left),
     Math.max(rect0.top, rect1.top),
     Math.min(rect0.right, rect1.right),
-    Math.min(rect0.bottom, rect1.bottom)
+    Math.min(rect0.bottom, rect1.bottom),
   )
 }
 
@@ -24,39 +23,39 @@ export function joinRects(rect1, rect2) {
     left: Math.min(rect1.left, rect2.left),
     right: Math.max(rect1.right, rect2.right),
     top: Math.min(rect1.top, rect2.top),
-    bottom: Math.max(rect1.bottom, rect2.bottom)
+    bottom: Math.max(rect1.bottom, rect2.bottom),
   }
 }
 
 function buildRectViaEdges(left, top, right, bottom) {
   return {
-    left: left,
-    top: top,
+    left,
+    top,
     width: right - left,
     height: bottom - top,
-    right: right,
-    bottom: bottom
+    right,
+    bottom,
   }
 }
 
 function buildPoint(left, top) {
   return {
-    left: left,
-    top: top
+    left,
+    top,
   }
 }
 
 export function subtractPoints(point1, point0) {
   return buildPoint(
     point1.left - point0.left,
-    point1.top - point0.top
+    point1.top - point0.top,
   )
 }
 
 export function addPoints(point0, point1) {
   return buildPoint(
     point0.left + point1.left,
-    point0.top + point1.top
+    point0.top + point1.top,
   )
 }
 

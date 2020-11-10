@@ -1,20 +1,19 @@
 import dayGridPlugin from '@fullcalendar/daygrid'
 
 export function testTimeZoneImpl(timeZoneImplPlugin) {
-
-  describe('named tz implementation', function() {
+  describe('named tz implementation', () => {
     pushOptions({
-      plugins: [ timeZoneImplPlugin, dayGridPlugin ]
+      plugins: [timeZoneImplPlugin, dayGridPlugin],
     })
 
-    it('computes correct offset for named timezone for View dates', function() {
+    it('computes correct offset for named timezone for View dates', () => {
       initCalendar({
         initialView: 'dayGridMonth',
         now: '2018-09-01',
         timeZone: 'Europe/Moscow',
         events: [
-          { start: '2018-09-05' }
-        ]
+          { start: '2018-09-05' },
+        ],
       })
 
       let view = currentCalendar.view
@@ -24,7 +23,5 @@ export function testTimeZoneImpl(timeZoneImplPlugin) {
       let event = currentCalendar.getEvents()[0]
       expect(event.start).toEqualDate('2018-09-05T00:00:00+03:00')
     })
-
   })
-
 }

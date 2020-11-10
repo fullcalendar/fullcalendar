@@ -1,17 +1,17 @@
-describe('Event::moveEnd', function() {
+describe('Event::moveEnd', () => {
   pushOptions({
     timeZone: 'UTC',
-    defaultTimedEventDuration: '01:00'
+    defaultTimedEventDuration: '01:00',
   })
 
-  describe('when event doesn\'t have an end', function() {
+  describe('when event doesn\'t have an end', () => {
     pushOptions({
       events: [
-        { id: '1', start: '2018-09-03T12:00:00' }
-      ]
+        { id: '1', start: '2018-09-03T12:00:00' },
+      ],
     })
 
-    it('generates a new end', function() {
+    it('generates a new end', () => {
       initCalendar()
       let event = currentCalendar.getEventById('1')
       event.moveEnd('01:00')
@@ -20,14 +20,14 @@ describe('Event::moveEnd', function() {
     })
   })
 
-  describe('when event does have an end', function() {
+  describe('when event does have an end', () => {
     pushOptions({
       events: [
-        { id: '1', start: '2018-09-03T12:00:00', end: '2018-09-03T15:00:00' }
-      ]
+        { id: '1', start: '2018-09-03T12:00:00', end: '2018-09-03T15:00:00' },
+      ],
     })
 
-    it('moves end', function() {
+    it('moves end', () => {
       initCalendar()
       let event = currentCalendar.getEventById('1')
       event.moveEnd('01:00')
@@ -35,5 +35,4 @@ describe('Event::moveEnd', function() {
       expect(event.end).toEqualDate('2018-09-03T16:00:00Z')
     })
   })
-
 })

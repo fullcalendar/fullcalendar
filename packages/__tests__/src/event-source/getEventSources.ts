@@ -1,12 +1,10 @@
-describe('getEventSources', function() {
-
-  xit('correctly retrieves event sources provided via `events` at initialization', function() {
+describe('getEventSources', () => {
+  xit('correctly retrieves event sources provided via `events` at initialization', () => {
   })
 
-  xit('correctly retrieves event sources provided via `eventSources` at initialization', function() {
+  xit('correctly retrieves event sources provided via `eventSources` at initialization', () => {
   })
 
-  xit('correctly retrieves event sources provided via `addEventSource` method', function() {
+  xit('correctly retrieves event sources provided via `addEventSource` method', () => {
   })
-
 })

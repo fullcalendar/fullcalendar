@@ -1,19 +1,19 @@
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('TimeGrid event rendering', function() {
+describe('TimeGrid event rendering', () => {
   pushOptions({
     initialDate: '2014-08-23',
     initialView: 'timeGridWeek',
-    scrollTime: '00:00:00'
+    scrollTime: '00:00:00',
   })
 
-  it('renders the start and end time of an event that spans only 1 day', function() {
+  it('renders the start and end time of an event that spans only 1 day', () => {
     let calendar = initCalendar({
-      events: [ {
+      events: [{
         title: 'event1',
         start: '2014-08-18T02:00:00',
-        end: '2014-08-18T22:00:00'
-      } ]
+        end: '2014-08-18T22:00:00',
+      }],
     })
 
     let calendarWrapper = new CalendarWrapper(calendar)
@@ -23,13 +23,13 @@ describe('TimeGrid event rendering', function() {
     expect(eventText).toBe('2:00 - 10:00')
   })
 
-  it('renders time to/from midnight for an event that spans two days', function() {
+  it('renders time to/from midnight for an event that spans two days', () => {
     let calendar = initCalendar({
-      events: [ {
+      events: [{
         title: 'event1',
         start: '2014-08-18T02:00:00',
-        end: '2014-08-19T22:00:00'
-      } ]
+        end: '2014-08-19T22:00:00',
+      }],
     })
 
     let calendarWrapper = new CalendarWrapper(calendar)
@@ -41,13 +41,13 @@ describe('TimeGrid event rendering', function() {
     expect(eventText1).toBe('12:00 - 10:00')
   })
 
-  it('renders no time on an event segment that spans through an entire day', function() {
+  it('renders no time on an event segment that spans through an entire day', () => {
     let calendar = initCalendar({
-      events: [ {
+      events: [{
         title: 'event1',
         start: '2014-08-18T02:00:00',
-        end: '2014-08-20T22:00:00'
-      } ]
+        end: '2014-08-20T22:00:00',
+      }],
     })
 
     let calendarWrapper = new CalendarWrapper(calendar)
@@ -57,12 +57,12 @@ describe('TimeGrid event rendering', function() {
     expect(eventText1).toBe('')
   })
 
-  it('renders an event with no url with no <a> href', function() {
+  it('renders an event with no url with no <a> href', () => {
     let calendar = initCalendar({
-      events: [ {
+      events: [{
         title: 'event1',
-        start: '2014-08-18T02:00:00'
-      } ]
+        start: '2014-08-18T02:00:00',
+      }],
     })
 
     let calendarWrapper = new CalendarWrapper(calendar)
@@ -71,13 +71,13 @@ describe('TimeGrid event rendering', function() {
     expect(eventEl).not.toHaveAttr('href')
   })
 
-  it('renders an event with a url with an <a> href', function() {
+  it('renders an event with a url with an <a> href', () => {
     let calendar = initCalendar({
-      events: [ {
+      events: [{
         title: 'event1',
         start: '2014-08-18T02:00:00',
-        url: 'http://google.com/'
-      } ]
+        url: 'http://google.com/',
+      }],
     })
 
     let calendarWrapper = new CalendarWrapper(calendar)
@@ -85,5 +85,4 @@ describe('TimeGrid event rendering', function() {
 
     expect(eventEl).toHaveAttr('href')
   })
-
 })

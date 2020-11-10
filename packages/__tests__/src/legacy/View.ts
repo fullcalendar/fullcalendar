@@ -1,30 +1,25 @@
-
-describe('View object', function() {
-
+describe('View object', () => {
   /*
   TODO: move tests from eventLimitClick.js about view.name/type into here
   */
 
   pushOptions({
-    initialDate: '2015-01-01'
+    initialDate: '2015-01-01',
   })
 
-  describe('title', function() {
-
-    it('is a correctly defined string', function() {
+  describe('title', () => {
+    it('is a correctly defined string', () => {
       initCalendar()
-      var view = currentCalendar.view
+      let view = currentCalendar.view
       expect(view.title).toBe('January 2015')
     })
 
-    it('is available in the viewDidMount callback', function() {
-      var viewDidMountSpy = spyOnCalendarCallback('viewDidMount', function(arg) {
+    it('is available in the viewDidMount callback', () => {
+      let viewDidMountSpy = spyOnCalendarCallback('viewDidMount', (arg) => {
         expect(arg.view.title).toBe('January 2015')
       })
       initCalendar()
       expect(viewDidMountSpy).toHaveBeenCalled()
     })
-
   })
-
 })

@@ -1,58 +1,56 @@
 import { parseUtcDate } from '../lib/date-parsing'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('now', function() {
-
+describe('now', () => {
   pushOptions({
-    initialDate: '2014-05-01'
+    initialDate: '2014-05-01',
   })
 
-  describe('when month view', function() {
+  describe('when month view', () => {
     pushOptions({
-      initialView: 'dayGridMonth'
+      initialView: 'dayGridMonth',
     })
 
-    it('changes the highlighted day when customized', function() {
+    it('changes the highlighted day when customized', () => {
       let calendar = initCalendar({
-        now: '2014-05-06'
+        now: '2014-05-06',
       })
       expectRenderedTodayDate(calendar, '2014-05-06')
     })
   })
 
-  describe('when week view', function() {
+  describe('when week view', () => {
     pushOptions({
-      initialView: 'timeGridWeek'
+      initialView: 'timeGridWeek',
     })
 
-    it('changes the highlighted day when customized', function() {
+    it('changes the highlighted day when customized', () => {
       let calendar = initCalendar({
-        now: '2014-04-29T12:00:00'
+        now: '2014-04-29T12:00:00',
       })
       expectRenderedTodayDate(calendar, '2014-04-29')
     })
   })
 
-  it('accepts a function that returns a Date', function() {
+  it('accepts a function that returns a Date', () => {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
-      now: function() {
+      now() {
         return parseUtcDate('2014-05-01')
-      }
+      },
     })
     expectRenderedTodayDate(calendar, '2014-05-01')
   })
 
-  it('accepts a function that returns a date string', function() {
+  it('accepts a function that returns a date string', () => {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
-      now: function() {
+      now() {
         return '2014-05-01'
-      }
+      },
     })
     expectRenderedTodayDate(calendar, '2014-05-01')
   })
-
 
   function expectRenderedTodayDate(calendar, expectedDate) {
     let calendarWrapper = new CalendarWrapper(calendar)
@@ -60,5 +58,4 @@ describe('now', function() {
     let todayDate = todayCell.getAttribute('data-date')
     expect(todayDate).toEqual(expectedDate)
   }
-
 })

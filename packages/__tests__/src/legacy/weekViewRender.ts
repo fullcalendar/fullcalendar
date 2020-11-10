@@ -1,17 +1,15 @@
-import { TimeGridViewWrapper } from "../lib/wrappers/TimeGridViewWrapper"
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('weekViewRender', function() {
-
+describe('weekViewRender', () => {
   const nowStr = '2018-05-28' // is a Monday
 
   pushOptions({
     now: nowStr,
-    initialView: 'timeGridWeek'
+    initialView: 'timeGridWeek',
   })
 
-  describe('verify th class for today', function() {
-
-    it('should have today class only on "today"', function() {
+  describe('verify th class for today', () => {
+    it('should have today class only on "today"', () => {
       let calendar = initCalendar()
       let headerWrapper = new TimeGridViewWrapper(calendar).header
       let cellInfo = headerWrapper.getCellInfo()

@@ -1,12 +1,12 @@
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('timeGrid view rendering', function() {
+describe('timeGrid view rendering', () => {
   pushOptions({
-    initialView: 'timeGridWeek'
+    initialView: 'timeGridWeek',
   })
 
-  it('should have have days ordered sun to sat', function() {
+  it('should have have days ordered sun to sat', () => {
     let calendar = initCalendar()
     let viewWrapper = new TimeGridViewWrapper(calendar)
     let axisEl = viewWrapper.getHeaderAxisEl()

@@ -1,7 +1,7 @@
-describe('Event::formatRange', function() {
+describe('Event::formatRange', () => {
   pushOptions({
     timeZone: 'America/New_York', // for forced timezone offsets
-    locale: 'en'
+    locale: 'en',
   })
 
   const FORMAT_SETTINGS = {
@@ -10,17 +10,17 @@ describe('Event::formatRange', function() {
     year: 'numeric',
     timeZoneName: 'short',
     separator: ' to ',
-    omitCommas: true // for cross-browser
+    omitCommas: true, // for cross-browser
   }
 
-  describe('when event has an end', function() {
+  describe('when event has an end', () => {
     pushOptions({
       events: [
-        { start: '2018-09-04T12:00:00-05:00', end: '2018-09-05T12:00:00-05:00' }
-      ]
+        { start: '2018-09-04T12:00:00-05:00', end: '2018-09-05T12:00:00-05:00' },
+      ],
     })
 
-    it('formats start and end', function() {
+    it('formats start and end', () => {
       initCalendar()
       let event = currentCalendar.getEvents()[0]
       let str = event.formatRange(FORMAT_SETTINGS)
@@ -28,19 +28,18 @@ describe('Event::formatRange', function() {
     })
   })
 
-  describe('when event has NO end', function() {
+  describe('when event has NO end', () => {
     pushOptions({
       events: [
-        { start: '2018-09-04T12:00:00-05:00' }
-      ]
+        { start: '2018-09-04T12:00:00-05:00' },
+      ],
     })
 
-    it('formats start', function() {
+    it('formats start', () => {
       initCalendar()
       let event = currentCalendar.getEvents()[0]
       let str = event.formatRange(FORMAT_SETTINGS)
       expect(str).toBe('September 4 2018 12:00 PM GMT-5')
     })
   })
-
 })

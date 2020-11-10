@@ -1,16 +1,16 @@
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('Agenda view rendering', function() {
+describe('Agenda view rendering', () => {
   pushOptions({
-    initialView: 'timeGridWeek'
+    initialView: 'timeGridWeek',
   })
 
-  describe('when LTR', function() {
+  describe('when LTR', () => {
     pushOptions({
-      direction: 'ltr'
+      direction: 'ltr',
     })
 
-    it('renders the axis on the left', function() {
+    it('renders the axis on the left', () => {
       let calendar = initCalendar()
       let viewWrapper = new TimeGridViewWrapper(calendar)
       let headerWrapper = viewWrapper.header
@@ -28,12 +28,12 @@ describe('Agenda view rendering', function() {
     })
   })
 
-  describe('when RTL', function() {
+  describe('when RTL', () => {
     pushOptions({
-      direction: 'rtl'
+      direction: 'rtl',
     })
 
-    it('renders the axis on the right', function() {
+    it('renders the axis on the right', () => {
       let calendar = initCalendar()
       let viewWrapper = new TimeGridViewWrapper(calendar)
       let headerWrapper = viewWrapper.header

@@ -2,19 +2,18 @@ import bootstrapPlugin from '@fullcalendar/bootstrap'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('buttonIcons', function() {
+describe('buttonIcons', () => {
   pushOptions({
-    plugins: [ dayGridPlugin, bootstrapPlugin ],
+    plugins: [dayGridPlugin, bootstrapPlugin],
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: 'prevYear, nextYear'
-    }
+      right: 'prevYear, nextYear',
+    },
   })
 
-  describe('when buttonIcons is not set', function() {
-
-    it('should have default values', function() {
+  describe('when buttonIcons is not set', () => {
+    it('should have default values', () => {
       let calendar = initCalendar()
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
@@ -30,17 +29,17 @@ describe('buttonIcons', function() {
     })
   })
 
-  describe('when buttonIcons is set and theme is falsy', function() {
+  describe('when buttonIcons is set and theme is falsy', () => {
     pushOptions({
       buttonIcons: {
         prev: 'some-icon-left',
         next: 'some-icon-right',
         prevYear: 'some-icon-leftYear',
-        nextYear: 'some-icon-rightYear'
-      }
+        nextYear: 'some-icon-rightYear',
+      },
     })
 
-    it('should have the set values', function() {
+    it('should have the set values', () => {
       let calendar = initCalendar()
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
@@ -55,12 +54,12 @@ describe('buttonIcons', function() {
     })
   })
 
-  describe('when theme is set', function() {
+  describe('when theme is set', () => {
     pushOptions({
-      themeSystem: 'bootstrap'
+      themeSystem: 'bootstrap',
     })
 
-    it('buttonIcons is ignored', function() {
+    it('buttonIcons is ignored', () => {
       let calendar = initCalendar()
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
       let prevButtonInfo = toolbarWrapper.getButtonInfo('prev') // NOT called with 'fa'

@@ -1,4 +1,3 @@
-
 export function formatIsoTimeZoneOffset(date) {
   let minutes = date.getTimezoneOffset()
   let sign = minutes < 0 ? '+' : '-' // whaaa
@@ -38,14 +37,13 @@ export function formatIsoWithoutTz(date) {
 }
 
 export function parseIsoAsUtc(s) {
-
   if (s.length <= 10) {
     s += 'T00:00:00Z'
   } else if (s.indexOf('Z') === -1) {
     s += 'Z'
   }
 
-  var d = new Date(s)
+  let d = new Date(s)
 
   if (isNaN(d.valueOf())) {
     throw new Error(s + ' is not valid date input')
@@ -57,11 +55,12 @@ export function parseIsoAsUtc(s) {
 export function ensureDate(input) {
   if (input instanceof Date) {
     return input
-  } else if (typeof input === 'string') {
+  }
+  if (typeof input === 'string') {
     return parseIsoAsUtc(input)
-  } else if (typeof input === 'number') {
+  }
+  if (typeof input === 'number') {
     return new Date(input)
   }
-
   throw new Error(input + ' is invalid date input')
 }

@@ -11,17 +11,18 @@ opts:
   - isEnd
 */
 export function directionallyTestSeg(opts) {
-  var dayGridWrapper = new DayGridViewWrapper(currentCalendar).dayGrid
-  var el = opts.el ? $(opts.el) : dayGridWrapper.getEventEls()[0]
+  let dayGridWrapper = new DayGridViewWrapper(currentCalendar).dayGrid
+  let el = opts.el ? $(opts.el) : dayGridWrapper.getEventEls()[0]
 
-  var row = opts.row || 0
-  var rowTds = dayGridWrapper.getDayElsInRow(row)
+  let row = opts.row || 0
+  let rowTds = dayGridWrapper.getDayElsInRow(row)
 
   expect(rowTds.length).toBeGreaterThan(1)
 
-  var leftCol = opts.firstCol
-  var rightCol = opts.lastCol
-  var col, td
+  let leftCol = opts.firstCol
+  let rightCol = opts.lastCol
+  let col
+  let td
 
   for (col = leftCol; col <= rightCol; col++) {
     td = rowTds[col]

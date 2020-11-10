@@ -1,14 +1,12 @@
 import { createPlugin, sliceEvents } from '@fullcalendar/core'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('custom view class', function() { // TODO: rename file
-
-  it('calls all standard methods with correct parameters', function() {
-
+describe('custom view class', () => { // TODO: rename file
+  it('calls all standard methods with correct parameters', () => {
     const CustomViewConfig = {
       classNames: 'awesome-view',
-      didMount: function() {},
-      willUnmount: function() {},
+      didMount() {},
+      willUnmount() {},
 
       content(props) {
         expect(props.dateProfile.activeRange.start instanceof Date).toBe(true)
@@ -36,7 +34,7 @@ describe('custom view class', function() { // TODO: rename file
         }
 
         return { html: '<div class="hello-world">hello world</div>' }
-      }
+      },
     }
 
     spyOn(CustomViewConfig, 'didMount').and.callThrough()
@@ -53,9 +51,9 @@ describe('custom view class', function() { // TODO: rename file
       plugins: [
         createPlugin({
           views: {
-            custom: CustomViewConfig
-          }
-        })
+            custom: CustomViewConfig,
+          },
+        }),
       ],
       initialView: 'custom',
       initialDate: '2014-12-25', // will end up being a single-day view
@@ -63,9 +61,9 @@ describe('custom view class', function() { // TODO: rename file
         {
           title: 'Holidays',
           start: '2014-12-25T09:00:00',
-          end: '2014-12-25T11:00:00'
-        }
-      ]
+          end: '2014-12-25T11:00:00',
+        },
+      ],
     })
     let calendarWrapper = new CalendarWrapper(calendar)
 
@@ -95,5 +93,4 @@ describe('custom view class', function() { // TODO: rename file
     expect(CustomViewConfig.content.calls.count()).toBe(0)
     expect(CustomViewConfig.willUnmount.calls.count()).toBe(1)
   })
-
 })

@@ -4,7 +4,7 @@ import { waitEventDrag } from '../lib/wrappers/interaction-util'
 import { filterVisibleEls } from '../lib/dom-misc'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
-describe('event dragging on repeating events', function() {
+describe('event dragging on repeating events', () => {
   pushOptions({
     initialView: 'dayGridMonth',
     initialDate: '2017-02-12',
@@ -13,19 +13,18 @@ describe('event dragging on repeating events', function() {
       {
         groupId: '999',
         title: 'Repeating Event',
-        start: '2017-02-09T16:00:00'
+        start: '2017-02-09T16:00:00',
       },
       {
         groupId: '999',
         title: 'Repeating Event',
-        start: '2017-02-16T16:00:00'
-      }
-    ]
+        start: '2017-02-16T16:00:00',
+      },
+    ],
   })
 
   // bug where offscreen instance of a repeating event was being incorrectly dragged
-  it('drags correct instance of event', function(done) {
-
+  it('drags correct instance of event', (done) => {
     let calendar = initCalendar()
 
     // event range needs out large (month) then scope down (week)
@@ -42,62 +41,60 @@ describe('event dragging on repeating events', function() {
     })
   })
 
-  it('hides other repeating events when dragging', function(done) {
+  it('hides other repeating events when dragging', (done) => {
     let calendar = initCalendar({
       eventDragStart() {
-        setTimeout(function() { // try go execute DURING the drag
+        setTimeout(() => { // try go execute DURING the drag
           let visibleEventEls = filterVisibleEls(dayGridWrapper.getEventEls())
           expect(visibleEventEls.length).toBe(0)
         }, 0)
       },
       eventDrop() {
-        setTimeout(function() {
+        setTimeout(() => {
           done()
         }, 10)
-      }
+      },
     })
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
     $(dayGridWrapper.getFirstEventEl()).simulate('drag', {
       dx: 100,
-      duration: 100 // ample time for separate eventDragStart/eventDrop
+      duration: 100, // ample time for separate eventDragStart/eventDrop
     })
   })
 
   // inverse of above test
-  it('doesnt accidentally hide all non-id events when dragging', function(done) {
-
+  it('doesnt accidentally hide all non-id events when dragging', (done) => {
     let calendar = initCalendar({
       events: [
         {
           title: 'Regular Event',
-          start: '2017-02-09T16:00:00'
+          start: '2017-02-09T16:00:00',
         },
         {
           title: 'Other Regular Event',
-          start: '2017-02-16T16:00:00'
-        }
+          start: '2017-02-16T16:00:00',
+        },
       ],
 
       eventDragStart() {
-        setTimeout(function() { // try go execute DURING the drag
+        setTimeout(() => { // try go execute DURING the drag
           let visibleEventEls = filterVisibleEls(dayGridWrapper.getEventEls())
           expect(visibleEventEls.length).toBe(1) // the dragging event AND the other regular event
         }, 0)
       },
 
       eventDrop() {
-        setTimeout(function() {
+        setTimeout(() => {
           done()
         }, 10)
-      }
+      },
     })
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
     $(dayGridWrapper.getFirstEventEl()).simulate('drag', {
       dx: 100,
-      duration: 100 // ample time for separate eventDragStart/eventDrop
+      duration: 100, // ample time for separate eventDragStart/eventDrop
     })
   })
-
 })

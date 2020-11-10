@@ -1,10 +1,10 @@
-import { DayGridViewWrapper } from "../lib/wrappers/DayGridViewWrapper"
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('select method', function() {
+describe('select method', () => {
   pushOptions({
     initialDate: '2014-05-25',
-    selectable: true
+    selectable: true,
   })
 
   /*
@@ -17,33 +17,30 @@ describe('select method', function() {
 
   describeOptions('direction', {
     'when LTR': 'ltr',
-    'when RTL': 'rtl'
-  }, function() {
-
-    describe('when in month view', function() {
+    'when RTL': 'rtl',
+  }, () => {
+    describe('when in month view', () => {
       pushOptions({
-        initialView: 'dayGridMonth'
+        initialView: 'dayGridMonth',
       })
 
-      describe('when called with all-day date strings', function() {
-
-        describe('when in bounds', function() {
-
-          it('renders a selection', function() {
+      describe('when called with all-day date strings', () => {
+        describe('when in bounds', () => {
+          it('renders a selection', () => {
             let calendar = initCalendar()
             calendar.select('2014-05-07', '2014-05-09')
             let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
             expect(dayGridWrapper.getHighlightEls()).toBeVisible()
           })
 
-          it('renders a selection when called with one argument', function() {
+          it('renders a selection when called with one argument', () => {
             let calendar = initCalendar()
             calendar.select('2014-05-07')
             let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
             expect(dayGridWrapper.getHighlightEls()).toBeVisible()
           })
 
-          it('fires a selection event', function() {
+          it('fires a selection event', () => {
             let selectSpy = spyOnCalendarCallback('select', (arg) => {
               expect(arg.allDay).toEqual(true)
               expect(arg.start).toEqualDate('2014-05-07')
@@ -55,9 +52,8 @@ describe('select method', function() {
           })
         })
 
-        describe('when out of bounds', function() {
-
-          it('doesn\'t render a selection', function() {
+        describe('when out of bounds', () => {
+          it('doesn\'t render a selection', () => {
             let calendar = initCalendar()
             calendar.select('2015-05-07', '2015-05-09')
             let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -80,16 +76,15 @@ describe('select method', function() {
         })
       })
 
-      describe('when called with timed date strings', function() {
-
-        it('renders a selection', function() {
+      describe('when called with timed date strings', () => {
+        it('renders a selection', () => {
           let calendar = initCalendar()
           calendar.select('2014-05-07T06:00:00', '2014-05-09T07:00:00')
           let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
           expect(dayGridWrapper.getHighlightEls()).toBeVisible()
         })
 
-        it('fires a selection event', function() {
+        it('fires a selection event', () => {
           let selectSpy = spyOnCalendarCallback('select', (arg) => {
             expect(arg.allDay).toEqual(false)
             expect(arg.start).toEqualDate('2014-05-07T06:00:00Z')
@@ -102,25 +97,23 @@ describe('select method', function() {
       })
     })
 
-    describe('when in week view', function() { // May 25 - 31
+    describe('when in week view', () => { // May 25 - 31
       pushOptions({
         initialView: 'timeGridWeek',
         scrollTime: '01:00:00', // so that most events will be below the divider
-        height: 400 // short enought to make scrolling happen
+        height: 400, // short enought to make scrolling happen
       })
 
-      describe('when called with timed date strings', function() {
-
-        describe('when in bounds', function() {
-
-          it('renders a selection when called with one argument', function() {
+      describe('when called with timed date strings', () => {
+        describe('when in bounds', () => {
+          it('renders a selection when called with one argument', () => {
             let calendar = initCalendar()
             calendar.select('2014-05-26T06:00:00')
             let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
             expect(timeGridWrapper.getHighlightEls()).toBeVisible()
           })
 
-          it('renders a selection over the slot area', function() {
+          it('renders a selection over the slot area', () => {
             let calendar = initCalendar()
             calendar.select('2014-05-26T06:00:00', '2014-05-26T08:00:00')
             let viewWrapper = new TimeGridViewWrapper(calendar)
@@ -132,9 +125,8 @@ describe('select method', function() {
           })
         })
 
-        describe('when out of bounds', function() {
-
-          it('doesn\'t render a selection', function() {
+        describe('when out of bounds', () => {
+          it('doesn\'t render a selection', () => {
             let calendar = initCalendar()
             calendar.select('2015-05-26T06:00:00', '2015-05-26T07:00:00')
             let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -157,14 +149,13 @@ describe('select method', function() {
         })
       })
 
-      describe('when called with all-day date strings', function() { // forget about in/out bounds for this :)
-
-        describe('when allDaySlot is on', function() {
+      describe('when called with all-day date strings', () => { // forget about in/out bounds for this :)
+        describe('when allDaySlot is on', () => {
           pushOptions({
-            allDaySlot: true
+            allDaySlot: true,
           })
 
-          it('renders a selection over the day area', function() {
+          it('renders a selection over the day area', () => {
             let calendar = initCalendar()
             calendar.select('2014-05-26', '2014-05-28')
             let viewWrapper = new TimeGridViewWrapper(calendar)
@@ -175,7 +166,7 @@ describe('select method', function() {
             expect(overlayTop).toBeLessThan(slotAreaTop)
           })
 
-          it('fires a selection event', function() {
+          it('fires a selection event', () => {
             let selectSpy = spyOnCalendarCallback('select', (arg) => {
               expect(arg.allDay).toEqual(true)
               expect(arg.start).toEqualDate('2014-05-26')
@@ -187,12 +178,12 @@ describe('select method', function() {
           })
         })
 
-        describe('when allDaySlot is off', function() {
+        describe('when allDaySlot is off', () => {
           pushOptions({
-            allDaySlot: false
+            allDaySlot: false,
           })
 
-          it('doesn\'t render the all-day selection over time area', function() {
+          it('doesn\'t render the all-day selection over time area', () => {
             let calendar = initCalendar()
             calendar.select('2014-05-26', '2014-05-28')
             let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid

@@ -1,25 +1,23 @@
 import { parseLocalDate } from '../lib/date-parsing'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-
-describe('the time text on events', function() {
-
-  describe('in week', function() {
+describe('the time text on events', () => {
+  describe('in week', () => {
     pushOptions({
       initialView: 'timeGridWeek',
       initialDate: '2017-07-03',
-      scrollTime: '00:00'
+      scrollTime: '00:00',
     })
 
-    it('renders segs with correct local timezone', function() {
-      var FORMAT = { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }
+    it('renders segs with correct local timezone', () => {
+      let FORMAT = { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }
 
       let calendar = initCalendar({
         timeZone: 'local',
         eventTimeFormat: FORMAT,
         events: [
-          { start: '2017-07-03T23:00:00', end: '2017-07-04T13:00:00' }
-        ]
+          { start: '2017-07-03T23:00:00', end: '2017-07-04T13:00:00' },
+        ],
       })
 
       let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -29,15 +27,14 @@ describe('the time text on events', function() {
         currentCalendar.formatRange(
           parseLocalDate('2017-07-03T23:00:00'),
           parseLocalDate('2017-07-04T00:00:00'),
-          FORMAT
+          FORMAT,
         ),
         currentCalendar.formatRange(
           parseLocalDate('2017-07-04T00:00:00'),
           parseLocalDate('2017-07-04T13:00:00'),
-          FORMAT
-        )
+          FORMAT,
+        ),
       ])
     })
   })
-
 })

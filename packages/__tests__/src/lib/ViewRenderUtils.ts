@@ -1,10 +1,8 @@
-import { formatIsoDay } from './datelib-utils'
 import { addDays } from '@fullcalendar/core'
+import { formatIsoDay } from './datelib-utils'
 import { CalendarWrapper } from './wrappers/CalendarWrapper'
 
-
 export function expectDayRange(start, end) {
-
   if (typeof start === 'string') {
     expect(start.indexOf('T')).toBe(-1)
     start = new Date(start)
@@ -15,10 +13,10 @@ export function expectDayRange(start, end) {
     end = new Date(end)
   }
 
-  var dayBefore = addDays(start, -1)
+  let dayBefore = addDays(start, -1)
   expectDay(dayBefore, false)
 
-  var date = start
+  let date = start
   while (date < end) { // eslint-disable-line
     expectDay(date, true)
     date = addDays(date, 1)
@@ -28,16 +26,14 @@ export function expectDayRange(start, end) {
   expectDay(date, false)
 }
 
-
 export function expectDay(date, bool) {
-
   if (typeof date === 'string') {
     expect(date.indexOf('T')).toBe(-1)
     date = new Date(date)
   }
 
-  var calendarWrapper = new CalendarWrapper(currentCalendar)
-  var dayEl = calendarWrapper.getDateCellEl(formatIsoDay(date))
+  let calendarWrapper = new CalendarWrapper(currentCalendar)
+  let dayEl = calendarWrapper.getDateCellEl(formatIsoDay(date))
 
   if (bool) {
     expect(dayEl).toBeTruthy()

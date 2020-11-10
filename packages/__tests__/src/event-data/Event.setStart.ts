@@ -1,19 +1,19 @@
-describe('Event::setStart', function() {
+describe('Event::setStart', () => {
   pushOptions({
     now: '2018-09-03',
     timeZone: 'UTC',
-    defaultTimedEventDuration: '01:00'
+    defaultTimedEventDuration: '01:00',
   })
 
-  describe('when event doesn\'t have an end', function() {
+  describe('when event doesn\'t have an end', () => {
     pushOptions({
       events: [
-        { id: '1', start: '2018-09-05T00:00:00' }
-      ]
+        { id: '1', start: '2018-09-05T00:00:00' },
+      ],
     })
 
-    describe('when not maintaining duration', function() {
-      it('moves start and gives event an end', function() {
+    describe('when not maintaining duration', () => {
+      it('moves start and gives event an end', () => {
         initCalendar()
         let event = currentCalendar.getEventById('1')
         event.setStart('2018-09-01')
@@ -22,8 +22,8 @@ describe('Event::setStart', function() {
       })
     })
 
-    describe('when maintaining duration', function() {
-      it('moves start and keeps no end', function() {
+    describe('when maintaining duration', () => {
+      it('moves start and keeps no end', () => {
         initCalendar()
         let event = currentCalendar.getEventById('1')
         event.setStart('2018-09-01', { maintainDuration: true })
@@ -31,18 +31,17 @@ describe('Event::setStart', function() {
         expect(event.end).toBe(null)
       })
     })
-
   })
 
-  describe('when event does have an end', function() {
+  describe('when event does have an end', () => {
     pushOptions({
       events: [
-        { id: '1', start: '2018-09-05T00:00:00', end: '2018-09-07T00:00:00' }
-      ]
+        { id: '1', start: '2018-09-05T00:00:00', end: '2018-09-07T00:00:00' },
+      ],
     })
 
-    describe('when not maintaining duration', function() {
-      it('moves start and keeps the same end', function() {
+    describe('when not maintaining duration', () => {
+      it('moves start and keeps the same end', () => {
         initCalendar()
         let event = currentCalendar.getEventById('1')
         event.setStart('2018-09-01')
@@ -51,8 +50,8 @@ describe('Event::setStart', function() {
       })
     })
 
-    describe('when maintaining duration', function() {
-      it('move start and keeps the end', function() {
+    describe('when maintaining duration', () => {
+      it('move start and keeps the end', () => {
         initCalendar()
         let event = currentCalendar.getEventById('1')
         event.setStart('2018-09-01', { maintainDuration: true })
@@ -60,18 +59,17 @@ describe('Event::setStart', function() {
         expect(event.end).toEqualDate('2018-09-03')
       })
     })
-
   })
 
-  describe('when event is all-day', function() {
+  describe('when event is all-day', () => {
     pushOptions({
       events: [
-        { id: '1', start: '2018-09-05', end: '2018-09-07', allDay: true }
-      ]
+        { id: '1', start: '2018-09-05', end: '2018-09-07', allDay: true },
+      ],
     })
 
-    describe('when setting start to another all-day', function() {
-      it('moves start', function() {
+    describe('when setting start to another all-day', () => {
+      it('moves start', () => {
         initCalendar()
         let event = currentCalendar.getEventById('1')
         event.setStart('2018-09-01')
@@ -81,8 +79,8 @@ describe('Event::setStart', function() {
       })
     })
 
-    describe('when setting start to timed', function() {
-      it('moves start to rounded-down start-of-day', function() {
+    describe('when setting start to timed', () => {
+      it('moves start to rounded-down start-of-day', () => {
         initCalendar()
         let event = currentCalendar.getEventById('1')
         event.setStart('2018-09-01T23:00:00')
@@ -91,15 +89,14 @@ describe('Event::setStart', function() {
         expect(event.allDay).toBe(true)
       })
     })
-
   })
 
-  it('shortens related events of different duration by same delta', function() {
+  it('shortens related events of different duration by same delta', () => {
     initCalendar({
       events: [
         { id: '1', groupId: 'a', start: '2018-09-05T00:00:00', end: '2018-09-10T00:00:00' },
-        { id: '2', groupId: 'a', start: '2018-09-06T00:00:00', end: '2018-09-09T00:00:00' }
-      ]
+        { id: '2', groupId: 'a', start: '2018-09-06T00:00:00', end: '2018-09-09T00:00:00' },
+      ],
     })
 
     let event1 = currentCalendar.getEventById('1')
@@ -111,5 +108,4 @@ describe('Event::setStart', function() {
     expect(event2.start).toEqualDate('2018-09-02')
     expect(event2.end).toEqualDate('2018-09-09')
   })
-
 })

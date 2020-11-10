@@ -1,15 +1,15 @@
-describe('Event::setDates', function() {
+describe('Event::setDates', () => {
   pushOptions({
     now: '2018-09-03',
     timeZone: 'UTC',
     defaultTimedEventDuration: '01:00',
     events: [
-      { id: '1', start: '2018-09-05T12:00:00' }
-    ]
+      { id: '1', start: '2018-09-05T12:00:00' },
+    ],
   })
 
-  describe('when setting different start', function() {
-    it('changes start and gives it an end', function() {
+  describe('when setting different start', () => {
+    it('changes start and gives it an end', () => {
       initCalendar()
       let event = currentCalendar.getEventById('1')
       event.setDates('2018-09-05T14:00:00', '2018-09-05T16:00:00')
@@ -18,8 +18,8 @@ describe('Event::setDates', function() {
     })
   })
 
-  describe('when setting same start and end', function() {
-    it('changes nothing and end remains null', function() {
+  describe('when setting same start and end', () => {
+    it('changes nothing and end remains null', () => {
       initCalendar()
       let event = currentCalendar.getEventById('1')
       event.setDates('2018-09-05T12:00:00', '2018-09-05T13:00:00')
@@ -28,8 +28,8 @@ describe('Event::setDates', function() {
     })
   })
 
-  describe('when setting different end', function() {
-    it('changes end and gives it an end', function() {
+  describe('when setting different end', () => {
+    it('changes end and gives it an end', () => {
       initCalendar()
       let event = currentCalendar.getEventById('1')
       event.setDates('2018-09-05T12:00:00', '2018-09-05T18:00:00')
@@ -38,9 +38,9 @@ describe('Event::setDates', function() {
     })
   })
 
-  describe('when setting different start AND end', function() {
-    describe('if duration is effectively the same', function() {
-      it('changes start and leaves end null', function() {
+  describe('when setting different start AND end', () => {
+    describe('if duration is effectively the same', () => {
+      it('changes start and leaves end null', () => {
         initCalendar()
         let event = currentCalendar.getEventById('1')
         event.setDates('2018-09-06T01:00:00', '2018-09-06T02:00:00')
@@ -50,14 +50,14 @@ describe('Event::setDates', function() {
     })
   })
 
-  describe('when called with a null end', function() {
+  describe('when called with a null end', () => {
     pushOptions({
       events: [
-        { id: '1', start: '2018-09-05T12:00:00', end: '2018-09-05T14:00:00' }
-      ]
+        { id: '1', start: '2018-09-05T12:00:00', end: '2018-09-05T14:00:00' },
+      ],
     })
 
-    it('clears the end', function() {
+    it('clears the end', () => {
       initCalendar()
       let event = currentCalendar.getEventById('1')
       event.setDates('2018-09-06T01:00:00', null)
@@ -66,7 +66,7 @@ describe('Event::setDates', function() {
     })
   })
 
-  it('can set allDay to true', function() {
+  it('can set allDay to true', () => {
     initCalendar() // { id: '1', start: '2018-09-05T12:00:00' }
     let event = currentCalendar.getEventById('1')
     event.setDates('2018-09-06', '2018-09-10', { allDay: true })
@@ -75,11 +75,11 @@ describe('Event::setDates', function() {
     expect(event.allDay).toBe(true)
   })
 
-  it('can set allDay to false', function() {
+  it('can set allDay to false', () => {
     initCalendar({
       events: [
-        { id: '1', start: '2018-09-05', end: '2018-09-08' }
-      ]
+        { id: '1', start: '2018-09-05', end: '2018-09-08' },
+      ],
     })
 
     let event = currentCalendar.getEventById('1')
@@ -89,12 +89,12 @@ describe('Event::setDates', function() {
     expect(event.allDay).toBe(false)
   })
 
-  it('shortens related events of different duration by same delta', function() {
+  it('shortens related events of different duration by same delta', () => {
     initCalendar({
       events: [
         { id: '1', groupId: 'a', start: '2018-09-03', end: '2018-09-05' },
-        { id: '2', groupId: 'a', start: '2018-09-13', end: '2018-09-15' }
-      ]
+        { id: '2', groupId: 'a', start: '2018-09-13', end: '2018-09-15' },
+      ],
     })
 
     let event1 = currentCalendar.getEventById('1')
@@ -106,5 +106,4 @@ describe('Event::setDates', function() {
     expect(event2.start).toEqualDate('2018-09-12')
     expect(event2.end).toEqualDate('2018-09-16')
   })
-
 })

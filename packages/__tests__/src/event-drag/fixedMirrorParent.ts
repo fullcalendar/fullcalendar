@@ -1,19 +1,19 @@
-import { DayGridViewWrapper } from "../lib/wrappers/DayGridViewWrapper"
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('fixedMirrorParent', function() {
+describe('fixedMirrorParent', () => {
   pushOptions({
     initialView: 'dayGridMonth',
-    initialDate: '2020-10-26'
+    initialDate: '2020-10-26',
   })
 
-  it('changes the mirror\'s parent element', function(done) {
+  it('changes the mirror\'s parent element', (done) => {
     let calendar = initCalendar({
       editable: true,
       fixedMirrorParent: document.body,
       events: [
-        { start: '2020-10-04' }
-      ]
+        { start: '2020-10-04' },
+      ],
     })
 
     let wrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -27,7 +27,7 @@ describe('fixedMirrorParent', function() {
       },
       onRelease() {
         done()
-      }
+      },
     })
   })
 })

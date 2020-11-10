@@ -1,4 +1,3 @@
-
 /*
 Some hours don't exist in local time when a daylight-savings shift happpens.
 This time is called a "dead zone".
@@ -10,10 +9,10 @@ I apologize for the unreadability of this code. It was written a long time ago:
 https://github.com/arshaw/xdate/blob/master/test/old.js
 */
 export function getDSTDeadZone() {
-  var dstDates = getDSTDates()
+  let dstDates = getDSTDates()
 
   if (dstDates) {
-    var prior = new Date(dstDates[0].valueOf() - 1)
+    let prior = new Date(dstDates[0].valueOf() - 1)
 
     if (Math.abs(dstDates[0].getHours() - prior.getHours()) > 1) {
       return [prior, dstDates[0]]
@@ -28,16 +27,16 @@ export function getDSTDeadZone() {
 }
 
 function getDSTDates() {
-  var MS_DAY = 86400000
-  var res = []
-  var d0 = new Date()
-  var overAYear = new Date(+d0)
+  let MS_DAY = 86400000
+  let res = []
+  let d0 = new Date()
+  let overAYear = new Date(+d0)
 
   overAYear.setFullYear(overAYear.getFullYear() + 1)
   overAYear = new Date(overAYear.valueOf() + MS_DAY)
 
   while (d0 < overAYear) {
-    var d1 = new Date(d0.valueOf() + MS_DAY)
+    let d1 = new Date(d0.valueOf() + MS_DAY)
     if (d0.getTimezoneOffset() !== d1.getTimezoneOffset()) {
       res.push(new Date(narrowDSTDate(+d0, +d1)))
       if (res.length === 2) {
@@ -55,14 +54,14 @@ function narrowDSTDate(start, end) {
     return end
   }
 
-  var mid = start + Math.floor((end - start) / 2)
-  var midTZO = new Date(mid).getTimezoneOffset()
-  var startTZO = new Date(start).getTimezoneOffset()
-  var endTZO = new Date(end).getTimezoneOffset()
+  let mid = start + Math.floor((end - start) / 2)
+  let midTZO = new Date(mid).getTimezoneOffset()
+  let startTZO = new Date(start).getTimezoneOffset()
+  let endTZO = new Date(end).getTimezoneOffset()
 
   if (midTZO === startTZO) {
     return narrowDSTDate(mid, end)
-  } else if (midTZO === endTZO) {
+  } if (midTZO === endTZO) {
     return narrowDSTDate(start, mid)
   }
 }

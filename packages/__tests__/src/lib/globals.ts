@@ -2,18 +2,23 @@ import { Calendar, CalendarOptions, createPlugin } from '@fullcalendar/core'
 import { __assign } from 'tslib'
 import { parseLocalDate, parseUtcDate } from './date-parsing'
 
+// Other Important Global Stuff
+// ---------------------------------------------------------------------------------------------------------------------
+
+import './hacks'
+import './simulate'
+import './date-matchers'
 
 // Setup / Teardown
 // ---------------------------------------------------------------------------------------------------------------------
 
-var optionsStack = null
+let optionsStack = null
 
-
-beforeEach(function() {
+beforeEach(() => {
   optionsStack = []
 })
 
-afterEach(function() {
+afterEach(() => {
   optionsStack = null
 
   if (window.currentCalendar) {
@@ -24,22 +29,19 @@ afterEach(function() {
   $('#calendar').remove()
 })
 
-
 // Calendar Options and Initialization
 // ---------------------------------------------------------------------------------------------------------------------
 
 function pushOptions(options: CalendarOptions) {
-  beforeEach(function() {
-    return optionsStack.push(options)
-  })
+  beforeEach(() => optionsStack.push(options))
 }
 
 // called within an `it`
 // needs to be called *before* initCalendar
 function spyOnCalendarCallback(name, func?) {
-  var options = {} as any
+  let options = {} as any
 
-  options[name] = func || function() {}
+  options[name] = func || function () {}
   spyOn(options, name).and.callThrough()
 
   optionsStack.push(options)
@@ -48,7 +50,7 @@ function spyOnCalendarCallback(name, func?) {
 }
 
 function initCalendar(moreOptions?: CalendarOptions, el?) {
-  var $el
+  let $el
 
   if (moreOptions) {
     optionsStack.push(moreOptions)
@@ -64,18 +66,18 @@ function initCalendar(moreOptions?: CalendarOptions, el?) {
     window.currentCalendar.destroy()
   }
 
-  var options = getCurrentOptions()
-  var newCalendar = null
+  let options = getCurrentOptions()
+  let newCalendar = null
 
   options.plugins = options.plugins.concat([
     createPlugin({
       contextInit(context) {
         newCalendar = window.currentCalendar = context.calendarApi as Calendar
-      }
-    })
+      },
+    }),
   ])
 
-  var cool = new Calendar($el[0], options)
+  let cool = new Calendar($el[0], options)
 
   if (newCalendar === window.currentCalendar) {
     newCalendar.render()
@@ -87,10 +89,9 @@ function initCalendar(moreOptions?: CalendarOptions, el?) {
 }
 
 function getCurrentOptions() {
-  let args = [ {} ].concat(optionsStack) as any
+  let args = [{}].concat(optionsStack) as any
   return $.extend.apply($, args)
 }
-
 
 // Categorizing Tests
 // ---------------------------------------------------------------------------------------------------------------------
@@ -108,8 +109,8 @@ function describeOptions(optName, hash?, callback?) {
 
   $.each(
     hash,
-    function(desc, val) {
-      var opts
+    (desc, val) => {
+      let opts
 
       if (optName) {
         opts = {}
@@ -119,11 +120,11 @@ function describeOptions(optName, hash?, callback?) {
       }
       opts = $.extend(true, {}, opts)
 
-      describe(desc as string, function() {
+      describe(desc as string, () => {
         pushOptions(opts)
         callback(val)
       })
-    }
+    },
   )
 }
 
@@ -133,14 +134,13 @@ function describeValues(hash, callback) {
     /**
      * @param desc {string}
      */
-    function(desc, val) {
-      describe(desc as string, function() {
+    (desc, val) => {
+      describe(desc as string, () => {
         callback(val)
       })
-    }
+    },
   )
 }
-
 
 // Timezone Tests (needed?)
 // ---------------------------------------------------------------------------------------------------------------------
@@ -149,20 +149,20 @@ const timeZoneScenarios = {
   local: {
     description: 'when local timezone',
     value: 'local',
-    parseDate: parseLocalDate
+    parseDate: parseLocalDate,
   },
   UTC: {
     description: 'when UTC timezone',
     value: 'UTC',
-    parseDate: parseUtcDate
-  }
+    parseDate: parseUtcDate,
+  },
 }
 
 function describeTimeZones(callback) {
-  $.each(timeZoneScenarios, function(name, scenario) {
-    describe(scenario.description, function() {
+  $.each(timeZoneScenarios, (name, scenario) => {
+    describe(scenario.description, () => {
       pushOptions({
-        timeZone: name
+        timeZone: name,
       })
       callback(scenario)
     })
@@ -170,24 +170,23 @@ function describeTimeZones(callback) {
 }
 
 function describeTimeZone(name, callback) {
-  var scenario = timeZoneScenarios[name]
+  let scenario = timeZoneScenarios[name]
 
-  describe(scenario.description, function() {
+  describe(scenario.description, () => {
     pushOptions({
-      timeZone: name
+      timeZone: name,
     })
     callback(scenario)
   })
 }
 
-
 // Misc
 // ---------------------------------------------------------------------------------------------------------------------
 
 function oneCall(func) {
-  var called
+  let called
   called = false
-  return function() {
+  return function () {
     if (!called) {
       called = true
       return func.apply(this, arguments)
@@ -196,17 +195,17 @@ function oneCall(func) {
 }
 
 function spyOnMethod(Class, methodName, dontCallThrough) {
-  var origMethod = Class.prototype.hasOwnProperty(methodName) // eslint-disable-line no-prototype-builtins
+  let origMethod = Class.prototype.hasOwnProperty(methodName) // eslint-disable-line no-prototype-builtins
     ? Class.prototype[methodName]
     : null
 
-  var spy = spyOn(Class.prototype, methodName)
+  let spy = spyOn(Class.prototype, methodName)
 
   if (!dontCallThrough) {
     spy = spy.and.callThrough()
   }
 
-  spy['restore'] = function() {
+  spy.restore = function () {
     if (origMethod) {
       Class.prototype[methodName] = origMethod
     } else {
@@ -219,12 +218,11 @@ function spyOnMethod(Class, methodName, dontCallThrough) {
 
 // wraps an existing function in a spy, calling through to the function
 function spyCall(func?) {
-  func = func || function() {}
+  func = func || function () {}
   const obj = { func }
   spyOn(obj, 'func').and.callThrough()
   return obj.func
 }
-
 
 type spyOnCalendarCallbackType = typeof spyOnCalendarCallback
 type pushOptionsType = typeof pushOptions
@@ -308,18 +306,10 @@ __assign(window, {
   describeTimeZone,
   oneCall,
   spyOnMethod,
-  spyCall
+  spyCall,
 })
-
-
-// Other Important Global Stuff
-// ---------------------------------------------------------------------------------------------------------------------
-
-import './hacks'
-import './simulate'
-import './date-matchers'
 
 pushOptions({
   timeZone: 'UTC',
-  eventDisplay: 'auto'
+  eventDisplay: 'auto',
 })

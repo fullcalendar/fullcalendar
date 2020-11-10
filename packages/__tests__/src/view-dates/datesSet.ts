@@ -1,20 +1,20 @@
 import { Calendar } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
-describe('datesSet', function() {
+describe('datesSet', () => {
   pushOptions({
     initialView: 'dayGridMonth',
-    now: '2020-06-21'
+    now: '2020-06-21',
   })
 
-  it('won\'t fire when a non-dateprofile-related option is reset', function() {
+  it('won\'t fire when a non-dateprofile-related option is reset', () => {
     let fireCnt = 0
     let options = {
       ...getCurrentOptions(),
       weekNumbers: false,
       datesSet() {
         fireCnt++
-      }
+      },
     }
     let $calendarEl = $('<div>').appendTo('body')
     let calendar = new Calendar($calendarEl[0], options)
@@ -22,17 +22,17 @@ describe('datesSet', function() {
     expect(fireCnt).toBe(1)
     calendar.resetOptions({
       ...options,
-      weekNumbers: true
+      weekNumbers: true,
     })
     expect(fireCnt).toBe(1)
     calendar.destroy()
     $calendarEl.remove()
   })
 
-  it('won\'t fire when a complex object-like option is reset', function() {
+  it('won\'t fire when a complex object-like option is reset', () => {
     function buildHeaderToolbar() {
       return {
-        left: 'today'
+        left: 'today',
       }
     }
     let fireCnt = 0
@@ -41,7 +41,7 @@ describe('datesSet', function() {
       headerToolbar: buildHeaderToolbar(),
       datesSet() {
         fireCnt++
-      }
+      },
     }
     let $calendarEl = $('<div>').appendTo('body')
     let calendar = new Calendar($calendarEl[0], options)
@@ -49,21 +49,21 @@ describe('datesSet', function() {
     expect(fireCnt).toBe(1)
     calendar.resetOptions({
       ...options,
-      headerToolbar: buildHeaderToolbar()
+      headerToolbar: buildHeaderToolbar(),
     })
     expect(fireCnt).toBe(1)
     calendar.destroy()
     $calendarEl.remove()
   })
 
-  it('won\'t fire when plugins option is reset', function() {
+  it('won\'t fire when plugins option is reset', () => {
     let fireCnt = 0
     let options = {
       ...getCurrentOptions(),
-      plugins: [ dayGridPlugin ],
+      plugins: [dayGridPlugin],
       datesSet() {
         fireCnt++
-      }
+      },
     }
     let $calendarEl = $('<div>').appendTo('body')
     let calendar = new Calendar($calendarEl[0], options)
@@ -71,11 +71,10 @@ describe('datesSet', function() {
     expect(fireCnt).toBe(1)
     calendar.resetOptions({
       ...options,
-      plugins: [ dayGridPlugin ]
+      plugins: [dayGridPlugin],
     })
     expect(fireCnt).toBe(1)
     calendar.destroy()
     $calendarEl.remove()
   })
-
 })

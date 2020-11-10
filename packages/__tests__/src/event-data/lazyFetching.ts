@@ -1,22 +1,21 @@
-
-describe('lazyFetching', function() {
+describe('lazyFetching', () => {
   pushOptions({
     timeZone: 'UTC',
     initialView: 'dayGridMonth',
-    initialDate: '2017-10-04'
+    initialDate: '2017-10-04',
   })
 
-  describe('when on', function() {
+  describe('when on', () => {
     pushOptions({
-      lazyFetching: true
+      lazyFetching: true,
     })
 
-    it('won\'t fetch weeks already queried', function() {
-      var arg
-      var options = {
-        events: function(arg, callback) {
+    it('won\'t fetch weeks already queried', () => {
+      let arg
+      let options = {
+        events(arg, callback) {
           callback([])
-        }
+        },
       }
       spyOn(options, 'events').and.callThrough()
 
@@ -34,17 +33,17 @@ describe('lazyFetching', function() {
     })
   })
 
-  describe('when off', function() {
+  describe('when off', () => {
     pushOptions({
-      lazyFetching: false
+      lazyFetching: false,
     })
 
-    it('will fetch each new week range', function() {
-      var arg
-      var options = {
-        events: function(arg, callback) {
+    it('will fetch each new week range', () => {
+      let arg
+      let options = {
+        events(arg, callback) {
           callback([])
-        }
+        },
       }
       spyOn(options, 'events')
 

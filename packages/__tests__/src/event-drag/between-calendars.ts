@@ -7,13 +7,14 @@ import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-
-describe('dragging events between calendars', function() {
+describe('dragging events between calendars', () => {
   let DEFAULT_DATE = '2019-01-01'
-  let el0, el1
-  let calendar0, calendar1
+  let el0
+  let el1
+  let calendar0
+  let calendar1
 
-  beforeEach(function() {
+  beforeEach(() => {
     el0 = document.createElement('div')
     el1 = document.createElement('div')
 
@@ -24,7 +25,7 @@ describe('dragging events between calendars', function() {
     document.body.appendChild(el1)
   })
 
-  afterEach(function() {
+  afterEach(() => {
     if (calendar0) {
       calendar0.destroy()
     }
@@ -37,30 +38,30 @@ describe('dragging events between calendars', function() {
     document.body.removeChild(el1)
   })
 
-  it('fires all triggers', function(done) {
+  it('fires all triggers', (done) => {
     let triggerNames = []
     let eventAllowCalled = false
 
     calendar0 = new Calendar(el0, {
-      plugins: [ interactionPlugin, dayGridPlugin ],
+      plugins: [interactionPlugin, dayGridPlugin],
       timeZone: 'UTC',
       initialDate: DEFAULT_DATE,
       initialView: 'dayGridMonth',
       editable: true,
       events: [
-        { start: '2019-01-01', id: 'a' }
+        { start: '2019-01-01', id: 'a' },
       ],
-      eventLeave: function(info) {
+      eventLeave(info) {
         triggerNames.push('eventLeave')
         expect(info.draggedEl).toBe(eventEl)
         expect(info.event.id).toBe('a')
         expect(typeof info.revert).toBe('function')
         expect(Array.isArray(info.relatedEvents)).toBe(true)
-      }
+      },
     })
 
     calendar1 = new Calendar(el1, {
-      plugins: [ interactionPlugin, dayGridPlugin ],
+      plugins: [interactionPlugin, dayGridPlugin],
       timeZone: 'UTC',
       initialDate: DEFAULT_DATE,
       initialView: 'dayGridMonth',
@@ -83,7 +84,7 @@ describe('dragging events between calendars', function() {
         expect(info.event.start).toEqualDate('2019-01-05')
         expect(typeof info.revert).toBe('function')
         expect(Array.isArray(info.relatedEvents)).toBe(true)
-      }
+      },
     })
 
     calendar0.render()
@@ -98,39 +99,38 @@ describe('dragging events between calendars', function() {
 
     $(eventEl).simulate('drag', {
       end: point1,
-      callback: function() {
-        expect(triggerNames).toEqual([ 'eventLeave', 'drop', 'eventReceive' ])
+      callback() {
+        expect(triggerNames).toEqual(['eventLeave', 'drop', 'eventReceive'])
         expect(eventAllowCalled).toBe(true)
         done()
-      }
+      },
     })
   })
 
-  it('works between timeGrid views', function(done) {
-
+  it('works between timeGrid views', (done) => {
     calendar0 = new Calendar(el0, {
-      plugins: [ interactionPlugin, timeGridPlugin ],
+      plugins: [interactionPlugin, timeGridPlugin],
       scrollTime: '00:00',
       timeZone: 'UTC',
       initialDate: DEFAULT_DATE,
       initialView: 'timeGridDay',
       editable: true,
       events: [
-        { start: '2019-01-01T00:00:00', id: 'a' }
-      ]
+        { start: '2019-01-01T00:00:00', id: 'a' },
+      ],
     })
 
     calendar1 = new Calendar(el1, {
-      plugins: [ interactionPlugin, timeGridPlugin ],
+      plugins: [interactionPlugin, timeGridPlugin],
       scrollTime: '00:00',
       timeZone: 'UTC',
       initialDate: DEFAULT_DATE,
       initialView: 'timeGridDay',
       editable: true,
       droppable: true,
-      eventReceive: function(info) {
+      eventReceive(info) {
         done()
-      }
+      },
     })
 
     calendar0.render()
@@ -141,8 +141,7 @@ describe('dragging events between calendars', function() {
     let point1 = getRectCenter(destViewWrapper.getScrollerEl().getBoundingClientRect())
 
     $(eventEl).simulate('drag', {
-      end: point1
+      end: point1,
     })
   })
-
 })

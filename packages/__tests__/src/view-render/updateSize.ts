@@ -1,12 +1,11 @@
-import { CalendarWrapper } from "../lib/wrappers/CalendarWrapper"
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('updateSize method', function() {
-
-  it('updates size of a previously hidden element', function() {
+describe('updateSize method', () => {
+  it('updates size of a previously hidden element', () => {
     let $el = $('<div style="display:none" />').appendTo('body')
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
-      contentHeight: 600
+      contentHeight: 600,
     }, $el)
     let calendarWrapper = new CalendarWrapper(calendar)
 
@@ -16,5 +15,4 @@ describe('updateSize method', function() {
 
     $el.remove()
   })
-
 })

@@ -1,20 +1,18 @@
-
-describe('Event Object parsing', function() {
-
-  it('records _id as an extended prop', function() {
+describe('Event Object parsing', () => {
+  it('records _id as an extended prop', () => {
     initCalendar({
       initialDate: '2017-09-05',
       initialView: 'dayGridMonth',
       events: [
-        { _id: 'a', start: '2017-09-05' }
-      ]
+        { _id: 'a', start: '2017-09-05' },
+      ],
     })
 
-    var events = currentCalendar.getEvents()
+    let events = currentCalendar.getEvents()
     expect(events[0].extendedProps._id).toBe('a')
   })
 
-  it('parses an all-day event with timed same-day start/end', function() {
+  it('parses an all-day event with timed same-day start/end', () => {
     initCalendar({
       initialView: 'dayGridMonth',
       initialDate: '2017-11-01',
@@ -24,9 +22,9 @@ describe('Event Object parsing', function() {
           title: 'All Day with time',
           allDay: true,
           start: new Date(2017, 10, 1, 10, 0, 0),
-          end: new Date(2017, 10, 1, 18, 0, 0) // same-day. will result in null
-        }
-      ]
+          end: new Date(2017, 10, 1, 18, 0, 0), // same-day. will result in null
+        },
+      ],
     })
 
     let events = currentCalendar.getEvents()
@@ -35,19 +33,18 @@ describe('Event Object parsing', function() {
     expect(events[0].end).toBe(null)
   })
 
-  xit('won\'t accept two events with the same ID', function() {
+  xit('won\'t accept two events with the same ID', () => {
     initCalendar({
       initialView: 'dayGridDay',
       initialDate: '2018-01-01',
       events: [
         { id: '1', start: '2018-01-01', title: 'cool' },
-        { id: '1', start: '2018-01-01' }
-      ]
+        { id: '1', start: '2018-01-01' },
+      ],
     })
 
     let events = currentCalendar.getEvents()
     expect(events.length).toBe(1)
     expect(events[0].title).toBe('cool')
   })
-
 })

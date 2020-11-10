@@ -1,28 +1,25 @@
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
-
-describe('validRange event dragging', function() {
-
-  describe('when start constraint', function() {
-
-    describe('when in month view', function() {
+describe('validRange event dragging', () => {
+  describe('when start constraint', () => {
+    describe('when in month view', () => {
       pushOptions({
         initialView: 'dayGridMonth',
         initialDate: '2017-06-01',
         validRange: { start: '2017-06-06' },
         events: [
-          { start: '2017-06-07', end: '2017-06-10' }
+          { start: '2017-06-07', end: '2017-06-10' },
         ],
-        editable: true
+        editable: true,
       })
 
-      it('won\'t go before validRange', function(done) {
+      it('won\'t go before validRange', (done) => {
         let modifiedEvent: any = false
 
         let calendar = initCalendar({
           eventDrop(arg) {
             modifiedEvent = arg.event
-          }
+          },
         })
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
@@ -31,32 +28,31 @@ describe('validRange event dragging', function() {
           callback() {
             expect(modifiedEvent).toBe(false)
             done()
-          }
+          },
         })
       })
     })
   })
 
-  describe('when end constraint', function() {
-
-    describe('when in month view', function() {
+  describe('when end constraint', () => {
+    describe('when in month view', () => {
       pushOptions({
         initialView: 'dayGridMonth',
         initialDate: '2017-06-01',
         validRange: { end: '2017-06-09' },
         events: [
-          { start: '2017-06-04', end: '2017-06-07' }
+          { start: '2017-06-04', end: '2017-06-07' },
         ],
-        editable: true
+        editable: true,
       })
 
-      it('won\'t go after validRange', function(done) {
+      it('won\'t go after validRange', (done) => {
         let modifiedEvent: any = false
 
         let calendar = initCalendar({
           eventDrop(arg) {
             modifiedEvent = arg.event
-          }
+          },
         })
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
@@ -65,7 +61,7 @@ describe('validRange event dragging', function() {
           callback() {
             expect(modifiedEvent).toBe(false)
             done()
-          }
+          },
         })
       })
     })

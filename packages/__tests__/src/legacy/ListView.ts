@@ -1,29 +1,28 @@
 import frLocale from '@fullcalendar/core/locales/fr'
 import { ListViewWrapper } from '../lib/wrappers/ListViewWrapper'
 
-describe('ListView rendering', function() {
+describe('ListView rendering', () => {
   pushOptions({
     initialView: 'listWeek',
-    now: '2016-08-20'
+    now: '2016-08-20',
   })
 
-  describe('with all-day events', function() {
-
-    describe('when single-day', function() {
+  describe('with all-day events', () => {
+    describe('when single-day', () => {
       pushOptions({
         events: [
           {
             title: 'event 1',
-            start: '2016-08-15'
+            start: '2016-08-15',
           },
           {
             title: 'event 2',
-            start: '2016-08-17'
-          }
-        ]
+            start: '2016-08-17',
+          },
+        ],
       })
 
-      it('renders only days with events', function() {
+      it('renders only days with events', () => {
         let calendar = initCalendar()
 
         let viewWrapper = new ListViewWrapper(calendar)
@@ -41,25 +40,25 @@ describe('ListView rendering', function() {
         expect(events[1].timeText).toBe('all-day')
       })
 
-      it('filters events through event hook', function() {
+      it('filters events through event hook', () => {
         let eventMountCnt = 0
 
         initCalendar({
           eventDidMount() {
             eventMountCnt++
-          }
+          },
         })
 
         expect(eventMountCnt).toBe(2)
       })
 
-      it('filters events through eventWillUnmount', function() {
+      it('filters events through eventWillUnmount', () => {
         let callCnt = 0
 
         initCalendar({
           eventWillUnmount() {
             callCnt++
-          }
+          },
         })
 
         currentCalendar.destroy()
@@ -67,18 +66,18 @@ describe('ListView rendering', function() {
       })
     })
 
-    describe('when multi-day', function() {
+    describe('when multi-day', () => {
       pushOptions({
         events: [
           {
             title: 'event 1',
             start: '2016-08-15',
-            end: '2016-08-18' // 3 days
-          }
-        ]
+            end: '2016-08-18', // 3 days
+          },
+        ],
       })
 
-      it('renders all-day for every day', function() {
+      it('renders all-day for every day', () => {
         let calendar = initCalendar()
         let viewWrapper = new ListViewWrapper(calendar)
         let events = viewWrapper.getEventInfo()
@@ -94,24 +93,23 @@ describe('ListView rendering', function() {
     })
   })
 
-  describe('with timed events', function() {
-
-    describe('when single-day', function() {
+  describe('with timed events', () => {
+    describe('when single-day', () => {
       pushOptions({
         events: [
           {
             title: 'event 1',
-            start: '2016-08-15T07:00'
+            start: '2016-08-15T07:00',
           },
           {
             title: 'event 2',
             start: '2016-08-17T09:00',
-            end: '2016-08-17T11:00'
-          }
-        ]
+            end: '2016-08-17T11:00',
+          },
+        ],
       })
 
-      it('renders times', function() {
+      it('renders times', () => {
         let calendar = initCalendar()
         let viewWrapper = new ListViewWrapper(calendar)
         let events = viewWrapper.getEventInfo()
@@ -123,9 +121,9 @@ describe('ListView rendering', function() {
         expect(events[1].timeText).toBe('9:00am - 11:00am')
       })
 
-      it('doesn\'t render times when displayEventTime is false', function() {
+      it('doesn\'t render times when displayEventTime is false', () => {
         let calendar = initCalendar({
-          displayEventTime: false
+          displayEventTime: false,
         })
         let viewWrapper = new ListViewWrapper(calendar)
         let events = viewWrapper.getEventInfo()
@@ -137,9 +135,9 @@ describe('ListView rendering', function() {
         expect(events[1].timeText).toBe('')
       })
 
-      it('doesn\'t render end times when displayEventEnd is false', function() {
+      it('doesn\'t render end times when displayEventEnd is false', () => {
         let calendar = initCalendar({
-          displayEventEnd: false
+          displayEventEnd: false,
         })
         let viewWrapper = new ListViewWrapper(calendar)
         let events = viewWrapper.getEventInfo()
@@ -152,9 +150,9 @@ describe('ListView rendering', function() {
       })
 
       // regression test for when localized event dates get unlocalized and leak into view rendering
-      it('renders dates and times in locale', function() {
+      it('renders dates and times in locale', () => {
         let calendar = initCalendar({
-          locale: frLocale
+          locale: frLocale,
         })
         let viewWrapper = new ListViewWrapper(calendar)
         let days = viewWrapper.getDayInfo()
@@ -176,20 +174,20 @@ describe('ListView rendering', function() {
       })
     })
 
-    describe('when multi-day', function() {
+    describe('when multi-day', () => {
       pushOptions({
-        nextDayThreshold: '00:00'
+        nextDayThreshold: '00:00',
       })
 
-      it('renders partial and full days', function() {
+      it('renders partial and full days', () => {
         let calendar = initCalendar({
           events: [
             {
               title: 'event 1',
               start: '2016-08-15T07:00',
-              end: '2016-08-17T11:00'
-            }
-          ]
+              end: '2016-08-17T11:00',
+            },
+          ],
         })
         let viewWrapper = new ListViewWrapper(calendar)
         let events = viewWrapper.getEventInfo()
@@ -203,15 +201,15 @@ describe('ListView rendering', function() {
         expect(events[2].timeText).toBe('12:00am - 11:00am')
       })
 
-      it('truncates an out-of-range start', function() {
+      it('truncates an out-of-range start', () => {
         let calendar = initCalendar({
           events: [
             {
               title: 'event 1',
               start: '2016-08-13T07:00',
-              end: '2016-08-16T11:00'
-            }
-          ]
+              end: '2016-08-16T11:00',
+            },
+          ],
         })
         let viewWrapper = new ListViewWrapper(calendar)
         let events = viewWrapper.getEventInfo()
@@ -225,15 +223,15 @@ describe('ListView rendering', function() {
         expect(events[2].timeText).toBe('12:00am - 11:00am')
       })
 
-      it('truncates an out-of-range start', function() {
+      it('truncates an out-of-range start', () => {
         let calendar = initCalendar({
           events: [
             {
               title: 'event 1',
               start: '2016-08-18T07:00',
-              end: '2016-08-21T11:00'
-            }
-          ]
+              end: '2016-08-21T11:00',
+            },
+          ],
         })
         let viewWrapper = new ListViewWrapper(calendar)
         let events = viewWrapper.getEventInfo()
@@ -248,16 +246,16 @@ describe('ListView rendering', function() {
       })
     })
 
-    it('renders same days when equal to nextDayThreshold', function() {
+    it('renders same days when equal to nextDayThreshold', () => {
       let calendar = initCalendar({
         nextDayThreshold: '09:00',
         events: [
           {
             title: 'event 1',
             start: '2016-08-15T07:00',
-            end: '2016-08-17T09:00'
-          }
-        ]
+            end: '2016-08-17T09:00',
+          },
+        ],
       })
       let viewWrapper = new ListViewWrapper(calendar)
       let events = viewWrapper.getEventInfo()
@@ -271,16 +269,16 @@ describe('ListView rendering', function() {
       expect(events[2].timeText).toBe('12:00am - 9:00am')
     })
 
-    it('renders fewer days when before nextDayThreshold', function() {
+    it('renders fewer days when before nextDayThreshold', () => {
       let calendar = initCalendar({
         nextDayThreshold: '09:00',
         events: [
           {
             title: 'event 1',
             start: '2016-08-15T07:00',
-            end: '2016-08-17T08:00'
-          }
-        ]
+            end: '2016-08-17T08:00',
+          },
+        ],
       })
       let viewWrapper = new ListViewWrapper(calendar)
       let events = viewWrapper.getEventInfo()
@@ -293,14 +291,14 @@ describe('ListView rendering', function() {
     })
   })
 
-  describe('when an event has no title', function() {
-    it('renders no text for its title', function() {
+  describe('when an event has no title', () => {
+    it('renders no text for its title', () => {
       let calendar = initCalendar({
         events: [
           {
-            start: '2016-08-15'
-          }
-        ]
+            start: '2016-08-15',
+          },
+        ],
       })
       let viewWrapper = new ListViewWrapper(calendar)
       let events = viewWrapper.getEventInfo()
@@ -311,60 +309,60 @@ describe('ListView rendering', function() {
     })
   })
 
-  describe('when no events', function() {
-    it('renders an empty message', function() {
+  describe('when no events', () => {
+    it('renders an empty message', () => {
       let calendar = initCalendar()
       let viewWrapper = new ListViewWrapper(calendar)
       expect(viewWrapper.hasEmptyMessage()).toBe(true)
     })
   })
 
-  describe('with lots of events', function() {
+  describe('with lots of events', () => {
     pushOptions({
       now: '2016-08-29',
       events: [
         {
           title: 'All Day Event',
-          start: '2016-08-29'
+          start: '2016-08-29',
         },
         {
           title: 'Long Event',
           start: '2016-08-28',
-          end: '2016-09-04'
+          end: '2016-09-04',
         },
         {
           title: 'Meeting',
-          start: '2016-08-29T10:30:00'
+          start: '2016-08-29T10:30:00',
         },
         {
           title: 'Lunch',
-          start: '2016-08-30T12:00:00'
+          start: '2016-08-30T12:00:00',
         },
         {
           title: 'Meeting',
-          start: '2016-08-30T14:30:00'
+          start: '2016-08-30T14:30:00',
         },
         {
           title: 'Happy Hour',
-          start: '2014-11-12T17:30:00'
+          start: '2014-11-12T17:30:00',
         },
         {
           title: 'Dinner',
-          start: '2014-11-12T20:00:00'
+          start: '2014-11-12T20:00:00',
         },
         {
           title: 'Birthday Party',
-          start: '2016-08-29T07:00:00'
+          start: '2016-08-29T07:00:00',
         },
         {
           title: 'Click for Google',
           url: 'http://google.com/',
-          start: '2016-08-31'
-        }
-      ]
+          start: '2016-08-31',
+        },
+      ],
     })
 
-    it('sorts events correctly', function() {
+    it('sorts events correctly', () => {
       let calendar = initCalendar()
       let viewWrapper = new ListViewWrapper(calendar)
       let days = viewWrapper.getDayInfo()
@@ -408,24 +406,24 @@ describe('ListView rendering', function() {
       expect(events[12].timeText).toBe('all-day')
     })
 
-    it('can sort events with non-date property first', function() {
+    it('can sort events with non-date property first', () => {
       let calendar = initCalendar({
         now: '2016-08-29',
         eventOrder: 'title',
         events: [
           {
             title: 'Sup',
-            start: '2016-08-29T00:00:00'
+            start: '2016-08-29T00:00:00',
           },
           {
             title: 'Dude',
-            start: '2016-08-29T10:30:00'
+            start: '2016-08-29T10:30:00',
           },
           {
             title: 'Hello',
-            start: '2016-08-30'
-          }
-        ]
+            start: '2016-08-30',
+          },
+        ],
       })
       let viewWrapper = new ListViewWrapper(calendar)
       let days = viewWrapper.getDayInfo()
@@ -441,44 +439,44 @@ describe('ListView rendering', function() {
       expect(events[2].title).toBe('Hello')
     })
 
-    it('makes scrollbars', function() {
+    it('makes scrollbars', () => {
       let $el = $('<div style="width:300px" />').appendTo('body')
       let calendar = initCalendar({ headerToolbar: false }, $el)
       let viewWrapper = new ListViewWrapper(calendar)
       let scrollEl = viewWrapper.getScrollerEl()
 
       expect(
-        scrollEl.scrollHeight
+        scrollEl.scrollHeight,
       ).toBeGreaterThan(
-        scrollEl.clientHeight + 100
+        scrollEl.clientHeight + 100,
       )
 
       $el.remove()
     })
 
-    it('doesn\'t have scrollbars when height is \'auto\'', function() {
+    it('doesn\'t have scrollbars when height is \'auto\'', () => {
       let $el = $('<div style="width:300px" />').appendTo('body')
       let calendar = initCalendar({
         headerToolbar: false,
-        height: 'auto'
+        height: 'auto',
       }, $el)
       let viewWrapper = new ListViewWrapper(calendar)
       let scrollEl = viewWrapper.getScrollerEl()
 
       expect(
-        Math.abs(scrollEl.scrollHeight - scrollEl.clientHeight)
+        Math.abs(scrollEl.scrollHeight - scrollEl.clientHeight),
       ).toBeLessThan(2)
       $el.remove()
     })
   })
 
-  it('updates rendered events despite fetch range being lazy', function() {
+  it('updates rendered events despite fetch range being lazy', () => {
     let calendar = initCalendar({
       now: '2016-09-12',
       initialView: 'dayGridMonth',
       events: [
-        { title: 'event1', start: '2016-09-12' }
-      ]
+        { title: 'event1', start: '2016-09-12' },
+      ],
     })
 
     calendar.changeView('listWeek')
@@ -488,5 +486,4 @@ describe('ListView rendering', function() {
     calendar.prev()
     expect(viewWrapper.getEventEls().length).toBe(0)
   })
-
 })

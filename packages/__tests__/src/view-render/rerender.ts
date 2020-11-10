@@ -1,8 +1,7 @@
-import { DayGridViewWrapper } from "../lib/wrappers/DayGridViewWrapper"
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
-describe('rerendering a calendar', function() {
-
-  it('keeps sizing', function() {
+describe('rerendering a calendar', () => {
+  it('keeps sizing', () => {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
       initialDate: '2019-08-08',
@@ -11,8 +10,8 @@ describe('rerendering a calendar', function() {
         { date: '2019-08-08', title: 'event' },
         { date: '2019-08-08', title: 'event' },
         { date: '2019-08-08', title: 'event' },
-        { date: '2019-08-08', title: 'event' }
-      ]
+        { date: '2019-08-08', title: 'event' },
+      ],
     })
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
@@ -21,5 +20,4 @@ describe('rerendering a calendar', function() {
     calendar.render()
     expect(dayGridWrapper.getMoreEls().length).toBe(1) // good way to test that sizing is maintained
   })
-
 })

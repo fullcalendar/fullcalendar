@@ -1,11 +1,9 @@
-
-describe('addEventSource', function() {
-
-  it('will accept a processed api object after it was removed', function() {
+describe('addEventSource', () => {
+  it('will accept a processed api object after it was removed', () => {
     initCalendar({
       eventSources: [
-        { id: 'sourceA', events: [] }
-      ]
+        { id: 'sourceA', events: [] },
+      ],
     })
     expect(currentCalendar.getEventSources().length).toBe(1)
     let source = currentCalendar.getEventSourceById('sourceA')
@@ -16,11 +14,11 @@ describe('addEventSource', function() {
     expect(newSource).toBe(source)
   })
 
-  it('won\'t re-add a source that it already has', function() {
+  it('won\'t re-add a source that it already has', () => {
     initCalendar({
       eventSources: [
-        { id: 'sourceA', events: [] }
-      ]
+        { id: 'sourceA', events: [] },
+      ],
     })
     expect(currentCalendar.getEventSources().length).toBe(1)
     let source = currentCalendar.getEventSourceById('sourceA')
@@ -28,5 +26,4 @@ describe('addEventSource', function() {
     expect(currentCalendar.getEventSources().length).toBe(1)
     expect(newSource).toBe(source)
   })
-
 })

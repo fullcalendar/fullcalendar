@@ -1,15 +1,14 @@
-import { TimeGridViewWrapper } from "../lib/wrappers/TimeGridViewWrapper"
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('scrollTime', function() {
-
+describe('scrollTime', () => {
   pushOptions({
-    initialView: 'timeGridWeek'
+    initialView: 'timeGridWeek',
   })
 
-  it('accepts a string Duration', function() {
+  it('accepts a string Duration', () => {
     let calendar = initCalendar({
       scrollTime: '02:00:00',
-      height: 400 // short enough to make scrolling happen
+      height: 400, // short enough to make scrolling happen
     })
     let viewWrapper = new TimeGridViewWrapper(calendar)
     let timeGridWrapper = viewWrapper.timeGrid
@@ -22,10 +21,10 @@ describe('scrollTime', function() {
     expect(diff).toBeLessThan(3)
   })
 
-  it('accepts a Duration object', function() {
+  it('accepts a Duration object', () => {
     let calendar = initCalendar({
       scrollTime: { hours: 2 },
-      height: 400 // short enough to make scrolling happen
+      height: 400, // short enough to make scrolling happen
     })
     let viewWrapper = new TimeGridViewWrapper(calendar)
     let timeGridWrapper = viewWrapper.timeGrid
@@ -37,5 +36,4 @@ describe('scrollTime', function() {
     expect(scrollTop).toBeGreaterThan(0)
     expect(diff).toBeLessThan(3)
   })
-
 })

@@ -1,26 +1,24 @@
 import XHRMock from 'xhr-mock'
 
-describe('event feed params', function() {
-
+describe('event feed params', () => {
   pushOptions({
     initialDate: '2014-05-01',
-    initialView: 'dayGridMonth'
+    initialView: 'dayGridMonth',
   })
 
-  beforeEach(function() {
+  beforeEach(() => {
     XHRMock.setup()
   })
-  afterEach(function() {
+  afterEach(() => {
     XHRMock.teardown()
   })
 
-  it('utilizes custom startParam, endParam, and timeZoneParam names', function(done) {
-
-    XHRMock.get(/^my-feed\.php/, function(req, res) {
+  it('utilizes custom startParam, endParam, and timeZoneParam names', (done) => {
+    XHRMock.get(/^my-feed\.php/, (req, res) => {
       expect(req.url().query).toEqual({
         mystart: '2014-04-27T00:00:00',
         myend: '2014-06-08T00:00:00',
-        currtz: 'America/Los_Angeles'
+        currtz: 'America/Los_Angeles',
       })
       done()
       return res.status(200).header('content-type', 'application/json').body('[]')
@@ -31,17 +29,16 @@ describe('event feed params', function() {
       timeZone: 'America/Los_Angeles',
       startParam: 'mystart',
       endParam: 'myend',
-      timeZoneParam: 'currtz'
+      timeZoneParam: 'currtz',
     })
   })
 
-  it('utilizes event-source-specific startParam, endParam, and timeZoneParam names', function(done) {
-
-    XHRMock.get(/^my-feed\.php/, function(req, res) {
+  it('utilizes event-source-specific startParam, endParam, and timeZoneParam names', (done) => {
+    XHRMock.get(/^my-feed\.php/, (req, res) => {
       expect(req.url().query).toEqual({
         feedstart: '2014-04-27T00:00:00',
         feedend: '2014-06-08T00:00:00',
-        feedctz: 'America/Los_Angeles'
+        feedctz: 'America/Los_Angeles',
       })
       done()
       return res.status(200).header('content-type', 'application/json').body('[]')
@@ -57,10 +54,9 @@ describe('event feed params', function() {
           url: 'my-feed.php',
           startParam: 'feedstart',
           endParam: 'feedend',
-          timeZoneParam: 'feedctz'
-        }
-      ]
+          timeZoneParam: 'feedctz',
+        },
+      ],
     })
   })
-
 })

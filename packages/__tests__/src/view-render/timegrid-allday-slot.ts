@@ -1,23 +1,22 @@
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-
-describe('timegrid all-day slot', function() {
+describe('timegrid all-day slot', () => {
   pushOptions({
     initialDate: '2019-04-23',
     initialView: 'timeGridWeek',
-    editable: true
+    editable: true,
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/4616
-  it('allows dragging after dynamic event adding', function(done) {
+  it('allows dragging after dynamic event adding', (done) => {
     let calendar = initCalendar({
       eventDrop(arg) {
         expect(arg.event.start).toEqualDate('2019-04-24')
         done()
-      }
+      },
     })
 
-    calendar.batchRendering(function() {
+    calendar.batchRendering(() => {
       calendar.addEvent({ start: '2019-04-23' })
       calendar.addEvent({ start: '2019-04-23' })
       calendar.addEvent({ start: '2019-04-23' })
@@ -29,7 +28,7 @@ describe('timegrid all-day slot', function() {
 
     $(lastEventEl).simulate('drag', {
       localPoint: { left: '50%', top: '99%' },
-      dx: dayWidth
+      dx: dayWidth,
     })
   })
 })

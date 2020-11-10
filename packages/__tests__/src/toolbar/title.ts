@@ -1,14 +1,14 @@
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('calendar title', function() {
+describe('calendar title', () => {
   pushOptions({
-    now: '2017-03-29'
+    now: '2017-03-29',
   })
 
-  describe('when switching to and from a view', function() {
-    it('updates the title at each switch', function() {
+  describe('when switching to and from a view', () => {
+    it('updates the title at each switch', () => {
       let calendar = initCalendar({
-        initialView: 'dayGridMonth'
+        initialView: 'dayGridMonth',
       })
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 

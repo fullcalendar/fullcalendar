@@ -4,24 +4,23 @@ import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
 // SEE ALSO: event-color.js
 
-describe('background events', function() {
+describe('background events', () => {
   pushOptions({
     initialDate: '2014-11-04',
-    scrollTime: '00:00'
+    scrollTime: '00:00',
   })
 
-  describe('when in month view', function() {
+  describe('when in month view', () => {
     pushOptions({ initialView: 'dayGridMonth' })
 
-    describe('when LTR', function() {
-
-      it('render correctly on a single day', function() {
+    describe('when LTR', () => {
+      it('render correctly on a single day', () => {
         let calendar = initCalendar({
-          events: [ {
+          events: [{
             title: 'hi',
             start: '2014-11-04',
-            display: 'background'
-          } ]
+            display: 'background',
+          }],
         })
 
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -33,14 +32,14 @@ describe('background events', function() {
         expect(dayGridWrapper.getEventEls().length).toBe(0)
       })
 
-      it('render correctly spanning multiple weeks', function() {
+      it('render correctly spanning multiple weeks', () => {
         let calendar = initCalendar({
-          events: [ {
+          events: [{
             title: 'hi',
             start: '2014-11-04',
             end: '2014-11-11',
-            display: 'background'
-          } ]
+            display: 'background',
+          }],
         })
 
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -54,20 +53,20 @@ describe('background events', function() {
         expect(dayGridWrapper.getEventEls().length).toBe(0)
       })
 
-      it('render correctly when two span on top of each other', function() {
+      it('render correctly when two span on top of each other', () => {
         let calendar = initCalendar({
           events: [
             {
               start: '2014-11-04',
               end: '2014-11-07',
-              display: 'background'
+              display: 'background',
             },
             {
               start: '2014-11-05',
               end: '2014-11-08',
-              display: 'background'
-            }
-          ]
+              display: 'background',
+            },
+          ],
         })
 
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -80,25 +79,25 @@ describe('background events', function() {
         expect(dayGridWrapper.getEventEls().length).toBe(0)
       })
 
-      it('renders "business hours" on whole days', function() {
+      it('renders "business hours" on whole days', () => {
         let calendar = initCalendar({
-          businessHours: true
+          businessHours: true,
         })
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
         expect(dayGridWrapper.getNonBusinessDayEls().length).toBe(12) // there are 6 weeks. 2 weekend days each
       })
     })
 
-    describe('when RTL', function() {
-      pushOptions({direction: 'rtl'})
+    describe('when RTL', () => {
+      pushOptions({ direction: 'rtl' })
 
-      it('render correctly on a single day', function() {
+      it('render correctly on a single day', () => {
         let calendar = initCalendar({
-          events: [ {
+          events: [{
             title: 'hi',
             start: '2014-11-04',
-            display: 'background'
-          } ]
+            display: 'background',
+          }],
         })
 
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -110,14 +109,14 @@ describe('background events', function() {
         expect(dayGridWrapper.getEventEls().length).toBe(0)
       })
 
-      it('render correctly spanning multiple weeks', function() {
+      it('render correctly spanning multiple weeks', () => {
         let calendar = initCalendar({
-          events: [ {
+          events: [{
             title: 'hi',
             start: '2014-11-04',
             end: '2014-11-11',
-            display: 'background'
-          } ]
+            display: 'background',
+          }],
         })
 
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -132,17 +131,15 @@ describe('background events', function() {
       })
     })
 
-    describe('when inverse', function() {
-
-      describe('when LTR', function() {
-
-        it('render correctly on a single day', function() {
+    describe('when inverse', () => {
+      describe('when LTR', () => {
+        it('render correctly on a single day', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               title: 'hi',
               start: '2014-11-04',
-              display: 'inverse-background'
-            } ]
+              display: 'inverse-background',
+            }],
           })
           let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
@@ -165,14 +162,14 @@ describe('background events', function() {
           expect(dayGridWrapper.getEventEls().length).toBe(0)
         })
 
-        it('render correctly spanning multiple weeks', function() {
+        it('render correctly spanning multiple weeks', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               title: 'hi',
               start: '2014-11-04',
               end: '2014-11-11',
-              display: 'inverse-background'
-            } ]
+              display: 'inverse-background',
+            }],
           })
           let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
@@ -193,13 +190,13 @@ describe('background events', function() {
           expect(dayGridWrapper.getEventEls().length).toBe(0)
         })
 
-        it('render correctly when starts before start of month', function() {
+        it('render correctly when starts before start of month', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               start: '2014-10-24',
               end: '2014-11-06',
-              display: 'inverse-background'
-            } ]
+              display: 'inverse-background',
+            }],
           })
           let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
@@ -215,13 +212,13 @@ describe('background events', function() {
             .toBeRightOf(dayGridWrapper.getDayEl('2014-11-04'))
         })
 
-        it('render correctly when ends after end of month', function() {
+        it('render correctly when ends after end of month', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               start: '2014-11-27',
               end: '2014-12-08',
-              display: 'inverse-background'
-            } ]
+              display: 'inverse-background',
+            }],
           })
 
           let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -238,20 +235,20 @@ describe('background events', function() {
             .toBeLeftOf(dayGridWrapper.getDayEl('2014-11-28'))
         })
 
-        it('render correctly with two related events, in reverse order', function() {
+        it('render correctly with two related events, in reverse order', () => {
           let calendar = initCalendar({
             events: [
               {
                 groupId: 'hi',
                 start: '2014-11-06',
-                display: 'inverse-background'
+                display: 'inverse-background',
               },
               {
                 groupId: 'hi',
                 start: '2014-11-04',
-                display: 'inverse-background'
-              }
-            ]
+                display: 'inverse-background',
+              },
+            ],
           })
           let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
@@ -263,19 +260,18 @@ describe('background events', function() {
           expect(dayGridWrapper.getBgEventEls(4).length).toBe(1)
           expect(dayGridWrapper.getBgEventEls(5).length).toBe(1)
         })
-
       })
 
-      describe('when RTL', function() {
+      describe('when RTL', () => {
         pushOptions({ direction: 'rtl' })
 
-        it('render correctly on a single day', function() {
+        it('render correctly on a single day', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               title: 'hi',
               start: '2014-11-04',
-              display: 'inverse-background'
-            } ]
+              display: 'inverse-background',
+            }],
           })
           let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
@@ -290,16 +286,16 @@ describe('background events', function() {
       })
     })
 
-    describe('when in month view', function() {
-      it('can be activated when rendering set on the source', function() {
+    describe('when in month view', () => {
+      it('can be activated when rendering set on the source', () => {
         let calendar = initCalendar({
           initialView: 'dayGridMonth',
-          eventSources: [ {
+          eventSources: [{
             display: 'background',
-            events: [ {
-              start: '2014-11-04'
-            } ]
-          } ]
+            events: [{
+              start: '2014-11-04',
+            }],
+          }],
         })
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
@@ -308,16 +304,16 @@ describe('background events', function() {
       })
     })
 
-    describe('when in timeGrid view and timed event', function() {
-      it('can be activated when rendering set on the source', function() {
+    describe('when in timeGrid view and timed event', () => {
+      it('can be activated when rendering set on the source', () => {
         let calendar = initCalendar({
           initialView: 'timeGridWeek',
-          eventSources: [ {
+          eventSources: [{
             display: 'background',
-            events: [ {
-              start: '2014-11-04T01:00:00'
-            } ]
-          } ]
+            events: [{
+              start: '2014-11-04T01:00:00',
+            }],
+          }],
         })
         let viewWrapper = new TimeGridViewWrapper(calendar)
 
@@ -327,18 +323,17 @@ describe('background events', function() {
     })
   })
 
-  describe('when in week view', function() {
+  describe('when in week view', () => {
     pushOptions({ initialView: 'timeGridWeek' })
 
-    describe('when LTR', function() {
-
-      it('render correctly on one day', function() {
+    describe('when LTR', () => {
+      it('render correctly on one day', () => {
         let calendar = initCalendar({
-          events: [ {
+          events: [{
             start: '2014-11-04T01:00:00',
             end: '2014-11-04T05:00:00',
-            display: 'background'
-          } ]
+            display: 'background',
+          }],
         })
 
         let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -356,13 +351,13 @@ describe('background events', function() {
         expect(bottomDiff).toBeLessThanOrEqual(1)
       })
 
-      it('render correctly spanning multiple days', function() {
+      it('render correctly spanning multiple days', () => {
         let calendar = initCalendar({
-          events: [ {
+          events: [{
             start: '2014-11-04T01:00:00',
             end: '2014-11-05T05:00:00',
-            display: 'background'
-          } ]
+            display: 'background',
+          }],
         })
         let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
@@ -371,20 +366,20 @@ describe('background events', function() {
         expect(timeGridWrapper.queryBgEventsInCol(3).length).toBe(1)
       })
 
-      it('render correctly when two span on top of each other', function() {
+      it('render correctly when two span on top of each other', () => {
         let calendar = initCalendar({
           events: [
             {
               start: '2014-11-04T01:00:00',
               end: '2014-11-05T05:00:00',
-              display: 'background'
+              display: 'background',
             },
             {
               start: '2014-11-04T03:00:00',
               end: '2014-11-05T08:00:00',
-              display: 'background'
-            }
-          ]
+              display: 'background',
+            },
+          ],
         })
         let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
@@ -394,24 +389,23 @@ describe('background events', function() {
         // TODO: maybe check y coords
       })
 
-      describe('when businessHours', function() {
-
-        it('renders correctly if assumed default', function() {
+      describe('when businessHours', () => {
+        it('renders correctly if assumed default', () => {
           let calendar = initCalendar({
-            businessHours: true
+            businessHours: true,
           })
           let viewWrapper = new TimeGridViewWrapper(calendar)
           expect(viewWrapper.dayGrid.getNonBusinessDayEls().length).toBe(2) // whole days in the day area
           expect(viewWrapper.timeGrid.getNonBusinessDayEls().length).toBe(12) // strips of gray on the timed area
         })
 
-        it('renders correctly if custom', function() {
+        it('renders correctly if custom', () => {
           let calendar = initCalendar({
             businessHours: {
               startTime: '02:00',
               endTime: '06:00',
-              daysOfWeek: [ 1, 2, 3, 4 ] // Mon-Thu
-            }
+              daysOfWeek: [1, 2, 3, 4], // Mon-Thu
+            },
           })
           let viewWrapper = new TimeGridViewWrapper(calendar)
 
@@ -432,18 +426,18 @@ describe('background events', function() {
       })
     })
 
-    describe('when RTL', function() {
+    describe('when RTL', () => {
       pushOptions({
-        direction: 'rtl'
+        direction: 'rtl',
       })
 
-      it('render correctly on one day', function() {
+      it('render correctly on one day', () => {
         let calendar = initCalendar({
-          events: [ {
+          events: [{
             start: '2014-11-04T01:00:00',
             end: '2014-11-04T05:00:00',
-            display: 'background'
-          } ]
+            display: 'background',
+          }],
         })
 
         let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -460,13 +454,13 @@ describe('background events', function() {
         expect(bottomDiff).toBeLessThanOrEqual(1)
       })
 
-      it('render correctly spanning multiple days', function() {
+      it('render correctly spanning multiple days', () => {
         let calendar = initCalendar({
-          events: [ {
+          events: [{
             start: '2014-11-04T01:00:00',
             end: '2014-11-05T05:00:00',
-            display: 'background'
-          } ]
+            display: 'background',
+          }],
         })
         let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
@@ -475,15 +469,14 @@ describe('background events', function() {
         expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(1)
       })
 
-      describe('when businessHours', function() {
-
-        it('renders correctly if custom', function() {
+      describe('when businessHours', () => {
+        it('renders correctly if custom', () => {
           let calendar = initCalendar({
             businessHours: {
               startTime: '02:00',
               endTime: '06:00',
-              daysOfWeek: [ 1, 2, 3, 4 ] // Mon-Thu
-            }
+              daysOfWeek: [1, 2, 3, 4], // Mon-Thu
+            },
           })
           let viewWrapper = new TimeGridViewWrapper(calendar)
 
@@ -505,17 +498,15 @@ describe('background events', function() {
       })
     })
 
-    describe('when inverse', function() {
-
-      describe('when LTR', function() {
-
-        it('render correctly on one day', function() {
+    describe('when inverse', () => {
+      describe('when LTR', () => {
+        it('render correctly on one day', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               start: '2014-11-04T01:00:00',
               end: '2014-11-04T05:00:00',
-              display: 'inverse-background'
-            } ]
+              display: 'inverse-background',
+            }],
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
@@ -530,13 +521,13 @@ describe('background events', function() {
           // TODO: maybe check y coords
         })
 
-        it('render correctly spanning multiple days', function() {
+        it('render correctly spanning multiple days', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               start: '2014-11-04T01:00:00',
               end: '2014-11-05T05:00:00',
-              display: 'inverse-background'
-            } ]
+              display: 'inverse-background',
+            }],
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
@@ -551,13 +542,13 @@ describe('background events', function() {
           // TODO: maybe check y coords
         })
 
-        it('render correctly when starts before start of week', function() {
+        it('render correctly when starts before start of week', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               start: '2014-10-30T01:00:00',
               end: '2014-11-04T05:00:00',
-              display: 'inverse-background'
-            } ]
+              display: 'inverse-background',
+            }],
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
@@ -572,13 +563,13 @@ describe('background events', function() {
           // TODO: maybe check y coords
         })
 
-        it('render correctly when ends after end of week', function() {
+        it('render correctly when ends after end of week', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               start: '2014-11-04T01:00:00',
               end: '2014-11-12T05:00:00',
-              display: 'inverse-background'
-            } ]
+              display: 'inverse-background',
+            }],
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
@@ -589,22 +580,22 @@ describe('background events', function() {
           // TODO: maybe check y coords
         })
 
-        it('render correctly with two related events, in reverse order', function() {
+        it('render correctly with two related events, in reverse order', () => {
           let calendar = initCalendar({
             events: [
               {
                 groupId: 'hello',
                 start: '2014-11-05T01:00:00',
                 end: '2014-11-05T05:00:00',
-                display: 'inverse-background'
+                display: 'inverse-background',
               },
               {
                 groupId: 'hello',
                 start: '2014-11-03T01:00:00',
                 end: '2014-11-03T05:00:00',
-                display: 'inverse-background'
-              }
-            ]
+                display: 'inverse-background',
+              },
+            ],
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
@@ -619,22 +610,22 @@ describe('background events', function() {
           // TODO: maybe check y coords
         })
 
-        it('render correctly with two related events, nested', function() {
+        it('render correctly with two related events, nested', () => {
           let calendar = initCalendar({
             events: [
               {
                 groupId: 'hello',
                 start: '2014-11-05T01:00:00',
                 end: '2014-11-05T05:00:00',
-                display: 'inverse-background'
+                display: 'inverse-background',
               },
               {
                 groupId: 'hello',
                 start: '2014-11-05T02:00:00',
                 end: '2014-11-05T04:00:00',
-                display: 'inverse-background'
-              }
-            ]
+                display: 'inverse-background',
+              },
+            ],
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
           let allBgEls = timeGridWrapper.getBgEventEls()
@@ -653,21 +644,20 @@ describe('background events', function() {
           expect(allBgEls[4].getBoundingClientRect().bottom)
             .toBeGreaterThan(timeGridWrapper.getTimeTop('05:00:00'))
         })
-
       })
 
-      describe('when RTL', function() {
+      describe('when RTL', () => {
         pushOptions({
-          direction: 'rtl'
+          direction: 'rtl',
         })
 
-        it('render correctly on one day', function() {
+        it('render correctly on one day', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               start: '2014-11-04T01:00:00',
               end: '2014-11-04T05:00:00',
-              display: 'inverse-background'
-            } ]
+              display: 'inverse-background',
+            }],
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
@@ -683,15 +673,14 @@ describe('background events', function() {
         })
       })
 
-      describe('when out of view range', function() {
-
-        it('should still render', function() {
+      describe('when out of view range', () => {
+        it('should still render', () => {
           let calendar = initCalendar({
-            events: [ {
+            events: [{
               start: '2014-01-01T01:00:00',
               end: '2014-01-01T05:00:00',
-              display: 'inverse-background'
-            } ]
+              display: 'inverse-background',
+            }],
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
           expect(timeGridWrapper.getBgEventEls().length).toBe(7)
@@ -699,86 +688,86 @@ describe('background events', function() {
       })
     })
 
-    it('can have custom Event Object color', function() {
+    it('can have custom Event Object color', () => {
       let calendar = initCalendar({
-        events: [ {
+        events: [{
           start: '2014-11-04T01:00:00',
           display: 'background',
-          color: 'red'
-        } ]
-      })
-      let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
-      let bgEl = timeGridWrapper.getBgEventEls()[0]
-      expect($(bgEl).css('background-color')).toMatch(RED_REGEX)
-    })
-
-    it('can have custom Event Object backgroundColor', function() {
-      let calendar = initCalendar({
-        events: [ {
-          start: '2014-11-04T01:00:00',
-          display: 'background',
-          backgroundColor: 'red'
-        } ]
-      })
-      let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
-      let bgEl = timeGridWrapper.getBgEventEls()[0]
-      expect($(bgEl).css('background-color')).toMatch(RED_REGEX)
-    })
-
-    it('can have custom Event Source color', function() {
-      let calendar = initCalendar({
-        eventSources: [ {
           color: 'red',
-          events: [ {
-            start: '2014-11-04T01:00:00',
-            display: 'background'
-          } ]
-        } ]
+        }],
       })
       let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
       let bgEl = timeGridWrapper.getBgEventEls()[0]
       expect($(bgEl).css('background-color')).toMatch(RED_REGEX)
     })
 
-    it('can have custom Event Source backgroundColor', function() {
+    it('can have custom Event Object backgroundColor', () => {
       let calendar = initCalendar({
-        eventSources: [ {
+        events: [{
+          start: '2014-11-04T01:00:00',
+          display: 'background',
           backgroundColor: 'red',
-          events: [ {
-            start: '2014-11-04T01:00:00',
-            display: 'background'
-          } ]
-        } ]
+        }],
       })
       let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
       let bgEl = timeGridWrapper.getBgEventEls()[0]
       expect($(bgEl).css('background-color')).toMatch(RED_REGEX)
     })
 
-    it('is affected by global eventColor', function() {
+    it('can have custom Event Source color', () => {
+      let calendar = initCalendar({
+        eventSources: [{
+          color: 'red',
+          events: [{
+            start: '2014-11-04T01:00:00',
+            display: 'background',
+          }],
+        }],
+      })
+      let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+      let bgEl = timeGridWrapper.getBgEventEls()[0]
+      expect($(bgEl).css('background-color')).toMatch(RED_REGEX)
+    })
+
+    it('can have custom Event Source backgroundColor', () => {
+      let calendar = initCalendar({
+        eventSources: [{
+          backgroundColor: 'red',
+          events: [{
+            start: '2014-11-04T01:00:00',
+            display: 'background',
+          }],
+        }],
+      })
+      let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+      let bgEl = timeGridWrapper.getBgEventEls()[0]
+      expect($(bgEl).css('background-color')).toMatch(RED_REGEX)
+    })
+
+    it('is affected by global eventColor', () => {
       let calendar = initCalendar({
         eventColor: 'red',
-        eventSources: [ {
-          events: [ {
+        eventSources: [{
+          events: [{
             start: '2014-11-04T01:00:00',
-            display: 'background'
-          } ]
-        } ]
+            display: 'background',
+          }],
+        }],
       })
       let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
       let bgEl = timeGridWrapper.getBgEventEls()[0]
       expect($(bgEl).css('background-color')).toMatch(RED_REGEX)
     })
 
-    it('is affected by global eventBackgroundColor', function() {
+    it('is affected by global eventBackgroundColor', () => {
       let calendar = initCalendar({
         eventBackgroundColor: 'red',
-        eventSources: [ {
-          events: [ {
+        eventSources: [{
+          events: [{
             start: '2014-11-04T01:00:00',
-            display: 'background'
-          } ]
-        } ]
+            display: 'background',
+          }],
+        }],
       })
       let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
       let bgEl = timeGridWrapper.getBgEventEls()[0]

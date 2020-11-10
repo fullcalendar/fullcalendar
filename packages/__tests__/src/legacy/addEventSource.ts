@@ -1,72 +1,70 @@
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('addEventSource', function() {
-  var eventArray = [
+describe('addEventSource', () => {
+  let eventArray = [
     { id: '0', title: 'event zero', start: '2014-06-24', classNames: 'event-zero' },
     { id: '1', title: 'event one', start: '2014-06-24', classNames: 'event-non-zero event-one' },
-    { id: '2', title: 'event two', start: '2014-06-24', classNames: 'event-non-zero event-two' }
+    { id: '2', title: 'event two', start: '2014-06-24', classNames: 'event-non-zero event-two' },
   ]
 
   pushOptions({
     initialDate: '2014-06-24',
-    initialView: 'dayGridMonth'
+    initialView: 'dayGridMonth',
   })
 
-
-  it('correctly adds an array source', function(done) {
+  it('correctly adds an array source', (done) => {
     go(
-      function() {
+      () => {
         currentCalendar.addEventSource(eventArray)
       },
       null,
-      done
+      done,
     )
   })
 
-  it('correctly adds a function source', function(done) {
+  it('correctly adds a function source', (done) => {
     go(
-      function() {
-        currentCalendar.addEventSource(function(arg, callback) {
+      () => {
+        currentCalendar.addEventSource((arg, callback) => {
           callback(eventArray)
         })
       },
       null,
-      done
+      done,
     )
   })
 
-  it('correctly adds an extended array source', function(done) {
+  it('correctly adds an extended array source', (done) => {
     go(
-      function() {
+      () => {
         currentCalendar.addEventSource({
           classNames: 'arraysource',
-          events: eventArray
+          events: eventArray,
         })
       },
-      function() {
+      () => {
         expect($('.arraysource').length).toEqual(3)
       },
-      done
+      done,
     )
   })
 
-  it('correctly adds an extended func source', function(done) {
+  it('correctly adds an extended func source', (done) => {
     go(
-      function() {
+      () => {
         currentCalendar.addEventSource({
           classNames: 'funcsource',
-          events: function(arg, callback) {
+          events(arg, callback) {
             callback(eventArray)
-          }
+          },
         })
       },
-      function() {
+      () => {
         expect($('.funcsource').length).toEqual(3)
       },
-      done
+      done,
     )
   })
-
 
   function go(addFunc, extraTestFunc, doneFunc) {
     initCalendar()
@@ -82,8 +80,7 @@ describe('addEventSource', function() {
     currentCalendar.prev()
 
     // otherwise, prev/next would be cancelled out by doneFunc's calendar destroy
-    setTimeout(function() {
-
+    setTimeout(() => {
       checkAllEvents()
       if (extraTestFunc) {
         extraTestFunc()

@@ -1,18 +1,17 @@
 import { formatIsoDay } from '../lib/datelib-utils'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
-describe('dayCellDidMount', function() { // TODO: rename file
-
-  it('is triggered upon initialization of a view, with correct parameters', function() {
-    var options = {
+describe('dayCellDidMount', () => { // TODO: rename file
+  it('is triggered upon initialization of a view, with correct parameters', () => {
+    let options = {
       initialView: 'dayGridMonth',
       fixedWeekCount: true,
       initialDate: '2014-05-01',
-      dayCellDidMount: function(arg) {
+      dayCellDidMount(arg) {
         expect(arg.date instanceof Date).toEqual(true)
         expect(formatIsoDay(arg.date)).toEqual(arg.el.getAttribute('data-date'))
         expect(arg.el instanceof HTMLElement).toBe(true)
-      }
+      },
     }
 
     spyOn(options, 'dayCellDidMount').and.callThrough()
@@ -20,11 +19,11 @@ describe('dayCellDidMount', function() { // TODO: rename file
     expect(options.dayCellDidMount.calls.count()).toEqual(42)
   })
 
-  it('is called when date range is changed', function() {
-    var options = {
+  it('is called when date range is changed', () => {
+    let options = {
       initialView: 'dayGridWeek',
       initialDate: '2014-05-01',
-      dayCellDidMount: function(arg) { }
+      dayCellDidMount(arg) { },
     }
 
     spyOn(options, 'dayCellDidMount').and.callThrough()
@@ -34,11 +33,11 @@ describe('dayCellDidMount', function() { // TODO: rename file
     expect(options.dayCellDidMount.calls.count()).toEqual(7)
   })
 
-  it('won\'t be called when date is navigated but remains in the current visible range', function() {
-    var options = {
+  it('won\'t be called when date is navigated but remains in the current visible range', () => {
+    let options = {
       initialView: 'dayGridWeek',
       initialDate: '2014-05-01',
-      dayCellDidMount: function(arg) { }
+      dayCellDidMount(arg) { },
     }
 
     spyOn(options, 'dayCellDidMount').and.callThrough()
@@ -48,16 +47,16 @@ describe('dayCellDidMount', function() { // TODO: rename file
     expect(options.dayCellDidMount.calls.count()).toEqual(0)
   })
 
-  it('allows you to modify the element', function() {
-    var options = {
+  it('allows you to modify the element', () => {
+    let options = {
       initialView: 'dayGridMonth',
       fixedWeekCount: true,
       initialDate: '2014-05-01',
-      dayCellDidMount: function(arg) {
+      dayCellDidMount(arg) {
         if (formatIsoDay(arg.date) === '2014-05-01') {
           arg.el.classList.add('mycustomclass')
         }
-      }
+      },
     }
 
     let calendar = initCalendar(options)
@@ -66,9 +65,9 @@ describe('dayCellDidMount', function() { // TODO: rename file
     expect(dayEl).toHaveClass('mycustomclass')
   })
 
-  it('gets called for TimeGrid views', function() {
-    var callCnt = 0
-    var options = {
+  it('gets called for TimeGrid views', () => {
+    let callCnt = 0
+    let options = {
       initialView: 'timeGridWeek',
       initialDate: '2014-05-01',
       allDaySlot: false, // turn off. fires its own dayCellDidMount
@@ -77,11 +76,10 @@ describe('dayCellDidMount', function() { // TODO: rename file
         expect(arg.el instanceof HTMLElement).toBe(true)
         expect(typeof arg.view).toBe('object')
         callCnt++
-      }
+      },
     }
 
     initCalendar(options)
     expect(callCnt).toBe(7)
   })
-
 })

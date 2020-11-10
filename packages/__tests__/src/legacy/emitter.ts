@@ -1,14 +1,13 @@
 import { Emitter } from '@fullcalendar/core'
 
-describe('emitter', function() {
-
-  it('calls a handler', function() {
-    var o = new Emitter()
-    var handlers = {
-      something: function(arg1, arg2) {
+describe('emitter', () => {
+  it('calls a handler', () => {
+    let o = new Emitter()
+    let handlers = {
+      something(arg1, arg2) {
         expect(arg1).toBe(7)
         expect(arg2).toBe(8)
-      }
+      },
     }
     spyOn(handlers, 'something').and.callThrough()
 
@@ -17,10 +16,10 @@ describe('emitter', function() {
     expect(handlers.something).toHaveBeenCalled()
   })
 
-  it('unbinds with an exact reference', function() {
-    var o = new Emitter()
-    var handlers = {
-      something: function() {}
+  it('unbinds with an exact reference', () => {
+    let o = new Emitter()
+    let handlers = {
+      something() {},
     }
     spyOn(handlers, 'something')
 
@@ -33,11 +32,11 @@ describe('emitter', function() {
     expect(handlers.something.calls.count()).toBe(1)
   })
 
-  it('unbinds all when no reference', function() {
-    var o = new Emitter()
-    var handlers = {
-      something1: function() {},
-      something2: function() {}
+  it('unbinds all when no reference', () => {
+    let o = new Emitter()
+    let handlers = {
+      something1() {},
+      something2() {},
     }
     spyOn(handlers, 'something1')
     spyOn(handlers, 'something2')
@@ -54,5 +53,4 @@ describe('emitter', function() {
     expect(handlers.something1.calls.count()).toBe(1)
     expect(handlers.something2.calls.count()).toBe(1)
   })
-
 })

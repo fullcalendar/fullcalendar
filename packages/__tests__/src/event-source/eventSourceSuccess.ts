@@ -1,41 +1,39 @@
-describe('eventSourceSuccess', function() {
-
-  const FETCH_FUNC = function(info, successCallback) {
+describe('eventSourceSuccess', () => {
+  const FETCH_FUNC = function (info, successCallback) {
     successCallback({
       something: [
-        { title: 'hi', start: '2018-10-01' }
-      ]
+        { title: 'hi', start: '2018-10-01' },
+      ],
     })
   }
 
-  const TRANSFORM = function(input) {
+  const TRANSFORM = function (input) {
     return input.something
   }
 
   pushOptions({
-    initialDate: '2018-10-01'
+    initialDate: '2018-10-01',
   })
 
-  it('massages event data with calendar-wide setting', function() {
+  it('massages event data with calendar-wide setting', () => {
     initCalendar({
-      eventSources: [ FETCH_FUNC ],
-      eventSourceSuccess: TRANSFORM
+      eventSources: [FETCH_FUNC],
+      eventSourceSuccess: TRANSFORM,
     })
 
     expect(currentCalendar.getEvents().length).toBe(1)
   })
 
-  it('massages event data with source setting', function() {
+  it('massages event data with source setting', () => {
     initCalendar({
       eventSources: [
         {
           events: FETCH_FUNC,
-          success: TRANSFORM
-        }
-      ]
+          success: TRANSFORM,
+        },
+      ],
     })
 
     expect(currentCalendar.getEvents().length).toBe(1)
   })
-
 })

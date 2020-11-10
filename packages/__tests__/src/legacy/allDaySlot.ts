@@ -1,69 +1,68 @@
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('allDaySlots', function() {
-
-  describe('when allDaySlots is not set', function() {
-    describe('in week', function() {
-      it('should default to having an allDaySlots table', function() {
-        var calendar = initCalendar({
-          initialView: 'timeGridWeek'
-        })
-        var dayGrid = new TimeGridViewWrapper(calendar).dayGrid
-        expect(dayGrid).toBeTruthy()
-      })
-    })
-    describe('in day', function() {
-      it('should default to having an allDaySlots table', function() {
-        var calendar = initCalendar({
-          initialView: 'timeGridDay'
-        })
-        var dayGrid = new TimeGridViewWrapper(calendar).dayGrid
-        expect(dayGrid).toBeTruthy()
-      })
-    })
-  })
-
-  describe('when allDaySlots is set true', function() {
-    describe('in week', function() {
-      it('should default to having an allDaySlots table', function() {
-        var calendar = initCalendar({
+describe('allDaySlots', () => {
+  describe('when allDaySlots is not set', () => {
+    describe('in week', () => {
+      it('should default to having an allDaySlots table', () => {
+        let calendar = initCalendar({
           initialView: 'timeGridWeek',
-          allDaySlot: true
         })
-        var dayGrid = new TimeGridViewWrapper(calendar).dayGrid
+        let dayGrid = new TimeGridViewWrapper(calendar).dayGrid
         expect(dayGrid).toBeTruthy()
       })
     })
-    describe('in day', function() {
-      it('should default to having an allDaySlots table', function() {
-        var calendar = initCalendar({
+    describe('in day', () => {
+      it('should default to having an allDaySlots table', () => {
+        let calendar = initCalendar({
           initialView: 'timeGridDay',
-          allDaySlot: true
         })
-        var dayGrid = new TimeGridViewWrapper(calendar).dayGrid
+        let dayGrid = new TimeGridViewWrapper(calendar).dayGrid
         expect(dayGrid).toBeTruthy()
       })
     })
   })
 
-  describe('when allDaySlots is set false', function() {
-    describe('in week', function() {
-      it('should default to having an allDaySlots table', function() {
-        var calendar = initCalendar({
+  describe('when allDaySlots is set true', () => {
+    describe('in week', () => {
+      it('should default to having an allDaySlots table', () => {
+        let calendar = initCalendar({
           initialView: 'timeGridWeek',
-          allDaySlot: false
+          allDaySlot: true,
         })
-        var dayGrid = new TimeGridViewWrapper(calendar).dayGrid
+        let dayGrid = new TimeGridViewWrapper(calendar).dayGrid
+        expect(dayGrid).toBeTruthy()
+      })
+    })
+    describe('in day', () => {
+      it('should default to having an allDaySlots table', () => {
+        let calendar = initCalendar({
+          initialView: 'timeGridDay',
+          allDaySlot: true,
+        })
+        let dayGrid = new TimeGridViewWrapper(calendar).dayGrid
+        expect(dayGrid).toBeTruthy()
+      })
+    })
+  })
+
+  describe('when allDaySlots is set false', () => {
+    describe('in week', () => {
+      it('should default to having an allDaySlots table', () => {
+        let calendar = initCalendar({
+          initialView: 'timeGridWeek',
+          allDaySlot: false,
+        })
+        let dayGrid = new TimeGridViewWrapper(calendar).dayGrid
         expect(dayGrid).toBeFalsy()
       })
     })
-    describe('in day', function() {
-      it('should default to having an allDaySlots table', function() {
-        var calendar = initCalendar({
+    describe('in day', () => {
+      it('should default to having an allDaySlots table', () => {
+        let calendar = initCalendar({
           initialView: 'timeGridDay',
-          allDaySlot: false
+          allDaySlot: false,
         })
-        var dayGrid = new TimeGridViewWrapper(calendar).dayGrid
+        let dayGrid = new TimeGridViewWrapper(calendar).dayGrid
         expect(dayGrid).toBeFalsy()
       })
     })

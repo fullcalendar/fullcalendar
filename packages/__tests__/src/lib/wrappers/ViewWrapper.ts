@@ -1,7 +1,6 @@
 import { Calendar } from '@fullcalendar/core'
 
 export class ViewWrapper {
-
   el: HTMLElement // TODO: make protected?
 
   constructor(calendar: Calendar, className: string) {
@@ -11,5 +10,4 @@ export class ViewWrapper {
     }
     this.el = viewEl
   }
-
 }

@@ -1,8 +1,7 @@
-describe('events as a function', function() {
-
+describe('events as a function', () => {
   pushOptions({
     initialView: 'dayGridMonth',
-    initialDate: '2014-05-01'
+    initialDate: '2014-05-01',
   })
 
   function testEventFunctionParams(arg, callback) {
@@ -11,10 +10,10 @@ describe('events as a function', function() {
     expect(typeof callback).toEqual('function')
   }
 
-  it('requests correctly when local timezone', function(done) {
+  it('requests correctly when local timezone', (done) => {
     initCalendar({
       timeZone: 'local',
-      events: function(arg, callback) {
+      events(arg, callback) {
         testEventFunctionParams(arg, callback)
         expect(arg.timeZone).toEqual('local')
         expect(arg.start).toEqualLocalDate('2014-04-27T00:00:00')
@@ -23,14 +22,14 @@ describe('events as a function', function() {
         expect(arg.endStr).toMatch(/^2014-06-08T00:00:00[-+]/)
         callback([])
         setTimeout(done) // :(
-      }
+      },
     })
   })
 
-  it('requests correctly when UTC timezone', function(done) {
+  it('requests correctly when UTC timezone', (done) => {
     initCalendar({
       timeZone: 'UTC',
-      events: function(arg, callback) {
+      events(arg, callback) {
         testEventFunctionParams(arg, callback)
         expect(arg.timeZone).toEqual('UTC')
         expect(arg.start).toEqualDate('2014-04-27T00:00:00Z')
@@ -39,14 +38,14 @@ describe('events as a function', function() {
         expect(arg.endStr).toEqual('2014-06-08T00:00:00Z')
         callback([])
         setTimeout(done) // :(
-      }
+      },
     })
   })
 
-  it('requests correctly when custom timezone', function(done) {
+  it('requests correctly when custom timezone', (done) => {
     initCalendar({
       timeZone: 'America/Chicago',
-      events: function(arg, callback) {
+      events(arg, callback) {
         testEventFunctionParams(arg, callback)
         expect(arg.timeZone).toEqual('America/Chicago')
         expect(arg.start).toEqualDate('2014-04-27T00:00:00Z')
@@ -55,22 +54,22 @@ describe('events as a function', function() {
         expect(arg.endStr).toEqual('2014-06-08T00:00:00') // no Z
         callback([])
         setTimeout(done) // :(
-      }
+      },
     })
   })
 
-  it('requests correctly when timezone changed dynamically', function(done) {
-    var callCnt = 0
-    var options = {
+  it('requests correctly when timezone changed dynamically', (done) => {
+    let callCnt = 0
+    let options = {
       timeZone: 'America/Chicago',
-      events: function(arg, callback) {
+      events(arg, callback) {
         testEventFunctionParams(arg, callback)
         callCnt++
         if (callCnt === 1) {
           expect(arg.timeZone).toEqual('America/Chicago')
           expect(arg.start).toEqualDate('2014-04-27')
           expect(arg.end).toEqualDate('2014-06-08')
-          setTimeout(function() {
+          setTimeout(() => {
             currentCalendar.setOption('timeZone', 'UTC')
           }, 0)
         } else if (callCnt === 2) {
@@ -79,16 +78,16 @@ describe('events as a function', function() {
           expect(arg.end).toEqualDate('2014-06-08')
           setTimeout(done) // :(
         }
-      }
+      },
     }
 
     initCalendar(options)
   })
 
-  it('requests correctly with event source extended form', function(done) {
-    var eventSource = {
+  it('requests correctly with event source extended form', (done) => {
+    let eventSource = {
       className: 'customeventclass',
-      events: function(arg, callback) {
+      events(arg, callback) {
         testEventFunctionParams(arg, callback)
         expect(arg.timeZone).toEqual('UTC')
         expect(arg.start).toEqualDate('2014-04-27')
@@ -96,41 +95,40 @@ describe('events as a function', function() {
         callback([
           {
             title: 'event1',
-            start: '2014-05-10'
-          }
+            start: '2014-05-10',
+          },
         ])
-      }
+      },
     }
     spyOn(eventSource, 'events').and.callThrough()
 
     initCalendar({
       timeZone: 'UTC',
-      eventSources: [ eventSource ],
+      eventSources: [eventSource],
       eventDidMount(arg) {
         expect(eventSource.events.calls.count()).toEqual(1)
         expect(arg.el).toHaveClass('customeventclass')
         setTimeout(done) // :(
-      }
+      },
     })
   })
 
-  it('can return a promise-like object', function(done) {
+  it('can return a promise-like object', (done) => {
     let calendar = initCalendar({
       events() {
         let deferred = $.Deferred() // we want tests to run in IE11, which doesn't have native promises
-        setTimeout(function() {
+        setTimeout(() => {
           deferred.resolve([
-            { start: '2018-09-04' }
+            { start: '2018-09-04' },
           ])
         }, 100)
         return deferred.promise()
-      }
+      },
     })
 
-    setTimeout(function() {
+    setTimeout(() => {
       expect(calendar.getEvents().length).toBe(1)
       setTimeout(done) // :(
     }, 101)
   })
-
 })

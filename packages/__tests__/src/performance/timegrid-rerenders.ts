@@ -1,5 +1,4 @@
-
-it('timegrid view rerenders well', function(done) {
+it('timegrid view rerenders well', (done) => {
   let dayHeaderRenderCnt = 0
   let dayCellRenderCnt = 0
   let slotLabelRenderCnt = 0
@@ -11,7 +10,7 @@ it('timegrid view rerenders well', function(done) {
     initialDate: '2017-10-04',
     windowResizeDelay: 0,
     events: [
-      { title: 'event 0', start: '2017-10-04T00:00:00' }
+      { title: 'event 0', start: '2017-10-04T00:00:00' },
     ],
     dayHeaderContent() {
       dayHeaderRenderCnt++
@@ -27,7 +26,7 @@ it('timegrid view rerenders well', function(done) {
     },
     eventContent() {
       eventRenderCnt++
-    }
+    },
   })
 
   function resetCounts() {
@@ -63,8 +62,7 @@ it('timegrid view rerenders well', function(done) {
 
   resetCounts()
   $(window).simulate('resize')
-  setTimeout(function() {
-
+  setTimeout(() => {
     expect(dayHeaderRenderCnt).toBe(0)
     expect(dayCellRenderCnt).toBe(0)
     expect(slotLabelRenderCnt).toBe(0)

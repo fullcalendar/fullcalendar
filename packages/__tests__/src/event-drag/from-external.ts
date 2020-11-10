@@ -1,22 +1,21 @@
 import { Draggable } from '@fullcalendar/interaction'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
+describe('external event dragging', () => {
+  let $dragEl
+  let thirdPartyDraggable
 
-describe('external event dragging', function() {
-  var $dragEl
-  var thirdPartyDraggable
-
-  beforeEach(function() {
+  beforeEach(() => {
     $dragEl = $('<div class="drag">yo</div>')
       .css({
         width: 200,
         background: 'blue',
-        color: 'white'
+        color: 'white',
       })
       .appendTo('body')
   })
 
-  afterEach(function() {
+  afterEach(() => {
     if (thirdPartyDraggable) {
       thirdPartyDraggable.destroy()
     }
@@ -24,15 +23,14 @@ describe('external event dragging', function() {
     $dragEl = null
   })
 
-
-  describe('with forceEventDuration', function() {
+  describe('with forceEventDuration', () => {
     pushOptions({
       forceEventDuration: true,
-      defaultTimedEventDuration: '1:30'
+      defaultTimedEventDuration: '1:30',
     })
 
     // https://github.com/fullcalendar/fullcalendar/issues/4597
-    it('should yield an event with an end', function(done) {
+    it('should yield an event with an end', (done) => {
       let calendar = initCalendar({
         initialView: 'dayGridMonth',
         initialDate: '2019-04-01',
@@ -41,22 +39,22 @@ describe('external event dragging', function() {
         eventReceive(arg) {
           expect(arg.event.end).toEqualDate('2019-04-04')
           done()
-        }
+        },
       })
       let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
       thirdPartyDraggable = new Draggable($dragEl[0], {
-        eventData: {}
+        eventData: {},
       })
 
       $dragEl.simulate('drag', {
-        end: dayGridWrapper.getDayEl('2019-04-02')
+        end: dayGridWrapper.getDayEl('2019-04-02'),
       })
     })
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/4575
-  it('provides eventAllow with a valid event with null start/end', function(done) {
+  it('provides eventAllow with a valid event with null start/end', (done) => {
     let called = false
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
@@ -70,15 +68,15 @@ describe('external event dragging', function() {
         expect(draggedEvent.end).toBe(null)
         called = true
         return true
-      }
+      },
     })
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
     thirdPartyDraggable = new Draggable($dragEl[0], {
       eventData: {
         id: 'a',
-        title: 'hey'
-      }
+        title: 'hey',
+      },
     })
 
     $dragEl.simulate('drag', {
@@ -86,8 +84,7 @@ describe('external event dragging', function() {
       callback() {
         expect(called).toBe(true)
         done()
-      }
+      },
     })
   })
-
 })

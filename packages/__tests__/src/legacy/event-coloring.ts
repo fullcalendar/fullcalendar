@@ -2,216 +2,210 @@ import { EventInput } from '@fullcalendar/core'
 import { RED_REGEX } from '../lib/dom-misc'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('event coloring', function() {
+describe('event coloring', () => {
   pushOptions({
     initialDate: '2014-11-04',
-    allDaySlot: false
+    allDaySlot: false,
   })
 
-  describe('when in month view', function() {
+  describe('when in month view', () => {
     pushOptions({
-      initialView: 'dayGridMonth'
+      initialView: 'dayGridMonth',
     })
 
     defineViewTests(false)
   })
 
-  describe('when in week view', function() {
+  describe('when in week view', () => {
     pushOptions({
-      initialView: 'timeGridWeek'
+      initialView: 'timeGridWeek',
     })
 
     defineViewTests(true)
   })
 
   function defineViewTests(eventHasTime) {
-
-    describe('for foreground events', function() {
+    describe('for foreground events', () => {
       testTextColor(eventHasTime)
       testBorderColor(eventHasTime)
       testBackgroundColor(eventHasTime)
     })
 
-    describe('for background events', function() {
+    describe('for background events', () => {
       testBackgroundColor(eventHasTime, 'background')
     })
-
   }
 
   function testTextColor(eventHasTime) {
+    let eventOptions = getEventOptions(eventHasTime)
 
-    var eventOptions = getEventOptions(eventHasTime)
-
-    it('should accept the global eventTextColor', function() {
+    it('should accept the global eventTextColor', () => {
       initCalendar({
         eventTextColor: 'red',
-        events: [ getTestEvent(eventOptions) ]
+        events: [getTestEvent(eventOptions)],
       })
       expect(getEventCss('color')).toMatch(RED_REGEX)
     })
 
-    it('should accept an event source\'s textColor', function() {
+    it('should accept an event source\'s textColor', () => {
       initCalendar({
         eventTextColor: 'blue', // even when there's a more general setting
-        eventSources: [ {
+        eventSources: [{
           textColor: 'red',
-          events: [ getTestEvent(eventOptions) ]
-        } ]
+          events: [getTestEvent(eventOptions)],
+        }],
       })
       expect(getEventCss('color')).toMatch(RED_REGEX)
     })
 
-    it('should accept an event object\'s textColor', function() {
-      var eventInput = getTestEvent(eventOptions, {
-        textColor: 'red'
+    it('should accept an event object\'s textColor', () => {
+      let eventInput = getTestEvent(eventOptions, {
+        textColor: 'red',
       })
       initCalendar({
         eventTextColor: 'blue', // even when there's a more general setting
-        events: [ eventInput ]
+        events: [eventInput],
       })
       expect(getEventCss('color')).toMatch(RED_REGEX)
     })
   }
 
   function testBorderColor(eventHasTime) {
+    let eventOptions = getEventOptions(eventHasTime)
 
-    var eventOptions = getEventOptions(eventHasTime)
-
-    it('should accept the global eventColor for border color', function() {
+    it('should accept the global eventColor for border color', () => {
       initCalendar({
         eventColor: 'red',
-        events: [ getTestEvent(eventOptions) ]
+        events: [getTestEvent(eventOptions)],
       })
       expect(getEventCss('border-top-color')).toMatch(RED_REGEX)
     })
 
-    it('should accept the global eventBorderColor', function() {
+    it('should accept the global eventBorderColor', () => {
       initCalendar({
         eventColor: 'blue',
         eventBorderColor: 'red',
-        events: [ getTestEvent(eventOptions) ]
+        events: [getTestEvent(eventOptions)],
       })
       expect(getEventCss('border-top-color')).toMatch(RED_REGEX)
     })
 
-    it('should accept an event source\'s color for the border', function() {
+    it('should accept an event source\'s color for the border', () => {
       initCalendar({
         eventBorderColor: 'blue', // even when there's a more general setting
-        eventSources: [ {
+        eventSources: [{
           color: 'red',
-          events: [ getTestEvent(eventOptions) ]
-        } ]
+          events: [getTestEvent(eventOptions)],
+        }],
       })
       expect(getEventCss('border-top-color')).toMatch(RED_REGEX)
     })
 
-    it('should accept an event source\'s borderColor', function() {
+    it('should accept an event source\'s borderColor', () => {
       initCalendar({
         eventBorderColor: 'blue', // even when there's a more general setting
-        eventSources: [ {
+        eventSources: [{
           color: 'blue',
           borderColor: 'red',
-          events: [ getTestEvent(eventOptions) ]
-        } ]
+          events: [getTestEvent(eventOptions)],
+        }],
       })
       expect(getEventCss('border-top-color')).toMatch(RED_REGEX)
     })
 
-    it('should accept an event object\'s color for the border', function() {
-      var eventInput = getTestEvent(eventOptions, {
-        color: 'red'
+    it('should accept an event object\'s color for the border', () => {
+      let eventInput = getTestEvent(eventOptions, {
+        color: 'red',
       })
       initCalendar({
-        eventSources: [ {
+        eventSources: [{
           borderColor: 'blue', // even when there's a more general setting
-          events: [ eventInput ]
-        } ]
+          events: [eventInput],
+        }],
       })
       expect(getEventCss('border-top-color')).toMatch(RED_REGEX)
     })
 
-    it('should accept an event object\'s borderColor', function() {
-      var eventInput = getTestEvent(eventOptions, {
+    it('should accept an event object\'s borderColor', () => {
+      let eventInput = getTestEvent(eventOptions, {
         color: 'blue', // even when there's a more general setting
-        borderColor: 'red'
+        borderColor: 'red',
       })
       initCalendar({
-        eventSources: [ {
-          events: [ eventInput ]
-        } ]
+        eventSources: [{
+          events: [eventInput],
+        }],
       })
       expect(getEventCss('border-top-color')).toMatch(RED_REGEX)
     })
   }
 
-
   function testBackgroundColor(eventHasTime, display?) {
-
-    var eventOptions = getEventOptions(eventHasTime)
+    let eventOptions = getEventOptions(eventHasTime)
 
     if (typeof display !== 'undefined') {
       eventOptions.display = display
     }
 
-    it('should accept the global eventColor for background color', function() {
+    it('should accept the global eventColor for background color', () => {
       initCalendar({
         eventColor: 'red',
-        events: [ getTestEvent(eventOptions) ]
+        events: [getTestEvent(eventOptions)],
       })
       expect(getEventCss('background-color', display)).toMatch(RED_REGEX)
     })
 
-    it('should accept the global eventBackgroundColor', function() {
+    it('should accept the global eventBackgroundColor', () => {
       initCalendar({
         eventColor: 'blue', // even when there's a more general setting
         eventBackgroundColor: 'red',
-        events: [ getTestEvent(eventOptions) ]
+        events: [getTestEvent(eventOptions)],
       })
       expect(getEventCss('background-color', display)).toMatch(RED_REGEX)
     })
 
-    it('should accept an event source\'s color for the background', function() {
+    it('should accept an event source\'s color for the background', () => {
       initCalendar({
         eventBackgroundColor: 'blue', // even when there's a more general setting
-        eventSources: [ {
+        eventSources: [{
           color: 'red',
-          events: [ getTestEvent(eventOptions) ]
-        } ]
+          events: [getTestEvent(eventOptions)],
+        }],
       })
       expect(getEventCss('background-color', display)).toMatch(RED_REGEX)
     })
 
-    it('should accept an event source\'s backgroundColor', function() {
+    it('should accept an event source\'s backgroundColor', () => {
       initCalendar({
-        eventSources: [ {
+        eventSources: [{
           color: 'blue', // even when there's a more general setting
           backgroundColor: 'red',
-          events: [ getTestEvent(eventOptions) ]
-        } ]
+          events: [getTestEvent(eventOptions)],
+        }],
       })
       expect(getEventCss('background-color', display)).toMatch(RED_REGEX)
     })
 
-    it('should accept an event object\'s color for the background', function() {
-      var eventInput = getTestEvent(eventOptions)
+    it('should accept an event object\'s color for the background', () => {
+      let eventInput = getTestEvent(eventOptions)
       eventInput.color = 'red'
       initCalendar({
-        eventSources: [ {
+        eventSources: [{
           backgroundColor: 'blue', // even when there's a more general setting
-          events: [ eventInput ]
-        } ]
+          events: [eventInput],
+        }],
       })
       expect(getEventCss('background-color', display)).toMatch(RED_REGEX)
     })
 
-    it('should accept an event object\'s backgroundColor', function() {
-      var eventInput = getTestEvent(eventOptions)
+    it('should accept an event object\'s backgroundColor', () => {
+      let eventInput = getTestEvent(eventOptions)
       eventInput.color = 'blue' // even when there's a more general setting
       eventInput.backgroundColor = 'red'
       initCalendar({
-        eventSources: [ {
-          events: [ eventInput ]
-        } ]
+        eventSources: [{
+          events: [eventInput],
+        }],
       })
       expect(getEventCss('background-color', display)).toMatch(RED_REGEX)
     })
@@ -225,13 +219,12 @@ describe('event coloring', function() {
 
     if (prop === 'color') {
       return $(eventEl).find('.fc-event-title').css(prop)
-    } else {
-      return $(eventEl).css(prop)
     }
+      return $(eventEl).css(prop)
   }
 
   function getTestEvent(defaultOptions, extraOptions = {}): EventInput {
-    var event = {} as EventInput
+    let event = {} as EventInput
     $.extend(event, defaultOptions)
     if (extraOptions) {
       $.extend(event, extraOptions)
@@ -240,13 +233,12 @@ describe('event coloring', function() {
   }
 
   function getEventOptions(eventHasTime): EventInput {
-    var options = {
-      start: '2014-11-04'
+    let options = {
+      start: '2014-11-04',
     }
     if (eventHasTime) {
       options.start += 'T01:00:00'
     }
     return options
   }
-
 })

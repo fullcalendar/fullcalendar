@@ -2,8 +2,7 @@ import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { waitEventDrag } from '../lib/wrappers/interaction-util'
 
-describe('eventAllow', function() {
-
+describe('eventAllow', () => {
   pushOptions({
     now: '2016-09-04',
     initialView: 'timeGridWeek',
@@ -12,21 +11,21 @@ describe('eventAllow', function() {
     events: [
       {
         title: 'event 1',
-        start: '2016-09-04T01:00'
-      }
-    ]
+        start: '2016-09-04T01:00',
+      },
+    ],
   })
 
-  it('disallows dragging when returning false', function(done) { // and given correct params
-    var options = {
-      eventAllow: function(dropInfo, event) {
+  it('disallows dragging when returning false', (done) => { // and given correct params
+    let options = {
+      eventAllow(dropInfo, event) {
         expect(typeof dropInfo).toBe('object')
         expect(dropInfo.start instanceof Date).toBe(true)
         expect(dropInfo.end instanceof Date).toBe(true)
         expect(typeof event).toBe('object')
         expect(event.title).toBe('event 1')
         return false
-      }
+      },
     }
     spyOn(options, 'eventAllow').and.callThrough()
 
@@ -36,7 +35,7 @@ describe('eventAllow', function() {
 
     let dragging = timeGridWrapper.dragEventToDate(
       calendarWrapper.getFirstEventEl(),
-      '2016-09-04T03:00:00'
+      '2016-09-04T03:00:00',
     )
 
     waitEventDrag(calendar, dragging).then((modifiedEvent) => {
@@ -46,11 +45,11 @@ describe('eventAllow', function() {
     })
   })
 
-  it('allows dragging when returning true', function(done) {
-    var options = {
+  it('allows dragging when returning true', (done) => {
+    let options = {
       eventAllow() {
         return true
-      }
+      },
     }
     spyOn(options, 'eventAllow').and.callThrough()
 
@@ -60,7 +59,7 @@ describe('eventAllow', function() {
 
     let dragging = timeGridWrapper.dragEventToDate(
       calendarWrapper.getFirstEventEl(),
-      '2016-09-04T03:00:00Z'
+      '2016-09-04T03:00:00Z',
     )
 
     waitEventDrag(calendar, dragging).then((modifiedEvent) => {
