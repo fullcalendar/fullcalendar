@@ -1,9 +1,18 @@
-import { identity, Identity, ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler, createFormatter, FormatterInput } from '@fullcalendar/common'
+import {
+  identity,
+  Identity,
+  ClassNamesGenerator,
+  CustomContentGenerator,
+  DidMountHandler,
+  WillUnmountHandler,
+  createFormatter,
+  FormatterInput,
+} from '@fullcalendar/common'
 
 // public
 import {
   NoEventsContentArg,
-  NoEventsMountArg
+  NoEventsMountArg,
 } from './api-type-deps'
 
 export const OPTION_REFINERS = {
@@ -13,7 +22,7 @@ export const OPTION_REFINERS = {
   noEventsClassNames: identity as Identity<ClassNamesGenerator<NoEventsContentArg>>,
   noEventsContent: identity as Identity<CustomContentGenerator<NoEventsContentArg>>,
   noEventsDidMount: identity as Identity<DidMountHandler<NoEventsMountArg>>,
-  noEventsWillUnmount: identity as Identity<WillUnmountHandler<NoEventsMountArg>>
+  noEventsWillUnmount: identity as Identity<WillUnmountHandler<NoEventsMountArg>>,
 
   // noEventsText is defined in base options
 }

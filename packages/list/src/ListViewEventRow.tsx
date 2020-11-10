@@ -1,18 +1,15 @@
 import {
   MinimalEventProps, BaseComponent, ViewContext, createElement, AllDayContentArg,
-  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventContentArg, EventRoot, ComponentChildren, RenderHook
-} from "@fullcalendar/common"
-
+  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventContentArg, EventRoot, ComponentChildren, RenderHook,
+} from '@fullcalendar/common'
 
 const DEFAULT_TIME_FORMAT = createFormatter({
   hour: 'numeric',
   minute: '2-digit',
-  meridiem: 'short'
+  meridiem: 'short',
 })
 
-
 export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
-
   render() {
     let { props, context } = this
     let { seg } = props
@@ -22,9 +19,9 @@ export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
     return (
       <EventRoot
         seg={seg}
-        timeText={'' /* BAD. because of all-day content */}
-        disableDragging={true}
-        disableResizing={true}
+        timeText="" // BAD. because of all-day content
+        disableDragging
+        disableResizing
         defaultContent={renderEventInnerContent}
         isPast={props.isPast}
         isFuture={props.isFuture}
@@ -35,12 +32,12 @@ export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
         isDateSelecting={props.isDateSelecting}
       >
         {(rootElRef, classNames, innerElRef, innerContent, hookProps) => (
-          <tr className={[ 'fc-list-event', hookProps.event.url ? 'fc-event-forced-url' : '' ].concat(classNames).join(' ')} ref={rootElRef}>
+          <tr className={['fc-list-event', hookProps.event.url ? 'fc-event-forced-url' : ''].concat(classNames).join(' ')} ref={rootElRef}>
             {buildTimeContent(seg, timeFormat, context)}
-            <td className='fc-list-event-graphic'>
-              <span className='fc-list-event-dot' style={{ borderColor: hookProps.borderColor || hookProps.backgroundColor }} />
+            <td className="fc-list-event-graphic">
+              <span className="fc-list-event-dot" style={{ borderColor: hookProps.borderColor || hookProps.backgroundColor }} />
             </td>
-            <td className='fc-list-event-title' ref={innerElRef}>
+            <td className="fc-list-event-title" ref={innerElRef}>
               {innerContent}
             </td>
           </tr>
@@ -48,9 +45,7 @@ export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
       </EventRoot>
     )
   }
-
 }
-
 
 function renderEventInnerContent(props: EventContentArg) {
   let { event } = props
@@ -58,12 +53,12 @@ function renderEventInnerContent(props: EventContentArg) {
   let anchorAttrs = url ? { href: url } : {}
 
   return (
-    <a {...anchorAttrs}>{/* TODO: document how whole row become clickable */}
+    <a {...anchorAttrs}>
+      {/* TODO: document how whole row become clickable */}
       {event.title}
     </a>
   )
 }
-
 
 function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewContext): ComponentChildren {
   let { options } = context
@@ -76,9 +71,7 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewCont
 
     if (eventDef.allDay) {
       doAllDay = true
-
     } else if (isMultiDayRange(seg.eventRange.range)) { // TODO: use (!isStart || !isEnd) instead?
-
       if (seg.isStart) {
         timeText = buildSegTimeText(
           seg,
@@ -87,9 +80,8 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewCont
           null,
           null,
           eventInstance.range.start,
-          seg.end
+          seg.end,
         )
-
       } else if (seg.isEnd) {
         timeText = buildSegTimeText(
           seg,
@@ -98,25 +90,23 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewCont
           null,
           null,
           seg.start,
-          eventInstance.range.end
+          eventInstance.range.end,
         )
-
       } else {
         doAllDay = true
       }
-
     } else {
       timeText = buildSegTimeText(
         seg,
         timeFormat,
-        context
+        context,
       )
     }
 
     if (doAllDay) {
       let hookProps: AllDayContentArg = {
         text: context.options.allDayText,
-        view: context.viewApi
+        view: context.viewApi,
       }
 
       return (
@@ -129,25 +119,22 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewCont
           willUnmount={options.allDayWillUnmount}
         >
           {(rootElRef, classNames, innerElRef, innerContent) => (
-            <td className={[ 'fc-list-event-time' ].concat(classNames).join(' ')} ref={rootElRef}>
+            <td className={['fc-list-event-time'].concat(classNames).join(' ')} ref={rootElRef}>
               {innerContent}
             </td>
           )}
         </RenderHook>
       )
-
-    } else {
+    }
       return (
-        <td className='fc-list-event-time'>
+        <td className="fc-list-event-time">
           {timeText}
         </td>
       )
-    }
   }
 
   return null
 }
-
 
 function renderAllDayInner(hookProps) {
   return hookProps.text

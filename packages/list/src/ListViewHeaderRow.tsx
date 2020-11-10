@@ -1,8 +1,7 @@
 import {
   BaseComponent, DateMarker, createElement, DateRange, getDateMeta,
-  RenderHook, buildNavLinkData, DayHeaderContentArg, getDayClassNames, formatDayString, Fragment
+  RenderHook, buildNavLinkData, DayHeaderContentArg, getDayClassNames, formatDayString, Fragment,
 } from '@fullcalendar/common'
-
 
 export interface ListViewHeaderRowProps {
   dayDate: DateMarker
@@ -14,17 +13,17 @@ interface HookProps extends DayHeaderContentArg { // doesn't enforce much since 
   sideText: string
 }
 
-
 export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
-
-
   render() {
     let { dayDate, todayRange } = this.props
     let { theme, dateEnv, options, viewApi } = this.context
-
     let dayMeta = getDateMeta(dayDate, todayRange)
-    let text = options.listDayFormat ? dateEnv.format(dayDate, options.listDayFormat) : '' // will ever be falsy?
-    let sideText = options.listDaySideFormat ? dateEnv.format(dayDate, options.listDaySideFormat) : '' // will ever be falsy? also, BAD NAME "alt"
+
+    // will ever be falsy?
+    let text = options.listDayFormat ? dateEnv.format(dayDate, options.listDayFormat) : ''
+
+    // will ever be falsy? also, BAD NAME "alt"
+    let sideText = options.listDaySideFormat ? dateEnv.format(dayDate, options.listDaySideFormat) : ''
 
     let navLinkData = options.navLinks
       ? buildNavLinkData(dayDate)
@@ -36,11 +35,11 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
       text,
       sideText,
       navLinkData,
-      ...dayMeta
+      ...dayMeta,
     }
 
-    let classNames = [ 'fc-list-day' ].concat(
-      getDayClassNames(dayMeta, theme)
+    let classNames = ['fc-list-day'].concat(
+      getDayClassNames(dayMeta, theme),
     )
 
     // TODO: make a reusable HOC for dayHeader (used in daygrid/timegrid too)
@@ -69,9 +68,7 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
       </RenderHook>
     )
   }
-
 }
-
 
 function renderInnerContent(props: HookProps) {
   let navLinkAttrs = props.navLinkData // is there a type for this?
@@ -80,16 +77,16 @@ function renderInnerContent(props: HookProps) {
 
   return (
     <Fragment>
-      {props.text &&
-        <a className='fc-list-day-text' {...navLinkAttrs}>
+      {props.text && (
+        <a className="fc-list-day-text" {...navLinkAttrs}>
           {props.text}
         </a>
-      }
-      {props.sideText &&
-        <a className='fc-list-day-side-text' {...navLinkAttrs}>
+      )}
+      {props.sideText && (
+        <a className="fc-list-day-side-text" {...navLinkAttrs}>
           {props.sideText}
         </a>
-      }
+      )}
     </Fragment>
   )
 }

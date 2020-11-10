@@ -22,11 +22,10 @@ import {
   RenderHook,
   DateComponent,
   ViewApi,
-  MountArg
+  MountArg,
 } from '@fullcalendar/common'
 import { ListViewHeaderRow } from './ListViewHeaderRow'
 import { ListViewEventRow } from './ListViewEventRow'
-
 
 export interface NoEventsContentArg {
   text: string
@@ -35,15 +34,12 @@ export interface NoEventsContentArg {
 
 export type NoEventsMountArg = MountArg<NoEventsContentArg>
 
-
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
 */
 export class ListView extends DateComponent<ViewProps> {
-
   private computeDateVars = memoize(computeDateVars)
   private eventStoreToSegs = memoize(this._eventStoreToSegs)
-
 
   render() {
     let { props, context } = this
@@ -51,7 +47,7 @@ export class ListView extends DateComponent<ViewProps> {
     let extraClassNames = [
       'fc-list',
       context.theme.getClass('table'), // just for the outer border. will be on div
-      context.options.stickyHeaderDates !== false ? 'fc-list-sticky' : ''
+      context.options.stickyHeaderDates !== false ? 'fc-list-sticky' : '',
     ]
 
     let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
@@ -68,8 +64,7 @@ export class ListView extends DateComponent<ViewProps> {
             >
               {eventSegs.length > 0 ?
                 this.renderSegList(eventSegs, dayDates) :
-                this.renderEmptyMessage()
-              }
+                this.renderEmptyMessage()}
             </Scroller>
           </div>
         )}
@@ -77,23 +72,21 @@ export class ListView extends DateComponent<ViewProps> {
     )
   }
 
-
   setRootEl = (rootEl: HTMLDivElement | null) => {
     if (rootEl) {
       this.context.registerInteractiveComponent(this, { // TODO: make aware that it doesn't do Hits
-        el: rootEl
+        el: rootEl,
       })
     } else {
       this.context.unregisterInteractiveComponent(this)
     }
   }
 
-
   renderEmptyMessage() {
     let { options, viewApi } = this.context
     let hookProps: NoEventsContentArg = {
       text: options.noEventsText,
-      view: viewApi
+      view: viewApi,
     }
 
     return (
@@ -106,8 +99,8 @@ export class ListView extends DateComponent<ViewProps> {
         willUnmount={options.noEventsWillUnmount}
       >
         {(rootElRef, classNames, innerElRef, innerContent) => (
-          <div className={[ 'fc-list-empty' ].concat(classNames).join(' ')} ref={rootElRef}>
-            <div className='fc-list-empty-cushion' ref={innerElRef}>
+          <div className={['fc-list-empty'].concat(classNames).join(' ')} ref={rootElRef}>
+            <div className="fc-list-empty-cushion" ref={innerElRef}>
               {innerContent}
             </div>
           </div>
@@ -116,17 +109,16 @@ export class ListView extends DateComponent<ViewProps> {
     )
   }
 
-
   renderSegList(allSegs: Seg[], dayDates: DateMarker[]) {
     let { theme, options } = this.context
     let segsByDay = groupSegsByDay(allSegs) // sparse array
 
     return (
-      <NowTimer unit='day'>
+      <NowTimer unit="day">
         {(nowDate: DateMarker, todayRange: DateRange) => {
           let innerNodes: VNode[] = []
 
-          for (let dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
+          for (let dayIndex = 0; dayIndex < segsByDay.length; dayIndex += 1) {
             let daySegs = segsByDay[dayIndex]
 
             if (daySegs) { // sparse array, so might be undefined
@@ -138,7 +130,7 @@ export class ListView extends DateComponent<ViewProps> {
                   key={dayStr}
                   dayDate={dayDates[dayIndex]}
                   todayRange={todayRange}
-                />
+                />,
               )
 
               daySegs = sortEventSegs(daySegs, options.eventOrder)
@@ -153,7 +145,7 @@ export class ListView extends DateComponent<ViewProps> {
                     isDateSelecting={false}
                     isSelected={false}
                     {...getSegMeta(seg, todayRange, nowDate)}
-                  />
+                  />,
                 )
               }
             }
@@ -169,19 +161,17 @@ export class ListView extends DateComponent<ViewProps> {
     )
   }
 
-
   _eventStoreToSegs(eventStore: EventStore, eventUiBases: EventUiHash, dayRanges: DateRange[]): Seg[] {
     return this.eventRangesToSegs(
       sliceEventStore(
         eventStore,
         eventUiBases,
         this.props.dateProfile.activeRange,
-        this.context.options.nextDayThreshold
+        this.context.options.nextDayThreshold,
       ).fg,
-      dayRanges
+      dayRanges,
     )
   }
-
 
   eventRangesToSegs(eventRanges: EventRenderRange[], dayRanges: DateRange[]) {
     let segs = []
@@ -193,7 +183,6 @@ export class ListView extends DateComponent<ViewProps> {
     return segs
   }
 
-
   eventRangeToSegs(eventRange: EventRenderRange, dayRanges: DateRange[]) {
     let { dateEnv } = this.context
     let { nextDayThreshold } = this.context.options
@@ -204,7 +193,7 @@ export class ListView extends DateComponent<ViewProps> {
     let seg
     let segs = []
 
-    for (dayIndex = 0; dayIndex < dayRanges.length; dayIndex++) {
+    for (dayIndex = 0; dayIndex < dayRanges.length; dayIndex += 1) {
       segRange = intersectRanges(range, dayRanges[dayIndex])
 
       if (segRange) {
@@ -215,7 +204,7 @@ export class ListView extends DateComponent<ViewProps> {
           end: segRange.end,
           isStart: eventRange.isStart && segRange.start.valueOf() === range.start.valueOf(),
           isEnd: eventRange.isEnd && segRange.end.valueOf() === range.end.valueOf(),
-          dayIndex: dayIndex
+          dayIndex,
         }
 
         segs.push(seg)
@@ -228,7 +217,7 @@ export class ListView extends DateComponent<ViewProps> {
           range.end <
             dateEnv.add(
               dayRanges[dayIndex + 1].start,
-              nextDayThreshold
+              nextDayThreshold,
             )
         ) {
           seg.end = range.end
@@ -240,14 +229,11 @@ export class ListView extends DateComponent<ViewProps> {
 
     return segs
   }
-
 }
-
 
 function renderNoEventsInner(hookProps) {
   return hookProps.text
 }
-
 
 function computeDateVars(dateProfile: DateProfile) {
   let dayStart = startOfDay(dateProfile.renderRange.start)
@@ -256,12 +242,11 @@ function computeDateVars(dateProfile: DateProfile) {
   let dayRanges: DateRange[] = []
 
   while (dayStart < viewEnd) {
-
     dayDates.push(dayStart)
 
     dayRanges.push({
       start: dayStart,
-      end: addDays(dayStart, 1)
+      end: addDays(dayStart, 1),
     })
 
     dayStart = addDays(dayStart, 1)
@@ -270,14 +255,13 @@ function computeDateVars(dateProfile: DateProfile) {
   return { dayDates, dayRanges }
 }
 
-
 // Returns a sparse array of arrays, segs grouped by their dayIndex
 function groupSegsByDay(segs): Seg[][] {
   let segsByDay = [] // sparse array
   let i
   let seg
 
-  for (i = 0; i < segs.length; i++) {
+  for (i = 0; i < segs.length; i += 1) {
     seg = segs[i];
     (segsByDay[seg.dayIndex] || (segsByDay[seg.dayIndex] = []))
       .push(seg)
