@@ -1,4 +1,3 @@
-const { eslint } = require('../gulpfile')
 const path = require('path')
 const { publicPackageStructs } = require('./lib/package-index')
 const exec = require('./lib/shell')
