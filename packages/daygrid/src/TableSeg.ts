@@ -1,6 +1,5 @@
 import { EventSegUiInteractionState, Seg } from '@fullcalendar/common'
 
-
 // this is a DATA STRUCTURE, not a component
 
 export interface TableSeg extends Seg {
@@ -9,11 +8,10 @@ export interface TableSeg extends Seg {
   lastCol: number
 }
 
-
 export function splitSegsByRow(segs: TableSeg[], rowCnt: number) {
   let byRow: TableSeg[][] = []
 
-  for (let i = 0; i < rowCnt; i++) {
+  for (let i = 0; i < rowCnt; i += 1) {
     byRow[i] = []
   }
 
@@ -24,11 +22,10 @@ export function splitSegsByRow(segs: TableSeg[], rowCnt: number) {
   return byRow
 }
 
-
 export function splitSegsByFirstCol(segs: TableSeg[], colCnt: number) {
   let byCol: TableSeg[][] = []
 
-  for (let i = 0; i < colCnt; i++) {
+  for (let i = 0; i < colCnt; i += 1) {
     byCol[i] = []
   }
 
@@ -39,21 +36,19 @@ export function splitSegsByFirstCol(segs: TableSeg[], colCnt: number) {
   return byCol
 }
 
-
 export function splitInteractionByRow(ui: EventSegUiInteractionState | null, rowCnt: number) {
   let byRow: EventSegUiInteractionState[] = []
 
   if (!ui) {
-    for (let i = 0; i < rowCnt; i++) {
+    for (let i = 0; i < rowCnt; i += 1) {
       byRow[i] = null
     }
-
   } else {
-    for (let i = 0; i < rowCnt; i++) {
+    for (let i = 0; i < rowCnt; i += 1) {
       byRow[i] = {
         affectedInstances: ui.affectedInstances,
         isEvent: ui.isEvent,
-        segs: []
+        segs: [],
       }
     }
 

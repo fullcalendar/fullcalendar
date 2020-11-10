@@ -1,7 +1,4 @@
-import {
-  createElement, ComponentChildren, applyStyle, BaseComponent, DelayedRunner, Ref, setRef, Dictionary
-} from '@fullcalendar/common'
-
+import { createElement, ComponentChildren, applyStyle, BaseComponent, DelayedRunner, Ref, setRef, Dictionary } from '@fullcalendar/common'
 
 export interface PopoverProps {
   title: string
@@ -17,30 +14,27 @@ export interface PopoverProps {
 const PADDING_FROM_VIEWPORT = 10
 const SCROLL_DEBOUNCE = 10
 
-
 export class Popover extends BaseComponent<PopoverProps> {
-
   private rootEl: HTMLElement
   private repositioner = new DelayedRunner(this.updateSize.bind(this))
-
 
   render() {
     let { theme } = this.context
     let { props } = this
     let classNames = [
       'fc-popover',
-      theme.getClass('popover')
+      theme.getClass('popover'),
     ].concat(
-      props.extraClassNames || []
+      props.extraClassNames || [],
     )
 
     return (
       <div className={classNames.join(' ')} {...props.extraAttrs} ref={this.handleRootEl}>
         <div className={'fc-popover-header ' + theme.getClass('popoverHeader')}>
-          <span className='fc-popover-title'>
+          <span className="fc-popover-title">
             {props.title}
           </span>
-          <span className={'fc-popover-close ' + theme.getIconClass('close')} onClick={this.handleCloseClick}></span>
+          <span className={'fc-popover-close ' + theme.getIconClass('close')} onClick={this.handleCloseClick} />
         </div>
         <div className={'fc-popover-body ' + theme.getClass('popoverContent')}>
           {props.children}
@@ -49,19 +43,16 @@ export class Popover extends BaseComponent<PopoverProps> {
     )
   }
 
-
   componentDidMount() {
     document.addEventListener('mousedown', this.handleDocumentMousedown)
     document.addEventListener('scroll', this.handleDocumentScroll)
     this.updateSize()
   }
 
-
   componentWillUnmount() {
     document.removeEventListener('mousedown', this.handleDocumentMousedown)
     document.removeEventListener('scroll', this.handleDocumentScroll)
   }
-
 
   handleRootEl = (el: HTMLElement | null) => {
     this.rootEl = el
@@ -70,7 +61,6 @@ export class Popover extends BaseComponent<PopoverProps> {
       setRef(this.props.elRef, el)
     }
   }
-
 
   // Triggered when the user clicks *anywhere* in the document, for the autoHide feature
   handleDocumentMousedown = (ev) => {
@@ -82,11 +72,9 @@ export class Popover extends BaseComponent<PopoverProps> {
     }
   }
 
-
   handleDocumentScroll = () => {
     this.repositioner.request(SCROLL_DEBOUNCE)
   }
-
 
   handleCloseClick = () => {
     let { onClose } = this.props
@@ -96,9 +84,7 @@ export class Popover extends BaseComponent<PopoverProps> {
     }
   }
 
-
   // TODO: adjust on window resize
-
 
   /*
   NOTE: the popover is position:fixed, so coordinates are relative to the viewport
@@ -133,5 +119,4 @@ export class Popover extends BaseComponent<PopoverProps> {
 
     applyStyle(rootEl, { top, left })
   }
-
 }

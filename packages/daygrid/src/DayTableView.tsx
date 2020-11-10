@@ -6,31 +6,29 @@ import {
   memoize,
   DaySeriesModel,
   DayTableModel,
-  ChunkContentCallbackArgs
+  ChunkContentCallbackArgs,
 } from '@fullcalendar/common'
 import { TableView } from './TableView'
 import { DayTable } from './DayTable'
 
-
 export class DayTableView extends TableView {
-
   private buildDayTableModel = memoize(buildDayTableModel)
   private headerRef = createRef<DayHeader>()
   private tableRef = createRef<DayTable>()
-
 
   render() {
     let { options, dateProfileGenerator } = this.context
     let { props } = this
     let dayTableModel = this.buildDayTableModel(props.dateProfile, dateProfileGenerator)
 
-    let headerContent = options.dayHeaders &&
+    let headerContent = options.dayHeaders && (
       <DayHeader
         ref={this.headerRef}
         dateProfile={props.dateProfile}
         dates={dayTableModel.headerDates}
         datesRepDistinctDays={dayTableModel.rowCnt === 1}
       />
+    )
 
     let bodyContent = (contentArg: ChunkContentCallbackArgs) => (
       <DayTable
@@ -62,15 +60,13 @@ export class DayTableView extends TableView {
       ? this.renderHScrollLayout(headerContent, bodyContent, dayTableModel.colCnt, options.dayMinWidth)
       : this.renderSimpleLayout(headerContent, bodyContent)
   }
-
 }
-
 
 export function buildDayTableModel(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {
   let daySeries = new DaySeriesModel(dateProfile.renderRange, dateProfileGenerator)
 
   return new DayTableModel(
     daySeries,
-    /year|month|week/.test(dateProfile.currentRangeUnit)
+    /year|month|week/.test(dateProfile.currentRangeUnit),
   )
 }

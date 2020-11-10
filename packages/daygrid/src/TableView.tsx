@@ -13,24 +13,20 @@ import {
   getStickyHeaderDates,
   getStickyFooterScrollbar,
   ChunkConfigRowContent,
-  Dictionary
+  Dictionary,
 } from '@fullcalendar/common'
-
 
 /* An abstract class for the daygrid views, as well as month view. Renders one or more rows of day cells.
 ----------------------------------------------------------------------------------------------------------------------*/
 // It is a manager for a Table subcomponent, which does most of the heavy lifting.
 // It is responsible for managing width/height.
 
-
 export abstract class TableView<State=Dictionary> extends DateComponent<ViewProps, State> {
-
   protected headerElRef: RefObject<HTMLTableCellElement> = createRef<HTMLTableCellElement>()
-
 
   renderSimpleLayout(
     headerRowContent: ChunkConfigRowContent,
-    bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode
+    bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode,
   ) {
     let { props, context } = this
     let sections: SimpleScrollGridSection[] = []
@@ -44,8 +40,8 @@ export abstract class TableView<State=Dictionary> extends DateComponent<ViewProp
         chunk: {
           elRef: this.headerElRef,
           tableClassName: 'fc-col-header',
-          rowContent: headerRowContent
-        }
+          rowContent: headerRowContent,
+        },
       })
     }
 
@@ -53,13 +49,13 @@ export abstract class TableView<State=Dictionary> extends DateComponent<ViewProp
       type: 'body',
       key: 'body',
       liquid: true,
-      chunk: { content: bodyContent }
+      chunk: { content: bodyContent },
     })
 
     return (
       <ViewRoot viewSpec={context.viewSpec}>
         {(rootElRef, classNames) => (
-          <div ref={rootElRef} className={[ 'fc-daygrid' ].concat(classNames).join(' ')}>
+          <div ref={rootElRef} className={['fc-daygrid'].concat(classNames).join(' ')}>
             <SimpleScrollGrid
               liquid={!props.isHeightAuto && !props.forPrint}
               cols={[] /* TODO: make optional? */}
@@ -71,12 +67,11 @@ export abstract class TableView<State=Dictionary> extends DateComponent<ViewProp
     )
   }
 
-
   renderHScrollLayout(
     headerRowContent: ChunkConfigRowContent,
     bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode,
     colCnt: number,
-    dayMinWidth: number
+    dayMinWidth: number,
   ) {
     let ScrollGrid = this.context.pluginHooks.scrollGridImpl
 
@@ -98,8 +93,8 @@ export abstract class TableView<State=Dictionary> extends DateComponent<ViewProp
           key: 'main',
           elRef: this.headerElRef,
           tableClassName: 'fc-col-header',
-          rowContent: headerRowContent
-        }]
+          rowContent: headerRowContent,
+        }],
       })
     }
 
@@ -109,8 +104,8 @@ export abstract class TableView<State=Dictionary> extends DateComponent<ViewProp
       liquid: true,
       chunks: [{
         key: 'main',
-        content: bodyContent
-      }]
+        content: bodyContent,
+      }],
     })
 
     if (stickyFooterScrollbar) {
@@ -120,18 +115,18 @@ export abstract class TableView<State=Dictionary> extends DateComponent<ViewProp
         isSticky: true,
         chunks: [{
           key: 'main',
-          content: renderScrollShim
-        }]
+          content: renderScrollShim,
+        }],
       })
     }
 
     return (
       <ViewRoot viewSpec={context.viewSpec}>
         {(rootElRef, classNames) => (
-          <div ref={rootElRef} className={[ 'fc-daygrid' ].concat(classNames).join(' ')}>
+          <div ref={rootElRef} className={['fc-daygrid'].concat(classNames).join(' ')}>
             <ScrollGrid
               liquid={!props.isHeightAuto && !props.forPrint}
-              colGroups={[ { cols: [ { span: colCnt, minWidth: dayMinWidth } ] } ]}
+              colGroups={[{ cols: [{ span: colCnt, minWidth: dayMinWidth }] }]}
               sections={sections}
             />
           </div>
@@ -139,5 +134,4 @@ export abstract class TableView<State=Dictionary> extends DateComponent<ViewProp
       </ViewRoot>
     )
   }
-
 }

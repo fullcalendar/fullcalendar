@@ -1,12 +1,10 @@
 import {
   DateProfileGenerator,
   addWeeks, diffWeeks,
-  DateRange
+  DateRange,
 } from '@fullcalendar/common'
 
 export class TableDateProfileGenerator extends DateProfileGenerator {
-
-
   // Computes the date range that will be rendered.
   buildRenderRange(currentRange, currentRangeUnit, isRangeAllDay): DateRange {
     let { dateEnv } = this.props
@@ -32,12 +30,11 @@ export class TableDateProfileGenerator extends DateProfileGenerator {
       this.props.fixedWeekCount
     ) {
       let rowCnt = Math.ceil( // could be partial weeks due to hiddenDays
-        diffWeeks(start, end)
+        diffWeeks(start, end),
       )
       end = addWeeks(end, 6 - rowCnt)
     }
 
     return { start, end }
   }
-
 }

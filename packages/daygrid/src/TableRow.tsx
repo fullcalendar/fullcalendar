@@ -15,7 +15,7 @@ import {
   renderFill,
   isPropsEqual,
   createRef,
-  buildEventRangeKey
+  buildEventRangeKey,
 } from '@fullcalendar/common'
 import { TableSeg, splitSegsByFirstCol } from './TableSeg'
 import { TableCell, TableCellModel, MoreLinkArg } from './TableCell'
@@ -24,9 +24,7 @@ import { TableBlockEvent } from './TableBlockEvent'
 import { computeFgSegPlacement } from './event-placement'
 import { hasListItemDisplay } from './event-rendering'
 
-
 // TODO: attach to window resize?
-
 
 export interface TableRowProps {
   cells: TableCellModel[]
@@ -56,9 +54,7 @@ interface TableRowState {
   segHeights: { [instanceIdAndFirstCol: string]: number } | null
 }
 
-
 export class TableRow extends DateComponent<TableRowProps, TableRowState> {
-
   private cellElRefs = new RefMap<HTMLTableCellElement>() // the <td>
   private frameElRefs = new RefMap<HTMLElement>() // the fc-daygrid-day-frame
   private fgElRefs = new RefMap<HTMLDivElement>() // the fc-daygrid-day-events
@@ -68,9 +64,8 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   state: TableRowState = {
     framePositions: null,
     maxContentHeight: null,
-    segHeights: {}
+    segHeights: {},
   }
-
 
   render() {
     let { props, state, context } = this
@@ -89,7 +84,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
       state.segHeights,
       state.maxContentHeight,
       colCnt,
-      context.options.eventOrder
+      context.options.eventOrder,
     )
 
     let selectedInstanceHash = // TODO: messy way to compute this
@@ -107,7 +102,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
             segTops,
             segMarginTops,
             selectedInstanceHash,
-            props.todayRange
+            props.todayRange,
           )
 
           let mirrorFgNodes = this.renderFgSegs(
@@ -119,7 +114,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
             props.todayRange,
             Boolean(props.eventDrag),
             Boolean(props.eventResize),
-            false // date-selecting (because mirror is never drawn for date selection)
+            false, // date-selecting (because mirror is never drawn for date selection)
           )
 
           return (
@@ -164,47 +159,37 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     )
   }
 
-
   componentDidMount() {
     this.updateSizing(true)
   }
-
 
   componentDidUpdate(prevProps: TableRowProps, prevState: TableRowState) {
     let currentProps = this.props
 
     this.updateSizing(
-      !isPropsEqual(prevProps, currentProps)
+      !isPropsEqual(prevProps, currentProps),
     )
   }
-
 
   getHighlightSegs(): TableSeg[] {
     let { props } = this
 
     if (props.eventDrag && props.eventDrag.segs.length) { // messy check
       return props.eventDrag.segs as TableSeg[]
-
-    } else if (props.eventResize && props.eventResize.segs.length) { // messy check
+    } if (props.eventResize && props.eventResize.segs.length) { // messy check
       return props.eventResize.segs as TableSeg[]
-
-    } else {
-      return props.dateSelectionSegs
     }
+      return props.dateSelectionSegs
   }
-
 
   getMirrorSegs(): TableSeg[] {
     let { props } = this
 
     if (props.eventResize && props.eventResize.segs.length) { // messy check
       return props.eventResize.segs as TableSeg[]
-
-    } else {
-      return []
     }
+      return []
   }
-
 
   renderFgSegs(
     segs: TableSeg[],
@@ -215,7 +200,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     todayRange: DateRange,
     isDragging?: boolean,
     isResizing?: boolean,
-    isDateSelecting?: boolean
+    isDateSelecting?: boolean,
   ): VNode[] {
     let { context } = this
     let { eventSelection } = this.props
@@ -229,7 +214,10 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
         let isMirror = isDragging || isResizing || isDateSelecting
         let isSelected = selectedInstanceHash[instanceId]
         let isInvisible = segIsHidden[instanceId] || isSelected
-        let isAbsolute = segIsHidden[instanceId] || isMirror || seg.firstCol !== seg.lastCol || !seg.isStart || !seg.isEnd // TODO: simpler way? NOT DRY
+
+        // TODO: simpler way? NOT DRY
+        let isAbsolute = segIsHidden[instanceId] || isMirror || seg.firstCol !== seg.lastCol || !seg.isStart || !seg.isEnd
+
         let marginTop: CssDimValue
         let top: CssDimValue
         let left: CssDimValue
@@ -245,7 +233,6 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
             left = 0
             right = framePositions.rights[seg.firstCol] - framePositions.rights[seg.lastCol]
           }
-
         } else {
           marginTop = segMarginTops[instanceId]
         }
@@ -257,23 +244,25 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
           <div
             className={'fc-daygrid-event-harness' + (isAbsolute ? ' fc-daygrid-event-harness-abs' : '')}
             key={instanceId}
-            ref={isMirror ? null : this.segHarnessRefs.createRef(instanceId + ':' + seg.firstCol) /* in print mode when in mult cols, could collide */}
+            // in print mode when in mult cols, could collide
+            ref={isMirror ? null : this.segHarnessRefs.createRef(instanceId + ':' + seg.firstCol)}
             style={{
               visibility: isInvisible ? 'hidden' : ('' as any),
               marginTop: marginTop || '',
               top: top || '',
               left: left || '',
-              right: right || ''
+              right: right || '',
             }}
           >
-            {hasListItemDisplay(seg) ?
+            {hasListItemDisplay(seg) ? (
               <TableListItemEvent
                 seg={seg}
                 isDragging={isDragging}
                 isSelected={instanceId === eventSelection}
                 defaultDisplayEventEnd={defaultDisplayEventEnd}
                 {...getSegMeta(seg, todayRange)}
-              /> :
+              />
+            ) : (
               <TableBlockEvent
                 seg={seg}
                 isDragging={isDragging}
@@ -283,15 +272,14 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
                 defaultDisplayEventEnd={defaultDisplayEventEnd}
                 {...getSegMeta(seg, todayRange)}
               />
-            }
-          </div>
+            )}
+          </div>,
         )
       }
     }
 
     return nodes
   }
-
 
   renderFillSegs(segs: TableSeg[], fillType: string): VNode {
     let { isRtl } = this.context
@@ -301,10 +289,9 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
     if (framePositions) {
       for (let seg of segs) {
-
         let leftRightCss = isRtl ? {
           right: 0,
-          left: framePositions.lefts[seg.lastCol] - framePositions.lefts[seg.firstCol]
+          left: framePositions.lefts[seg.lastCol] - framePositions.lefts[seg.firstCol],
         } : {
           left: 0,
           right: framePositions.rights[seg.firstCol] - framePositions.rights[seg.lastCol],
@@ -313,14 +300,13 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
         nodes.push(
           <div
             key={buildEventRangeKey(seg.eventRange)}
-            className='fc-daygrid-bg-harness'
+            className="fc-daygrid-bg-harness"
             style={leftRightCss}
           >
             {fillType === 'bg-event' ?
               <BgEvent seg={seg} {...getSegMeta(seg, todayRange)} /> :
-              renderFill(fillType)
-            }
-          </div>
+              renderFill(fillType)}
+          </div>,
         )
       }
     }
@@ -328,12 +314,10 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     return createElement(Fragment, {}, ...nodes)
   }
 
-
   updateSizing(isExternalSizingChange) {
     let { props, frameElRefs } = this
 
     if (props.clientWidth !== null) { // positioning ready?
-
       if (isExternalSizingChange) {
         let frameEls = props.cells.map((cell) => frameElRefs.currentMap[cell.key])
 
@@ -345,8 +329,8 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               originEl,
               frameEls,
               true, // isHorizontal
-              false
-            )
+              false,
+            ),
           })
         }
       }
@@ -355,18 +339,16 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
       this.setState({
         segHeights: this.computeSegHeights(),
-        maxContentHeight: limitByContentHeight ? this.computeMaxContentHeight() : null
+        maxContentHeight: limitByContentHeight ? this.computeMaxContentHeight() : null,
       })
     }
   }
-
 
   computeSegHeights() { // query
     return mapHash(this.segHarnessRefs.currentMap, (eventHarnessEl) => (
       eventHarnessEl.getBoundingClientRect().height
     ))
   }
-
 
   computeMaxContentHeight() {
     let firstKey = this.props.cells[0].key
@@ -376,15 +358,13 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     return cellEl.getBoundingClientRect().bottom - fcContainerEl.getBoundingClientRect().top
   }
 
-
   public getCellEls() {
     let elMap = this.cellElRefs.currentMap
 
     return this.props.cells.map((cell) => elMap[cell.key])
   }
-
 }
 
 TableRow.addStateEquality({
-  segHeights: isPropsEqual
+  segHeights: isPropsEqual,
 })

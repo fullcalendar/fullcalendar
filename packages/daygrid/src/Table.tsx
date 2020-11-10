@@ -16,14 +16,13 @@ import {
   DateMarker,
   EventApi,
   DateProfile,
-  Fragment
+  Fragment,
 } from '@fullcalendar/common'
 import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg'
 import { TableRow } from './TableRow'
 import { TableCellModel, MoreLinkArg } from './TableCell'
 import { MorePopover } from './MorePopover'
 import { MoreLinkAction } from './more-link'
-
 
 export interface TableProps {
   elRef?: Ref<HTMLDivElement>
@@ -57,9 +56,7 @@ interface MorePopoverState extends MoreLinkArg {
   currentFgEventSegs: TableSeg[]
 }
 
-
 export class Table extends DateComponent<TableProps, TableState> {
-
   private splitBusinessHourSegs = memoize(splitSegsByRow)
   private splitBgEventSegs = memoize(splitSegsByRow)
   private splitFgEventSegs = memoize(splitSegsByRow)
@@ -73,9 +70,8 @@ export class Table extends DateComponent<TableProps, TableState> {
   private colPositions: PositionCache
 
   state = {
-    morePopoverState: null
+    morePopoverState: null,
   }
-
 
   render() {
     let { props } = this
@@ -104,25 +100,29 @@ export class Table extends DateComponent<TableProps, TableState> {
     let classNames = [
       'fc-daygrid-body',
       limitViaBalanced ? 'fc-daygrid-body-balanced' : 'fc-daygrid-body-unbalanced', // will all row heights be equal?
-      expandRows ? '' : 'fc-daygrid-body-natural' // will height of one row depend on the others?
+      expandRows ? '' : 'fc-daygrid-body-natural', // will height of one row depend on the others?
     ]
 
     return (
-      <div className={classNames.join(' ')} ref={this.handleRootEl} style={{
-        // these props are important to give this wrapper correct dimensions for interactions
-        // TODO: if we set it here, can we avoid giving to inner tables?
-        width: props.clientWidth,
-        minWidth: props.tableMinWidth
-      }}>
-        <NowTimer unit='day'>
+      <div
+        className={classNames.join(' ')}
+        ref={this.handleRootEl}
+        style={{
+          // these props are important to give this wrapper correct dimensions for interactions
+          // TODO: if we set it here, can we avoid giving to inner tables?
+          width: props.clientWidth,
+          minWidth: props.tableMinWidth,
+        }}
+      >
+        <NowTimer unit="day">
           {(nowDate: DateMarker, todayRange: DateRange) => (
             <Fragment>
               <table
-                className='fc-scrollgrid-sync-table'
+                className="fc-scrollgrid-sync-table"
                 style={{
                   width: props.clientWidth,
                   minWidth: props.tableMinWidth,
-                  height: expandRows ? props.clientHeight : ''
+                  height: expandRows ? props.clientHeight : '',
                 }}
               >
                 {props.colGroupNode}
@@ -158,22 +158,24 @@ export class Table extends DateComponent<TableProps, TableState> {
                   ))}
                 </tbody>
               </table>
-              {(!props.forPrint && morePopoverState && morePopoverState.currentFgEventSegs === props.fgEventSegs) && // clear popover on event mod
-                <MorePopover
-                  date={morePopoverState.date}
-                  dateProfile={dateProfile}
-                  segs={morePopoverState.allSegs}
-                  alignmentEl={morePopoverState.dayEl}
-                  topAlignmentEl={rowCnt === 1 ? props.headerAlignElRef.current : null}
-                  onCloseClick={this.handleMorePopoverClose}
-                  selectedInstanceId={props.eventSelection}
-                  hiddenInstances={ // yuck
-                    (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-                    (props.eventResize ? props.eventResize.affectedInstances : null) ||
-                    {}
-                  }
-                  todayRange={todayRange}
-                />
+              { // clear popover on event mod
+                (!props.forPrint && morePopoverState && morePopoverState.currentFgEventSegs === props.fgEventSegs) && (
+                  <MorePopover
+                    date={morePopoverState.date}
+                    dateProfile={dateProfile}
+                    segs={morePopoverState.allSegs}
+                    alignmentEl={morePopoverState.dayEl}
+                    topAlignmentEl={rowCnt === 1 ? props.headerAlignElRef.current : null}
+                    onCloseClick={this.handleMorePopoverClose}
+                    selectedInstanceId={props.eventSelection}
+                    hiddenInstances={// yuck
+                      (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
+                      (props.eventResize ? props.eventResize.affectedInstances : null) ||
+                      {}
+                    }
+                    todayRange={todayRange}
+                  />
+                )
               }
             </Fragment>
           )}
@@ -182,12 +184,10 @@ export class Table extends DateComponent<TableProps, TableState> {
     )
   }
 
-
   handleRootEl = (rootEl: HTMLElement | null) => {
     this.rootEl = rootEl
     setRef(this.props.elRef, rootEl)
   }
-
 
   handleMoreLinkClick = (arg: MoreLinkArg) => { // TODO: bad names "more link click" versus "more click"
     let { context } = this
@@ -202,7 +202,7 @@ export class Table extends DateComponent<TableProps, TableState> {
         start: dateEnv.toDate(range.start),
         end: dateEnv.toDate(range.end),
         isStart: seg.isStart,
-        isEnd: seg.isEnd
+        isEnd: seg.isEnd,
       }
     }
 
@@ -213,7 +213,7 @@ export class Table extends DateComponent<TableProps, TableState> {
         allSegs: arg.allSegs.map(segForPublic),
         hiddenSegs: arg.hiddenSegs.map(segForPublic),
         jsEvent: arg.ev,
-        view: context.viewApi
+        view: context.viewApi,
       }) as (MoreLinkAction | undefined) // hack to handle void
     }
 
@@ -221,47 +221,41 @@ export class Table extends DateComponent<TableProps, TableState> {
       this.setState({
         morePopoverState: {
           ...arg,
-          currentFgEventSegs: this.props.fgEventSegs
-        }
+          currentFgEventSegs: this.props.fgEventSegs,
+        },
       })
-
     } else if (typeof clickOption === 'string') { // a view name
       context.calendarApi.zoomTo(arg.date, clickOption)
     }
   }
 
-
   handleMorePopoverClose = () => {
     this.setState({
-      morePopoverState: null
+      morePopoverState: null,
     })
   }
 
-
   // Hit System
   // ----------------------------------------------------------------------------------------------------
-
 
   prepareHits() {
     this.rowPositions = new PositionCache(
       this.rootEl,
       this.rowRefs.collect().map((rowObj) => rowObj.getCellEls()[0]), // first cell el in each row. TODO: not optimal
       false,
-      true // vertical
+      true, // vertical
     )
 
     this.colPositions = new PositionCache(
       this.rootEl,
       this.rowRefs.currentMap[0].getCellEls(), // cell els in first row
       true, // horizontal
-      false
+      false,
     )
   }
 
-
   positionToHit(leftPosition, topPosition) {
     let { colPositions, rowPositions } = this
-
     let col = colPositions.leftToIndex(leftPosition)
     let row = rowPositions.topToIndex(topPosition)
 
@@ -271,44 +265,39 @@ export class Table extends DateComponent<TableProps, TableState> {
         col,
         dateSpan: {
           range: this.getCellRange(row, col),
-          allDay: true
+          allDay: true,
         },
         dayEl: this.getCellEl(row, col),
         relativeRect: {
           left: colPositions.lefts[col],
           right: colPositions.rights[col],
           top: rowPositions.tops[row],
-          bottom: rowPositions.bottoms[row]
-        }
+          bottom: rowPositions.bottoms[row],
+        },
       }
     }
-  }
 
+    return null
+  }
 
   private getCellEl(row, col) {
     return this.rowRefs.currentMap[row].getCellEls()[col] // TODO: not optimal
   }
-
 
   private getCellRange(row, col) {
     let start = this.props.cells[row][col].date
     let end = addDays(start, 1)
     return { start, end }
   }
-
 }
-
 
 function buildBuildMoreLinkText(moreLinkTextInput): (num: number) => string {
   if (typeof moreLinkTextInput === 'function') {
     return moreLinkTextInput
-  } else {
-    return function(num) {
-      return `+${num} ${moreLinkTextInput}`
-    }
   }
-}
 
+  return (num) => `+${num} ${moreLinkTextInput}`
+}
 
 function isSegAllDay(seg: TableSeg) {
   return seg.eventRange.def.allDay

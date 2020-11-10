@@ -7,17 +7,14 @@ import {
   DayTableModel,
   Duration,
   DateComponent,
-  DateRange,
-  Slicer,
   ViewContext,
   RefObject,
   CssDimValue,
   Hit,
-  DateProfile
+  DateProfile,
 } from '@fullcalendar/common'
 import { Table } from './Table'
-import { TableSeg } from './TableSeg'
-
+import { DayTableSlicer } from './DayTableSlicer'
 
 export interface DayTableProps {
   dateProfile: DateProfile,
@@ -44,10 +41,8 @@ export interface DayTableProps {
 }
 
 export class DayTable extends DateComponent<DayTableProps, ViewContext> {
-
   private slicer = new DayTableSlicer()
   private tableRef = createRef<Table>()
-
 
   render() {
     let { props, context } = this
@@ -56,7 +51,7 @@ export class DayTable extends DateComponent<DayTableProps, ViewContext> {
       <Table
         ref={this.tableRef}
         elRef={this.handleRootEl}
-        { ...this.slicer.sliceProps(props, props.dateProfile, props.nextDayThreshold, context, props.dayTableModel) }
+        {...this.slicer.sliceProps(props, props.dateProfile, props.nextDayThreshold, context, props.dayTableModel)}
         dateProfile={props.dateProfile}
         cells={props.dayTableModel.cells}
         colGroupNode={props.colGroupNode}
@@ -74,7 +69,6 @@ export class DayTable extends DateComponent<DayTableProps, ViewContext> {
     )
   }
 
-
   handleRootEl = (rootEl: HTMLDivElement | null) => {
     if (rootEl) {
       this.context.registerInteractiveComponent(this, { el: rootEl })
@@ -83,11 +77,9 @@ export class DayTable extends DateComponent<DayTableProps, ViewContext> {
     }
   }
 
-
   prepareHits() {
     this.tableRef.current.prepareHits()
   }
-
 
   queryHit(positionLeft: number, positionTop: number): Hit {
     let rawHit = this.tableRef.current.positionToHit(positionLeft, positionTop)
@@ -101,22 +93,12 @@ export class DayTable extends DateComponent<DayTableProps, ViewContext> {
           left: rawHit.relativeRect.left,
           right: rawHit.relativeRect.right,
           top: rawHit.relativeRect.top,
-          bottom: rawHit.relativeRect.bottom
+          bottom: rawHit.relativeRect.bottom,
         },
-        layer: 0
+        layer: 0,
       }
     }
+
+    return null
   }
-
-}
-
-
-export class DayTableSlicer extends Slicer<TableSeg, [DayTableModel]> {
-
-  forceDayIfListItem = true
-
-  sliceRange(dateRange: DateRange, dayTableModel: DayTableModel): TableSeg[] {
-    return dayTableModel.sliceRange(dateRange)
-  }
-
 }

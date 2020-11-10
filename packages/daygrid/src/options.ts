@@ -1,12 +1,10 @@
-import {
-  identity, Identity, ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler
-} from '@fullcalendar/common'
+import { identity, Identity, ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler } from '@fullcalendar/common'
 
 // public
 import {
   MoreLinkContentArg,
   MoreLinkMountArg,
-  MoreLinkAction
+  MoreLinkAction,
 } from './api-type-deps'
 
 export const OPTION_REFINERS = {

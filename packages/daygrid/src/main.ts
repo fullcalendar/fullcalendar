@@ -6,7 +6,8 @@ import './options-declare'
 import './main.css'
 
 export * from './api-type-deps'
-export { DayTable, DayTableSlicer } from './DayTable'
+export { DayTable } from './DayTable'
+export { DayTableSlicer } from './DayTableSlicer'
 export { Table } from './Table'
 export { TableSeg } from './TableSeg'
 export { TableCellModel } from './TableCell'
@@ -21,25 +22,25 @@ export default createPlugin({
 
     dayGrid: {
       component: DayTableView,
-      dateProfileGeneratorClass: TableDateProfileGenerator
+      dateProfileGeneratorClass: TableDateProfileGenerator,
     },
 
     dayGridDay: {
       type: 'dayGrid',
-      duration: { days: 1 }
+      duration: { days: 1 },
     },
 
     dayGridWeek: {
       type: 'dayGrid',
-      duration: { weeks: 1 }
+      duration: { weeks: 1 },
     },
 
     dayGridMonth: {
       type: 'dayGrid',
       duration: { months: 1 },
       monthMode: true,
-      fixedWeekCount: true
-    }
+      fixedWeekCount: true,
+    },
 
-  }
+  },
 })
