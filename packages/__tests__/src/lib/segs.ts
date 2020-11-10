@@ -17,11 +17,11 @@ export function doElsMatchSegs(els, segs, segToRectFunc) {
     return false
   }
 
-  for (j = 0, len = segs.length; j < len; j++) {
+  for (j = 0, len = segs.length; j < len; j += 1) {
     seg = segs[j]
     segRect = segToRectFunc(seg)
     found = false
-    for (i = k = 0, len1 = unmatchedRects.length; k < len1; i = ++k) {
+    for (i = k = 0, len1 = unmatchedRects.length; k < len1; i = (k += 1)) {
       elRect = unmatchedRects[i]
       if (isRectsSimilar(elRect, segRect)) {
         unmatchedRects.splice(i, 1) // remove

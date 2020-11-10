@@ -42,6 +42,7 @@ describe('event dragging on repeating events', () => {
   })
 
   it('hides other repeating events when dragging', (done) => {
+    let dayGridWrapper
     let calendar = initCalendar({
       eventDragStart() {
         setTimeout(() => { // try go execute DURING the drag
@@ -55,8 +56,8 @@ describe('event dragging on repeating events', () => {
         }, 10)
       },
     })
-    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
+    dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     $(dayGridWrapper.getFirstEventEl()).simulate('drag', {
       dx: 100,
       duration: 100, // ample time for separate eventDragStart/eventDrop
@@ -65,6 +66,7 @@ describe('event dragging on repeating events', () => {
 
   // inverse of above test
   it('doesnt accidentally hide all non-id events when dragging', (done) => {
+    let dayGridWrapper
     let calendar = initCalendar({
       events: [
         {
@@ -90,8 +92,8 @@ describe('event dragging on repeating events', () => {
         }, 10)
       },
     })
-    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
+    dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     $(dayGridWrapper.getFirstEventEl()).simulate('drag', {
       dx: 100,
       duration: 100, // ample time for separate eventDragStart/eventDrop

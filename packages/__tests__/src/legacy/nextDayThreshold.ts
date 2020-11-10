@@ -76,7 +76,7 @@ describe('nextDayThreshold', () => {
     let totalWidth = 0
 
     let eventEls = new CalendarWrapper(calendar).getEventEls()
-    $(eventEls).each(function () {
+    $(eventEls).each(() => {
       totalWidth += $(this).outerWidth()
     })
 

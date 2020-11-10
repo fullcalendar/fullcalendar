@@ -94,7 +94,7 @@ describe('firstDay', () => {
     let headerWrapper = new DayGridViewWrapper(calendar).header
     let cellEls = headerWrapper.getCellEls()
 
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 7; i += 1) {
       expect(cellEls[i]).toHaveClass(DOW_CLASSNAMES[(i + dowNum) % 7])
     }
   }

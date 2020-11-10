@@ -70,7 +70,7 @@ describe('destroy', () => {
 
     // Issue 2432
     it('preserves existing window handlers when handleWindowResize is off', () => {
-      let resizeHandler = function () {}
+      let resizeHandler = () => {}
       let windowListenerCounter = new ListenerCounter(window)
       windowListenerCounter.startWatching()
 

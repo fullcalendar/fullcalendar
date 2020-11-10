@@ -1,5 +1,5 @@
 describe('eventSourceSuccess', () => {
-  const FETCH_FUNC = function (info, successCallback) {
+  const FETCH_FUNC = (info, successCallback) => {
     successCallback({
       something: [
         { title: 'hi', start: '2018-10-01' },
@@ -7,9 +7,7 @@ describe('eventSourceSuccess', () => {
     })
   }
 
-  const TRANSFORM = function (input) {
-    return input.something
-  }
+  const TRANSFORM = (input) => input.something
 
   pushOptions({
     initialDate: '2018-10-01',

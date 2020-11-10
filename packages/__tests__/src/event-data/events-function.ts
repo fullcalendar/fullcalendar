@@ -86,12 +86,12 @@ describe('events as a function', () => {
         loadingCallArgs.push(bool)
       },
       eventSources: [
-        function (arg, callback) {
+        (arg, callback) => {
           setTimeout(() => {
             callback([])
           }, 0)
         },
-        function (arg, callback) {
+        (arg, callback) => {
           setTimeout(() => {
             callback([])
           }, 10)

@@ -1,9 +1,9 @@
 describe('eventDataTransform', () => {
-  let transform = function (raw) {
-    return $.extend({}, raw, {
+  let transform = (raw) => (
+    $.extend({}, raw, {
       was_processed: true,
     })
-  }
+  )
 
   describeOptions({
     'when on the calendar': {

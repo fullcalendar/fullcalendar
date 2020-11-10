@@ -24,6 +24,8 @@ export function getDSTDeadZone() {
       return [prior, dstDates[1]]
     }
   }
+
+  return null
 }
 
 function getDSTDates() {
@@ -64,4 +66,6 @@ function narrowDSTDate(start, end) {
   } if (midTZO === endTZO) {
     return narrowDSTDate(start, mid)
   }
+
+  return null
 }

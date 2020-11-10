@@ -41,7 +41,7 @@ function pushOptions(options: CalendarOptions) {
 function spyOnCalendarCallback(name, func?) {
   let options = {} as any
 
-  options[name] = func || function () {}
+  options[name] = func || (() => {})
   spyOn(options, name).and.callThrough()
 
   optionsStack.push(options)
@@ -90,7 +90,7 @@ function initCalendar(moreOptions?: CalendarOptions, el?) {
 
 function getCurrentOptions() {
   let args = [{}].concat(optionsStack) as any
-  return $.extend.apply($, args)
+  return $.extend.apply($, args) // eslint-disable-line prefer-spread
 }
 
 // Categorizing Tests
@@ -186,11 +186,12 @@ function describeTimeZone(name, callback) {
 function oneCall(func) {
   let called
   called = false
-  return function () {
+  return function () { // eslint-disable-line func-names
     if (!called) {
       called = true
-      return func.apply(this, arguments)
+      return func.apply(this, arguments) // eslint-disable-line prefer-rest-params
     }
+    return null
   }
 }
 
@@ -205,7 +206,7 @@ function spyOnMethod(Class, methodName, dontCallThrough) {
     spy = spy.and.callThrough()
   }
 
-  spy.restore = function () {
+  (spy as any).restore = () => {
     if (origMethod) {
       Class.prototype[methodName] = origMethod
     } else {
@@ -218,7 +219,7 @@ function spyOnMethod(Class, methodName, dontCallThrough) {
 
 // wraps an existing function in a spy, calling through to the function
 function spyCall(func?) {
-  func = func || function () {}
+  func = func || (() => {})
   const obj = { func }
   spyOn(obj, 'func').and.callThrough()
   return obj.func

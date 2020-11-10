@@ -46,7 +46,7 @@ describe('aspectRatio', () => {
         let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
 
         let rect = viewContainerEl.getBoundingClientRect()
-        let ratio = Math.round(rect.width / rect.height * 100)
+        let ratio = Math.round((rect.width / rect.height) * 100)
         expect(Math.round(ratio)).toEqual(200)
       })
     })
@@ -69,7 +69,7 @@ describe('aspectRatio', () => {
         let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
 
         let rect = viewContainerEl.getBoundingClientRect()
-        let ratio = Math.round(rect.width / rect.height * 100)
+        let ratio = Math.round((rect.width / rect.height) * 100)
         expect(Math.round(ratio)).toEqual(100)
       })
     })
@@ -92,7 +92,7 @@ describe('aspectRatio', () => {
         let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
 
         let rect = viewContainerEl.getBoundingClientRect()
-        let ratio = Math.round(rect.width / rect.height * 100)
+        let ratio = Math.round((rect.width / rect.height) * 100)
         expect(Math.round(ratio)).toEqual(50)
       })
     })
@@ -115,7 +115,7 @@ describe('aspectRatio', () => {
         let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
 
         let rect = viewContainerEl.getBoundingClientRect()
-        let ratio = Math.round(rect.width / rect.height * 100)
+        let ratio = Math.round((rect.width / rect.height) * 100)
         expect(Math.round(ratio)).toEqual(50)
       })
     })
@@ -138,7 +138,7 @@ describe('aspectRatio', () => {
         let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
 
         let rect = viewContainerEl.getBoundingClientRect()
-        let ratio = Math.round(rect.width / rect.height * 100)
+        let ratio = Math.round((rect.width / rect.height) * 100)
         expect(Math.round(ratio)).toEqual(50)
       })
     })

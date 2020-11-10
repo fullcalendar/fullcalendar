@@ -11,13 +11,13 @@ it('daygrid view rerenders well', (done) => {
       { title: 'event 0', start: '2017-10-04' },
     ],
     dayHeaderContent() {
-      dayHeaderRenderCnt++
+      dayHeaderRenderCnt += 1
     },
     dayCellContent() {
-      dayCellRenderCnt++
+      dayCellRenderCnt += 1
     },
     eventContent() {
-      eventRenderCnt++
+      eventRenderCnt += 1
     },
   })
 

@@ -26,17 +26,17 @@ describe('event resize mirror', () => {
       let calendar = initCalendar({
         eventDidMount(info) {
           if (info.isMirror) {
-            mirrorMountCalls++
+            mirrorMountCalls += 1
           }
         },
         eventContent(info) {
           if (info.isMirror) {
-            mirrorContentCalls++
+            mirrorContentCalls += 1
           }
         },
         eventWillUnmount(info) {
           if (info.isMirror) {
-            mirrorUnmountCalls++
+            mirrorUnmountCalls += 1
           }
         },
       })
@@ -76,17 +76,17 @@ describe('event resize mirror', () => {
       let calendar = initCalendar({
         eventDidMount(info) {
           if (info.isMirror) {
-            mirrorMountCalls++
+            mirrorMountCalls += 1
           }
         },
         eventContent(info) {
           if (info.isMirror) {
-            mirrorContentCalls++
+            mirrorContentCalls += 1
           }
         },
         eventWillUnmount(info) {
           if (info.isMirror) {
-            mirrorUnmountCalls++
+            mirrorUnmountCalls += 1
           }
         },
       })

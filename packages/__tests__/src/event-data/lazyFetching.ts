@@ -11,9 +11,8 @@ describe('lazyFetching', () => {
     })
 
     it('won\'t fetch weeks already queried', () => {
-      let arg
       let options = {
-        events(arg, callback) {
+        events(fetchInfo, callback) {
           callback([])
         },
       }
@@ -27,7 +26,7 @@ describe('lazyFetching', () => {
 
       expect(options.events.calls.count()).toBe(1)
 
-      arg = options.events.calls.argsFor(0)[0]
+      let arg = options.events.calls.argsFor(0)[0]
       expect(arg.start).toEqualDate('2017-10-01T00:00:00Z')
       expect(arg.end).toEqualDate('2017-11-12T00:00:00Z')
     })
@@ -39,9 +38,8 @@ describe('lazyFetching', () => {
     })
 
     it('will fetch each new week range', () => {
-      let arg
       let options = {
-        events(arg, callback) {
+        events(fetchInfo, callback) {
           callback([])
         },
       }
@@ -55,7 +53,7 @@ describe('lazyFetching', () => {
 
       expect(options.events.calls.count()).toBe(5)
 
-      arg = options.events.calls.argsFor(0)[0]
+      let arg = options.events.calls.argsFor(0)[0]
       expect(arg.start).toEqualDate('2017-10-01T00:00:00Z')
       expect(arg.end).toEqualDate('2017-11-12T00:00:00Z')
 

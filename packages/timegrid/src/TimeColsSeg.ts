@@ -12,12 +12,12 @@ export function splitSegsByCol(segs: TimeColsSeg[] | null, colCnt: number) { // 
   let segsByCol: TimeColsSeg[][] = []
   let i
 
-  for (i = 0; i < colCnt; i++) {
+  for (i = 0; i < colCnt; i += 1) {
     segsByCol.push([])
   }
 
   if (segs) {
-    for (i = 0; i < segs.length; i++) {
+    for (i = 0; i < segs.length; i += 1) {
       segsByCol[segs[i].col].push(segs[i])
     }
   }
@@ -29,11 +29,11 @@ export function splitInteractionByCol(ui: EventSegUiInteractionState | null, col
   let byRow: EventSegUiInteractionState[] = []
 
   if (!ui) {
-    for (let i = 0; i < colCnt; i++) {
+    for (let i = 0; i < colCnt; i += 1) {
       byRow[i] = null
     }
   } else {
-    for (let i = 0; i < colCnt; i++) {
+    for (let i = 0; i < colCnt; i += 1) {
       byRow[i] = {
         affectedInstances: ui.affectedInstances,
         isEvent: ui.isEvent,

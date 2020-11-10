@@ -11,10 +11,10 @@ describe('implicit unselection', () => {
 
     initCalendar({
       select() {
-        selectFired++
+        selectFired += 1
       },
       unselect() {
-        unselectFired++
+        unselectFired += 1
       },
     })
 
@@ -33,10 +33,10 @@ describe('implicit unselection', () => {
 
     initCalendar({
       select() {
-        selectFired++
+        selectFired += 1
       },
       unselect() {
-        unselectFired++
+        unselectFired += 1
       },
     })
 

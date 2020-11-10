@@ -41,6 +41,7 @@ describe('dragging events between calendars', () => {
   it('fires all triggers', (done) => {
     let triggerNames = []
     let eventAllowCalled = false
+    let eventEl
 
     calendar0 = new Calendar(el0, {
       plugins: [interactionPlugin, dayGridPlugin],
@@ -93,7 +94,7 @@ describe('dragging events between calendars', () => {
     let dayGridWrapper0 = new DayGridViewWrapper(calendar0).dayGrid
     let dayGridWrapper1 = new DayGridViewWrapper(calendar1).dayGrid
 
-    let eventEl = dayGridWrapper0.getEventEls()[0]
+    eventEl = dayGridWrapper0.getEventEls()[0]
     let dayEl = dayGridWrapper1.getDayEls('2019-01-05')[0]
     let point1 = getRectCenter(dayEl.getBoundingClientRect())
 

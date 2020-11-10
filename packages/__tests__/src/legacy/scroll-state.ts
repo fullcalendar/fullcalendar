@@ -26,6 +26,8 @@ describe('scroll state', () => {
     let ViewWrapper = viewName.match(/^dayGrid/) ? DayGridViewWrapper : TimeGridViewWrapper
 
     it('should be maintained when resizing window', (done) => {
+      let scrollEl
+      let scroll0
       let calendar = initCalendar({
         windowResize() {
           setTimeout(() => { // wait until all other tasks are finished
@@ -34,8 +36,8 @@ describe('scroll state', () => {
           }, 0)
         },
       }, calendarEl)
-      let scrollEl = new ViewWrapper(calendar).getScrollerEl()
-      let scroll0
+
+      scrollEl = new ViewWrapper(calendar).getScrollerEl()
 
       setTimeout(() => { // wait until after browser's scroll state is applied
         scrollEl.scrollTop = 9999 // all the way

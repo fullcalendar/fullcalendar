@@ -13,7 +13,7 @@ describe('datesSet', () => {
       ...getCurrentOptions(),
       weekNumbers: false,
       datesSet() {
-        fireCnt++
+        fireCnt += 1
       },
     }
     let $calendarEl = $('<div>').appendTo('body')
@@ -40,7 +40,7 @@ describe('datesSet', () => {
       ...getCurrentOptions(),
       headerToolbar: buildHeaderToolbar(),
       datesSet() {
-        fireCnt++
+        fireCnt += 1
       },
     }
     let $calendarEl = $('<div>').appendTo('body')
@@ -62,7 +62,7 @@ describe('datesSet', () => {
       ...getCurrentOptions(),
       plugins: [dayGridPlugin],
       datesSet() {
-        fireCnt++
+        fireCnt += 1
       },
     }
     let $calendarEl = $('<div>').appendTo('body')

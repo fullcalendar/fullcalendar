@@ -1,7 +1,7 @@
 /* General Utils
 ---------------------------------------------------------------------------------------------------------------------- */
 
-$.simulateByPoint = function (type, options) {
+$.simulateByPoint = (type, options) => {
   let docEl = $(document)
   let point = options.point
   let clientX
@@ -22,16 +22,16 @@ $.simulateByPoint = function (type, options) {
 let origSimulateEvent = $.simulate.prototype.simulateEvent
 let touchUID = Date.now()
 
-$.simulate.prototype.simulateEvent = function (elem, type, options) {
+$.simulate.prototype.simulateEvent = function (elem, type, options) { // eslint-disable-line func-names
   if (elem === window && type === 'resize') {
     return this.simulateWindowResize()
   } if (/^touch/.test(type)) {
     return this.simulateTouchEvent(elem, type, options)
   }
-    return origSimulateEvent.apply(this, arguments)
+  return origSimulateEvent.apply(this, arguments) // eslint-disable-line prefer-rest-params
 }
 
-$.simulate.prototype.simulateWindowResize = function () {
+$.simulate.prototype.simulateWindowResize = function () { // eslint-disable-line func-names
   // from https://stackoverflow.com/a/1818513/96342
   let event
 
@@ -51,14 +51,14 @@ $.simulate.prototype.simulateWindowResize = function () {
   this.dispatchEvent(window, 'resize', event)
 }
 
-$.simulate.prototype.simulateTouchEvent = function (elem, type, options) {
+$.simulate.prototype.simulateTouchEvent = function (elem, type, options) { // eslint-disable-line func-names
   // http://stackoverflow.com/a/29019278/96342
   let event = document.createEvent('Event')
 
   event.initEvent(type, true, true); // cancelable, bubbleable
   (event as any).touches = [{
     target: elem,
-    identifier: touchUID++,
+    identifier: touchUID,
     pageX: options.clientX,
     pageY: options.clientY,
     screenX: options.clientX,
@@ -66,11 +66,12 @@ $.simulate.prototype.simulateTouchEvent = function (elem, type, options) {
     clientX: options.clientX,
     clientY: options.clientY,
   }]
+  touchUID += 1
 
   this.dispatchEvent(elem, type, event, options)
 }
 
-$.simulateMouseClick = function (elem) {
+$.simulateMouseClick = function (elem) { // eslint-disable-line func-names
   let $elem = $(elem)
   let clientCoords = {
     clientX: $elem.offset().left + $elem.outerWidth() / 2,
@@ -82,7 +83,7 @@ $.simulateMouseClick = function (elem) {
   $elem.simulate('click', clientCoords)
 }
 
-$.simulateTouchClick = function (elem) {
+$.simulateTouchClick = function (elem) { // eslint-disable-line func-names
   let $elem = $(elem)
   let clientCoords = {
     clientX: $elem.offset().left + $elem.outerWidth() / 2,
@@ -115,7 +116,7 @@ let DRAG_DEFAULTS = {
 
 let dragStackCnt = 0
 
-$.simulate.prototype.simulateDrag = function () {
+$.simulate.prototype.simulateDrag = function () { // eslint-disable-line func-names
   let options = $.extend({}, DRAG_DEFAULTS, this.options)
   let targetNode = this.target // raw DOM node
   let targetEl = $(targetNode) // jq object
@@ -217,7 +218,8 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
 
   function startDrag() {
     updateCoords()
-    dragId = ++dragStackCnt
+    dragStackCnt += 1
+    dragId = dragStackCnt
 
     // simulate a drag-start only if another drag isn't already happening
     if (dragStackCnt === 1) {
@@ -247,7 +249,7 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
   }
 
   function tick() { // called one interval after start
-    moveIndex++
+    moveIndex += 1
     updateCoords() // update clientCoords before mousemove
 
     if (isTouch) {
@@ -275,7 +277,7 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
   }
 
   function stopDrag() { // progress at 1, coords already up to date at this point
-    (options.onBeforeRelease || function () {})()
+    (options.onBeforeRelease || (() => {}))()
 
     // only simulate a drop if the current drag is still the active one.
     // otherwise, this means another drag has begun via onBeforeRelease.
@@ -292,14 +294,13 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
       }
     }
 
-    dragStackCnt--
+    dragStackCnt -= 1
+
+    let callback: (() => void) = options.onRelease || options.callback || (() => {})
 
     // we wait because the there might be a FullCalendar drag interaction that finishes asynchronously
     // after the mouseend/touchend happens, and it's really convenient if our callback fires after that.
-    setTimeout(
-      options.onRelease || options.callback || (() => {}), // TODO: deprecate "callback" ?
-      0,
-    )
+    setTimeout(callback, 0)
   }
 
   startDrag()
@@ -310,10 +311,10 @@ function normalizeElPoint(point, el) {
   let top = point.top
 
   if (/%$/.test(left)) {
-    left = parseInt(left) / 100 * el.outerWidth()
+    left = (parseInt(left, 10) / 100) * el.outerWidth()
   }
   if (/%$/.test(top)) {
-    top = parseInt(top) / 100 * el.outerHeight()
+    top = (parseInt(top, 10) / 100) * el.outerHeight()
   }
 
   return { left, top }

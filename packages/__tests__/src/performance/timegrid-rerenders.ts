@@ -13,19 +13,19 @@ it('timegrid view rerenders well', (done) => {
       { title: 'event 0', start: '2017-10-04T00:00:00' },
     ],
     dayHeaderContent() {
-      dayHeaderRenderCnt++
+      dayHeaderRenderCnt += 1
     },
     dayCellContent() {
-      dayCellRenderCnt++
+      dayCellRenderCnt += 1
     },
     slotLabelContent() {
-      slotLabelRenderCnt++
+      slotLabelRenderCnt += 1
     },
     slotLaneContent() {
-      slotLaneRenderCnt++
+      slotLaneRenderCnt += 1
     },
     eventContent() {
-      eventRenderCnt++
+      eventRenderCnt += 1
     },
   })
 

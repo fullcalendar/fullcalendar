@@ -108,10 +108,10 @@ describe('event source refetch', () => {
   }
 
   function createEventGenerator(classNamePrefix, fetchConfig) {
-    return function (arg, callback) {
+    return (arg, callback) => {
       let events = []
 
-      for (let i = 0; i < fetchConfig.eventCount; i++) {
+      for (let i = 0; i < fetchConfig.eventCount; i += 1) {
         events.push({
           start: '2015-08-07T02:00:00',
           end: '2015-08-07T03:00:00',

@@ -23,6 +23,7 @@ describe('unselectAuto', () => {
     describe('when clicking away', () => {
       it('unselects the current selection when clicking elsewhere in DOM', (done) => {
         let isDone = false // hack against dragging continuing after destroy
+        let dayGridWrapper
         let calendar = initCalendar({
           unselect(arg) {
             if (!isDone) {
@@ -34,8 +35,7 @@ describe('unselectAuto', () => {
             }
           },
         })
-        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
-
+        dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
         calendar.select('2014-12-01', '2014-12-03')
         expect(dayGridWrapper.getHighlightEls().length).toBeGreaterThan(0)
 
@@ -49,6 +49,7 @@ describe('unselectAuto', () => {
     describe('when clicking another date', () => {
       it('unselects the current selection when clicking elsewhere in DOM', (done) => {
         let isDone = false // hack against dragging continuing after destroy
+        let dayGridWrapper
         let calendar = initCalendar({
           unselect(arg) {
             if (!isDone) {
@@ -60,11 +61,9 @@ describe('unselectAuto', () => {
             }
           },
         })
-        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
-
+        dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
         calendar.select('2014-12-01', '2014-12-03')
         expect(dayGridWrapper.getHighlightEls().length).toBeGreaterThan(0)
-
         $(dayGridWrapper.getDayEl('2014-12-04')).simulate('drag')
       })
     })

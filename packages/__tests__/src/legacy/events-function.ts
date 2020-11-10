@@ -64,7 +64,7 @@ describe('events as a function', () => {
       timeZone: 'America/Chicago',
       events(arg, callback) {
         testEventFunctionParams(arg, callback)
-        callCnt++
+        callCnt += 1
         if (callCnt === 1) {
           expect(arg.timeZone).toEqual('America/Chicago')
           expect(arg.start).toEqualDate('2014-04-27')

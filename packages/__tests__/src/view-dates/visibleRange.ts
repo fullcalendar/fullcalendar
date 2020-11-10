@@ -21,18 +21,14 @@ describe('visibleRange', () => {
           start: startInput,
           end: endInput,
         },
-        'of a function that returns date objects': function () {
-          return {
-            start: new Date(startInput),
-            end: new Date(endInput),
-          }
-        },
-        'of a function that returns strings': function () {
-          return {
-            start: startInput,
-            end: endInput,
-          }
-        },
+        'of a function that returns date objects': () => ({
+          start: new Date(startInput),
+          end: new Date(endInput),
+        }),
+        'of a function that returns strings': () => ({
+          start: startInput,
+          end: endInput,
+        }),
       }, () => {
         it('gets set to the given range', () => {
           initCalendar()

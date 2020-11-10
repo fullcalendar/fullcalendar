@@ -38,7 +38,7 @@ describe('day names', () => {
       })
     })
 
-    $.each(locales, (index, locale) => {
+    $.each(locales, (localeIndex, locale) => {
       describe('when locale is ' + locale, () => {
         CalendarWrapper.DOW_CLASSNAMES.forEach((dowClassName, index) => {
           let dayDate = addDays(sundayDate, index)

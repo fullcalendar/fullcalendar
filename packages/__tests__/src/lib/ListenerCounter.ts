@@ -19,14 +19,14 @@ export class ListenerCounter {
 
     el.addEventListener = (eventName, ...otherArgs) => {
       if (!IGNORED_EVENTS[eventName]) {
-        t.delta++
+        t.delta += 1
       }
       return origAddEventListened.call(el, eventName, ...otherArgs)
     }
 
     el.removeEventListener = (eventName, ...otherArgs) => {
       if (!IGNORED_EVENTS[eventName]) {
-        t.delta--
+        t.delta -= 1
       }
       return origRemoveEventListener.call(el, eventName, ...otherArgs)
     }

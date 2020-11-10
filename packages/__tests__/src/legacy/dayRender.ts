@@ -75,7 +75,7 @@ describe('dayCellDidMount', () => { // TODO: rename file
         expect(arg.date instanceof Date).toBe(true)
         expect(arg.el instanceof HTMLElement).toBe(true)
         expect(typeof arg.view).toBe('object')
-        callCnt++
+        callCnt += 1
       },
     }
 

@@ -16,7 +16,7 @@ describe('timeGrid view rendering', () => {
 
     let dowClassNames = CalendarWrapper.DOW_CLASSNAMES
 
-    for (let i = 0; i < dowClassNames.length; i++) {
+    for (let i = 0; i < dowClassNames.length; i += 1) {
       expect(thEls[i]).toHaveClass(dowClassNames[i])
     }
   })

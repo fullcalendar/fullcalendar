@@ -19,7 +19,7 @@ describe('removeEvents', () => {
     let events = buildEventsWithoutIds()
     let i
 
-    for (i = 0; i < events.length; i++) {
+    for (i = 0; i < events.length; i += 1) {
       events[i].id = i
     }
 

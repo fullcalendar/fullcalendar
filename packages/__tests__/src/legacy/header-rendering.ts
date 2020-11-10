@@ -114,7 +114,7 @@ children: [
         .appendTo('body')
 
       function beforeUnloadHandler() {
-        console.log('when calendar is within a form, it submits!!!')
+        console.log('when calendar is within a form, it submits!!!') // eslint-disable-line no-console
         unloadCalled = true
         cleanup()
         return 'click stay on this page'

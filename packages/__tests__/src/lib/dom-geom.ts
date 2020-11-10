@@ -7,11 +7,11 @@ import {
 ['height', 'outerHeight'].forEach((methodName) => {
   let orig = $.fn[methodName]
 
-  $.fn[methodName] = function () {
-    if (!arguments.length && this.is('td')) {
+  $.fn[methodName] = function () { // eslint-disable-line func-names
+    if (!arguments.length && this.is('td')) { // eslint-disable-line prefer-rest-params
       return this[0].getBoundingClientRect().height
     }
-      return orig.apply(this, arguments)
+    return orig.apply(this, arguments) // eslint-disable-line prefer-rest-params
   }
 })
 
@@ -29,8 +29,8 @@ export function getBoundingRect(el) {
 export function anyElsIntersect(els) {
   let rects = els.map((el) => el.getBoundingClientRect())
 
-  for (let i = 0; i < rects.length; i++) {
-    for (let j = i + 1; j < rects.length; j++) {
+  for (let i = 0; i < rects.length; i += 1) {
+    for (let j = i + 1; j < rects.length; j += 1) {
       if (rectsIntersect(rects[i], rects[j])) {
         return [els[i], els[j]]
       }

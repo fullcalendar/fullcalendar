@@ -20,6 +20,8 @@ export class ToolbarWrapper {
         iconName: iconNameMatch ? iconNameMatch[1] : '',
       }
     }
+
+    return null
   }
 
   getButtonEl(name) { // for custom or standard buttons

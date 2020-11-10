@@ -59,7 +59,7 @@ function buildSlotSegLevels(segs: Seg[]) {
   let seg
   let j
 
-  for (i = 0; i < segs.length; i++) {
+  for (i = 0; i < segs.length; i += 1) {
     seg = segs[i]
 
     // go through all the levels and stop on the first level where there are no collisions
@@ -79,7 +79,7 @@ function buildSlotSegLevels(segs: Seg[]) {
 // Find all the segments in `otherSegs` that vertically collide with `seg`.
 // Append into an optionally-supplied `results` array and return.
 function computeSlotSegCollisions(seg: Seg, otherSegs: Seg[], results = []) {
-  for (let i = 0; i < otherSegs.length; i++) {
+  for (let i = 0; i < otherSegs.length; i += 1) {
     if (isSlotSegCollision(seg, otherSegs[i])) {
       results.push(otherSegs[i])
     }
@@ -102,7 +102,7 @@ function computeForwardSlotSegs(levels) {
   let seg
   let k
 
-  for (i = 0; i < levels.length; i++) {
+  for (i = 0; i < levels.length; i += 1) {
     level = levels[i]
 
     for (j = 0; j < level.length; j++) {
@@ -125,7 +125,7 @@ function computeSlotSegPressures(seg: Seg) {
   let forwardSeg
 
   if (seg.forwardPressure == null) { // not already computed
-    for (i = 0; i < forwardSegs.length; i++) {
+    for (i = 0; i < forwardSegs.length; i += 1) {
       forwardSeg = forwardSegs[i]
 
       // figure out the child's maximum forward path
@@ -176,7 +176,7 @@ function computeSegForwardBack(seg: Seg, seriesBackwardPressure, seriesBackwardC
 
     // use this segment's coordinates to computed the coordinates of the less-pressurized
     // forward segments
-    for (i = 0; i < forwardSegs.length; i++) {
+    for (i = 0; i < forwardSegs.length; i += 1) {
       computeSegForwardBack(forwardSegs[i], 0, seg.forwardCoord, eventOrderSpecs)
     }
   }

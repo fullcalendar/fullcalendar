@@ -1,4 +1,4 @@
-import 'jquery-simulate/jquery.simulate.js'
+import 'jquery-simulate/jquery.simulate'
 import 'jasmine-jquery'
 
 import './lib/globals'

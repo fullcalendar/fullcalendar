@@ -7,7 +7,7 @@ import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 // (requests to other services were working however)
 const SKIP_GCAL = window.karmaConfig.isCi // maybe use webpack for this???
 if (SKIP_GCAL) {
-  console.log('skipping google-calendar')
+  console.log('skipping google-calendar') // eslint-disable-line no-console
 }
 
 // eslint-disable-next-line
@@ -33,8 +33,8 @@ describe('Google Calendar plugin', () => {
     // Intercept calls to console.warn
     currentWarnArgs = null
     oldConsoleWarn = console.warn
-    console.warn = function () {
-      currentWarnArgs = arguments
+    console.warn = function () { // eslint-disable-line func-names
+      currentWarnArgs = arguments // eslint-disable-line prefer-rest-params
     }
   })
 
@@ -54,7 +54,7 @@ describe('Google Calendar plugin', () => {
       let i
 
       expect(events.length).toBe(NUM_EVENTS)
-      for (i = 0; i < events.length; i++) {
+      for (i = 0; i < events.length; i += 1) {
         expect(events[i].url).not.toMatch('ctz=')
       }
 
@@ -74,7 +74,7 @@ describe('Google Calendar plugin', () => {
       let i
 
       expect(events.length).toBe(NUM_EVENTS)
-      for (i = 0; i < events.length; i++) {
+      for (i = 0; i < events.length; i += 1) {
         expect(events[i].url).toMatch('ctz=UTC')
       }
 
@@ -96,7 +96,7 @@ describe('Google Calendar plugin', () => {
       let i
 
       expect(events.length).toBe(NUM_EVENTS)
-      for (i = 0; i < events.length; i++) {
+      for (i = 0; i < events.length; i += 1) {
         expect(events[i].url).toMatch('ctz=America/New_York')
       }
 
@@ -272,7 +272,7 @@ describe('Google Calendar plugin', () => {
     })
   })
 
-  function afterEventsLoaded(calendar, callback) {
+  function afterEventsLoaded(calendar, callback: () => void) {
     calendar.on('eventsSet', () => {
       setTimeout(callback) // because nothing is rendered yet when eventSourceSuccess fires
     })

@@ -17,12 +17,12 @@ describe('eventDrop', () => {
   describe('when in month view', () => {
     pushOptions({
       initialView: 'dayGridMonth',
-    })
+    });
 
     // TODO: test that event's dragged via touch that don't wait long enough for longPressDelay
     // SHOULD NOT drag
 
-    ;[false, true].forEach((isTouch) => {
+    [false, true].forEach((isTouch) => {
       describe('with ' + (isTouch ? 'touch' : 'mouse'), () => {
         describe('when dragging an all-day event to another day', () => {
           it('should be given correct arguments, with whole-day delta', (done) => {

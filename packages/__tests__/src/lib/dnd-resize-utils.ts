@@ -201,7 +201,7 @@ export function testSelection(options, start, end, expectSuccess, callback) {
   }
 
   options.selectable = true
-  options.select = function (arg) {
+  options.select = (arg) => {
     successfulSelection =
       arg.allDay === allDay &&
       arg.start.valueOf() === start.valueOf() &&

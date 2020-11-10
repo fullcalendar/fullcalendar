@@ -120,11 +120,13 @@ export class TimeGridWrapper {
   getLastMajorAxisInfo() {
     let cells = this.getTimeAxisInfo()
 
-    for (let i = cells.length - 1; i >= 0; i--) {
+    for (let i = cells.length - 1; i >= 0; i -= 1) {
       if (cells[i].isMajor) {
         return cells[i]
       }
     }
+
+    return null
   }
 
   dragEventToDate(eventEl: HTMLElement, dropDate, onBeforeRelease?) {
@@ -313,19 +315,18 @@ export class TimeGridWrapper {
     }
 
     const topBorderWidth = 1 // TODO: kill
-    let slotEl = this.getSlotElByTime(targetTimeMs)
-    let $slotEl // used within loop, but we access last val
 
-    // exact slot match
-    if (slotEl) {
-      return $(slotEl).offset().top + topBorderWidth
+    let singleSlotEl = this.getSlotElByTime(targetTimeMs)
+    if (singleSlotEl) { // exact slot match
+      return $(singleSlotEl).offset().top + topBorderWidth
     }
 
+    let $slotEl // used within loop, but we access last val
     let slotEls = this.getSlotEls() // all slots
     let slotTimeMs = null
     let prevSlotTimeMs = null
 
-    for (let i = 0; i < slotEls.length; i++) { // traverse earlier to later
+    for (let i = 0; i < slotEls.length; i += 1) { // traverse earlier to later
       let slotEl = slotEls[i]
       $slotEl = $(slotEl)
 
@@ -377,10 +378,10 @@ export class TimeGridWrapper {
     let endTop = null
     let rects = []
 
-    for (dayI = 0; dayI < dayStructs.length; dayI++) {
+    for (dayI = 0; dayI < dayStructs.length; dayI += 1) {
       dayStruct = dayStructs[dayI]
 
-      for (slotI = 0; slotI < slotStructs.length; slotI++) {
+      for (slotI = 0; slotI < slotStructs.length; slotI += 1) {
         slotStruct = slotStructs[slotI]
 
         slotDayStart = addDays(
@@ -467,7 +468,7 @@ export class TimeGridWrapper {
 
     let len = slots.length
     if (len < 3) {
-      console.log('need at least 3 slots')
+      console.log('need at least 3 slots') // eslint-disable-line no-console
       return []
     }
 
@@ -478,12 +479,12 @@ export class TimeGridWrapper {
     let dayOffset = 0
 
     // iterate from one-before middle to beginning
-    for (i = mid - 1; i >= 0; i--) {
+    for (i = mid - 1; i >= 0; i -= 1) {
       ms = slots[i + 1].startTimeMs - slots[i].startTimeMs
 
       // big deviation? assume moved to previous day (b/c of special slotMinTime)
       if (Math.abs(ms - standardMs) > standardMs * 2) {
-        dayOffset--
+        dayOffset -= 1
         slots[i].endTimeMs = slots[i].startTimeMs + standardMs
       } else { // otherwise, current slot's end is next slot's beginning
         slots[i].endTimeMs = slots[i + 1].startTimeMs
@@ -495,14 +496,14 @@ export class TimeGridWrapper {
     dayOffset = 0
 
     // iterate from middle to one-before last
-    for (i = mid; i < len - 1; i++) {
+    for (i = mid; i < len - 1; i += 1) {
       ms = slots[i + 1].startTimeMs - slots[i].startTimeMs
 
       slots[i].dayOffset = dayOffset
 
       // big deviation? assume moved to next day (b/c of special slotMaxTime)
       if (Math.abs(ms - standardMs) > standardMs * 2) {
-        dayOffset++ // will apply to the next slotStruct
+        dayOffset += 1 // will apply to the next slotStruct
         slots[i].endTimeMs = slots[i].startTimeMs + standardMs
       } else { // otherwise, current slot's end is next slot's beginning
         slots[i].endTimeMs = slots[i + 1].startTimeMs
@@ -516,7 +517,7 @@ export class TimeGridWrapper {
     // if last slot went over the day threshold
     if (slots[i].endTimeMs > 1000 * 60 * 60 * 24) {
       slots[i].endTimeMs -= 1000 * 60 * 60 * 24
-      slots[i].dayOffset++
+      slots[i].dayOffset += 1
     }
 
     return slots
@@ -570,11 +571,11 @@ function checkEventRenderingMatch(expectedRects, eventEls) {
   let elRect
 
   if (eventEls.length !== expectedLength) {
-    console.log('does not match element count')
+    console.log('does not match element count') // eslint-disable-line no-console
     return false
   }
 
-  for (i = 0; i < expectedLength; i++) {
+  for (i = 0; i < expectedLength; i += 1) {
     expectedRect = expectedRects[i]
     elRect = eventEls[i].getBoundingClientRect()
 
@@ -585,7 +586,7 @@ function checkEventRenderingMatch(expectedRects, eventEls) {
       Math.abs(elRect.top - expectedRect.top) < 1 &&
       Math.abs(elRect.bottom + 1 - expectedRect.bottom) < 1 // add 1 because of bottom margin!
     )) {
-      console.log('rects do not match')
+      console.log('rects do not match') // eslint-disable-line no-console
       return false
     }
   }

@@ -72,7 +72,7 @@ describe('refetchEvents', () => {
     describe('and all events are fetched synchronously', () => {
       it('all events are immediately updated', (done) => {
         initCalendar({ eventSources })
-        fetchCount++
+        fetchCount += 1
         currentCalendar.refetchEvents()
         expect($('.fetch0').length).toEqual(0)
         expect($('.fetch1').length).toEqual(3)
@@ -83,7 +83,7 @@ describe('refetchEvents', () => {
     describe('and one event source is asynchronous', () => {
       it('original events remain on the calendar until all events have been refetched', (done) => {
         // set a 100ms timeout on this event source
-        eventSources[0].events = function (arg, callback) {
+        eventSources[0].events = (arg, callback) => {
           let events = [
             { id: '1',
               start: '2015-08-07T02:00:00',
@@ -101,7 +101,7 @@ describe('refetchEvents', () => {
         })
 
         setTimeout(() => {
-          fetchCount++
+          fetchCount += 1
           currentCalendar.refetchEvents()
           expect($('.fetch0').length).toEqual(3) // original events still on the calendar
           expect($('.fetch1').length).toEqual(0) // new events not yet refetched
@@ -117,7 +117,7 @@ describe('refetchEvents', () => {
 
     // relies on fetchCount
     function createEventGenerator() {
-      return function (arg, callback) {
+      return (arg, callback) => {
         let events = [
           {
             id: 1,

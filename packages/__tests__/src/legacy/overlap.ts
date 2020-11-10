@@ -526,7 +526,7 @@ describe('event overlap', () => {
   describe('when eventOverlap is a function', () => {
     describe('when no intersecting events upon drag', () => {
       it('does not get called, allows dragging', (done) => {
-        options.eventOverlap = function () { }
+        options.eventOverlap = () => {}
         options.events = [
           {
             title: 'Event A',
@@ -550,7 +550,7 @@ describe('event overlap', () => {
     })
     describe('when an intersection and returning true', () => {
       it('allows dragging AND gets called', (done) => {
-        options.eventOverlap = function (stillEvent, movingEvent) {
+        options.eventOverlap = (stillEvent, movingEvent) => {
           // checks arguments here
           expect(stillEvent.title).toBe('Event B')
           expect(movingEvent.title).toBe('Event A')
@@ -579,9 +579,7 @@ describe('event overlap', () => {
     })
     describe('when an intersection and returning false', () => {
       it('disallows dragging AND gets called', (done) => {
-        options.eventOverlap = function () {
-          return false
-        }
+        options.eventOverlap = () => false
         options.events = [
           {
             title: 'Event A',
@@ -741,7 +739,7 @@ describe('selectOverlap', () => {
   describe('as a function', () => {
     describe('when no intersecting events when selecting', () => {
       it('does not get called, allows selection', (done) => {
-        options.selectOverlap = function () { }
+        options.selectOverlap = () => {}
         options.events = [{
           title: 'Event A',
           start: '2014-11-12T04:00:00',
@@ -756,10 +754,10 @@ describe('selectOverlap', () => {
     })
     describe('when an intersection and returning true', () => {
       it('allows selection', (done) => {
-        options.selectOverlap = function (o) {
+        options.selectOverlap = (arg0, arg1) => {
           // checks arguments here
-          expect(o.title).toBe('Event A')
-          expect(arguments[1]).toBeFalsy()
+          expect(arg0.title).toBe('Event A')
+          expect(arg1).toBeFalsy()
           return true
         }
         options.events = [{
@@ -776,9 +774,7 @@ describe('selectOverlap', () => {
     })
     describe('when an intersection and returning false', () => {
       it('does not allow selection', (done) => {
-        options.selectOverlap = function () {
-          return false
-        }
+        options.selectOverlap = () => false
         options.events = [{
           title: 'Event A',
           start: '2014-11-12T04:00:00',

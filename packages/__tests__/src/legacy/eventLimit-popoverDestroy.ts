@@ -23,12 +23,12 @@ describe('more-link popover', () => { // TODO: rename file
       eventDidMount(arg) {
         if (activated) {
           eventsRendered[arg.event.title] = true
-          ++renderCount
+          renderCount += 1
         }
       },
       eventWillUnmount(arg) {
         delete eventsRendered[arg.event.title]
-        --renderCount
+        renderCount -= 1
       },
     })
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -58,12 +58,12 @@ describe('more-link popover', () => { // TODO: rename file
       eventDidMount(arg) {
         if (activated) {
           eventsRendered[arg.event.title] = true
-          ++renderCount
+          renderCount += 1
         }
       },
       eventWillUnmount(arg) {
         delete eventsRendered[arg.event.title]
-        --renderCount
+        renderCount -= 1
       },
     })
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid

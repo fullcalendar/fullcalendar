@@ -55,6 +55,7 @@ describe('external drag and drop with jquery UI', () => {
 
       it('works after the view is changed', (done) => { // issue 2240
         let callCnt = 0
+        let dayGridWrapper
         let calendar = initCalendarInContainer({
           drop(arg) {
             if (callCnt === 0) {
@@ -74,10 +75,10 @@ describe('external drag and drop with jquery UI', () => {
               setTimeout(done) // weird
             }
 
-            callCnt++
+            callCnt += 1
           },
         })
-        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+        dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
         initDnd()
         setTimeout(() => { // weird
@@ -193,6 +194,7 @@ describe('external drag and drop with jquery UI', () => {
 
       it('works after the view is changed', (done) => {
         let callCnt = 0
+        let timeGridWrapper
         let calendar = initCalendarInContainer({
           drop(arg) {
             if (callCnt === 0) {
@@ -212,10 +214,10 @@ describe('external drag and drop with jquery UI', () => {
               setTimeout(done) // weird
             }
 
-            callCnt++
+            callCnt += 1
           },
         })
-        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+        timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
         initDnd()
         setTimeout(() => { // weird

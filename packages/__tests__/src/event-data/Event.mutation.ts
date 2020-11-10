@@ -12,7 +12,7 @@ describe('event mutations on non-instances', () => {
       let renderCnt = 0
       let calendar = initCalendar({
         eventContent(arg) {
-          renderCnt++
+          renderCnt += 1
           if (renderCnt === 2) {
             arg.event.setStart('2018-08-04')
             arg.event.setEnd('2018-10-04')

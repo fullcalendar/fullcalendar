@@ -1,5 +1,13 @@
-import { DateEnv, createFormatter, createDuration, startOfDay, diffWholeWeeks, diffWholeDays, diffDayAndTime, Calendar } from '@fullcalendar/core'
-
+import {
+  DateEnv,
+  createFormatter,
+  createDuration,
+  startOfDay,
+  diffWholeWeeks,
+  diffWholeDays,
+  diffDayAndTime,
+  Calendar,
+} from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import { getDSTDeadZone } from '../lib/dst-dead-zone'
 import { formatPrettyTimeZoneOffset, formatIsoTimeZoneOffset, formatIsoWithoutTz } from '../lib/datelib-utils'
@@ -230,13 +238,13 @@ describe('datelib', () => {
       })
 
       it('works with different days of same month, with inprecise formatter', () => {
-        let formatter = createFormatter({
+        let otherFormatter = createFormatter({
           month: 'long',
           year: 'numeric',
         })
         let m0 = env.createMarker('2018-06-08')
         let m1 = env.createMarker('2018-06-09')
-        let s = env.formatRange(m0, m1, formatter)
+        let s = env.formatRange(m0, m1, otherFormatter)
         expect(s).toBe('June 2018')
       })
 
@@ -518,7 +526,7 @@ describe('datelib', () => {
         let deadZone = getDSTDeadZone()
 
         if (!deadZone) {
-          console.log('could not determine DST dead zone')
+          console.log('could not determine DST dead zone') // eslint-disable-line no-console
         } else {
           // use a utc date to get a ISO8601 string representation of the start of the dead zone
           let utcDate = new Date(Date.UTC(

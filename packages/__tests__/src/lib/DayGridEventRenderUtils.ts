@@ -24,12 +24,12 @@ export function directionallyTestSeg(opts) {
   let col
   let td
 
-  for (col = leftCol; col <= rightCol; col++) {
+  for (col = leftCol; col <= rightCol; col += 1) {
     td = rowTds[col]
     expect(el).toIntersectWith(td)
   }
 
-  for (col = 0; col < rowTds.length; col++) {
+  for (col = 0; col < rowTds.length; col += 1) {
     if (col < leftCol || col > rightCol) {
       td = rowTds[col]
       expect(el).not.toIntersectWith(td)

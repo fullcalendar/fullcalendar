@@ -465,6 +465,7 @@ describe('more-link popover', () => { // TODO: rename file
 
     describe('when a single-day event isn\'t dragged out all the way', () => {
       it('shouldn\'t do anything', (done) => {
+        let dayGridWrapper
         let calendar = initCalendar({
           eventDragStop() {
             setTimeout(() => { // try to wait until drag is over. eventMutation won't fire BTW
@@ -474,9 +475,9 @@ describe('more-link popover', () => { // TODO: rename file
           },
         })
         let viewWrapper = new DayGridViewWrapper(calendar)
-        let dayGridWrapper = viewWrapper.dayGrid
-
+        dayGridWrapper = viewWrapper.dayGrid
         dayGridWrapper.openMorePopover()
+
         setTimeout(() => { // simulate was getting confused about which thing was being clicked :(
           $('.event1', dayGridWrapper.getMorePopoverEl()).simulate('drag', {
             localPoint: { left: '0%', top: '50%' }, // leftmost is guaranteed to be over the 30th

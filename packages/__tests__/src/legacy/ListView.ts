@@ -45,7 +45,7 @@ describe('ListView rendering', () => {
 
         initCalendar({
           eventDidMount() {
-            eventMountCnt++
+            eventMountCnt += 1
           },
         })
 
@@ -57,7 +57,7 @@ describe('ListView rendering', () => {
 
         initCalendar({
           eventWillUnmount() {
-            callCnt++
+            callCnt += 1
           },
         })
 

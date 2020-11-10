@@ -14,12 +14,12 @@ export function parseUtcDate(str) {
   }
 
   return new Date(Date.UTC(
-    parseInt(parts[0]),
-    parseInt(parts[1]) - 1,
-    parts[2] ? parseInt(parts[2]) : 0,
-    parts[3] ? parseInt(parts[3]) : 0,
-    parts[4] ? parseInt(parts[4]) : 0,
-    parts[5] ? parseInt(parts[5]) : 0,
+    parseInt(parts[0], 10),
+    parseInt(parts[1], 10) - 1,
+    parts[2] ? parseInt(parts[2], 10) : 0,
+    parts[3] ? parseInt(parts[3], 10) : 0,
+    parts[4] ? parseInt(parts[4], 10) : 0,
+    parts[5] ? parseInt(parts[5], 10) : 0,
   ))
 }
 
@@ -33,12 +33,12 @@ export function parseLocalDate(str) {
     throw new Error('Don\'t pass timezone info to parseLocalDate. Use parseUtcDate instead.')
   } else {
     return new Date(
-      parseInt(parts[0]),
-      parseInt(parts[1]) - 1,
-      parts[2] ? parseInt(parts[2]) : 0,
-      parts[3] ? parseInt(parts[3]) : 0,
-      parts[4] ? parseInt(parts[4]) : 0,
-      parts[5] ? parseInt(parts[5]) : 0,
+      parseInt(parts[0], 10),
+      parseInt(parts[1], 10) - 1,
+      parts[2] ? parseInt(parts[2], 10) : 0,
+      parts[3] ? parseInt(parts[3], 10) : 0,
+      parts[4] ? parseInt(parts[4], 10) : 0,
+      parts[5] ? parseInt(parts[5], 10) : 0,
     )
   }
 }

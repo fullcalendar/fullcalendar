@@ -93,9 +93,8 @@ describe('events as a json feed', () => {
 
       calendar.setOption('timeZone', 'America/New_York')
       setTimeout(() => {
-        let eventStartStr = calendar.getEvents()[0].startStr
+        eventStartStr = calendar.getEvents()[0].startStr
         expect(eventStartStr).toBe('2014-06-08T03:00:00')
-
         done()
       }, 100)
     }, 100)

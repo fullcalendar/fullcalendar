@@ -11,13 +11,13 @@ it('list view rerenders well', (done) => {
       { title: 'event 0', start: '2017-10-04' },
     ],
     dayHeaderContent() {
-      dayRenderCnt++
+      dayRenderCnt += 1
     },
     eventContent() {
-      eventRenderCnt++
+      eventRenderCnt += 1
     },
     noEventsContent() {
-      noEventsRenderCnt++
+      noEventsRenderCnt += 1
     },
   })
 

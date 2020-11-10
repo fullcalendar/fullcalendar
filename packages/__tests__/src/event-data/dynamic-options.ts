@@ -5,7 +5,7 @@ describe('setting option dynamically', () => {
     initCalendar({
       initialView: 'dayGridMonth',
       events(arg, callback) {
-        fetchCnt++
+        fetchCnt += 1
         callback([])
       },
     })
