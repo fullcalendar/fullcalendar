@@ -23,12 +23,10 @@ declare global {
   }
 }
 
-
 let globalObj = typeof globalThis !== 'undefined' ? globalThis : window // // TODO: streamline when killing IE11 support
 
 if (globalObj.FullCalendarVDom) {
-  console.log('FullCalendar VDOM already loaded')
-
+  console.warn('FullCalendar VDOM already loaded')
 } else {
   globalObj.FullCalendarVDom = {
     Component: preact.Component,
@@ -38,15 +36,13 @@ if (globalObj.FullCalendarVDom) {
     Fragment: preact.Fragment,
     createContext, // custom implementation
     flushToDom,
-    unmountComponentAtNode
+    unmountComponentAtNode,
   }
 }
-
 
 // HACKS...
 // TODO: lock version
 // TODO: link gh issues
-
 
 function flushToDom() {
   let oldDebounceRendering = preact.options.debounceRendering // orig
@@ -71,21 +67,20 @@ class FakeComponent extends preact.Component {
   componentDidMount() { this.setState({}) }
 }
 
-
 function createContext<T>(defaultValue: T) {
   let ContextType = preact.createContext<T>(defaultValue)
   let origProvider = ContextType.Provider
 
-  ContextType.Provider = function() {
+  ContextType.Provider = function () { // eslint-disable-line func-names
     let isNew = !this.getChildContext
-    let children = origProvider.apply(this, arguments as any)
+    let children = origProvider.apply(this, arguments as any) // eslint-disable-line prefer-rest-params
 
     if (isNew) {
       let subs = []
 
       this.shouldComponentUpdate = (_props) => {
         if (this.props.value !== _props.value) {
-          subs.some(c => {
+          subs.forEach((c) => {
             c.context = _props.value
             c.forceUpdate()
           })
@@ -107,7 +102,6 @@ function createContext<T>(defaultValue: T) {
 
   return ContextType
 }
-
 
 function unmountComponentAtNode(node: HTMLElement) {
   preact.render(null, node)
