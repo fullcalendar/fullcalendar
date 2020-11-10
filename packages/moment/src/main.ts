@@ -1,9 +1,7 @@
 import moment from 'moment'
 import { Duration, VerboseFormattingArg, createPlugin, CalendarApi } from '@fullcalendar/common'
 
-
 export function toMoment(date: Date, calendar: CalendarApi): moment.Moment {
-
   if (!(calendar instanceof CalendarApi)) {
     throw new Error('must supply a CalendarApi instance')
   }
@@ -14,14 +12,13 @@ export function toMoment(date: Date, calendar: CalendarApi): moment.Moment {
     date,
     dateEnv.timeZone,
     null,
-    dateEnv.locale.codes[0]
+    dateEnv.locale.codes[0],
   )
 }
 
 export function toMomentDuration(fcDuration: Duration): moment.Duration {
   return moment.duration(fcDuration) // moment accepts all the props that fc.Duration already has!
 }
-
 
 function formatWithCmdStr(cmdStr: string, arg: VerboseFormattingArg) {
   let cmd = parseCmdStr(cmdStr)
@@ -31,19 +28,19 @@ function formatWithCmdStr(cmdStr: string, arg: VerboseFormattingArg) {
       arg.start.array,
       arg.timeZone,
       arg.start.timeZoneOffset,
-      arg.localeCodes[0]
+      arg.localeCodes[0],
     )
     let endMom = convertToMoment(
       arg.end.array,
       arg.timeZone,
       arg.end.timeZoneOffset,
-      arg.localeCodes[0]
+      arg.localeCodes[0],
     )
     return formatRange(
       cmd,
       createMomentFormatFunc(startMom),
       createMomentFormatFunc(endMom),
-      arg.defaultSeparator
+      arg.defaultSeparator,
     )
   }
 
@@ -51,20 +48,18 @@ function formatWithCmdStr(cmdStr: string, arg: VerboseFormattingArg) {
     arg.date.array,
     arg.timeZone,
     arg.date.timeZoneOffset,
-    arg.localeCodes[0]
+    arg.localeCodes[0],
   ).format(cmd.whole) // TODO: test for this
 }
 
-
 export default createPlugin({
-  cmdFormatter: formatWithCmdStr
+  cmdFormatter: formatWithCmdStr,
 })
 
-
 function createMomentFormatFunc(mom: moment.Moment) {
-  return function(cmdStr) {
-    return cmdStr ? mom.format(cmdStr) : '' // because calling with blank string results in ISO8601 :(
-  }
+  return (cmdStr) => (
+    cmdStr ? mom.format(cmdStr) : '' // because calling with blank string results in ISO8601 :(
+  )
 }
 
 function convertToMoment(input: any, timeZone: string, timeZoneOffset: number | null, locale: string): moment.Moment {
@@ -72,13 +67,10 @@ function convertToMoment(input: any, timeZone: string, timeZoneOffset: number | 
 
   if (timeZone === 'local') {
     mom = moment(input)
-
   } else if (timeZone === 'UTC') {
     mom = moment.utc(input)
-
   } else if ((moment as any).tz) {
     mom = (moment as any).tz(input, timeZone)
-
   } else {
     mom = moment.utc(input)
 
@@ -91,7 +83,6 @@ function convertToMoment(input: any, timeZone: string, timeZoneOffset: number | 
 
   return mom
 }
-
 
 /* Range Formatting (duplicate code as other date plugins)
 ----------------------------------------------------------------------------------------------------*/
@@ -113,23 +104,22 @@ function parseCmdStr(cmdStr: string): CmdParts {
       head: parts[1],
       middle,
       tail: parts[3],
-      whole: parts[1] + middle.whole + parts[3]
+      whole: parts[1] + middle.whole + parts[3],
     }
-  } else {
+  }
     return {
       head: null,
       middle: null,
       tail: null,
-      whole: cmdStr
+      whole: cmdStr,
     }
-  }
 }
 
 function formatRange(
   cmd: CmdParts,
   formatStart: (cmdStr: string) => string,
   formatEnd: (cmdStr: string) => string,
-  separator: string
+  separator: string,
 ): string {
   if (cmd.middle) {
     let startHead = formatStart(cmd.head)
@@ -152,7 +142,7 @@ function formatRange(
 
   if (startWhole === endWhole) {
     return startWhole
-  } else {
-    return startWhole + separator + endWhole
   }
+
+  return startWhole + separator + endWhole
 }
