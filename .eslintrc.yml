@@ -45,6 +45,9 @@
     no-param-reassign: off
     no-restricted-globals: off # waiting for IE11 death b/c isNaN is needed (not Number.isNaN)
     no-restricted-syntax: off # was restricting for...of statements. a mistake it seems. REVISIT
+    no-return-assign:
+      - error
+      - except-parens
     no-underscore-dangle: off # important for pseudo-private properties
     object-curly-newline:
       - error
@@ -56,6 +59,7 @@
     prefer-template: off
     react/destructuring-assignment: off
     react/jsx-props-no-spreading: off # more acceptable in preact, b/c no proptype filtering
+    react/prop-types: off # preact doesn't care about proptypes
     react/react-in-jsx-scope: off # because we use preact
     react/sort-comp: off
     react/static-property-placement: off # typescript transpilation makes this a non-issue

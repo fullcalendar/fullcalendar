@@ -15,6 +15,7 @@ function eslintDir(dir) {
     '--parser-options', JSON.stringify({
       project: path.join(dir, 'tsconfig.json')
     }),
+    // '--fix',
     path.join(dir, 'src')
   ]
 
