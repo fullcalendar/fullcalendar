@@ -4,7 +4,6 @@ import './options-declare'
 import { EVENT_SOURCE_REFINERS } from './event-source-refiners'
 import './event-source-declare'
 
-
 // TODO: expose somehow
 const API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'
 
@@ -14,7 +13,6 @@ interface GCalMeta {
   googleCalendarApiBase?: string,
   extraParams?: Dictionary | (() => Dictionary)
 }
-
 
 let eventSourceDef: EventSourceDef<GCalMeta> = {
 
@@ -30,7 +28,7 @@ let eventSourceDef: EventSourceDef<GCalMeta> = {
         googleCalendarId,
         googleCalendarApiKey: refined.googleCalendarApiKey,
         googleCalendarApiBase: refined.googleCalendarApiBase,
-        extraParams: refined.extraParams
+        extraParams: refined.extraParams,
       }
     }
 
@@ -44,7 +42,7 @@ let eventSourceDef: EventSourceDef<GCalMeta> = {
 
     if (!apiKey) {
       onFailure({
-        message: 'Specify a googleCalendarApiKey. See http://fullcalendar.io/docs/google_calendar/'
+        message: 'Specify a googleCalendarApiKey. See http://fullcalendar.io/docs/google_calendar/',
       })
     } else {
       let url = buildUrl(meta)
@@ -57,34 +55,31 @@ let eventSourceDef: EventSourceDef<GCalMeta> = {
         arg.range,
         apiKey,
         extraParamsObj,
-        dateEnv
+        dateEnv,
       )
 
-      requestJson('GET', url, requestParams, function(body, xhr) {
-
+      requestJson('GET', url, requestParams, (body, xhr) => {
         if (body.error) {
           onFailure({
             message: 'Google Calendar API: ' + body.error.message,
             errors: body.error.errors,
-            xhr
+            xhr,
           })
         } else {
           onSuccess({
             rawEvents: gcalItemsToRawEventDefs(
               body.items,
-              requestParams.timeZone
+              requestParams.timeZone,
             ),
-            xhr
+            xhr,
           })
         }
-
-      }, function(message, xhr) {
+      }, (message, xhr) => {
         onFailure({ message, xhr })
       })
     }
-  }
+  },
 }
-
 
 function parseGoogleCalendarId(url) {
   let match
@@ -93,14 +88,17 @@ function parseGoogleCalendarId(url) {
   // will match calendars like "asdf1234@calendar.google.com" in addition to person email calendars.
   if (/^[^/]+@([^/.]+\.)*(google|googlemail|gmail)\.com$/.test(url)) {
     return url
-  } else if (
+  }
+
+  if (
     (match = /^https:\/\/www.googleapis.com\/calendar\/v3\/calendars\/([^/]*)/.exec(url)) ||
     (match = /^https?:\/\/www.google.com\/calendar\/feeds\/([^/]*)/.exec(url))
   ) {
     return decodeURIComponent(match[1])
   }
-}
 
+  return null
+}
 
 function buildUrl(meta) {
   let apiBase = meta.googleCalendarApiBase
@@ -109,7 +107,6 @@ function buildUrl(meta) {
   }
   return apiBase + '/' + encodeURIComponent(meta.googleCalendarId) + '/events'
 }
-
 
 function buildRequestParams(range, apiKey: string, extraParams: Dictionary, dateEnv: DateEnv) {
   let params
@@ -134,7 +131,7 @@ function buildRequestParams(range, apiKey: string, extraParams: Dictionary, date
     timeMin: startStr,
     timeMax: endStr,
     singleEvents: true,
-    maxResults: 9999
+    maxResults: 9999,
   }
 
   if (dateEnv.timeZone !== 'local') {
@@ -144,13 +141,9 @@ function buildRequestParams(range, apiKey: string, extraParams: Dictionary, date
   return params
 }
 
-
 function gcalItemsToRawEventDefs(items, gcalTimezone) {
-  return items.map((item) => {
-    return gcalItemToRawEventDef(item, gcalTimezone)
-  })
+  return items.map((item) => gcalItemToRawEventDef(item, gcalTimezone))
 }
-
 
 function gcalItemToRawEventDef(item, gcalTimezone) {
   let url = item.htmlLink || null
@@ -165,24 +158,24 @@ function gcalItemToRawEventDef(item, gcalTimezone) {
     title: item.summary,
     start: item.start.dateTime || item.start.date, // try timed. will fall back to all-day
     end: item.end.dateTime || item.end.date, // same
-    url: url,
+    url,
     location: item.location,
-    description: item.description
+    description: item.description,
   }
 }
-
 
 // Injects a string like "arg=value" into the querystring of a URL
 // TODO: move to a general util file?
 function injectQsComponent(url, component) {
   // inject it after the querystring but before the fragment
-  return url.replace(/(\?.*?)?(#|$)/, function(whole, qs, hash) {
-    return (qs ? qs + '&' : '?') + component + hash
-  })
+  return url.replace(
+    /(\?.*?)?(#|$)/,
+    (whole, qs, hash) => (qs ? qs + '&' : '?') + component + hash,
+  )
 }
 
 export default createPlugin({
-  eventSourceDefs: [ eventSourceDef ],
+  eventSourceDefs: [eventSourceDef],
   optionRefiners: OPTION_REFINERS,
-  eventSourceRefiners: EVENT_SOURCE_REFINERS
+  eventSourceRefiners: EVENT_SOURCE_REFINERS,
 })
