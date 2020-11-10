@@ -4,7 +4,7 @@ import { TimeGridViewWrapper } from './wrappers/TimeGridViewWrapper'
 import { DayGridViewWrapper } from './wrappers/DayGridViewWrapper'
 import { CalendarWrapper } from './wrappers/CalendarWrapper'
 
-export function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {
+export function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName?) {
   options.editable = true
   options.viewDidMount = function() { setTimeout(function() {
     var calendar = currentCalendar
@@ -95,7 +95,7 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
 }
 
 
-export function testEventResize(options, resizeDate, expectSuccess, callback, eventClassName) {
+export function testEventResize(options, resizeDate, expectSuccess, callback, eventClassName?) {
   options.editable = true
   options.viewDidMount = function() { setTimeout(function() {
     var calendar = currentCalendar

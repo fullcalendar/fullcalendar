@@ -7,17 +7,16 @@ import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 describe('custom view', function() {
 
   it('renders a 4 day dayGrid view', function() {
-    var options = {
-      views: {}
-    }
-    options.views.dayGridFourDay = {
-      type: 'dayGrid',
-      duration: { days: 4 }
-    }
-    options.initialView = 'dayGridFourDay'
-    options.initialDate = '2014-12-25'
-
-    let calendar = initCalendar(options)
+    let calendar = initCalendar({
+      views: {
+        dayGridFourDay: {
+          type: 'dayGrid',
+          duration: { days: 4 }
+        }
+      },
+      initialView: 'dayGridFourDay',
+      initialDate: '2014-12-25'
+    })
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     let dayEls = dayGridWrapper.getAllDayEls()
 
@@ -27,18 +26,17 @@ describe('custom view', function() {
   })
 
   it('renders a 2 week dayGrid view', function() {
-    var options = {
-      views: {}
-    }
-    options.views.dayGridTwoWeek = {
-      type: 'dayGrid',
-      duration: { weeks: 2 }
-    }
-    options.initialView = 'dayGridTwoWeek'
-    options.initialDate = '2014-12-25'
-    options.firstDay = 2 // Tues
-
-    let calendar = initCalendar(options)
+    let calendar = initCalendar({
+      views: {
+        dayGridTwoWeek: {
+          type: 'dayGrid',
+          duration: { weeks: 2 }
+        }
+      },
+      initialView: 'dayGridTwoWeek',
+      initialDate: '2014-12-25',
+      firstDay: 2 // Tues
+    })
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     let dayEls = dayGridWrapper.getAllDayEls()
 
@@ -49,131 +47,121 @@ describe('custom view', function() {
   })
 
   it('will use the provided options', function() {
-    var options = {
-      views: {}
-    }
-    options.views.dayGridFourDay = {
-      type: 'dayGrid',
-      duration: { days: 4 },
-      titleFormat: function() { return 'special' }
-    }
-    options.initialView = 'dayGridFourDay'
-
-    let calendar = initCalendar(options)
+    let calendar = initCalendar({
+      views: {
+        dayGridFourDay: {
+          type: 'dayGrid',
+          duration: { days: 4 },
+          titleFormat: function() { return 'special' }
+        }
+      },
+      initialView: 'dayGridFourDay'
+    })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
     expect(toolbarWrapper.getTitleText()).toBe('special')
   })
 
   it('will inherit options from the parent view type', function() {
-    var options = {
-      views: {}
-    }
-    options.views.dayGrid = {
-      titleFormat: function() { return 'dayGridtitle' }
-    }
-    options.views.dayGridFourDay = {
-      type: 'dayGrid',
-      duration: { days: 4 }
-    }
-    options.initialView = 'dayGridFourDay'
-
-    let calendar = initCalendar(options)
+    let calendar = initCalendar({
+      views: {
+        dayGrid: {
+          titleFormat: function() { return 'dayGridtitle' }
+        },
+        dayGridFourDay: {
+          type: 'dayGrid',
+          duration: { days: 4 }
+        }
+      },
+      initialView: 'dayGridFourDay'
+    })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
     expect(toolbarWrapper.getTitleText()).toBe('dayGridtitle')
   })
 
   it('will override an option from the parent view type', function() {
-    var options = {
-      views: {}
-    }
-    options.views.dayGrid = {
-      titleFormat: function() { return 'dayGridtitle' }
-    }
-    options.views.dayGridFourDay = {
-      type: 'dayGrid',
-      duration: { days: 4 },
-      titleFormat: function() { return 'dayGridfourweekttitle' }
-    }
-    options.initialView = 'dayGridFourDay'
-
-    let calendar = initCalendar(options)
+    let calendar = initCalendar({
+      views: {
+        dayGrid: {
+          titleFormat: function() { return 'dayGridtitle' }
+        },
+        dayGridFourDay: {
+          type: 'dayGrid',
+          duration: { days: 4 },
+          titleFormat: function() { return 'dayGridfourweekttitle' }
+        }
+      },
+      initialView: 'dayGridFourDay'
+    })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
     expect(toolbarWrapper.getTitleText()).toBe('dayGridfourweekttitle')
   })
 
   it('will inherit options from generic "week" type', function() {
-    var options = {
-      views: {}
-    }
-    options.views.week = {
-      titleFormat: function() { return 'weektitle' }
-    }
-    options.views.dayGridOneWeek = {
-      type: 'dayGrid',
-      duration: { weeks: 1 }
-    }
-    options.initialView = 'dayGridOneWeek'
-
-    let calendar = initCalendar(options)
+    let calendar = initCalendar({
+      views: {
+        week: {
+          titleFormat: function() { return 'weektitle' }
+        },
+        dayGridOneWeek: {
+          type: 'dayGrid',
+          duration: { weeks: 1 }
+        }
+      },
+      initialView: 'dayGridOneWeek'
+    })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
-
     expect(toolbarWrapper.getTitleText()).toBe('weektitle')
   })
 
   it('generic type options for "dayGrid" will override generic "week" options', function() {
-    var options = {
-      views: {}
-    }
-    options.views.week = {
-      titleFormat: function() { return 'weektitle' }
-    }
-    options.views.dayGrid = {
-      titleFormat: function() { return 'dayGridtitle' }
-    }
-    options.views.dayGridOneWeek = {
-      type: 'dayGrid',
-      duration: { weeks: 1 }
-    }
-    options.initialView = 'dayGridOneWeek'
-
-    let calendar = initCalendar(options)
+    let calendar = initCalendar({
+      views: {
+        week: {
+          titleFormat: function() { return 'weektitle' }
+        },
+        dayGrid: {
+          titleFormat: function() { return 'dayGridtitle' }
+        },
+        dayGridOneWeek: {
+          type: 'dayGrid',
+          duration: { weeks: 1 }
+        }
+      },
+      initialView: 'dayGridOneWeek'
+    })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
-
     expect(toolbarWrapper.getTitleText()).toBe('dayGridtitle')
   })
 
   it('will not inherit "week" options if more than a single week', function() {
-    var options = {
-      views: {}
-    }
-    options.titleFormat = function() { return 'defaultitle' }
-    options.views.week = {
-      titleFormat: function() { return 'weektitle' }
-    }
-    options.views.dayGridTwoWeek = {
-      type: 'dayGrid',
-      duration: { weeks: 2 }
-    }
-    options.initialView = 'dayGridTwoWeek'
-
-    let calendar = initCalendar(options)
+    let calendar = initCalendar({
+      titleFormat: function() { return 'defaultitle' },
+      initialView: 'dayGridTwoWeek',
+      views: {
+        week: {
+          titleFormat: function() { return 'weektitle' }
+        },
+        dayGridTwoWeek: {
+          type: 'dayGrid',
+          duration: { weeks: 2 }
+        }
+      }
+    })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
-
     expect(toolbarWrapper.getTitleText()).toBe('defaultitle')
   })
 
   it('renders a 4 day timeGrid view', function() {
-    var options = {
-      views: {}
-    }
-    options.views.timeGridFourDay = {
-      type: 'timeGrid',
-      duration: { days: 4 }
-    }
-    options.initialView = 'timeGridFourDay'
-    options.initialDate = '2014-12-25'
-
-    let calendar = initCalendar(options)
+    let calendar = initCalendar({
+      initialView: 'timeGridFourDay',
+      initialDate: '2014-12-25',
+      views: {
+        timeGridFourDay: {
+          type: 'timeGrid',
+          duration: { days: 4 }
+        }
+      }
+    })
     let viewWrapper = new TimeGridViewWrapper(calendar)
     let timeGridDayEls = viewWrapper.timeGrid.getAllDayEls()
 
@@ -184,17 +172,16 @@ describe('custom view', function() {
   })
 
   it('renders a two week timeGrid view', function() {
-    var options = {
-      views: {}
-    }
-    options.views.timeGridTwoWeek = {
-      type: 'timeGrid',
-      duration: { weeks: 2 }
-    }
-    options.initialView = 'timeGridTwoWeek'
-    options.initialDate = '2014-12-25'
-
-    let calendar = initCalendar(options)
+    let calendar = initCalendar({
+      initialView: 'timeGridTwoWeek',
+      initialDate: '2014-12-25',
+      views: {
+        timeGridTwoWeek: {
+          type: 'timeGrid',
+          duration: { weeks: 2 }
+        }
+      }
+    })
     let viewWrapper = new TimeGridViewWrapper(calendar)
     let timeGridDayEls = viewWrapper.timeGrid.getAllDayEls()
 
@@ -205,17 +192,16 @@ describe('custom view', function() {
   })
 
   it('renders a two month timeGrid view', function() {
-    var options = {
-      views: {}
-    }
-    options.views.timeGridTwoWeek = {
-      type: 'timeGrid',
-      duration: { months: 2 }
-    }
-    options.initialView = 'timeGridTwoWeek'
-    options.initialDate = '2014-11-27'
-
-    let calendar = initCalendar(options)
+    let calendar = initCalendar({
+      initialView: 'timeGridTwoWeek',
+      initialDate: '2014-11-27',
+      views: {
+        timeGridTwoWeek: {
+          type: 'timeGrid',
+          duration: { months: 2 }
+        }
+      }
+    })
     let viewWrapper = new TimeGridViewWrapper(calendar)
     let timeGridDayEls = viewWrapper.timeGrid.getAllDayEls()
 
@@ -227,17 +213,16 @@ describe('custom view', function() {
   })
 
   it('renders a two month dayGrid view', function() {
-    var options = {
-      views: {}
-    }
-    options.views.dayGridTwoWeek = {
-      type: 'dayGrid',
-      duration: { months: 2 }
-    }
-    options.initialView = 'dayGridTwoWeek'
-    options.initialDate = '2014-11-27'
-
-    let calendar = initCalendar(options)
+    let calendar = initCalendar({
+      initialView: 'dayGridTwoWeek',
+      initialDate: '2014-11-27',
+      views: {
+        dayGridTwoWeek: {
+          type: 'dayGrid',
+          duration: { months: 2 }
+        }
+      }
+    })
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     let dayEls = dayGridWrapper.getAllDayEls()
 
@@ -249,15 +234,15 @@ describe('custom view', function() {
 
   it('renders a one year dayGrid view', function() {
     var options = {
-      views: {}
+      initialView: 'dayGridYear',
+      initialDate: '2014-11-27',
+      views: {
+        dayGridYear: {
+          type: 'dayGrid',
+          duration: { years: 1 }
+        }
+      }
     }
-    options.views.dayGridYear = {
-      type: 'dayGrid',
-      duration: { years: 1 }
-    }
-    options.initialView = 'dayGridYear'
-    options.initialDate = '2014-11-27'
-
     let calendar = initCalendar(options)
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     let dayEls = dayGridWrapper.getAllDayEls()
@@ -270,21 +255,21 @@ describe('custom view', function() {
 
     it('accepts buttonText exact-match override', function() {
       var options = {
-        views: {}
+        buttonText: {
+          custom: 'over-ridden'
+        },
+        headerToolbar: {
+          center: 'custom,dayGridMonth'
+        },
+        initialView: 'custom',
+        views: {
+          custom: {
+            type: 'dayGrid',
+            duration: { days: 4 },
+            buttonText: 'awesome'
+          }
+        }
       }
-      options.buttonText = {
-        custom: 'over-ridden'
-      }
-      options.views.custom = {
-        type: 'dayGrid',
-        duration: { days: 4 },
-        buttonText: 'awesome'
-      }
-      options.headerToolbar = {
-        center: 'custom,dayGridMonth'
-      }
-      options.initialView = 'custom'
-
       let calendar = initCalendar(options)
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
       let buttonInfo = toolbarWrapper.getButtonInfo('custom')
@@ -294,21 +279,21 @@ describe('custom view', function() {
 
     it('accepts buttonText single-unit-match override', function() {
       var options = {
-        views: {}
+        buttonText: {
+          day: '1day-over-ridden'
+        },
+        headerToolbar: {
+          center: 'custom,dayGridMonth'
+        },
+        initialView: 'custom',
+        views: {
+          custom: {
+            type: 'dayGrid',
+            duration: { days: 1 },
+            buttonText: 'awesome'
+          }
+        }
       }
-      options.buttonText = {
-        day: '1day-over-ridden'
-      }
-      options.views.custom = {
-        type: 'dayGrid',
-        duration: { days: 1 },
-        buttonText: 'awesome'
-      }
-      options.headerToolbar = {
-        center: 'custom,dayGridMonth'
-      }
-      options.initialView = 'custom'
-
       let calendar = initCalendar(options)
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
       let buttonInfo = toolbarWrapper.getButtonInfo('custom')
@@ -318,21 +303,21 @@ describe('custom view', function() {
 
     it('does not accept buttonText unit-match override when unit is more than one', function() {
       var options = {
-        views: {}
+        buttonText: {
+          day: '1day!!!???'
+        },
+        headerToolbar: {
+          center: 'custom,dayGridMonth'
+        },
+        initialView: 'custom',
+        views: {
+          custom: {
+            type: 'dayGrid',
+            duration: { days: 2 },
+            buttonText: 'awesome'
+          }
+        }
       }
-      options.buttonText = {
-        day: '1day!!!???'
-      }
-      options.views.custom = {
-        type: 'dayGrid',
-        duration: { days: 2 },
-        buttonText: 'awesome'
-      }
-      options.headerToolbar = {
-        center: 'custom,dayGridMonth'
-      }
-      options.initialView = 'custom'
-
       let calendar = initCalendar(options)
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
       let buttonInfo = toolbarWrapper.getButtonInfo('custom')
@@ -354,7 +339,6 @@ describe('custom view', function() {
           }
         }
       })
-
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
       let buttonInfo = toolbarWrapper.getButtonInfo('custom')
 
@@ -376,7 +360,6 @@ describe('custom view', function() {
           }
         }
       })
-
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
       let buttonInfo = toolbarWrapper.getButtonInfo('custom')
 
@@ -385,18 +368,18 @@ describe('custom view', function() {
 
     it('respects custom view\'s value', function() {
       var options = {
-        views: {}
+        headerToolbar: {
+          center: 'custom,dayGridMonth'
+        },
+        initialView: 'custom',
+        views: {
+          custom: {
+            type: 'dayGrid',
+            duration: { days: 4 },
+            buttonText: 'awesome'
+          }
+        }
       }
-      options.views.custom = {
-        type: 'dayGrid',
-        duration: { days: 4 },
-        buttonText: 'awesome'
-      }
-      options.headerToolbar = {
-        center: 'custom,dayGridMonth'
-      }
-      options.initialView = 'custom'
-
       let calendar = initCalendar(options)
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
       let buttonInfo = toolbarWrapper.getButtonInfo('custom')
@@ -406,18 +389,18 @@ describe('custom view', function() {
 
     it('respects custom view\'s value, even when a "smart" property name', function() {
       var options = {
-        views: {}
+        headerToolbar: {
+          center: 'dayGridFourDay,dayGridMonth'
+        },
+        initialView: 'dayGridFourDay',
+        views: {
+          dayGridFourDay: { // "dayGridFourDay" is a pitfall for smartProperty
+            type: 'dayGrid',
+            duration: { days: 4 },
+            buttonText: 'awesome'
+          }
+        }
       }
-      options.views.dayGridFourDay = { // "dayGridFourDay" is a pitfall for smartProperty
-        type: 'dayGrid',
-        duration: { days: 4 },
-        buttonText: 'awesome'
-      }
-      options.headerToolbar = {
-        center: 'dayGridFourDay,dayGridMonth'
-      }
-      options.initialView = 'dayGridFourDay'
-
       let calendar = initCalendar(options)
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
       let buttonInfo = toolbarWrapper.getButtonInfo('dayGridFourDay')

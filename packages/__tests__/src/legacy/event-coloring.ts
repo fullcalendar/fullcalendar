@@ -1,3 +1,4 @@
+import { EventInput } from '@fullcalendar/core'
 import { RED_REGEX } from '../lib/dom-misc'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
@@ -144,7 +145,7 @@ describe('event coloring', function() {
   }
 
 
-  function testBackgroundColor(eventHasTime, display) {
+  function testBackgroundColor(eventHasTime, display?) {
 
     var eventOptions = getEventOptions(eventHasTime)
 
@@ -216,7 +217,7 @@ describe('event coloring', function() {
     })
   }
 
-  function getEventCss(prop, display) {
+  function getEventCss(prop, display?) {
     let calendarWrapper = new CalendarWrapper(currentCalendar)
     let eventEl = display === 'background'
       ? calendarWrapper.getBgEventEls()[0]
@@ -229,8 +230,8 @@ describe('event coloring', function() {
     }
   }
 
-  function getTestEvent(defaultOptions, extraOptions) {
-    var event = {}
+  function getTestEvent(defaultOptions, extraOptions = {}): EventInput {
+    var event = {} as EventInput
     $.extend(event, defaultOptions)
     if (extraOptions) {
       $.extend(event, extraOptions)
@@ -238,7 +239,7 @@ describe('event coloring', function() {
     return event
   }
 
-  function getEventOptions(eventHasTime) {
+  function getEventOptions(eventHasTime): EventInput {
     var options = {
       start: '2014-11-04'
     }

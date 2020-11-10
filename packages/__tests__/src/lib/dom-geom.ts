@@ -127,7 +127,7 @@ beforeEach(function() {
     toBeMostlyAbove() {
       return {
         compare(subject, other) {
-          const result = { pass: isRectMostlyAbove(massageRect(subject), massageRect(other)) }
+          const result = { pass: isRectMostlyAbove(massageRect(subject), massageRect(other)), message: '' }
           if (!result.pass) {
             result.message = 'first rect is not mostly above the second'
           }
@@ -139,7 +139,7 @@ beforeEach(function() {
     toBeMostlyBelow() {
       return {
         compare(subject, other) {
-          const result = { pass: !isRectMostlyAbove(massageRect(subject), massageRect(other)) }
+          const result = { pass: !isRectMostlyAbove(massageRect(subject), massageRect(other)), message: '' }
           if (!result.pass) {
             result.message = 'first rect is not mostly below the second'
           }
@@ -151,7 +151,7 @@ beforeEach(function() {
     toBeMostlyLeftOf() {
       return {
         compare(subject, other) {
-          const result = { pass: isRectMostlyLeft(massageRect(subject), massageRect(other)) }
+          const result = { pass: isRectMostlyLeft(massageRect(subject), massageRect(other)), message: '' }
           if (!result.pass) {
             result.message = 'first rect is not mostly left of the second'
           }
@@ -163,7 +163,7 @@ beforeEach(function() {
     toBeMostlyRightOf() {
       return {
         compare(subject, other) {
-          const result = { pass: !isRectMostlyLeft(massageRect(subject), massageRect(other)) }
+          const result = { pass: !isRectMostlyLeft(massageRect(subject), massageRect(other)), message: '' }
           if (!result.pass) {
             result.message = 'first rect is not mostly right of the second'
           }
@@ -175,7 +175,7 @@ beforeEach(function() {
     toBeMostlyBoundedBy() {
       return {
         compare(subject, other) {
-          const result = { pass: isRectMostlyBounded(massageRect(subject), massageRect(other)) }
+          const result = { pass: isRectMostlyBounded(massageRect(subject), massageRect(other)), message: '' }
           if (!result.pass) {
             result.message = 'first rect is not mostly bounded by the second'
           }
@@ -187,7 +187,7 @@ beforeEach(function() {
     toBeMostlyHBoundedBy() {
       return {
         compare(subject, other) {
-          const result = { pass: isRectMostlyHBounded(massageRect(subject), massageRect(other)) }
+          const result = { pass: isRectMostlyHBounded(massageRect(subject), massageRect(other)), message: '' }
           if (!result.pass) {
             result.message = 'first rect does not mostly horizontally bound the second'
           }
@@ -199,7 +199,7 @@ beforeEach(function() {
     toBeMostlyVBoundedBy() {
       return {
         compare(subject, other) {
-          const result = { pass: isRectMostlyVBounded(massageRect(subject), massageRect(other)) }
+          const result = { pass: isRectMostlyVBounded(massageRect(subject), massageRect(other)), message: '' }
           if (!result.pass) {
             result.message = 'first rect does not mostly vertically bound the second'
           }
@@ -214,6 +214,7 @@ beforeEach(function() {
           var outer = massageRect(expected)
           var inner = massageRect(actual)
           var result = {
+            message: '',
             pass: outer && inner &&
               inner.left >= outer.left &&
               inner.right <= outer.right &&
@@ -234,6 +235,7 @@ beforeEach(function() {
           var subjectBounds = massageRect(actual)
           var otherBounds = massageRect(expected)
           var result = {
+            message: '',
             pass: subjectBounds && otherBounds &&
               Math.round(subjectBounds.right) <= Math.round(otherBounds.left) + 2
             // need to round because IE was giving weird fractions
@@ -252,6 +254,7 @@ beforeEach(function() {
           var subjectBounds = massageRect(actual)
           var otherBounds = massageRect(expected)
           var result = {
+            message: '',
             pass: subjectBounds && otherBounds &&
               Math.round(subjectBounds.left) >= Math.round(otherBounds.right) - 2
             // need to round because IE was giving weird fractions
@@ -270,6 +273,7 @@ beforeEach(function() {
           var subjectBounds = massageRect(actual)
           var otherBounds = massageRect(expected)
           var result = {
+            message: '',
             pass: subjectBounds && otherBounds &&
               Math.round(subjectBounds.bottom) <= Math.round(otherBounds.top) + 2
             // need to round because IE was giving weird fractions
@@ -288,6 +292,7 @@ beforeEach(function() {
           var subjectBounds = massageRect(actual)
           var otherBounds = massageRect(expected)
           var result = {
+            message: '',
             pass: subjectBounds && otherBounds &&
               Math.round(subjectBounds.top) >= Math.round(otherBounds.bottom) - 2
             // need to round because IE was giving weird fractions
@@ -306,6 +311,7 @@ beforeEach(function() {
           var subjectBounds = massageRect(actual)
           var otherBounds = massageRect(expected)
           var result = {
+            message: '',
             pass: subjectBounds && otherBounds &&
               subjectBounds.right - 1 > otherBounds.left &&
               subjectBounds.left + 1 < otherBounds.right &&

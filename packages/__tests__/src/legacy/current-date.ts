@@ -256,7 +256,7 @@ describe('current date', function() {
     })
   }
 
-  function expectViewDates(calendar, start, end, titleStart, titleEnd) {
+  function expectViewDates(calendar, start, end?, titleStart?, titleEnd?) {
     let view = calendar.view
     let calculatedEnd
     let title

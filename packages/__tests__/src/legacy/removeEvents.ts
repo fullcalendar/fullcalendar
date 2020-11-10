@@ -1,3 +1,4 @@
+import { EventInput } from '@fullcalendar/core'
 import { CalendarWrapper } from "../lib/wrappers/CalendarWrapper"
 
 describe('removeEvents', function() {
@@ -7,7 +8,7 @@ describe('removeEvents', function() {
     initialView: 'dayGridMonth'
   })
 
-  function buildEventsWithoutIds() {
+  function buildEventsWithoutIds(): EventInput[] {
     return [
       { title: 'event zero', start: '2014-06-24', className: 'event-zero' },
       { title: 'event one', start: '2014-06-24', className: 'event-non-zero event-one' },
@@ -75,8 +76,7 @@ describe('removeEvents', function() {
     go(
       buildEventsWithIds(),
       function() {
-        /** @type any */ let id = 1
-        currentCalendar.getEventById(id).remove()
+        currentCalendar.getEventById(1 as any).remove()
       },
       function() {
         expect(currentCalendar.getEvents().length).toEqual(2)
@@ -110,8 +110,7 @@ describe('removeEvents', function() {
     go(
       buildEventsWithIds(),
       function() {
-        /** @type any */ let id = 0
-        currentCalendar.getEventById(id).remove()
+        currentCalendar.getEventById(0 as any).remove()
       },
       function() {
         expect(currentCalendar.getEvents().length).toEqual(2)

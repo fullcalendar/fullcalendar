@@ -36,10 +36,10 @@ function pushOptions(options: CalendarOptions) {
 
 // called within an `it`
 // needs to be called *before* initCalendar
-function spyOnCalendarCallback(name, func = function(){}) {
+function spyOnCalendarCallback(name, func?) {
   var options = {} as any
 
-  options[name] = func
+  options[name] = func || function() {}
   spyOn(options, name).and.callThrough()
 
   optionsStack.push(options)
@@ -65,8 +65,6 @@ function initCalendar(moreOptions?: CalendarOptions, el?) {
   }
 
   var options = getCurrentOptions()
-
-  /** @type {any} */
   var newCalendar = null
 
   options.plugins = options.plugins.concat([

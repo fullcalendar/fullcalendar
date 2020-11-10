@@ -67,30 +67,33 @@ describe('advanced external dnd', function() {
         })
 
         it('is not affected by eventOverlap:false', function(done) {
-          var options = {}
-          options.eventOverlap = false
-          options.events = [ {
-            start: '2014-11-13T01:00:00',
-            end: '2014-11-13T05:00:00'
-          } ]
+          var options = {
+            eventOverlap: false,
+            events: [ {
+              start: '2014-11-13T01:00:00',
+              end: '2014-11-13T05:00:00'
+            } ]
+          }
           testExternalElDrag(options, '2014-11-13T03:00:00Z', '2014-11-13T03:00:00Z', true, done)
         })
 
         it('is not affected by an event object\'s overlap:false', function(done) {
-          var options = {}
-          options.events = [ {
-            start: '2014-11-13T01:00:00',
-            end: '2014-11-13T05:00:00',
-            overlap: false
-          } ]
+          var options = {
+            events: [ {
+              start: '2014-11-13T01:00:00',
+              end: '2014-11-13T05:00:00',
+              overlap: false
+            } ]
+          }
           testExternalElDrag(options, '2014-11-13T03:00:00Z', '2014-11-13T03:00:00Z', true, done)
         })
 
         it('is not affected by eventConstraint', function(done) {
-          var options = {}
-          options.eventConstraint = {
-            start: '03:00',
-            end: '10:00'
+          var options = {
+            eventConstraint: {
+              start: '03:00',
+              end: '10:00'
+            }
           }
           testExternalElDrag(options, '2014-11-13T02:00:00Z', '2014-11-13T02:00:00Z', true, done)
         })

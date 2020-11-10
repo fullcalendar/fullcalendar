@@ -6,7 +6,7 @@ TODO: Don't rely on legacy simulateDrag
 Given the rectangles of the origin and destination
 slot or day area.
 */
-export function drag(rect0, rect1, debug) {
+export function drag(rect0, rect1, debug?) {
   var eventEl = new CalendarWrapper(currentCalendar).getFirstEventEl()
 
   var eventRect = eventEl.getBoundingClientRect()

@@ -15,7 +15,7 @@ describe('view-specific options', function() {
   })
 
   function testEachView(viewsAndVals) {
-    $.each(viewsAndVals, function(/** @type string **/ view, val) {
+    $.each(viewsAndVals, function(view: string, val) {
       currentCalendar.changeView(view)
       expect($('h2')).toHaveText(val)
     })

@@ -1,11 +1,10 @@
+import { EventInput } from '@fullcalendar/core'
 import { DayGridViewWrapper } from "../lib/wrappers/DayGridViewWrapper"
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 describe('more-link popover', function() { // TODO: rename file
-
-  /** @type {any} */
-  var testEvents = [
+  var testEvents: EventInput[] = [
     { title: 'event1', start: '2014-07-28', end: '2014-07-30', className: 'event1' },
     { title: 'event2', start: '2014-07-29', end: '2014-07-31', className: 'event2' },
     { title: 'event3', start: '2014-07-29', className: 'event3' },

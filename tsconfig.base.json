@@ -17,8 +17,6 @@
     "noImplicitUseStrict": true,
     "importHelpers": true,
     "resolveJsonModule": true,
-    "allowJs": true,
-    "checkJs": true,
     "jsx": "react",
     "jsxFactory": "createElement",
     "strictBindCallApply": true

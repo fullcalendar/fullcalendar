@@ -42,7 +42,7 @@ describe('external drag and drop with jquery UI', function() {
     thirdPartyDraggable.destroy()
   })
 
-  function initCalendarInContainer(options) {
+  function initCalendarInContainer(options = {}) {
     return initCalendar(options, $('#cal')[0])
   }
 

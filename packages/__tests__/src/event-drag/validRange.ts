@@ -17,8 +17,7 @@ describe('validRange event dragging', function() {
       })
 
       it('won\'t go before validRange', function(done) {
-        /** @type any */
-        let modifiedEvent = false
+        let modifiedEvent: any = false
 
         let calendar = initCalendar({
           eventDrop(arg) {
@@ -52,8 +51,7 @@ describe('validRange event dragging', function() {
       })
 
       it('won\'t go after validRange', function(done) {
-        /** @type any */
-        let modifiedEvent = false
+        let modifiedEvent: any = false
 
         let calendar = initCalendar({
           eventDrop(arg) {

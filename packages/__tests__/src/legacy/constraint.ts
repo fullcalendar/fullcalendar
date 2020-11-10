@@ -11,30 +11,32 @@ describe('event constraint', function() {
     describe('when an event is being dragged', function() {
       describe('to the middle of the constraint range', function() {
         it('allows a drag', function(done) {
-          var options = {}
-          options.events = [ {
-            start: '2014-11-10T01:00:00',
-            end: '2014-11-10T02:00:00',
-            constraint: {
-              start: '2014-11-10T03:00:00',
-              end: '2014-11-10T06:00:00'
-            }
-          } ]
+          var options = {
+            events: [ {
+              start: '2014-11-10T01:00:00',
+              end: '2014-11-10T02:00:00',
+              constraint: {
+                start: '2014-11-10T03:00:00',
+                end: '2014-11-10T06:00:00'
+              }
+            } ]
+          }
           testEventDrag(options, '2014-11-10T04:00:00', true, done)
         })
 
         describe('when in month view with timed event', function() {
           it('allows a drag, respects time of day', function(done) {
-            var options = {}
-            options.initialView = 'dayGridMonth'
-            options.events = [ {
-              start: '2014-11-10T05:00:00',
-              end: '2014-11-10T07:00:00',
-              constraint: {
-                start: '04:00',
-                end: '20:00'
-              }
-            } ]
+            var options = {
+              initialView: 'dayGridMonth',
+              events: [ {
+                start: '2014-11-10T05:00:00',
+                end: '2014-11-10T07:00:00',
+                constraint: {
+                  start: '04:00',
+                  end: '20:00'
+                }
+              } ]
+            }
             testEventDrag(options, '2014-11-14', true, function() {
               var event = currentCalendar.getEvents()[0]
               expect(event.start).toEqualDate('2014-11-14T05:00:00Z')
@@ -47,25 +49,8 @@ describe('event constraint', function() {
 
       describe('to the start of the constraint range', function() {
         it('allows a drag', function(done) {
-          var options = {}
-          options.events = [ {
-            start: '2014-11-10T01:00:00',
-            end: '2014-11-10T02:00:00',
-            constraint: {
-              start: '2014-11-10T03:00:00',
-              end: '2014-11-10T06:00:00'
-            }
-          } ]
-          testEventDrag(options, '2014-11-10T03:00:00', true, done)
-        })
-      })
-
-      describe('to the end of the constraint range', function() {
-        describe('when the event has an explicit end', function() {
-          it('allows a drag', function(done) {
-            var options = {}
-
-            options.events = [ {
+          var options = {
+            events: [ {
               start: '2014-11-10T01:00:00',
               end: '2014-11-10T02:00:00',
               constraint: {
@@ -73,21 +58,39 @@ describe('event constraint', function() {
                 end: '2014-11-10T06:00:00'
               }
             } ]
+          }
+          testEventDrag(options, '2014-11-10T03:00:00', true, done)
+        })
+      })
+
+      describe('to the end of the constraint range', function() {
+        describe('when the event has an explicit end', function() {
+          it('allows a drag', function(done) {
+            var options = {
+              events: [ {
+                start: '2014-11-10T01:00:00',
+                end: '2014-11-10T02:00:00',
+                constraint: {
+                  start: '2014-11-10T03:00:00',
+                  end: '2014-11-10T06:00:00'
+                }
+              } ]
+            }
             testEventDrag(options, '2014-11-10T05:00:00', true, done)
           })
         })
         describe('when the event has an implied end', function() {
           it('allows a drag', function(done) {
-            var options = {}
-
-            options.defaultTimedEventDuration = '01:30:00'
-            options.events = [ {
-              start: '2014-11-10T01:00:00',
-              constraint: {
-                start: '2014-11-10T03:00:00',
-                end: '2014-11-10T06:00:00'
-              }
-            } ]
+            var options = {
+              defaultTimedEventDuration: '01:30:00',
+              events: [ {
+                start: '2014-11-10T01:00:00',
+                constraint: {
+                  start: '2014-11-10T03:00:00',
+                  end: '2014-11-10T06:00:00'
+                }
+              } ]
+            }
             testEventDrag(options, '2014-11-10T04:30:00', true, done)
           })
         })
@@ -95,16 +98,16 @@ describe('event constraint', function() {
 
       describe('before a constraint range', function() {
         it('does not allow a drag', function(done) {
-          var options = {}
-
-          options.events = [ {
-            start: '2014-11-10T01:00:00',
-            end: '2014-11-10T02:00:00',
-            constraint: {
-              start: '2014-11-10T03:00:00',
-              end: '2014-11-10T06:00:00'
-            }
-          } ]
+          var options = {
+            events: [ {
+              start: '2014-11-10T01:00:00',
+              end: '2014-11-10T02:00:00',
+              constraint: {
+                start: '2014-11-10T03:00:00',
+                end: '2014-11-10T06:00:00'
+              }
+            } ]
+          }
           testEventDrag(options, '2014-11-10T02:00:00', false, done)
         })
       })
@@ -113,16 +116,16 @@ describe('event constraint', function() {
         describe('using an event object\'s constraint', function() {
           describe('when in week view with timed events', function() {
             it('does not allow a drag', function(done) {
-              var options = {}
-
-              options.events = [ {
-                start: '2014-11-10T01:00:00',
-                end: '2014-11-10T02:00:00',
-                constraint: {
-                  start: '2014-11-10T03:00:00',
-                  end: '2014-11-10T06:00:00'
-                }
-              } ]
+              var options = {
+                events: [ {
+                  start: '2014-11-10T01:00:00',
+                  end: '2014-11-10T02:00:00',
+                  constraint: {
+                    start: '2014-11-10T03:00:00',
+                    end: '2014-11-10T06:00:00'
+                  }
+                } ]
+              }
               testEventDrag(options, '2014-11-10T06:00:00', false, done)
             })
           })
@@ -130,61 +133,61 @@ describe('event constraint', function() {
             pushOptions({initialView: 'dayGridMonth'})
             describe('with timed event and all-day constraint', function() {
               it('does not allow a drag', function(done) {
-                var options = {}
-
-                options.events = [ {
-                  start: '2014-11-10T01:00:00',
-                  end: '2014-11-10T02:00:00',
-                  constraint: {
-                    start: '2014-11-10',
-                    end: '2014-11-11'
-                  }
-                } ]
+                var options = {
+                  events: [ {
+                    start: '2014-11-10T01:00:00',
+                    end: '2014-11-10T02:00:00',
+                    constraint: {
+                      start: '2014-11-10',
+                      end: '2014-11-11'
+                    }
+                  } ]
+                }
                 testEventDrag(options, '2014-11-12', false, done)
               })
             })
             describe('with timed event and timed constraint', function() {
               it('does not allow a drag', function(done) {
-                var options = {}
-
-                options.events = [ {
-                  start: '2014-11-10T01:00:00',
-                  end: '2014-11-10T02:00:00',
-                  constraint: {
-                    start: '2014-11-10T00:00:00',
-                    end: '2014-11-11T12:00:00'
-                  }
-                } ]
+                var options = {
+                  events: [ {
+                    start: '2014-11-10T01:00:00',
+                    end: '2014-11-10T02:00:00',
+                    constraint: {
+                      start: '2014-11-10T00:00:00',
+                      end: '2014-11-11T12:00:00'
+                    }
+                  } ]
+                }
                 testEventDrag(options, '2014-11-12', false, done)
               })
             })
             describe('with all-day event and all-day constraint', function() {
               it('does not allow a drag', function(done) {
-                var options = {}
-
-                options.events = [ {
-                  start: '2014-11-10',
-                  end: '2014-11-12',
-                  constraint: {
-                    start: '2014-11-09',
-                    end: '2014-11-13'
-                  }
-                } ]
+                var options = {
+                  events: [ {
+                    start: '2014-11-10',
+                    end: '2014-11-12',
+                    constraint: {
+                      start: '2014-11-09',
+                      end: '2014-11-13'
+                    }
+                  } ]
+                }
                 testEventDrag(options, '2014-11-13', false, done)
               })
             })
             describe('with all-day event and timed constraint', function() {
               it('does not allow a drag', function(done) {
-                var options = {}
-
-                options.events = [ {
-                  start: '2014-11-10',
-                  end: '2014-11-12',
-                  constraint: {
-                    start: '2014-11-09T01:00:00',
-                    end: '2014-11-12T23:00:00'
-                  }
-                } ]
+                var options = {
+                  events: [ {
+                    start: '2014-11-10',
+                    end: '2014-11-12',
+                    constraint: {
+                      start: '2014-11-09T01:00:00',
+                      end: '2014-11-12T23:00:00'
+                    }
+                  } ]
+                }
                 testEventDrag(options, '2014-11-13', false, done)
               })
             })
@@ -192,37 +195,35 @@ describe('event constraint', function() {
         })
         describe('using an event source\'s constraint', function() {
           it('does not allow a drag', function(done) {
-            var options = {}
-
-            options.eventSources = [ {
-              events: [ {
-                start: '2014-11-10T01:00:00',
-                end: '2014-11-10T02:00:00'
-              } ],
-              constraint: {
-                start: '2014-11-10T03:00:00',
-                end: '2014-11-10T06:00:00'
-              }
-            } ]
+            var options = {
+              eventSources: [ {
+                events: [ {
+                  start: '2014-11-10T01:00:00',
+                  end: '2014-11-10T02:00:00'
+                } ],
+                constraint: {
+                  start: '2014-11-10T03:00:00',
+                  end: '2014-11-10T06:00:00'
+                }
+              } ]
+            }
             testEventDrag(options, '2014-11-10T06:00:00', false, done)
           })
         })
         describe('using eventConstraint', function() {
           it('does not allow a drag and doesnt call eventDataTransform', function(done) {
-            var options = {}
-
-            options.events = [ {
-              start: '2014-11-10T01:00:00',
-              end: '2014-11-10T02:00:00'
-            } ]
-
-            options.eventConstraint = {
-              start: '2014-11-10T03:00:00',
-              end: '2014-11-10T06:00:00'
-            }
-
-            options.eventDataTransform = function(inData) {
-              return inData
+            var options = {
+              events: [ {
+                start: '2014-11-10T01:00:00',
+                end: '2014-11-10T02:00:00'
+              } ],
+              eventConstraint: {
+                start: '2014-11-10T03:00:00',
+                end: '2014-11-10T06:00:00'
+              },
+              eventDataTransform(inData) {
+                return inData
+              }
             }
 
             spyOn(options, 'eventDataTransform').and.callThrough()
@@ -238,32 +239,32 @@ describe('event constraint', function() {
       describe('intersecting the constraint start', function() {
         describe('with no timezone', function() {
           it('does not allow a drag', function(done) {
-            var options = {}
-
-            options.events = [ {
-              start: '2014-11-10T03:00:00',
-              end: '2014-11-10T05:00:00',
-              constraint: {
+            var options = {
+              events: [ {
                 start: '2014-11-10T03:00:00',
-                end: '2014-11-10T06:00:00'
-              }
-            } ]
+                end: '2014-11-10T05:00:00',
+                constraint: {
+                  start: '2014-11-10T03:00:00',
+                  end: '2014-11-10T06:00:00'
+                }
+              } ]
+            }
             testEventDrag(options, '2014-11-10T02:00:00', false, done)
           })
         })
         describe('with UTC timezone', function() {
           it('does not allow a drag', function(done) {
-            var options = {}
-
-            options.timeZone = 'UTC'
-            options.events = [ {
-              start: '2014-11-10T03:00:00+00:00',
-              end: '2014-11-10T05:00:00+00:00',
-              constraint: {
+            var options = {
+              timeZone: 'UTC',
+              events: [ {
                 start: '2014-11-10T03:00:00+00:00',
-                end: '2014-11-10T06:00:00+00:00'
-              }
-            } ]
+                end: '2014-11-10T05:00:00+00:00',
+                constraint: {
+                  start: '2014-11-10T03:00:00+00:00',
+                  end: '2014-11-10T06:00:00+00:00'
+                }
+              } ]
+            }
             testEventDrag(options, '2014-11-10T02:00:00+00:00', false, done)
           })
         })
@@ -272,47 +273,47 @@ describe('event constraint', function() {
       describe('intersecting the constraint end', function() {
         describe('when the event has an explicit end', function() {
           it('does not allow a drag', function(done) {
-            var options = {}
-
-            options.events = [ {
-              start: '2014-11-10T03:00:00',
-              end: '2014-11-10T05:00:00',
-              constraint: {
+            var options = {
+              events: [ {
                 start: '2014-11-10T03:00:00',
-                end: '2014-11-10T06:00:00'
-              }
-            } ]
+                end: '2014-11-10T05:00:00',
+                constraint: {
+                  start: '2014-11-10T03:00:00',
+                  end: '2014-11-10T06:00:00'
+                }
+              } ]
+            }
             testEventDrag(options, '2014-11-10T05:00:00', false, done)
           })
         })
         describe('when the event has an implied end', function() {
           it('does not allow a drag', function(done) {
-            var options = {}
-
-            options.defaultTimedEventDuration = '02:30'
-            options.events = [ {
-              start: '2014-11-10T03:00:00',
-              constraint: {
+            var options = {
+              defaultTimedEventDuration: '02:30',
+              events: [ {
                 start: '2014-11-10T03:00:00',
-                end: '2014-11-10T12:00:00'
-              }
-            } ]
+                constraint: {
+                  start: '2014-11-10T03:00:00',
+                  end: '2014-11-10T12:00:00'
+                }
+              } ]
+            }
             testEventDrag(options, '2014-11-10T10:00:00', false, done)
           })
         })
         describe('with UTC timezone', function() {
           it('does not allow a drag', function(done) {
-            var options = {}
-
-            options.timeZone = 'UTC'
-            options.events = [ {
-              start: '2014-11-10T03:00:00+00:00',
-              end: '2014-11-10T05:00:00+00:00',
-              constraint: {
+            var options = {
+              timeZone: 'UTC',
+              events: [ {
                 start: '2014-11-10T03:00:00+00:00',
-                end: '2014-11-10T06:00:00+00:00'
-              }
-            } ]
+                end: '2014-11-10T05:00:00+00:00',
+                constraint: {
+                  start: '2014-11-10T03:00:00+00:00',
+                  end: '2014-11-10T06:00:00+00:00'
+                }
+              } ]
+            }
             testEventDrag(options, '2014-11-10T05:00:00+00:00', false, done)
           })
         })
@@ -320,16 +321,16 @@ describe('event constraint', function() {
 
       describe('into a constraint it encompasses', function() {
         it('does not allow a drag', function(done) {
-          var options = {}
-
-          options.events = [ {
-            start: '2014-11-10T01:00:00',
-            end: '2014-11-10T05:00:00',
-            constraint: {
-              start: '2014-11-10T12:00:00',
-              end: '2014-11-10T14:00:00'
-            }
-          } ]
+          var options = {
+            events: [ {
+              start: '2014-11-10T01:00:00',
+              end: '2014-11-10T05:00:00',
+              constraint: {
+                start: '2014-11-10T12:00:00',
+                end: '2014-11-10T14:00:00'
+              }
+            } ]
+          }
           testEventDrag(options, '2014-11-10T10:00:00', false, done)
         })
       })
@@ -340,64 +341,64 @@ describe('event constraint', function() {
 
       describe('when the start is already outside the constraint', function() {
         it('does not allow a resize', function(done) {
-          var options = {}
-
-          options.events = [ {
-            start: '2014-11-12T01:00:00',
-            end: '2014-11-12T03:00:00',
-            constraint: {
-              start: '2014-11-12T02:00:00',
-              end: '2014-11-12T22:00:00'
-            }
-          } ]
+          var options = {
+            events: [ {
+              start: '2014-11-12T01:00:00',
+              end: '2014-11-12T03:00:00',
+              constraint: {
+                start: '2014-11-12T02:00:00',
+                end: '2014-11-12T22:00:00'
+              }
+            } ]
+          }
           testEventResize(options, '2014-11-12T10:00:00', false, done)
         })
       })
 
       describe('when resized well within the constraint', function() {
         it('allows a resize', function(done) {
-          var options = {}
-
-          options.events = [ {
-            start: '2014-11-12T02:00:00',
-            end: '2014-11-12T04:00:00',
-            constraint: {
-              start: '2014-11-12T01:00:00',
-              end: '2014-11-12T22:00:00'
-            }
-          } ]
+          var options = {
+            events: [ {
+              start: '2014-11-12T02:00:00',
+              end: '2014-11-12T04:00:00',
+              constraint: {
+                start: '2014-11-12T01:00:00',
+                end: '2014-11-12T22:00:00'
+              }
+            } ]
+          }
           testEventResize(options, '2014-11-12T10:00:00', true, done)
         })
       })
 
       describe('when resized to the end of the constraint', function() {
         it('allows a resize', function(done) {
-          var options = {}
-
-          options.events = [ {
-            start: '2014-11-12T02:00:00',
-            end: '2014-11-12T04:00:00',
-            constraint: {
-              start: '2014-11-12T01:00:00',
-              end: '2014-11-12T06:00:00'
-            }
-          } ]
+          var options = {
+            events: [ {
+              start: '2014-11-12T02:00:00',
+              end: '2014-11-12T04:00:00',
+              constraint: {
+                start: '2014-11-12T01:00:00',
+                end: '2014-11-12T06:00:00'
+              }
+            } ]
+          }
           testEventResize(options, '2014-11-12T06:00:00', true, done)
         })
       })
 
       describe('when resized past the end of the constraint', function() {
         it('does not allow a resize', function(done) {
-          var options = {}
-
-          options.events = [ {
-            start: '2014-11-12T02:00:00',
-            end: '2014-11-12T04:00:00',
-            constraint: {
-              start: '2014-11-12T01:00:00',
-              end: '2014-11-12T06:00:00'
-            }
-          } ]
+          var options = {
+            events: [ {
+              start: '2014-11-12T02:00:00',
+              end: '2014-11-12T04:00:00',
+              constraint: {
+                start: '2014-11-12T01:00:00',
+                end: '2014-11-12T06:00:00'
+              }
+            } ]
+          }
           testEventResize(options, '2014-11-12T07:00:00', false, done)
         })
       })
@@ -412,49 +413,49 @@ describe('event constraint', function() {
       describe('to the middle of the constraint range', function() {
 
         it('allows a drag', function(done) {
-          var options = {}
-
-          options.events = [ {
-            start: '2014-11-12T01:00:00',
-            end: '2014-11-12T03:00:00',
-            constraint: {
-              startTime: '04:00:00',
-              endTime: '08:00:00'
-            }
-          } ]
+          var options = {
+            events: [ {
+              start: '2014-11-12T01:00:00',
+              end: '2014-11-12T03:00:00',
+              constraint: {
+                startTime: '04:00:00',
+                endTime: '08:00:00'
+              }
+            } ]
+          }
           testEventDrag(options, '2014-11-12T05:00:00', true, done)
         })
       })
 
       describe('outside of a constraint range', function() {
         it('does not allow a drag', function(done) {
-          var options = {}
-
-          options.events = [ {
-            start: '2014-11-12T01:00:00',
-            end: '2014-11-12T03:00:00',
-            constraint: {
-              startTime: '04:00:00',
-              endTime: '08:00:00'
-            }
-          } ]
+          var options = {
+            events: [ {
+              start: '2014-11-12T01:00:00',
+              end: '2014-11-12T03:00:00',
+              constraint: {
+                startTime: '04:00:00',
+                endTime: '08:00:00'
+              }
+            } ]
+          }
           testEventDrag(options, '2014-11-12T07:00:00', false, done)
         })
       })
 
       describe('on an off-day of a constraint range', function() {
         it('does not allow a drag', function(done) {
-          var options = {}
-
-          options.events = [ {
-            start: '2014-11-12T01:00:00',
-            end: '2014-11-12T03:00:00',
-            constraint: {
-              startTime: '04:00:00',
-              endTime: '08:00:00',
-              daysOfWeek: [ 0, 1, 2, 3, 5, 6 ] // except Thursday
-            }
-          } ]
+          var options = {
+            events: [ {
+              start: '2014-11-12T01:00:00',
+              end: '2014-11-12T03:00:00',
+              constraint: {
+                startTime: '04:00:00',
+                endTime: '08:00:00',
+                daysOfWeek: [ 0, 1, 2, 3, 5, 6 ] // except Thursday
+              }
+            } ]
+          }
           testEventDrag(options, '2014-11-13T05:00:00', false, done) // drag to Thursday
         })
       })
@@ -468,52 +469,52 @@ describe('event constraint', function() {
       describe('to the middle of the constraint range', function() {
 
         it('allows a drag', function(done) {
-          var options = {}
-
-          options.businessHours = {
-            startTime: '02:00',
-            endTime: '06:00'
+          var options = {
+            businessHours: {
+              startTime: '02:00',
+              endTime: '06:00'
+            },
+            events: [ {
+              start: '2014-11-12T01:00:00',
+              end: '2014-11-12T02:00:00',
+              constraint: 'businessHours'
+            } ]
           }
-          options.events = [ {
-            start: '2014-11-12T01:00:00',
-            end: '2014-11-12T02:00:00',
-            constraint: 'businessHours'
-          } ]
           testEventDrag(options, '2014-11-12T03:00:00', true, done)
         })
       })
 
       describe('outside of a constraint range', function() {
         it('does not allow a drag', function(done) {
-          var options = {}
-
-          options.businessHours = {
-            startTime: '02:00',
-            endTime: '06:00'
+          var options = {
+            businessHours: {
+              startTime: '02:00',
+              endTime: '06:00'
+            },
+            events: [ {
+              start: '2014-11-12T01:00:00',
+              end: '2014-11-12T02:30:00',
+              constraint: 'businessHours'
+            } ]
           }
-          options.events = [ {
-            start: '2014-11-12T01:00:00',
-            end: '2014-11-12T02:30:00',
-            constraint: 'businessHours'
-          } ]
           testEventDrag(options, '2014-11-12T05:00:00', false, done)
         })
       })
 
       describe('on an off-day of a constraint range', function() {
         it('does not allow a drag', function(done) {
-          var options = {}
-
-          options.businessHours = {
-            startTime: '02:00',
-            endTime: '06:00',
-            daysOfWeek: [ 1, 2, 3, 4 ] // Mon - Thurs
+          var options = {
+            businessHours: {
+              startTime: '02:00',
+              endTime: '06:00',
+              daysOfWeek: [ 1, 2, 3, 4 ] // Mon - Thurs
+            },
+            events: [ {
+              start: '2014-11-12T01:00:00',
+              end: '2014-11-12T02:30:00',
+              constraint: 'businessHours'
+            } ]
           }
-          options.events = [ {
-            start: '2014-11-12T01:00:00',
-            end: '2014-11-12T02:30:00',
-            constraint: 'businessHours'
-          } ]
           testEventDrag(options, '2014-11-14T03:00:00', false, done) // Friday
         })
       })
@@ -526,21 +527,21 @@ describe('event constraint', function() {
 
       describe('to the middle of the constraint range', function() {
         it('allows a drag', function(done) {
-          var options = {}
-
-          options.events = [
-            {
-              start: '2014-11-12T01:00:00',
-              end: '2014-11-12T03:00:00',
-              className: 'dragging-event',
-              constraint: 'yo'
-            },
-            {
-              groupId: 'yo',
-              start: '2014-11-13T01:00:00',
-              end: '2014-11-13T05:00:00'
-            }
-          ]
+          var options = {
+            events: [
+              {
+                start: '2014-11-12T01:00:00',
+                end: '2014-11-12T03:00:00',
+                className: 'dragging-event',
+                constraint: 'yo'
+              },
+              {
+                groupId: 'yo',
+                start: '2014-11-13T01:00:00',
+                end: '2014-11-13T05:00:00'
+              }
+            ]
+          }
           testEventDrag(options, '2014-11-13T02:00:00', true, done, 'dragging-event')
         })
       })
@@ -548,9 +549,50 @@ describe('event constraint', function() {
       describe('outside of a foreground event constraint', function() {
         describe('with an explicit end time', function() {
           it('does not allow a drag', function(done) {
-            var options = {}
+            var options = {
+              events: [
+                {
+                  start: '2014-11-12T01:00:00',
+                  end: '2014-11-12T03:00:00',
+                  constraint: 'yo',
+                  className: 'dragging-event'
+                },
+                {
+                  id: 'yo',
+                  start: '2014-11-13T01:00:00',
+                  end: '2014-11-13T04:00:00'
+                }
+              ]
+            }
+            testEventDrag(options, '2014-11-13T04:00:00', false, done, 'dragging-event')
+          })
+        })
+        describe('when an implied end time', function() {
+          it('does not allow a drag', function(done) {
+            var options = {
+              defaultTimedEventDuration: '01:00:00',
+              events: [
+                {
+                  start: '2014-11-12T01:00:00',
+                  end: '2014-11-12T03:00:00',
+                  constraint: 'yo',
+                  className: 'dragging-event'
+                },
+                {
+                  id: 'yo',
+                  start: '2014-11-13T01:00:00'
+                }
+              ]
+            }
+            testEventDrag(options, '2014-11-13T01:00:00', false, done, 'dragging-event')
+          })
+        })
+      })
 
-            options.events = [
+      describe('outside of a background-event constraint', function() {
+        it('does not allow a drag', function(done) {
+          var options = {
+            events: [
               {
                 start: '2014-11-12T01:00:00',
                 end: '2014-11-12T03:00:00',
@@ -560,67 +602,26 @@ describe('event constraint', function() {
               {
                 id: 'yo',
                 start: '2014-11-13T01:00:00',
-                end: '2014-11-13T04:00:00'
+                end: '2014-11-13T04:00:00',
+                display: 'background'
               }
             ]
-            testEventDrag(options, '2014-11-13T04:00:00', false, done, 'dragging-event')
-          })
-        })
-        describe('when an implied end time', function() {
-          it('does not allow a drag', function(done) {
-            var options = {}
-
-            options.defaultTimedEventDuration = '01:00:00'
-            options.events = [
-              {
-                start: '2014-11-12T01:00:00',
-                end: '2014-11-12T03:00:00',
-                constraint: 'yo',
-                className: 'dragging-event'
-              },
-              {
-                id: 'yo',
-                start: '2014-11-13T01:00:00'
-              }
-            ]
-            testEventDrag(options, '2014-11-13T01:00:00', false, done, 'dragging-event')
-          })
-        })
-      })
-
-      describe('outside of a background-event constraint', function() {
-        it('does not allow a drag', function(done) {
-          var options = {}
-
-          options.events = [
-            {
-              start: '2014-11-12T01:00:00',
-              end: '2014-11-12T03:00:00',
-              constraint: 'yo',
-              className: 'dragging-event'
-            },
-            {
-              id: 'yo',
-              start: '2014-11-13T01:00:00',
-              end: '2014-11-13T04:00:00',
-              display: 'background'
-            }
-          ]
+          }
           testEventDrag(options, '2014-11-13T04:00:00', false, done, 'dragging-event')
         })
       })
 
       describe('when the event ID constraint matches no events', function() {
         it('does not allow a drag', function(done) {
-          var options = {}
-
-          options.events = [
-            {
-              start: '2014-11-12T01:00:00',
-              end: '2014-11-12T03:00:00',
-              constraint: 'yo'
-            }
-          ]
+          var options = {
+            events: [
+              {
+                start: '2014-11-12T01:00:00',
+                end: '2014-11-12T03:00:00',
+                constraint: 'yo'
+              }
+            ]
+          }
           testEventDrag(options, '2014-11-13T04:00:00', false, done)
         })
       })
@@ -629,15 +630,15 @@ describe('event constraint', function() {
         pushOptions({initialView: 'dayGridMonth'})
         describe('when the event ID constraint matches no events', function() {
           it('does not allow a drag', function(done) {
-            var options = {}
-
-            options.events = [
-              {
-                start: '2014-11-12',
-                end: '2014-11-12',
-                constraint: 'yo'
-              }
-            ]
+            var options = {
+              events: [
+                {
+                  start: '2014-11-12',
+                  end: '2014-11-12',
+                  constraint: 'yo'
+                }
+              ]
+            }
             testEventDrag(options, '2014-11-13', false, done)
           })
         })
@@ -658,11 +659,11 @@ describe('selectConstraint', function() {
 
     describe('when dragged clearly within', function() {
       it('allows a selection', function(done) {
-        var options = {}
-
-        options.selectConstraint = {
-          start: '2014-11-12T01:00:00',
-          end: '2014-11-12T20:00:00'
+        var options = {
+          selectConstraint: {
+            start: '2014-11-12T01:00:00',
+            end: '2014-11-12T20:00:00'
+          }
         }
         testSelection(options, '2014-11-12T03:00:00Z', '2014-11-12T10:00:00Z', true, done)
       })
@@ -670,11 +671,11 @@ describe('selectConstraint', function() {
 
     describe('when dragged within, starting with the constraint start', function() {
       it('allows a selection', function(done) {
-        var options = {}
-
-        options.selectConstraint = {
-          start: '2014-11-12T01:00:00',
-          end: '2014-11-12T20:00:00'
+        var options = {
+          selectConstraint: {
+            start: '2014-11-12T01:00:00',
+            end: '2014-11-12T20:00:00'
+          }
         }
         testSelection(options, '2014-11-12T01:00:00Z', '2014-11-12T05:00:00Z', true, done)
       })
@@ -682,11 +683,11 @@ describe('selectConstraint', function() {
 
     describe('when dragged within, ending with the constraint end', function() {
       it('allows a selection', function(done) {
-        var options = {}
-
-        options.selectConstraint = {
-          start: '2014-11-12T01:00:00',
-          end: '2014-11-12T05:00:00'
+        var options = {
+          selectConstraint: {
+            start: '2014-11-12T01:00:00',
+            end: '2014-11-12T05:00:00'
+          }
         }
         testSelection(options, '2014-11-12T03:00:00Z', '2014-11-12T05:00:00Z', true, done)
       })
@@ -694,11 +695,11 @@ describe('selectConstraint', function() {
 
     describe('when dragged intersecting the constraint start', function() {
       it('does not allow a selection', function(done) {
-        var options = {}
-
-        options.selectConstraint = {
-          start: '2014-11-12T03:00:00',
-          end: '2014-11-12T20:00:00'
+        var options = {
+          selectConstraint: {
+            start: '2014-11-12T03:00:00',
+            end: '2014-11-12T20:00:00'
+          }
         }
         testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T04:00:00Z', false, done)
       })
@@ -706,11 +707,11 @@ describe('selectConstraint', function() {
 
     describe('when dragged intersecting the constraint end', function() {
       it('does not allow a selection', function(done) {
-        var options = {}
-
-        options.selectConstraint = {
-          start: '2014-11-12T03:00:00',
-          end: '2014-11-12T07:00:00'
+        var options = {
+          selectConstraint: {
+            start: '2014-11-12T03:00:00',
+            end: '2014-11-12T07:00:00'
+          }
         }
         testSelection(options, '2014-11-12T04:00:00Z', '2014-11-12T08:00:00Z', false, done)
       })
@@ -719,11 +720,11 @@ describe('selectConstraint', function() {
     describe('when dragged after the constraint', function() {
       describe('when in week view with timed events', function() {
         it('does not allow a selection', function(done) {
-          var options = {}
-
-          options.selectConstraint = {
-            start: '2014-11-12T03:00:00',
-            end: '2014-11-12T05:00:00'
+          var options = {
+            selectConstraint: {
+              start: '2014-11-12T03:00:00',
+              end: '2014-11-12T05:00:00'
+            }
           }
           testSelection(options, '2014-11-12T05:00:00Z', '2014-11-12T07:00:00Z', false, done)
         })
@@ -732,33 +733,33 @@ describe('selectConstraint', function() {
         pushOptions({initialView: 'dayGridMonth'})
         describe('when an all-day constraint', function() {
           it('does not allow a selection', function(done) {
-            var options = {}
-
-            options.selectConstraint = {
-              start: '2014-11-13',
-              end: '2014-11-14'
+            var options = {
+              selectConstraint: {
+                start: '2014-11-13',
+                end: '2014-11-14'
+              }
             }
             testSelection(options, '2014-11-12', '2014-11-14', false, done)
           })
         })
         describe('when a timed constraint, out of bounds', function() {
           it('does not allow a selection', function(done) {
-            var options = {}
-
-            options.selectConstraint = {
-              start: '2014-11-12T01:00:00',
-              end: '2014-11-14T00:00:00'
+            var options = {
+              selectConstraint: {
+                start: '2014-11-12T01:00:00',
+                end: '2014-11-14T00:00:00'
+              }
             }
             testSelection(options, '2014-11-12', '2014-11-14', false, done)
           })
         })
         describe('when a timed constraint, in bounds', function() {
           it('allows a selection', function(done) {
-            var options = {}
-
-            options.selectConstraint = {
-              start: '2014-11-12T00:00:00',
-              end: '2014-11-14T00:00:00'
+            var options = {
+              selectConstraint: {
+                start: '2014-11-12T00:00:00',
+                end: '2014-11-14T00:00:00'
+              }
             }
             testSelection(options, '2014-11-12', '2014-11-14', true, done)
           })
@@ -771,11 +772,11 @@ describe('selectConstraint', function() {
 
     describe('to the middle of the constraint range', function() {
       it('allows a selection when in bounds', function(done) {
-        var options = {}
-
-        options.selectConstraint = {
-          startTime: '01:00:00',
-          endTime: '05:00:00'
+        var options = {
+          selectConstraint: {
+            startTime: '01:00:00',
+            endTime: '05:00:00'
+          }
         }
         testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T04:00:00Z', true, done)
       })
@@ -783,20 +784,20 @@ describe('selectConstraint', function() {
 
     describe('outside of a constraint range', function() {
       it('does not allow a selection when single day', function(done) {
-        var options = {}
-
-        options.selectConstraint = {
-          startTime: '01:00:00',
-          endTime: '05:00:00'
+        var options = {
+          selectConstraint: {
+            startTime: '01:00:00',
+            endTime: '05:00:00'
+          }
         }
         testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T06:00:00Z', false, done)
       })
       it('does not allow a selection when multiday', function(done) {
-        var options = {}
-
-        options.selectConstraint = {
-          startTime: '01:00:00',
-          endTime: '05:00:00'
+        var options = {
+          selectConstraint: {
+            startTime: '01:00:00',
+            endTime: '05:00:00'
+          }
         }
         testSelection(options, '2014-11-12T02:00:00Z', '2014-11-14T04:00:00Z', false, done)
       })
@@ -807,40 +808,40 @@ describe('selectConstraint', function() {
 
     describe('to the middle of the constraint range', function() {
       it('allows a selection', function(done) {
-        var options = {}
-
-        options.businessHours = {
-          startTime: '01:00:00',
-          endTime: '05:00:00'
+        var options = {
+          businessHours: {
+            startTime: '01:00:00',
+            endTime: '05:00:00'
+          },
+          selectConstraint: 'businessHours'
         }
-        options.selectConstraint = 'businessHours'
         testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T04:00:00Z', true, done)
       })
     })
 
     describe('outside of a constraint range', function() {
       it('does not allow a selection', function(done) {
-        var options = {}
-
-        options.businessHours = {
-          startTime: '01:00:00',
-          endTime: '05:00:00'
+        var options = {
+          businessHours: {
+            startTime: '01:00:00',
+            endTime: '05:00:00'
+          },
+          selectConstraint: 'businessHours'
         }
-        options.selectConstraint = 'businessHours'
         testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T06:00:00Z', false, done)
       })
     })
 
     describe('with a custom dow when dragged to a dead day', function() {
       it('does not allow a selection', function(done) {
-        var options = {}
-
-        options.businessHours = {
-          startTime: '01:00:00',
-          endTime: '05:00:00',
-          daysOfWeek: [ 1, 2, 4, 5 ] // Mon,Tue,Thu,Fri
+        var options = {
+          businessHours: {
+            startTime: '01:00:00',
+            endTime: '05:00:00',
+            daysOfWeek: [ 1, 2, 4, 5 ] // Mon,Tue,Thu,Fri
+          },
+          selectConstraint: 'businessHours'
         }
-        options.selectConstraint = 'businessHours'
         testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T04:00:00Z', false, done) // Wed
       })
     })
@@ -850,30 +851,30 @@ describe('selectConstraint', function() {
 
     describe('to the middle of the constraint range', function() {
       it('allows a selection', function(done) {
-        var options = {}
-
-        options.events = [ {
-          groupId: 'yo',
-          start: '2014-11-12T02:00:00',
-          end: '2014-11-12T05:00:00',
-          display: 'background'
-        } ]
-        options.selectConstraint = 'yo'
+        var options = {
+          events: [ {
+            groupId: 'yo',
+            start: '2014-11-12T02:00:00',
+            end: '2014-11-12T05:00:00',
+            display: 'background'
+          } ],
+          selectConstraint: 'yo'
+        }
         testSelection(options, '2014-11-12T03:00:00Z', '2014-11-12T04:00:00Z', true, done)
       })
     })
 
     describe('outside of a constraint range', function() {
       it('does not allow a selection', function(done) {
-        var options = {}
-
-        options.events = [ {
-          groupId: 'yo',
-          start: '2014-11-12T02:00:00',
-          end: '2014-11-12T05:00:00',
-          display: 'background'
-        } ]
-        options.selectConstraint = 'yo'
+        var options = {
+          events: [ {
+            groupId: 'yo',
+            start: '2014-11-12T02:00:00',
+            end: '2014-11-12T05:00:00',
+            display: 'background'
+          } ],
+          selectConstraint: 'yo'
+        }
         testSelection(options, '2014-11-12T03:00:00Z', '2014-11-12T06:00:00Z', false, done)
       })
     })
@@ -881,18 +882,18 @@ describe('selectConstraint', function() {
     describe('when event ID does not match any events', function() {
       describe('when in week view', function() {
         it('does not allow a selection', function(done) {
-          var options = {}
-
-          options.selectConstraint = 'yooo'
+          var options = {
+            selectConstraint: 'yooo'
+          }
           testSelection(options, '2014-11-12T03:00:00Z', '2014-11-12T06:00:00Z', false, done)
         })
       })
       describe('when in month view', function() {
         it('does not allow a selection', function(done) {
-          var options = {}
-
-          options.initialView = 'dayGridMonth'
-          options.selectConstraint = 'yooo'
+          var options = {
+            initialView: 'dayGridMonth',
+            selectConstraint: 'yooo'
+          }
           testSelection(options, '2014-11-12', '2014-11-15', false, done)
         })
       })

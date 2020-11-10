@@ -6,8 +6,11 @@ const IGNORED_EVENTS = {
 
 export class ListenerCounter {
 
+  el: HTMLElement
+  delta = 0
+  jQueryStartCount = 0
+
   constructor(el) {
-    this.delta = 0
     this.el = el
   }
 
@@ -17,18 +20,18 @@ export class ListenerCounter {
     let origAddEventListened = el.addEventListener
     let origRemoveEventListener = el.removeEventListener
 
-    el.addEventListener = function(eventName) {
+    el.addEventListener = (eventName, ...otherArgs) => {
       if (!IGNORED_EVENTS[eventName]) {
         t.delta++
       }
-      return origAddEventListened.apply(el, arguments)
+      return origAddEventListened.call(el, eventName, ...otherArgs)
     }
 
-    el.removeEventListener = function(eventName) {
+    el.removeEventListener = (eventName, ...otherArgs) => {
       if (!IGNORED_EVENTS[eventName]) {
         t.delta--
       }
-      return origRemoveEventListener.apply(el, arguments)
+      return origRemoveEventListener.call(el, eventName, ...otherArgs)
     }
 
     this.jQueryStartCount = countJqueryListeners(el)

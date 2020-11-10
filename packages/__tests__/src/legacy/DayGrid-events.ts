@@ -18,11 +18,11 @@ describe('DayGrid event rendering', function() {
 
   function initMonthTesting(direction) {
     it('correctly renders an event starting before view\'s start', function() {
-      var options = {}
-      options.events = [
-        { start: '2014-07-26', end: '2014-07-30' }
-      ]
-
+      var options = {
+        events: [
+          { start: '2014-07-26', end: '2014-07-30' }
+        ]
+      }
       var testSegOptions = {
         firstCol: 0,
         lastCol: 2,
@@ -33,11 +33,11 @@ describe('DayGrid event rendering', function() {
     })
 
     it('correctly renders an event starting at view\'s start', function() {
-      var options = {}
-      options.events = [
-        { start: '2014-07-27', end: '2014-07-29' }
-      ]
-
+      var options = {
+        events: [
+          { start: '2014-07-27', end: '2014-07-29' }
+        ]
+      }
       var testSegOptions = {
         firstCol: 0,
         lastCol: 1,
@@ -48,11 +48,11 @@ describe('DayGrid event rendering', function() {
     })
 
     it('correctly renders an event starting after view\'s start', function() {
-      var options = {}
-      options.events = [
-        { start: '2014-08-01', end: '2014-08-02' }
-      ]
-
+      var options = {
+        events: [
+          { start: '2014-08-01', end: '2014-08-02' }
+        ]
+      }
       var testSegOptions = {
         firstCol: 5,
         lastCol: 5,
@@ -63,12 +63,12 @@ describe('DayGrid event rendering', function() {
     })
 
     it('correctly renders an event starting on a hidden day at week start', function() {
-      var options = {}
-      options.weekends = false
-      options.events = [
-        { start: '2014-07-27', end: '2014-07-30' }
-      ]
-
+      var options = {
+        weekends: false,
+        events: [
+          { start: '2014-07-27', end: '2014-07-30' }
+        ]
+      }
       var testSegOptions = {
         firstCol: 0,
         lastCol: 1,
@@ -79,12 +79,12 @@ describe('DayGrid event rendering', function() {
     })
 
     it('correctly renders an event starting on a hidden day in middle of week', function() {
-      var options = {}
-      options.hiddenDays = [ 2 ] // hide Tues
-      options.events = [
-        { start: '2014-07-29', end: '2014-08-01' }
-      ]
-
+      var options = {
+        hiddenDays: [ 2 ], // hide Tues
+        events: [
+          { start: '2014-07-29', end: '2014-08-01' }
+        ]
+      }
       var testSegOptions = {
         firstCol: 2,
         lastCol: 3,
@@ -95,10 +95,11 @@ describe('DayGrid event rendering', function() {
     })
 
     it('correctly renders an event ending before view\'s end', function() {
-      var options = {}
-      options.events = [
-        { start: '2014-09-02', end: '2014-09-05' }
-      ]
+      var options = {
+        events: [
+          { start: '2014-09-02', end: '2014-09-05' }
+        ]
+      }
       var testSegOptions = {
         row: 5,
         firstCol: 2,
@@ -110,11 +111,11 @@ describe('DayGrid event rendering', function() {
     })
 
     it('correctly renders an event ending at view\'s end', function() {
-      var options = {}
-      options.events = [
-        { start: '2014-09-04', end: '2014-09-07' }
-      ]
-
+      var options = {
+        events: [
+          { start: '2014-09-04', end: '2014-09-07' }
+        ]
+      }
       var testSegOptions = {
         row: 5,
         firstCol: 4,
@@ -126,10 +127,11 @@ describe('DayGrid event rendering', function() {
     })
 
     it('correctly renders an event ending after view\'s end', function() {
-      var options = {}
-      options.events = [
-        { start: '2014-09-04', end: '2014-09-08' }
-      ]
+      var options = {
+        events: [
+          { start: '2014-09-04', end: '2014-09-08' }
+        ]
+      }
       var testSegOptions = {
         row: 5,
         firstCol: 4,
@@ -141,10 +143,11 @@ describe('DayGrid event rendering', function() {
     })
 
     it('correctly renders an event ending at a week\'s end', function() {
-      var options = {}
-      options.events = [
-        { start: '2014-08-28', end: '2014-08-31' }
-      ]
+      var options = {
+        events: [
+          { start: '2014-08-28', end: '2014-08-31' }
+        ]
+      }
       var testSegOptions = {
         row: 4,
         firstCol: 4,
@@ -156,11 +159,12 @@ describe('DayGrid event rendering', function() {
     })
 
     it('correctly renders an event ending on a hidden day at week end', function() {
-      var options = {}
-      options.weekends = false
-      options.events = [
-        { start: '2014-07-30', end: '2014-08-03' }
-      ]
+      var options = {
+        weekends: false,
+        events: [
+          { start: '2014-07-30', end: '2014-08-03' }
+        ]
+      }
       var testSegOptions = {
         firstCol: 2,
         lastCol: 4,
@@ -171,11 +175,12 @@ describe('DayGrid event rendering', function() {
     })
 
     it('correctly renders an event ending on a hidden day in middle of week', function() {
-      var options = {}
-      options.hiddenDays = [ 4 ] // Thurs
-      options.events = [
-        { start: '2014-07-28', end: '2014-08-01' }
-      ]
+      var options = {
+        hiddenDays: [ 4 ], // Thurs
+        events: [
+          { start: '2014-07-28', end: '2014-08-01' }
+        ]
+      }
       var testSegOptions = {
         firstCol: 1,
         lastCol: 3,

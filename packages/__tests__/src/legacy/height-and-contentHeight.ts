@@ -5,14 +5,12 @@ import '../lib/dom-misc'
 
 (function() {
 
-  [ 'height', 'contentHeight' ].forEach(function(/** @type any */ heightProp) {
+  [ 'height', 'contentHeight' ].forEach(function(heightProp) {
     describe(heightProp, function() {
       var $calendarEl
       var heightEl // HTMLElement
       var asAMethod
-
-      /** @type {any} */
-      var heightPropDescriptions = [
+      var heightPropDescriptions: { description: string, height: string | number, heightWrapper?: boolean }[] = [
         { description: 'as a number', height: 600 }
       ]
 

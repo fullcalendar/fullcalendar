@@ -402,7 +402,6 @@ export class TimeGridWrapper {
     end = ensureDate(end)
 
     var dayStructs = this.computeDayInfo()
-    /** @type {any} */
     var slotStructs = this.computeSlotInfo()
 
     var dayI, dayStruct
@@ -494,16 +493,13 @@ export class TimeGridWrapper {
 
   private computeSlotInfo() {
     var slotEls = this.getSlotEls()
-
-    /** @type {any} */
-    var slots
-    slots = slotEls.map(function(node) {
+    var slots = slotEls.map(function(node) {
       var rect = node.getBoundingClientRect()
       return $.extend({}, rect, {
         startTimeMs: createDuration(
           node.getAttribute('data-time')
         ).milliseconds
-      })
+      }) as any
     })
 
     var len = slots.length

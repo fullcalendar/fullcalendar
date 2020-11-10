@@ -2,7 +2,7 @@ import { getRectCenter, subtractPoints, addPoints } from './geom'
 import { CalendarWrapper } from './wrappers/CalendarWrapper'
 
 
-export function resize(point0, point1, fromStart, debug) {
+export function resize(point0, point1, fromStart?, debug?) {
   var eventEl = new CalendarWrapper(currentCalendar).getFirstEventEl()
 
   var $resizerEl = $(eventEl).find(

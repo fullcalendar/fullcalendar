@@ -156,7 +156,7 @@ describe('moreLinkClick', function() { // TODO: rename file
 
   it('works with custom function, and can return a view name', function(done) {
     let calendar = initCalendar({
-      moreLinkClick: function(cellInfo, jsEvent) {
+      moreLinkClick: function() {
         return 'timeGridDay'
       }
     })
