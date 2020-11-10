@@ -10,13 +10,12 @@ import {
   memoize,
   DateRange,
   NowIndicatorRoot,
-  DateProfile
+  DateProfile,
 } from '@fullcalendar/common'
 import { TableCellModel } from '@fullcalendar/daygrid' // TODO: good to use this interface?
 import { TimeColsSeg, splitSegsByCol, splitInteractionByCol } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { TimeCol } from './TimeCol'
-
 
 export interface TimeColsContentProps {
   axis: boolean
@@ -40,9 +39,7 @@ export interface TimeColsContentProps {
   forPrint: boolean
 }
 
-
 export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TODO: rename
-
   private splitFgEventSegs = memoize(splitSegsByCol)
   private splitBgEventSegs = memoize(splitSegsByCol)
   private splitBusinessHourSegs = memoize(splitSegsByCol)
@@ -52,7 +49,6 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
   private splitEventResize = memoize(splitInteractionByCol)
   private rootElRef = createRef<HTMLDivElement>()
   private cellElRefs = new RefMap<HTMLTableCellElement>()
-
 
   render() {
     let { props, context } = this
@@ -71,33 +67,36 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
     let eventResizeByRow = this.splitEventResize(props.eventResize, colCnt)
 
     return (
-      <div className='fc-timegrid-cols' ref={this.rootElRef}>
+      <div className="fc-timegrid-cols" ref={this.rootElRef}>
         <table style={{
           minWidth: props.tableMinWidth,
-          width: props.clientWidth
-        }}>
+          width: props.clientWidth,
+        }}
+        >
           {props.tableColGroupNode}
           <tbody>
             <tr>
-              {props.axis &&
-                <td className='fc-timegrid-col fc-timegrid-axis'>
-                  <div className='fc-timegrid-col-frame'>
-                    <div className='fc-timegrid-now-indicator-container'>
-                      {typeof nowIndicatorTop === 'number' &&
-                        <NowIndicatorRoot isAxis={true} date={props.nowDate}>
+              {props.axis && (
+                <td className="fc-timegrid-col fc-timegrid-axis">
+                  <div className="fc-timegrid-col-frame">
+                    <div className="fc-timegrid-now-indicator-container">
+                      {typeof nowIndicatorTop === 'number' && (
+                        <NowIndicatorRoot isAxis date={props.nowDate}>
                           {(rootElRef, classNames, innerElRef, innerContent) => (
                             <div
                               ref={rootElRef}
-                              className={[ 'fc-timegrid-now-indicator-arrow' ].concat(classNames).join(' ')}
+                              className={['fc-timegrid-now-indicator-arrow'].concat(classNames).join(' ')}
                               style={{ top: nowIndicatorTop }}
-                            >{innerContent}</div>
+                            >
+                              {innerContent}
+                            </div>
                           )}
                         </NowIndicatorRoot>
-                      }
+                      )}
                     </div>
                   </div>
                 </td>
-              }
+              )}
               {props.cells.map((cell, i) => (
                 <TimeCol
                   key={cell.key}
@@ -128,16 +127,13 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
     )
   }
 
-
   componentDidMount() {
     this.updateCoords()
   }
 
-
   componentDidUpdate() {
     this.updateCoords()
   }
-
 
   updateCoords() {
     let { props } = this
@@ -151,14 +147,12 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
           this.rootElRef.current,
           collectCellEls(this.cellElRefs.currentMap, props.cells),
           true, // horizontal
-          false
-        )
+          false,
+        ),
       )
     }
   }
-
 }
-
 
 function collectCellEls(elMap: { [key: string]: HTMLElement }, cells: TableCellModel[]) {
   return cells.map((cell) => elMap[cell.key])

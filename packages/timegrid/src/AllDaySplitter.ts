@@ -2,34 +2,34 @@ import {
   Splitter,
   hasBgRendering,
   EventDef,
-  DateSpan
+  DateSpan,
 } from '@fullcalendar/common'
 
 export class AllDaySplitter extends Splitter {
-
   getKeyInfo() {
     return {
       allDay: {},
-      timed: {}
+      timed: {},
     }
   }
 
   getKeysForDateSpan(dateSpan: DateSpan): string[] {
     if (dateSpan.allDay) {
-      return [ 'allDay' ]
-    } else {
-      return [ 'timed' ]
+      return ['allDay']
     }
+
+    return ['timed']
   }
 
   getKeysForEventDef(eventDef: EventDef): string[] {
     if (!eventDef.allDay) {
-      return [ 'timed' ]
-    } else if (hasBgRendering(eventDef)) {
-      return [ 'timed', 'allDay' ]
-    } else {
-      return [ 'allDay' ]
+      return ['timed']
     }
-  }
 
+    if (hasBgRendering(eventDef)) {
+      return ['timed', 'allDay']
+    }
+
+    return ['allDay']
+  }
 }

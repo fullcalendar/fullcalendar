@@ -22,18 +22,18 @@ export default createPlugin({
       usesMinMaxTime: true, // indicates that slotMinTime/slotMaxTime affects rendering
       allDaySlot: true,
       slotDuration: '00:30:00',
-      slotEventOverlap: true // a bad name. confused with overlap/constraint system
+      slotEventOverlap: true, // a bad name. confused with overlap/constraint system
     },
 
     timeGridDay: {
       type: 'timeGrid',
-      duration: { days: 1 }
+      duration: { days: 1 },
     },
 
     timeGridWeek: {
       type: 'timeGrid',
-      duration: { weeks: 1 }
-    }
+      duration: { weeks: 1 },
+    },
 
-  }
+  },
 })

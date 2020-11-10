@@ -13,14 +13,13 @@ import {
   ScrollRequest,
   DateRange,
   Duration,
-  DateProfile
+  DateProfile,
 } from '@fullcalendar/common'
 import { TableCellModel } from '@fullcalendar/daygrid' // TODO: good to use this interface?
 import { TimeColsSlats, TimeSlatMeta } from './TimeColsSlats'
 import { TimeColsContent } from './TimeColsContent'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { TimeColsSeg } from './TimeColsSeg'
-
 
 export interface TimeColsProps {
   cells: TableCellModel[]
@@ -53,31 +52,32 @@ interface TimeColsState {
   slatCoords: TimeColsSlatsCoords | null
 }
 
-
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
 
 export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
-
   private processSlotOptions = memoize(processSlotOptions)
   private scrollResponder: ScrollResponder
   private colCoords: PositionCache
 
   state = {
-    slatCoords: null
+    slatCoords: null,
   }
-
 
   render() {
     let { props, state } = this
 
     return (
-      <div className='fc-timegrid-body' ref={props.rootElRef} style={{
-        // these props are important to give this wrapper correct dimensions for interactions
-        // TODO: if we set it here, can we avoid giving to inner tables?
-        width: props.clientWidth,
-        minWidth: props.tableMinWidth
-      }}>
+      <div
+        className="fc-timegrid-body"
+        ref={props.rootElRef}
+        style={{
+          // these props are important to give this wrapper correct dimensions for interactions
+          // TODO: if we set it here, can we avoid giving to inner tables?
+          width: props.clientWidth,
+          minWidth: props.tableMinWidth,
+        }}
+      >
         <TimeColsSlats
           axis={props.axis}
           dateProfile={props.dateProfile}
@@ -113,28 +113,23 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
     )
   }
 
-
   componentDidMount() {
     this.scrollResponder = this.context.createScrollResponder(this.handleScrollRequest)
   }
-
 
   componentDidUpdate(prevProps: TimeColsProps) {
     this.scrollResponder.update(prevProps.dateProfile !== this.props.dateProfile)
   }
 
-
   componentWillUnmount() {
     this.scrollResponder.detach()
   }
-
 
   handleScrollRequest = (request: ScrollRequest) => {
     let { onScrollTopRequest } = this.props
     let { slatCoords } = this.state
 
     if (onScrollTopRequest && slatCoords) {
-
       if (request.time) {
         let top = slatCoords.computeTimeTop(request.time)
         top = Math.ceil(top) // zoom can give weird floating-point values. rather scroll a little bit further
@@ -147,11 +142,9 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
     }
   }
 
-
   handleColCoords = (colCoords: PositionCache | null) => {
     this.colCoords = colCoords
   }
-
 
   handleSlatCoords = (slatCoords: TimeColsSlatsCoords | null) => {
     this.setState({ slatCoords })
@@ -160,7 +153,6 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
       this.props.onSlatCoords(slatCoords)
     }
   }
-
 
   positionToHit(positionLeft, positionTop) {
     let { dateEnv, options } = this.context
@@ -182,7 +174,7 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
       let dayDate = this.props.cells[colIndex].date
       let time = addDurations(
         dateProfile.slotMinTime,
-        multiplyDuration(snapDuration, snapIndex)
+        multiplyDuration(snapDuration, snapIndex),
       )
 
       let start = dateEnv.add(dayDate, time)
@@ -192,21 +184,19 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
         col: colIndex,
         dateSpan: {
           range: { start, end },
-          allDay: false
+          allDay: false,
         },
         dayEl: colCoords.els[colIndex],
         relativeRect: {
           left: colCoords.lefts[colIndex],
           right: colCoords.rights[colIndex],
           top: slatTop,
-          bottom: slatTop + slatHeight
-        }
+          bottom: slatTop + slatHeight,
+        },
       }
     }
   }
-
 }
-
 
 function processSlotOptions(slotDuration: Duration, snapDurationOverride: Duration | null) {
   let snapDuration = snapDurationOverride || slotDuration

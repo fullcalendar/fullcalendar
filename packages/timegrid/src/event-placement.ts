@@ -1,18 +1,13 @@
-import {
-  Seg, DateMarker, buildSegCompareObj, compareByFieldSpecs, sortEventSegs, OrderSpec, EventApi
-} from '@fullcalendar/common'
+import { Seg, DateMarker, buildSegCompareObj, compareByFieldSpecs, sortEventSegs, OrderSpec, EventApi } from '@fullcalendar/common'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-
 
 // UNFORTUNATELY, assigns results to the top/bottom/level/forwardCoord/backwardCoord props of the actual segs.
 // TODO: return hash (by instanceId) of results
-
 
 export function computeSegCoords(segs: Seg[], dayDate: DateMarker, slatCoords: TimeColsSlatsCoords, eventMinHeight: number, eventOrderSpecs: OrderSpec<EventApi>[]) {
   computeSegVerticals(segs, dayDate, slatCoords, eventMinHeight)
   return computeSegHorizontals(segs, eventOrderSpecs) // requires top/bottom from computeSegVerticals
 }
-
 
 // For each segment in an array, computes and assigns its top and bottom properties
 export function computeSegVerticals(segs: Seg[], dayDate: DateMarker, slatCoords: TimeColsSlatsCoords, eventMinHeight: number) {
@@ -20,17 +15,15 @@ export function computeSegVerticals(segs: Seg[], dayDate: DateMarker, slatCoords
     seg.top = slatCoords.computeDateTop(seg.start, dayDate)
     seg.bottom = Math.max(
       seg.top + (eventMinHeight || 0), // yuck
-      slatCoords.computeDateTop(seg.end, dayDate)
+      slatCoords.computeDateTop(seg.end, dayDate),
     )
   }
 }
-
 
 // Given an array of segments that are all in the same column, sets the backwardCoord and forwardCoord on each.
 // Assumed the segs are already ordered.
 // NOTE: Also reorders the given array by date!
 function computeSegHorizontals(segs: Seg[], eventOrderSpecs: OrderSpec<EventApi>[]) {
-
   // IMPORTANT TO CLEAR OLD RESULTS :(
   for (let seg of segs) {
     seg.level = null
@@ -46,7 +39,6 @@ function computeSegHorizontals(segs: Seg[], eventOrderSpecs: OrderSpec<EventApi>
   computeForwardSlotSegs(levels)
 
   if ((level0 = levels[0])) {
-
     for (let seg of level0) {
       computeSlotSegPressures(seg)
     }
@@ -58,7 +50,6 @@ function computeSegHorizontals(segs: Seg[], eventOrderSpecs: OrderSpec<EventApi>
 
   return segs
 }
-
 
 // Builds an array of segments "levels". The first level will be the leftmost tier of segments if the calendar is
 // left-to-right, or the rightmost if the calendar is right-to-left. Assumes the segments are already ordered by date.
@@ -78,19 +69,16 @@ function buildSlotSegLevels(segs: Seg[]) {
       }
     }
 
-    seg.level = j
-
-    ;(levels[j] || (levels[j] = [])).push(seg)
+    seg.level = j;
+    (levels[j] || (levels[j] = [])).push(seg)
   }
 
   return levels
 }
 
-
 // Find all the segments in `otherSegs` that vertically collide with `seg`.
 // Append into an optionally-supplied `results` array and return.
-function computeSlotSegCollisions(seg: Seg, otherSegs: Seg[], results= []) {
-
+function computeSlotSegCollisions(seg: Seg, otherSegs: Seg[], results = []) {
   for (let i = 0; i < otherSegs.length; i++) {
     if (isSlotSegCollision(seg, otherSegs[i])) {
       results.push(otherSegs[i])
@@ -100,12 +88,10 @@ function computeSlotSegCollisions(seg: Seg, otherSegs: Seg[], results= []) {
   return results
 }
 
-
 // Do these segments occupy the same vertical space?
 function isSlotSegCollision(seg1: Seg, seg2: Seg) {
   return seg1.bottom > seg2.top && seg1.top < seg2.bottom
 }
-
 
 // For every segment, figure out the other segments that are in subsequent
 // levels that also occupy the same vertical space. Accumulate in seg.forwardSegs
@@ -130,7 +116,6 @@ function computeForwardSlotSegs(levels) {
   }
 }
 
-
 // Figure out which path forward (via seg.forwardSegs) results in the longest path until
 // the furthest edge is reached. The number of segments in this path will be seg.forwardPressure
 function computeSlotSegPressures(seg: Seg) {
@@ -140,7 +125,6 @@ function computeSlotSegPressures(seg: Seg) {
   let forwardSeg
 
   if (seg.forwardPressure == null) { // not already computed
-
     for (i = 0; i < forwardSegs.length; i++) {
       forwardSeg = forwardSegs[i]
 
@@ -151,14 +135,13 @@ function computeSlotSegPressures(seg: Seg) {
       // plus one (for the forwardSeg itself)
       forwardPressure = Math.max(
         forwardPressure,
-        1 + forwardSeg.forwardPressure
+        1 + forwardSeg.forwardPressure,
       )
     }
 
     seg.forwardPressure = forwardPressure
   }
 }
-
 
 // Calculate seg.forwardCoord and seg.backwardCoord for the segment, where both values range
 // from 0 to 1. If the calendar is left-to-right, the seg.backwardCoord maps to "left" and
@@ -173,13 +156,10 @@ function computeSegForwardBack(seg: Seg, seriesBackwardPressure, seriesBackwardC
   let i
 
   if (seg.forwardCoord == null) { // not already computed
-
     if (!forwardSegs.length) {
-
       // if there are no forward segments, this segment should butt up against the edge
       seg.forwardCoord = 1
     } else {
-
       // sort highest pressure first
       sortForwardSegs(forwardSegs, eventOrderSpecs)
 
@@ -202,7 +182,6 @@ function computeSegForwardBack(seg: Seg, seriesBackwardPressure, seriesBackwardC
   }
 }
 
-
 function sortForwardSegs(forwardSegs: Seg[], eventOrderSpecs) {
   let objs = forwardSegs.map(buildTimeGridSegCompareObj)
 
@@ -210,18 +189,13 @@ function sortForwardSegs(forwardSegs: Seg[], eventOrderSpecs) {
     // put higher-pressure first
     { field: 'forwardPressure', order: -1 },
     // put segments that are closer to initial edge first (and favor ones with no coords yet)
-    { field: 'backwardCoord', order: 1 }
+    { field: 'backwardCoord', order: 1 },
   ].concat(eventOrderSpecs)
 
-  objs.sort(function(obj0, obj1) {
-    return compareByFieldSpecs(obj0, obj1, specs)
-  })
+  objs.sort((obj0, obj1) => compareByFieldSpecs(obj0, obj1, specs))
 
-  return objs.map(function(c) {
-    return c._seg
-  })
+  return objs.map((c) => c._seg)
 }
-
 
 function buildTimeGridSegCompareObj(seg: Seg): any {
   let obj = buildSegCompareObj(seg) as any

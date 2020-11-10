@@ -1,16 +1,13 @@
 import { PositionCache, DateMarker, startOfDay, createDuration, asRoughMs, DateProfile, Duration, rangeContainsMarker } from '@fullcalendar/common'
 import { TimeSlatMeta } from './TimeColsSlats'
 
-
 export class TimeColsSlatsCoords {
-
   constructor(
     public positions: PositionCache,
     private dateProfile: DateProfile,
-    private slatMetas: TimeSlatMeta[]
+    private slatMetas: TimeSlatMeta[],
   ) {
   }
-
 
   safeComputeTop(date: DateMarker) { // TODO: DRY with computeDateTop
     let { dateProfile } = this
@@ -28,7 +25,6 @@ export class TimeColsSlatsCoords {
     }
   }
 
-
   // Computes the top coordinate, relative to the bounds of the grid, of the given date.
   // A `startOfDayDate` must be given for avoiding ambiguity over how to treat midnight.
   computeDateTop(when: DateMarker, startOfDayDate?: DateMarker) {
@@ -37,7 +33,6 @@ export class TimeColsSlatsCoords {
     }
     return this.computeTimeTop(createDuration(when.valueOf() - startOfDayDate.valueOf()))
   }
-
 
   // Computes the top coordinate, relative to the bounds of the grid, of the given time (a Duration).
   // This is a makeshify way to compute the time-top. Assumes all slatMetas dates are uniform.
@@ -68,5 +63,4 @@ export class TimeColsSlatsCoords {
     return positions.tops[slatIndex] +
       positions.getHeight(slatIndex) * slatRemainder
   }
-
 }

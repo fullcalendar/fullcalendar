@@ -19,10 +19,9 @@ import {
   RenderHook,
   DateProfile,
   SlotLabelContentArg,
-  SlotLaneContentArg
+  SlotLaneContentArg,
 } from '@fullcalendar/common'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-
 
 export interface TimeColsSlatsProps extends TimeColsSlatsContentProps {
   dateProfile: DateProfile
@@ -38,7 +37,6 @@ interface TimeColsSlatsContentProps {
   slatMetas: TimeSlatMeta[]
 }
 
-
 // potential nice values for the slot-duration and interval-duration
 // from largest to smallest
 const STOCK_SUB_DURATIONS = [
@@ -46,31 +44,28 @@ const STOCK_SUB_DURATIONS = [
   { minutes: 30 },
   { minutes: 15 },
   { seconds: 30 },
-  { seconds: 15 }
+  { seconds: 15 },
 ]
 
 /*
 for the horizontal "slats" that run width-wise. Has a time axis on a side. Depends on RTL.
 */
 
-
 export class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
-
   private rootElRef = createRef<HTMLDivElement>()
   private slatElRefs = new RefMap<HTMLTableRowElement>()
-
 
   render() {
     let { props, context } = this
 
     return (
-      <div className='fc-timegrid-slots' ref={this.rootElRef}>
+      <div className="fc-timegrid-slots" ref={this.rootElRef}>
         <table
           className={context.theme.getClass('table')}
           style={{
             minWidth: props.tableMinWidth,
             width: props.clientWidth,
-            height: props.minHeight
+            height: props.minHeight,
           }}
         >
           {props.tableColGroupNode /* relies on there only being a single <col> for the axis */}
@@ -84,23 +79,19 @@ export class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
     )
   }
 
-
   componentDidMount() {
     this.updateSizing()
   }
 
-
   componentDidUpdate() {
     this.updateSizing()
   }
-
 
   componentWillUnmount() {
     if (this.props.onCoords) {
       this.props.onCoords(null)
     }
   }
-
 
   updateSizing() {
     let { props } = this
@@ -118,23 +109,20 @@ export class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
               this.rootElRef.current,
               collectSlatEls(this.slatElRefs.currentMap, props.slatMetas),
               false,
-              true // vertical
+              true, // vertical
             ),
             this.props.dateProfile,
-            props.slatMetas
-          )
+            props.slatMetas,
+          ),
         )
       }
     }
   }
-
 }
-
 
 function collectSlatEls(elMap: { [key: string]: HTMLElement }, slatMetas: TimeSlatMeta[]) {
   return slatMetas.map((slatMeta) => elMap[slatMeta.key])
 }
-
 
 export interface TimeColsSlatsBodyProps {
   axis: boolean
@@ -142,9 +130,7 @@ export interface TimeColsSlatsBodyProps {
   slatElRefs: RefMap<HTMLTableRowElement>
 }
 
-
 export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
-
   render() {
     let { props, context } = this
     let { options } = context
@@ -156,13 +142,13 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
           let hookProps: SlotLaneContentArg = {
             time: slatMeta.time,
             date: context.dateEnv.toDate(slatMeta.date),
-            view: context.viewApi
+            view: context.viewApi,
           }
 
           let classNames = [
             'fc-timegrid-slot',
             'fc-timegrid-slot-lane',
-            slatMeta.isLabeled ? '' : 'fc-timegrid-slot-minor'
+            slatMeta.isLabeled ? '' : 'fc-timegrid-slot-minor',
           ]
 
           return (
@@ -171,8 +157,7 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
               ref={slatElRefs.createRef(slatMeta.key)}
             >
               {props.axis &&
-                <TimeColsAxisCell {...slatMeta} />
-              }
+                <TimeColsAxisCell {...slatMeta} />}
               <RenderHook
                 hookProps={hookProps}
                 classNames={options.slotLaneClassNames}
@@ -185,7 +170,9 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
                     ref={rootElRef}
                     className={classNames.concat(customClassNames).join(' ')}
                     data-time={slatMeta.isoTimeStr}
-                  >{innerContent}</td>
+                  >
+                    {innerContent}
+                  </td>
                 )}
               </RenderHook>
             </tr>
@@ -194,80 +181,73 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
       </tbody>
     )
   }
-
 }
-
 
 const DEFAULT_SLAT_LABEL_FORMAT = createFormatter({
   hour: 'numeric',
   minute: '2-digit',
   omitZeroMinute: true,
-  meridiem: 'short'
+  meridiem: 'short',
 })
 
 export function TimeColsAxisCell(props: TimeSlatMeta) {
   let classNames = [
     'fc-timegrid-slot',
     'fc-timegrid-slot-label',
-    props.isLabeled ? 'fc-scrollgrid-shrink' : 'fc-timegrid-slot-minor'
+    props.isLabeled ? 'fc-scrollgrid-shrink' : 'fc-timegrid-slot-minor',
   ]
 
   return (
     <ViewContextType.Consumer>
       {(context: ViewContext) => {
-
         if (!props.isLabeled) {
           return (
             <td className={classNames.join(' ')} data-time={props.isoTimeStr} />
           )
-
-        } else {
-          let { dateEnv, options, viewApi } = context
-
-          let labelFormat = // TODO: fully pre-parse
-            options.slotLabelFormat == null ? DEFAULT_SLAT_LABEL_FORMAT :
-            Array.isArray(options.slotLabelFormat) ? createFormatter(options.slotLabelFormat[0]) :
-            createFormatter(options.slotLabelFormat)
-
-          let hookProps: SlotLabelContentArg = {
-            level: 0,
-            time: props.time,
-            date: dateEnv.toDate(props.date),
-            view: viewApi,
-            text: dateEnv.format(props.date, labelFormat)
-          }
-
-          return (
-            <RenderHook<SlotLabelContentArg> // needed?
-              hookProps={hookProps}
-              classNames={options.slotLabelClassNames}
-              content={options.slotLabelContent}
-              defaultContent={renderInnerContent}
-              didMount={options.slotLabelDidMount}
-              willUnmount={options.slotLabelWillUnmount}
-            >
-              {(rootElRef, customClassNames, innerElRef, innerContent) => (
-                <td ref={rootElRef} className={classNames.concat(customClassNames).join(' ')} data-time={props.isoTimeStr}>
-                  <div className='fc-timegrid-slot-label-frame fc-scrollgrid-shrink-frame'>
-                    <div className='fc-timegrid-slot-label-cushion fc-scrollgrid-shrink-cushion' ref={innerElRef}>
-                      {innerContent}
-                    </div>
-                  </div>
-                </td>
-              )}
-            </RenderHook>
-          )
         }
+
+        let { dateEnv, options, viewApi } = context
+        let labelFormat = // TODO: fully pre-parse
+          options.slotLabelFormat == null ? DEFAULT_SLAT_LABEL_FORMAT :
+          Array.isArray(options.slotLabelFormat) ? createFormatter(options.slotLabelFormat[0]) :
+          createFormatter(options.slotLabelFormat)
+
+        let hookProps: SlotLabelContentArg = {
+          level: 0,
+          time: props.time,
+          date: dateEnv.toDate(props.date),
+          view: viewApi,
+          text: dateEnv.format(props.date, labelFormat),
+        }
+
+        return (
+          <RenderHook<SlotLabelContentArg> // needed?
+            hookProps={hookProps}
+            classNames={options.slotLabelClassNames}
+            content={options.slotLabelContent}
+            defaultContent={renderInnerContent}
+            didMount={options.slotLabelDidMount}
+            willUnmount={options.slotLabelWillUnmount}
+          >
+            {(rootElRef, customClassNames, innerElRef, innerContent) => (
+              <td ref={rootElRef} className={classNames.concat(customClassNames).join(' ')} data-time={props.isoTimeStr}>
+                <div className="fc-timegrid-slot-label-frame fc-scrollgrid-shrink-frame">
+                  <div className="fc-timegrid-slot-label-cushion fc-scrollgrid-shrink-cushion" ref={innerElRef}>
+                    {innerContent}
+                  </div>
+                </div>
+              </td>
+            )}
+          </RenderHook>
+        )
       }}
     </ViewContextType.Consumer>
   )
 }
 
-
 function renderInnerContent(props) { // TODO: add types
   return props.text
 }
-
 
 export interface TimeSlatMeta {
   date: DateMarker
@@ -293,7 +273,7 @@ export function buildSlatMetas(slotMinTime: Duration, slotMaxTime: Duration, exp
       time: slatTime,
       key: date.toISOString(), // we can't use the isoTimeStr for uniqueness when minTime/maxTime beyone 0h/24h
       isoTimeStr: formatIsoTimeString(date),
-      isLabeled
+      isLabeled,
     })
 
     slatTime = addDurations(slatTime, slotDuration)
@@ -302,7 +282,6 @@ export function buildSlatMetas(slotMinTime: Duration, slotMaxTime: Duration, exp
 
   return metas
 }
-
 
 // Computes an automatic value for slotLabelInterval
 function computeLabelInterval(slotDuration) {

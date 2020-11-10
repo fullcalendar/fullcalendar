@@ -22,16 +22,14 @@ import {
   CssDimValue,
   NowTimer,
   DateMarker,
-  NowIndicatorRoot
+  NowIndicatorRoot,
 } from '@fullcalendar/common'
 import { AllDaySplitter } from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
-
 const DEFAULT_WEEK_NUM_FORMAT = createFormatter({ week: 'short' })
 const AUTO_ALL_DAY_MAX_EVENT_ROWS = 5
-
 
 /* An abstract class for all timegrid-related views. Displays one more columns with time slots running vertically.
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -43,7 +41,6 @@ interface TimeColsViewState {
 }
 
 export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsViewState> {
-
   protected allDaySplitter = new AllDaySplitter() // for use by subclasses
 
   protected headerElRef: RefObject<HTMLTableCellElement> = createRef<HTMLTableCellElement>()
@@ -51,18 +48,16 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
   private scrollerElRef: RefObject<HTMLDivElement> = createRef<HTMLDivElement>()
 
   state = {
-    slatCoords: null
+    slatCoords: null,
   }
-
 
   // rendering
   // ----------------------------------------------------------------------------------------------------
 
-
   renderSimpleLayout(
     headerRowContent: VNode | null,
     allDayContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
-    timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null
+    timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
   ) {
     let { context, props } = this
     let sections: SimpleScrollGridSection[] = []
@@ -76,8 +71,8 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
         chunk: {
           elRef: this.headerElRef,
           tableClassName: 'fc-col-header',
-          rowContent: headerRowContent
-        }
+          rowContent: headerRowContent,
+        },
       })
     }
 
@@ -85,18 +80,18 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
       sections.push({
         type: 'body',
         key: 'all-day',
-        chunk: { content: allDayContent }
+        chunk: { content: allDayContent },
       })
       sections.push({
         type: 'body',
         key: 'all-day-divider',
         outerContent: ( // TODO: rename to cellContent so don't need to define <tr>?
-          <tr className='fc-scrollgrid-section'>
+          <tr className="fc-scrollgrid-section">
             <td
               className={'fc-timegrid-divider ' + context.theme.getClass('tableCellShaded')}
             />
           </tr>
-        )
+        ),
       })
     }
 
@@ -107,17 +102,17 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
       expandRows: Boolean(context.options.expandRows),
       chunk: {
         scrollerElRef: this.scrollerElRef,
-        content: timeContent
-      }
+        content: timeContent,
+      },
     })
 
     return (
       <ViewRoot viewSpec={context.viewSpec} elRef={this.rootElRef}>
         {(rootElRef, classNames) => (
-          <div className={[ 'fc-timegrid' ].concat(classNames).join(' ')} ref={rootElRef}>
+          <div className={['fc-timegrid'].concat(classNames).join(' ')} ref={rootElRef}>
             <SimpleScrollGrid
               liquid={!props.isHeightAuto && !props.forPrint}
-              cols={[ { width: 'shrink' } ]}
+              cols={[{ width: 'shrink' }]}
               sections={sections}
             />
           </div>
@@ -126,7 +121,6 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     )
   }
 
-
   renderHScrollLayout(
     headerRowContent: VNode | null,
     allDayContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
@@ -134,7 +128,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     colCnt: number,
     dayMinWidth: number,
     slatMetas: TimeSlatMeta[],
-    slatCoords: TimeColsSlatsCoords | null // yuck
+    slatCoords: TimeColsSlatsCoords | null, // yuck
   ) {
     let ScrollGrid = this.context.pluginHooks.scrollGridImpl
 
@@ -158,15 +152,15 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
             key: 'axis',
             rowContent: (arg: ChunkContentCallbackArgs) => (
               <tr>{this.renderHeadAxis(arg.rowSyncHeights[0])}</tr>
-            )
+            ),
           },
           {
             key: 'cols',
             elRef: this.headerElRef,
             tableClassName: 'fc-col-header',
-            rowContent: headerRowContent
-          }
-        ]
+            rowContent: headerRowContent,
+          },
+        ],
       })
     }
 
@@ -184,21 +178,21 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
           },
           {
             key: 'cols',
-            content: allDayContent
-          }
-        ]
+            content: allDayContent,
+          },
+        ],
       })
       sections.push({
         key: 'all-day-divider',
         type: 'body',
         outerContent: ( // TODO: rename to cellContent so don't need to define <tr>?
-          <tr className='fc-scrollgrid-section'>
+          <tr className="fc-scrollgrid-section">
             <td
               colSpan={2}
               className={'fc-timegrid-divider ' + context.theme.getClass('tableCellShaded')}
             />
           </tr>
-        )
+        ),
       })
     }
 
@@ -212,52 +206,52 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
       chunks: [
         {
           key: 'axis',
-          content: (arg) => {
+          content: (arg) => (
             // TODO: make this now-indicator arrow more DRY with TimeColsContent
-            return (
-              <div className='fc-timegrid-axis-chunk'>
-                <table style={{ height: arg.expandRows ? arg.clientHeight : '' }}>
-                  {arg.tableColGroupNode}
-                  <tbody>
-                    <TimeBodyAxis slatMetas={slatMetas} />
-                  </tbody>
-                </table>
-                <div className='fc-timegrid-now-indicator-container'>
-                  <NowTimer unit={isNowIndicator ? 'minute' : 'day' /* hacky */}>
-                    {(nowDate: DateMarker) => {
-                      let nowIndicatorTop =
-                        isNowIndicator &&
-                        slatCoords &&
-                        slatCoords.safeComputeTop(nowDate) // might return void
+            <div className="fc-timegrid-axis-chunk">
+              <table style={{ height: arg.expandRows ? arg.clientHeight : '' }}>
+                {arg.tableColGroupNode}
+                <tbody>
+                  <TimeBodyAxis slatMetas={slatMetas} />
+                </tbody>
+              </table>
+              <div className="fc-timegrid-now-indicator-container">
+                <NowTimer unit={isNowIndicator ? 'minute' : 'day' /* hacky */}>
+                  {(nowDate: DateMarker) => {
+                  let nowIndicatorTop =
+                    isNowIndicator &&
+                    slatCoords &&
+                    slatCoords.safeComputeTop(nowDate) // might return void
 
-                      if (typeof nowIndicatorTop === 'number') {
-                        return (
-                          <NowIndicatorRoot isAxis={true} date={nowDate}>
-                            {(rootElRef, classNames, innerElRef, innerContent) => (
-                              <div
-                                ref={rootElRef}
-                                className={[ 'fc-timegrid-now-indicator-arrow' ].concat(classNames).join(' ')}
-                                style={{ top: nowIndicatorTop }}
-                              >{innerContent}</div>
-                            )}
-                          </NowIndicatorRoot>
-                        )
-                      }
+                  if (typeof nowIndicatorTop === 'number') {
+                    return (
+                      <NowIndicatorRoot isAxis date={nowDate}>
+                        {(rootElRef, classNames, innerElRef, innerContent) => (
+                          <div
+                            ref={rootElRef}
+                            className={['fc-timegrid-now-indicator-arrow'].concat(classNames).join(' ')}
+                            style={{ top: nowIndicatorTop }}
+                          >
+                            {innerContent}
+                          </div>
+                        )}
+                      </NowIndicatorRoot>
+                    )
+                  }
 
-                      return null
-                    }}
-                  </NowTimer>
-                </div>
+                  return null
+                }}
+                </NowTimer>
               </div>
-            )
-          }
+            </div>
+          ),
         },
         {
           key: 'cols',
           scrollerElRef: this.scrollerElRef,
-          content: timeContent
-        }
-      ]
+          content: timeContent,
+        },
+      ],
     })
 
     if (stickyFooterScrollbar) {
@@ -268,25 +262,25 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
         chunks: [
           {
             key: 'axis',
-            content: renderScrollShim
+            content: renderScrollShim,
           },
           {
             key: 'cols',
-            content: renderScrollShim
-          }
-        ]
+            content: renderScrollShim,
+          },
+        ],
       })
     }
 
     return (
       <ViewRoot viewSpec={context.viewSpec} elRef={this.rootElRef}>
         {(rootElRef, classNames) => (
-          <div className={[ 'fc-timegrid' ].concat(classNames).join(' ')} ref={rootElRef}>
+          <div className={['fc-timegrid'].concat(classNames).join(' ')} ref={rootElRef}>
             <ScrollGrid
               liquid={!props.isHeightAuto && !props.forPrint}
               colGroups={[
-                { width: 'shrink', cols: [ { width: 'shrink' } ] }, // TODO: allow no specify cols
-                { cols: [ { span: colCnt, minWidth: dayMinWidth } ] }
+                { width: 'shrink', cols: [{ width: 'shrink' }] }, // TODO: allow no specify cols
+                { cols: [{ span: colCnt, minWidth: dayMinWidth }] },
               ]}
               sections={sections}
             />
@@ -296,7 +290,6 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     )
   }
 
-
   handleScrollTopRequest = (scrollTop: number) => {
     let scrollerEl = this.scrollerElRef.current
 
@@ -305,10 +298,8 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     }
   }
 
-
   /* Dimensions
   ------------------------------------------------------------------------------------------------------------------*/
-
 
   getAllDayMaxEventProps() {
     let { dayMaxEvents, dayMaxEventRows } = this.context.options
@@ -321,11 +312,8 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     return { dayMaxEvents, dayMaxEventRows }
   }
 
-
-
   /* Header Render Methods
   ------------------------------------------------------------------------------------------------------------------*/
-
 
   renderHeadAxis = (frameHeight: CssDimValue = '') => {
     let { options } = this.context
@@ -341,17 +329,20 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
       return (
         <WeekNumberRoot date={range.start} defaultFormat={DEFAULT_WEEK_NUM_FORMAT}>
           {(rootElRef, classNames, innerElRef, innerContent) => (
-            <th ref={rootElRef} className={[
-              'fc-timegrid-axis',
-              'fc-scrollgrid-shrink'
-            ].concat(classNames).join(' ')}>
+            <th
+              ref={rootElRef}
+              className={[
+                'fc-timegrid-axis',
+                'fc-scrollgrid-shrink',
+              ].concat(classNames).join(' ')}
+            >
               <div
-                className='fc-timegrid-axis-frame fc-scrollgrid-shrink-frame fc-timegrid-axis-frame-liquid'
+                className="fc-timegrid-axis-frame fc-scrollgrid-shrink-frame fc-timegrid-axis-frame-liquid"
                 style={{ height: frameHeight }}
               >
                 <a
                   ref={innerElRef}
-                  className='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion fc-scrollgrid-sync-inner'
+                  className="fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion fc-scrollgrid-sync-inner"
                   {...navLinkAttrs}
                 >
                   {innerContent}
@@ -364,16 +355,14 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     }
 
     return (
-      <th className='fc-timegrid-axis'>
-        <div className='fc-timegrid-axis-frame' style={{ height: frameHeight }}></div>
+      <th className="fc-timegrid-axis">
+        <div className="fc-timegrid-axis-frame" style={{ height: frameHeight }} />
       </th>
     )
   }
 
-
   /* Table Component Render Methods
   ------------------------------------------------------------------------------------------------------------------*/
-
 
   // only a one-way height sync. we don't send the axis inner-content height to the DayGrid,
   // but DayGrid still needs to have classNames on inner elements in order to measure.
@@ -381,7 +370,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     let { options, viewApi } = this.context
     let hookProps: AllDayContentArg = {
       text: options.allDayText,
-      view: viewApi
+      view: viewApi,
     }
 
     return (
@@ -395,12 +384,18 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
         willUnmount={options.allDayWillUnmount}
       >
         {(rootElRef, classNames, innerElRef, innerContent) => (
-          <td ref={rootElRef} className={[
-            'fc-timegrid-axis',
-            'fc-scrollgrid-shrink'
-          ].concat(classNames).join(' ')}>
-            <div className={'fc-timegrid-axis-frame fc-scrollgrid-shrink-frame' + (rowHeight == null ? ' fc-timegrid-axis-frame-liquid' : '')} style={{ height: rowHeight }}>
-              <span className='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion fc-scrollgrid-sync-inner' ref={innerElRef}>
+          <td
+            ref={rootElRef}
+            className={[
+              'fc-timegrid-axis',
+              'fc-scrollgrid-shrink',
+            ].concat(classNames).join(' ')}
+          >
+            <div
+              className={'fc-timegrid-axis-frame fc-scrollgrid-shrink-frame' + (rowHeight == null ? ' fc-timegrid-axis-frame-liquid' : '')}
+              style={{ height: rowHeight }}
+            >
+              <span className="fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion fc-scrollgrid-sync-inner" ref={innerElRef}>
                 {innerContent}
               </span>
             </div>
@@ -410,17 +405,14 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     )
   }
 
-
   handleSlatCoords = (slatCoords: TimeColsSlatsCoords) => {
     this.setState({ slatCoords })
   }
-
 }
 
 function renderAllDayInner(hookProps) {
   return hookProps.text
 }
-
 
 /* Thin Axis
 ------------------------------------------------------------------------------------------------------------------*/
@@ -430,7 +422,6 @@ interface TimeBodyAxisProps {
 }
 
 class TimeBodyAxis extends BaseComponent<TimeBodyAxisProps> { // just <tr> content
-
   render() {
     return this.props.slatMetas.map((slatMeta: TimeSlatMeta) => (
       <tr key={slatMeta.key}>
@@ -438,5 +429,4 @@ class TimeBodyAxis extends BaseComponent<TimeBodyAxisProps> { // just <tr> conte
       </tr>
     ))
   }
-
 }

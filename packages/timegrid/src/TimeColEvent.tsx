@@ -1,23 +1,20 @@
 import { createElement, StandardEvent, BaseComponent, MinimalEventProps, createFormatter } from '@fullcalendar/common'
 
-
 const DEFAULT_TIME_FORMAT = createFormatter({
   hour: 'numeric',
   minute: '2-digit',
-  meridiem: false
+  meridiem: false,
 })
-
 
 export interface TimeColEventProps extends MinimalEventProps {
   isCondensed: boolean
 }
 
 export class TimeColEvent extends BaseComponent<TimeColEventProps> {
-
   render() {
     let classNames = [
       'fc-timegrid-event',
-      'fc-v-event'
+      'fc-v-event',
     ]
 
     if (this.props.isCondensed) {
@@ -32,5 +29,4 @@ export class TimeColEvent extends BaseComponent<TimeColEventProps> {
       />
     )
   }
-
 }
