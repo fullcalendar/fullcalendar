@@ -7,7 +7,7 @@ import {
   Hit,
   InteractionSettingsStore,
   mapHash,
-  ElementDragging
+  ElementDragging,
 } from '@fullcalendar/common'
 import { OffsetTracker } from '../OffsetTracker'
 
@@ -25,7 +25,6 @@ emits:
 - dragend
 */
 export class HitDragging {
-
   droppableStore: InteractionSettingsStore
   dragging: ElementDragging
   emitter: Emitter<any>
@@ -66,7 +65,9 @@ export class HitDragging {
 
     if (this.initialHit || !this.requireInitial) {
       dragging.setIgnoreMove(false)
-      this.emitter.trigger('pointerdown', ev) // TODO: fire this before computing processFirstCoord, so listeners can cancel. this gets fired by almost every handler :(
+
+      // TODO: fire this before computing processFirstCoord, so listeners can cancel. this gets fired by almost every handler :(
+      this.emitter.trigger('pointerdown', ev)
     } else {
       dragging.setIgnoreMove(true)
     }
@@ -129,7 +130,7 @@ export class HitDragging {
   handleMove(ev: PointerDragEvent, forceHandle?: boolean) {
     let hit = this.queryHitForOffset(
       ev.pageX + this.coordAdjust!.left,
-      ev.pageY + this.coordAdjust!.top
+      ev.pageY + this.coordAdjust!.top,
     )
 
     if (forceHandle || !isHitsEqual(this.movingHit, hit)) {
@@ -139,7 +140,7 @@ export class HitDragging {
   }
 
   prepareHits() {
-    this.offsetTrackers = mapHash(this.droppableStore, function(interactionSettings) {
+    this.offsetTrackers = mapHash(this.droppableStore, (interactionSettings) => {
       interactionSettings.component.prepareHits()
 
       return new OffsetTracker(interactionSettings.el)
@@ -192,7 +193,6 @@ export class HitDragging {
             ) &&
             (!bestHit || hit.layer > bestHit.layer)
           ) {
-
             // TODO: better way to re-orient rectangle
             hit.rect.left += originLeft
             hit.rect.right += originLeft
@@ -207,7 +207,6 @@ export class HitDragging {
 
     return bestHit
   }
-
 }
 
 export function isHitsEqual(hit0: Hit | null, hit1: Hit | null): boolean {

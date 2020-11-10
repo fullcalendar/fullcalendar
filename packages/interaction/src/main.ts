@@ -9,11 +9,11 @@ import { OPTION_REFINERS, LISTENER_REFINERS } from './options'
 import './options-declare'
 
 export default createPlugin({
-  componentInteractions: [ DateClicking, DateSelecting, EventDragging, EventResizing ],
-  calendarInteractions: [ UnselectAuto ],
+  componentInteractions: [DateClicking, DateSelecting, EventDragging, EventResizing],
+  calendarInteractions: [UnselectAuto],
   elementDraggingImpl: FeaturefulElementDragging,
   optionRefiners: OPTION_REFINERS,
-  listenerRefiners: LISTENER_REFINERS
+  listenerRefiners: LISTENER_REFINERS,
 })
 
 export * from './api-type-deps'

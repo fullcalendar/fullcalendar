@@ -2,19 +2,17 @@ import {
   compareNumbers, enableCursor, disableCursor, DateComponent, Hit,
   DateSpan, PointerDragEvent, dateSelectionJoinTransformer,
   Interaction, InteractionSettings, interactionSettingsToStore,
-  triggerDateSelect
+  triggerDateSelect,
 } from '@fullcalendar/common'
+import { __assign } from 'tslib'
 import { HitDragging } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
-import { __assign } from 'tslib'
-
 
 /*
 Tracks when the user selects a portion of time of a component,
 constituted by a drag over date cells, with a possible delay at the beginning of the drag.
 */
 export class DateSelecting extends Interaction {
-
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
   dragSelection: DateSpan | null = null
@@ -67,7 +65,7 @@ export class DateSelecting extends Interaction {
       dragSelection = joinHitsIntoSelection(
         this.hitDragging.initialHit!,
         hit,
-        context.pluginHooks.dateSelectionTransformers
+        context.pluginHooks.dateSelectionTransformers,
       )
 
       if (!dragSelection || !this.component.isDateSelectionValid(dragSelection)) {
@@ -95,14 +93,12 @@ export class DateSelecting extends Interaction {
 
   handlePointerUp = (pev: PointerDragEvent) => {
     if (this.dragSelection) {
-
       // selection is already rendered, so just need to report selection
       triggerDateSelect(this.dragSelection, pev, this.component.context)
 
       this.dragSelection = null
     }
   }
-
 }
 
 function getComponentTouchDelay(component: DateComponent<any>): number {
@@ -123,7 +119,7 @@ function joinHitsIntoSelection(hit0: Hit, hit1: Hit, dateSelectionTransformers: 
     dateSpan0.range.start,
     dateSpan0.range.end,
     dateSpan1.range.start,
-    dateSpan1.range.end
+    dateSpan1.range.end,
   ]
 
   ms.sort(compareNumbers)
@@ -135,7 +131,9 @@ function joinHitsIntoSelection(hit0: Hit, hit1: Hit, dateSelectionTransformers: 
 
     if (res === false) {
       return null
-    } else if (res) {
+    }
+
+    if (res) {
       __assign(props, res)
     }
   }

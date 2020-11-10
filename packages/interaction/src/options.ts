@@ -5,11 +5,11 @@ import {
   DateClickArg,
   EventDragStartArg, EventDragStopArg, EventDropArg,
   EventResizeStartArg, EventResizeStopArg, EventResizeDoneArg,
-  DropArg, EventReceiveArg, EventLeaveArg
+  DropArg, EventReceiveArg, EventLeaveArg,
 } from './api-type-deps'
 
 export const OPTION_REFINERS = {
-  fixedMirrorParent: identity as Identity<HTMLElement>
+  fixedMirrorParent: identity as Identity<HTMLElement>,
 }
 
 export const LISTENER_REFINERS = {
@@ -22,5 +22,5 @@ export const LISTENER_REFINERS = {
   eventResize: identity as Identity<(arg: EventResizeDoneArg) => void>,
   drop: identity as Identity<(arg: DropArg) => void>,
   eventReceive: identity as Identity<(arg: EventReceiveArg) => void>,
-  eventLeave: identity as Identity<(arg: EventLeaveArg) => void>
+  eventLeave: identity as Identity<(arg: EventLeaveArg) => void>,
 }

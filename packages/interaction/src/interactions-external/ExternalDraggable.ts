@@ -16,7 +16,6 @@ Can pass in data that determines how an event will be created when dropped onto 
 Leverages FullCalendar's internal drag-n-drop functionality WITHOUT a third-party drag system.
 */
 export class ExternalDraggable {
-
   dragging: FeaturefulElementDragging
   settings: ExternalDraggableSettings
 
@@ -37,7 +36,7 @@ export class ExternalDraggable {
     dragging.emitter.on('pointerdown', this.handlePointerDown)
     dragging.emitter.on('dragstart', this.handleDragStart)
 
-    new ExternalElementDragging(dragging, settings.eventData)
+    new ExternalElementDragging(dragging, settings.eventData) // eslint-disable-line no-new
   }
 
   handlePointerDown = (ev: PointerDragEvent) => {
@@ -68,5 +67,4 @@ export class ExternalDraggable {
   destroy() {
     this.dragging.destroy()
   }
-
 }

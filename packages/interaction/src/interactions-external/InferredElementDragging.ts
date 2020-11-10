@@ -8,7 +8,6 @@ This class simply monitors for pointer movements and fires events.
 It also has the ability to hide the moving element (the "mirror") during the drag.
 */
 export class InferredElementDragging extends ElementDragging {
-
   pointer: PointerDragging
   shouldIgnoreMove: boolean = false
   mirrorSelector: string = ''
@@ -74,5 +73,4 @@ export class InferredElementDragging extends ElementDragging {
       }
     }
   }
-
 }

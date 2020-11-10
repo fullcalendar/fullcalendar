@@ -1,12 +1,11 @@
 import {
   PointerDragEvent, Interaction, InteractionSettings, interactionSettingsToStore,
   DatePointApi,
-  ViewApi
+  ViewApi,
 } from '@fullcalendar/common'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { buildDatePointApiWithContext } from '../utils'
-
 
 export interface DateClickArg extends DatePointApi {
   dayEl: HTMLElement
@@ -19,7 +18,6 @@ Monitors when the user clicks on a specific date/time of a component.
 A pointerdown+pointerup on the same "hit" constitutes a click.
 */
 export class DateClicking extends Interaction {
-
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
 
@@ -45,7 +43,7 @@ export class DateClicking extends Interaction {
 
     // do this in pointerdown (not dragend) because DOM might be mutated by the time dragend is fired
     dragging.setIgnoreMove(
-      !this.component.isValidDateDownEl(downEl)
+      !this.component.isValidDateDownEl(downEl),
     )
   }
 
@@ -63,12 +61,11 @@ export class DateClicking extends Interaction {
           ...buildDatePointApiWithContext(initialHit.dateSpan, context),
           dayEl: initialHit.dayEl,
           jsEvent: ev.origEvent as MouseEvent,
-          view: context.viewApi || context.calendarApi.view
+          view: context.viewApi || context.calendarApi.view,
         }
 
         context.emitter.trigger('dateClick', arg)
       }
     }
   }
-
 }

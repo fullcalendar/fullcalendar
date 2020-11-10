@@ -11,12 +11,11 @@ import {
   createDuration,
   EventInteractionState,
   EventResizeJoinTransforms,
-  Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration, EventChangeArg, buildEventApis
+  Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration, EventChangeArg, buildEventApis,
 } from '@fullcalendar/common'
+import { __assign } from 'tslib'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
-import { __assign } from 'tslib'
-
 
 export type EventResizeStartArg = EventResizeStartStopArg
 export type EventResizeStopArg = EventResizeStartStopArg
@@ -36,9 +35,7 @@ export interface EventResizeDoneArg extends EventChangeArg {
   view: ViewApi
 }
 
-
 export class EventResizing extends Interaction {
-
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
 
@@ -81,7 +78,7 @@ export class EventResizing extends Interaction {
     // if touch, need to be working with a selected event
     this.dragging.setIgnoreMove(
       !this.component.isValidSegDownEl(ev.origEvent.target as HTMLElement) ||
-      (ev.isTouch && this.component.props.eventSelection !== eventRange.instance!.instanceId)
+      (ev.isTouch && this.component.props.eventSelection !== eventRange.instance!.instanceId),
     )
   }
 
@@ -91,7 +88,7 @@ export class EventResizing extends Interaction {
 
     this.relevantEvents = getRelevantEvents(
       context.getCurrentData().eventStore,
-      this.eventRange.instance!.instanceId
+      this.eventRange.instance!.instanceId,
     )
 
     let segEl = this.querySegEl(ev)
@@ -103,7 +100,7 @@ export class EventResizing extends Interaction {
       el: segEl,
       event: new EventApi(context, eventRange.def, eventRange.instance),
       jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-      view: context.viewApi
+      view: context.viewApi,
     } as EventResizeStartArg)
   }
 
@@ -118,7 +115,7 @@ export class EventResizing extends Interaction {
     let interaction: EventInteractionState = {
       affectedEvents: relevantEvents,
       mutatedEvents: createEmptyEventStore(),
-      isEvent: true
+      isEvent: true,
     }
 
     if (hit) {
@@ -127,7 +124,7 @@ export class EventResizing extends Interaction {
         hit,
         (ev.subjectEl as HTMLElement).classList.contains('fc-event-resizer-start'),
         eventInstance.range,
-        context.pluginHooks.eventResizeJoinTransforms
+        context.pluginHooks.eventResizeJoinTransforms,
       )
     }
 
@@ -147,7 +144,7 @@ export class EventResizing extends Interaction {
     if (mutatedRelevantEvents) {
       context.dispatch({
         type: 'SET_EVENT_RESIZE',
-        state: interaction
+        state: interaction,
       })
     } else {
       context.dispatch({ type: 'UNSET_EVENT_RESIZE' })
@@ -160,7 +157,6 @@ export class EventResizing extends Interaction {
     }
 
     if (!isFinal) {
-
       if (mutation && isHitsEqual(initialHit, hit)) {
         mutation = null
       }
@@ -182,19 +178,19 @@ export class EventResizing extends Interaction {
       el: this.draggingSegEl,
       event: eventApi,
       jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-      view: context.viewApi
+      view: context.viewApi,
     } as EventResizeStopArg)
 
     if (this.validMutation) {
       let updatedEventApi = new EventApi(
         context,
         mutatedRelevantEvents.defs[eventDef.defId],
-        eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
+        eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null,
       )
 
       context.dispatch({
         type: 'MERGE_EVENTS',
-        eventStore: mutatedRelevantEvents
+        eventStore: mutatedRelevantEvents,
       })
 
       let eventChangeArg: EventChangeArg = {
@@ -204,9 +200,9 @@ export class EventResizing extends Interaction {
         revert() {
           context.dispatch({
             type: 'MERGE_EVENTS',
-            eventStore: relevantEvents // the pre-change events
+            eventStore: relevantEvents, // the pre-change events
           })
-        }
+        },
       }
 
       context.emitter.trigger('eventResize', {
@@ -215,11 +211,10 @@ export class EventResizing extends Interaction {
         startDelta: this.validMutation.startDelta || createDuration(0),
         endDelta: this.validMutation.endDelta || createDuration(0),
         jsEvent: ev.origEvent as MouseEvent,
-        view: context.viewApi
+        view: context.viewApi,
       })
 
       context.emitter.trigger('eventChange', eventChangeArg)
-
     } else {
       context.emitter.trigger('_noEventResize')
     }
@@ -235,10 +230,15 @@ export class EventResizing extends Interaction {
   querySegEl(ev: PointerDragEvent) {
     return elementClosest(ev.subjectEl as HTMLElement, '.fc-event')
   }
-
 }
 
-function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRange: DateRange, transforms: EventResizeJoinTransforms[]): EventMutation | null {
+function computeMutation(
+  hit0: Hit,
+  hit1: Hit,
+  isFromStart: boolean,
+  instanceRange: DateRange,
+  transforms: EventResizeJoinTransforms[],
+): EventMutation | null {
   let dateEnv = hit0.component.context.dateEnv
   let date0 = hit0.dateSpan.range.start
   let date1 = hit1.dateSpan.range.start
@@ -246,7 +246,7 @@ function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRan
   let delta = diffDates(
     date0, date1,
     dateEnv,
-    hit0.component.largeUnit
+    hit0.component.largeUnit,
   )
 
   let props = {} as EventMutation
@@ -256,7 +256,9 @@ function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRan
 
     if (res === false) {
       return null
-    } else if (res) {
+    }
+
+    if (res) {
       __assign(props, res)
     }
   }
@@ -266,12 +268,10 @@ function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRan
       props.startDelta = delta
       return props
     }
-  } else {
-    if (dateEnv.add(instanceRange.end, delta) > instanceRange.start) {
+  } else if (dateEnv.add(instanceRange.end, delta) > instanceRange.start) {
       props.endDelta = delta
       return props
     }
-  }
 
   return null
 }

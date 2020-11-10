@@ -2,13 +2,12 @@ import {
   DateSelectionApi,
   PointerDragEvent,
   elementClosest,
-  CalendarContext
+  CalendarContext,
 } from '@fullcalendar/common'
 import { PointerDragging } from '../dnd/PointerDragging'
 import { EventDragging } from './EventDragging'
 
 export class UnselectAuto {
-
   documentPointer: PointerDragging // for unfocusing
   isRecentPointerDateSelect = false // wish we could use a selector to detect date selection, but uses hit system
   matchesCancel = false
@@ -53,7 +52,6 @@ export class UnselectAuto {
 
     // touch-scrolling should never unfocus any type of selection
     if (!documentPointer.wasTouchScroll) {
-
       if (
         calendarState.dateSelection && // an existing date selection?
         !this.isRecentPointerDateSelect // a new pointer-initiated date selection since last onDocumentPointerUp?
@@ -71,11 +69,8 @@ export class UnselectAuto {
       ) {
         context.dispatch({ type: 'UNSELECT_EVENT' })
       }
-
     }
 
     this.isRecentPointerDateSelect = false
   }
-
 }
-

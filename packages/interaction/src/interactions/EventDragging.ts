@@ -18,13 +18,12 @@ import {
   EventChangeArg,
   buildEventApis,
   EventAddArg,
-  EventRemoveArg
+  EventRemoveArg,
 } from '@fullcalendar/common'
+import { __assign } from 'tslib'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
-import { __assign } from 'tslib'
 import { buildDatePointApiWithContext } from '../utils'
-
 
 export type EventDragStopArg = EventDragArg
 export type EventDragStartArg = EventDragArg
@@ -44,9 +43,7 @@ export interface EventDropArg extends EventChangeArg {
   // and other "transformed" things
 }
 
-
 export class EventDragging extends Interaction { // TODO: rename to EventSelectingAndDragging
-
   // TODO: test this in IE11
   // QUESTION: why do we need it on the resizable???
   static SELECTOR = '.fc-event-draggable, .fc-event-resizable'
@@ -100,7 +97,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
     this.relevantEvents = getRelevantEvents(
       initialContext.getCurrentData().eventStore,
-      eventInstanceId
+      eventInstanceId,
     )
 
     dragging.minDistance = ev.isTouch ? 0 : options.eventDragMinDistance
@@ -151,13 +148,12 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
         el: this.subjectEl,
         event: new EventApi(initialContext, eventRange.def, eventRange.instance),
         jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-        view: initialContext.viewApi
+        view: initialContext.viewApi,
       } as EventDragStartArg)
     }
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean) => {
-
     if (!this.isDragging) {
       return
     }
@@ -174,7 +170,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
     let interaction: EventInteractionState = {
       affectedEvents: relevantEvents,
       mutatedEvents: createEmptyEventStore(),
-      isEvent: true
+      isEvent: true,
     }
 
     if (hit) {
@@ -184,12 +180,17 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
       if (
         initialContext === receivingContext ||
-        receivingOptions.editable && receivingOptions.droppable
+        (receivingOptions.editable && receivingOptions.droppable)
       ) {
         mutation = computeEventMutation(initialHit, hit, receivingContext.getCurrentData().pluginHooks.eventDragMutationMassagers)
 
         if (mutation) {
-          mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, receivingContext.getCurrentData().eventUiBases, mutation, receivingContext)
+          mutatedRelevantEvents = applyMutationToEventStore(
+            relevantEvents,
+            receivingContext.getCurrentData().eventUiBases,
+            mutation,
+            receivingContext,
+          )
           interaction.mutatedEvents = mutatedRelevantEvents
 
           if (!receivingComponent.isInteractionValid(interaction)) {
@@ -214,7 +215,6 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
     }
 
     if (!isFinal) {
-
       if (
         initialContext === receivingContext && // TODO: write test for this
         isHitsEqual(initialHit, hit)
@@ -227,7 +227,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
       // render the mirror if no already-rendered mirror
       // TODO: wish we could somehow wait for dispatch to guarantee render
       this.dragging.setMirrorIsVisible(
-        !hit || !document.querySelector('.fc-event-mirror')
+        !hit || !document.querySelector('.fc-event-mirror'),
       )
 
       // assign states based on new hit
@@ -244,7 +244,6 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
   }
 
   handleDragEnd = (ev: PointerDragEvent) => {
-
     if (this.isDragging) {
       let initialContext = this.component.context
       let initialView = initialContext.viewApi
@@ -262,22 +261,21 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
         el: this.subjectEl,
         event: eventApi,
         jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-        view: initialView
+        view: initialView,
       } as EventDragStopArg)
 
       if (validMutation) {
-
         // dropped within same calendar
         if (receivingContext === initialContext) {
           let updatedEventApi = new EventApi(
             initialContext,
             mutatedRelevantEvents.defs[eventDef.defId],
-            eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
+            eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null,
           )
 
           initialContext.dispatch({
             type: 'MERGE_EVENTS',
-            eventStore: mutatedRelevantEvents
+            eventStore: mutatedRelevantEvents,
           })
 
           let eventChangeArg: EventChangeArg = {
@@ -287,9 +285,9 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             revert() {
               initialContext.dispatch({
                 type: 'MERGE_EVENTS',
-                eventStore: relevantEvents // the pre-change data
+                eventStore: relevantEvents, // the pre-change data
               })
-            }
+            },
           }
 
           let transformed: ReturnType<EventDropTransformers> = {}
@@ -303,34 +301,33 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             el: ev.subjectEl as HTMLElement,
             delta: validMutation.datesDelta!,
             jsEvent: ev.origEvent as MouseEvent, // bad
-            view: initialView
+            view: initialView,
           })
 
           initialContext.emitter.trigger('eventChange', eventChangeArg)
 
         // dropped in different calendar
         } else if (receivingContext) {
-
           let eventRemoveArg: EventRemoveArg = {
             event: eventApi,
             relatedEvents: buildEventApis(relevantEvents, initialContext, eventInstance),
             revert() {
               initialContext.dispatch({
                 type: 'MERGE_EVENTS',
-                eventStore: relevantEvents
+                eventStore: relevantEvents,
               })
-            }
+            },
           }
 
           initialContext.emitter.trigger('eventLeave', {
             ...eventRemoveArg,
             draggedEl: ev.subjectEl as HTMLElement,
-            view: initialView
+            view: initialView,
           })
 
           initialContext.dispatch({
             type: 'REMOVE_EVENTS',
-            eventStore: relevantEvents
+            eventStore: relevantEvents,
           })
 
           initialContext.emitter.trigger('eventRemove', eventRemoveArg)
@@ -341,7 +338,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
           receivingContext.dispatch({
             type: 'MERGE_EVENTS',
-            eventStore: mutatedRelevantEvents
+            eventStore: mutatedRelevantEvents,
           })
 
           let eventAddArg: EventAddArg = {
@@ -350,9 +347,9 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             revert() {
               receivingContext.dispatch({
                 type: 'REMOVE_EVENTS',
-                eventStore: mutatedRelevantEvents
+                eventStore: mutatedRelevantEvents,
               })
-            }
+            },
           }
 
           receivingContext.emitter.trigger('eventAdd', eventAddArg)
@@ -360,7 +357,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
           if (ev.isTouch) {
             receivingContext.dispatch({
               type: 'SELECT_EVENT',
-              eventInstanceId: eventInstance.instanceId
+              eventInstanceId: eventInstance.instanceId,
             })
           }
 
@@ -368,16 +365,15 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             ...buildDatePointApiWithContext(finalHit.dateSpan, receivingContext),
             draggedEl: ev.subjectEl as HTMLElement,
             jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-            view: finalHit.component.context.viewApi
+            view: finalHit.component.context.viewApi,
           })
 
           receivingContext.emitter.trigger('eventReceive', {
             ...eventAddArg,
             draggedEl: ev.subjectEl as HTMLElement,
-            view: finalHit.component.context.viewApi
+            view: finalHit.component.context.viewApi,
           })
         }
-
       } else {
         initialContext.emitter.trigger('_noEventDrop')
       }
@@ -393,7 +389,6 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
     // does the previous calendar need to be cleared?
     if (prevContext && prevContext !== nextContext) {
-
       // does the initial calendar need to be cleared?
       // if so, don't clear all the way. we still need to to hide the affectedEvents
       if (prevContext === initialContext) {
@@ -402,8 +397,8 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
           state: {
             affectedEvents: state.affectedEvents,
             mutatedEvents: createEmptyEventStore(),
-            isEvent: true
-          }
+            isEvent: true,
+          },
         })
 
       // completely clear the old calendar if it wasn't the initial
@@ -440,7 +435,6 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
     this.validMutation = null
     this.mutatedRelevantEvents = null
   }
-
 }
 
 function computeEventMutation(hit0: Hit, hit1: Hit, massagers: eventDragMutationMassager[]): EventMutation {
@@ -466,7 +460,7 @@ function computeEventMutation(hit0: Hit, hit1: Hit, massagers: eventDragMutation
     hit0.component.context.dateEnv,
     hit0.component === hit1.component ?
       hit0.component.largeUnit :
-      null
+      null,
   )
 
   if (delta.milliseconds) { // has hours/minutes/seconds
@@ -475,7 +469,7 @@ function computeEventMutation(hit0: Hit, hit1: Hit, massagers: eventDragMutation
 
   let mutation: EventMutation = {
     datesDelta: delta,
-    standardProps
+    standardProps,
   }
 
   for (let massager of massagers) {

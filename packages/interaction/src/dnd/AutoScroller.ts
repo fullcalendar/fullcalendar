@@ -1,4 +1,6 @@
-import { ScrollGeomCache, ElementScrollGeomCache, WindowScrollGeomCache } from '../scroll-geom-cache'
+import { ScrollGeomCache } from '../ScrollGeomCache'
+import { ElementScrollGeomCache } from '../ElementScrollGeomCache'
+import { WindowScrollGeomCache } from '../WindowScrollGeomCache'
 
 interface Edge {
   scrollCache: ScrollGeomCache
@@ -18,10 +20,9 @@ approaches the edge.
 The caller must call start + handleMove + stop.
 */
 export class AutoScroller {
-
   // options that can be set by caller
   isEnabled: boolean = true
-  scrollQuery: (Window | string)[] = [ window, '.fc-scroller' ]
+  scrollQuery: (Window | string)[] = [window, '.fc-scroller']
   edgeThreshold: number = 50 // pixels
   maxVelocity: number = 300 // pixels per second
 
@@ -102,7 +103,7 @@ export class AutoScroller {
     if (this.isAnimating) { // wasn't cancelled between animation calls
       let edge = this.computeBestEdge(
         this.pointerScreenX! + window.pageXOffset,
-        this.pointerScreenY! + window.pageYOffset
+        this.pointerScreenY! + window.pageYOffset,
       )
 
       if (edge) {
@@ -120,12 +121,11 @@ export class AutoScroller {
     let { edgeThreshold } = this
     let invDistance = edgeThreshold - edge.distance
     let velocity = // the closer to the edge, the faster we scroll
-      (invDistance * invDistance) / (edgeThreshold * edgeThreshold) * // quadratic
+      ((invDistance * invDistance) / (edgeThreshold * edgeThreshold)) * // quadratic
       this.maxVelocity * seconds
     let sign = 1
 
     switch (edge.name) {
-
       case 'left':
         sign = -1
         // falls through
@@ -156,7 +156,6 @@ export class AutoScroller {
 
       // completely within the rect?
       if (leftDist >= 0 && rightDist >= 0 && topDist >= 0 && bottomDist >= 0) {
-
         if (
           topDist <= edgeThreshold && this.everMovedUp && scrollCache.canScrollUp() &&
           (!bestSide || bestSide.distance > topDist)
@@ -194,9 +193,8 @@ export class AutoScroller {
     return this.queryScrollEls().map((el) => {
       if (el === window) {
         return new WindowScrollGeomCache(false) // false = don't listen to user-generated scrolls
-      } else {
-        return new ElementScrollGeomCache(el, false) // false = don't listen to user-generated scrolls
       }
+        return new ElementScrollGeomCache(el, false) // false = don't listen to user-generated scrolls
     })
   }
 
@@ -213,5 +211,4 @@ export class AutoScroller {
 
     return els
   }
-
 }

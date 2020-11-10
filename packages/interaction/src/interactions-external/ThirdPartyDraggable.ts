@@ -12,12 +12,11 @@ Bridges third-party drag-n-drop systems with FullCalendar.
 Must be instantiated and destroyed by caller.
 */
 export class ThirdPartyDraggable {
-
   dragging: InferredElementDragging
 
   constructor(
     containerOrSettings?: EventTarget | ThirdPartyDraggableSettings,
-    settings?: ThirdPartyDraggableSettings
+    settings?: ThirdPartyDraggableSettings,
   ) {
     let containerEl: EventTarget = document
 
@@ -44,11 +43,10 @@ export class ThirdPartyDraggable {
       dragging.mirrorSelector = settings.mirrorSelector
     }
 
-    new ExternalElementDragging(dragging, settings.eventData)
+    new ExternalElementDragging(dragging, settings.eventData) // eslint-disable-line no-new
   }
 
   destroy() {
     this.dragging.destroy()
   }
-
 }

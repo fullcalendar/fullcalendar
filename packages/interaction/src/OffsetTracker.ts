@@ -1,8 +1,8 @@
 import {
   getClippingParents, computeRect,
-  pointInsideRect, Rect
+  pointInsideRect, Rect,
 } from '@fullcalendar/common'
-import { ElementScrollGeomCache } from './scroll-geom-cache'
+import { ElementScrollGeomCache } from './ElementScrollGeomCache'
 
 /*
 When this class is instantiated, it records the offset of an element (relative to the document topleft),
@@ -13,7 +13,6 @@ Also keeps track of all scrolling/overflow:hidden containers that are parents of
 and an determine if a given point is inside the combined clipping rectangle.
 */
 export class OffsetTracker { // ElementOffsetTracker
-
   scrollCaches: ElementScrollGeomCache[]
   origRect: Rect
 
@@ -21,9 +20,9 @@ export class OffsetTracker { // ElementOffsetTracker
     this.origRect = computeRect(el)
 
     // will work fine for divs that have overflow:hidden
-    this.scrollCaches = getClippingParents(el).map(function(el) {
-      return new ElementScrollGeomCache(el, true) // listen=true
-    })
+    this.scrollCaches = getClippingParents(el).map(
+      (scrollEl) => new ElementScrollGeomCache(scrollEl, true), // listen=true
+    )
   }
 
   destroy() {
@@ -66,7 +65,6 @@ export class OffsetTracker { // ElementOffsetTracker
 
     return true
   }
-
 }
 
 // certain clipping containers should never constrain interactions, like <html> and <body>

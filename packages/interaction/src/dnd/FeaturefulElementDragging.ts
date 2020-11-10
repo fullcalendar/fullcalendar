@@ -1,4 +1,11 @@
-import { PointerDragEvent, preventSelection, allowSelection, preventContextMenu, allowContextMenu, ElementDragging } from '@fullcalendar/common'
+import {
+  PointerDragEvent,
+  preventSelection,
+  allowSelection,
+  preventContextMenu,
+  allowContextMenu,
+  ElementDragging,
+} from '@fullcalendar/common'
 import { PointerDragging } from './PointerDragging'
 import { ElementMirror } from './ElementMirror'
 import { AutoScroller } from './AutoScroller'
@@ -10,7 +17,6 @@ Monitors dragging on an element. Has a number of high-level features:
 - a mirror element that follows the pointer
 */
 export class FeaturefulElementDragging extends ElementDragging {
-
   pointer: PointerDragging
   mirror: ElementMirror
   autoScroller: AutoScroller
@@ -27,7 +33,6 @@ export class FeaturefulElementDragging extends ElementDragging {
   isDelayEnded: boolean = false
   isDistanceSurpassed: boolean = false
   delayTimeoutId: number | null = null
-
 
   constructor(containerEl: HTMLElement, selector?: string) {
     super(containerEl)
@@ -55,7 +60,6 @@ export class FeaturefulElementDragging extends ElementDragging {
 
   onPointerDown = (ev: PointerDragEvent) => {
     if (!this.isDragging) { // so new drag doesn't happen while revert animation is going
-
       this.isInteracting = true
       this.isDelayEnded = false
       this.isDistanceSurpassed = false
@@ -92,7 +96,6 @@ export class FeaturefulElementDragging extends ElementDragging {
 
   onPointerMove = (ev: PointerDragEvent) => {
     if (this.isInteracting) {
-
       this.emitter.trigger('pointermove', ev)
 
       if (!this.isDistanceSurpassed) {
@@ -107,7 +110,6 @@ export class FeaturefulElementDragging extends ElementDragging {
       }
 
       if (this.isDragging) {
-
         // a real pointer move? (not one simulated by scrolling)
         if (ev.origEvent.type !== 'scroll') {
           this.mirror.handleMove(ev.pageX, ev.pageY)
@@ -182,7 +184,7 @@ export class FeaturefulElementDragging extends ElementDragging {
     // that come from the document to fire beforehand. much more convenient this way.
     this.mirror.stop(
       this.mirrorNeedsRevert,
-      this.stopDrag.bind(this, ev) // bound with args
+      this.stopDrag.bind(this, ev), // bound with args
     )
   }
 
@@ -208,5 +210,4 @@ export class FeaturefulElementDragging extends ElementDragging {
   setAutoScrollEnabled(bool: boolean) {
     this.autoScroller.isEnabled = bool
   }
-
 }

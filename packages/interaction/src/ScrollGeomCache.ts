@@ -1,7 +1,4 @@
-import {
-  Rect, computeInnerRect,
-  ScrollController, ElementScrollController, WindowScrollController
-} from '@fullcalendar/common'
+import { Rect, ScrollController } from '@fullcalendar/common'
 
 /*
 Is a cache for a given element's scroll information (all the info that ScrollController stores)
@@ -12,7 +9,6 @@ The cache can be in one of two modes:
 - doesListening:true - watch for scrolling and update the cache
 */
 export abstract class ScrollGeomCache extends ScrollController {
-
   clientRect: Rect
   origScrollTop: number
   origScrollLeft: number
@@ -108,48 +104,4 @@ export abstract class ScrollGeomCache extends ScrollController {
 
   handleScrollChange() {
   }
-
-}
-
-export class ElementScrollGeomCache extends ScrollGeomCache {
-
-  constructor(el: HTMLElement, doesListening: boolean) {
-    super(new ElementScrollController(el), doesListening)
-  }
-
-  getEventTarget(): EventTarget {
-    return (this.scrollController as ElementScrollController).el
-  }
-
-  computeClientRect() {
-    return computeInnerRect((this.scrollController as ElementScrollController).el)
-  }
-
-}
-
-export class WindowScrollGeomCache extends ScrollGeomCache {
-
-  constructor(doesListening: boolean) {
-    super(new WindowScrollController(), doesListening)
-  }
-
-  getEventTarget(): EventTarget {
-    return window
-  }
-
-  computeClientRect(): Rect {
-    return {
-      left: this.scrollLeft,
-      right: this.scrollLeft + this.clientWidth,
-      top: this.scrollTop,
-      bottom: this.scrollTop + this.clientHeight
-    }
-  }
-
-  // the window is the only scroll object that changes it's rectangle relative
-  // to the document's topleft as it scrolls
-  handleScrollChange() {
-    this.clientRect = this.computeClientRect()
-  }
-
 }
