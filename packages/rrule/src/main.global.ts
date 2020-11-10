@@ -1,4 +1,3 @@
-
 import { globalPlugins } from '@fullcalendar/common'
 import plugin from './main'
 
