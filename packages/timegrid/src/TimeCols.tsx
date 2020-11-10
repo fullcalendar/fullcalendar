@@ -16,7 +16,8 @@ import {
   DateProfile,
 } from '@fullcalendar/common'
 import { TableCellModel } from '@fullcalendar/daygrid' // TODO: good to use this interface?
-import { TimeColsSlats, TimeSlatMeta } from './TimeColsSlats'
+import { TimeColsSlats } from './TimeColsSlats'
+import { TimeSlatMeta } from './time-slat-meta'
 import { TimeColsContent } from './TimeColsContent'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { TimeColsSeg } from './TimeColsSeg'
@@ -133,13 +134,17 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
       if (request.time) {
         let top = slatCoords.computeTimeTop(request.time)
         top = Math.ceil(top) // zoom can give weird floating-point values. rather scroll a little bit further
-        if (top) { top++ } // to overcome top border that slots beyond the first have. looks better
+        if (top) {
+          top += 1 // to overcome top border that slots beyond the first have. looks better
+        }
 
         onScrollTopRequest(top)
       }
 
       return true
     }
+
+    return false
   }
 
   handleColCoords = (colCoords: PositionCache | null) => {
@@ -195,6 +200,8 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
         },
       }
     }
+
+    return null
   }
 }
 

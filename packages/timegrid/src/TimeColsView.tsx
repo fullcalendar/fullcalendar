@@ -6,7 +6,6 @@ import {
   SimpleScrollGrid,
   ChunkContentCallbackArgs,
   ScrollGridSectionConfig,
-  BaseComponent,
   buildNavLinkData,
   ViewRoot,
   WeekNumberRoot,
@@ -25,8 +24,9 @@ import {
   NowIndicatorRoot,
 } from '@fullcalendar/common'
 import { AllDaySplitter } from './AllDaySplitter'
-import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
+import { TimeSlatMeta } from './time-slat-meta'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
+import { TimeBodyAxis } from './TimeBodyAxis'
 
 const DEFAULT_WEEK_NUM_FORMAT = createFormatter({ week: 'short' })
 const AUTO_ALL_DAY_MAX_EVENT_ROWS = 5
@@ -412,21 +412,4 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
 
 function renderAllDayInner(hookProps) {
   return hookProps.text
-}
-
-/* Thin Axis
-------------------------------------------------------------------------------------------------------------------*/
-
-interface TimeBodyAxisProps {
-  slatMetas: TimeSlatMeta[]
-}
-
-class TimeBodyAxis extends BaseComponent<TimeBodyAxisProps> { // just <tr> content
-  render() {
-    return this.props.slatMetas.map((slatMeta: TimeSlatMeta) => (
-      <tr key={slatMeta.key}>
-        <TimeColsAxisCell {...slatMeta} />
-      </tr>
-    ))
-  }
 }

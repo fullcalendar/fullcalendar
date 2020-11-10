@@ -1,11 +1,13 @@
 import {
-  Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta, DateRange, Fragment, DayCellRoot, NowIndicatorRoot,
-  DayCellContent, BgEvent, renderFill, DateProfile, config, buildEventRangeKey, sortEventSegs,
+  Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta,
+  DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill,
+  DateProfile, config, buildEventRangeKey, sortEventSegs,
 } from '@fullcalendar/common'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { computeSegCoords, computeSegVerticals } from './event-placement'
 import { TimeColEvent } from './TimeColEvent'
+import { TimeColMisc } from './TimeColMisc'
 
 export interface TimeColProps {
   elRef?: Ref<HTMLTableCellElement>
@@ -47,7 +49,13 @@ export class TimeCol extends BaseComponent<TimeColProps> {
       {}
 
     return (
-      <DayCellRoot elRef={props.elRef} date={props.date} dateProfile={props.dateProfile} todayRange={props.todayRange} extraHookProps={props.extraHookProps}>
+      <DayCellRoot
+        elRef={props.elRef}
+        date={props.date}
+        dateProfile={props.dateProfile}
+        todayRange={props.todayRange}
+        extraHookProps={props.extraHookProps}
+      >
         {(rootElRef, classNames, dataAttrs) => (
           <td
             ref={rootElRef}
@@ -109,6 +117,8 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     if (props.slatCoords) {
       return this.renderPositionedFgSegs(segs, segIsInvisible, isDragging, isResizing, isDateSelecting)
     }
+
+    return null
   }
 
   renderPrintFgSegs(segs: TimeColsSeg[]) {
@@ -151,12 +161,11 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     return segs.map((seg) => {
       let instanceId = seg.eventRange.instance.instanceId
       let isMirror = isDragging || isResizing || isDateSelecting
-      let positionCss = isMirror ?
+      let positionCss = isMirror
         // will span entire column width
         // also, won't assign z-index, which is good, fc-event-mirror will overpower other harnesses
-        { left: 0, right: 0, ...this.computeSegTopBottomCss(seg) }
-        :
-        this.computeFgSegPositionCss(seg)
+        ? { left: 0, right: 0, ...this.computeSegTopBottomCss(seg) }
+        : this.computeFgSegPositionCss(seg)
 
       return (
         <div
@@ -260,27 +269,5 @@ export class TimeCol extends BaseComponent<TimeColProps> {
       top: seg.top,
       bottom: -seg.bottom,
     }
-  }
-}
-
-interface TimeColMiscProps { // should be given nowDate too??
-  dateProfile: DateProfile
-  date: DateMarker
-  todayRange: DateRange
-  extraHookProps?: any
-}
-
-class TimeColMisc extends BaseComponent<TimeColMiscProps> {
-  render() {
-    let { props } = this
-
-    return (
-      <DayCellContent date={props.date} dateProfile={props.dateProfile} todayRange={props.todayRange} extraHookProps={props.extraHookProps}>
-        {(innerElRef, innerContent) => (
-          innerContent &&
-            <div className="fc-timegrid-col-misc" ref={innerElRef}>{innerContent}</div>
-        )}
-      </DayCellContent>
-    )
   }
 }

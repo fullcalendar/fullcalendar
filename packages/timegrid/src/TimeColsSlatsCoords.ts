@@ -1,5 +1,14 @@
-import { PositionCache, DateMarker, startOfDay, createDuration, asRoughMs, DateProfile, Duration, rangeContainsMarker } from '@fullcalendar/common'
-import { TimeSlatMeta } from './TimeColsSlats'
+import {
+  PositionCache,
+  DateMarker,
+  startOfDay,
+  createDuration,
+  asRoughMs,
+  DateProfile,
+  Duration,
+  rangeContainsMarker,
+} from '@fullcalendar/common'
+import { TimeSlatMeta } from './time-slat-meta'
 
 export class TimeColsSlatsCoords {
   constructor(
@@ -23,6 +32,8 @@ export class TimeColsSlatsCoords {
         return this.computeTimeTop(createDuration(timeMs))
       }
     }
+
+    return null
   }
 
   // Computes the top coordinate, relative to the bounds of the grid, of the given date.
@@ -40,8 +51,13 @@ export class TimeColsSlatsCoords {
   computeTimeTop(duration: Duration): number {
     let { positions, dateProfile, slatMetas } = this
     let len = positions.els.length
-    let slotDurationMs = slatMetas[1].date.valueOf() - slatMetas[0].date.valueOf() // we assume dates are uniform
-    let slatCoverage = (duration.milliseconds - asRoughMs(dateProfile.slotMinTime)) / slotDurationMs // floating-point value of # of slots covered
+
+    // we assume dates are uniform
+    let slotDurationMs = slatMetas[1].date.valueOf() - slatMetas[0].date.valueOf()
+
+    // floating-point value of # of slots covered
+    let slatCoverage = (duration.milliseconds - asRoughMs(dateProfile.slotMinTime)) / slotDurationMs
+
     let slatIndex
     let slatRemainder
 

@@ -4,7 +4,13 @@ import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 // UNFORTUNATELY, assigns results to the top/bottom/level/forwardCoord/backwardCoord props of the actual segs.
 // TODO: return hash (by instanceId) of results
 
-export function computeSegCoords(segs: Seg[], dayDate: DateMarker, slatCoords: TimeColsSlatsCoords, eventMinHeight: number, eventOrderSpecs: OrderSpec<EventApi>[]) {
+export function computeSegCoords(
+  segs: Seg[],
+  dayDate: DateMarker,
+  slatCoords: TimeColsSlatsCoords,
+  eventMinHeight: number,
+  eventOrderSpecs: OrderSpec<EventApi>[],
+) {
   computeSegVerticals(segs, dayDate, slatCoords, eventMinHeight)
   return computeSegHorizontals(segs, eventOrderSpecs) // requires top/bottom from computeSegVerticals
 }
@@ -63,7 +69,7 @@ function buildSlotSegLevels(segs: Seg[]) {
     seg = segs[i]
 
     // go through all the levels and stop on the first level where there are no collisions
-    for (j = 0; j < levels.length; j++) {
+    for (j = 0; j < levels.length; j += 1) {
       if (!computeSlotSegCollisions(seg, levels[j]).length) {
         break
       }
@@ -105,11 +111,11 @@ function computeForwardSlotSegs(levels) {
   for (i = 0; i < levels.length; i += 1) {
     level = levels[i]
 
-    for (j = 0; j < level.length; j++) {
+    for (j = 0; j < level.length; j += 1) {
       seg = level[j]
 
       seg.forwardSegs = []
-      for (k = i + 1; k < levels.length; k++) {
+      for (k = i + 1; k < levels.length; k += 1) {
         computeSlotSegCollisions(seg, levels[k], seg.forwardSegs)
       }
     }

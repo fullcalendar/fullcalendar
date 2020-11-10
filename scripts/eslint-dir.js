@@ -19,6 +19,8 @@ function eslintDir(dir) {
     path.join(dir, 'src')
   ]
 
+  console.log(cmd.join(' '))
+
   let { success } = exec.sync(cmd, { live: true })
   return success
 }

@@ -9,20 +9,19 @@ import {
   EventInteractionState,
   DateSpan,
   memoize,
-  intersectRanges, DateRange,
+  DateRange,
   DayTableModel,
   DateEnv,
   DateMarker,
-  Slicer,
   Hit,
   NowTimer,
   CssDimValue,
   Duration,
 } from '@fullcalendar/common'
-import { TimeColsSeg } from './TimeColsSeg'
 import { TimeCols } from './TimeCols'
-import { TimeSlatMeta } from './TimeColsSlats'
+import { TimeSlatMeta } from './time-slat-meta'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
+import { DayTimeColsSlicer } from './DayTimeColsSlicer'
 
 export interface DayTimeColsProps {
   dateProfile: DateProfile
@@ -115,6 +114,8 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
         layer: 0,
       }
     }
+
+    return null
   }
 }
 
@@ -129,26 +130,4 @@ export function buildDayRanges(dayTableModel: DayTableModel, dateProfile: DatePr
   }
 
   return ranges
-}
-
-export class DayTimeColsSlicer extends Slicer<TimeColsSeg, [DateRange[]]> {
-  sliceRange(range: DateRange, dayRanges: DateRange[]): TimeColsSeg[] {
-    let segs: TimeColsSeg[] = []
-
-    for (let col = 0; col < dayRanges.length; col++) {
-      let segRange = intersectRanges(range, dayRanges[col])
-
-      if (segRange) {
-        segs.push({
-          start: segRange.start,
-          end: segRange.end,
-          isStart: segRange.start.valueOf() === range.start.valueOf(),
-          isEnd: segRange.end.valueOf() === range.end.valueOf(),
-          col,
-        })
-      }
-    }
-
-    return segs
-  }
 }
