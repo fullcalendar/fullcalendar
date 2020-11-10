@@ -1,12 +1,3 @@
-
-export * from '@fullcalendar/core'
-export * from '@fullcalendar/interaction'
-export * from '@fullcalendar/daygrid'
-export * from '@fullcalendar/timegrid'
-export * from '@fullcalendar/list'
-export * from '@fullcalendar/bootstrap'
-export * from '@fullcalendar/google-calendar'
-
 import { globalPlugins } from '@fullcalendar/core'
 import interactionPlugin from '@fullcalendar/interaction'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -21,5 +12,13 @@ globalPlugins.push(
   timeGridPlugin,
   listPlugin,
   bootstrapPlugin,
-  googleCalendarPlugin
+  googleCalendarPlugin,
 )
+
+export * from '@fullcalendar/core'
+export * from '@fullcalendar/interaction'
+export * from '@fullcalendar/daygrid'
+export * from '@fullcalendar/timegrid'
+export * from '@fullcalendar/list'
+export * from '@fullcalendar/bootstrap'
+export * from '@fullcalendar/google-calendar'
