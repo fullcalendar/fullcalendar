@@ -1,12 +1,12 @@
 import { LocaleInput } from '@fullcalendar/common'
 
 export default {
-  code: "ug",
+  code: 'ug',
   buttonText: {
-    month: "ئاي",
-    week: "ھەپتە",
-    day: "كۈن",
-    list: "كۈنتەرتىپ"
+    month: 'ئاي',
+    week: 'ھەپتە',
+    day: 'كۈن',
+    list: 'كۈنتەرتىپ',
   },
-  allDayText: "پۈتۈن كۈن"
+  allDayText: 'پۈتۈن كۈن',
 } as LocaleInput

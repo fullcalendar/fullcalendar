@@ -1,24 +1,24 @@
 import { LocaleInput } from '@fullcalendar/common'
 
 export default {
-  code: "ro",
+  code: 'ro',
   week: {
     dow: 1, // Monday is the first day of the week.
-    doy: 7  // The week that contains Jan 1st is the first week of the year.
+    doy: 7, // The week that contains Jan 1st is the first week of the year.
   },
   buttonText: {
-    prev: "precedentă",
-    next: "următoare",
-    today: "Azi",
-    month: "Lună",
-    week: "Săptămână",
-    day: "Zi",
-    list: "Agendă"
+    prev: 'precedentă',
+    next: 'următoare',
+    today: 'Azi',
+    month: 'Lună',
+    week: 'Săptămână',
+    day: 'Zi',
+    list: 'Agendă',
   },
-  weekText: "Săpt",
-  allDayText: "Toată ziua",
-  moreLinkText: function(n) {
-    return "+alte " + n;
+  weekText: 'Săpt',
+  allDayText: 'Toată ziua',
+  moreLinkText(n) {
+    return '+alte ' + n
   },
-  noEventsText: "Nu există evenimente de afișat"
+  noEventsText: 'Nu există evenimente de afișat',
 } as LocaleInput
