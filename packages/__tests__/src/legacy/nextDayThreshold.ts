@@ -76,8 +76,8 @@ describe('nextDayThreshold', () => {
     let totalWidth = 0
 
     let eventEls = new CalendarWrapper(calendar).getEventEls()
-    $(eventEls).each(() => {
-      totalWidth += $(this).outerWidth()
+    $(eventEls).each((i, eventEl) => {
+      totalWidth += $(eventEl).outerWidth()
     })
 
     return Math.round(totalWidth / cellWidth)
