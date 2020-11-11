@@ -6,11 +6,10 @@ type Success = (rawFeed: string, xhr: XMLHttpRequest) => void
 type Failure = (error: string, xhr: XMLHttpRequest) => void
 
 export function requestICal(url: string, successCallback: Success, failureCallback: Failure) {
-
   const xhr = new XMLHttpRequest()
   xhr.open('GET', url, true)
 
-  xhr.onload = function() {
+  xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 400) {
       successCallback(xhr.responseText, xhr)
     } else {
@@ -23,7 +22,6 @@ export function requestICal(url: string, successCallback: Success, failureCallba
   xhr.send(null)
 }
 
-
 interface ICalFeedMeta {
   feedUrl: string
   extraParams?: any
@@ -32,21 +30,20 @@ interface ICalFeedMeta {
 let buildIcalEvents = (rawFeed: string): ICAL.Event[] => {
   try {
     const iCalFeed = ICAL.parse(rawFeed)
-    const iCalComponent = new ICAL.Component(iCalFeed);
-    return iCalComponent.getAllSubcomponents("vevent");
+    const iCalComponent = new ICAL.Component(iCalFeed)
+    return iCalComponent.getAllSubcomponents('vevent')
   } catch (err) {
-    console.log(`Error parsing feed: ${err}`)
+    console.warn(`Error parsing feed: ${err}`)
     return []
   }
 }
 
-let buildEvents = (vevents: ICAL.Event[]): EventInput[] => {
-  return vevents.map((vevent) => {
+let buildEvents = (vevents: ICAL.Event[]): EventInput[] => vevents.map((vevent) => {
     const event = new ICAL.Event(vevent)
 
     if (!event.startDate) {
       // no start date so corrupt / invalid event
-      return null;
+      return null
     }
 
     const fcEvent = {
@@ -64,12 +61,11 @@ let buildEvents = (vevents: ICAL.Event[]): EventInput[] => {
       }
 
       return fcEvent
-    } catch(error) {
-      console.log(`Unable to process item in calendar: ${error}.`)
+    } catch (error) {
+      console.warn(`Unable to process item in calendar: ${error}.`)
       return null
     }
-  }).filter((item: EventInput | null) => { return item !== null })
-}
+  }).filter((item: EventInput | null) => item !== null)
 
 let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
 
@@ -100,11 +96,10 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
         },
       )
     })
-  }
+  },
 }
-
 
 export default createPlugin({
   eventSourceRefiners: EVENT_SOURCE_REFINERS,
-  eventSourceDefs: [ eventSourceDef ]
+  eventSourceDefs: [eventSourceDef],
 })

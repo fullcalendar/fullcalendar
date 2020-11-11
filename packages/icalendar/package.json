@@ -9,8 +9,8 @@
     "tslib": "^2.0.0",
     "ical.js": "^1.4.0"
   },
-  "type": "module",
-  "main": "main.js",
+  "main": "main.cjs.js",
+  "module": "main.js",
   "types": "main.d.ts",
   "jsdelivr": "main.global.min.js",
   "browserGlobal": "FullCalendarICalendar",
