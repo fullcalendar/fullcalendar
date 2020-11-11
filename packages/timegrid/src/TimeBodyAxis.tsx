@@ -1,5 +1,5 @@
 import { createElement, BaseComponent } from '@fullcalendar/common'
-import { TimeColsAxisCell  } from './TimeColsAxisCell'
+import { TimeColsAxisCell } from './TimeColsAxisCell'
 import { TimeSlatMeta } from './time-slat-meta'
 
 /* Thin Axis

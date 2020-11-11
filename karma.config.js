@@ -34,6 +34,7 @@ module.exports = function(config) {
     files: [
       'tmp/tests/config.js',
       'tmp/tests/all.js',
+      { pattern: 'tmp/tests/all.js.map', included: false }
     ],
 
     // make console errors aware of source files

@@ -27,7 +27,7 @@ export class DayTimeColsView extends TimeColsView {
       dateProfile.slotMaxTime,
       options.slotLabelInterval,
       options.slotDuration,
-      dateEnv
+      dateEnv,
     )
     let { dayMinWidth } = options
     let hasAttachedAxis = !dayMinWidth

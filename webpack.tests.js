@@ -15,6 +15,7 @@ module.exports = (env) => {
 
   return {
     mode: 'development',
+    devtool: 'source-map',
     entry: './tmp/tests/index.js',
     output: {
       filename: 'all.js',

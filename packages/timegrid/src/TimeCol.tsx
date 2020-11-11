@@ -193,7 +193,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
   renderFillSegs(segs: TimeColsSeg[], fillType: string) {
     let { context, props } = this
 
-    if (!props.slatCoords) { return }
+    if (!props.slatCoords) { return null }
 
     // BAD: assigns TO THE SEGS THEMSELVES
     computeSegVerticals(segs, props.date, props.slatCoords, context.options.eventMinHeight)
@@ -212,10 +212,15 @@ export class TimeCol extends BaseComponent<TimeColProps> {
   renderNowIndicator(segs: TimeColsSeg[]) {
     let { slatCoords, date } = this.props
 
-    if (!slatCoords) { return }
+    if (!slatCoords) { return null }
 
     return segs.map((seg, i) => (
-      <NowIndicatorRoot isAxis={false} date={date} key={i /* key doesn't matter. will only ever be one */}>
+      <NowIndicatorRoot
+        isAxis={false}
+        date={date}
+        // key doesn't matter. will only ever be one
+        key={i} // eslint-disable-line react/no-array-index-key
+      >
         {(rootElRef, classNames, innerElRef, innerContent) => (
           <div
             ref={rootElRef}

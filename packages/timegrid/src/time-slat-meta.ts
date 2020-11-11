@@ -27,7 +27,13 @@ const STOCK_SUB_DURATIONS = [
   { seconds: 15 },
 ]
 
-export function buildSlatMetas(slotMinTime: Duration, slotMaxTime: Duration, explicitLabelInterval: Duration | null, slotDuration: Duration, dateEnv: DateEnv) {
+export function buildSlatMetas(
+  slotMinTime: Duration,
+  slotMaxTime: Duration,
+  explicitLabelInterval: Duration | null,
+  slotDuration: Duration,
+  dateEnv: DateEnv,
+) {
   let dayStart = new Date(0)
   let slatTime = slotMinTime
   let slatIterator = createDuration(0)
@@ -60,7 +66,7 @@ function computeLabelInterval(slotDuration) {
   let slotsPerLabel
 
   // find the smallest stock label interval that results in more than one slots-per-label
-  for (i = STOCK_SUB_DURATIONS.length - 1; i >= 0; i--) {
+  for (i = STOCK_SUB_DURATIONS.length - 1; i >= 0; i -= 1) {
     labelInterval = createDuration(STOCK_SUB_DURATIONS[i])
     slotsPerLabel = wholeDivideDurations(labelInterval, slotDuration)
     if (slotsPerLabel !== null && slotsPerLabel > 1) {
