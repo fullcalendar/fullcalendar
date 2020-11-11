@@ -107,6 +107,7 @@ describe('addICalEventSource with week view', function() {
       (source) => {
         initCalendar({
           defaultTimedEventDuration: '03:00',
+          forceEventDuration: false,
         }).addEventSource(source)
       })
   })
