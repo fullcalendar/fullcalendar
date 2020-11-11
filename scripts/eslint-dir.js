@@ -35,7 +35,7 @@ function eslintDirs(dirs) {
     }
   }
 
-  return anyErrors
+  return !anyErrors
 }
 
 
