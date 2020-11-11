@@ -22,7 +22,6 @@ describe('addICalEventSource with week view', () => {
   })
 
   beforeEach(() => { XHRMock.setup() })
-
   afterEach(() => { XHRMock.teardown() })
 
   it('correctly adds a one-hour long meeting', (done) => {
@@ -74,7 +73,8 @@ describe('addICalEventSource with week view', () => {
   })
 
   it('sets default duration when forceEventDuration is enabled and no end or duration included in the VEVENT', (done) => {
-    loadICalendarWith(timedMeetingWithoutEnd,
+    loadICalendarWith(
+      timedMeetingWithoutEnd,
       () => {
         setTimeout(() => {
           assertEventCount(1)
@@ -89,11 +89,13 @@ describe('addICalEventSource with week view', () => {
           forceEventDuration: true,
           defaultTimedEventDuration: '03:00',
         }).addEventSource(source)
-      })
+      },
+    )
   })
 
   it('sets end to null when forceEventDuration is disabled and no end or duration included in the VEVENT', (done) => {
-    loadICalendarWith(timedMeetingWithoutEnd,
+    loadICalendarWith(
+      timedMeetingWithoutEnd,
       () => {
         setTimeout(() => {
           assertEventCount(1)
@@ -107,11 +109,13 @@ describe('addICalEventSource with week view', () => {
         initCalendar({
           defaultTimedEventDuration: '03:00',
         }).addEventSource(source)
-      })
+      },
+    )
   })
 
   it('does not override iCal DURATION in VEVENT', (done) => {
-    loadICalendarWith(timedMeetingWithDuration,
+    loadICalendarWith(
+      timedMeetingWithDuration,
       () => {
         setTimeout(() => {
           assertEventCount(1)
@@ -126,9 +130,15 @@ describe('addICalEventSource with week view', () => {
           forceEventDuration: true,
           defaultTimedEventDuration: '03:00',
         }).addEventSource(source)
-      })
+      },
+    )
   })
-  function loadICalendarWith(rawICal: string, assertions: () => void, calendarSetup?: (source: EventSourceInput) => void) {
+
+  function loadICalendarWith(
+    rawICal: string,
+    assertions: () => void,
+    calendarSetup?: (source: EventSourceInput) => void,
+  ) {
     const feedUrl = '/mock.ics'
 
     XHRMock.get(feedUrl, (req, res) => {

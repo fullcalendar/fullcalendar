@@ -39,33 +39,33 @@ let buildIcalEvents = (rawFeed: string): ICAL.Event[] => {
 }
 
 let buildEvents = (vevents: ICAL.Event[]): EventInput[] => vevents.map((vevent) => {
-    const event = new ICAL.Event(vevent)
+  const event = new ICAL.Event(vevent)
 
-    if (!event.startDate) {
-      // no start date so corrupt / invalid event
-      return null
-    }
+  if (!event.startDate) {
+    // no start date so corrupt / invalid event
+    return null
+  }
 
-    const fcEvent = {
-      title: event.summary,
-      start: event.startDate.toString(),
-      end: (event.endDate ? event.endDate.toString() : null),
-    }
+  const fcEvent = {
+    title: event.summary,
+    start: event.startDate.toString(),
+    end: (event.endDate ? event.endDate.toString() : null),
+  }
 
-    try {
-      if (event.startDate.isDate) {
-        return {
-          ...fcEvent,
-          allDay: true,
-        }
+  try {
+    if (event.startDate.isDate) {
+      return {
+        ...fcEvent,
+        allDay: true,
       }
-
-      return fcEvent
-    } catch (error) {
-      console.warn(`Unable to process item in calendar: ${error}.`)
-      return null
     }
-  }).filter((item: EventInput | null) => item !== null)
+
+    return fcEvent
+  } catch (error) {
+    console.warn(`Unable to process item in calendar: ${error}.`)
+    return null
+  }
+}).filter((item: EventInput | null) => item !== null)
 
 let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
 
