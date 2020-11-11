@@ -1,5 +1,5 @@
 const path = require('path')
-const { publicPackageStructs } = require('./lib/package-index')
+const { packageStructs, testStructs } = require('./lib/package-index')
 const exec = require('./lib/shell')
 
 
@@ -45,7 +45,7 @@ function eslintAll() {
 
 
 function getAllDirs() {
-  return publicPackageStructs.map((struct) => struct.dir)
+  return packageStructs.concat(testStructs).map((struct) => struct.dir)
 }
 
 
