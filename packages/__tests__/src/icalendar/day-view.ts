@@ -2,7 +2,7 @@ import XHRMock from 'xhr-mock'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import { EventSourceInput } from '@fullcalendar/core'
-import iCalendarPlugin from '../../../icalendar/main'
+import iCalendarPlugin from '@fullcalendar/icalendar'
 
 import oneHourMeeting from './data/oneHourMeeting'
 import recurringWeeklyMeeting from './data/recurringWeeklyMeeting'
@@ -36,7 +36,7 @@ describe('addICalEventSource with week view', function() {
 	})
 
   xit('correctly adds a repeating weekly meeting', (done) => {
-    // I want to test that the event for the current week is visible but 
+    // I want to test that the event for the current week is visible but
     // am unsure how to do this.
     loadICalendarWith(recurringWeeklyMeeting, () => {
       setTimeout(() => {
@@ -110,7 +110,7 @@ describe('addICalEventSource with week view', function() {
         }).addEventSource(source)
       })
   })
-  
+
   it('does not override iCal DURATION in VEVENT', (done) => {
     loadICalendarWith(timedMeetingWithDuration,
       () => {

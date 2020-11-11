@@ -1,4 +1,4 @@
-import ICAL from 'ical.js'
+import * as ICAL from 'ical.js'
 import { createPlugin, EventSourceDef, EventInput } from '@fullcalendar/common'
 import { EVENT_SOURCE_REFINERS } from './event-source-refiners'
 
@@ -43,7 +43,7 @@ let buildIcalEvents = (rawFeed: string): ICAL.Event[] => {
 let buildEvents = (vevents: ICAL.Event[]): EventInput[] => {
   return vevents.map((vevent) => {
     const event = new ICAL.Event(vevent)
-    
+
     if (!event.startDate) {
       // no start date so corrupt / invalid event
       return null;
@@ -62,7 +62,7 @@ let buildEvents = (vevents: ICAL.Event[]): EventInput[] => {
           allDay: true,
         }
       }
-      
+
       return fcEvent
     } catch(error) {
       console.log(`Unable to process item in calendar: ${error}.`)

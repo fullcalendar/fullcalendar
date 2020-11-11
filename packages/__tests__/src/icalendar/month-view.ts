@@ -2,7 +2,7 @@ import XHRMock from 'xhr-mock'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import dayGridMonth from '@fullcalendar/daygrid'
 import { EventSourceInput } from '@fullcalendar/core'
-import iCalendarPlugin from '../../../icalendar/main'
+import iCalendarPlugin from '@fullcalendar/icalendar'
 
 import alldayEvent from './data/alldayEvent'
 import multidayEvent from './data/multidayEvent'
