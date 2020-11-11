@@ -401,7 +401,7 @@ exports.lintPackageMeta = function() {
 
 
 exports.lint = series(exports.lintPackageMeta, () => {
-  return eslintAll() ? Promise.resolve() : Promise.reject()
+  return eslintAll() ? Promise.resolve() : Promise.reject(new Error('One or more lint tasks failed'))
 })
 
 exports.lintBuilt = series(exports.lintBuiltCss, exports.lintBuiltDts)

@@ -26,18 +26,8 @@ function eslintDir(dir) {
 }
 
 
-function getAllDirs() {
-  return publicPackageStructs.map((struct) => struct.dir)
-}
-
-
-function eslintAll() {
-  let dirs = process.argv.splice(2)
+function eslintDirs(dirs) {
   let anyErrors = false
-
-  if (!dirs.length || dirs[0] === 'all') {
-    dirs = getAllDirs()
-  }
 
   for (let dir of dirs) {
     if (!eslintDir(dir)) {
@@ -49,6 +39,27 @@ function eslintAll() {
 }
 
 
+function eslintAll() {
+  return eslintDirs(getAllDirs())
+}
+
+
+function getAllDirs() {
+  return publicPackageStructs.map((struct) => struct.dir)
+}
+
+
 if (require.main === module) {
-  eslintAll()
+  let dirs = process.argv.splice(2)
+  let success
+
+  if (!dirs.length || dirs[0] === 'all') {
+    success = eslintAll()
+  } else {
+    success = eslintDirs(dirs)
+  }
+
+  if (!success) {
+    process.exit(1)
+  }
 }
