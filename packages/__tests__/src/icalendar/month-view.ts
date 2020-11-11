@@ -3,7 +3,6 @@ import dayGridMonth from '@fullcalendar/daygrid'
 import { EventSourceInput } from '@fullcalendar/core'
 import iCalendarPlugin from '@fullcalendar/icalendar'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
-
 import alldayEvent from './data/alldayEvent'
 import multidayEvent from './data/multidayEvent'
 import multipleMultidayEvents from './data/multipleMultidayEvents'
@@ -22,7 +21,6 @@ describe('addICalEventSource with month view', () => {
   })
 
   beforeEach(() => { XHRMock.setup() })
-
   afterEach(() => { XHRMock.teardown() })
 
   it('correctly adds an all day event', (done) => {
@@ -75,25 +73,26 @@ describe('addICalEventSource with month view', () => {
   })
 
   it('ignores a munged event', (done) => {
-	  loadICalendarWith(mungedOneHourMeeting, () => {
-		  setTimeout(() => {
-			  assertEventCount(0)
+    loadICalendarWith(mungedOneHourMeeting, () => {
+      setTimeout(() => {
+        assertEventCount(0)
         done()
       }, 100)
     })
   })
 
   it('adds a valid event and ignores a munged event', (done) => {
-	  loadICalendarWith(multipleEventsOneMunged, () => {
-		  setTimeout(() => {
-			  assertEventCount(1)
+    loadICalendarWith(multipleEventsOneMunged, () => {
+      setTimeout(() => {
+        assertEventCount(1)
         done()
       }, 100)
     })
   })
 
   it('defaultAllDayEventDuration does not override ical default all day length of one day', (done) => {
-    loadICalendarWith(alldayEvent,
+    loadICalendarWith(
+      alldayEvent,
       () => {
         setTimeout(() => {
           assertEventCount(1)
@@ -108,7 +107,8 @@ describe('addICalEventSource with month view', () => {
           forceEventDuration: true,
           defaultAllDayEventDuration: { days: 2 },
         }).addEventSource(source)
-      })
+      },
+    )
   })
 
   function loadICalendarWith(rawICal: string, assertions: () => void, calendarSetup?: (source: EventSourceInput) => void) {
