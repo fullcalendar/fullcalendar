@@ -1,4 +1,4 @@
-/* eslint max-classes-per-file: "off" */
+/* eslint max-classes-per-file: off */
 
 import { Ref, createRef, ComponentChildren, createElement, RefObject, createContext, Context } from '../vdom'
 import { setRef, BaseComponent } from '../vdom-util'
@@ -28,7 +28,10 @@ export type RenderHookPropsChildren = (
 ) => ComponentChildren
 
 export interface ContentTypeHandlers {
-  [contentKey: string]: () => (el: HTMLElement, contentVal: any) => void
+  [contentKey: string]: () => ({
+    render: (el: HTMLElement, contentVal: any) => void
+    destroy?: () => void
+  })
 }
 
 // NOTE: in JSX, you should always use this class with <HookProps> arg. otherwise, will default to any???
@@ -110,7 +113,8 @@ class ContentHookInner<HookProps> extends BaseComponent<ContentHookInnerProps<Ho
   private customContentInfo: {
     contentKey: string
     contentVal: any
-    handler: (el: HTMLElement, contentVal: any) => void
+    render: (el: HTMLElement, contentVal: any) => void
+    destroy?: () => void
   }
 
   render() {
@@ -123,6 +127,12 @@ class ContentHookInner<HookProps> extends BaseComponent<ContentHookInnerProps<Ho
 
   componentDidUpdate() {
     this.updateCustomContent()
+  }
+
+  componentWillUnmount() {
+    if (this.customContentInfo && this.customContentInfo.destroy) {
+      this.customContentInfo.destroy()
+    }
   }
 
   private renderInnerContent() {
@@ -143,10 +153,11 @@ class ContentHookInner<HookProps> extends BaseComponent<ContentHookInnerProps<Ho
         // look for a prop that would indicate a custom content handler is needed
         for (let contentKey in contentTypeHandlers) {
           if (innerContent[contentKey] !== undefined) {
+            let stuff = contentTypeHandlers[contentKey]()
             customContentInfo = this.customContentInfo = {
               contentKey,
               contentVal: innerContent[contentKey],
-              handler: contentTypeHandlers[contentKey](),
+              ...stuff,
             }
             break
           }
@@ -165,7 +176,7 @@ class ContentHookInner<HookProps> extends BaseComponent<ContentHookInnerProps<Ho
 
   private updateCustomContent() {
     if (this.customContentInfo) {
-      this.customContentInfo.handler(
+      this.customContentInfo.render(
         this.innerElRef.current || this.props.backupElRef.current, // the element to render into
         this.customContentInfo.contentVal,
       )

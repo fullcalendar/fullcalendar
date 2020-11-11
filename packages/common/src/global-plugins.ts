@@ -22,8 +22,8 @@ export const globalPlugins: PluginDef[] = [ // TODO: make a const?
   changeHandlerPlugin,
   createPlugin({ // misc...
     contentTypeHandlers: {
-      html: () => injectHtml,
-      domNodes: () => injectDomNodes,
+      html: () => ({ render: injectHtml }),
+      domNodes: () => ({ render: injectDomNodes }),
     },
     propSetHandlers: {
       dateProfile: handleDateProfile,
