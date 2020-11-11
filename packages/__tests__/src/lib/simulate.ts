@@ -285,7 +285,7 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
       if (
         $.contains(docNode, targetNode) ||
         isTouch // touch will always first touchend on original node, even if removed from DOM
-          // https://stackoverflow.com/a/45760014
+        // https://stackoverflow.com/a/45760014
       ) {
         self.simulateEvent(targetNode, isTouch ? 'touchend' : 'mouseup', clientCoords)
         self.simulateEvent(targetNode, 'click', clientCoords)

@@ -62,7 +62,7 @@ describe('slotDuration', () => {
             slotDuration: { minutes: slotMinutes },
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
-        let slotCount = timeGridWrapper.getSlotEls().length
+          let slotCount = timeGridWrapper.getSlotEls().length
           let expected = Math.ceil(minutesInADay / slotMinutes)
           expect(slotCount).toEqual(expected)
         })

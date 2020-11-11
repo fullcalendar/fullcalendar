@@ -107,12 +107,13 @@ function parseCmdStr(cmdStr: string): CmdParts {
       whole: parts[1] + middle.whole + parts[3],
     }
   }
-    return {
-      head: null,
-      middle: null,
-      tail: null,
-      whole: cmdStr,
-    }
+
+  return {
+    head: null,
+    middle: null,
+    tail: null,
+    whole: cmdStr,
+  }
 }
 
 function formatRange(

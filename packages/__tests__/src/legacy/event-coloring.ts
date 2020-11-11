@@ -220,7 +220,8 @@ describe('event coloring', () => {
     if (prop === 'color') {
       return $(eventEl).find('.fc-event-title').css(prop)
     }
-      return $(eventEl).css(prop)
+
+    return $(eventEl).css(prop)
   }
 
   function getTestEvent(defaultOptions, extraOptions = {}): EventInput {

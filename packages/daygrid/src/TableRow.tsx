@@ -176,10 +176,13 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
     if (props.eventDrag && props.eventDrag.segs.length) { // messy check
       return props.eventDrag.segs as TableSeg[]
-    } if (props.eventResize && props.eventResize.segs.length) { // messy check
+    }
+
+    if (props.eventResize && props.eventResize.segs.length) { // messy check
       return props.eventResize.segs as TableSeg[]
     }
-      return props.dateSelectionSegs
+
+    return props.dateSelectionSegs
   }
 
   getMirrorSegs(): TableSeg[] {
@@ -188,7 +191,8 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     if (props.eventResize && props.eventResize.segs.length) { // messy check
       return props.eventResize.segs as TableSeg[]
     }
-      return []
+
+    return []
   }
 
   renderFgSegs(

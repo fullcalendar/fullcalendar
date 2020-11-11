@@ -5,7 +5,8 @@ describe('weekText', () => { // TODO: rename file
   pushOptions({
     weekNumbers: true,
   });
-['timeGridWeek'].forEach((viewName) => {
+
+  ['timeGridWeek'].forEach((viewName) => {
     describe('when views is ' + viewName, () => {
       pushOptions({
         initialView: viewName,

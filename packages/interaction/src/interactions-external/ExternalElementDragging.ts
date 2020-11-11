@@ -59,10 +59,11 @@ export class ExternalElementDragging {
   buildDragMeta(subjectEl: HTMLElement) {
     if (typeof this.suppliedDragMeta === 'object') {
       return parseDragMeta(this.suppliedDragMeta)
-    } if (typeof this.suppliedDragMeta === 'function') {
+    }
+    if (typeof this.suppliedDragMeta === 'function') {
       return parseDragMeta(this.suppliedDragMeta(subjectEl))
     }
-      return getDragMetaFromEl(subjectEl)
+    return getDragMetaFromEl(subjectEl)
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {

@@ -64,7 +64,7 @@ export function reduceEventStore(
 
     case 'REMOVE_ALL_EVENT_SOURCES':
       return filterEventStoreDefs(eventStore, (eventDef: EventDef) => (
-       !eventDef.sourceId // only keep events with no source id
+        !eventDef.sourceId // only keep events with no source id
       ))
 
     case 'REMOVE_ALL_EVENTS':

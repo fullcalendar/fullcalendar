@@ -269,9 +269,9 @@ function computeMutation(
       return props
     }
   } else if (dateEnv.add(instanceRange.end, delta) > instanceRange.start) {
-      props.endDelta = delta
-      return props
-    }
+    props.endDelta = delta
+    return props
+  }
 
   return null
 }

@@ -194,7 +194,7 @@ export class AutoScroller {
       if (el === window) {
         return new WindowScrollGeomCache(false) // false = don't listen to user-generated scrolls
       }
-        return new ElementScrollGeomCache(el, false) // false = don't listen to user-generated scrolls
+      return new ElementScrollGeomCache(el, false) // false = don't listen to user-generated scrolls
     })
   }
 

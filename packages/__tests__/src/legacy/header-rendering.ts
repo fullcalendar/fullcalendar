@@ -13,11 +13,13 @@ describe('headerToolbar rendering', () => { // TODO: rename file
 
     expect(toolbarWrapper.getSectionContent(2)).toEqual([
       { type: 'button', name: 'today' },
-      { type: 'button-group',
-children: [
-        { type: 'button', name: 'prev' },
-        { type: 'button', name: 'next' },
-      ] },
+      {
+        type: 'button-group',
+        children: [
+          { type: 'button', name: 'prev' },
+          { type: 'button', name: 'next' },
+        ],
+      },
     ])
   })
 
@@ -32,22 +34,26 @@ children: [
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
     expect(toolbarWrapper.getSectionContent(0)).toEqual([
-      { type: 'button-group',
-children: [
-        { type: 'button', name: 'next' },
-        { type: 'button', name: 'prev' },
-      ] },
+      {
+        type: 'button-group',
+        children: [
+          { type: 'button', name: 'next' },
+          { type: 'button', name: 'prev' },
+        ],
+      },
     ])
 
     expect(toolbarWrapper.getSectionContent(1)).toEqual([
       { type: 'button', name: 'prevYear' },
       { type: 'button', name: 'today' },
       { type: 'button', name: 'nextYear' },
-      { type: 'button-group',
-children: [
-        { type: 'button', name: 'timeGridDay' },
-        { type: 'button', name: 'timeGridWeek' },
-      ] },
+      {
+        type: 'button-group',
+        children: [
+          { type: 'button', name: 'timeGridDay' },
+          { type: 'button', name: 'timeGridWeek' },
+        ],
+      },
     ])
 
     expect(toolbarWrapper.getSectionContent(2)).toEqual([

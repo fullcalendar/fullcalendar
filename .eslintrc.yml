@@ -1,10 +1,11 @@
 ---
   extends: airbnb-typescript
+
   settings:
     react:
       version: detect
+
   rules:
-    '@typescript-eslint/indent': off # because https://github.com/typescript-eslint/typescript-eslint/issues/1824
     '@typescript-eslint/lines-between-class-members':
       - error
       - exceptAfterSingleLine: true
@@ -63,3 +64,14 @@
     react/react-in-jsx-scope: off # because we use preact
     react/sort-comp: off
     react/static-property-placement: off # typescript transpilation makes this a non-issue
+
+  overrides:
+    # indentation of TS defs is wonkily linted. disable for specific files.
+    # https://github.com/typescript-eslint/typescript-eslint/issues/1824
+    - files:
+        - packages/common/src/options.ts
+        - packages-premium/resource-common/src/reducers/resource-action.ts
+        - packages-premium/timeline/src/TimelineLaneSlicer.ts
+        - packages/__tests__/src/legacy/header-rendering.ts
+      rules:
+        '@typescript-eslint/indent': off

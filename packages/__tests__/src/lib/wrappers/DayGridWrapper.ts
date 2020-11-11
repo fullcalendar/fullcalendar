@@ -33,10 +33,10 @@ export class DayGridWrapper {
     if (typeof date === 'number') {
       return findElements(this.el, `.fc-day.${CalendarWrapper.DOW_CLASSNAMES[date]}`)
     }
-      if (typeof date === 'string') {
-        date = new Date(date)
-      }
-      return findElements(this.el, '.fc-day[data-date="' + formatIsoDay(date) + '"]')
+    if (typeof date === 'string') {
+      date = new Date(date)
+    }
+    return findElements(this.el, '.fc-day[data-date="' + formatIsoDay(date) + '"]')
   }
 
   getDayNumberText(date) {

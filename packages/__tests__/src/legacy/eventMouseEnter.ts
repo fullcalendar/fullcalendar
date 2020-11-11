@@ -3,7 +3,8 @@ describe('eventMouseEnter', () => {
     initialDate: '2014-08-01',
     scrollTime: '00:00:00',
   });
-['dayGridMonth', 'timeGridWeek'].forEach((viewName) => {
+
+  ['dayGridMonth', 'timeGridWeek'].forEach((viewName) => {
     describe('for ' + viewName + ' view', () => {
       pushOptions({
         initialView: viewName,

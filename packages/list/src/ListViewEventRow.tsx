@@ -126,11 +126,12 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewCont
         </RenderHook>
       )
     }
-      return (
-        <td className="fc-list-event-time">
-          {timeText}
-        </td>
-      )
+
+    return (
+      <td className="fc-list-event-time">
+        {timeText}
+      </td>
+    )
   }
 
   return null

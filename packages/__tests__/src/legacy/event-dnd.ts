@@ -176,7 +176,8 @@ describe('eventDrop', () => {
     pushOptions({
       initialView: 'timeGridWeek',
     });
-[false, true].forEach((isTouch) => {
+
+    [false, true].forEach((isTouch) => {
       describe('with ' + (isTouch ? 'touch' : 'mouse'), () => {
         describe('when dragging a timed event to another time on a different day', () => {
           it('should be given correct arguments and delta with days/time', (done) => {

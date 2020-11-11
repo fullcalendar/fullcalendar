@@ -53,8 +53,8 @@ export function getLeadingBoundingRect(els, direction = 'ltr') {
         best = rect
       }
     } else if (rect.left < best.left) {
-        best = rect
-      }
+      best = rect
+    }
   })
   return best
 }
@@ -72,8 +72,8 @@ export function getTrailingBoundingRect(els, direction = 'ltr') {
         best = rect
       }
     } else if (rect.right > best.right) {
-        best = rect
-      }
+      best = rect
+    }
   })
   return best
 }

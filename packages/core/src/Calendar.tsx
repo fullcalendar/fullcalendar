@@ -2,7 +2,7 @@ import {
   CalendarOptions, Action, CalendarContent, render, createElement, DelayedRunner, CssDimValue, applyStyleProp,
   CalendarApi, CalendarRoot, isArraysEqual, CalendarDataManager, CalendarData,
   CustomContentRenderContext, flushToDom, unmountComponentAtNode,
- } from '@fullcalendar/common'
+} from '@fullcalendar/common'
 
 export class Calendar extends CalendarApi {
   currentData: CalendarData

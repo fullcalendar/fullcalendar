@@ -218,29 +218,29 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
               <div className="fc-timegrid-now-indicator-container">
                 <NowTimer unit={isNowIndicator ? 'minute' : 'day' /* hacky */}>
                   {(nowDate: DateMarker) => {
-                  let nowIndicatorTop =
-                    isNowIndicator &&
-                    slatCoords &&
-                    slatCoords.safeComputeTop(nowDate) // might return void
+                    let nowIndicatorTop =
+                      isNowIndicator &&
+                      slatCoords &&
+                      slatCoords.safeComputeTop(nowDate) // might return void
 
-                  if (typeof nowIndicatorTop === 'number') {
-                    return (
-                      <NowIndicatorRoot isAxis date={nowDate}>
-                        {(rootElRef, classNames, innerElRef, innerContent) => (
-                          <div
-                            ref={rootElRef}
-                            className={['fc-timegrid-now-indicator-arrow'].concat(classNames).join(' ')}
-                            style={{ top: nowIndicatorTop }}
-                          >
-                            {innerContent}
-                          </div>
-                        )}
-                      </NowIndicatorRoot>
-                    )
-                  }
+                    if (typeof nowIndicatorTop === 'number') {
+                      return (
+                        <NowIndicatorRoot isAxis date={nowDate}>
+                          {(rootElRef, classNames, innerElRef, innerContent) => (
+                            <div
+                              ref={rootElRef}
+                              className={['fc-timegrid-now-indicator-arrow'].concat(classNames).join(' ')}
+                              style={{ top: nowIndicatorTop }}
+                            >
+                              {innerContent}
+                            </div>
+                          )}
+                        </NowIndicatorRoot>
+                      )
+                    }
 
-                  return null
-                }}
+                    return null
+                  }}
                 </NowTimer>
               </div>
             </div>
