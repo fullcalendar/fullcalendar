@@ -1,8 +1,8 @@
 import XHRMock from 'xhr-mock'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import dayGridMonth from '@fullcalendar/daygrid'
 import { EventSourceInput } from '@fullcalendar/core'
 import iCalendarPlugin from '@fullcalendar/icalendar'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 import alldayEvent from './data/alldayEvent'
 import multidayEvent from './data/multidayEvent'
@@ -12,24 +12,24 @@ import oneHourMeeting from './data/oneHourMeeting'
 import recurringWeeklyMeeting from './data/recurringWeeklyMeeting'
 import mungedOneHourMeeting from './data/mungedOneHourMeeting'
 
-describe('addICalEventSource with month view', function() {
+describe('addICalEventSource with month view', () => {
   const ICAL_MIME_TYPE = 'text/calendar'
 
   pushOptions({
-    plugins: [ iCalendarPlugin, dayGridMonth ],
+    plugins: [iCalendarPlugin, dayGridMonth],
     initialDate: '2019-04-10', // the start of the three-day event in the feed
     initialView: 'dayGridMonth',
   })
 
-  beforeEach(function() { XHRMock.setup() })
+  beforeEach(() => { XHRMock.setup() })
 
-  afterEach(function() { XHRMock.teardown() })
+  afterEach(() => { XHRMock.teardown() })
 
   it('correctly adds an all day event', (done) => {
     loadICalendarWith(alldayEvent, () => {
       setTimeout(() => {
         assertEventCount(1)
-        currentCalendar.getEvents().forEach(event => expect(event.allDay).toBeTruthy())
+        currentCalendar.getEvents().forEach((event) => expect(event.allDay).toBeTruthy())
         done()
       }, 100)
     })
@@ -39,7 +39,7 @@ describe('addICalEventSource with month view', function() {
     loadICalendarWith(multidayEvent, () => {
       setTimeout(() => {
         assertEventCount(1)
-        currentCalendar.getEvents().forEach(event => expect(event.allDay).toBeTruthy())
+        currentCalendar.getEvents().forEach((event) => expect(event.allDay).toBeTruthy())
         done()
       }, 100)
     })
@@ -49,7 +49,7 @@ describe('addICalEventSource with month view', function() {
     loadICalendarWith(multipleMultidayEvents, () => {
       setTimeout(() => {
         assertEventCount(2)
-        currentCalendar.getEvents().forEach(event => expect(event.allDay).toBeTruthy())
+        currentCalendar.getEvents().forEach((event) => expect(event.allDay).toBeTruthy())
         done()
       }, 100)
     })
@@ -59,11 +59,11 @@ describe('addICalEventSource with month view', function() {
     loadICalendarWith(oneHourMeeting, () => {
       setTimeout(() => {
         assertEventCount(1)
-        currentCalendar.getEvents().forEach(event => expect(event.allDay).not.toBeTruthy())
+        currentCalendar.getEvents().forEach((event) => expect(event.allDay).not.toBeTruthy())
         done()
       }, 100)
     })
-	})
+  })
 
   it('correctly adds a repeating weekly meeting', (done) => {
     loadICalendarWith(recurringWeeklyMeeting, () => {
@@ -72,25 +72,25 @@ describe('addICalEventSource with month view', function() {
         done()
       }, 100)
     })
-	})
+  })
 
   it('ignores a munged event', (done) => {
 	  loadICalendarWith(mungedOneHourMeeting, () => {
 		  setTimeout(() => {
 			  assertEventCount(0)
-				done()
-			}, 100)
-		})
-	})
+        done()
+      }, 100)
+    })
+  })
 
   it('adds a valid event and ignores a munged event', (done) => {
 	  loadICalendarWith(multipleEventsOneMunged, () => {
 		  setTimeout(() => {
 			  assertEventCount(1)
-				done()
-			}, 100)
-		})
-	})
+        done()
+      }, 100)
+    })
+  })
 
   it('defaultAllDayEventDuration does not override ical default all day length of one day', (done) => {
     loadICalendarWith(alldayEvent,
@@ -114,7 +114,7 @@ describe('addICalEventSource with month view', function() {
   function loadICalendarWith(rawICal: string, assertions: () => void, calendarSetup?: (source: EventSourceInput) => void) {
     const feedUrl = '/mock.ics'
 
-    XHRMock.get(feedUrl, function(req, res) {
+    XHRMock.get(feedUrl, (req, res) => {
       expect(req.url().query).toEqual({})
 
       return res.status(200)

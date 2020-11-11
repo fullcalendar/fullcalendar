@@ -1,9 +1,7 @@
 import XHRMock from 'xhr-mock'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import { EventSourceInput } from '@fullcalendar/core'
 import iCalendarPlugin from '@fullcalendar/icalendar'
-
 import oneHourMeeting from './data/oneHourMeeting'
 import recurringWeeklyMeeting from './data/recurringWeeklyMeeting'
 import mungedOneHourMeeting from './data/mungedOneHourMeeting'
@@ -11,20 +9,21 @@ import meetingWithMungedStart from './data/meetingWithMungedStart'
 import alldayEvent from './data/alldayEvent'
 import timedMeetingWithoutEnd from './data/timedMeetingWithoutEnd'
 import timedMeetingWithDuration from './data/timedMeetingWithDuration'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('addICalEventSource with week view', function() {
+describe('addICalEventSource with week view', () => {
   const ICAL_MIME_TYPE = 'text/calendar'
 
   pushOptions({
-    plugins: [ iCalendarPlugin, timeGridPlugin ],
+    plugins: [iCalendarPlugin, timeGridPlugin],
     initialDate: '2019-04-15', // The start of the week for oneHourMeeting
     initialView: 'timeGridDay',
     timeZone: 'Europe/Paris',
   })
 
-  beforeEach(function() { XHRMock.setup() })
+  beforeEach(() => { XHRMock.setup() })
 
-  afterEach(function() { XHRMock.teardown() })
+  afterEach(() => { XHRMock.teardown() })
 
   it('correctly adds a one-hour long meeting', (done) => {
     loadICalendarWith(oneHourMeeting, () => {
@@ -33,7 +32,7 @@ describe('addICalEventSource with week view', function() {
         done()
       }, 100)
     })
-	})
+  })
 
   xit('correctly adds a repeating weekly meeting', (done) => {
     // I want to test that the event for the current week is visible but
@@ -44,13 +43,13 @@ describe('addICalEventSource with week view', function() {
         done()
       }, 100)
     })
-	})
+  })
 
   it('adds an all day event', (done) => {
     loadICalendarWith(alldayEvent, () => {
       setTimeout(() => {
         assertEventCount(1)
-        currentCalendar.getEvents().forEach(event => expect(event.allDay).toBeTruthy())
+        currentCalendar.getEvents().forEach((event) => expect(event.allDay).toBeTruthy())
         done()
       })
     })
@@ -62,8 +61,8 @@ describe('addICalEventSource with week view', function() {
         assertEventCount(0)
         done()
       }, 100)
-		})
-	})
+    })
+  })
 
   it('ignores a meeting with a munged start', (done) => {
     loadICalendarWith(meetingWithMungedStart, () => {
@@ -71,8 +70,8 @@ describe('addICalEventSource with week view', function() {
         assertEventCount(0)
         done()
       }, 100)
-		})
-	})
+    })
+  })
 
   it('sets default duration when forceEventDuration is enabled and no end or duration included in the VEVENT', (done) => {
     loadICalendarWith(timedMeetingWithoutEnd,
@@ -132,7 +131,7 @@ describe('addICalEventSource with week view', function() {
   function loadICalendarWith(rawICal: string, assertions: () => void, calendarSetup?: (source: EventSourceInput) => void) {
     const feedUrl = '/mock.ics'
 
-    XHRMock.get(feedUrl, function(req, res) {
+    XHRMock.get(feedUrl, (req, res) => {
       expect(req.url().query).toEqual({})
 
       return res.status(200)
