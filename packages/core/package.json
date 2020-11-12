@@ -1,11 +1,11 @@
 {
   "name": "@fullcalendar/core",
-  "version": "5.3.1",
+  "version": "5.4.0",
   "title": "FullCalendar Core Package",
   "description": "Provides core functionality, including the Calendar class",
   "docs": "https://fullcalendar.io/docs/initialize-es6",
   "dependencies": {
-    "@fullcalendar/common": "workspace:~5.3.1",
+    "@fullcalendar/common": "workspace:~5.4.0",
     "preact": "^10.0.5",
     "tslib": "^2.0.3"
   },
