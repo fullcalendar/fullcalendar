@@ -24,7 +24,7 @@ describe('addICalEventSource with week view', () => {
   beforeEach(() => { XHRMock.setup() })
   afterEach(() => { XHRMock.teardown() })
 
-  it('correctly adds a one-hour long meeting', (done) => {
+  it('adds a one-hour long meeting', (done) => {
     loadICalendarWith(oneHourMeeting, () => {
       setTimeout(() => {
         assertEventCount(1)
@@ -33,7 +33,7 @@ describe('addICalEventSource with week view', () => {
     })
   })
 
-  xit('correctly adds a repeating weekly meeting', (done) => {
+  xit('adds a repeating weekly meeting', (done) => {
     // I want to test that the event for the current week is visible but
     // am unsure how to do this.
     loadICalendarWith(recurringWeeklyMeeting, () => {
@@ -78,7 +78,6 @@ describe('addICalEventSource with week view', () => {
       () => {
         setTimeout(() => {
           assertEventCount(1)
-          // check that event has been given a two day length
           const event = currentCalendar.getEvents()[0]
           expect(event.end.getHours()).toEqual(event.start.getHours() + 3)
           done()
@@ -99,7 +98,6 @@ describe('addICalEventSource with week view', () => {
       () => {
         setTimeout(() => {
           assertEventCount(1)
-          // check that event has been given a two day length
           const event = currentCalendar.getEvents()[0]
           expect(event.end).toBeNull()
           done()
@@ -120,7 +118,6 @@ describe('addICalEventSource with week view', () => {
       () => {
         setTimeout(() => {
           assertEventCount(1)
-          // check that event has been given a two day length
           const event = currentCalendar.getEvents()[0]
           expect(event.end.getHours()).toEqual(event.start.getHours() + 4)
           done()

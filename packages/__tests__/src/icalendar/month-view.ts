@@ -23,7 +23,7 @@ describe('addICalEventSource with month view', () => {
   beforeEach(() => { XHRMock.setup() })
   afterEach(() => { XHRMock.teardown() })
 
-  it('correctly adds an all day event', (done) => {
+  it('adds an all day event', (done) => {
     loadICalendarWith(alldayEvent, () => {
       setTimeout(() => {
         assertEventCount(1)
@@ -33,7 +33,7 @@ describe('addICalEventSource with month view', () => {
     })
   })
 
-  it('correctly adds a single multi-day event', (done) => {
+  it('adds a single multi-day event', (done) => {
     loadICalendarWith(multidayEvent, () => {
       setTimeout(() => {
         assertEventCount(1)
@@ -43,7 +43,7 @@ describe('addICalEventSource with month view', () => {
     })
   })
 
-  it('correctly adds multiple multi-day events', (done) => {
+  it('adds multiple multi-day events', (done) => {
     loadICalendarWith(multipleMultidayEvents, () => {
       setTimeout(() => {
         assertEventCount(2)
@@ -53,7 +53,7 @@ describe('addICalEventSource with month view', () => {
     })
   })
 
-  it('correctly adds a one-hour long meeting', (done) => {
+  it('adds a one-hour long meeting', (done) => {
     loadICalendarWith(oneHourMeeting, () => {
       setTimeout(() => {
         assertEventCount(1)
@@ -63,7 +63,7 @@ describe('addICalEventSource with month view', () => {
     })
   })
 
-  it('correctly adds a repeating weekly meeting', (done) => {
+  it('adds a repeating weekly meeting', (done) => {
     loadICalendarWith(recurringWeeklyMeeting, () => {
       setTimeout(() => {
         assertEventCount(5)
@@ -96,7 +96,6 @@ describe('addICalEventSource with month view', () => {
       () => {
         setTimeout(() => {
           assertEventCount(1)
-          // check that event has been given a two day length
           const event = currentCalendar.getEvents()[0]
           expect(event.end.getDate()).toEqual(event.start.getDate() + 1)
           done()
