@@ -3,16 +3,17 @@
 <head>
 <meta charset='utf-8' />
 <link href='../packages/bundle/main.css' rel='stylesheet' />
+<script src='https://github.com/mozilla-comm/ical.js/releases/download/v1.4.0/ical.js'></script>
 <script src='../packages/bundle/main.js'></script>
+<script src='../packages/icalendar/main.global.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
-
       events: {
-        feedUrl: 'https://duckduckgo.com', // need a valid request that obeys CORS
+        feedUrl: '/examples/ical/feed.ics',
       },
 
       headerToolbar: {
@@ -21,7 +22,8 @@
         right: 'dayGridMonth,listYear'
       },
 
-      displayEventTime: false, // don't show the time column in list view
+      displayEventTime: false,
+        initialDate: '2019-04-01',
 
       loading: function(bool) {
         document.getElementById('loading').style.display =
