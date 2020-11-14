@@ -1,4 +1,4 @@
-import XHRMock from 'xhr-mock'
+import XHRMock, { once } from 'xhr-mock'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import { EventSourceInput } from '@fullcalendar/core'
 import iCalendarPlugin from '@fullcalendar/icalendar'
@@ -11,8 +11,9 @@ import timedMeetingWithoutEnd from './data/timedMeetingWithoutEnd'
 import timedMeetingWithDuration from './data/timedMeetingWithDuration'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
-describe('addICalEventSource with week view', () => {
+describe('addICalEventSource with day view', () => {
   const ICAL_MIME_TYPE = 'text/calendar'
+  const FEED_URL = '/mock.ics'
 
   pushOptions({
     plugins: [iCalendarPlugin, timeGridPlugin],
@@ -33,12 +34,10 @@ describe('addICalEventSource with week view', () => {
     })
   })
 
-  xit('adds a repeating weekly meeting', (done) => {
-    // I want to test that the event for the current week is visible but
-    // am unsure how to do this.
+  it('adds a repeating weekly meeting', (done) => {
     loadICalendarWith(recurringWeeklyMeeting, () => {
       setTimeout(() => {
-        assertEventCount(1)
+        assertEventCount(5, 1)
         done()
       }, 100)
     })
@@ -132,14 +131,33 @@ describe('addICalEventSource with week view', () => {
     )
   })
 
+  it('does not reload data on next', (done) => {
+    XHRMock.get(FEED_URL, once((req, res) => {
+      expect(req.url().query).toEqual({})
+
+      return res.status(200)
+        .header('content-type', ICAL_MIME_TYPE)
+        .body(timedMeetingWithDuration)
+    }))
+
+    initCalendar().addEventSource({ feedUrl: FEED_URL } as EventSourceInput)
+
+    setTimeout(() => {
+      assertEventCount(1)
+      XHRMock.get(FEED_URL, () => {
+        return Promise.reject(new Error('Calendar.next() should not trigger a new XHR'))
+      })
+      currentCalendar.next()
+      done()
+    }, 100)
+  })
+
   function loadICalendarWith(
     rawICal: string,
     assertions: () => void,
     calendarSetup?: (source: EventSourceInput) => void,
   ) {
-    const feedUrl = '/mock.ics'
-
-    XHRMock.get(feedUrl, (req, res) => {
+    XHRMock.get(FEED_URL, (req, res) => {
       expect(req.url().query).toEqual({})
 
       return res.status(200)
@@ -147,7 +165,7 @@ describe('addICalEventSource with week view', () => {
         .body(rawICal)
     })
 
-    const source = { feedUrl } as EventSourceInput
+    const source = { feedUrl: FEED_URL } as EventSourceInput
 
     if (calendarSetup) {
       calendarSetup(source)
@@ -160,10 +178,11 @@ describe('addICalEventSource with week view', () => {
 
   // Checks to make sure all events have been rendered and that the calendar
   // has internal info on all the events.
-  function assertEventCount(expectedCount: number) {
+  function assertEventCount(expectedCount: number, expectedVisibleCount?: number) {
     expect(currentCalendar.getEvents().length).toEqual(expectedCount)
 
     let calendarWrapper = new CalendarWrapper(currentCalendar)
-    expect(calendarWrapper.getEventEls().length).toEqual(expectedCount)
+    const visibleCount = expectedVisibleCount ? expectedVisibleCount : expectedCount
+    expect(calendarWrapper.getEventEls().length).toEqual(visibleCount)
   }
 })
