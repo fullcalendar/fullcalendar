@@ -144,9 +144,7 @@ describe('addICalEventSource with day view', () => {
 
     setTimeout(() => {
       assertEventCount(1)
-      XHRMock.get(FEED_URL, () => {
-        return Promise.reject(new Error('Calendar.next() should not trigger a new XHR'))
-      })
+      XHRMock.get(FEED_URL, () => Promise.reject(new Error('Calendar.next() should not trigger a new XHR')))
       currentCalendar.next()
       done()
     }, 100)
@@ -182,7 +180,7 @@ describe('addICalEventSource with day view', () => {
     expect(currentCalendar.getEvents().length).toEqual(expectedCount)
 
     let calendarWrapper = new CalendarWrapper(currentCalendar)
-    const visibleCount = expectedVisibleCount ? expectedVisibleCount : expectedCount
+    const visibleCount = expectedVisibleCount || expectedCount
     expect(calendarWrapper.getEventEls().length).toEqual(visibleCount)
   }
 })
