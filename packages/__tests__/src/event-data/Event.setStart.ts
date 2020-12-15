@@ -31,6 +31,23 @@ describe('Event::setStart', () => {
         expect(event.end).toBe(null)
       })
     })
+
+    it('can revert', () => {
+      let revertCalled = false
+      let calendar = initCalendar({
+        eventChange(info) {
+          revertCalled = true
+          info.revert()
+        }
+      })
+
+      let event = calendar.getEventById('1')
+      event.setStart('2018-09-01') // will be immediately undone
+
+      let events = calendar.getEvents()
+      expect(events.length).toBe(1)
+      expect(events[0].start).toEqualDate('2018-09-05T00:00:00')
+    })
   })
 
   describe('when event does have an end', () => {

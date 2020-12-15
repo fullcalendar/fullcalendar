@@ -246,8 +246,8 @@ export class EventApi {
         relatedEvents: buildEventApis(relevantEvents, context, instance),
         revert() {
           context.dispatch({
-            type: 'REMOVE_EVENTS',
-            eventStore: relevantEvents,
+            type: 'RESET_EVENTS',
+            eventStore, // the ORIGINAL store
           })
         },
       })

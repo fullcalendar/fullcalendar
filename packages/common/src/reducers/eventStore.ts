@@ -44,6 +44,9 @@ export function reduceEventStore(
         context,
       )
 
+    case 'RESET_EVENTS':
+      return action.eventStore
+
     case 'MERGE_EVENTS': // already parsed and expanded
       return mergeEventStores(eventStore, action.eventStore)
 

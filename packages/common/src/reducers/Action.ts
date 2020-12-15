@@ -43,6 +43,7 @@ export type Action =
   } | // need all these?
 
   { type: 'ADD_EVENTS', eventStore: EventStore } |
+  { type: 'RESET_EVENTS', eventStore: EventStore } |
   { type: 'MERGE_EVENTS', eventStore: EventStore } |
   { type: 'REMOVE_EVENTS', eventStore: EventStore } |
   { type: 'REMOVE_ALL_EVENTS' }
