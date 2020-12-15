@@ -1,4 +1,6 @@
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { RED_REGEX } from '../lib/dom-misc'
 
 describe('eventContent', () => {
   pushOptions({
@@ -42,5 +44,45 @@ describe('eventContent', () => {
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     let eventEl = dayGridWrapper.getEventEls()[0]
     expect($(eventEl).text()).toBe('1amy event')
+  })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/5916
+  xit('can render multiple appearance changes in eventDidMount', () => {
+    let calendar = initCalendar({
+      initialView: 'timeGridWeek',
+      initialDate: '2020-12-13',
+      eventDidMount(arg){
+        arg.event.setProp('backgroundColor', 'red')
+        arg.event.setProp('title', 'name changed')
+      },
+      events: [
+        {
+          id: 'a',
+          title: 'a',
+          start: '2020-12-15T09:30:00'
+        },
+        {
+          id: 'b',
+          title: 'b',
+          start: '2020-12-22T09:30:00'
+        },
+      ]
+    })
+
+    function expectEventDataChanged(id) {
+      let event = calendar.getEventById(id)
+      expect(event.title).toBe('name changed')
+      expect(event.backgroundColor).toBe('red')
+    }
+
+    let viewWrapper = new TimeGridViewWrapper(calendar).timeGrid
+    let eventEl = viewWrapper.getEventEls()[0]
+    expect($(eventEl).css('background-color')).toMatch(RED_REGEX)
+    expectEventDataChanged('a')
+
+    calendar.next()
+    eventEl = viewWrapper.getEventEls()[0]
+    expect($(eventEl).css('background-color')).toMatch(RED_REGEX)
+    expectEventDataChanged('b')
   })
 })
