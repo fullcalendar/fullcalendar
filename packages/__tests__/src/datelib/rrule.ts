@@ -1,5 +1,6 @@
 import dayGridPlugin from '@fullcalendar/daygrid'
 import rrulePlugin from '@fullcalendar/rrule'
+import luxonPlugin from '@fullcalendar/luxon'
 import { parseUtcDate, parseLocalDate } from '../lib/date-parsing'
 
 describe('rrule plugin', () => {
@@ -352,6 +353,27 @@ describe('rrule plugin', () => {
       expect(events[0].start).toEqualDate('2020-09-19T03:00:00')
       expect(events[1].start).toEqualDate('2020-09-26T03:00:00')
       expect(events[2].start).toEqualDate('2020-10-10T03:00:00')
+    })
+
+    // https://github.com/fullcalendar/fullcalendar/issues/5993
+    it('won\'t accidentally clip dates when calendar has non-UTC timezone', () => {
+      let calendar = initCalendar({
+        plugins: [rrulePlugin, dayGridPlugin, luxonPlugin],
+        initialDate: '2020-11-01',
+        timeZone: 'Asia/Manila',
+        events: [
+          {
+            duration: '01:00',
+            rrule: {
+              freq: 'daily',
+              dtstart: '2020-10-24T16:00:00Z' // will be 00:00 in Manila
+            }
+          }
+        ]
+      })
+
+      let events = calendar.getEvents()
+      expect(events[0].start).toEqualDate(calendar.view.activeStart)
     })
   })
 

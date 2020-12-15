@@ -35,17 +35,23 @@ let recurring: RecurringType<RRuleParsed> = {
   },
 
   expand(parsed: RRuleParsed, framingRange: DateRange, dateEnv: DateEnv): DateMarker[] {
-    let dates = parsed.rrule.between(framingRange.start, framingRange.end, true) // always UTC
+    let dates: DateMarker[]
 
-    if (parsed.isTimeZoneSpecified) { // not already in DateMarker form
-      dates = dates.map((date) => dateEnv.createMarker(date))
+    if (parsed.isTimeZoneSpecified) {
+      dates = parsed.rrule.between(
+        dateEnv.toDate(framingRange.start), // rrule lib will treat as UTC-zoned
+        dateEnv.toDate(framingRange.end), // (same)
+        true, // inclusive (will give extra events at start, see https://github.com/jakubroztocil/rrule/issues/84)
+      ).map((date) => dateEnv.createMarker(date)) // convert UTC-zoned-date to locale datemarker
+    } else {
+      // when no timezone in given start/end, the rrule lib will assume UTC,
+      // which is same as our DateMarkers. no need to manipulate
+      dates = parsed.rrule.between(
+        framingRange.start,
+        framingRange.end,
+        true, // inclusive (will give extra events at start, see https://github.com/jakubroztocil/rrule/issues/84)
+      )
     }
-
-    // we WANT an inclusive start and in exclusive end, but the js rrule lib will only do either BOTH
-    // inclusive or BOTH exclusive, which is stupid: https://github.com/jakubroztocil/rrule/issues/84
-    // Workaround: make inclusive, which will generate extra occurences, and then trim.
-    dates = dates.filter((date) => date.valueOf() < framingRange.end.valueOf())
-
     return dates
   },
 
