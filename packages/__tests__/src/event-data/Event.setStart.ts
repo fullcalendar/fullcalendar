@@ -43,6 +43,7 @@ describe('Event::setStart', () => {
 
       let event = calendar.getEventById('1')
       event.setStart('2018-09-01') // will be immediately undone
+      expect(revertCalled).toBe(true)
 
       let events = calendar.getEvents()
       expect(events.length).toBe(1)
