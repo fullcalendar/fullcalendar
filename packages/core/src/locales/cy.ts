@@ -9,7 +9,7 @@ export default {
   buttonText: {
     prev: 'Blaenorol',
     next: 'Nesaf',
-    today: "Heddiw",
+    today: 'Heddiw',
     year: 'Blwyddyn',
     month: 'Mis',
     week: 'Wythnos',
@@ -17,7 +17,7 @@ export default {
     list: 'Rhestr',
   },
   weekText: 'Wythnos',
-  allDayText: "Trwy'r dydd",
+  allDayText: 'Trwy\'r dydd',
   moreLinkText: 'Mwy',
   noEventsText: 'Dim digwyddiadau',
 } as LocaleInput
