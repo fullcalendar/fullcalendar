@@ -1,4 +1,3 @@
-
 import { LocaleInput } from '@fullcalendar/common'
 
 export default {
