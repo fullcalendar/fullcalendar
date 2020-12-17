@@ -16,6 +16,9 @@ export function getScrollbarWidths() { // TODO: way to force recompute?
 function computeScrollbarWidths(): ScrollbarWidths {
   let el = document.createElement('div')
   el.style.overflow = 'scroll'
+  el.style.position = 'absolute'
+  el.style.top = '-9999px'
+  el.style.left = '-9999px'
   document.body.appendChild(el)
   let res = computeScrollbarWidthsForEl(el)
   document.body.removeChild(el)
