@@ -9,6 +9,7 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     id: guid(),
     deps: input.deps || [],
     reducers: input.reducers || [],
+    isLoadingFuncs: input.isLoadingFuncs || [],
     contextInit: [].concat(input.contextInit || []),
     eventRefiners: input.eventRefiners || {},
     eventDefMemberAdders: input.eventDefMemberAdders || [],
@@ -48,6 +49,7 @@ function buildPluginHooks(pluginDefs: PluginDef[], globalDefs: PluginDef[]): Plu
   let isAdded: { [pluginId: string]: boolean } = {}
   let hooks: PluginHooks = {
     reducers: [],
+    isLoadingFuncs: [],
     contextInit: [],
     eventRefiners: {},
     eventDefMemberAdders: [],
@@ -119,6 +121,7 @@ export function buildBuildPluginHooks() { // memoizes
 function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
   return {
     reducers: hooks0.reducers.concat(hooks1.reducers),
+    isLoadingFuncs: hooks0.isLoadingFuncs.concat(hooks1.isLoadingFuncs),
     contextInit: hooks0.contextInit.concat(hooks1.contextInit),
     eventRefiners: { ...hooks0.eventRefiners, ...hooks1.eventRefiners },
     eventDefMemberAdders: hooks0.eventDefMemberAdders.concat(hooks1.eventDefMemberAdders),

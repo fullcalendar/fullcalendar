@@ -9,6 +9,8 @@ import { handleDateProfile } from './dates-set'
 import { handleEventStore } from './event-crud'
 import { isArraysEqual } from './util/array'
 import { removeElement } from './util/dom-manip'
+import { computeEventSourcesLoading } from './reducers/eventSources'
+import { CalendarDataManagerState } from './reducers/data-types'
 
 /*
 this array is exposed on the root namespace so that UMD plugins can add to it.
@@ -21,6 +23,9 @@ export const globalPlugins: PluginDef[] = [ // TODO: make a const?
   simpleRecurringEventsPlugin,
   changeHandlerPlugin,
   createPlugin({ // misc...
+    isLoadingFuncs: [
+      (state: CalendarDataManagerState) => computeEventSourcesLoading(state.eventSources),
+    ],
     contentTypeHandlers: {
       html: () => ({ render: injectHtml }),
       domNodes: () => ({ render: injectDomNodes }),
