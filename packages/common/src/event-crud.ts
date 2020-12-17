@@ -1,6 +1,8 @@
 import { EventStore } from './structs/event-store'
 import { CalendarData } from './reducers/data-types'
 import { EventApi, buildEventApis } from './api/EventApi'
+import { Duration } from './datelib/duration'
+import { ViewApi } from './ViewApi'
 
 export interface EventAddArg {
   event: EventApi
@@ -13,6 +15,14 @@ export interface EventChangeArg {
   event: EventApi
   relatedEvents: EventApi[]
   revert: () => void
+}
+
+export interface EventDropArg extends EventChangeArg { // not best place. deals w/ UI
+  el: HTMLElement
+  delta: Duration
+  jsEvent: MouseEvent
+  view: ViewApi
+  // and other "transformed" things
 }
 
 export interface EventRemoveArg {

@@ -21,3 +21,6 @@ export { FeaturefulElementDragging }
 export { PointerDragging } from './dnd/PointerDragging'
 export { ExternalDraggable as Draggable } from './interactions-external/ExternalDraggable'
 export { ThirdPartyDraggable } from './interactions-external/ThirdPartyDraggable'
+
+// to maintains backwards compat after moving the declaration between packages
+export { EventDropArg } from '@fullcalendar/common'
