@@ -14,7 +14,7 @@ export interface DayHeaderProps {
   dateProfile: DateProfile
   dates: DateMarker[]
   datesRepDistinctDays: boolean
-  renderIntro?: () => VNode
+  renderIntro?: (rowKey: string) => VNode
 }
 
 export class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: rename to DayHeaderTr?
@@ -34,7 +34,7 @@ export class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: rename t
       <NowTimer unit="day">
         {(nowDate: DateMarker, todayRange: DateRange) => (
           <tr>
-            {renderIntro && renderIntro()}
+            {renderIntro && renderIntro('day')}
             {dates.map((date) => (
               datesRepDistinctDays ? (
                 <TableDateCell
