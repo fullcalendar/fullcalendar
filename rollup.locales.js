@@ -30,7 +30,8 @@ module.exports = [
     },
     plugins: [
       externalizeRelative(), // resulting bundle will import the individual locales
-      sucraseInstance
+      sucraseInstance,
+      dumbDownFuncs()
     ]
   },
 
@@ -48,6 +49,7 @@ module.exports = [
     }),
     plugins: [
       sucraseInstance,
+      dumbDownFuncs(),
       bundleWrapLocalesAll()
     ]
   },
@@ -61,7 +63,8 @@ module.exports = [
       file: path.join('packages/core/locales', path.basename(srcLocaleFile, '.ts') + '.js')
     },
     plugins: [
-      sucraseInstance
+      sucraseInstance,
+      dumbDownFuncs()
     ]
   })),
 
@@ -79,6 +82,7 @@ module.exports = [
     }),
     plugins: [
       sucraseInstance,
+      dumbDownFuncs(),
       bundleWrapLocalesEach()
     ]
   }))
@@ -99,6 +103,16 @@ function bundleWrapLocalesEach() {
   return {
     renderChunk(code) {
       return code.replace(/^var FullCalendar = /, 'FullCalendar.globalLocales.push')
+    }
+  }
+}
+
+
+// for IE11: https://github.com/fullcalendar/fullcalendar/issues/6014
+function dumbDownFuncs() {
+  return {
+    renderChunk(code) {
+      return code.replace(/(\w+)(\([\w, ]\)\s*{)/g, '$1: function$2')
     }
   }
 }
