@@ -38,7 +38,7 @@ describe('Event::setStart', () => {
         eventChange(info) {
           revertCalled = true
           info.revert()
-        }
+        },
       })
 
       let event = calendar.getEventById('1')

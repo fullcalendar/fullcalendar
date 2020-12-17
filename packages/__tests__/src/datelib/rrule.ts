@@ -366,10 +366,10 @@ describe('rrule plugin', () => {
             duration: '01:00',
             rrule: {
               freq: 'daily',
-              dtstart: '2020-10-24T16:00:00Z' // will be 00:00 in Manila
-            }
-          }
-        ]
+              dtstart: '2020-10-24T16:00:00Z', // will be 00:00 in Manila
+            },
+          },
+        ],
       })
 
       let events = calendar.getEvents()
