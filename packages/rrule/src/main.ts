@@ -1,4 +1,4 @@
-import { RRule, rrulestr } from 'rrule'
+import { RRule, RRuleSet, rrulestr } from 'rrule'
 import {
   RecurringType,
   EventRefined,
@@ -75,6 +75,8 @@ function parseRRule(input, dateEnv: DateEnv) {
     isTimeZoneSpecified = result.isTimeZoneSpecified
   } else if (typeof input === 'object' && input) { // non-null object
     let refined = { ...input } // copy
+    delete refined.exdates
+    delete refined.exrules
 
     if (typeof refined.dtstart === 'string') {
       let result = parseMarker(refined.dtstart)
@@ -117,6 +119,27 @@ function parseRRule(input, dateEnv: DateEnv) {
     }
 
     rrule = new RRule(refined)
+
+    if (input.exdates || input.exrules) {
+      const exdates: [] = input.exdates instanceof Array ? input.exdates : []
+      const exrules: [] = input.exrules instanceof Array ? input.exrules : []
+
+      const rruleSet = new RRuleSet()
+      rruleSet.rrule(rrule)
+
+      for (let exrule of exrules) {
+        const rruleObj = parseRRule(exrule, dateEnv)
+        if (rruleObj && rruleObj.rrule) {
+          rruleSet.exrule(rruleObj.rrule)
+        }
+      }
+
+      for (let exdate of exdates) {
+        rruleSet.exdate(exdate)
+      }
+
+      rrule = rruleSet
+    }
   }
 
   if (rrule) {
