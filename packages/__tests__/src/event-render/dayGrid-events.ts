@@ -81,6 +81,46 @@ describe('dayGrid advanced event rendering', () => {
     )).toBeLessThan(1)
   })
 
+  // https://github.com/fullcalendar/fullcalendar/issues/5883
+  it('it renders without gaps when ordered by title', () => {
+    let calendar = initCalendar({
+      initialDate: '2020-10-01',
+      eventOrder: 'title',
+      dayMaxEventRows: 3,
+      events: [
+        {
+          title: 'b1',
+          start: '2020-10-20',
+          end: '2020-10-22',
+        },
+        {
+          title: 'b2',
+          start: '2020-10-21',
+          end: '2020-10-22',
+        },
+        {
+          title: 'b3',
+          start: '2020-10-20',
+          end: '2020-10-23',
+        },
+        {
+          title: 'b4',
+          start: '2020-10-20',
+          end: '2020-10-23',
+        },
+      ],
+    })
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEls = dayGridWrapper.getEventEls()
+    let visibleEventEls = filterVisibleEls(eventEls)
+    let moreLinkEls = dayGridWrapper.getMoreEls()
+
+    expect(visibleEventEls.length).toBe(2)
+    expect(moreLinkEls.length).toBe(3)
+    expect(anyElsIntersect(visibleEventEls.concat(moreLinkEls))).toBe(false)
+  })
+
   it('won\'t intersect when doing custom rendering', () => {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
