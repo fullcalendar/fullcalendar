@@ -65,7 +65,9 @@ export default createPlugin({
 function parseRRule(input, dateEnv: DateEnv) {
   if (typeof input === 'string') {
     return parseRRuleSetString(input)
-  } else if (typeof input === 'object' && input) { // non-null object
+  }
+
+  if (typeof input === 'object' && input) { // non-null object
     return parseRRuleSetObject(input, dateEnv)
   }
 
@@ -87,7 +89,7 @@ function parseRRuleSetObject(input, dateEnv: DateEnv) {
     isTimeSpecified = isTimeSpecified || !exdateRes.isTimeUnspecified
     isTimeZoneSpecified = isTimeZoneSpecified || exdateRes.timeZoneOffset !== null
     rruleSet.exdate(
-      new Date(exdateRes.marker.valueOf() - (exdateRes.timeZoneOffset || 0) * 60 * 1000)
+      new Date(exdateRes.marker.valueOf() - (exdateRes.timeZoneOffset || 0) * 60 * 1000),
     )
   }
 

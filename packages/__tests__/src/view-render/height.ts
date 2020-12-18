@@ -1,4 +1,4 @@
-import { TimeGridViewWrapper } from "../lib/wrappers/TimeGridViewWrapper"
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('view height', () => {
   // https://github.com/fullcalendar/fullcalendar/issues/6034
@@ -8,9 +8,9 @@ describe('view height', () => {
       aspectRatio: 1.8,
       views: {
         timeGrid: {
-          height: 'auto'
-        }
-      }
+          height: 'auto',
+        },
+      },
     })
     let viewWrapper = new TimeGridViewWrapper(calendar)
     let scrollerEl = viewWrapper.getScrollerEl()
