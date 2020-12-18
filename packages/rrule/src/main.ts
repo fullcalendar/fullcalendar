@@ -110,8 +110,8 @@ function parseRRuleObject(input, dateEnv: DateEnv) {
   let refined = { ...input } // copy
 
   // TODO: weird to blacklist these here
-  delete refined.exdates
-  delete refined.exrules
+  delete refined.exdate
+  delete refined.exrule
 
   if (typeof refined.dtstart === 'string') {
     let result = parseMarker(refined.dtstart)
