@@ -9,6 +9,7 @@
     { "path": "packages/common" },
     { "path": "packages/daygrid" },
     { "path": "packages/timegrid" },
+    { "path": "packages/icalendar" },
     { "path": "packages/interaction" },
     { "path": "packages/list" },
     { "path": "packages/bootstrap" },
