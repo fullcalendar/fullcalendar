@@ -94,24 +94,13 @@ export abstract class DateComponent<Props=Dictionary, State=Dictionary> extends 
   isValidSegDownEl(el: HTMLElement) {
     return !(this.props as any).eventDrag && // HACK
       !(this.props as any).eventResize && // HACK
-      !elementClosest(el, '.fc-event-mirror') &&
-      (this.isPopover() || !this.isInPopover(el))
-      // ^above line ensures we don't detect a seg interaction within a nested component.
-      // it's a HACK because it only supports a popover as the nested component.
+      !elementClosest(el, '.fc-event-mirror')
   }
 
   isValidDateDownEl(el: HTMLElement) {
     return !elementClosest(el, '.fc-event:not(.fc-bg-event)') &&
       !elementClosest(el, '.fc-daygrid-more-link') && // a "more.." link
       !elementClosest(el, 'a[data-navlink]') && // a clickable nav link
-      !this.isInPopover(el)
-  }
-
-  isPopover() { // HACK. should be overridden by any components that know that they live within a popover
-    return false
-  }
-
-  isInPopover(el: HTMLElement) {
-    return Boolean(elementClosest(el, '.fc-popover'))
+      !elementClosest(el, '.fc-popover') // hack
   }
 }

@@ -40,7 +40,7 @@ export interface TableRowProps {
   dayMaxEventRows: boolean | number
   clientWidth: number | null
   clientHeight: number | null // simply for causing an updateSize, for when liquid height
-  onMoreClick?: (arg: MoreLinkArg) => void
+  onMoreClick?: (arg: MoreLinkArg & {fromCol: number}) => void
   dateProfile: DateProfile
   todayRange: DateRange
   showDayNumbers: boolean
@@ -133,7 +133,9 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               extraClassNames={cell.extraClassNames}
               moreCnt={moreCnts[col]}
               buildMoreLinkText={props.buildMoreLinkText}
-              onMoreClick={props.onMoreClick}
+              onMoreClick={(arg) => {
+                props.onMoreClick({...arg, fromCol: col})
+              }}
               segIsHidden={segIsHidden}
               moreMarginTop={moreTops[col] /* rename */}
               segsByEachCol={segsByEachCol[col]}
@@ -368,6 +370,10 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     return this.props.cells.map((cell) => elMap[cell.key])
   }
 }
+
+TableRow.addPropsEquality({
+  onMoreClick: true, // never forces rerender
+})
 
 TableRow.addStateEquality({
   segHeights: isPropsEqual,
