@@ -158,7 +158,7 @@ export class Table extends DateComponent<TableProps, TableState> {
                       clientHeight={props.clientHeight}
                       buildMoreLinkText={buildMoreLinkText}
                       onMoreClick={(arg) => {
-                        this.handleMoreLinkClick({...arg, fromRow: row})
+                        this.handleMoreLinkClick({ ...arg, fromRow: row })
                       }}
                     />
                   ))}
@@ -196,7 +196,8 @@ export class Table extends DateComponent<TableProps, TableState> {
     setRef(this.props.elRef, rootEl)
   }
 
-  handleMoreLinkClick = (arg: MoreLinkArg & {fromRow: number, fromCol: number}) => { // TODO: bad names "more link click" versus "more click"
+  // TODO: bad names "more link click" versus "more click"
+  handleMoreLinkClick = (arg: MoreLinkArg & {fromRow: number, fromCol: number}) => {
     let { context } = this
     let { dateEnv } = context
     let clickOption = context.options.moreLinkClick

@@ -134,7 +134,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               moreCnt={moreCnts[col]}
               buildMoreLinkText={props.buildMoreLinkText}
               onMoreClick={(arg) => {
-                props.onMoreClick({...arg, fromCol: col})
+                props.onMoreClick({ ...arg, fromCol: col })
               }}
               segIsHidden={segIsHidden}
               moreMarginTop={moreTops[col] /* rename */}
