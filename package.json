@@ -105,7 +105,7 @@
     "karma-verbose-reporter": "0.0.6",
     "luxon": "^1.22.0",
     "mini-css-extract-plugin": "^1.2.0",
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^1.0.4",
     "moment": "^2.29.1",
     "moment-locales-webpack-plugin": "^1.2.0",
     "moment-timezone": "^0.5.31",
