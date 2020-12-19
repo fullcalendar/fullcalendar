@@ -1,10 +1,20 @@
-import { createDuration, identity, Identity } from '@fullcalendar/common'
+import { createDuration, DateInput, identity, Identity } from '@fullcalendar/common'
+import { Options as RRuleOptions } from 'rrule'
 
-// TODO: ask rrule maintainers to expose this
-// NOTE: we added `exdate` and `exrule` to this
-type RRuleOptions = any
+export type RRuleInputObjectFull = Omit<RRuleOptions, 'dtstart' | 'until' | 'freq' | 'wkst' | 'byweekday'> & {
+  dtstart: RRuleOptions['dtstart'] | DateInput
+  until: RRuleOptions['until'] | DateInput
+  freq: RRuleOptions['until'] | string
+  wkst: RRuleOptions['wkst'] | string
+  byweekday: RRuleOptions['byweekday'] | string
+}
+
+export type RRuleInputObject = Partial<RRuleInputObjectFull>
+export type RRuleInput = RRuleInputObject | string
 
 export const RRULE_EVENT_REFINERS = {
-  rrule: identity as Identity<RRuleOptions>,
+  rrule: identity as Identity<RRuleInput>,
+  exrule: identity as Identity<RRuleInputObject | RRuleInputObject[]>,
+  exdate: identity as Identity<DateInput | DateInput[]>,
   duration: createDuration,
 }

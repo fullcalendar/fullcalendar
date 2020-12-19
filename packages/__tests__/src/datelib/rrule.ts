@@ -59,8 +59,8 @@ describe('rrule plugin', () => {
         rrule: {
           dtstart: '2020-12-01',
           freq: 'weekly',
-          exdate: '2020-12-08',
         },
+        exdate: '2020-12-08',
       }],
     })
 
@@ -81,8 +81,8 @@ describe('rrule plugin', () => {
         rrule: {
           dtstart: '2020-12-01',
           freq: 'weekly',
-          exdate: ['2020-12-08', '2020-12-15'],
         },
+        exdate: ['2020-12-08', '2020-12-15'],
       }],
     })
 
@@ -102,11 +102,11 @@ describe('rrule plugin', () => {
         rrule: {
           dtstart: '2020-12-01',
           freq: 'weekly',
-          exrule: {
-            dtstart: '2020-12-08',
-            until: '2020-12-15', // will include this date for exclusion
-            freq: 'weekly',
-          },
+        },
+        exrule: {
+          dtstart: '2020-12-08',
+          until: '2020-12-15', // will include this date for exclusion
+          freq: 'weekly',
         },
       }],
     })
@@ -127,19 +127,19 @@ describe('rrule plugin', () => {
         rrule: {
           dtstart: '2020-12-01',
           freq: 'weekly',
-          exrule: [
-            {
-              dtstart: '2020-12-08',
-              until: '2020-12-15', // will include this date for exclusion
-              freq: 'weekly',
-            },
-            {
-              dtstart: '2020-12-22',
-              until: '2020-12-29', // will include this date for exclusion
-              freq: 'weekly',
-            },
-          ],
         },
+        exrule: [
+          {
+            dtstart: '2020-12-08',
+            until: '2020-12-15', // will include this date for exclusion
+            freq: 'weekly',
+          },
+          {
+            dtstart: '2020-12-22',
+            until: '2020-12-29', // will include this date for exclusion
+            freq: 'weekly',
+          },
+        ],
       }],
     })
 
