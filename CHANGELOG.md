@@ -4,6 +4,7 @@ v5.5.0
 
 - icalendar support (#1580)
 - support exrule and exdate for rrule plugin (#4439)
+- support for Angular 11
 - fix: recurring events missing with dtstart in UTC and timeZone not UTC (#5993)
 - fix: events can have a gap between and take more rows than dayMaxEventRows when using eventOrder (#5883)
 - fix: events dragged from the More popup to another resource drop on the wrong resource (#5593)
