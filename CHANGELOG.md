@@ -1,4 +1,10 @@
 
+next-release
+------------
+
+- removed unnecessary use of Promise in icalendar package. makes IE11 compatible
+
+
 v5.5.0 (2020-12-19)
 -------------------
 

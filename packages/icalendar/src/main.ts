@@ -83,21 +83,18 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
   fetch(arg, success, failure) {
     let meta: ICalFeedMeta = arg.eventSource.meta
 
-    return new Promise((resolve, reject) => {
-      requestICal(meta.url,
-        (rawFeed, xhr) => {
-          const icalEvents = buildIcalEvents(rawFeed)
-          const events = buildEvents(icalEvents)
+    requestICal(
+      meta.url,
+      (rawFeed, xhr) => {
+        const icalEvents = buildIcalEvents(rawFeed)
+        const events = buildEvents(icalEvents)
 
-          success({ rawEvents: events, xhr })
-          resolve()
-        },
-        (errorMessage, xhr) => {
-          failure({ message: errorMessage, xhr })
-          reject()
-        },
-      )
-    })
+        success({ rawEvents: events, xhr })
+      },
+      (errorMessage, xhr) => {
+        failure({ message: errorMessage, xhr })
+      },
+    )
   },
 }
 
