@@ -2205,12 +2205,12 @@ __metadata:
     "@angular/platform-browser": ~10.0.9
     "@angular/platform-browser-dynamic": ~10.0.9
     "@angular/router": ~10.0.9
-    "@fullcalendar/angular": ^5.4.0
-    "@fullcalendar/core": ^5.4.0
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/list": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
+    "@fullcalendar/angular": ^5.5.0
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/list": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
     "@types/jasmine": ~2.8.8
     "@types/jasminewd2": ~2.0.3
     "@types/node": ^12.11.1
@@ -2232,12 +2232,12 @@ __metadata:
   resolution: "@fullcalendar-example-projects/bootstrap@workspace:example-projects/bootstrap"
   dependencies:
     "@fortawesome/fontawesome-free": ^5.13.1
-    "@fullcalendar/bootstrap": ^5.4.0
-    "@fullcalendar/core": ^5.4.0
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/list": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
+    "@fullcalendar/bootstrap": ^5.5.0
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/list": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
     bootstrap: ^4.5.0
     css-loader: ^4.3.0
     file-loader: ^6.1.1
@@ -2253,11 +2253,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/custom-css-vars@workspace:example-projects/custom-css-vars"
   dependencies:
-    "@fullcalendar/core": ^5.4.0
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/list": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/list": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
     css-loader: ^4.3.0
     mini-css-extract-plugin: ^1.2.0
     postcss-calc: ^7.0.2
@@ -2272,11 +2272,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/locales@workspace:example-projects/locales"
   dependencies:
-    "@fullcalendar/core": ^5.4.0
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/list": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/list": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
     css-loader: ^4.3.0
     mini-css-extract-plugin: ^1.2.0
     webpack: ^5.3.0
@@ -2288,10 +2288,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/moment-timezone@workspace:example-projects/moment-timezone"
   dependencies:
-    "@fullcalendar/core": ^5.4.0
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/moment-timezone": ^5.4.0
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/moment-timezone": ^5.5.0
     css-loader: ^4.3.0
     mini-css-extract-plugin: ^1.2.0
     moment: ^2.29.1
@@ -2307,12 +2307,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/moment-typescript@workspace:example-projects/moment-typescript"
   dependencies:
-    "@fullcalendar/core": ^5.4.0
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/list": ^5.4.0
-    "@fullcalendar/moment": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/list": ^5.5.0
+    "@fullcalendar/moment": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
     css-loader: ^4.3.0
     mini-css-extract-plugin: ^1.2.0
     moment: ^2.29.1
@@ -2328,12 +2328,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/moment@workspace:example-projects/moment"
   dependencies:
-    "@fullcalendar/core": ^5.4.0
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/list": ^5.4.0
-    "@fullcalendar/moment": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/list": ^5.5.0
+    "@fullcalendar/moment": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
     css-loader: ^4.3.0
     mini-css-extract-plugin: ^1.2.0
     moment: ^2.29.1
@@ -2347,10 +2347,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/react-mobx-typescript@workspace:example-projects/react-mobx-typescript"
   dependencies:
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/react": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/react": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
     "@types/react": ^16.9.55
     "@types/react-dom": ^16.9.9
     css-loader: ^4.3.0
@@ -2379,11 +2379,11 @@ __metadata:
     "@babel/plugin-syntax-dynamic-import": ^7.0.0
     "@babel/preset-env": ^7.0.0-beta.51
     "@babel/preset-react": ^7.0.0-beta.51
-    "@fullcalendar/core": ^5.4.0
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/react": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/react": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
     babel-loader: ^8.1.0
     css-loader: ^4.3.0
     html-webpack-plugin: ^4.5.0
@@ -2404,10 +2404,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/react-typescript@workspace:example-projects/react-typescript"
   dependencies:
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/react": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/react": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
     "@types/react": ^16.9.55
     "@types/react-dom": ^16.9.9
     css-loader: ^4.3.0
@@ -2434,11 +2434,11 @@ __metadata:
     "@babel/plugin-syntax-dynamic-import": ^7.0.0
     "@babel/preset-env": ^7.0.0-beta.51
     "@babel/preset-react": ^7.0.0-beta.51
-    "@fullcalendar/core": ^5.4.0
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/react": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/react": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
     babel-loader: ^8.1.0
     css-loader: ^4.3.0
     html-webpack-plugin: ^4.5.0
@@ -2455,13 +2455,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/rollup-scheduler@workspace:example-projects/rollup-scheduler"
   dependencies:
-    "@fullcalendar/adaptive": ^5.4.0
-    "@fullcalendar/core": ^5.4.0
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/list": ^5.4.0
-    "@fullcalendar/resource-timeline": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
+    "@fullcalendar/adaptive": ^5.5.0
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/list": ^5.5.0
+    "@fullcalendar/resource-timeline": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
     "@rollup/plugin-node-resolve": ^7.1.3
     rollup: ^1.20.0||^2.0.0
     rollup-plugin-postcss: ^2.8.2
@@ -2472,11 +2472,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/rollup@workspace:example-projects/rollup"
   dependencies:
-    "@fullcalendar/core": ^5.4.0
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/list": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/list": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
     "@rollup/plugin-node-resolve": ^7.1.3
     rollup: ^1.20.0||^2.0.0
     rollup-plugin-postcss: ^2.8.2
@@ -2487,14 +2487,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/typescript-scheduler@workspace:example-projects/typescript-scheduler"
   dependencies:
-    "@fullcalendar/adaptive": ^5.4.0
-    "@fullcalendar/core": ^5.4.0
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/list": ^5.4.0
-    "@fullcalendar/resource-timeline": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
-    "@fullcalendar/timeline": ^5.4.0
+    "@fullcalendar/adaptive": ^5.5.0
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/list": ^5.5.0
+    "@fullcalendar/resource-timeline": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
+    "@fullcalendar/timeline": ^5.5.0
     css-loader: ^4.3.0
     mini-css-extract-plugin: ^1.2.0
     ts-loader: ^8.0.7
@@ -2508,11 +2508,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/typescript@workspace:example-projects/typescript"
   dependencies:
-    "@fullcalendar/core": ^5.4.0
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/list": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/list": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
     css-loader: ^4.3.0
     mini-css-extract-plugin: ^1.2.0
     ts-loader: ^8.0.7
@@ -2526,10 +2526,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/vue@workspace:example-projects/vue"
   dependencies:
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
-    "@fullcalendar/vue": ^5.4.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
+    "@fullcalendar/vue": ^5.5.0
     css-loader: ^4.3.0
     html-webpack-plugin: ^4.5.0
     source-map-loader: ^1.1.1
@@ -2547,13 +2547,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/webpack-scheduler@workspace:example-projects/webpack-scheduler"
   dependencies:
-    "@fullcalendar/adaptive": ^5.4.0
-    "@fullcalendar/core": ^5.4.0
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/list": ^5.4.0
-    "@fullcalendar/resource-timeline": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
+    "@fullcalendar/adaptive": ^5.5.0
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/list": ^5.5.0
+    "@fullcalendar/resource-timeline": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
     css-loader: ^4.3.0
     mini-css-extract-plugin: ^1.2.0
     webpack: ^5.3.0
@@ -2565,11 +2565,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/webpack@workspace:example-projects/webpack"
   dependencies:
-    "@fullcalendar/core": ^5.4.0
-    "@fullcalendar/daygrid": ^5.4.0
-    "@fullcalendar/interaction": ^5.4.0
-    "@fullcalendar/list": ^5.4.0
-    "@fullcalendar/timegrid": ^5.4.0
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/list": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
     css-loader: ^4.3.0
     mini-css-extract-plugin: ^1.2.0
     webpack: ^5.3.0
@@ -2577,41 +2577,41 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/adaptive@^5.4.0, @fullcalendar/adaptive@workspace:packages-premium/adaptive, @fullcalendar/adaptive@workspace:~5.4.0":
+"@fullcalendar/adaptive@^5.5.0, @fullcalendar/adaptive@workspace:packages-premium/adaptive, @fullcalendar/adaptive@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/adaptive@workspace:packages-premium/adaptive"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/premium-common": "workspace:~5.4.0"
+    "@fullcalendar/premium-common": "workspace:~5.5.0"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/angular@^5.4.0, @fullcalendar/angular@workspace:packages-contrib/angular/dist/fullcalendar":
+"@fullcalendar/angular@^5.5.0, @fullcalendar/angular@workspace:packages-contrib/angular/dist/fullcalendar":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/angular@workspace:packages-contrib/angular/dist/fullcalendar"
   dependencies:
-    "@fullcalendar/core": ~5.4.0
+    "@fullcalendar/core": ~5.5.0
     fast-deep-equal: ^3.1.1
     tslib: ^2.0.0
   peerDependencies:
-    "@angular/common": 9 - 10
-    "@angular/core": 9 - 10
+    "@angular/common": 9 - 11
+    "@angular/core": 9 - 11
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/bootstrap@^5.4.0, @fullcalendar/bootstrap@workspace:packages/bootstrap, @fullcalendar/bootstrap@workspace:~5.4.0":
+"@fullcalendar/bootstrap@^5.5.0, @fullcalendar/bootstrap@workspace:packages/bootstrap, @fullcalendar/bootstrap@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/bootstrap@workspace:packages/bootstrap"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/common@workspace:packages/common, @fullcalendar/common@workspace:~5.4.0, @fullcalendar/common@~5.4.0":
+"@fullcalendar/common@workspace:packages/common, @fullcalendar/common@workspace:~5.5.0, @fullcalendar/common@~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/common@workspace:packages/common"
   dependencies:
@@ -2630,72 +2630,72 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/core@^5.4.0, @fullcalendar/core@workspace:packages/core, @fullcalendar/core@workspace:~5.4.0, @fullcalendar/core@~5.4.0":
+"@fullcalendar/core@^5.5.0, @fullcalendar/core@workspace:packages/core, @fullcalendar/core@workspace:~5.5.0, @fullcalendar/core@~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/core@workspace:packages/core"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
     preact: ^10.0.5
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/daygrid@^5.4.0, @fullcalendar/daygrid@workspace:packages/daygrid, @fullcalendar/daygrid@workspace:~5.4.0, @fullcalendar/daygrid@~5.4.0":
+"@fullcalendar/daygrid@^5.5.0, @fullcalendar/daygrid@workspace:packages/daygrid, @fullcalendar/daygrid@workspace:~5.5.0, @fullcalendar/daygrid@~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/daygrid@workspace:packages/daygrid"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/google-calendar@workspace:packages/google-calendar, @fullcalendar/google-calendar@workspace:~5.4.0":
+"@fullcalendar/google-calendar@workspace:packages/google-calendar, @fullcalendar/google-calendar@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/google-calendar@workspace:packages/google-calendar"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/icalendar@workspace:packages/icalendar, @fullcalendar/icalendar@workspace:~5.4.0":
+"@fullcalendar/icalendar@workspace:packages/icalendar, @fullcalendar/icalendar@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/icalendar@workspace:packages/icalendar"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     ical.js: ^1.4.0
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/interaction@^5.4.0, @fullcalendar/interaction@workspace:packages/interaction, @fullcalendar/interaction@workspace:~5.4.0, @fullcalendar/interaction@~5.4.0":
+"@fullcalendar/interaction@^5.5.0, @fullcalendar/interaction@workspace:packages/interaction, @fullcalendar/interaction@workspace:~5.5.0, @fullcalendar/interaction@~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/interaction@workspace:packages/interaction"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/list@^5.4.0, @fullcalendar/list@workspace:packages/list, @fullcalendar/list@workspace:~5.4.0":
+"@fullcalendar/list@^5.5.0, @fullcalendar/list@workspace:packages/list, @fullcalendar/list@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/list@workspace:packages/list"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/luxon@workspace:packages/luxon, @fullcalendar/luxon@workspace:~5.4.0":
+"@fullcalendar/luxon@workspace:packages/luxon, @fullcalendar/luxon@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/luxon@workspace:packages/luxon"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
     luxon: ^1.12.1
     tslib: ^2.0.3
@@ -2704,11 +2704,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/moment-timezone@^5.4.0, @fullcalendar/moment-timezone@workspace:packages/moment-timezone, @fullcalendar/moment-timezone@workspace:~5.4.0":
+"@fullcalendar/moment-timezone@^5.5.0, @fullcalendar/moment-timezone@workspace:packages/moment-timezone, @fullcalendar/moment-timezone@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/moment-timezone@workspace:packages/moment-timezone"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
     moment: ^2.29.1
     moment-timezone: ^0.5.31
@@ -2719,11 +2719,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/moment@^5.4.0, @fullcalendar/moment@workspace:packages/moment, @fullcalendar/moment@workspace:~5.4.0":
+"@fullcalendar/moment@^5.5.0, @fullcalendar/moment@workspace:packages/moment, @fullcalendar/moment@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/moment@workspace:packages/moment"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
     moment: ^2.29.1
     tslib: ^2.0.3
@@ -2732,25 +2732,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/premium-common@workspace:packages-premium/premium-common, @fullcalendar/premium-common@workspace:~5.4.0":
+"@fullcalendar/premium-common@workspace:packages-premium/premium-common, @fullcalendar/premium-common@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/premium-common@workspace:packages-premium/premium-common"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/react@^5.4.0, @fullcalendar/react@workspace:packages-contrib/react":
+"@fullcalendar/react@^5.5.0, @fullcalendar/react@workspace:packages-contrib/react":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/react@workspace:packages-contrib/react"
   dependencies:
     "@babel/core": ^7.0.0
     "@babel/preset-env": ^7.9.0
     "@babel/preset-react": ^7.9.4
-    "@fullcalendar/common": ~5.4.0
-    "@fullcalendar/daygrid": ~5.4.0
+    "@fullcalendar/common": ~5.5.0
+    "@fullcalendar/daygrid": ~5.5.0
     "@rollup/plugin-babel": ^5.0.0
     "@rollup/plugin-commonjs": ^11.1.0
     "@rollup/plugin-json": ^4.0.3
@@ -2788,63 +2788,63 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/resource-common@workspace:packages-premium/resource-common, @fullcalendar/resource-common@workspace:~5.4.0":
+"@fullcalendar/resource-common@workspace:packages-premium/resource-common, @fullcalendar/resource-common@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/resource-common@workspace:packages-premium/resource-common"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/premium-common": "workspace:~5.4.0"
+    "@fullcalendar/premium-common": "workspace:~5.5.0"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/resource-daygrid@workspace:packages-premium/resource-daygrid, @fullcalendar/resource-daygrid@workspace:~5.4.0":
+"@fullcalendar/resource-daygrid@workspace:packages-premium/resource-daygrid, @fullcalendar/resource-daygrid@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/resource-daygrid@workspace:packages-premium/resource-daygrid"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/daygrid": "workspace:~5.4.0"
-    "@fullcalendar/premium-common": "workspace:~5.4.0"
-    "@fullcalendar/resource-common": "workspace:~5.4.0"
+    "@fullcalendar/daygrid": "workspace:~5.5.0"
+    "@fullcalendar/premium-common": "workspace:~5.5.0"
+    "@fullcalendar/resource-common": "workspace:~5.5.0"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/resource-timegrid@workspace:packages-premium/resource-timegrid, @fullcalendar/resource-timegrid@workspace:~5.4.0":
+"@fullcalendar/resource-timegrid@workspace:packages-premium/resource-timegrid, @fullcalendar/resource-timegrid@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/resource-timegrid@workspace:packages-premium/resource-timegrid"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/premium-common": "workspace:~5.4.0"
-    "@fullcalendar/resource-common": "workspace:~5.4.0"
-    "@fullcalendar/resource-daygrid": "workspace:~5.4.0"
-    "@fullcalendar/timegrid": "workspace:~5.4.0"
+    "@fullcalendar/premium-common": "workspace:~5.5.0"
+    "@fullcalendar/resource-common": "workspace:~5.5.0"
+    "@fullcalendar/resource-daygrid": "workspace:~5.5.0"
+    "@fullcalendar/timegrid": "workspace:~5.5.0"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/resource-timeline@^5.4.0, @fullcalendar/resource-timeline@workspace:packages-premium/resource-timeline, @fullcalendar/resource-timeline@workspace:~5.4.0":
+"@fullcalendar/resource-timeline@^5.5.0, @fullcalendar/resource-timeline@workspace:packages-premium/resource-timeline, @fullcalendar/resource-timeline@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/resource-timeline@workspace:packages-premium/resource-timeline"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/premium-common": "workspace:~5.4.0"
-    "@fullcalendar/resource-common": "workspace:~5.4.0"
-    "@fullcalendar/scrollgrid": "workspace:~5.4.0"
-    "@fullcalendar/timeline": "workspace:~5.4.0"
+    "@fullcalendar/premium-common": "workspace:~5.5.0"
+    "@fullcalendar/resource-common": "workspace:~5.5.0"
+    "@fullcalendar/scrollgrid": "workspace:~5.5.0"
+    "@fullcalendar/timeline": "workspace:~5.5.0"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/rrule@workspace:packages/rrule, @fullcalendar/rrule@workspace:~5.4.0":
+"@fullcalendar/rrule@workspace:packages/rrule, @fullcalendar/rrule@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/rrule@workspace:packages/rrule"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
     rrule: ^2.6.0
     tslib: ^2.0.3
@@ -2853,41 +2853,41 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/scrollgrid@workspace:packages-premium/scrollgrid, @fullcalendar/scrollgrid@workspace:~5.4.0":
+"@fullcalendar/scrollgrid@workspace:packages-premium/scrollgrid, @fullcalendar/scrollgrid@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/scrollgrid@workspace:packages-premium/scrollgrid"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/premium-common": "workspace:~5.4.0"
+    "@fullcalendar/premium-common": "workspace:~5.5.0"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/timegrid@^5.4.0, @fullcalendar/timegrid@workspace:packages/timegrid, @fullcalendar/timegrid@workspace:~5.4.0, @fullcalendar/timegrid@~5.4.0":
+"@fullcalendar/timegrid@^5.5.0, @fullcalendar/timegrid@workspace:packages/timegrid, @fullcalendar/timegrid@workspace:~5.5.0, @fullcalendar/timegrid@~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/timegrid@workspace:packages/timegrid"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/daygrid": "workspace:~5.4.0"
+    "@fullcalendar/daygrid": "workspace:~5.5.0"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/timeline@^5.4.0, @fullcalendar/timeline@workspace:packages-premium/timeline, @fullcalendar/timeline@workspace:~5.4.0":
+"@fullcalendar/timeline@^5.5.0, @fullcalendar/timeline@workspace:packages-premium/timeline, @fullcalendar/timeline@workspace:~5.5.0":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/timeline@workspace:packages-premium/timeline"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.4.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/premium-common": "workspace:~5.4.0"
-    "@fullcalendar/scrollgrid": "workspace:~5.4.0"
+    "@fullcalendar/premium-common": "workspace:~5.5.0"
+    "@fullcalendar/scrollgrid": "workspace:~5.5.0"
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/vue@^5.4.0, @fullcalendar/vue@workspace:packages-contrib/vue":
+"@fullcalendar/vue@^5.5.0, @fullcalendar/vue@workspace:packages-contrib/vue":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/vue@workspace:packages-contrib/vue"
   dependencies:
@@ -2895,8 +2895,8 @@ __metadata:
     "@babel/plugin-transform-runtime": ^7.10.1
     "@babel/preset-env": ^7.8.4
     "@babel/runtime": ^7.12.1
-    "@fullcalendar/core": ~5.4.0
-    "@fullcalendar/daygrid": ~5.4.0
+    "@fullcalendar/core": ~5.5.0
+    "@fullcalendar/daygrid": ~5.5.0
     "@rollup/plugin-node-resolve": ^8.4.0
     "@types/estree": ^0.0.45
     "@types/node": 14.10.0
@@ -2918,7 +2918,7 @@ __metadata:
     vue: ^2.6.12
     vue-loader: ^15.9.5
     vue-template-compiler: ^2.6.12
-    webpack: ^5.4.0
+    webpack: ^5.5.0
     webpack-cli: ^4.1.0
   peerDependencies:
     vue: ^2.6.12
@@ -4003,10 +4003,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@webassemblyjs/ast@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/ast@npm:1.9.1"
+  dependencies:
+    "@webassemblyjs/helper-module-context": 1.9.1
+    "@webassemblyjs/helper-wasm-bytecode": 1.9.1
+    "@webassemblyjs/wast-parser": 1.9.1
+  checksum: d2bb54b4f32be4596d21403059cdadf366aad2c3735cb6f2973c1c7dadef58ca61a0f832bd2f6ae23c676e62d0d0ed1d2cbec29e43c7f21067795cca14d4dc28
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/floating-point-hex-parser@npm:1.9.0":
   version: 1.9.0
   resolution: "@webassemblyjs/floating-point-hex-parser@npm:1.9.0"
   checksum: af9e11a688b0748f2e4119379d64a8f990a0edf1fbf80df612d2fdf3874528f4917ba51c735b324266314b6587b229825eb53eacbc9e9d00ce1d21ebd2a7d9dc
+  languageName: node
+  linkType: hard
+
+"@webassemblyjs/floating-point-hex-parser@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/floating-point-hex-parser@npm:1.9.1"
+  checksum: fc9ee5780a1e1416e22a920879f8f34841c06f112df25f9fedad3d349ecd8e26c699bbb58fa1db505ef4a205c7fc41e729b6d715d9f161290e62d8ab23d92db4
   languageName: node
   linkType: hard
 
@@ -4017,10 +4035,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@webassemblyjs/helper-api-error@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/helper-api-error@npm:1.9.1"
+  checksum: 3244e86c67551e5fdbd809dc6418731924e178bc5c1e361e8e229d1d20c584c6be0c7aa212e3c6363ad922bf66dfb3fbc9860b1fca9addde8a1772d522e3a4e2
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/helper-buffer@npm:1.9.0":
   version: 1.9.0
   resolution: "@webassemblyjs/helper-buffer@npm:1.9.0"
   checksum: 94bcf27ccf4e5cfcdb92f89bb1e80a973656cab5d19e67eb61a8b5c9cf4ce060616e3afc3d900f6cffa2fc9746a4ad7be75fa448c06af4d4103e507584149a78
+  languageName: node
+  linkType: hard
+
+"@webassemblyjs/helper-buffer@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/helper-buffer@npm:1.9.1"
+  checksum: 3f29b8fa34652b975123752dcfe4e86bc475caf7f36db42b853c7504afed7d8b16d5a2d6fe6e8ee76b243b43c910cf5e92c44356f6a18e6c322df19ef7670911
   languageName: node
   linkType: hard
 
@@ -4033,10 +4065,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@webassemblyjs/helper-code-frame@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/helper-code-frame@npm:1.9.1"
+  dependencies:
+    "@webassemblyjs/wast-printer": 1.9.1
+  checksum: b533f1817761f5c15c8eb9d5eb3eb304d522ad73267045fe5f0d2dbdb223a22c6c1615120db5861e9fb0526fcddb36d13694e57c2aa14f135db68995b62c15a0
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/helper-fsm@npm:1.9.0":
   version: 1.9.0
   resolution: "@webassemblyjs/helper-fsm@npm:1.9.0"
   checksum: 3181e69c16aad1267fd471283b797e86f5e0b26abfddf1d0d2ddef8a758f486cd2482887ec317ecbb5c421aa1d11dea17a06e92c59ea9bd38513204e6c7b8f3d
+  languageName: node
+  linkType: hard
+
+"@webassemblyjs/helper-fsm@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/helper-fsm@npm:1.9.1"
+  checksum: ff717cfa8200ca853e572d2fd0218eda7cacc5fbe1e0cb51be579af381ebe786e14ae54b37be815b348ac48183ab3c00384b866cc6ec66c8f4d89fa09413dea4
   languageName: node
   linkType: hard
 
@@ -4049,10 +4097,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@webassemblyjs/helper-module-context@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/helper-module-context@npm:1.9.1"
+  dependencies:
+    "@webassemblyjs/ast": 1.9.1
+  checksum: 1ee952876a07e87939eaa5f00be2c7a6b7c5dbaf5d42e9f96e3b36ab2b4c8f8dd5779fb8efdd31f765276d369e4c992095b03f53f435357ca9dd4e139441853b
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/helper-wasm-bytecode@npm:1.9.0":
   version: 1.9.0
   resolution: "@webassemblyjs/helper-wasm-bytecode@npm:1.9.0"
   checksum: 27ba07f49514d49ccf62a6e7a460941a6794107c9d7ef9685fda8a7373169d6ebdb676071006ce20581abb9f62562fa447473fb0b031e9ef6b2f62fa819be3f1
+  languageName: node
+  linkType: hard
+
+"@webassemblyjs/helper-wasm-bytecode@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/helper-wasm-bytecode@npm:1.9.1"
+  checksum: 1902efd9863af9785ea72a6faa6e13f08a77952723f07650b8115602e98eecdfa6761c0c01ff5ef84dc0f03bc7fdd816760018de7e91a1bd8ec9e53385ff1c7d
   languageName: node
   linkType: hard
 
@@ -4068,12 +4132,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@webassemblyjs/helper-wasm-section@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/helper-wasm-section@npm:1.9.1"
+  dependencies:
+    "@webassemblyjs/ast": 1.9.1
+    "@webassemblyjs/helper-buffer": 1.9.1
+    "@webassemblyjs/helper-wasm-bytecode": 1.9.1
+    "@webassemblyjs/wasm-gen": 1.9.1
+  checksum: 235e0344ce7a2911588d739f1939ee901efb8b25f54a32a69201dccec7d4479c47b9a26217645472b6e496ad5d85d269cb60102c624c5b441d95c591b8e84c7a
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/ieee754@npm:1.9.0":
   version: 1.9.0
   resolution: "@webassemblyjs/ieee754@npm:1.9.0"
   dependencies:
     "@xtuc/ieee754": ^1.2.0
   checksum: 1474a87d8686542267b11b8ab0a1a37d3003cd6d4b797b8f96c58e348d483fec4e267ec1e128525e56e9250f90b75a79f1187a6beba2072d568b7a01faf3b8d4
+  languageName: node
+  linkType: hard
+
+"@webassemblyjs/ieee754@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/ieee754@npm:1.9.1"
+  dependencies:
+    "@xtuc/ieee754": ^1.2.0
+  checksum: dffd70d68220edfcdd11928ef20c4166ee8706baa7892793c7a245e8c51086747e7847882b23a63161388531090525e4412155d191ee6ad3d0816eacad14a572
   languageName: node
   linkType: hard
 
@@ -4086,10 +4171,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@webassemblyjs/leb128@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/leb128@npm:1.9.1"
+  dependencies:
+    "@xtuc/long": 4.2.2
+  checksum: 737e63b429e398b90a97af148864c7d32553fcf90cc14a497c87184c3233a1540a6fe3ecbd8d64d82f1f301396500c9805d380ae04d89708470ca57c4ffcaac1
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/utf8@npm:1.9.0":
   version: 1.9.0
   resolution: "@webassemblyjs/utf8@npm:1.9.0"
   checksum: 172fd362aaf6760b826117177ec171ce63b5fabe172f09343b8cd24852f33475f3a596bc1d02088f64a498556a19f98dce00cafe3da3fb8d77367db5326d2d66
+  languageName: node
+  linkType: hard
+
+"@webassemblyjs/utf8@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/utf8@npm:1.9.1"
+  checksum: 17ea013083026df33c0414964ab722becd3217842ad0332182d4605d2f0a51e9b12717accebecfc3c163035ec97c2f13571406f1b1a997a1969422d8c5a9c029
   languageName: node
   linkType: hard
 
@@ -4109,6 +4210,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@webassemblyjs/wasm-edit@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/wasm-edit@npm:1.9.1"
+  dependencies:
+    "@webassemblyjs/ast": 1.9.1
+    "@webassemblyjs/helper-buffer": 1.9.1
+    "@webassemblyjs/helper-wasm-bytecode": 1.9.1
+    "@webassemblyjs/helper-wasm-section": 1.9.1
+    "@webassemblyjs/wasm-gen": 1.9.1
+    "@webassemblyjs/wasm-opt": 1.9.1
+    "@webassemblyjs/wasm-parser": 1.9.1
+    "@webassemblyjs/wast-printer": 1.9.1
+  checksum: 7348088939358e78bc0a7636485d8faf5f8faed423dc9b7f8cd364b8b2043e4dd3b3bb9b4c59efad57a78a6ac2e8d499e97ecb57b9ada4e353dc305a5399e735
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/wasm-gen@npm:1.9.0":
   version: 1.9.0
   resolution: "@webassemblyjs/wasm-gen@npm:1.9.0"
@@ -4122,6 +4239,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@webassemblyjs/wasm-gen@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/wasm-gen@npm:1.9.1"
+  dependencies:
+    "@webassemblyjs/ast": 1.9.1
+    "@webassemblyjs/helper-wasm-bytecode": 1.9.1
+    "@webassemblyjs/ieee754": 1.9.1
+    "@webassemblyjs/leb128": 1.9.1
+    "@webassemblyjs/utf8": 1.9.1
+  checksum: acfb3dc6d27e136c3b517ae010a5c36ac143eecbdc326393e7f1006a50a66c332054d67355092f1e3900db6a20e82d208d7ffe4ddbb7d4c55225f96342054998
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/wasm-opt@npm:1.9.0":
   version: 1.9.0
   resolution: "@webassemblyjs/wasm-opt@npm:1.9.0"
@@ -4131,6 +4261,18 @@ __metadata:
     "@webassemblyjs/wasm-gen": 1.9.0
     "@webassemblyjs/wasm-parser": 1.9.0
   checksum: 2ce89f206e40dbfc44ec4a04669b76d14810db70da2506f90a7d5ff45f8002e34d7eaed447c3423cdad76d60617012d1fd0c055b63a5ed863b0068e5ce3e4032
+  languageName: node
+  linkType: hard
+
+"@webassemblyjs/wasm-opt@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/wasm-opt@npm:1.9.1"
+  dependencies:
+    "@webassemblyjs/ast": 1.9.1
+    "@webassemblyjs/helper-buffer": 1.9.1
+    "@webassemblyjs/wasm-gen": 1.9.1
+    "@webassemblyjs/wasm-parser": 1.9.1
+  checksum: 44687846e65f29587ed0cad3b1f5c9ce262dbdfa9eba6cd30b21284d2bcf0b8f4a216264dbae62ef8dbb2059ef025a8d59745972dfc7df067faad6778fe0abf6
   languageName: node
   linkType: hard
 
@@ -4148,6 +4290,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@webassemblyjs/wasm-parser@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/wasm-parser@npm:1.9.1"
+  dependencies:
+    "@webassemblyjs/ast": 1.9.1
+    "@webassemblyjs/helper-api-error": 1.9.1
+    "@webassemblyjs/helper-wasm-bytecode": 1.9.1
+    "@webassemblyjs/ieee754": 1.9.1
+    "@webassemblyjs/leb128": 1.9.1
+    "@webassemblyjs/utf8": 1.9.1
+  checksum: 65a448850ff8dd23e4150cf27d8647c037f2c70ac8c8bdec2c48f1c3ef22cfc70769c67c700311f6067d7441053b8c7a0422afa240ed69f9e0615335ad397881
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/wast-parser@npm:1.9.0":
   version: 1.9.0
   resolution: "@webassemblyjs/wast-parser@npm:1.9.0"
@@ -4162,6 +4318,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@webassemblyjs/wast-parser@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/wast-parser@npm:1.9.1"
+  dependencies:
+    "@webassemblyjs/ast": 1.9.1
+    "@webassemblyjs/floating-point-hex-parser": 1.9.1
+    "@webassemblyjs/helper-api-error": 1.9.1
+    "@webassemblyjs/helper-code-frame": 1.9.1
+    "@webassemblyjs/helper-fsm": 1.9.1
+    "@xtuc/long": 4.2.2
+  checksum: 67b3e5219cf820058e8cc28daa37f00aa146a0ed1f08ad2cd8b20c6d0a8913b9cc6af49e5c4de72a7c77b3ab45df27990f6256fbfb84c7d8fac4bffe8725b059
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/wast-printer@npm:1.9.0":
   version: 1.9.0
   resolution: "@webassemblyjs/wast-printer@npm:1.9.0"
@@ -4170,6 +4340,17 @@ __metadata:
     "@webassemblyjs/wast-parser": 1.9.0
     "@xtuc/long": 4.2.2
   checksum: 9f013b27e28b60cb215011079a15c94d1a7b0784eb3b59ec4936f8c0635ecdb58875c6809485cff814e01df170f02c18676cf782826795dc08553b98e69c1049
+  languageName: node
+  linkType: hard
+
+"@webassemblyjs/wast-printer@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@webassemblyjs/wast-printer@npm:1.9.1"
+  dependencies:
+    "@webassemblyjs/ast": 1.9.1
+    "@webassemblyjs/wast-parser": 1.9.1
+    "@xtuc/long": 4.2.2
+  checksum: 58f032ad7b104230287ff5b947f67d4065c2d5dd80f42404d9986d87d23e3d95de6bf7a21ce59a427ae9bf80c218f06987af77f6bf2b87b3069e735746799500
   languageName: node
   linkType: hard
 
@@ -9444,6 +9625,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"find-up@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "find-up@npm:5.0.0"
+  dependencies:
+    locate-path: ^6.0.0
+    path-exists: ^4.0.0
+  checksum: cd0b77415bc59e5af31e4e1b29c6ff8d965d9ca3c60a4b74161f8f116c0d1ad8d35bc6e53bf8f92c69e704e98183f1628a363ed7d519eb28eff54378b8f167a7
+  languageName: node
+  linkType: hard
+
 "findup-sync@npm:^2.0.0":
   version: 2.0.0
   resolution: "findup-sync@npm:2.0.0"
@@ -9746,17 +9937,17 @@ fsevents@~2.1.2:
     "@angular/platform-browser": ~11.0.2
     "@angular/platform-browser-dynamic": ~11.0.2
     "@angular/router": ~11.0.2
-    "@fullcalendar/core": ~5.4.0
-    "@fullcalendar/daygrid": ~5.4.0
-    "@fullcalendar/interaction": ~5.4.0
-    "@fullcalendar/timegrid": ~5.4.0
+    "@fullcalendar/core": ~5.5.0
+    "@fullcalendar/daygrid": ~5.5.0
+    "@fullcalendar/interaction": ~5.5.0
+    "@fullcalendar/timegrid": ~5.5.0
     "@types/jasmine": ~3.6.0
     "@types/jasminewd2": ~2.0.3
     "@types/node": ^12.11.1
     codelyzer: ^6.0.0
     core-js: ^3.6.2
     fast-deep-equal: ^3.1.1
-    fullcalendar-scheduler: ~5.4.0
+    fullcalendar-scheduler: ~5.5.0
     jasmine-core: ~3.6.0
     jasmine-spec-reporter: ~5.0.0
     karma: ~5.1.1
@@ -9779,17 +9970,17 @@ fsevents@~2.1.2:
   version: 0.0.0-use.local
   resolution: "fullcalendar-scheduler-tests@workspace:packages-premium/__tests__"
   dependencies:
-    "@fullcalendar/core": "workspace:~5.4.0"
-    "@fullcalendar/daygrid": "workspace:~5.4.0"
-    "@fullcalendar/interaction": "workspace:~5.4.0"
-    "@fullcalendar/list": "workspace:~5.4.0"
-    "@fullcalendar/premium-common": "workspace:~5.4.0"
-    "@fullcalendar/resource-daygrid": "workspace:~5.4.0"
-    "@fullcalendar/resource-timegrid": "workspace:~5.4.0"
-    "@fullcalendar/resource-timeline": "workspace:~5.4.0"
-    "@fullcalendar/scrollgrid": "workspace:~5.4.0"
-    "@fullcalendar/timegrid": "workspace:~5.4.0"
-    "@fullcalendar/timeline": "workspace:~5.4.0"
+    "@fullcalendar/core": "workspace:~5.5.0"
+    "@fullcalendar/daygrid": "workspace:~5.5.0"
+    "@fullcalendar/interaction": "workspace:~5.5.0"
+    "@fullcalendar/list": "workspace:~5.5.0"
+    "@fullcalendar/premium-common": "workspace:~5.5.0"
+    "@fullcalendar/resource-daygrid": "workspace:~5.5.0"
+    "@fullcalendar/resource-timegrid": "workspace:~5.5.0"
+    "@fullcalendar/resource-timeline": "workspace:~5.5.0"
+    "@fullcalendar/scrollgrid": "workspace:~5.5.0"
+    "@fullcalendar/timegrid": "workspace:~5.5.0"
+    "@fullcalendar/timeline": "workspace:~5.5.0"
     "@types/jasmine": ^3.3.12
     "@types/jasmine-jquery": ^1.5.33
     "@types/jquery": ^3.3.29
@@ -9799,24 +9990,24 @@ fsevents@~2.1.2:
   languageName: unknown
   linkType: soft
 
-"fullcalendar-scheduler@workspace:packages-premium/bundle, fullcalendar-scheduler@~5.4.0":
+"fullcalendar-scheduler@workspace:packages-premium/bundle, fullcalendar-scheduler@~5.5.0":
   version: 0.0.0-use.local
   resolution: "fullcalendar-scheduler@workspace:packages-premium/bundle"
   dependencies:
-    "@fullcalendar/adaptive": "workspace:~5.4.0"
-    "@fullcalendar/bootstrap": "workspace:~5.4.0"
-    "@fullcalendar/core": "workspace:~5.4.0"
-    "@fullcalendar/daygrid": "workspace:~5.4.0"
-    "@fullcalendar/google-calendar": "workspace:~5.4.0"
-    "@fullcalendar/interaction": "workspace:~5.4.0"
-    "@fullcalendar/list": "workspace:~5.4.0"
-    "@fullcalendar/resource-common": "workspace:~5.4.0"
-    "@fullcalendar/resource-daygrid": "workspace:~5.4.0"
-    "@fullcalendar/resource-timegrid": "workspace:~5.4.0"
-    "@fullcalendar/resource-timeline": "workspace:~5.4.0"
-    "@fullcalendar/scrollgrid": "workspace:~5.4.0"
-    "@fullcalendar/timegrid": "workspace:~5.4.0"
-    "@fullcalendar/timeline": "workspace:~5.4.0"
+    "@fullcalendar/adaptive": "workspace:~5.5.0"
+    "@fullcalendar/bootstrap": "workspace:~5.5.0"
+    "@fullcalendar/core": "workspace:~5.5.0"
+    "@fullcalendar/daygrid": "workspace:~5.5.0"
+    "@fullcalendar/google-calendar": "workspace:~5.5.0"
+    "@fullcalendar/interaction": "workspace:~5.5.0"
+    "@fullcalendar/list": "workspace:~5.5.0"
+    "@fullcalendar/resource-common": "workspace:~5.5.0"
+    "@fullcalendar/resource-daygrid": "workspace:~5.5.0"
+    "@fullcalendar/resource-timegrid": "workspace:~5.5.0"
+    "@fullcalendar/resource-timeline": "workspace:~5.5.0"
+    "@fullcalendar/scrollgrid": "workspace:~5.5.0"
+    "@fullcalendar/timegrid": "workspace:~5.5.0"
+    "@fullcalendar/timeline": "workspace:~5.5.0"
   languageName: unknown
   linkType: soft
 
@@ -9824,19 +10015,19 @@ fsevents@~2.1.2:
   version: 0.0.0-use.local
   resolution: "fullcalendar-tests@workspace:packages/__tests__"
   dependencies:
-    "@fullcalendar/bootstrap": "workspace:~5.4.0"
-    "@fullcalendar/common": "workspace:~5.4.0"
-    "@fullcalendar/core": "workspace:~5.4.0"
-    "@fullcalendar/daygrid": "workspace:~5.4.0"
-    "@fullcalendar/google-calendar": "workspace:~5.4.0"
-    "@fullcalendar/icalendar": "workspace:~5.4.0"
-    "@fullcalendar/interaction": "workspace:~5.4.0"
-    "@fullcalendar/list": "workspace:~5.4.0"
-    "@fullcalendar/luxon": "workspace:~5.4.0"
-    "@fullcalendar/moment": "workspace:~5.4.0"
-    "@fullcalendar/moment-timezone": "workspace:~5.4.0"
-    "@fullcalendar/rrule": "workspace:~5.4.0"
-    "@fullcalendar/timegrid": "workspace:~5.4.0"
+    "@fullcalendar/bootstrap": "workspace:~5.5.0"
+    "@fullcalendar/common": "workspace:~5.5.0"
+    "@fullcalendar/core": "workspace:~5.5.0"
+    "@fullcalendar/daygrid": "workspace:~5.5.0"
+    "@fullcalendar/google-calendar": "workspace:~5.5.0"
+    "@fullcalendar/icalendar": "workspace:~5.5.0"
+    "@fullcalendar/interaction": "workspace:~5.5.0"
+    "@fullcalendar/list": "workspace:~5.5.0"
+    "@fullcalendar/luxon": "workspace:~5.5.0"
+    "@fullcalendar/moment": "workspace:~5.5.0"
+    "@fullcalendar/moment-timezone": "workspace:~5.5.0"
+    "@fullcalendar/rrule": "workspace:~5.5.0"
+    "@fullcalendar/timegrid": "workspace:~5.5.0"
     "@types/jasmine": ^3.3.12
     "@types/jasmine-jquery": ^1.5.33
     "@types/jquery": ^3.3.29
@@ -9926,13 +10117,13 @@ fsevents@~2.1.2:
   version: 0.0.0-use.local
   resolution: "fullcalendar@workspace:packages/bundle"
   dependencies:
-    "@fullcalendar/bootstrap": "workspace:~5.4.0"
-    "@fullcalendar/core": "workspace:~5.4.0"
-    "@fullcalendar/daygrid": "workspace:~5.4.0"
-    "@fullcalendar/google-calendar": "workspace:~5.4.0"
-    "@fullcalendar/interaction": "workspace:~5.4.0"
-    "@fullcalendar/list": "workspace:~5.4.0"
-    "@fullcalendar/timegrid": "workspace:~5.4.0"
+    "@fullcalendar/bootstrap": "workspace:~5.5.0"
+    "@fullcalendar/core": "workspace:~5.5.0"
+    "@fullcalendar/daygrid": "workspace:~5.5.0"
+    "@fullcalendar/google-calendar": "workspace:~5.5.0"
+    "@fullcalendar/interaction": "workspace:~5.5.0"
+    "@fullcalendar/list": "workspace:~5.5.0"
+    "@fullcalendar/timegrid": "workspace:~5.5.0"
   languageName: unknown
   linkType: soft
 
@@ -13172,6 +13363,15 @@ karma@~5.2.3:
   languageName: node
   linkType: hard
 
+"locate-path@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "locate-path@npm:6.0.0"
+  dependencies:
+    p-locate: ^5.0.0
+  checksum: 4c379638152e0e5fda9a8cc07005702f81fcb9899db0f66d691ac1e64193dea670af14e96c50f14d82d45959daa4c400cb712c158cffe22ae265bfc1b1e3a221
+  languageName: node
+  linkType: hard
+
 "lodash._basecopy@npm:^3.0.0":
   version: 3.0.1
   resolution: "lodash._basecopy@npm:3.0.1"
@@ -15389,6 +15589,15 @@ karma@~5.2.3:
   languageName: node
   linkType: hard
 
+"p-locate@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "p-locate@npm:5.0.0"
+  dependencies:
+    p-limit: ^3.0.2
+  checksum: a233d775c870e00c734adabd29f66f93824df076683c0d5a2dc16e5285b02d80c1bf3bab43b9881e4a5b16b37bb86f1922aebb094674703d30a4973041d5c0f6
+  languageName: node
+  linkType: hard
+
 "p-map@npm:^2.0.0":
   version: 2.1.0
   resolution: "p-map@npm:2.1.0"
@@ -15920,6 +16129,15 @@ karma@~5.2.3:
   dependencies:
     find-up: ^4.0.0
   checksum: 1956ebf3cf5cc36a5d20e93851fcadd5a786774eb08667078561e72e0ab8ace91fc36a028d5305f0bfe7c89f9bf51886e2a3c8cb2c2620accfa3feb8da3c256b
+  languageName: node
+  linkType: hard
+
+"pkg-dir@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "pkg-dir@npm:5.0.0"
+  dependencies:
+    find-up: ^5.0.0
+  checksum: 86f6ecee1787d8fe1606fd831f823f967c6ea0d760ce714af6afd2fec076ce71fbedcb57b339d93b84edf90ccdd81d4e6e2c10fcde21684ef3ffee5e05fd37dc
   languageName: node
   linkType: hard
 
@@ -19962,6 +20180,13 @@ resolve@1.18.1:
   languageName: node
   linkType: hard
 
+"tapable@npm:^2.1.1":
+  version: 2.2.0
+  resolution: "tapable@npm:2.2.0"
+  checksum: f8ed725aedb3d777bf908ff06c02d1a2108667d3e64af87dd45354ac8de67e7e4fe1a567e215057fb1a2a5437b31d80cc5e5ddbb8327f7280afd4494967a9a93
+  languageName: node
+  linkType: hard
+
 "tar-stream@npm:^2.0.1":
   version: 2.1.4
   resolution: "tar-stream@npm:2.1.4"
@@ -21923,7 +22148,7 @@ typescript@~3.9.7:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.3.0, webpack@npm:^5.3.1, webpack@npm:^5.4.0":
+"webpack@npm:^5.3.0, webpack@npm:^5.3.1":
   version: 5.4.0
   resolution: "webpack@npm:5.4.0"
   dependencies:
@@ -21957,6 +22182,43 @@ typescript@~3.9.7:
   bin:
     webpack: bin/webpack.js
   checksum: 1da5d7f1f0ec1f8f0a0ef2ef4b374805a9abd9a1a30e8834ab4b2f7793ce43251ea5c50b0132884666bd5189711f2049c66bb06ca6c381bfb022355619dc93bc
+  languageName: node
+  linkType: hard
+
+"webpack@npm:^5.5.0":
+  version: 5.11.0
+  resolution: "webpack@npm:5.11.0"
+  dependencies:
+    "@types/eslint-scope": ^3.7.0
+    "@types/estree": ^0.0.45
+    "@webassemblyjs/ast": 1.9.1
+    "@webassemblyjs/helper-module-context": 1.9.1
+    "@webassemblyjs/wasm-edit": 1.9.1
+    "@webassemblyjs/wasm-parser": 1.9.1
+    acorn: ^8.0.4
+    browserslist: ^4.14.5
+    chrome-trace-event: ^1.0.2
+    enhanced-resolve: ^5.3.1
+    eslint-scope: ^5.1.1
+    events: ^3.2.0
+    glob-to-regexp: ^0.4.1
+    graceful-fs: ^4.2.4
+    json-parse-better-errors: ^1.0.2
+    loader-runner: ^4.1.0
+    mime-types: ^2.1.27
+    neo-async: ^2.6.2
+    pkg-dir: ^5.0.0
+    schema-utils: ^3.0.0
+    tapable: ^2.1.1
+    terser-webpack-plugin: ^5.0.3
+    watchpack: ^2.0.0
+    webpack-sources: ^2.1.1
+  peerDependenciesMeta:
+    webpack-cli:
+      optional: true
+  bin:
+    webpack: bin/webpack.js
+  checksum: 573cdf80bd1cc2ef27a6abbf47b132898a6cd8b1514e7884a4788c521f307dd8c287888a36a40f8402cba5555a553d5a681c7932fed23b654bd922152117691a
   languageName: node
   linkType: hard
 
