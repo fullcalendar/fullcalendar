@@ -121,7 +121,7 @@ describe('addICalEventSource with month view', () => {
         .body(rawICal)
     })
 
-    const source = { feedUrl } as EventSourceInput
+    const source = { url: feedUrl, format: 'icalendar' } as EventSourceInput
 
     if (calendarSetup) {
       calendarSetup(source)

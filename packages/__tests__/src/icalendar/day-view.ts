@@ -140,7 +140,7 @@ describe('addICalEventSource with day view', () => {
         .body(timedMeetingWithDuration)
     }))
 
-    initCalendar().addEventSource({ feedUrl: FEED_URL } as EventSourceInput)
+    initCalendar().addEventSource({ url: FEED_URL, format: 'icalendar' } as EventSourceInput)
 
     setTimeout(() => {
       assertEventCount(1)
@@ -163,7 +163,7 @@ describe('addICalEventSource with day view', () => {
         .body(rawICal)
     })
 
-    const source = { feedUrl: FEED_URL } as EventSourceInput
+    const source = { url: FEED_URL, format: 'icalendar' } as EventSourceInput
 
     if (calendarSetup) {
       calendarSetup(source)

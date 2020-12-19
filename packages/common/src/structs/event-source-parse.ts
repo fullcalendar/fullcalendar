@@ -11,6 +11,7 @@ const EVENT_SOURCE_REFINERS = { // does NOT include EVENT_UI_REFINERS
   id: String,
   defaultAllDay: Boolean,
   url: String,
+  format: String,
   events: identity as Identity<EventInput[] | EventSourceFunc>, // array or function
   eventDataTransform: identity as Identity<EventInputTransformer>,
 

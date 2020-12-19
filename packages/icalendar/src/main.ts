@@ -1,6 +1,5 @@
 import * as ICAL from 'ical.js'
 import { createPlugin, EventSourceDef, EventInput } from '@fullcalendar/common'
-import { EVENT_SOURCE_REFINERS } from './event-source-refiners'
 
 type Success = (rawFeed: string, xhr: XMLHttpRequest) => void
 type Failure = (error: string, xhr: XMLHttpRequest) => void
@@ -72,9 +71,9 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
   ignoreRange: true,
 
   parseMeta(refined) {
-    if (refined.feedUrl) {
+    if (refined.url && refined.format === 'icalendar') {
       return {
-        feedUrl: refined.feedUrl,
+        feedUrl: refined.url,
       }
     }
     return null
@@ -102,6 +101,5 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
 }
 
 export default createPlugin({
-  eventSourceRefiners: EVENT_SOURCE_REFINERS,
   eventSourceDefs: [eventSourceDef],
 })

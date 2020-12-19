@@ -18,7 +18,7 @@ interface JsonFeedMeta {
 let eventSourceDef: EventSourceDef<JsonFeedMeta> = {
 
   parseMeta(refined) {
-    if (refined.url) {
+    if (refined.url && (refined.format === 'json' || !refined.format)) {
       return {
         url: refined.url,
         method: (refined.method || 'GET').toUpperCase(),
