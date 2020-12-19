@@ -29,8 +29,11 @@ export class EventSourceApi {
     return this.internalEventSource.publicId
   }
 
-  // only relevant to json-feed event sources
   get url(): string {
     return this.internalEventSource.meta.url
+  }
+
+  get format(): string {
+    return this.internalEventSource.meta.format // TODO: bad. not guaranteed
   }
 }

@@ -8,6 +8,7 @@ import { JSON_FEED_EVENT_SOURCE_REFINERS } from './json-feed-event-source-refine
 
 interface JsonFeedMeta {
   url: string
+  format: 'json' // for EventSourceApi
   method: string
   extraParams?: any
   startParam?: string
@@ -21,6 +22,7 @@ let eventSourceDef: EventSourceDef<JsonFeedMeta> = {
     if (refined.url && (refined.format === 'json' || !refined.format)) {
       return {
         url: refined.url,
+        format: 'json',
         method: (refined.method || 'GET').toUpperCase(),
         extraParams: refined.extraParams,
         startParam: refined.startParam,
