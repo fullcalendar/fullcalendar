@@ -74,7 +74,7 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
     if (refined.url && refined.format === 'ics') {
       return {
         url: refined.url,
-        format: 'ics'
+        format: 'ics',
       }
     }
     return null
