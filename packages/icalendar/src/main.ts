@@ -23,7 +23,7 @@ export function requestICal(url: string, successCallback: Success, failureCallba
 
 interface ICalFeedMeta {
   url: string
-  format: 'icalendar' // for EventSourceApi
+  format: 'ics' // for EventSourceApi
 }
 
 let buildIcalEvents = (rawFeed: string): ICAL.Event[] => {
@@ -71,10 +71,10 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
   ignoreRange: true,
 
   parseMeta(refined) {
-    if (refined.url && refined.format === 'icalendar') {
+    if (refined.url && refined.format === 'ics') {
       return {
         url: refined.url,
-        format: 'icalendar'
+        format: 'ics'
       }
     }
     return null
