@@ -43,12 +43,12 @@ let buildEvents = (vevents: ICAL.Event[]): EventInput[] => vevents.map((vevent) 
 
   try {
     event = new ICAL.Event(vevent)
+
+    if (!event.startDate) { // is an accessor method. might throw an error
+      return null
+    }
   } catch (error) {
     console.warn(`Unable to process item in calendar: ${error}.`)
-    return null
-  }
-
-  if (!event || !event.startDate) {
     return null
   }
 
