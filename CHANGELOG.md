@@ -1,6 +1,6 @@
 
-v5.5.0
-------
+v5.5.0 (2020-12-19)
+-------------------
 
 - icalendar support (#1580)
 - support exrule and exdate for rrule plugin (#4439)
@@ -23,8 +23,8 @@ v5.5.0
 - breaking-change: EventDropArg typescript type moved from interaction package to core
 
 
-v5.4.0
-------
+v5.4.0 (2020-11-11)
+-------------------
 
 - new fixedMirrorParent settings for drag-n-drop. workaround for #4673
 - rrule exclusion doesn't work while adding the 'Z' char for RRule datetimes (#5726)
