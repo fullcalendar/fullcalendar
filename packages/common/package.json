@@ -1,10 +1,11 @@
 {
   "name": "@fullcalendar/common",
-  "version": "5.4.0",
+  "version": "5.5.0",
   "title": "FullCalendar Common",
   "description": "internal package",
   "docs": "https://fullcalendar.io/docs",
   "dependencies": {
+    "ical.js": "^1.4.0",
     "tslib": "^2.0.3"
   },
   "main": "main.cjs.js",

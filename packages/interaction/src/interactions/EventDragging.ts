@@ -14,7 +14,6 @@ import {
   EventDropTransformers,
   CalendarContext,
   ViewApi,
-  Duration,
   EventChangeArg,
   buildEventApis,
   EventAddArg,
@@ -33,14 +32,6 @@ export interface EventDragArg {
   event: EventApi
   jsEvent: MouseEvent
   view: ViewApi
-}
-
-export interface EventDropArg extends EventChangeArg {
-  el: HTMLElement
-  delta: Duration
-  jsEvent: MouseEvent
-  view: ViewApi
-  // and other "transformed" things
 }
 
 export class EventDragging extends Interaction { // TODO: rename to EventSelectingAndDragging

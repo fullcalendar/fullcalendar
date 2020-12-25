@@ -76,16 +76,14 @@ export function reduceEventSourcesNewTimeZone(eventSources: EventSourceHash, dat
   )
 }
 
-export function computeEventSourceLoadingLevel(eventSources: EventSourceHash): number {
-  let cnt = 0
-
+export function computeEventSourcesLoading(eventSources: EventSourceHash): boolean {
   for (let sourceId in eventSources) {
     if (eventSources[sourceId].isFetching) {
-      cnt += 1
+      return true
     }
   }
 
-  return cnt
+  return false
 }
 
 function addSources(

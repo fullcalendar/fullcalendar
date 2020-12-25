@@ -38,7 +38,8 @@ const THIRD_PARTY_BROWSER_GLOBALS = {
   rrule: 'rrule',
   moment: 'moment',
   'moment-timezone': 'moment',
-  luxon: 'luxon'
+  luxon: 'luxon',
+  'ical.js': 'ICAL'
 }
 let allGlobals = { ...THIRD_PARTY_BROWSER_GLOBALS, ...browserGlobalByPkg }
 let externalList = Object.keys(allGlobals)

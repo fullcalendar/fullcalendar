@@ -23,7 +23,6 @@ export interface CalendarDataManagerState {
   businessHours: EventStore
   eventSources: EventSourceHash
   eventUiBases: EventUiHash
-  loadingLevel: number
   eventStore: EventStore
   renderableEventStore: EventStore
   dateSelection: DateSpan | null

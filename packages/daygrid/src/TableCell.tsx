@@ -204,6 +204,10 @@ export class TableCell extends DateComponent<TableCellProps> {
   }
 }
 
+TableCell.addPropsEquality({
+  onMoreClick: true, // never forces rerender
+})
+
 function renderMoreLinkInner(props) {
   return props.text
 }

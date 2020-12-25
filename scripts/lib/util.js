@@ -5,7 +5,8 @@ const readFile = util.promisify(fs.readFile)
 const writeFile = util.promisify(fs.writeFile)
 const copyFile = util.promisify(fs.copyFile)
 const fileExists = util.promisify(fs.exists)
-const mkdirp = util.promisify(require('mkdirp'))
+const mkdir = util.promisify(fs.mkdir)
+const mkdirSync = fs.mkdirSync
 const concurrently = require('concurrently')
 const { watch } = require('gulp')
 
@@ -19,7 +20,6 @@ exports.writeFile = betterWriteFile
 exports.writeFileSync = betterWriteFileSync
 exports.copyFile = betterCopyFile
 exports.fileExists = fileExists
-exports.mkdirp = mkdirp
 
 
 function betterWatch() { // i cant believe gulp doesnt do this
@@ -73,20 +73,20 @@ function betterReadFileSync(destPath) {
 
 
 function betterWriteFile(destPath, content) {
-  return mkdirp(path.dirname(destPath)).then(function() {
+  return mkdir(path.dirname(destPath), { recursive: true }).then(function() {
     return writeFile(destPath, content, { encoding: 'utf8' })
   })
 }
 
 
 function betterWriteFileSync(destPath, content) {
-  mkdirp.sync(path.dirname(destPath))
+  mkdirSync(path.dirname(destPath), { recursive: true })
   return fs.writeFileSync(destPath, content, { encoding: 'utf8' })
 }
 
 
 function betterCopyFile(srcPath, destPath) {
-  return mkdirp(path.dirname(destPath)).then(function() {
+  return mkdir(path.dirname(destPath), { recursive: true }).then(function() {
     return copyFile(srcPath, destPath)
   })
 }

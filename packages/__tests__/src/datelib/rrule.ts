@@ -51,6 +51,104 @@ describe('rrule plugin', () => {
     expect(events[0].start).toEqualDate('2018-12-13')
   })
 
+  it('can exclude a recurrence with exdate', () => {
+    let calendar = initCalendar({
+      initialView: 'dayGridMonth',
+      now: '2020-12-01',
+      events: [{
+        rrule: {
+          dtstart: '2020-12-01',
+          freq: 'weekly',
+        },
+        exdate: '2020-12-08',
+      }],
+    })
+
+    let events = calendar.getEvents()
+    expect(events.length).toBe(5)
+    expect(events[0].start).toEqualDate('2020-12-01')
+    expect(events[1].start).toEqualDate('2020-12-15')
+    expect(events[2].start).toEqualDate('2020-12-22')
+    expect(events[3].start).toEqualDate('2020-12-29')
+    expect(events[4].start).toEqualDate('2021-01-05')
+  })
+
+  it('can exclude multiple recurrences with exdate', () => {
+    let calendar = initCalendar({
+      initialView: 'dayGridMonth',
+      now: '2020-12-01',
+      events: [{
+        rrule: {
+          dtstart: '2020-12-01',
+          freq: 'weekly',
+        },
+        exdate: ['2020-12-08', '2020-12-15'],
+      }],
+    })
+
+    let events = calendar.getEvents()
+    expect(events.length).toBe(4)
+    expect(events[0].start).toEqualDate('2020-12-01')
+    expect(events[1].start).toEqualDate('2020-12-22')
+    expect(events[2].start).toEqualDate('2020-12-29')
+    expect(events[3].start).toEqualDate('2021-01-05')
+  })
+
+  it('can exclude recurrences with an exrule', () => {
+    let calendar = initCalendar({
+      initialView: 'dayGridMonth',
+      now: '2020-12-01',
+      events: [{
+        rrule: {
+          dtstart: '2020-12-01',
+          freq: 'weekly',
+        },
+        exrule: {
+          dtstart: '2020-12-08',
+          until: '2020-12-15', // will include this date for exclusion
+          freq: 'weekly',
+        },
+      }],
+    })
+
+    let events = calendar.getEvents()
+    expect(events.length).toBe(4)
+    expect(events[0].start).toEqualDate('2020-12-01')
+    expect(events[1].start).toEqualDate('2020-12-22')
+    expect(events[2].start).toEqualDate('2020-12-29')
+    expect(events[3].start).toEqualDate('2021-01-05')
+  })
+
+  it('can exclude recurrences with multiple exrules', () => {
+    let calendar = initCalendar({
+      initialView: 'dayGridMonth',
+      now: '2020-12-01',
+      events: [{
+        rrule: {
+          dtstart: '2020-12-01',
+          freq: 'weekly',
+        },
+        exrule: [
+          {
+            dtstart: '2020-12-08',
+            until: '2020-12-15', // will include this date for exclusion
+            freq: 'weekly',
+          },
+          {
+            dtstart: '2020-12-22',
+            until: '2020-12-29', // will include this date for exclusion
+            freq: 'weekly',
+          },
+        ],
+      }],
+    })
+
+    let events = calendar.getEvents()
+    expect(events.length).toBe(2)
+    expect(events[0].start).toEqualDate('2020-12-01')
+    expect(events[1].start).toEqualDate('2021-01-05')
+  })
+
   it('expands events until a date', () => {
     initCalendar({
       events: [

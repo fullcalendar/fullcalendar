@@ -15,6 +15,7 @@
   "references": [
     { "path": "../core" },
     { "path": "../interaction" },
+    { "path": "../icalendar" },
     { "path": "../daygrid" },
     { "path": "../timegrid" },
     { "path": "../list" },

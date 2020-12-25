@@ -58,6 +58,10 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
     let nextUnitStart = context.dateEnv.add(currentUnitStart, createDuration(1, props.unit))
     let waitMs = nextUnitStart.valueOf() - unroundedNow.valueOf()
 
+    // there is a max setTimeout ms value (https://stackoverflow.com/a/3468650/96342)
+    // ensure no longer than a day
+    waitMs = Math.min(1000 * 60 * 60 * 24, waitMs)
+
     return {
       currentState: { nowDate: currentUnitStart, todayRange: buildDayRange(currentUnitStart) } as NowTimerState,
       nextState: { nowDate: nextUnitStart, todayRange: buildDayRange(nextUnitStart) } as NowTimerState,

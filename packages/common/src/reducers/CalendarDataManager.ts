@@ -15,7 +15,7 @@ import { reduceViewType } from './view-type'
 import { getInitialDate, reduceCurrentDate } from './current-date'
 import { reduceDynamicOptionOverrides } from './options'
 import { reduceDateProfile } from './date-profile'
-import { reduceEventSources, initEventSources, reduceEventSourcesNewTimeZone, computeEventSourceLoadingLevel } from './eventSources'
+import { reduceEventSources, initEventSources, reduceEventSourcesNewTimeZone, computeEventSourcesLoading } from './eventSources'
 import { reduceEventStore, rezoneEventStoreDates } from './eventStore'
 import { reduceDateSelection } from './date-selection'
 import { reduceSelectedEvent } from './selected-event'
@@ -147,7 +147,6 @@ export class CalendarDataManager {
       businessHours: this.parseContextBusinessHours(calendarContext), // weird to have this in state
       eventSources,
       eventUiBases: {},
-      loadingLevel: computeEventSourceLoadingLevel(eventSources),
       eventStore: createEmptyEventStore(),
       renderableEventStore: createEmptyEventStore(),
       dateSelection: null,
@@ -162,7 +161,7 @@ export class CalendarDataManager {
       __assign(initialState, reducer(null, null, contextAndState))
     }
 
-    if (initialState.loadingLevel) {
+    if (computeIsLoading(initialState, calendarContext)) {
       this.emitter.trigger('loading', true) // NOT DRY
     }
 
@@ -237,20 +236,17 @@ export class CalendarDataManager {
     }
 
     let eventSources = reduceEventSources(state.eventSources, action, dateProfile, calendarContext)
-    let eventSourceLoadingLevel = computeEventSourceLoadingLevel(eventSources)
     let eventStore = reduceEventStore(state.eventStore, action, eventSources, dateProfile, calendarContext)
+    let isEventsLoading = computeEventSourcesLoading(eventSources) // BAD. also called in this func in computeIsLoading
 
     let renderableEventStore =
-      (eventSourceLoadingLevel && !currentViewData.options.progressiveEventRendering) ?
+      (isEventsLoading && !currentViewData.options.progressiveEventRendering) ?
         (state.renderableEventStore || eventStore) : // try from previous state
         eventStore
 
     let { eventUiSingleBase, selectionConfig } = this.buildViewUiProps(calendarContext) // will memoize obj
     let eventUiBySource = this.buildEventUiBySource(eventSources)
     let eventUiBases = this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
-
-    let prevLoadingLevel = state.loadingLevel || 0
-    let loadingLevel = eventSourceLoadingLevel
 
     let newState: CalendarDataManagerState = {
       dynamicOptionOverrides,
@@ -262,7 +258,6 @@ export class CalendarDataManager {
       renderableEventStore,
       selectionConfig,
       eventUiBases,
-      loadingLevel,
       businessHours: this.parseContextBusinessHours(calendarContext), // will memoize obj
       dateSelection: reduceDateSelection(state.dateSelection, action),
       eventSelection: reduceSelectedEvent(state.eventSelection, action),
@@ -275,10 +270,13 @@ export class CalendarDataManager {
       __assign(newState, reducer(state, action, contextAndState)) // give the OLD state, for old value
     }
 
+    let wasLoading = computeIsLoading(state, calendarContext)
+    let isLoading = computeIsLoading(newState, calendarContext)
+
     // TODO: use propSetHandlers in plugin system
-    if (!prevLoadingLevel && loadingLevel) {
+    if (!wasLoading && isLoading) {
       emitter.trigger('loading', true)
-    } else if (prevLoadingLevel && !loadingLevel) {
+    } else if (wasLoading && !isLoading) {
       emitter.trigger('loading', false)
     }
 
@@ -644,6 +642,16 @@ function buildViewUiProps(calendarContext: CalendarContext) {
       calendarContext,
     ),
   }
+}
+
+function computeIsLoading(state: CalendarDataManagerState, context: CalendarContext) {
+  for (let isLoadingFunc of context.pluginHooks.isLoadingFuncs) {
+    if (isLoadingFunc(state)) {
+      return true
+    }
+  }
+
+  return false
 }
 
 function parseContextBusinessHours(calendarContext: CalendarContext) {

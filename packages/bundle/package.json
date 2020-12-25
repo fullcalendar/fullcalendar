@@ -1,17 +1,17 @@
 {
   "name": "fullcalendar",
-  "version": "5.4.0",
+  "version": "5.5.0",
   "title": "FullCalendar Standard Bundle",
   "description": "An easily consumable combination of standard plugins",
   "docs": "https://fullcalendar.io/docs/initialize-globals",
   "devDependencies": {
-    "@fullcalendar/bootstrap": "workspace:~5.4.0",
-    "@fullcalendar/core": "workspace:~5.4.0",
-    "@fullcalendar/daygrid": "workspace:~5.4.0",
-    "@fullcalendar/google-calendar": "workspace:~5.4.0",
-    "@fullcalendar/interaction": "workspace:~5.4.0",
-    "@fullcalendar/list": "workspace:~5.4.0",
-    "@fullcalendar/timegrid": "workspace:~5.4.0"
+    "@fullcalendar/bootstrap": "workspace:~5.5.0",
+    "@fullcalendar/core": "workspace:~5.5.0",
+    "@fullcalendar/daygrid": "workspace:~5.5.0",
+    "@fullcalendar/google-calendar": "workspace:~5.5.0",
+    "@fullcalendar/interaction": "workspace:~5.5.0",
+    "@fullcalendar/list": "workspace:~5.5.0",
+    "@fullcalendar/timegrid": "workspace:~5.5.0"
   },
   "main": "main.js",
   "jsdelivr": "main.min.js",

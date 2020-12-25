@@ -17,6 +17,7 @@ import {
   EventApi,
   DateProfile,
   Fragment,
+  createRef,
 } from '@fullcalendar/common'
 import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg'
 import { TableRow } from './TableRow'
@@ -54,6 +55,8 @@ interface TableState {
 
 interface MorePopoverState extends MoreLinkArg {
   currentFgEventSegs: TableSeg[]
+  fromRow: number
+  fromCol: number
 }
 
 export class Table extends DateComponent<TableProps, TableState> {
@@ -65,11 +68,12 @@ export class Table extends DateComponent<TableProps, TableState> {
   private splitEventResize = memoize(splitInteractionByRow)
   private buildBuildMoreLinkText = memoize(buildBuildMoreLinkText)
   private rootEl: HTMLElement
+  private morePopoverRef = createRef<MorePopover>()
   private rowRefs = new RefMap<TableRow>()
   private rowPositions: PositionCache
   private colPositions: PositionCache
 
-  state = {
+  state: TableState = {
     morePopoverState: null,
   }
 
@@ -153,7 +157,9 @@ export class Table extends DateComponent<TableProps, TableState> {
                       clientWidth={props.clientWidth}
                       clientHeight={props.clientHeight}
                       buildMoreLinkText={buildMoreLinkText}
-                      onMoreClick={this.handleMoreLinkClick}
+                      onMoreClick={(arg) => {
+                        this.handleMoreLinkClick({ ...arg, fromRow: row })
+                      }}
                     />
                   ))}
                 </tbody>
@@ -161,6 +167,7 @@ export class Table extends DateComponent<TableProps, TableState> {
               { // clear popover on event mod
                 (!props.forPrint && morePopoverState && morePopoverState.currentFgEventSegs === props.fgEventSegs) && (
                   <MorePopover
+                    ref={this.morePopoverRef}
                     date={morePopoverState.date}
                     dateProfile={dateProfile}
                     segs={morePopoverState.allSegs}
@@ -189,7 +196,8 @@ export class Table extends DateComponent<TableProps, TableState> {
     setRef(this.props.elRef, rootEl)
   }
 
-  handleMoreLinkClick = (arg: MoreLinkArg) => { // TODO: bad names "more link click" versus "more click"
+  // TODO: bad names "more link click" versus "more click"
+  handleMoreLinkClick = (arg: MoreLinkArg & {fromRow: number, fromCol: number}) => {
     let { context } = this
     let { dateEnv } = context
     let clickOption = context.options.moreLinkClick
@@ -222,6 +230,8 @@ export class Table extends DateComponent<TableProps, TableState> {
         morePopoverState: {
           ...arg,
           currentFgEventSegs: this.props.fgEventSegs,
+          fromRow: arg.fromRow,
+          fromCol: arg.fromCol,
         },
       })
     } else if (typeof clickOption === 'string') { // a view name
@@ -255,6 +265,18 @@ export class Table extends DateComponent<TableProps, TableState> {
   }
 
   positionToHit(leftPosition, topPosition) {
+    let morePopover = this.morePopoverRef.current
+    let morePopoverHit = morePopover ? morePopover.positionToHit(leftPosition, topPosition, this.rootEl) : null
+    let { morePopoverState } = this.state
+
+    if (morePopoverHit) {
+      return {
+        row: morePopoverState.fromRow,
+        col: morePopoverState.fromCol,
+        ...morePopoverHit,
+      }
+    }
+
     let { colPositions, rowPositions } = this
     let col = colPositions.leftToIndex(leftPosition)
     let row = rowPositions.topToIndex(topPosition)

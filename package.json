@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "fullcalendar-workspace",
-  "version": "5.4.0",
+  "version": "5.5.0",
   "title": "FullCalendar",
   "description": "Full-sized drag & drop event calendar",
   "keywords": [
@@ -59,6 +59,9 @@
     "ci:test": "yarn run build && yarn run test:ci",
     "ci:contrib": "yarn run build && yarn run contrib:run all ci && FULLCALENDAR_FORCE_REACT=1 yarn run test:ci",
     "ci:examples": "yarn run build && yarn run contrib:run all build && yarn run example:run all build",
+    "update-readmes": "node ./scripts/update-readmes.js",
+    "update-licenses": "node ./scripts/update-licenses.js",
+    "update-package-jsons": "node ./scripts/update-package-jsons.js",
     "preversion": "./scripts/update-example-dates.sh && yarn run clean",
     "xxxversion": "yarn run ci && yarn run archive",
     "xxxpostversion": "echo 'EXEC: git push --recurse-submodules=on-demand' && echo 'STILL NEED TO PUSH ALL TAGS'"
@@ -105,7 +108,6 @@
     "karma-verbose-reporter": "0.0.6",
     "luxon": "^1.22.0",
     "mini-css-extract-plugin": "^1.2.0",
-    "mkdirp": "^0.5.1",
     "moment": "^2.29.1",
     "moment-locales-webpack-plugin": "^1.2.0",
     "moment-timezone": "^0.5.31",

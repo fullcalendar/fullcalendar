@@ -21,7 +21,7 @@ import { ElementDraggingClass } from './interactions/ElementDragging'
 import { ComponentChildren } from './vdom'
 import { ScrollGridImpl } from './scrollgrid/ScrollGridImpl'
 import { ContentTypeHandlers } from './common/render-hook'
-import { GenericRefiners, GenericListenerRefiners } from './options'
+import { GenericRefiners, GenericListenerRefiners, Dictionary } from './options'
 import { CalendarData } from './reducers/data-types'
 
 // TODO: easier way to add new hooks? need to update a million things
@@ -29,6 +29,7 @@ import { CalendarData } from './reducers/data-types'
 export interface PluginDefInput {
   deps?: PluginDef[]
   reducers?: ReducerFunc[]
+  isLoadingFuncs?: ((state: Dictionary) => boolean)[]
   contextInit?: (context: CalendarContext) => void
   eventRefiners?: GenericRefiners // why not an array like others?
   eventDefMemberAdders?: EventDefMemberAdder[]
@@ -65,6 +66,7 @@ export interface PluginDefInput {
 
 export interface PluginHooks {
   reducers: ReducerFunc[]
+  isLoadingFuncs: ((state: Dictionary) => boolean)[]
   contextInit: ((context: CalendarContext) => void)[]
   eventRefiners: GenericRefiners
   eventDefMemberAdders: EventDefMemberAdder[]

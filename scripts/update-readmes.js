@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 const path = require('path')
 const { readFileSync, writeFileSync } = require('./lib/util')
 const { publicPackageStructs } = require('./lib/package-index')

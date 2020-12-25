@@ -151,7 +151,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
           {
             key: 'axis',
             rowContent: (arg: ChunkContentCallbackArgs) => (
-              <tr>{this.renderHeadAxis(arg.rowSyncHeights[0])}</tr>
+              <tr>{this.renderHeadAxis('day', arg.rowSyncHeights[0])}</tr>
             ),
           },
           {
@@ -315,7 +315,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
   /* Header Render Methods
   ------------------------------------------------------------------------------------------------------------------*/
 
-  renderHeadAxis = (frameHeight: CssDimValue = '') => {
+  renderHeadAxis = (rowKey: 'day' | string, frameHeight: CssDimValue = '') => {
     let { options } = this.context
     let { dateProfile } = this.props
     let range = dateProfile.renderRange
@@ -325,7 +325,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
       ? { 'data-navlink': buildNavLinkData(range.start, 'week'), tabIndex: 0 }
       : {}
 
-    if (options.weekNumbers) {
+    if (options.weekNumbers && rowKey === 'day') {
       return (
         <WeekNumberRoot date={range.start} defaultFormat={DEFAULT_WEEK_NUM_FORMAT}>
           {(rootElRef, classNames, innerElRef, innerContent) => (

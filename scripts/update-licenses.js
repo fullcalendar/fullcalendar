@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 const path = require('path')
 const { publicPackageStructs, bundleStructs } = require('./lib/package-index')
 const exec = require('./lib/shell').sync.withOptions({

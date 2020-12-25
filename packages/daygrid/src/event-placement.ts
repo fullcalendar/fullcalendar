@@ -256,7 +256,18 @@ function limitEvents(hiddenCnts, segIsHidden, colPlacements, _moreLinkConsumesLe
       segIsVisible[instanceId] = true
 
       for (let col = seg.firstCol; col <= seg.lastCol; col += 1) {
-        visibleColPlacements[col].push(placement)
+        let destPlacements = visibleColPlacements[col]
+        let newPosition = 0
+
+        // insert while keeping top sorted in each column
+        while (
+          newPosition < destPlacements.length &&
+          placement.top >= destPlacements[newPosition].top
+        ) {
+          newPosition += 1
+        }
+
+        destPlacements.splice(newPosition, 0, placement)
       }
     }
   }

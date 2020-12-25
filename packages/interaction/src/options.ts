@@ -1,9 +1,9 @@
-import { identity, Identity } from '@fullcalendar/common'
+import { identity, Identity, EventDropArg } from '@fullcalendar/common'
 
 // public
 import {
   DateClickArg,
-  EventDragStartArg, EventDragStopArg, EventDropArg,
+  EventDragStartArg, EventDragStopArg,
   EventResizeStartArg, EventResizeStopArg, EventResizeDoneArg,
   DropArg, EventReceiveArg, EventLeaveArg,
 } from './api-type-deps'

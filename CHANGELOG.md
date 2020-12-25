@@ -1,6 +1,36 @@
 
-v5.4.0
-------
+next-release
+------------
+
+- removed unnecessary use of Promise in icalendar package. makes IE11 compatible
+
+
+v5.5.0 (2020-12-19)
+-------------------
+
+- icalendar support (#1580)
+- support exrule and exdate for rrule plugin (#4439)
+- support for Angular 11
+- fix: recurring events missing with dtstart in UTC and timeZone not UTC (#5993)
+- fix: events can have a gap between and take more rows than dayMaxEventRows when using eventOrder (#5883)
+- fix: events dragged from the More popup to another resource drop on the wrong resource (#5593)
+- fix: week number rendered twice in ResourceTimeGridView (#5890)
+- fix: nowIndicator not positioned correctly for resourceTimelineYear view with slot duration 1 month (#5999)
+- fix: oldResource and newResource missing from EventDropArg typescript definition (#6010)
+- fix: loading callback fires before resources are done loading and again after (#5896)
+- fix: locales are not compatible with IE 11 (#6014)
+- fix: IE11 freezes trying to display dayGrid with dayMinWidth (#5971)
+- fix: calling revert func within eventChange would erase affected event
+- locale: add Armenian
+- locale: add Austrian
+- locale: add Welsh
+- locale: add Esperanto
+- locale: improve Dutch
+- breaking-change: EventDropArg typescript type moved from interaction package to core
+
+
+v5.4.0 (2020-11-11)
+-------------------
 
 - new fixedMirrorParent settings for drag-n-drop. workaround for #4673
 - rrule exclusion doesn't work while adding the 'Z' char for RRule datetimes (#5726)
