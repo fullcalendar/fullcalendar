@@ -48,6 +48,11 @@ Enter the directory and install FullCalendar's dependencies:
 
 *NOTE:* The install command will take a LONG time. We are working to fix this.
 
+### Online one-click setup
+
+You can use Gitpod(an online IDE which is free for Open Source) for working on issues and making Prs to this project. With a single click it will launch a workspace and automatically: clone the `fullcalendar` repo, install the dependencies, run `yarn build` and `yarn watch`.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/from-referrer/)
 
 ## Development Workflow
 
