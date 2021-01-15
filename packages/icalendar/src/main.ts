@@ -1,5 +1,5 @@
 import * as ICAL from 'ical.js'
-import { createPlugin, EventSourceDef, EventInput } from '@fullcalendar/common'
+import { createPlugin, EventSourceDef, EventInput, addDays, DateRange } from '@fullcalendar/common'
 
 type Success = (rawFeed: string, xhr: XMLHttpRequest) => void
 type Failure = (error: string, xhr: XMLHttpRequest) => void
@@ -38,7 +38,7 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
       if (errorMessage) {
         onFailure({ message: errorMessage, xhr })
       } else {
-        onSuccess({ rawEvents: expandICalEvents(iCalEvents), xhr })
+        onSuccess({ rawEvents: expandICalEvents(iCalEvents, arg.range), xhr })
       }
     }
 
@@ -48,7 +48,7 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
         callbacks: [handleIcalEvents],
         errorMessage: '',
         iCalEvents: [],
-        xhr: null
+        xhr: null,
       }
 
       requestICal(
@@ -105,7 +105,6 @@ function parseICalFeed(feedStr: string): ICAL.Event[] {
     let feed = ICAL.parse(feedStr)
     let rootComponent = new ICAL.Component(feed)
     components = rootComponent.getAllSubcomponents('vevent')
-
   } catch (error) {
     console.warn(`Error parsing feed: ${error}`)
     return []
@@ -128,17 +127,34 @@ function parseICalFeed(feedStr: string): ICAL.Event[] {
   return iCalEvents
 }
 
-function expandICalEvents(iCalEvents: ICAL.Event[]): EventInput[] {
+function expandICalEvents(iCalEvents: ICAL.Event[], range: DateRange): EventInput[] {
   let eventInputs: EventInput[] = []
+  let rangeStart = addDays(range.start, -1) // account for current TZ needing before UTC date
+  let rangeEnd = addDays(range.end, 1) // same. TODO: consider duration?
 
   for (let iCalEvent of iCalEvents) {
     if (iCalEvent.isRecurring()) {
-      console.log('found recurring iCalendar event!')
-    }
+      let expansion = iCalEvent.iterator(ICAL.Time.fromJSDate(rangeStart))
+      let startDateTime: ICAL.Time
 
-    eventInputs.push(
-      buildSingleEvent(iCalEvent)
-    )
+      while ((startDateTime = expansion.next())) {
+        let startDate = startDateTime.toJSDate()
+
+        if (startDate.valueOf() >= rangeEnd.valueOf()) {
+          break
+        } else {
+          eventInputs.push({
+            title: iCalEvent.summary,
+            start: startDateTime.toString(),
+            end: null, // TODO
+          })
+        }
+      }
+    } else {
+      eventInputs.push(
+        buildSingleEvent(iCalEvent),
+      )
+    }
   }
 
   return eventInputs
