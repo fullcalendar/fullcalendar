@@ -129,7 +129,7 @@ function parseRRuleObject(rruleInput: RRuleInputObject, dateEnv: DateEnv) {
     wkst: rruleInput.wkst == null
       ? (dateEnv.weekDow - 1 + 7) % 7 // convert Sunday-first to Monday-first
       : convertConstant(rruleInput.wkst),
-    byweekday: convertConstants(rruleInput.wkst),
+    byweekday: convertConstants(rruleInput.byweekday),
   }
 
   return { rrule: new RRule(rruleOptions), isTimeSpecified, isTimeZoneSpecified }
