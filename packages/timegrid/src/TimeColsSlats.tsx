@@ -91,7 +91,7 @@ export class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
               true, // vertical
             ),
             this.props.dateProfile,
-            context.options.slotDuration
+            context.options.slotDuration,
           ),
         )
       }
