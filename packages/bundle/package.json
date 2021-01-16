@@ -1,6 +1,6 @@
 {
   "name": "fullcalendar",
-  "version": "5.5.0",
+  "version": "5.5.1",
   "title": "FullCalendar Standard Bundle",
   "description": "An easily consumable combination of standard plugins",
   "docs": "https://fullcalendar.io/docs/initialize-globals",
