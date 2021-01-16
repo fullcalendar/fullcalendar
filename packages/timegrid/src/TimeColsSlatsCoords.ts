@@ -13,7 +13,7 @@ export class TimeColsSlatsCoords {
   constructor(
     public positions: PositionCache,
     private dateProfile: DateProfile,
-    private slotDuration: Duration
+    private slotDuration: Duration,
   ) {
   }
 

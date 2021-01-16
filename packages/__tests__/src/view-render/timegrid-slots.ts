@@ -3,7 +3,7 @@ describe('timegrid slots', () => {
   it('can render a single big slot without error', () => {
     initCalendar({
       initialView: 'timeGridDay',
-      slotDuration: '24:00'
+      slotDuration: '24:00',
     })
   })
 })

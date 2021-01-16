@@ -246,10 +246,12 @@ SimpleScrollGrid.addStateEquality({
   scrollerClientHeights: isPropsEqual,
 })
 
-function getSectionByKey(sections: SimpleScrollGridSection[], key: string) {
+function getSectionByKey(sections: SimpleScrollGridSection[], key: string): SimpleScrollGridSection | null {
   for (let section of sections) {
     if (section.key === key) {
       return section
     }
   }
+
+  return null
 }

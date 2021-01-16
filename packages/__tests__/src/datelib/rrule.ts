@@ -60,7 +60,7 @@ describe('rrule plugin', () => {
         allDay: true,
         rrule: {
           freq: 'weekly',
-          byweekday: ['mo','tu'],
+          byweekday: ['mo', 'tu'],
           dtstart: '2021-01-01',
         },
       }],
