@@ -1,8 +1,14 @@
 
-next-release
-------------
+v5.5.1 (2021-01-16)
+-------------------
 
-- removed unnecessary use of Promise in icalendar package. makes IE11 compatible
+- view styles lost after changing to view with allDaySlot:false, view-specific dayHeaders (#6069)
+- type error when slotDuration is in whole days (#5952)
+- rrule byweekday property not working (#6059)
+- support for recurring events in iCalendar feed (#6068)
+- add Indian/Tamil language support (#6061)
+- error in @fullcalendar/scrollgrid with NextJS (SSR) (#6037)
+- removed unnecessary use of Promise in icalendar package. restores IE11 compatibility
 
 
 v5.5.0 (2020-12-19)

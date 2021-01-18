@@ -51,6 +51,26 @@ describe('rrule plugin', () => {
     expect(events[0].start).toEqualDate('2018-12-13')
   })
 
+  // https://github.com/fullcalendar/fullcalendar/issues/6059
+  it('can specify strings in byweekday', () => {
+    initCalendar({
+      initialView: 'dayGridMonth',
+      initialDate: '2021-01-01',
+      events: [{
+        allDay: true,
+        rrule: {
+          freq: 'weekly',
+          byweekday: ['mo', 'tu'],
+          dtstart: '2021-01-01',
+        },
+      }],
+    })
+
+    let events = currentCalendar.getEvents()
+    expect(events.length).toBe(10)
+    expect(events[0].start).toEqualDate('2021-01-04')
+  })
+
   it('can exclude a recurrence with exdate', () => {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',

@@ -27,8 +27,8 @@ export interface SimpleScrollGridSection extends SectionConfig {
 interface SimpleScrollGridState {
   shrinkWidth: number | null
   forceYScrollbars: boolean
-  scrollerClientWidths: { [index: string]: number } // why not use array?
-  scrollerClientHeights: { [index: string]: number }
+  scrollerClientWidths: { [key: string]: number }
+  scrollerClientHeights: { [key: string]: number }
 }
 
 export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, SimpleScrollGridState> {
@@ -64,17 +64,17 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     let footSectionNodes: VNode[] = []
 
     while (configI < configCnt && (currentConfig = sectionConfigs[configI]).type === 'header') {
-      headSectionNodes.push(this.renderSection(currentConfig, configI, microColGroupNode))
+      headSectionNodes.push(this.renderSection(currentConfig, microColGroupNode))
       configI += 1
     }
 
     while (configI < configCnt && (currentConfig = sectionConfigs[configI]).type === 'body') {
-      bodySectionNodes.push(this.renderSection(currentConfig, configI, microColGroupNode))
+      bodySectionNodes.push(this.renderSection(currentConfig, microColGroupNode))
       configI += 1
     }
 
     while (configI < configCnt && (currentConfig = sectionConfigs[configI]).type === 'footer') {
-      footSectionNodes.push(this.renderSection(currentConfig, configI, microColGroupNode))
+      footSectionNodes.push(this.renderSection(currentConfig, microColGroupNode))
       configI += 1
     }
 
@@ -97,7 +97,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     )
   }
 
-  renderSection(sectionConfig: SimpleScrollGridSection, sectionI: number, microColGroupNode: VNode) {
+  renderSection(sectionConfig: SimpleScrollGridSection, microColGroupNode: VNode) {
     if ('outerContent' in sectionConfig) {
       return (
         <Fragment key={sectionConfig.key}>
@@ -108,12 +108,12 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
 
     return (
       <tr key={sectionConfig.key} className={getSectionClassNames(sectionConfig, this.props.liquid).join(' ')}>
-        {this.renderChunkTd(sectionConfig, sectionI, microColGroupNode, sectionConfig.chunk)}
+        {this.renderChunkTd(sectionConfig, microColGroupNode, sectionConfig.chunk)}
       </tr>
     )
   }
 
-  renderChunkTd(sectionConfig: SimpleScrollGridSection, sectionI: number, microColGroupNode: VNode, chunkConfig: ChunkConfig) {
+  renderChunkTd(sectionConfig: SimpleScrollGridSection, microColGroupNode: VNode, chunkConfig: ChunkConfig) {
     if ('outerContent' in chunkConfig) {
       return chunkConfig.outerContent
     }
@@ -132,11 +132,12 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
           !needsYScrolling ? 'hidden' :
             'auto'
 
+    let sectionKey = sectionConfig.key
     let content = renderChunkContent(sectionConfig, chunkConfig, {
       tableColGroupNode: microColGroupNode,
       tableMinWidth: '',
-      clientWidth: scrollerClientWidths[sectionI] !== undefined ? scrollerClientWidths[sectionI] : null,
-      clientHeight: scrollerClientHeights[sectionI] !== undefined ? scrollerClientHeights[sectionI] : null,
+      clientWidth: scrollerClientWidths[sectionKey] !== undefined ? scrollerClientWidths[sectionKey] : null,
+      clientHeight: scrollerClientHeights[sectionKey] !== undefined ? scrollerClientHeights[sectionKey] : null,
       expandRows: sectionConfig.expandRows,
       syncRowHeights: false,
       rowSyncHeights: [],
@@ -147,8 +148,8 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
       <td ref={chunkConfig.elRef}>
         <div className={`fc-scroller-harness${isLiquid ? ' fc-scroller-harness-liquid' : ''}`}>
           <Scroller
-            ref={this.scrollerRefs.createRef(sectionI)}
-            elRef={this.scrollerElRefs.createRef(sectionI)}
+            ref={this.scrollerRefs.createRef(sectionKey)}
+            elRef={this.scrollerElRefs.createRef(sectionKey)}
             overflowY={overflowY}
             overflowX={!props.liquid ? 'visible' : 'hidden' /* natural height? */}
             maxHeight={sectionConfig.maxHeight}
@@ -163,10 +164,11 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
   }
 
   _handleScrollerEl(scrollerEl: HTMLElement | null, key: string) {
-    let sectionI = parseInt(key, 10)
-    let chunkConfig = this.props.sections[sectionI].chunk
+    let section = getSectionByKey(this.props.sections, key)
 
-    setRef(chunkConfig.scrollerElRef, scrollerEl)
+    if (section) {
+      setRef(section.chunk.scrollerElRef, scrollerEl)
+    }
   }
 
   // TODO: can do a really simple print-view. dont need to join rows
@@ -199,15 +201,14 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
 
   computeScrollerDims() {
     let scrollbarWidth = getScrollbarWidths()
-    let sectionCnt = this.props.sections.length
     let { scrollerRefs, scrollerElRefs } = this
 
     let forceYScrollbars = false
     let scrollerClientWidths: { [index: string]: number } = {}
     let scrollerClientHeights: { [index: string]: number } = {}
 
-    for (let sectionI = 0; sectionI < sectionCnt; sectionI += 1) { // along edge
-      let scroller = scrollerRefs.currentMap[sectionI]
+    for (let sectionKey in scrollerRefs.currentMap) {
+      let scroller = scrollerRefs.currentMap[sectionKey]
 
       if (scroller && scroller.needsYScrolling()) {
         forceYScrollbars = true
@@ -215,13 +216,14 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
       }
     }
 
-    for (let sectionI = 0; sectionI < sectionCnt; sectionI += 1) { // along edge
-      let scrollerEl = scrollerElRefs.currentMap[sectionI]
+    for (let section of this.props.sections) {
+      let sectionKey = section.key
+      let scrollerEl = scrollerElRefs.currentMap[sectionKey]
 
       if (scrollerEl) {
         let harnessEl = scrollerEl.parentNode as HTMLElement // TODO: weird way to get this. need harness b/c doesn't include table borders
 
-        scrollerClientWidths[sectionI] = Math.floor(
+        scrollerClientWidths[sectionKey] = Math.floor(
           harnessEl.getBoundingClientRect().width - (
             forceYScrollbars
               ? scrollbarWidth.y // use global because scroller might not have scrollbars yet but will need them in future
@@ -229,7 +231,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
           ),
         )
 
-        scrollerClientHeights[sectionI] = Math.floor(
+        scrollerClientHeights[sectionKey] = Math.floor(
           harnessEl.getBoundingClientRect().height, // never has horizontal scrollbars
         )
       }
@@ -243,3 +245,13 @@ SimpleScrollGrid.addStateEquality({
   scrollerClientWidths: isPropsEqual,
   scrollerClientHeights: isPropsEqual,
 })
+
+function getSectionByKey(sections: SimpleScrollGridSection[], key: string): SimpleScrollGridSection | null {
+  for (let section of sections) {
+    if (section.key === key) {
+      return section
+    }
+  }
+
+  return null
+}

@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/core",
-  "version": "5.5.0",
+  "version": "5.5.1",
   "title": "FullCalendar Core Package",
   "description": "Provides core functionality, including the Calendar class",
   "docs": "https://fullcalendar.io/docs/initialize-es6",

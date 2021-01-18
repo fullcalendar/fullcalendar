@@ -73,7 +73,7 @@ export class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
   }
 
   updateSizing() {
-    let { props } = this
+    let { context, props } = this
 
     if (
       props.onCoords &&
@@ -91,7 +91,7 @@ export class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
               true, // vertical
             ),
             this.props.dateProfile,
-            props.slatMetas,
+            context.options.slotDuration,
           ),
         )
       }

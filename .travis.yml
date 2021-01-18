@@ -9,6 +9,7 @@ cache:
   directories:
     - .yarn/cache
     - example-projects/next/node_modules
+    - example-projects/next-scheduler/node_modules
     - example-projects/nuxt/node_modules
     - example-projects/vue-vuex/node_modules
     - example-projects/vue-typescript/node_modules

@@ -161,7 +161,7 @@ function fetchSource(eventSource: EventSource<any>, fetchRange: DateRange, conte
       range: fetchRange,
       context,
     },
-    (res) => {
+    (res) => { // success callback
       let { rawEvents } = res
 
       if (options.eventSourceSuccess) {
@@ -180,7 +180,7 @@ function fetchSource(eventSource: EventSource<any>, fetchRange: DateRange, conte
         rawEvents,
       })
     },
-    (error) => {
+    (error) => { // failure callback
       console.warn(error.message, error)
 
       if (options.eventSourceFailure) {

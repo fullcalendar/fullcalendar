@@ -37,7 +37,7 @@ describe('addICalEventSource with day view', () => {
   it('adds a repeating weekly meeting', (done) => {
     loadICalendarWith(recurringWeeklyMeeting, () => {
       setTimeout(() => {
-        assertEventCount(5, 1)
+        assertEventCount(1)
         done()
       }, 100)
     })
@@ -176,11 +176,10 @@ describe('addICalEventSource with day view', () => {
 
   // Checks to make sure all events have been rendered and that the calendar
   // has internal info on all the events.
-  function assertEventCount(expectedCount: number, expectedVisibleCount?: number) {
+  function assertEventCount(expectedCount: number) {
     expect(currentCalendar.getEvents().length).toEqual(expectedCount)
 
     let calendarWrapper = new CalendarWrapper(currentCalendar)
-    const visibleCount = expectedVisibleCount || expectedCount
-    expect(calendarWrapper.getEventEls().length).toEqual(visibleCount)
+    expect(calendarWrapper.getEventEls().length).toEqual(expectedCount)
   }
 })

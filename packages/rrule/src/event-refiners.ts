@@ -6,7 +6,7 @@ export type RRuleInputObjectFull = Omit<RRuleOptions, 'dtstart' | 'until' | 'fre
   until: RRuleOptions['until'] | DateInput
   freq: RRuleOptions['until'] | string
   wkst: RRuleOptions['wkst'] | string
-  byweekday: RRuleOptions['byweekday'] | string
+  byweekday: RRuleOptions['byweekday'] | string | string[]
 }
 
 export type RRuleInputObject = Partial<RRuleInputObjectFull>

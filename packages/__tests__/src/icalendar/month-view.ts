@@ -66,7 +66,7 @@ describe('addICalEventSource with month view', () => {
   it('adds a repeating weekly meeting', (done) => {
     loadICalendarWith(recurringWeeklyMeeting, () => {
       setTimeout(() => {
-        assertEventCount(5)
+        assertEventCount(6)
         done()
       }, 100)
     })

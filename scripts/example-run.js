@@ -37,6 +37,7 @@ for (let projName of projNames) {
       - .travis.yml
     */
     case 'next': // somehow incompatible with babel-plugin-transform-require-ignore. REVISIT
+    case 'next-scheduler': // same
     case 'nuxt': // nuxt cli tool uses webpack 4
     case 'vue-typescript': // vue cli tool uses webpack 4
     case 'vue-vuex': // vue cli tool uses webpack 4

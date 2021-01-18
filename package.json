@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "fullcalendar-workspace",
-  "version": "5.5.0",
+  "version": "5.5.1",
   "title": "FullCalendar",
   "description": "Full-sized drag & drop event calendar",
   "keywords": [
@@ -31,6 +31,7 @@
     "packages-contrib/angular/dist/fullcalendar",
     "example-projects/*",
     "!example-projects/next",
+    "!example-projects/next-scheduler",
     "!example-projects/nuxt",
     "!example-projects/vue-vuex",
     "!example-projects/vue-typescript",
