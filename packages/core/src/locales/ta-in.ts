@@ -11,14 +11,14 @@ export default {
     next: 'அடுத்தது',
     today: 'இன்று',
     month: 'மாதம்',
-    week: 'சனிக்கிழமை',
+    week: 'வாரம்',
     day: 'நாள்',
-    list: 'தினசரி கதை',
+    list: 'தினசரி அட்டவணை',
   },
-  weekText: 'வார',
+  weekText: 'வாரம்',
   allDayText: 'நாள் முழுவதும்',
   moreLinkText(n) {
     return '+ மேலும் ' + n
   },
-  noEventsText: 'நிகழ்வைக் காட்டவில்லை',
+  noEventsText: 'காண்பிக்க நிகழ்வுகள் இல்லை',
 } as LocaleInput
