@@ -147,6 +147,11 @@ function expandICalEvents(iCalEvents: ICAL.Event[], range: DateRange): EventInpu
             title: iCalEvent.summary,
             start: startDateTime.toString(),
             end: null, // TODO
+            extendedProps: {
+                location: iCalEvent.location,
+                organizer: iCalEvent.organizer,
+                description: iCalEvent.description,
+            },
           })
         }
       }
@@ -165,6 +170,11 @@ function buildSingleEvent(iCalEvent: ICAL.Event): EventInput {
     title: iCalEvent.summary,
     start: iCalEvent.startDate.toString(),
     end: (iCalEvent.endDate ? iCalEvent.endDate.toString() : null),
+    extendedProps: {
+        location: iCalEvent.location,
+        organizer: iCalEvent.organizer,
+        description: iCalEvent.description,
+    },
   }
 }
 
