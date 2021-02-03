@@ -129,15 +129,17 @@ function parseICalFeed(feedStr: string): ICAL.Event[] {
 
 function expandICalEvents(iCalEvents: ICAL.Event[], range: DateRange): EventInput[] {
   let eventInputs: EventInput[] = []
-  let rangeStart = addDays(range.start, -1) // account for current TZ needing before UTC date
-  let rangeEnd = addDays(range.end, 1) // same. TODO: consider duration?
+  let rangeEnd = addDays(range.end, 1) // TODO: consider duration?
 
   for (let iCalEvent of iCalEvents) {
     if (iCalEvent.isRecurring()) {
-      let expansion = iCalEvent.iterator(ICAL.Time.fromJSDate(rangeStart))
+      // TODO: Handle iCalEvent.exceptions
+      let expansion = iCalEvent.iterator()
       let startDateTime: ICAL.Time
 
       while ((startDateTime = expansion.next())) {
+        let endDateTime = startDateTime.clone()
+        endDateTime.addDuration(iCalEvent.duration)
         let startDate = startDateTime.toJSDate()
 
         if (startDate.valueOf() >= rangeEnd.valueOf()) {
@@ -146,7 +148,7 @@ function expandICalEvents(iCalEvents: ICAL.Event[], range: DateRange): EventInpu
           eventInputs.push({
             title: iCalEvent.summary,
             start: startDateTime.toString(),
-            end: null, // TODO
+            end: endDateTime.toString(),
           })
         }
       }
