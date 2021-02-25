@@ -27,9 +27,7 @@ export class ScrollResponder {
   }
 
   update(isDatesNew: boolean) {
-    if (isDatesNew) {
-      this.fireInitialScroll() // will drain
-    } else {
+    if (!isDatesNew) {
       this.drain()
     }
   }
