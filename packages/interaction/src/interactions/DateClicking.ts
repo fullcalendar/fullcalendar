@@ -33,8 +33,8 @@ export class DateClicking extends Interaction {
         origEvent: ev,
         isTouch: false,
         subjectEl: ev.currentTarget,
-        pageX: ev.clientX,
-        pageY: ev.clientY,
+        pageX: ev.pageX,
+        pageY: ev.pageY,
         deltaX: 0,
         deltaY: 0,
       } as PointerDragEvent
