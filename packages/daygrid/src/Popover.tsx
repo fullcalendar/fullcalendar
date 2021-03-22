@@ -67,7 +67,8 @@ export class Popover extends BaseComponent<PopoverProps> {
     let { onClose } = this.props
 
     // only hide the popover if the click happened outside the popover
-    if (onClose && !this.rootEl.contains(ev.target)) {
+    const target = ev.composedPath?.()[0] ?? ev.target
+    if (onClose && !this.rootEl.contains(target)) {
       onClose()
     }
   }
