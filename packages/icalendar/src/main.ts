@@ -172,9 +172,10 @@ function expandRecurringEvent(iCalEvent: ICAL.Event, range: DateRange): EventInp
   while ((startDateTime = expansion.next())) { // will start expanding ALL occurences
     let startDate = startDateTime.toJSDate()
     let endDate: DateMarker | null = null
+    let endDateTime: ICAL.Time | null = null
 
     if (hasDuration) {
-      let endDateTime = startDateTime.clone()
+      endDateTime = startDateTime.clone()
       endDateTime.addDuration(iCalEvent.duration)
       endDate = endDateTime.toJSDate()
     }
@@ -185,7 +186,7 @@ function expandRecurringEvent(iCalEvent: ICAL.Event, range: DateRange): EventInp
       eventInputs.push({
         title: iCalEvent.summary,
         start: startDateTime.toString(),
-        end: endDate,
+        end: endDateTime ? endDateTime.toString() : null,
       })
     }
   }
@@ -194,7 +195,8 @@ function expandRecurringEvent(iCalEvent: ICAL.Event, range: DateRange): EventInp
 }
 
 function specifiesEnd(iCalEvent: ICAL.Event) {
-  return Boolean(iCalEvent.component.getFirstProperty('dtend'))
+  return Boolean(iCalEvent.component.getFirstProperty('dtend')) ||
+    Boolean(iCalEvent.component.getFirstProperty('duration'))
 }
 
 export default createPlugin({

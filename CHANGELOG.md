@@ -2,12 +2,17 @@
 v5.5.2
 ------
 
+- fix: icalendar recurring events ignoring count rule (#6190)
+- fix: icalendar recurring timed-events with wrong times (#6139)
 - fix: removed accidental ical.js dependency in common's package.json (#6171)
 - fix: for gcal events, restore extendedProperties (#5083)
 - fix: for gcal events, make attachments available (#5024)
 - fix: can't parse rrule strings with newlines after UNTIL statements (#6126)
 - locale: fixed typos in Tamil (#6115)
 - locale: added Bengali (#6096)
+- breaking-change: for icalendar recurring event that don't specify dtend/duration,
+    the resulting Event object's end is now determined by forceEventDuration, defaultTimedEventDuration,
+    and defaultAllDayEventDuration, whereas previously it was *sometimes* null.
 
 
 v5.5.1 (2021-01-16)

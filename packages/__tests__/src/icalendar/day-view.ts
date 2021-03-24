@@ -3,7 +3,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import { EventSourceInput } from '@fullcalendar/core'
 import iCalendarPlugin from '@fullcalendar/icalendar'
 import oneHourMeeting from './data/oneHourMeeting'
-import recurringWeeklyMeeting from './data/recurringWeeklyMeeting'
+import recurringWeekly from './data/recurringWeekly'
 import mungedOneHourMeeting from './data/mungedOneHourMeeting'
 import meetingWithMungedStart from './data/meetingWithMungedStart'
 import alldayEvent from './data/alldayEvent'
@@ -35,7 +35,7 @@ describe('addICalEventSource with day view', () => {
   })
 
   it('adds a repeating weekly meeting', (done) => {
-    loadICalendarWith(recurringWeeklyMeeting, () => {
+    loadICalendarWith(recurringWeekly, () => {
       setTimeout(() => {
         assertEventCount(1)
         done()
@@ -98,7 +98,7 @@ describe('addICalEventSource with day view', () => {
         setTimeout(() => {
           assertEventCount(1)
           const event = currentCalendar.getEvents()[0]
-          expect(event.end).toBeNull()
+          expect(event.end).toBe(null)
           done()
         }, 100)
       },

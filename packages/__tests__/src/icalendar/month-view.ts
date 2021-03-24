@@ -8,7 +8,8 @@ import multidayEvent from './data/multidayEvent'
 import multipleMultidayEvents from './data/multipleMultidayEvents'
 import multipleEventsOneMunged from './data/multipleEventsOneMunged'
 import oneHourMeeting from './data/oneHourMeeting'
-import recurringWeeklyMeeting from './data/recurringWeeklyMeeting'
+import recurringWeekly from './data/recurringWeekly'
+import recurringWeeklyWithoutEnd from './data/recurringWeeklyWithoutEnd'
 import recurringWeeklyWithCount from './data/recurringWeeklyWithCount'
 import mungedOneHourMeeting from './data/mungedOneHourMeeting'
 
@@ -27,8 +28,10 @@ describe('addICalEventSource with month view', () => {
   it('adds an all day event', (done) => {
     loadICalendarWith(alldayEvent, () => {
       setTimeout(() => {
+        let events = currentCalendar.getEvents()
+        expect(events[0].end).toBe(null)
+        events.forEach((event) => expect(event.allDay).toBeTruthy())
         assertEventCount(1)
-        currentCalendar.getEvents().forEach((event) => expect(event.allDay).toBeTruthy())
         done()
       }, 100)
     })
@@ -68,10 +71,23 @@ describe('addICalEventSource with month view', () => {
   })
 
   it('adds a repeating weekly meeting', (done) => {
-    loadICalendarWith(recurringWeeklyMeeting, () => {
+    loadICalendarWith(recurringWeekly, () => {
       setTimeout(() => {
         let events = currentCalendar.getEvents()
         expect(events[0].start).toEqualDate('2019-04-01T17:30:00')
+        expect(events[0].end).toEqualDate('2019-04-01T18:30:00')
+        assertEventCount(6)
+        done()
+      }, 100)
+    })
+  })
+
+  it('adds a repeating weekly meeting, with null end', (done) => {
+    loadICalendarWith(recurringWeeklyWithoutEnd, () => {
+      setTimeout(() => {
+        let events = currentCalendar.getEvents()
+        expect(events[0].start).toEqualDate('2019-04-01T17:30:00')
+        expect(events[0].end).toBe(null)
         assertEventCount(6)
         done()
       }, 100)
@@ -108,14 +124,14 @@ describe('addICalEventSource with month view', () => {
     })
   })
 
-  it('defaultAllDayEventDuration does not override ical default all day length of one day', (done) => {
+  it('defaultAllDayEventDuration overrides ical default all day length of one day', (done) => {
     loadICalendarWith(
       alldayEvent,
       () => {
         setTimeout(() => {
           assertEventCount(1)
           const event = currentCalendar.getEvents()[0]
-          expect(event.end.getDate()).toEqual(event.start.getDate() + 1)
+          expect(event.end.getDate()).toEqual(event.start.getDate() + 2)
           done()
         }, 100)
       },
