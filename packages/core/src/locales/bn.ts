@@ -17,7 +17,7 @@ export default {
 	},
 	weekText: 'সপ্তাহ',
 	allDayText: 'সারাদিন',
-	moreLinkText: function(n) {
+	moreLinkText(n) {
 	  return '+অন্যান্য ' + n
 	},
 	noEventsText: 'কোনো ইভেন্ট নেই',
