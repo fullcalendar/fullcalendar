@@ -47,7 +47,7 @@
     "example:run": "node ./scripts/example-run.js",
     "example:npm": "node ./scripts/example-npm.js",
     "example:pnp": "node ./scripts/example-pnp.js",
-    "example:open": "./script/example-open.sh",
+    "example:open": "./scripts/example-open.sh",
     "clean": "./scripts/clean.sh",
     "lint": "gulp lint",
     "lintBuilt": "gulp lintBuilt",
