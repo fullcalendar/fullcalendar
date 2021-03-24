@@ -2,8 +2,9 @@
 v5.5.2
 ------
 
-- locale: fixed typos in Tamil
-- locale: added Bengali
+- fix: removed accidental ical.js dependency in common's package.json (#6171)
+- locale: fixed typos in Tamil (#6115)
+- locale: added Bengali (#6096)
 
 
 v5.5.1 (2021-01-16)
