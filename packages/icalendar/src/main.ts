@@ -1,5 +1,5 @@
 import * as ICAL from 'ical.js'
-import { createPlugin, EventSourceDef, EventInput, addDays, DateRange } from '@fullcalendar/common'
+import { createPlugin, EventSourceDef, EventInput, addDays, DateRange, DateMarker } from '@fullcalendar/common'
 
 type Success = (rawFeed: string, xhr: XMLHttpRequest) => void
 type Failure = (error: string, xhr: XMLHttpRequest) => void
@@ -149,7 +149,9 @@ function buildSingleEvent(iCalEvent: ICAL.Event): EventInput {
   return {
     title: iCalEvent.summary,
     start: iCalEvent.startDate.toString(),
-    end: (iCalEvent.endDate ? iCalEvent.endDate.toString() : null),
+    end: (specifiesEnd(iCalEvent) && iCalEvent.endDate)
+      ? iCalEvent.endDate.toString()
+      : null
   }
 }
 
@@ -157,33 +159,42 @@ function buildSingleEvent(iCalEvent: ICAL.Event): EventInput {
 This is suprisingly involved and not built-in to ical.js:
 https://github.com/mozilla-comm/ical.js/issues/285
 https://github.com/mifi/ical-expander/blob/master/index.js
-
 TODO: handle VEVENTs that are *exceptions*
-TODO: restore end-setting
 */
 function expandRecurringEvent(iCalEvent: ICAL.Event, range: DateRange): EventInput[] {
   let rangeStart = addDays(range.start, -1)
   let rangeEnd = addDays(range.end, 1)
   let expansion = iCalEvent.iterator()
+  let hasDuration = specifiesEnd(iCalEvent)
   let eventInputs: EventInput[] = []
   let startDateTime: ICAL.Time
 
   while ((startDateTime = expansion.next())) { // will start expanding ALL occurences
-    let endDateTime = startDateTime.clone()
-    endDateTime.addDuration(iCalEvent.duration)
+    let startDate = startDateTime.toJSDate()
+    let endDate: DateMarker | null = null
 
-    if (startDateTime.toJSDate() >= rangeEnd.valueOf()) { // is event's start on-or-after the range's end?
+    if (hasDuration) {
+      let endDateTime = startDateTime.clone()
+      endDateTime.addDuration(iCalEvent.duration)
+      endDate = endDateTime.toJSDate()
+    }
+
+    if (startDate >= rangeEnd.valueOf()) { // is event's start on-or-after the range's end?
       break
-    } else if (endDateTime.toJSDate() > rangeStart.valueOf()) { // is event's end after the range's start?
+    } else if ((endDate || startDate) > rangeStart.valueOf()) { // is event's end after the range's start?
       eventInputs.push({
         title: iCalEvent.summary,
         start: startDateTime.toString(),
-        end: null, // TODO
+        end: endDate,
       })
     }
   }
 
   return eventInputs
+}
+
+function specifiesEnd(iCalEvent: ICAL.Event) {
+  return Boolean(iCalEvent.component.getFirstProperty('dtend'))
 }
 
 export default createPlugin({
