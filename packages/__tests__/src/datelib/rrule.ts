@@ -311,7 +311,9 @@ describe('rrule plugin', () => {
       initCalendar({
         events: [
           {
-            rrule: 'DTSTART:20180904T130000\nRRULE:FREQ=WEEKLY',
+            rrule:
+              'DTSTART:20180904T130000\n' +
+              'RRULE:FREQ=WEEKLY',
           },
         ],
       })
@@ -324,6 +326,24 @@ describe('rrule plugin', () => {
       expect(events[2].start).toEqualDate('2018-09-18T13:00:00Z')
       expect(events[3].start).toEqualDate('2018-09-25T13:00:00Z')
       expect(events[4].start).toEqualDate('2018-10-02T13:00:00Z')
+    })
+
+    // https://github.com/fullcalendar/fullcalendar/issues/6126
+    fit('expands correctly with UNTIL followed by newline', () => {
+      initCalendar({
+        events: [
+          {
+            rrule:
+              'DTSTART:20180904T130000\n' +
+              'RRULE:FREQ=WEEKLY;UNTIL=20180925T130000\n' +
+              'RDATE:20180904T130000',
+          },
+        ],
+      })
+
+      let events = getSortedEvents()
+      debugger
+      expect(events.length).toBe(5)
     })
 
     it('respects allDay', () => {
