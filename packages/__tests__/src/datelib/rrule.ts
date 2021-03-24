@@ -329,7 +329,7 @@ describe('rrule plugin', () => {
     })
 
     // https://github.com/fullcalendar/fullcalendar/issues/6126
-    fit('expands correctly with UNTIL followed by newline', () => {
+    it('expands correctly with UNTIL followed by newline', () => {
       initCalendar({
         events: [
           {
@@ -343,7 +343,7 @@ describe('rrule plugin', () => {
 
       let events = getSortedEvents()
       debugger
-      expect(events.length).toBe(5)
+      expect(events.length).toBe(4)
     })
 
     it('respects allDay', () => {
