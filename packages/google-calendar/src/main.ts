@@ -155,13 +155,14 @@ function gcalItemToRawEventDef(item, gcalTimezone) {
 
   return {
     id: item.id,
-    attachments: item.attachments || [],
     title: item.summary,
     start: item.start.dateTime || item.start.date, // try timed. will fall back to all-day
     end: item.end.dateTime || item.end.date, // same
     url,
     location: item.location,
     description: item.description,
+    attachments: item.attachments || [],
+    extendedProps: (item.extendedProperties || {}).shared || {}
   }
 }
 

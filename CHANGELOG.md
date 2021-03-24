@@ -3,6 +3,8 @@ v5.5.2
 ------
 
 - fix: removed accidental ical.js dependency in common's package.json (#6171)
+- fix: for gcal events, restore extendedProperties (#5083)
+- fix: for gcal events, make attachments available (#5024)
 - locale: fixed typos in Tamil (#6115)
 - locale: added Bengali (#6096)
 
