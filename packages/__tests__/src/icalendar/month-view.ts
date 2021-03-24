@@ -9,6 +9,7 @@ import multipleMultidayEvents from './data/multipleMultidayEvents'
 import multipleEventsOneMunged from './data/multipleEventsOneMunged'
 import oneHourMeeting from './data/oneHourMeeting'
 import recurringWeeklyMeeting from './data/recurringWeeklyMeeting'
+import recurringWeeklyWithCount from './data/recurringWeeklyWithCount'
 import mungedOneHourMeeting from './data/mungedOneHourMeeting'
 
 describe('addICalEventSource with month view', () => {
@@ -56,6 +57,9 @@ describe('addICalEventSource with month view', () => {
   it('adds a one-hour long meeting', (done) => {
     loadICalendarWith(oneHourMeeting, () => {
       setTimeout(() => {
+        let events = currentCalendar.getEvents()
+        expect(events[0].start).toEqualDate('2019-04-15T09:30:00')
+        expect(events[0].end).toEqualDate('2019-04-15T10:30:00')
         assertEventCount(1)
         currentCalendar.getEvents().forEach((event) => expect(event.allDay).not.toBeTruthy())
         done()
@@ -66,7 +70,21 @@ describe('addICalEventSource with month view', () => {
   it('adds a repeating weekly meeting', (done) => {
     loadICalendarWith(recurringWeeklyMeeting, () => {
       setTimeout(() => {
+        let events = currentCalendar.getEvents()
+        expect(events[0].start).toEqualDate('2019-04-01T17:30:00')
         assertEventCount(6)
+        done()
+      }, 100)
+    })
+  })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/6190
+  // this feed starts at beginning of previous month (March 2019) and has 9 total occurences,
+  // 5 of which will be visible in the current month (April 2019)
+  it('adds a repeating weekly meeting, limited by COUNT, but across months', (done) => {
+    loadICalendarWith(recurringWeeklyWithCount, () => {
+      setTimeout(() => {
+        assertEventCount(5)
         done()
       }, 100)
     })
@@ -134,6 +152,7 @@ describe('addICalEventSource with month view', () => {
 
   // Checks to make sure all events have been rendered and that the calendar
   // has internal info on all the events.
+  // TODO: don't use currentCalendar
   function assertEventCount(expectedCount: number) {
     expect(currentCalendar.getEvents().length).toEqual(expectedCount)
 
