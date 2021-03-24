@@ -1,4 +1,11 @@
 
+v5.5.2
+------
+
+- locale: fixed typos in Tamil
+- locale: added Bengali
+
+
 v5.5.1 (2021-01-16)
 -------------------
 
