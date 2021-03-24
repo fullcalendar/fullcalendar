@@ -5,7 +5,6 @@
   "description": "internal package",
   "docs": "https://fullcalendar.io/docs",
   "dependencies": {
-    "ical.js": "^1.4.0",
     "tslib": "^2.0.3"
   },
   "main": "main.cjs.js",
