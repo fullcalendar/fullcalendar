@@ -4,6 +4,7 @@ v5.6.0
 
 - feature: icalendar events receive URL (#6173)
 - feature: icalendar events receive location, organizer, description in extendedProps (#6097)
+- fix: Event::setProp can't change the id (#4730)
 - fix: icalendar event source does not update on refreshEvents (#6194)
 - fix: business hours per resource do not fill row height with expandRows (#6134)
 - fix: icalendar recurring events ignoring count rule (#6190)
