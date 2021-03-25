@@ -147,7 +147,7 @@ function expandICalEvents(iCalEvents: ICAL.Event[], range: DateRange): EventInpu
 
 function buildSingleEvent(iCalEvent: ICAL.Event): EventInput {
   return {
-    title: iCalEvent.summary,
+    ...buildNonDateProps(iCalEvent),
     start: iCalEvent.startDate.toString(),
     end: (specifiesEnd(iCalEvent) && iCalEvent.endDate)
       ? iCalEvent.endDate.toString()
@@ -184,7 +184,7 @@ function expandRecurringEvent(iCalEvent: ICAL.Event, range: DateRange): EventInp
       break
     } else if ((endDate || startDate) > rangeStart.valueOf()) { // is event's end after the range's start?
       eventInputs.push({
-        title: iCalEvent.summary,
+        ...buildNonDateProps(iCalEvent),
         start: startDateTime.toString(),
         end: endDateTime ? endDateTime.toString() : null,
       })
@@ -192,6 +192,18 @@ function expandRecurringEvent(iCalEvent: ICAL.Event, range: DateRange): EventInp
   }
 
   return eventInputs
+}
+
+function buildNonDateProps(iCalEvent: ICAL.Event): EventInput {
+  return {
+    title: iCalEvent.summary,
+    url: iCalEvent.url,
+    extendedProps: {
+      location: iCalEvent.location,
+      organizer: iCalEvent.organizer,
+      description: iCalEvent.description,
+    }
+  }
 }
 
 function specifiesEnd(iCalEvent: ICAL.Event) {
