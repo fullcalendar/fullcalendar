@@ -144,12 +144,42 @@ describe('addICalEventSource with month view', () => {
     )
   })
 
+  it('calling refetchEvents request ical feed again', (done) => {
+    const feedUrl = '/mock.ics'
+    let fetchCnt = 0
+
+    XHRMock.get(feedUrl, (req, res) => {
+      fetchCnt++
+      return res.status(200)
+        .header('content-type', ICAL_MIME_TYPE)
+        .body(oneHourMeeting)
+    })
+
+    const calendar = initCalendar({
+      events: {
+        url: feedUrl,
+        format: 'ics',
+      }
+    })
+
+    setTimeout(() => {
+      expect(fetchCnt).toBe(1)
+      expect(calendar.getEvents().length).toBe(1)
+      calendar.refetchEvents()
+
+      setTimeout(() => {
+        expect(fetchCnt).toBe(2)
+        expect(calendar.getEvents().length).toBe(1)
+        done()
+      }, 100)
+    }, 100)
+  })
+
   function loadICalendarWith(rawICal: string, assertions: () => void, calendarSetup?: (source: EventSourceInput) => void) {
     const feedUrl = '/mock.ics'
 
     XHRMock.get(feedUrl, (req, res) => {
       expect(req.url().query).toEqual({})
-
       return res.status(200)
         .header('content-type', ICAL_MIME_TYPE)
         .body(rawICal)

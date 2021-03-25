@@ -498,7 +498,7 @@ export class CalendarApi {
   }
 
   refetchEvents() {
-    this.dispatch({ type: 'FETCH_EVENT_SOURCES' })
+    this.dispatch({ type: 'FETCH_EVENT_SOURCES', isRefetch: true })
   }
 
   // Scroll

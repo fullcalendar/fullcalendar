@@ -50,6 +50,7 @@ export function reduceEventSources(
           arrayToHash((action as any).sourceIds) :
           excludeStaticSources(eventSources, context),
         activeRange,
+        action.isRefetch || false,
         context,
       )
 
@@ -72,6 +73,7 @@ export function reduceEventSourcesNewTimeZone(eventSources: EventSourceHash, dat
     eventSources,
     excludeStaticSources(eventSources, context),
     activeRange,
+    true,
     context,
   )
 }
@@ -114,6 +116,7 @@ function fetchDirtySources(sourceHash: EventSourceHash, fetchRange: DateRange, c
     sourceHash,
     filterHash(sourceHash, (eventSource) => isSourceDirty(eventSource, fetchRange, context)),
     fetchRange,
+    false,
     context,
   )
 }
@@ -133,6 +136,7 @@ function fetchSourcesByIds(
   prevSources: EventSourceHash,
   sourceIdHash: { [sourceId: string]: any },
   fetchRange: DateRange,
+  isRefetch: boolean,
   context: CalendarContext,
 ): EventSourceHash {
   let nextSources: EventSourceHash = {}
@@ -141,7 +145,7 @@ function fetchSourcesByIds(
     let source = prevSources[sourceId]
 
     if (sourceIdHash[sourceId]) {
-      nextSources[sourceId] = fetchSource(source, fetchRange, context)
+      nextSources[sourceId] = fetchSource(source, fetchRange, isRefetch, context)
     } else {
       nextSources[sourceId] = source
     }
@@ -150,7 +154,7 @@ function fetchSourcesByIds(
   return nextSources
 }
 
-function fetchSource(eventSource: EventSource<any>, fetchRange: DateRange, context: CalendarContext) {
+function fetchSource(eventSource: EventSource<any>, fetchRange: DateRange, isRefetch: boolean, context: CalendarContext) {
   let { options, calendarApi } = context
   let sourceDef = context.pluginHooks.eventSourceDefs[eventSource.sourceDefId]
   let fetchId = guid()
@@ -159,6 +163,7 @@ function fetchSource(eventSource: EventSource<any>, fetchRange: DateRange, conte
     {
       eventSource,
       range: fetchRange,
+      isRefetch,
       context,
     },
     (res) => { // success callback
