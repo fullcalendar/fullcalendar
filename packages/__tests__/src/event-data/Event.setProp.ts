@@ -1,6 +1,6 @@
 
 describe('Event::setProps', () => {
-  fit('allows setting id', () => {
+  it('allows setting id', () => {
     const calendar = initCalendar({
       events: [
         { id: '123', start: '2021-01-01' }

@@ -189,7 +189,7 @@ exports.testsIndexWatch = testsIndexWatch
 
 async function testsIndex() {
   let res = exec2(
-    'find packages*/__tests__/src -mindepth 2 -type f -print0 | ' +
+    'find packages*/__tests__/src -mindepth 2 -type f -print0 | ' + // TODO: filter away non-ts/tsx files
     'xargs -0 grep -E "(fdescribe|fit)\\("'
   )
 
@@ -200,7 +200,7 @@ async function testsIndex() {
   let files
 
   if (!res.success) { // means there were no files that matched
-    let { stdout } = exec2('find packages*/__tests__/src -mindepth 2 -type f')
+    let { stdout } = exec2('find packages*/__tests__/src -mindepth 2 -type f') // TODO: filter away non-ts/tsx files
     files = stdout.trim()
     files = !files ? [] : files.split('\n')
     files = uniqStrs(files)
