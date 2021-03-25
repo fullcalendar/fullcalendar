@@ -12,9 +12,10 @@ DTSTAMP:20201006T124223Z
 ORGANIZER;CN=Testy McTestface:mailto:test@fullcalendar.test
 UID:12345678
 CREATED:20181210T150458Z
-DESCRIPTION:
+DESCRIPTION:this is the description
+URL:https://fullcalendar.io/
 LAST-MODIFIED:20190508T170523Z
-LOCATION:
+LOCATION:this is the location
 SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:Weekly Monday meeting

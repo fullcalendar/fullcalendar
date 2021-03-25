@@ -2,8 +2,10 @@
 v5.5.2
 ------
 
+- feature: icalendar events receive URL (#6173)
+- feature: icalendar events receive location, organizer, description in extendedProps (#6097)
 - fix: icalendar recurring events ignoring count rule (#6190)
-- fix: icalendar recurring timed-events with wrong times (#6139)
+- fix: icalendar recurring timed-events with wrong times (#6139, #6106)
 - fix: removed accidental ical.js dependency in common's package.json (#6171)
 - fix: for gcal events, restore extendedProperties (#5083)
 - fix: for gcal events, make attachments available (#5024)

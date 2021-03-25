@@ -197,13 +197,18 @@ function expandRecurringEvent(iCalEvent: ICAL.Event, range: DateRange): EventInp
 function buildNonDateProps(iCalEvent: ICAL.Event): EventInput {
   return {
     title: iCalEvent.summary,
-    url: iCalEvent.url,
+    url: extractEventUrl(iCalEvent),
     extendedProps: {
       location: iCalEvent.location,
       organizer: iCalEvent.organizer,
       description: iCalEvent.description,
     }
   }
+}
+
+function extractEventUrl(iCalEvent: ICAL.Event): string {
+  let urlProp = iCalEvent.component.getFirstProperty('url')
+  return urlProp ? urlProp.getFirstValue() : ''
 }
 
 function specifiesEnd(iCalEvent: ICAL.Event) {
