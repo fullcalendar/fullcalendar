@@ -15,7 +15,8 @@ import { getScrollbarWidths } from '../util/scrollbar-width'
 export interface SimpleScrollGridProps {
   cols: ColProps[]
   sections: SimpleScrollGridSection[]
-  liquid: boolean
+  liquid: boolean // liquid *height*
+  collapsibleWidth: boolean // can ALL sections be fully collapsed in width?
   height?: CssDimValue // TODO: give to real ScrollGrid
 }
 
@@ -54,6 +55,10 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
 
     let microColGroupNode = this.renderMicroColGroup(cols, state.shrinkWidth)
     let classNames = getScrollGridClassNames(props.liquid, context)
+
+    if (props.collapsibleWidth) {
+      classNames.push('fc-scrollgrid-collapsible')
+    }
 
     // TODO: make DRY
     let configCnt = sectionConfigs.length
@@ -136,7 +141,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     let content = renderChunkContent(sectionConfig, chunkConfig, {
       tableColGroupNode: microColGroupNode,
       tableMinWidth: '',
-      clientWidth: scrollerClientWidths[sectionKey] !== undefined ? scrollerClientWidths[sectionKey] : null,
+      clientWidth: (!props.collapsibleWidth && scrollerClientWidths[sectionKey] !== undefined) ? scrollerClientWidths[sectionKey] : null,
       clientHeight: scrollerClientHeights[sectionKey] !== undefined ? scrollerClientHeights[sectionKey] : null,
       expandRows: sectionConfig.expandRows,
       syncRowHeights: false,
