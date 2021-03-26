@@ -2616,7 +2616,6 @@ __metadata:
   resolution: "@fullcalendar/common@workspace:packages/common"
   dependencies:
     "@fullcalendar/core-preact": "workspace:*"
-    ical.js: ^1.4.0
     tslib: ^2.0.3
   languageName: unknown
   linkType: soft
