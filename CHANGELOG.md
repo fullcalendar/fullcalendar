@@ -4,6 +4,7 @@ v5.6.0
 
 - feature: icalendar events receive URL (#6173)
 - feature: icalendar events receive location, organizer, description in extendedProps (#6097)
+- fix: resizing resource column larger does not always update column widths (#6140)
 - fix: print view cut off for wide liquid-width calendar (#5707)
 - fix: event start time is limited by what is visible by slotMinTime (#6162)
 - fix: Event::setProp can't change the id (#4730)
