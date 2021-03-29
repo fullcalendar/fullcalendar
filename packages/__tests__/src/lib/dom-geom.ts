@@ -1,6 +1,6 @@
 import {
   isRect, isRectMostlyAbove, isRectMostlyLeft, isRectMostlyBounded,
-  isRectMostlyHBounded, isRectMostlyVBounded, rectsIntersect,
+  isRectMostlyHBounded, isRectMostlyVBounded, rectsIntersect, rectContainersOther,
 } from './geom'
 
 // fix bug with jQuery 3 returning 0 height for <td> elements in the IE's
@@ -32,6 +32,20 @@ export function anyElsIntersect(els) {
   for (let i = 0; i < rects.length; i += 1) {
     for (let j = i + 1; j < rects.length; j += 1) {
       if (rectsIntersect(rects[i], rects[j])) {
+        return [els[i], els[j]]
+      }
+    }
+  }
+
+  return false
+}
+
+export function anyElsObscured(els) {
+  let rects = els.map((el) => el.getBoundingClientRect())
+
+  for (let i = 0; i < rects.length; i += 1) {
+    for (let j = 0; j < rects.length; j += 1) {
+      if (i !== j && rectContainersOther(rects[i], rects[j])) {
         return [els[i], els[j]]
       }
     }

@@ -31,7 +31,7 @@ export type Action =
   { type: 'REMOVE_EVENT_SOURCE', sourceId: string } |
   { type: 'REMOVE_ALL_EVENT_SOURCES' } |
 
-  { type: 'FETCH_EVENT_SOURCES', sourceIds?: string[] } | // if no sourceIds, fetch all
+  { type: 'FETCH_EVENT_SOURCES', sourceIds?: string[], isRefetch?: boolean } | // if no sourceIds, fetch all
 
   { type: 'RECEIVE_EVENTS', sourceId: string, fetchId: string, fetchRange: DateRange | null, rawEvents: EventInput[] } |
   {

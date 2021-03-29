@@ -22,6 +22,7 @@ export class EventSourceApi {
     this.context.dispatch({
       type: 'FETCH_EVENT_SOURCES',
       sourceIds: [this.internalEventSource.sourceId],
+      isRefetch: true,
     })
   }
 

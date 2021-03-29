@@ -5,7 +5,8 @@ import { ViewContext } from '../ViewContext'
 export interface ScrollGridProps {
   colGroups?: ColGroupConfig[]
   sections: ScrollGridSectionConfig[]
-  liquid: boolean
+  liquid: boolean // liquid *height*
+  collapsibleWidth: boolean // can ALL sections be fully collapsed in width?
   elRef?: Ref<any>
 }
 

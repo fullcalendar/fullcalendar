@@ -27,6 +27,22 @@ describe('slotMinTime', () => { // TODO: rename file
         expect(res.isMatch).toBe(true)
       })
     })
+
+    describe('when event start cut off by positive slotMinTime', () => {
+      pushOptions({
+        slotMinTime: { hours: 12 },
+        events: [
+          { start: '2017-03-22T10:00:00', end: '2017-03-22T14:00:00' },
+        ],
+      })
+
+      it('shows time-text as original event start time', () => {
+        let calendar = initCalendar()
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+        let timeTexts = timeGridWrapper.getEventTimeTexts()
+        expect(timeTexts[0]).toBe('10:00 - 2:00')
+      })
+    })
   })
 
   it('can be changed dynamically', () => {

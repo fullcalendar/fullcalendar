@@ -41,6 +41,7 @@ export type EventSourceFetcher<Meta> = (
   arg: {
     eventSource: EventSource<Meta>
     range: DateRange
+    isRefetch: boolean
     context: CalendarContext
   },
   success: (res: { rawEvents: EventInput[], xhr?: XMLHttpRequest }) => void,

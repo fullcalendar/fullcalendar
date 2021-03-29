@@ -38,6 +38,13 @@ export class EventApi {
   setProp(name: string, val: string) {
     if (name in EVENT_DATE_REFINERS) {
       console.warn('Could not set date-related prop \'name\'. Use one of the date-related methods instead.')
+    // TODO: make proper aliasing system?
+    } else if (name === 'id') {
+      val = EVENT_NON_DATE_REFINERS[name](val)
+
+      this.mutate({
+        standardProps: { publicId: val }, // hardcoded internal name
+      })
     } else if (name in EVENT_NON_DATE_REFINERS) {
       val = EVENT_NON_DATE_REFINERS[name](val)
 

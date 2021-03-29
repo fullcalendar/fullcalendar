@@ -112,6 +112,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
           <div className={['fc-timegrid'].concat(classNames).join(' ')} ref={rootElRef}>
             <SimpleScrollGrid
               liquid={!props.isHeightAuto && !props.forPrint}
+              collapsibleWidth={props.forPrint}
               cols={[{ width: 'shrink' }]}
               sections={sections}
             />
@@ -278,6 +279,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
           <div className={['fc-timegrid'].concat(classNames).join(' ')} ref={rootElRef}>
             <ScrollGrid
               liquid={!props.isHeightAuto && !props.forPrint}
+              collapsibleWidth={false}
               colGroups={[
                 { width: 'shrink', cols: [{ width: 'shrink' }] }, // TODO: allow no specify cols
                 { cols: [{ span: colCnt, minWidth: dayMinWidth }] },

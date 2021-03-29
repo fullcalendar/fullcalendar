@@ -1,4 +1,28 @@
 
+v5.6.0 (2021-03-28)
+-------------------
+
+- feature: icalendar events receive URL (#6173)
+- feature: icalendar events receive location, organizer, description in extendedProps (#6097)
+- fix: resizing resource column larger does not always update column widths (#6140)
+- fix: print view cut off for wide liquid-width calendar (#5707)
+- fix: event start time is limited by what is visible by slotMinTime (#6162)
+- fix: Event::setProp can't change the id (#4730)
+- fix: icalendar event source does not update on refreshEvents (#6194)
+- fix: business hours per resource do not fill row height with expandRows (#6134)
+- fix: icalendar recurring events ignoring count rule (#6190)
+- fix: icalendar recurring timed-events with wrong times (#6139, #6106)
+- fix: removed accidental ical.js dependency in common's package.json (#6171)
+- fix: for gcal events, restore extendedProperties (#5083)
+- fix: for gcal events, make attachments available (#5024)
+- fix: can't parse rrule strings with newlines after UNTIL statements (#6126)
+- locale: fixed typos in Tamil (#6115)
+- locale: added Bengali (#6096)
+- breaking-change: for icalendar recurring event that don't specify dtend/duration,
+    the resulting Event object's end is now determined by forceEventDuration, defaultTimedEventDuration,
+    and defaultAllDayEventDuration, whereas previously it was *sometimes* null.
+
+
 v5.5.1 (2021-01-16)
 -------------------
 

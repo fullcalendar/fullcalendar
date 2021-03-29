@@ -11,7 +11,7 @@ import { EventUi, EventUiHash, combineEventUis } from './event-ui'
 import { mapHash } from '../util/object'
 import { ViewContext } from '../ViewContext'
 import { DateFormatter } from '../datelib/DateFormatter'
-import { DateMarker } from '../datelib/marker'
+import { addMs, DateMarker, startOfDay } from '../datelib/marker'
 import { ViewApi } from '../ViewApi'
 import { MountArg } from '../common/render-hook'
 
@@ -247,9 +247,16 @@ export function buildSegTimeText(
   if (displayEventTime == null) { displayEventTime = defaultDisplayEventTime !== false }
   if (displayEventEnd == null) { displayEventEnd = defaultDisplayEventEnd !== false }
 
-  if (displayEventTime && !eventDef.allDay && (seg.isStart || seg.isEnd)) {
-    let segStart = startOverride || (seg.isStart ? eventInstance.range.start : (seg.start || seg.eventRange.range.start))
-    let segEnd = endOverride || (seg.isEnd ? eventInstance.range.end : (seg.end || seg.eventRange.range.end))
+  let wholeEventStart = eventInstance.range.start
+  let wholeEventEnd = eventInstance.range.end
+  let segStart = startOverride || seg.start || seg.eventRange.range.start
+  let segEnd = endOverride || seg.end || seg.eventRange.range.end
+  let isStartDay = startOfDay(wholeEventStart).valueOf() === startOfDay(segStart).valueOf()
+  let isEndDay = startOfDay(addMs(wholeEventEnd, -1)).valueOf() === startOfDay(addMs(segEnd, -1)).valueOf()
+
+  if (displayEventTime && !eventDef.allDay && (isStartDay || isEndDay)) {
+    segStart = isStartDay ? wholeEventStart : segStart
+    segEnd = isEndDay ? wholeEventEnd : segEnd
 
     if (displayEventEnd && eventDef.hasEnd) {
       return dateEnv.formatRange(segStart, segEnd, timeFormat, {
