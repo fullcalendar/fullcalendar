@@ -1,6 +1,6 @@
 
-v5.6.0
-------
+v5.6.0 (2021-03-28)
+-------------------
 
 - feature: icalendar events receive URL (#6173)
 - feature: icalendar events receive location, organizer, description in extendedProps (#6097)
