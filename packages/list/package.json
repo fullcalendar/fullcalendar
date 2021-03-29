@@ -1,11 +1,11 @@
 {
   "name": "@fullcalendar/list",
-  "version": "5.5.0",
+  "version": "5.6.0",
   "title": "FullCalendar List View Plugin",
   "description": "View your events as a bulleted list",
   "docs": "https://fullcalendar.io/docs/list-view",
   "dependencies": {
-    "@fullcalendar/common": "workspace:~5.5.0",
+    "@fullcalendar/common": "workspace:~5.6.0",
     "tslib": "^2.0.3"
   },
   "main": "main.cjs.js",
