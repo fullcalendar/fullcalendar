@@ -40,6 +40,20 @@ export function anyElsIntersect(els) {
   return false
 }
 
+export function anyElsObscured(els) {
+  let rects = els.map((el) => el.getBoundingClientRect())
+
+  for (let i = 0; i < rects.length; i += 1) {
+    for (let j = 0; j < rects.length; j += 1) {
+      if (i !== j && rectContainersOther(rects[i], rects[j])) {
+        return [els[i], els[j]]
+      }
+    }
+  }
+
+  return false
+}
+
 export function getLeadingBoundingRect(els, direction = 'ltr') {
   els = $(els)
   expect(els.length).toBeGreaterThan(0)

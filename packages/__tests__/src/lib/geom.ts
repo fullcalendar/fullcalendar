@@ -18,6 +18,10 @@ export function rectsIntersect(rect0, rect1) {
   return rect0.left < rect1.right && rect0.right > rect1.left && rect0.top < rect1.bottom && rect0.bottom > rect1.top
 }
 
+export function rectContainersOther(rect0, rect1) { // rect0 contains rect1?
+  return rect1.left >= rect0.left && rect1.right <= rect0.right && rect1.top >= rect0.top && rect1.bottom <= rect0.bottom
+}
+
 export function joinRects(rect1, rect2) {
   return {
     left: Math.min(rect1.left, rect2.left),
