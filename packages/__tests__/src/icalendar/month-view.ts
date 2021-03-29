@@ -149,7 +149,7 @@ describe('addICalEventSource with month view', () => {
     let fetchCnt = 0
 
     XHRMock.get(feedUrl, (req, res) => {
-      fetchCnt++
+      fetchCnt += 1
       return res.status(200)
         .header('content-type', ICAL_MIME_TYPE)
         .body(oneHourMeeting)
@@ -159,7 +159,7 @@ describe('addICalEventSource with month view', () => {
       events: {
         url: feedUrl,
         format: 'ics',
-      }
+      },
     })
 
     setTimeout(() => {

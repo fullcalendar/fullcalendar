@@ -162,7 +162,7 @@ function gcalItemToRawEventDef(item, gcalTimezone) {
     location: item.location,
     description: item.description,
     attachments: item.attachments || [],
-    extendedProps: (item.extendedProperties || {}).shared || {}
+    extendedProps: (item.extendedProperties || {}).shared || {},
   }
 }
 

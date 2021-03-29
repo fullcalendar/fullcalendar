@@ -342,7 +342,6 @@ describe('rrule plugin', () => {
       })
 
       let events = getSortedEvents()
-      debugger
       expect(events.length).toBe(4)
     })
 

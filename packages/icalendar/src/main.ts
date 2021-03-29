@@ -155,7 +155,7 @@ function buildSingleEvent(iCalEvent: ICAL.Event): EventInput {
     start: iCalEvent.startDate.toString(),
     end: (specifiesEnd(iCalEvent) && iCalEvent.endDate)
       ? iCalEvent.endDate.toString()
-      : null
+      : null,
   }
 }
 
@@ -206,7 +206,7 @@ function buildNonDateProps(iCalEvent: ICAL.Event): EventInput {
       location: iCalEvent.location,
       organizer: iCalEvent.organizer,
       description: iCalEvent.description,
-    }
+    },
   }
 }
 

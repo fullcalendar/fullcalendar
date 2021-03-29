@@ -1,10 +1,9 @@
-
 describe('Event::setProps', () => {
   it('allows setting id', () => {
     const calendar = initCalendar({
       events: [
-        { id: '123', start: '2021-01-01' }
-      ]
+        { id: '123', start: '2021-01-01' },
+      ],
     })
 
     let events = calendar.getEvents()

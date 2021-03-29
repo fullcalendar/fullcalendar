@@ -32,8 +32,8 @@ describe('slotMinTime', () => { // TODO: rename file
       pushOptions({
         slotMinTime: { hours: 12 },
         events: [
-          { start: '2017-03-22T10:00:00', end: '2017-03-22T14:00:00' }
-        ]
+          { start: '2017-03-22T10:00:00', end: '2017-03-22T14:00:00' },
+        ],
       })
 
       it('shows time-text as original event start time', () => {
