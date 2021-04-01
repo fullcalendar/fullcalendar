@@ -4,7 +4,7 @@ import { Options as RRuleOptions } from 'rrule'
 export type RRuleInputObjectFull = Omit<RRuleOptions, 'dtstart' | 'until' | 'freq' | 'wkst' | 'byweekday'> & {
   dtstart: RRuleOptions['dtstart'] | DateInput
   until: RRuleOptions['until'] | DateInput
-  freq: RRuleOptions['until'] | string
+  freq: RRuleOptions['freq'] | string
   wkst: RRuleOptions['wkst'] | string
   byweekday: RRuleOptions['byweekday'] | string | string[]
 }
