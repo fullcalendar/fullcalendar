@@ -31,6 +31,10 @@ for (let projName of projNames) {
   switch(projName) {
 
     case 'angular':
+      // !!! - HACK: pnpify is broken with our built yarn (see .yarnrc.yml)
+      console.log('SKIPPING PnP simulation')
+      continue
+      // !!!
       console.log('Using PnP simulation')
       console.log('')
       exec.sync(
