@@ -86,35 +86,9 @@ git config --global push.recurseSubmodules on-demand
 ```
 
 
-## Style Guide
+## Linting
 
-Please follow the [Google JavaScript Style Guide] as closely as possible. With the following exceptions:
-
-```js
-if (true) {
-}
-else { // please put else, else if, and catch on a separate line
-}
-
-// please write one-line array literals with a one-space padding inside
-var a = [ 1, 2, 3 ];
-
-// please write one-line object literals with a one-space padding inside
-var o = { a: 1, b: 2, c: 3 };
-```
-
-Other exceptions:
-
-- please ignore anything about Google Closure Compiler or the `goog` library
-- please do not write JSDoc comments
-
-Notes about whitespace:
-
-- **use *tabs* instead of spaces**
-- separate functions with *2* blank lines
-- separate logical blocks within functions with *1* blank line
-
-Run the command line tool to automatically check your style:
+Run the command line tool to automatically check your code style:
 
 	yarn lint
 
