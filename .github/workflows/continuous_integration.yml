@@ -1,0 +1,52 @@
+name: Continuous Integration
+description: Performs all necessary CI processes
+on: pull_request
+env:
+  TZ: "America/Los_Angeles"
+jobs:
+  setup-environment:
+    name: Setup Environment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "13"
+      - run: yarn install
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.yarn/cache
+            ~/example-projects/next/node_modules
+            ~/example-projects/next-scheduler/node_modules
+            ~/example-projects/nuxt/node_modules
+            ~/example-projects/vue-vuex/node_modules
+            ~/example-projects/vue-typescript/node_modules
+            ~/example-projects/parcel/node_modules
+          key: module-cache
+  ci-lint:
+    name: CI Lint
+    needs: setup-environment
+    runs-on: ubuntu-latest
+    steps:
+      - run: yarn run ci:lint
+  ci-test:
+    name: CI Test
+    needs: setup-environment
+    runs-on: ubuntu-latest
+    steps:
+      - run: yarn run ci:test
+  ci-contrib:
+    name: CI Contrib
+    needs: setup-environment
+    runs-on: ubuntu-latest
+    steps:
+      - run: yarn run ci:contrib
+  ci-examples:
+    name: CI Examples
+    needs: setup-environment
+    runs-on: ubuntu-latest
+    steps:
+      - run: yarn run ci:examples
