@@ -17,6 +17,9 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: |
+            ~/node_modules
+            ~/packages-premium
+            ~/packages
             ~/.yarn/cache
             ~/example-projects/next/node_modules
             ~/example-projects/next-scheduler/node_modules
@@ -24,28 +27,52 @@ jobs:
             ~/example-projects/vue-vuex/node_modules
             ~/example-projects/vue-typescript/node_modules
             ~/example-projects/parcel/node_modules
-          key: module-cache
+          key: modules
   ci-lint:
     name: CI Lint
     needs: setup-environment
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "13"
       - run: yarn run ci:lint
   ci-test:
     name: CI Test
     needs: setup-environment
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "13"
       - run: yarn run ci:test
   ci-contrib:
     name: CI Contrib
     needs: setup-environment
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "13"
       - run: yarn run ci:contrib
   ci-examples:
     name: CI Examples
     needs: setup-environment
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "13"
       - run: yarn run ci:examples
