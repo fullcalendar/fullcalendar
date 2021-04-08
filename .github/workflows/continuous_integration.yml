@@ -17,6 +17,7 @@ jobs:
         with:
           path: |
             ~/node_modules
+            ~/.yarn/cache
             ~/packages-premium/**
             ~/packages/**
             ~/example-projects/next/node_modules
@@ -33,6 +34,7 @@ jobs:
       - name: Build Project
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn run build
+      - run: ls
   ci-lint:
     name: CI Lint
     needs: setup-environment
@@ -58,6 +60,7 @@ jobs:
             ~/example-projects/parcel/node_modules
           key: modules-${{ hashFiles('package-lock.json')}}
           restore-keys: modules-
+      - run: ls
       - run: yarn run lint
       - run: yarn run lintBuilt
   ci-test:
@@ -85,6 +88,7 @@ jobs:
             ~/example-projects/parcel/node_modules
           key: modules-${{ hashFiles('package-lock.json')}}
           restore-keys: modules-
+      - run: ls
       - run: yarn run ci:test
   ci-contrib:
     name: CI Contrib
@@ -111,6 +115,7 @@ jobs:
             ~/example-projects/parcel/node_modules
           key: modules-${{ hashFiles('package-lock.json')}}
           restore-keys: modules-
+      - run: ls
       - run: yarn run ci:contrib
   ci-examples:
     name: CI Examples
@@ -137,4 +142,5 @@ jobs:
             ~/example-projects/parcel/node_modules
           key: modules-${{ hashFiles('package-lock.json')}}
           restore-keys: modules-
+      - run: ls
       - run: yarn run ci:examples
