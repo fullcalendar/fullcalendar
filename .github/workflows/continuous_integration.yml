@@ -13,14 +13,12 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "13"
-      - run: yarn install
       - uses: actions/cache@v2
         with:
           path: |
             ~/node_modules
-            ~/packages-premium
-            ~/packages
-            ~/.yarn/cache
+            ~/packages-premium/**
+            ~/packages/**
             ~/example-projects/next/node_modules
             ~/example-projects/next-scheduler/node_modules
             ~/example-projects/nuxt/node_modules
@@ -29,6 +27,10 @@ jobs:
             ~/example-projects/parcel/node_modules
           key: modules-${{ hashFiles('package-lock.json')}}
           restore-keys: modules-
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install
+
   ci-lint:
     name: CI Lint
     needs: setup-environment
@@ -44,9 +46,8 @@ jobs:
         with:
           path: |
             ~/node_modules
-            ~/packages-premium
-            ~/packages
-            ~/.yarn/cache
+            ~/packages-premium/**
+            ~/packages/**
             ~/example-projects/next/node_modules
             ~/example-projects/next-scheduler/node_modules
             ~/example-projects/nuxt/node_modules
@@ -71,9 +72,8 @@ jobs:
         with:
           path: |
             ~/node_modules
-            ~/packages-premium
-            ~/packages
-            ~/.yarn/cache
+            ~/packages-premium/**
+            ~/packages/**
             ~/example-projects/next/node_modules
             ~/example-projects/next-scheduler/node_modules
             ~/example-projects/nuxt/node_modules
@@ -98,9 +98,8 @@ jobs:
         with:
           path: |
             ~/node_modules
-            ~/packages-premium
-            ~/packages
-            ~/.yarn/cache
+            ~/packages-premium/**
+            ~/packages/**
             ~/example-projects/next/node_modules
             ~/example-projects/next-scheduler/node_modules
             ~/example-projects/nuxt/node_modules
@@ -125,9 +124,8 @@ jobs:
         with:
           path: |
             ~/node_modules
-            ~/packages-premium
-            ~/packages
-            ~/.yarn/cache
+            ~/packages-premium/**
+            ~/packages/**
             ~/example-projects/next/node_modules
             ~/example-projects/next-scheduler/node_modules
             ~/example-projects/nuxt/node_modules
