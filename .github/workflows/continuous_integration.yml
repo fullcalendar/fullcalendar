@@ -30,7 +30,9 @@ jobs:
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install
-
+      - name: Build Project
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn run build
   ci-lint:
     name: CI Lint
     needs: setup-environment
@@ -56,7 +58,8 @@ jobs:
             ~/example-projects/parcel/node_modules
           key: modules-${{ hashFiles('package-lock.json')}}
           restore-keys: modules-
-      - run: yarn run ci:lint
+      - run: yarn run lint
+      - run: yarn run lintBuilt
   ci-test:
     name: CI Test
     needs: setup-environment
