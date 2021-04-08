@@ -1,5 +1,4 @@
 name: Continuous Integration
-description: Performs all necessary CI processes
 on: pull_request
 env:
   TZ: "America/Los_Angeles"
