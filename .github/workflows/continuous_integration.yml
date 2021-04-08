@@ -40,6 +40,21 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "13"
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/node_modules
+            ~/packages-premium
+            ~/packages
+            ~/.yarn/cache
+            ~/example-projects/next/node_modules
+            ~/example-projects/next-scheduler/node_modules
+            ~/example-projects/nuxt/node_modules
+            ~/example-projects/vue-vuex/node_modules
+            ~/example-projects/vue-typescript/node_modules
+            ~/example-projects/parcel/node_modules
+          key: modules-${{ hashFiles('package-lock.json')}}
+          restore-keys: modules-
       - run: yarn run ci:lint
   ci-test:
     name: CI Test
@@ -52,6 +67,21 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "13"
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/node_modules
+            ~/packages-premium
+            ~/packages
+            ~/.yarn/cache
+            ~/example-projects/next/node_modules
+            ~/example-projects/next-scheduler/node_modules
+            ~/example-projects/nuxt/node_modules
+            ~/example-projects/vue-vuex/node_modules
+            ~/example-projects/vue-typescript/node_modules
+            ~/example-projects/parcel/node_modules
+          key: modules-${{ hashFiles('package-lock.json')}}
+          restore-keys: modules-
       - run: yarn run ci:test
   ci-contrib:
     name: CI Contrib
@@ -64,6 +94,21 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "13"
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/node_modules
+            ~/packages-premium
+            ~/packages
+            ~/.yarn/cache
+            ~/example-projects/next/node_modules
+            ~/example-projects/next-scheduler/node_modules
+            ~/example-projects/nuxt/node_modules
+            ~/example-projects/vue-vuex/node_modules
+            ~/example-projects/vue-typescript/node_modules
+            ~/example-projects/parcel/node_modules
+          key: modules-${{ hashFiles('package-lock.json')}}
+          restore-keys: modules-
       - run: yarn run ci:contrib
   ci-examples:
     name: CI Examples
@@ -76,4 +121,19 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "13"
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/node_modules
+            ~/packages-premium
+            ~/packages
+            ~/.yarn/cache
+            ~/example-projects/next/node_modules
+            ~/example-projects/next-scheduler/node_modules
+            ~/example-projects/nuxt/node_modules
+            ~/example-projects/vue-vuex/node_modules
+            ~/example-projects/vue-typescript/node_modules
+            ~/example-projects/parcel/node_modules
+          key: modules-${{ hashFiles('package-lock.json')}}
+          restore-keys: modules-
       - run: yarn run ci:examples
