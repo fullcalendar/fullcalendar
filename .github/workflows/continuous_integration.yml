@@ -27,7 +27,8 @@ jobs:
             ~/example-projects/vue-vuex/node_modules
             ~/example-projects/vue-typescript/node_modules
             ~/example-projects/parcel/node_modules
-          key: modules
+          key: modules-${{ hashFiles('package-lock.json')}}
+          restore-keys: modules-
   ci-lint:
     name: CI Lint
     needs: setup-environment
