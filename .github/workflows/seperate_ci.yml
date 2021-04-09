@@ -20,8 +20,12 @@ jobs:
         with:
           useLockFile: false
           install-command: yarn install
+      - name: Install Examples
+        uses: bahmutov/npm-install@v1.6.0
+        with:
+          useLockFile: false
+          install-command: yarn install
           working-directory: |
-            .
             example-projects/next/
             example-projects/next-scheduler/
             example-projects/nuxt/
