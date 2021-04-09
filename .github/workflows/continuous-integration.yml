@@ -15,11 +15,16 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "13"
-      - name: Install Dependencies
-        uses: bahmutov/npm-install@v1.6.0
+      - name: Check Dependencies
+        uses: actions/cache@v2
+        id: yarn-cache
         with:
-          useLockFile: false
-          install-command: yarn install
+          path: .yarn/cache
+          key: yarn-cache-${{ hashFiles('**/yarn.lock') }}-${{ github.job }}
+          restore-keys: yarn-cache-
+      - name: Install Dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install
       - run: yarn run gulp lint
       - name: Build Project
         run: yarn run gulp build
