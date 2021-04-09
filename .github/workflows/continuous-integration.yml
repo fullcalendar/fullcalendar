@@ -20,7 +20,7 @@ jobs:
         id: yarn-cache
         with:
           path: .yarn/cache
-          key: yarn-cache-${{ hashFiles('**/yarn.lock') }}-${{ github.job }}
+          key: yarn-cache-${{ github.job }}
           restore-keys: yarn-cache-
       - name: Install Dependencies
         run: yarn install
@@ -30,7 +30,6 @@ jobs:
         with:
           issueSummary: true
           configFile: .eslintrc.yml
-          includeGlob: packages/*/src
       - name: Build Project
         run: yarn run gulp build
       - run: yarn run gulp lintBuilt
@@ -62,7 +61,7 @@ jobs:
         id: yarn-cache
         with:
           path: .yarn/cache
-          key: yarn-cache-${{ hashFiles('**/yarn.lock') }}-${{ github.job }}
+          key: yarn-cache-${{ github.job }}
           restore-keys: yarn-cache-
       - name: Install Dependencies
         run: yarn install
@@ -97,7 +96,7 @@ jobs:
         id: yarn-cache
         with:
           path: .yarn/cache
-          key: yarn-cache-${{ hashFiles('**/yarn.lock') }}-${{ github.job }}
+          key: yarn-cache-${{ github.job }}
           restore-keys: yarn-cache-
       - name: Install Dependencies
         run: yarn install
@@ -133,7 +132,7 @@ jobs:
         id: yarn-cache
         with:
           path: .yarn/cache
-          key: yarn-cache-${{ hashFiles('**/yarn.lock') }}-${{ github.job }}
+          key: yarn-cache-${{ github.job }}
           restore-keys: yarn-cache-
       - name: Install Dependencies
         run: yarn install
