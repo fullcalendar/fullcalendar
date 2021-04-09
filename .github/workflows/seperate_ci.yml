@@ -15,22 +15,18 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "13"
-      - name: Check Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.yarn/cache
-            ~/example-projects/next/node_modules
-            ~/example-projects/next-scheduler/node_modules
-            ~/example-projects/nuxt/node_modules
-            ~/example-projects/vue-vuex/node_modules
-            ~/example-projects/vue-typescript/node_modules
-            ~/example-projects/parcel/node_modules
-          key: modules-${{ hashFiles('yarn.lock')}}
-          restore-keys: modules-
       - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install
+        uses: bahmutov/npm-install@v1.6.0
+        with:
+          useLockFile: false
+          working-directory: |
+            .
+            example-projects/next/
+            example-projects/next-scheduler/
+            example-projects/nuxt/
+            example-projects/vue-vuex/
+            example-projects/vue-typescript/
+            example-projects/parcel/
       - run: yarn run lint
       - name: Build Project
         run: yarn run build
@@ -47,22 +43,18 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "13"
-      - name: Check Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.yarn/cache
-            ~/example-projects/next/node_modules
-            ~/example-projects/next-scheduler/node_modules
-            ~/example-projects/nuxt/node_modules
-            ~/example-projects/vue-vuex/node_modules
-            ~/example-projects/vue-typescript/node_modules
-            ~/example-projects/parcel/node_modules
-          key: modules-${{ hashFiles('yarn.lock')}}
-          restore-keys: modules-
       - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install
+        uses: bahmutov/npm-install@v1.6.0
+        with:
+          useLockFile: false
+          working-directory: |
+            .
+            example-projects/next/
+            example-projects/next-scheduler/
+            example-projects/nuxt/
+            example-projects/vue-vuex/
+            example-projects/vue-typescript/
+            example-projects/parcel/
       - name: Build Project
         run: yarn run build
       - run: yarn run test:ci
@@ -78,22 +70,18 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "13"
-      - name: Check Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.yarn/cache
-            ~/example-projects/next/node_modules
-            ~/example-projects/next-scheduler/node_modules
-            ~/example-projects/nuxt/node_modules
-            ~/example-projects/vue-vuex/node_modules
-            ~/example-projects/vue-typescript/node_modules
-            ~/example-projects/parcel/node_modules
-          key: modules-${{ hashFiles('yarn.lock')}}
-          restore-keys: modules-
       - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install
+        uses: bahmutov/npm-install@v1.6.0
+        with:
+          useLockFile: false
+          working-directory: |
+            .
+            example-projects/next/
+            example-projects/next-scheduler/
+            example-projects/nuxt/
+            example-projects/vue-vuex/
+            example-projects/vue-typescript/
+            example-projects/parcel/
       - name: Build Project
         run: yarn run build
       - run: yarn run contrib:run all ci
@@ -110,22 +98,18 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "13"
-      - name: Check Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.yarn/cache
-            ~/example-projects/next/node_modules
-            ~/example-projects/next-scheduler/node_modules
-            ~/example-projects/nuxt/node_modules
-            ~/example-projects/vue-vuex/node_modules
-            ~/example-projects/vue-typescript/node_modules
-            ~/example-projects/parcel/node_modules
-          key: modules-${{ hashFiles('yarn.lock')}}
-          restore-keys: modules-
       - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install
+        uses: bahmutov/npm-install@v1.6.0
+        with:
+          useLockFile: false
+          working-directory: |
+            .
+            example-projects/next/
+            example-projects/next-scheduler/
+            example-projects/nuxt/
+            example-projects/vue-vuex/
+            example-projects/vue-typescript/
+            example-projects/parcel/
       - name: Build Project
         run: yarn run build
       - run: yarn run contrib:run all build
