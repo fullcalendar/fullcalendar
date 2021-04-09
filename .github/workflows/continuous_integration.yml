@@ -3,139 +3,119 @@ on: pull_request
 env:
   TZ: "America/Los_Angeles"
 jobs:
-  setup-environment:
-    name: Setup Environment
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: "recursive"
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "13"
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/node_modules
-            ~/.yarn/cache
-            ~/packages-premium/**
-            ~/packages/**
-            ~/example-projects/next/node_modules
-            ~/example-projects/next-scheduler/node_modules
-            ~/example-projects/nuxt/node_modules
-            ~/example-projects/vue-vuex/node_modules
-            ~/example-projects/vue-typescript/node_modules
-            ~/example-projects/parcel/node_modules
-          key: modules-${{ hashFiles('package-lock.json')}}
-          restore-keys: modules-
-      - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install
-      - name: Build Project
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn run build
   ci-lint:
     name: CI Lint
-    needs: setup-environment
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           submodules: "recursive"
-      - uses: actions/setup-node@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
         with:
           node-version: "13"
-      - uses: actions/cache@v2
+      - name: Install Dependencies
+        uses: bahmutov/npm-install@v1.6.0
         with:
-          path: |
-            ~/node_modules
-            ~/packages-premium/**
-            ~/packages/**
-            ~/example-projects/next/node_modules
-            ~/example-projects/next-scheduler/node_modules
-            ~/example-projects/nuxt/node_modules
-            ~/example-projects/vue-vuex/node_modules
-            ~/example-projects/vue-typescript/node_modules
-            ~/example-projects/parcel/node_modules
-          key: modules-${{ hashFiles('package-lock.json')}}
-          restore-keys: modules-
-      - run: yarn run lint
-      - run: yarn run lintBuilt
+          useLockFile: false
+          install-command: yarn install
+      - run: yarn run gulp lint
+      - name: Build Project
+        run: yarn run gulp build
+      - run: yarn run gulp lintBuilt
   ci-test:
     name: CI Test
-    needs: setup-environment
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           submodules: "recursive"
-      - uses: actions/setup-node@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
         with:
           node-version: "13"
-      - uses: actions/cache@v2
+      - name: Check Examples Cache
+        uses: actions/cache@v2
         with:
           path: |
-            ~/node_modules
-            ~/packages-premium/**
-            ~/packages/**
-            ~/example-projects/next/node_modules
-            ~/example-projects/next-scheduler/node_modules
-            ~/example-projects/nuxt/node_modules
-            ~/example-projects/vue-vuex/node_modules
-            ~/example-projects/vue-typescript/node_modules
-            ~/example-projects/parcel/node_modules
-          key: modules-${{ hashFiles('package-lock.json')}}
-          restore-keys: modules-
-      - run: yarn run ci:test
+            example-projects/next/node_modules
+            example-projects/next-scheduler/node_modules
+            example-projects/nuxt/node_modules
+            example-projects/vue-vuex/node_modules
+            example-projects/vue-typescript/node_modules
+            example-projects/parcel/node_modules
+          key: example-projects
+      - name: Install Dependencies
+        uses: bahmutov/npm-install@v1.6.0
+        with:
+          useLockFile: false
+          install-command: yarn install
+      - name: Build Project
+        run: yarn run gulp build
+      - run: yarn run gulp testCi
   ci-contrib:
     name: CI Contrib
-    needs: setup-environment
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           submodules: "recursive"
-      - uses: actions/setup-node@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
         with:
           node-version: "13"
-      - uses: actions/cache@v2
+      - name: Check Examples Cache
+        uses: actions/cache@v2
         with:
           path: |
-            ~/node_modules
-            ~/packages-premium/**
-            ~/packages/**
-            ~/example-projects/next/node_modules
-            ~/example-projects/next-scheduler/node_modules
-            ~/example-projects/nuxt/node_modules
-            ~/example-projects/vue-vuex/node_modules
-            ~/example-projects/vue-typescript/node_modules
-            ~/example-projects/parcel/node_modules
-          key: modules-${{ hashFiles('package-lock.json')}}
-          restore-keys: modules-
-      - run: yarn run ci:contrib
+            example-projects/next/node_modules
+            example-projects/next-scheduler/node_modules
+            example-projects/nuxt/node_modules
+            example-projects/vue-vuex/node_modules
+            example-projects/vue-typescript/node_modules
+            example-projects/parcel/node_modules
+          key: example-projects
+      - name: Install Dependencies
+        uses: bahmutov/npm-install@v1.6.0
+        with:
+          useLockFile: false
+          install-command: yarn install
+      - name: Build Project
+        run: yarn run gulp build
+      - run: yarn run contrib:run all ci
+      - run: FULLCALENDAR_FORCE_REACT=1 yarn run gulp testCi
   ci-examples:
     name: CI Examples
-    needs: setup-environment
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           submodules: "recursive"
-      - uses: actions/setup-node@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
         with:
           node-version: "13"
-      - uses: actions/cache@v2
+      - name: Check Examples Cache
+        uses: actions/cache@v2
         with:
           path: |
-            ~/node_modules
-            ~/packages-premium/**
-            ~/packages/**
-            ~/example-projects/next/node_modules
-            ~/example-projects/next-scheduler/node_modules
-            ~/example-projects/nuxt/node_modules
-            ~/example-projects/vue-vuex/node_modules
-            ~/example-projects/vue-typescript/node_modules
-            ~/example-projects/parcel/node_modules
-          key: modules-${{ hashFiles('package-lock.json')}}
-          restore-keys: modules-
-      - run: yarn run ci:examples
+            example-projects/next/node_modules
+            example-projects/next-scheduler/node_modules
+            example-projects/nuxt/node_modules
+            example-projects/vue-vuex/node_modules
+            example-projects/vue-typescript/node_modules
+            example-projects/parcel/node_modules
+          key: example-projects
+      - name: Install Dependencies
+        uses: bahmutov/npm-install@v1.6.0
+        with:
+          useLockFile: false
+          install-command: yarn install
+      - name: Build Project
+        run: yarn run gulp build
+      - run: yarn run contrib:run all build
+      - run: yarn run example:run all build
