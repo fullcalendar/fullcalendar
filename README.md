@@ -1,5 +1,4 @@
-
-# FullCalendar [![Build Status](https://travis-ci.com/fullcalendar/fullcalendar.svg?branch=master)](https://travis-ci.com/fullcalendar/fullcalendar)
+# FullCalendar [![Build Status](https://github.com/fullcalendar/fullcalendar/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/fullcalendar/fullcalendar/actions/workflows/continuous-integration.yml)
 
 A full-sized drag & drop JavaScript event calendar
 
