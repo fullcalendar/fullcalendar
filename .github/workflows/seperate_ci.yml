@@ -15,6 +15,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "13"
+      - name: Yarn Version
+        run: yarn -v
       - name: Install Dependencies
         uses: bahmutov/npm-install@v1.6.0
         with:
@@ -43,6 +45,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "13"
+      - name: Yarn Version
+        run: yarn -v
       - name: Install Dependencies
         uses: bahmutov/npm-install@v1.6.0
         with:
@@ -70,6 +74,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "13"
+      - name: Yarn Version
+        run: yarn -v
       - name: Install Dependencies
         uses: bahmutov/npm-install@v1.6.0
         with:
@@ -98,6 +104,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "13"
+      - name: Yarn Version
+        run: yarn -v
       - name: Install Dependencies
         uses: bahmutov/npm-install@v1.6.0
         with:
