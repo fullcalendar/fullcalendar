@@ -24,6 +24,3 @@ jobs:
         run: yarn install
       - name: Lint Packages
         uses: bradennapier/eslint-plus-action@v3
-        with:
-          issueSummary: true
-          configFile: .eslintrc.yml
