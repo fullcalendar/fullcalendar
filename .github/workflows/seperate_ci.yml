@@ -1,10 +1,10 @@
-name: Continuous Integration
+name: Seperate CI
 on: pull_request
 env:
   TZ: "America/Los_Angeles"
 jobs:
-  setup-environment:
-    name: Setup Environment
+  ci-lint:
+    name: CI Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -16,80 +16,52 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: |
-            ~/node_modules
             ~/.yarn/cache
-            ~/packages-premium/**
-            ~/packages/**
             ~/example-projects/next/node_modules
             ~/example-projects/next-scheduler/node_modules
             ~/example-projects/nuxt/node_modules
             ~/example-projects/vue-vuex/node_modules
             ~/example-projects/vue-typescript/node_modules
             ~/example-projects/parcel/node_modules
-          key: modules-${{ hashFiles('package-lock.json')}}
+          key: modules-${{ hashFiles('yarn.lock')}}
+          restore-keys: modules-
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install
+      - run: yarn run lint
+      - name: Build Project
+        run: yarn run build
+      - run: yarn run lintBuilt
+  ci-test:
+    name: CI Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "13"
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.yarn/cache
+            ~/example-projects/next/node_modules
+            ~/example-projects/next-scheduler/node_modules
+            ~/example-projects/nuxt/node_modules
+            ~/example-projects/vue-vuex/node_modules
+            ~/example-projects/vue-typescript/node_modules
+            ~/example-projects/parcel/node_modules
+          key: modules-${{ hashFiles('yarn.lock')}}
           restore-keys: modules-
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install
       - name: Build Project
-        if: steps.cache.outputs.cache-hit != 'true'
         run: yarn run build
-  ci-lint:
-    name: CI Lint
-    needs: setup-environment
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: "recursive"
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "13"
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/node_modules
-            ~/packages-premium/**
-            ~/packages/**
-            ~/example-projects/next/node_modules
-            ~/example-projects/next-scheduler/node_modules
-            ~/example-projects/nuxt/node_modules
-            ~/example-projects/vue-vuex/node_modules
-            ~/example-projects/vue-typescript/node_modules
-            ~/example-projects/parcel/node_modules
-          key: modules-${{ hashFiles('package-lock.json')}}
-          restore-keys: modules-
-      - run: yarn run lint
-      - run: yarn run lintBuilt
-  ci-test:
-    name: CI Test
-    needs: setup-environment
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: "recursive"
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "13"
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/node_modules
-            ~/packages-premium/**
-            ~/packages/**
-            ~/example-projects/next/node_modules
-            ~/example-projects/next-scheduler/node_modules
-            ~/example-projects/nuxt/node_modules
-            ~/example-projects/vue-vuex/node_modules
-            ~/example-projects/vue-typescript/node_modules
-            ~/example-projects/parcel/node_modules
-          key: modules-${{ hashFiles('package-lock.json')}}
-          restore-keys: modules-
-      - run: yarn run ci:test
+      - run: yarn run test:ci
   ci-contrib:
     name: CI Contrib
-    needs: setup-environment
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -101,21 +73,24 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: |
-            ~/node_modules
-            ~/packages-premium/**
-            ~/packages/**
+            ~/.yarn/cache
             ~/example-projects/next/node_modules
             ~/example-projects/next-scheduler/node_modules
             ~/example-projects/nuxt/node_modules
             ~/example-projects/vue-vuex/node_modules
             ~/example-projects/vue-typescript/node_modules
             ~/example-projects/parcel/node_modules
-          key: modules-${{ hashFiles('package-lock.json')}}
+          key: modules-${{ hashFiles('yarn.lock')}}
           restore-keys: modules-
-      - run: yarn run ci:contrib
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install
+      - name: Build Project
+        run: yarn run build
+      - run: yarn run contrib:run all ci
+      - run: FULLCALENDAR_FORCE_REACT=1 yarn run test:ci
   ci-examples:
     name: CI Examples
-    needs: setup-environment
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -127,15 +102,19 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: |
-            ~/node_modules
-            ~/packages-premium/**
-            ~/packages/**
+            ~/.yarn/cache
             ~/example-projects/next/node_modules
             ~/example-projects/next-scheduler/node_modules
             ~/example-projects/nuxt/node_modules
             ~/example-projects/vue-vuex/node_modules
             ~/example-projects/vue-typescript/node_modules
             ~/example-projects/parcel/node_modules
-          key: modules-${{ hashFiles('package-lock.json')}}
+          key: modules-${{ hashFiles('yarn.lock')}}
           restore-keys: modules-
-      - run: yarn run ci:examples
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install
+      - name: Build Project
+        run: yarn run build
+      - run: yarn run contrib:run all build
+      - run: yarn run example:run all build

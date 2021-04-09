@@ -1,4 +1,4 @@
-name: Test
+name: Single CI
 on: pull_request
 env:
   TZ: "America/Los_Angeles"
