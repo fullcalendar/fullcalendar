@@ -15,110 +15,85 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "13"
+      - name: Check Examples Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            example-projects/next/node_modules
+            example-projects/next-scheduler/node_modules
+            example-projects/nuxt/node_modules
+            example-projects/vue-vuex/node_modules
+            example-projects/vue-typescript/node_modules
+            example-projects/parcel/node_modules
+          key: example-projects
       - name: Install Dependencies
         uses: bahmutov/npm-install@v1.6.0
         with:
           useLockFile: false
           install-command: yarn install
-      # - name: Install Examples
-      #   uses: bahmutov/npm-install@v1.6.0
-      #   with:
-      #     useLockFile: false
-      #     install-command: yarn install
-      #     working-directory: |
-      #       example-projects/next/
-      #       example-projects/next-scheduler/
-      #       example-projects/nuxt/
-      #       example-projects/vue-vuex/
-      #       example-projects/vue-typescript/
-      #       example-projects/parcel/
       - run: yarn run lint
       - name: Build Project
         run: yarn run build
       - run: yarn run lintBuilt
-  ci-test:
-    name: CI Test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: "recursive"
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "13"
-      - name: Install Dependencies
-        uses: bahmutov/npm-install@v1.6.0
-        with:
-          useLockFile: false
-          install-command: yarn install
-          working-directory: |
-            .
-            example-projects/next/
-            example-projects/next-scheduler/
-            example-projects/nuxt/
-            example-projects/vue-vuex/
-            example-projects/vue-typescript/
-            example-projects/parcel/
-      - name: Build Project
-        run: yarn run build
-      - run: yarn run test:ci
-  ci-contrib:
-    name: CI Contrib
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: "recursive"
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "13"
-      - name: Install Dependencies
-        uses: bahmutov/npm-install@v1.6.0
-        with:
-          useLockFile: false
-          install-command: yarn install
-          working-directory: |
-            .
-            example-projects/next/
-            example-projects/next-scheduler/
-            example-projects/nuxt/
-            example-projects/vue-vuex/
-            example-projects/vue-typescript/
-            example-projects/parcel/
-      - name: Build Project
-        run: yarn run build
-      - run: yarn run contrib:run all ci
-      - run: FULLCALENDAR_FORCE_REACT=1 yarn run test:ci
-  ci-examples:
-    name: CI Examples
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: "recursive"
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "13"
-      - name: Install Dependencies
-        uses: bahmutov/npm-install@v1.6.0
-        with:
-          useLockFile: false
-          install-command: yarn install
-          working-directory: |
-            .
-            example-projects/next/
-            example-projects/next-scheduler/
-            example-projects/nuxt/
-            example-projects/vue-vuex/
-            example-projects/vue-typescript/
-            example-projects/parcel/
-      - name: Build Project
-        run: yarn run build
-      - run: yarn run contrib:run all build
-      - run: yarn run example:run all build
+  # ci-test:
+  #   name: CI Test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+  #       with:
+  #         submodules: "recursive"
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: "13"
+  #     - name: Install Dependencies
+  #       uses: bahmutov/npm-install@v1.6.0
+  #       with:
+  #         useLockFile: false
+  #         install-command: yarn install
+  #     - name: Build Project
+  #       run: yarn run build
+  #     - run: yarn run test:ci
+  # ci-contrib:
+  #   name: CI Contrib
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+  #       with:
+  #         submodules: "recursive"
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: "13"
+  #     - name: Install Dependencies
+  #       uses: bahmutov/npm-install@v1.6.0
+  #       with:
+  #         useLockFile: false
+  #         install-command: yarn install
+  #     - name: Build Project
+  #       run: yarn run build
+  #     - run: yarn run contrib:run all ci
+  #     - run: FULLCALENDAR_FORCE_REACT=1 yarn run test:ci
+  # ci-examples:
+  #   name: CI Examples
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+  #       with:
+  #         submodules: "recursive"
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: "13"
+  #     - name: Install Dependencies
+  #       uses: bahmutov/npm-install@v1.6.0
+  #       with:
+  #         useLockFile: false
+  #         install-command: yarn install
+  #     - name: Build Project
+  #       run: yarn run build
+  #     - run: yarn run contrib:run all build
+  #     - run: yarn run example:run all build
