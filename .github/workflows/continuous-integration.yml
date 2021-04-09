@@ -25,11 +25,6 @@ jobs:
       - name: Install Dependencies
         run: yarn install
       - run: yarn run gulp lint
-      - name: Lint Packages
-        uses: bradennapier/eslint-plus-action@v3
-        with:
-          issueSummary: true
-          configFile: .eslintrc.yml
       - name: Build Project
         run: yarn run gulp build
       - run: yarn run gulp lintBuilt
