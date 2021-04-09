@@ -1,5 +1,5 @@
 name: Continuous Integration
-on: [push, pull_request]
+on: [pull_request]
 env:
   TZ: "America/Los_Angeles"
 jobs:
@@ -25,6 +25,12 @@ jobs:
       - name: Install Dependencies
         run: yarn install
       - run: yarn run gulp lint
+      - name: Lint Packages
+        uses: bradennapier/eslint-plus-action@v3
+        with:
+          issueSummary: true
+          configFile: .eslintrc.yml
+          includeGlob: packages/*/src
       - name: Build Project
         run: yarn run gulp build
       - run: yarn run gulp lintBuilt
