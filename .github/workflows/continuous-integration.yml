@@ -1,0 +1,144 @@
+name: Continuous Integration
+on: [push]
+env:
+  TZ: "America/Los_Angeles"
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - name: Check Dependencies
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: .yarn/cache
+          key: yarn-cache-${{ github.job }}
+          restore-keys: yarn-cache-
+      - name: Install Dependencies
+        run: yarn install
+      - name: Lint Source Files
+        run: yarn run gulp lint
+      - name: Build Project
+        run: yarn run gulp build
+      - name: Lint Built Files
+        run: yarn run gulp lintBuilt
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - name: Check Examples Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            example-projects/next/node_modules
+            example-projects/next-scheduler/node_modules
+            example-projects/nuxt/node_modules
+            example-projects/vue-vuex/node_modules
+            example-projects/vue-typescript/node_modules
+            example-projects/parcel/node_modules
+          key: example-projects
+      - name: Check Dependencies
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: .yarn/cache
+          key: yarn-cache-${{ github.job }}
+          restore-keys: yarn-cache-
+      - name: Install Dependencies
+        run: yarn install
+      - name: Build Project
+        run: yarn run gulp build
+      - name: Run Tests
+        run: yarn run gulp testCi
+  contrib:
+    name: Contrib
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - name: Check Examples Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            example-projects/next/node_modules
+            example-projects/next-scheduler/node_modules
+            example-projects/nuxt/node_modules
+            example-projects/vue-vuex/node_modules
+            example-projects/vue-typescript/node_modules
+            example-projects/parcel/node_modules
+          key: example-projects
+      - name: Check Dependencies
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: .yarn/cache
+          key: yarn-cache-${{ github.job }}
+          restore-keys: yarn-cache-
+      - name: Install Dependencies
+        run: yarn install
+      - name: Build Project
+        run: yarn run gulp build
+      - name: Run Contrib CI
+        run: yarn run contrib:run all ci
+      - name: Run Tests
+        run: FULLCALENDAR_FORCE_REACT=1 yarn run gulp testCi
+  examples:
+    name: Examples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - name: Check Examples Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            example-projects/next/node_modules
+            example-projects/next-scheduler/node_modules
+            example-projects/nuxt/node_modules
+            example-projects/vue-vuex/node_modules
+            example-projects/vue-typescript/node_modules
+            example-projects/parcel/node_modules
+          key: example-projects
+      - name: Check Dependencies
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: .yarn/cache
+          key: yarn-cache-${{ github.job }}
+          restore-keys: yarn-cache-
+      - name: Install Dependencies
+        run: yarn install
+      - name: Build Project
+        run: yarn run gulp build
+      - name: Run Contrib
+        run: yarn run contrib:run all build
+      - name: Run Examples
+        run: yarn run example:run all build
