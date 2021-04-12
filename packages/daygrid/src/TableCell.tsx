@@ -17,9 +17,13 @@ import {
   ViewApi,
   Dictionary,
   MountArg,
+  addDays,
+  intersectRanges,
+  EventRenderRange,
 } from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
 import { TableCellTop } from './TableCellTop'
+import { TableSegPlacement } from './event-placement'
 
 export interface TableCellProps {
   date: DateMarker
@@ -33,7 +37,6 @@ export interface TableCellProps {
   fgContentElRef?: Ref<HTMLDivElement> // TODO: rename!!! classname confusion. is the "event" div
   fgContent: ComponentChildren
   fgPaddingBottom: CssDimValue
-  // hasEvents: boolean // TODO: when reviving, event should "have events" even when none *start* on the cell
   moreCnt: number
   moreMarginTop: number
   showDayNumber: boolean
@@ -42,8 +45,7 @@ export interface TableCellProps {
   todayRange: DateRange
   buildMoreLinkText: (num: number) => string
   onMoreClick?: (arg: MoreLinkArg) => void
-  segsByEachCol: TableSeg[] // for more-popover. includes segs that aren't rooted in this cell but that pass over it
-  segIsHidden: { [instanceId: string]: boolean } // for more-popover. TODO: rename to be about selected instances
+  segPlacements: TableSegPlacement[]
 }
 
 export interface TableCellModel { // TODO: move somewhere else. combine with DayTableCell?
@@ -184,19 +186,30 @@ export class TableCell extends DateComponent<TableCellProps> {
   }
 
   handleMoreLinkClick = (ev: VUIEvent) => {
-    let { props } = this
+    let { segPlacements, onMoreClick, date, moreCnt } = this.props
+    let dayRange: DateRange = { start: date, end: addDays(date, 1) }
 
-    if (props.onMoreClick) {
-      let allSegs = props.segsByEachCol
-      let hiddenSegs = allSegs.filter(
-        (seg: TableSeg) => props.segIsHidden[seg.eventRange.instance.instanceId],
-      )
+    if (onMoreClick) {
+      let allSegs: TableSeg[] = []
+      let hiddenSegs: TableSeg[] = []
 
-      props.onMoreClick({
-        date: props.date,
+      for (let placement of segPlacements) {
+        let reslicedSeg = resliceSeg(placement.seg, dayRange)
+
+        if (reslicedSeg) {
+          allSegs.push(reslicedSeg)
+
+          if (placement.isHidden) {
+            hiddenSegs.push(reslicedSeg)
+          }
+        }
+      }
+
+      onMoreClick({
+        date,
         allSegs,
         hiddenSegs,
-        moreCnt: props.moreCnt,
+        moreCnt,
         dayEl: this.rootEl,
         ev,
       })
@@ -210,4 +223,28 @@ TableCell.addPropsEquality({
 
 function renderMoreLinkInner(props) {
   return props.text
+}
+
+function resliceSeg(seg: TableSeg, constraint: DateRange): TableSeg | null {
+  let eventRange = seg.eventRange
+  let origRange = eventRange.range
+  let slicedRange = intersectRanges(origRange, constraint)
+
+  if (slicedRange) {
+    return {
+      ...seg,
+      firstCol: -1, // we don't know. caller doesn't care
+      lastCol: -1, // we don't know. caller doesn't care
+      eventRange: {
+        def: eventRange.def,
+        ui: { ...eventRange.ui, durationEditable: false }, // hack to disable resizing
+        instance: eventRange.instance,
+        range: slicedRange,
+      } as EventRenderRange,
+      isStart: seg.isStart && slicedRange.start.valueOf() === origRange.start.valueOf(),
+      isEnd: seg.isEnd && slicedRange.end.valueOf() === origRange.end.valueOf(),
+    }
+  }
+
+  return null
 }

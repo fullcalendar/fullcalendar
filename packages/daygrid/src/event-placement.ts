@@ -2,331 +2,217 @@ import {
   sortEventSegs,
   OrderSpec,
   EventApi,
-  EventRenderRange,
-  addDays,
-  intersectRanges,
-  DateMarker,
+  SegInput,
+  SegHierarchy,
+  SegRect,
+  SegEntry,
+  SegInsertion,
+  hashEntry,
 } from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
-import { TableCellModel } from './TableCell'
 
-interface TableSegPlacement {
+// TODO: print-mode where every placement is non-absolute?
+
+export interface TableSegPlacement {
   seg: TableSeg
-  top: number
-  bottom: number
+  partIndex: number
+  isHidden: boolean
+  isAbsolute: boolean
+  absoluteTop: number // always populated regardless of isAbsolute
+  marginTop: number // only populated if !isAbsolute
 }
 
-export function computeFgSegPlacement( // for one row. TODO: print mode?
-  cellModels: TableCellModel[],
+export function computeFgSegPlacement(
   segs: TableSeg[],
   dayMaxEvents: boolean | number,
   dayMaxEventRows: boolean | number,
-  eventHeights: { [instanceIdAndFirstCol: string]: number },
+  eventInstanceHeights: { [instanceId: string]: number },
   maxContentHeight: number | null,
   colCnt: number,
   eventOrderSpecs: OrderSpec<EventApi>[],
 ) {
-  let colPlacements: TableSegPlacement[][] = [] // if event spans multiple cols, its present in each col
-  let moreCnts: number[] = [] // by-col
-  let segIsHidden: { [instanceId: string]: boolean } = {}
-  let segTops: { [instanceId: string]: number } = {} // always populated for each seg
-  let segMarginTops: { [instanceId: string]: number } = {} // simetimes populated for each seg
-  let moreTops: { [col: string]: number } = {}
-  let paddingBottoms: { [col: string]: number } = {} // for each cell's inner-wrapper div
+  let hierarchy = new DayGridSegHierarchy()
 
-  for (let i = 0; i < colCnt; i += 1) {
-    colPlacements.push([])
-    moreCnts.push(0)
+  if (dayMaxEvents === true || dayMaxEventRows === true) {
+    hierarchy.maxCoord = maxContentHeight
+  } else if (typeof dayMaxEvents === 'number') {
+    hierarchy.maxStackCnt = dayMaxEvents
+  } else if (typeof dayMaxEventRows === 'number') {
+    hierarchy.maxStackCnt = dayMaxEventRows
+    hierarchy.hiddenConsumes = true
   }
 
   segs = sortEventSegs(segs, eventOrderSpecs) as TableSeg[]
-
-  for (let seg of segs) {
+  let segInputs: SegInput[] = segs.map((seg: TableSeg, i: number) => {
     let { instanceId } = seg.eventRange.instance
-    let eventHeight = eventHeights[instanceId + ':' + seg.firstCol]
+    let eventHeight = eventInstanceHeights[instanceId]
 
-    placeSeg(seg, eventHeight || 0) // will keep colPlacements sorted by top
-  }
-
-  if (dayMaxEvents === true || dayMaxEventRows === true) {
-    limitByMaxHeight(moreCnts, segIsHidden, colPlacements, maxContentHeight) // populates moreCnts/segIsHidden
-  } else if (typeof dayMaxEvents === 'number') {
-    limitByMaxEvents(moreCnts, segIsHidden, colPlacements, dayMaxEvents) // populates moreCnts/segIsHidden
-  } else if (typeof dayMaxEventRows === 'number') {
-    limitByMaxRows(moreCnts, segIsHidden, colPlacements, dayMaxEventRows) // populates moreCnts/segIsHidden
-  }
-
-  // computes segTops/segMarginTops/moreTops/paddingBottoms
-  for (let col = 0; col < colCnt; col += 1) {
-    let placements = colPlacements[col]
-    let currentNonAbsBottom = 0
-    let currentAbsHeight = 0
-
-    for (let placement of placements) {
-      let seg = placement.seg
-
-      if (!segIsHidden[seg.eventRange.instance.instanceId]) {
-        segTops[seg.eventRange.instance.instanceId] = placement.top // from top of container
-
-        if (seg.firstCol === seg.lastCol && seg.isStart && seg.isEnd) { // TODO: simpler way? NOT DRY
-          segMarginTops[seg.eventRange.instance.instanceId] =
-            placement.top - currentNonAbsBottom // from previous seg bottom
-
-          currentAbsHeight = 0
-          currentNonAbsBottom = placement.bottom
-        } else { // multi-col event, abs positioned
-          currentAbsHeight = placement.bottom - currentNonAbsBottom
-        }
-      }
+    return {
+      index: i,
+      spanStart: seg.firstCol,
+      spanEnd: seg.lastCol + 1,
+      thickness: eventHeight || 0,
+      forceAbsolute: seg.isStart || seg.isEnd || eventHeight == null,
     }
-
-    if (currentAbsHeight) {
-      if (moreCnts[col]) {
-        moreTops[col] = currentAbsHeight
-      } else {
-        paddingBottoms[col] = currentAbsHeight
-      }
-    }
-  }
-
-  function placeSeg(seg, segHeight) {
-    if (!tryPlaceSegAt(seg, segHeight, 0)) {
-      for (let col = seg.firstCol; col <= seg.lastCol; col += 1) {
-        for (let placement of colPlacements[col]) { // will repeat multi-day segs!!!!!!! bad!!!!!!
-          if (tryPlaceSegAt(seg, segHeight, placement.bottom)) {
-            return
-          }
-        }
-      }
-    }
-  }
-
-  function tryPlaceSegAt(seg, segHeight, top) {
-    if (canPlaceSegAt(seg, segHeight, top)) {
-      for (let col = seg.firstCol; col <= seg.lastCol; col += 1) {
-        let placements = colPlacements[col]
-        let insertionIndex = 0
-
-        while (
-          insertionIndex < placements.length &&
-          top >= placements[insertionIndex].top
-        ) {
-          insertionIndex += 1
-        }
-
-        placements.splice(insertionIndex, 0, { // will keep it sorted by top
-          seg,
-          top,
-          bottom: top + segHeight,
-        })
-      }
-
-      return true
-    }
-
-    return false
-  }
-
-  function canPlaceSegAt(seg, segHeight, top) {
-    for (let col = seg.firstCol; col <= seg.lastCol; col += 1) {
-      for (let placement of colPlacements[col]) {
-        if (top < placement.bottom && top + segHeight > placement.top) { // collide?
-          return false
-        }
-      }
-    }
-
-    return true
-  }
-
-  // what does this do!?
-  for (let instanceIdAndFirstCol in eventHeights) {
-    if (!eventHeights[instanceIdAndFirstCol]) {
-      segIsHidden[instanceIdAndFirstCol.split(':')[0]] = true
-    }
-  }
-
-  let segsByFirstCol = colPlacements.map(extractFirstColSegs) // operates on the sorted cols
-  let segsByEachCol = colPlacements.map((placements, col) => {
-    let segsForCols = extractAllColSegs(placements)
-    segsForCols = resliceDaySegs(segsForCols, cellModels[col].date, col)
-    return segsForCols
   })
 
-  return {
-    segsByFirstCol,
-    segsByEachCol,
-    segIsHidden,
-    segTops,
-    segMarginTops,
-    moreCnts,
-    moreTops,
-    paddingBottoms,
-  }
-}
+  let hiddenEntries = hierarchy.addSegs(segInputs)
+  let segRects = hierarchy.toRects()
+  let { placementsByFirstCol, placementsByEachCol, leftoverMarginsByCol } = placeRects(segRects, segs, colCnt)
 
-function extractFirstColSegs(oneColPlacements: TableSegPlacement[], col: number) {
-  let segs: TableSeg[] = []
+  let moreCnts: number[] = []
+  let moreMarginTops: number[] = []
+  let cellPaddingBottoms: number[] = []
 
-  for (let placement of oneColPlacements) {
-    if (placement.seg.firstCol === col) {
-      segs.push(placement.seg)
+  // add the hidden entries
+  for (let hiddenEntry of hiddenEntries) {
+    let placement: TableSegPlacement = {
+      seg: segs[hiddenEntry.segInput.index],
+      partIndex: 0,
+      isAbsolute: true,
+      isHidden: true,
+      absoluteTop: 0,
+      marginTop: 0
+    }
+
+    placementsByFirstCol[hiddenEntry.spanStart].push(placement)
+
+    for (let col = hiddenEntry.spanStart; col < hiddenEntry.spanEnd; col++) {
+      placementsByEachCol[col].push(placement)
+      moreCnts[col]++
     }
   }
 
-  return segs
-}
-
-function extractAllColSegs(oneColPlacements: TableSegPlacement[]) {
-  let segs: TableSeg[] = []
-
-  for (let placement of oneColPlacements) {
-    segs.push(placement.seg)
-  }
-
-  return segs
-}
-
-function limitByMaxHeight(hiddenCnts, segIsHidden, colPlacements, maxContentHeight) {
-  limitEvents(
-    hiddenCnts,
-    segIsHidden,
-    colPlacements,
-    true,
-    (placement) => placement.bottom <= maxContentHeight,
-  )
-}
-
-function limitByMaxEvents(hiddenCnts, segIsHidden, colPlacements, dayMaxEvents) {
-  limitEvents(
-    hiddenCnts,
-    segIsHidden,
-    colPlacements,
-    false,
-    (placement, levelIndex) => levelIndex < dayMaxEvents,
-  )
-}
-
-function limitByMaxRows(hiddenCnts, segIsHidden, colPlacements, dayMaxEventRows) {
-  limitEvents(
-    hiddenCnts,
-    segIsHidden,
-    colPlacements,
-    true,
-    (placement, levelIndex) => levelIndex < dayMaxEventRows,
-  )
-}
-
-/*
-populates the given hiddenCnts/segIsHidden, which are supplied empty.
-TODO: return them instead
-*/
-function limitEvents(hiddenCnts, segIsHidden, colPlacements, _moreLinkConsumesLevel, isPlacementInBounds) {
-  let colCnt = hiddenCnts.length
-  let segIsVisible = {} as any // TODO: instead, use segIsHidden with true/false?
-  let visibleColPlacements = [] // will mirror colPlacements
-
-  for (let col = 0; col < colCnt; col += 1) {
-    visibleColPlacements.push([])
-  }
-
-  for (let col = 0; col < colCnt; col += 1) {
-    let placements = colPlacements[col]
-    let level = 0
-
-    for (let placement of placements) {
-      if (isPlacementInBounds(placement, level)) {
-        recordVisible(placement)
-      } else {
-        recordHidden(placement, level, _moreLinkConsumesLevel)
-      }
-
-      // only considered a level if the seg had height
-      if (placement.top !== placement.bottom) {
-        level += 1
-      }
+  for (let col = 0; col < colCnt; col++) {
+    if (moreCnts[col]) {
+      moreMarginTops.push(leftoverMarginsByCol[col])
+      cellPaddingBottoms.push(0)
+    } else {
+      moreMarginTops.push(0)
+      cellPaddingBottoms.push(leftoverMarginsByCol[col])
     }
   }
 
-  function recordVisible(placement) {
-    let { seg } = placement
-    let { instanceId } = seg.eventRange.instance
+  return { placementsByFirstCol, placementsByEachCol, moreCnts, moreMarginTops, cellPaddingBottoms }
+}
 
-    if (!segIsVisible[instanceId]) {
-      segIsVisible[instanceId] = true
+// rects ordered by top coord, then left
+function placeRects(rects: SegRect[], segs: TableSeg[], colCnt: number) {
+  let placementsByFirstCol: TableSegPlacement[][] = []
+  let placementsByEachCol: TableSegPlacement[][] = []
+  let leftoverMarginsByCol: number[] = []
 
-      for (let col = seg.firstCol; col <= seg.lastCol; col += 1) {
-        let destPlacements = visibleColPlacements[col]
-        let newPosition = 0
+  for (let col = 0; col < colCnt; col++) {
+    placementsByFirstCol.push([])
+    placementsByEachCol.push([])
+  }
 
-        // insert while keeping top sorted in each column
-        while (
-          newPosition < destPlacements.length &&
-          placement.top >= destPlacements[newPosition].top
-        ) {
-          newPosition += 1
+  for (let rect of rects) {
+    let seg = segs[rect.segInput.index]
+
+    if ( // a subdivided part? create a fake seg
+      seg.firstCol !== rect.spanStart ||
+      seg.lastCol !== rect.spanEnd - 1
+    ) {
+      seg = {
+        ...seg,
+        firstCol: rect.spanStart,
+        lastCol: rect.spanEnd - 1,
+        isStart: seg.isStart && (rect.spanStart === rect.segInput.spanStart), // keep isStart if not trimmed
+        isEnd: seg.isEnd && (rect.spanEnd === rect.segInput.spanEnd) // keep isEnd if not trimmed
+      }
+    }
+
+    let placement: TableSegPlacement & { height: number } = {
+      seg,
+      partIndex: rect.partIndex,
+      isAbsolute: rect.spanEnd - rect.spanStart > 1 || rect.segInput.forceAbsolute,
+      isHidden: false,
+      absoluteTop: rect.levelCoord,
+      marginTop: 0, // will compute later
+      height: rect.thickness
+    }
+
+    placementsByFirstCol[rect.spanStart].push(placement)
+
+    for (let col = rect.spanStart; col < rect.spanEnd; col++) {
+      placementsByEachCol[col].push(placement)
+    }
+  }
+
+  // compute the marginTops on the non-absolute placements
+  for (let col = 0; col < colCnt; col++) {
+    let currentHeight = 0
+    let currentMargin = 0
+
+    for (let placement of placementsByEachCol[col]) {
+      let placementHeight = (placement as any).height as number // hack
+      currentMargin += placement.absoluteTop - currentHeight // amount of space since bottom of previous seg
+      currentHeight = placement.absoluteTop + placementHeight // height will now be bottom of current seg
+
+      if (placement.seg.firstCol === col) { // is the rect rooted in this col?
+        if (placement.isAbsolute) {
+          currentMargin += placementHeight
+        } else {
+          placement.marginTop = currentMargin // claim the margin
+          currentMargin = 0
         }
-
-        destPlacements.splice(newPosition, 0, placement)
       }
     }
   }
 
-  function recordHidden(placement, currentLevel, moreLinkConsumesLevel) {
-    let { seg } = placement
-    let { instanceId } = seg.eventRange.instance
+  return { placementsByFirstCol, placementsByEachCol, leftoverMarginsByCol }
+}
 
-    if (!segIsHidden[instanceId]) {
-      segIsHidden[instanceId] = true
+class DayGridSegHierarchy extends SegHierarchy {
+  // config
+  hiddenConsumes: boolean = false
 
-      for (let col = seg.firstCol; col <= seg.lastCol; col += 1) {
-        hiddenCnts[col] += 1
-        let hiddenCnt = hiddenCnts[col]
+  // allows us to keep hidden entries in the hierarchy so they take up space
+  forceHidden: { [entryId: string]: true } = {}
 
-        if (moreLinkConsumesLevel && hiddenCnt === 1 && currentLevel > 0) {
-          let doomedLevel = currentLevel - 1
+  addSegs(segInputs: SegInput[]): SegEntry[] {
+    const hiddenSegs = super.addSegs(segInputs)
+    const { entriesByLevel } = this
+    const excludeHidden = (entry: SegEntry) => !this.forceHidden[hashEntry(entry)]
 
-          while (visibleColPlacements[col].length > doomedLevel) {
-            recordHidden(
-              visibleColPlacements[col].pop(), // removes
-              visibleColPlacements[col].length, // will execute after the pop. will be the index of the removed placement
-              false,
-            )
+    // remove the forced-hidden segs
+    for (let level = 0; level < entriesByLevel.length; level++) {
+      entriesByLevel[level] = entriesByLevel[level].filter(excludeHidden)
+    }
+
+    return hiddenSegs
+  }
+
+  handleInvalidInsertion(insertion: SegInsertion, entry: SegEntry, hiddenEntries: SegEntry[]) {
+    const { entriesByLevel, forceHidden } = this
+    const level = insertion.nextLevel - 1
+
+    if (this.hiddenConsumes && level >= 0) {
+      for (let lateral = insertion.lateralStart; lateral < insertion.lateralEnd; lateral++) {
+        const leadingEntry = entriesByLevel[level][lateral]
+        const leadingEntryId = hashEntry(leadingEntry)
+
+        if (!forceHidden[leadingEntryId]) {
+          forceHidden[leadingEntryId] = true
+
+          if (this.allowReslicing) {
+            // trim down the touchingEntry in the hierarchy. intersect with the new entry
+            entriesByLevel[level][lateral] = {
+              ...leadingEntry,
+              spanStart: Math.max(leadingEntry.spanStart, entry.spanStart),
+              spanEnd: Math.min(leadingEntry.spanEnd, entry.spanEnd)
+            }
+
+            // split up the leadingEntry
+            this.splitEntry(leadingEntry, entry, hiddenEntries)
+          } else {
+            hiddenEntries.push(leadingEntry)
           }
         }
       }
     }
+
+    return super.handleInvalidInsertion(insertion, entry, hiddenEntries)
   }
-}
-
-// Given the events within an array of segment objects, reslice them to be in a single day
-function resliceDaySegs(segs: TableSeg[], dayDate: DateMarker, colIndex: number) {
-  let dayStart = dayDate
-  let dayEnd = addDays(dayStart, 1)
-  let dayRange = { start: dayStart, end: dayEnd }
-  let newSegs = []
-
-  for (let seg of segs) {
-    let eventRange = seg.eventRange
-    let origRange = eventRange.range
-    let slicedRange = intersectRanges(origRange, dayRange)
-
-    if (slicedRange) {
-      newSegs.push({
-        ...seg,
-        firstCol: colIndex,
-        lastCol: colIndex,
-        eventRange: {
-          def: eventRange.def,
-          ui: { ...eventRange.ui, durationEditable: false }, // hack to disable resizing
-          instance: eventRange.instance,
-          range: slicedRange,
-        } as EventRenderRange,
-        isStart: seg.isStart && slicedRange.start.valueOf() === origRange.start.valueOf(),
-        isEnd: seg.isEnd && slicedRange.end.valueOf() === origRange.end.valueOf(),
-      })
-    }
-  }
-
-  return newSegs
 }

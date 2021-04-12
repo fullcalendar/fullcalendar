@@ -5,7 +5,6 @@ import {
   createElement,
   PositionCache,
   RefMap,
-  mapHash,
   CssDimValue,
   DateRange,
   getSegMeta,
@@ -21,7 +20,7 @@ import { TableSeg, splitSegsByFirstCol } from './TableSeg'
 import { TableCell, TableCellModel, MoreLinkArg } from './TableCell'
 import { TableListItemEvent } from './TableListItemEvent'
 import { TableBlockEvent } from './TableBlockEvent'
-import { computeFgSegPlacement } from './event-placement'
+import { computeFgSegPlacement, TableSegPlacement } from './event-placement'
 import { hasListItemDisplay } from './event-rendering'
 
 // TODO: attach to window resize?
@@ -51,7 +50,7 @@ export interface TableRowProps {
 interface TableRowState {
   framePositions: PositionCache
   maxContentHeight: number | null
-  segHeights: { [instanceIdAndFirstCol: string]: number } | null
+  eventInstanceHeights: { [instanceId: string]: number }
 }
 
 export class TableRow extends DateComponent<TableRowProps, TableRowState> {
@@ -64,7 +63,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   state: TableRowState = {
     framePositions: null,
     maxContentHeight: null,
-    segHeights: {},
+    eventInstanceHeights: {},
   }
 
   render() {
@@ -76,12 +75,11 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     let highlightSegsByCol = splitSegsByFirstCol(this.getHighlightSegs(), colCnt)
     let mirrorSegsByCol = splitSegsByFirstCol(this.getMirrorSegs(), colCnt)
 
-    let { paddingBottoms, segsByFirstCol, segsByEachCol, segIsHidden, segTops, segMarginTops, moreCnts, moreTops } = computeFgSegPlacement(
-      props.cells,
+    let { placementsByFirstCol, placementsByEachCol, moreCnts, moreMarginTops, cellPaddingBottoms } = computeFgSegPlacement(
       props.fgEventSegs,
       props.dayMaxEvents,
       props.dayMaxEventRows,
-      state.segHeights,
+      state.eventInstanceHeights,
       state.maxContentHeight,
       colCnt,
       context.options.eventOrder,
@@ -96,20 +94,14 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
       <tr ref={this.rootElRef}>
         {props.renderIntro && props.renderIntro()}
         {props.cells.map((cell, col) => {
-          let normalFgNodes = this.renderFgSegs(
-            segsByFirstCol[col],
-            segIsHidden,
-            segTops,
-            segMarginTops,
+          let [normalFgNodes, topsByInstanceId] = this.renderFgSegs(
+            placementsByFirstCol[col],
             selectedInstanceHash,
             props.todayRange,
           )
 
-          let mirrorFgNodes = this.renderFgSegs(
-            mirrorSegsByCol[col],
-            {},
-            segTops, // use same tops as real rendering
-            {},
+          let [mirrorFgNodes] = this.renderFgSegs(
+            buildMirrorPlacements(mirrorSegsByCol[col], topsByInstanceId),
             {},
             props.todayRange,
             Boolean(props.eventDrag),
@@ -136,10 +128,9 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               onMoreClick={(arg) => {
                 props.onMoreClick({ ...arg, fromCol: col })
               }}
-              segIsHidden={segIsHidden}
-              moreMarginTop={moreTops[col] /* rename */}
-              segsByEachCol={segsByEachCol[col]}
-              fgPaddingBottom={paddingBottoms[col]}
+              moreMarginTop={moreMarginTops[col]}
+              segPlacements={placementsByEachCol[col]}
+              fgPaddingBottom={cellPaddingBottoms[col]}
               fgContentElRef={this.fgElRefs.createRef(cell.key)}
               fgContent={( // Fragment scopes the keys
                 <Fragment>
@@ -198,40 +189,33 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   }
 
   renderFgSegs(
-    segs: TableSeg[],
-    segIsHidden: { [instanceId: string]: boolean }, // does NOT mean display:hidden
-    segTops: { [instanceId: string]: number },
-    segMarginTops: { [instanceId: string]: number },
+    segPlacements: TableSegPlacement[],
     selectedInstanceHash: { [instanceId: string]: any },
     todayRange: DateRange,
     isDragging?: boolean,
     isResizing?: boolean,
     isDateSelecting?: boolean,
-  ): VNode[] {
+  ): [VNode[], { [instanceId: string]: number }] { // [nodes, topsByInstanceId]
     let { context } = this
     let { eventSelection } = this.props
     let { framePositions } = this.state
     let defaultDisplayEventEnd = this.props.cells.length === 1 // colCnt === 1
     let nodes: VNode[] = []
+    let topsByInstanceId: { [instanceId: string]: number } = {}
 
     if (framePositions) {
-      for (let seg of segs) {
-        let instanceId = seg.eventRange.instance.instanceId
-        let isMirror = isDragging || isResizing || isDateSelecting
+      for (let placement of segPlacements) {
+        let seg = placement.seg
+        let { instanceId } = seg.eventRange.instance
+        let key = instanceId + ':' + placement.partIndex
         let isSelected = selectedInstanceHash[instanceId]
-        let isInvisible = segIsHidden[instanceId] || isSelected
-
-        // TODO: simpler way? NOT DRY
-        let isAbsolute = segIsHidden[instanceId] || isMirror || seg.firstCol !== seg.lastCol || !seg.isStart || !seg.isEnd
-
-        let marginTop: CssDimValue
-        let top: CssDimValue
-        let left: CssDimValue
-        let right: CssDimValue
+        let isMirror = isDragging || isResizing || isDateSelecting
+        let isHidden = placement.isHidden || isSelected
+        let isAbsolute = placement.isAbsolute || isHidden || isMirror
+        let left: CssDimValue = ''
+        let right: CssDimValue = ''
 
         if (isAbsolute) {
-          top = segTops[instanceId]
-
           if (context.isRtl) {
             right = 0
             left = framePositions.lefts[seg.lastCol] - framePositions.lefts[seg.firstCol]
@@ -239,8 +223,6 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
             left = 0
             right = framePositions.rights[seg.firstCol] - framePositions.rights[seg.lastCol]
           }
-        } else {
-          marginTop = segMarginTops[instanceId]
         }
 
         /*
@@ -249,15 +231,14 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
         nodes.push(
           <div
             className={'fc-daygrid-event-harness' + (isAbsolute ? ' fc-daygrid-event-harness-abs' : '')}
-            key={instanceId}
-            // in print mode when in mult cols, could collide
-            ref={isMirror ? null : this.segHarnessRefs.createRef(instanceId + ':' + seg.firstCol)}
+            key={key}
+            ref={isMirror ? null : this.segHarnessRefs.createRef(key)}
             style={{
-              visibility: isInvisible ? 'hidden' : ('' as any),
-              marginTop: marginTop || '',
-              top: top || '',
-              left: left || '',
-              right: right || '',
+              visibility: isHidden ? 'hidden' : ('' as any),
+              marginTop: isAbsolute ? '' : placement.marginTop,
+              top: isAbsolute ? placement.absoluteTop : '',
+              left: left,
+              right: right,
             }}
           >
             {hasListItemDisplay(seg) ? (
@@ -281,10 +262,12 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
             )}
           </div>,
         )
+
+        topsByInstanceId[instanceId] = placement.absoluteTop
       }
     }
 
-    return nodes
+    return [nodes, topsByInstanceId]
   }
 
   renderFillSegs(segs: TableSeg[], fillType: string): VNode {
@@ -344,16 +327,25 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
       let limitByContentHeight = props.dayMaxEvents === true || props.dayMaxEventRows === true
 
       this.setState({
-        segHeights: this.computeSegHeights(),
+        eventInstanceHeights: this.queryEventInstanceHeights(),
         maxContentHeight: limitByContentHeight ? this.computeMaxContentHeight() : null,
       })
     }
   }
 
-  computeSegHeights() { // query
-    return mapHash(this.segHarnessRefs.currentMap, (eventHarnessEl) => (
-      eventHarnessEl.getBoundingClientRect().height
-    ))
+  queryEventInstanceHeights() {
+    let segElMap = this.segHarnessRefs.currentMap
+    let eventInstanceHeights: { [key: string]: number } = {}
+
+    // get the max height amongst instance segs
+    for (let key in segElMap) {
+      let height = segElMap[key].getBoundingClientRect().height
+      let instanceId = key.split(':')[0] // deconstruct how renderFgSegs makes the key
+
+      eventInstanceHeights[instanceId] = Math.max(eventInstanceHeights[instanceId] || 0, height)
+    }
+
+    return eventInstanceHeights
   }
 
   computeMaxContentHeight() {
@@ -376,5 +368,16 @@ TableRow.addPropsEquality({
 })
 
 TableRow.addStateEquality({
-  segHeights: isPropsEqual,
+  eventInstanceHeights: isPropsEqual,
 })
+
+function buildMirrorPlacements(mirrorSegs: TableSeg[], topsByInstanceId: { [instanceId: string]: number }): TableSegPlacement[] {
+  return mirrorSegs.map((seg: TableSeg) => ({
+    seg,
+    partIndex: 0,
+    isHidden: false,
+    isAbsolute: true,
+    absoluteTop: topsByInstanceId[seg.eventRange.instance.instanceId],
+    marginTop: 0
+  }))
+}
