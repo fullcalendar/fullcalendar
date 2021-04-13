@@ -125,7 +125,7 @@ export class SegHierarchy {
       insertAt(this.entriesByLevel[nextLevel - 1], insertion.lateralEnd, entry)
     }
 
-    this.stackCnts[hashEntry(entry)] = insertion.stackCnt
+    this.stackCnts[buildEntryKey(entry)] = insertion.stackCnt
   }
 
   findInsertion(newEntry: SegEntry): SegInsertion {
@@ -171,7 +171,7 @@ export class SegHierarchy {
       lateralStart,
       lateralEnd,
       touchingEntry,
-      stackCnt: touchingEntry ? stackCnts[hashEntry(touchingEntry)] + 1 : 0
+      stackCnt: touchingEntry ? stackCnts[buildEntryKey(touchingEntry)] + 1 : 0
     }
   }
 
@@ -202,7 +202,7 @@ export function getEntrySpanEnd(entry: SegEntry) {
   return entry.spanEnd
 }
 
-export function hashEntry(entry: SegEntry) { // TODO: rename to something about 'key'???
+export function buildEntryKey(entry: SegEntry) {
   return entry.segInput.index + ':' + entry.spanStart
 }
 

@@ -1,13 +1,10 @@
 import {
-  sortEventSegs,
-  OrderSpec,
-  EventApi,
   SegInput,
   SegHierarchy,
   SegRect,
   SegEntry,
   SegInsertion,
-  hashEntry,
+  buildEntryKey,
 } from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
 
@@ -28,10 +25,10 @@ export function computeFgSegPlacement(
   dayMaxEventRows: boolean | number,
   eventInstanceHeights: { [instanceId: string]: number },
   maxContentHeight: number | null,
-  colCnt: number,
-  eventOrderSpecs: OrderSpec<EventApi>[],
+  colCnt: number
 ) {
   let hierarchy = new DayGridSegHierarchy()
+  hierarchy.allowReslicing = true
 
   if (dayMaxEvents === true || dayMaxEventRows === true) {
     hierarchy.maxCoord = maxContentHeight
@@ -42,7 +39,6 @@ export function computeFgSegPlacement(
     hierarchy.hiddenConsumes = true
   }
 
-  segs = sortEventSegs(segs, eventOrderSpecs) as TableSeg[]
   let segInputs: SegInput[] = segs.map((seg: TableSeg, i: number) => {
     let { instanceId } = seg.eventRange.instance
     let eventHeight = eventInstanceHeights[instanceId]
@@ -174,7 +170,7 @@ class DayGridSegHierarchy extends SegHierarchy {
   addSegs(segInputs: SegInput[]): SegEntry[] {
     const hiddenSegs = super.addSegs(segInputs)
     const { entriesByLevel } = this
-    const excludeHidden = (entry: SegEntry) => !this.forceHidden[hashEntry(entry)]
+    const excludeHidden = (entry: SegEntry) => !this.forceHidden[buildEntryKey(entry)]
 
     // remove the forced-hidden segs
     for (let level = 0; level < entriesByLevel.length; level++) {
@@ -191,7 +187,7 @@ class DayGridSegHierarchy extends SegHierarchy {
     if (this.hiddenConsumes && level >= 0) {
       for (let lateral = insertion.lateralStart; lateral < insertion.lateralEnd; lateral++) {
         const leadingEntry = entriesByLevel[level][lateral]
-        const leadingEntryId = hashEntry(leadingEntry)
+        const leadingEntryId = buildEntryKey(leadingEntry)
 
         if (!forceHidden[leadingEntryId]) {
           forceHidden[leadingEntryId] = true

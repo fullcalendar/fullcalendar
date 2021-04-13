@@ -15,6 +15,7 @@ import {
   isPropsEqual,
   createRef,
   buildEventRangeKey,
+  sortEventSegs
 } from '@fullcalendar/common'
 import { TableSeg, splitSegsByFirstCol } from './TableSeg'
 import { TableCell, TableCellModel, MoreLinkArg } from './TableCell'
@@ -76,13 +77,12 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     let mirrorSegsByCol = splitSegsByFirstCol(this.getMirrorSegs(), colCnt)
 
     let { placementsByFirstCol, placementsByEachCol, moreCnts, moreMarginTops, cellPaddingBottoms } = computeFgSegPlacement(
-      props.fgEventSegs,
+      sortEventSegs(props.fgEventSegs, context.options.eventOrder) as TableSeg[],
       props.dayMaxEvents,
       props.dayMaxEventRows,
       state.eventInstanceHeights,
       state.maxContentHeight,
       colCnt,
-      context.options.eventOrder,
     )
 
     let selectedInstanceHash = // TODO: messy way to compute this
