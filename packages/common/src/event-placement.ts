@@ -188,7 +188,8 @@ export class SegHierarchy {
 
       for (let entry of entries) {
         let segIndex = entry.segInput.index
-        let partIndex = (partIndexHash[segIndex] = (partIndexHash[segIndex] || 0) + 1)
+        let partIndex = partIndexHash[segIndex] || 0
+        partIndexHash[segIndex] = partIndex + 1 // increment the store
 
         rects.push({ ...entry, partIndex, levelCoord })
       }

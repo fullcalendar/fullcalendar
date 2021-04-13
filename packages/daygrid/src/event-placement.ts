@@ -32,6 +32,7 @@ export function computeFgSegPlacement(
 
   if (dayMaxEvents === true || dayMaxEventRows === true) {
     hierarchy.maxCoord = maxContentHeight
+    hierarchy.hiddenConsumes = true
   } else if (typeof dayMaxEvents === 'number') {
     hierarchy.maxStackCnt = dayMaxEvents
   } else if (typeof dayMaxEventRows === 'number') {
@@ -59,6 +60,10 @@ export function computeFgSegPlacement(
   let moreCnts: number[] = []
   let moreMarginTops: number[] = []
   let cellPaddingBottoms: number[] = []
+
+  for (let col = 0; col < colCnt; col++) {
+    moreCnts.push(0)
+  }
 
   // add the hidden entries
   for (let hiddenEntry of hiddenEntries) {
@@ -146,15 +151,15 @@ function placeRects(rects: SegRect[], segs: TableSeg[], colCnt: number) {
       currentMargin += placement.absoluteTop - currentHeight // amount of space since bottom of previous seg
       currentHeight = placement.absoluteTop + placementHeight // height will now be bottom of current seg
 
-      if (placement.seg.firstCol === col) { // is the rect rooted in this col?
-        if (placement.isAbsolute) {
-          currentMargin += placementHeight
-        } else {
-          placement.marginTop = currentMargin // claim the margin
-          currentMargin = 0
-        }
+      if (placement.isAbsolute) {
+        currentMargin += placementHeight
+      } else if (placement.seg.firstCol === col) { // non-absolute seg rooted in this col
+        placement.marginTop = currentMargin // claim the margin
+        currentMargin = 0
       }
     }
+
+    leftoverMarginsByCol.push(currentMargin)
   }
 
   return { placementsByFirstCol, placementsByEachCol, leftoverMarginsByCol }
