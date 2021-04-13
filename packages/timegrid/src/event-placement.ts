@@ -21,8 +21,8 @@ interface SegSiblingRange { // will ALWAYS have span of 1 or more items. if not,
 }
 
 export interface TimeColSegRect extends SegRect {
-  zCoord: number
-  forwardPressure: number // a number of nodes in longest path to lowest level
+  stackDepth: number
+  stackForward: number
 }
 
 export function computeFgSegPlacements(segInputs: SegInput[]): TimeColSegRect[] {
@@ -162,39 +162,38 @@ function stretchWeb(topLevelNodes: SegNode[], totalThickness: number): SegNode[]
 function webToRects(topLevelNodes: SegNode[]): TimeColSegRect[] {
   let rects: TimeColSegRect[] = []
   let partIndexHash: { [segId: string]: number } = {}
-  let zCoord = 0
 
   const processNode = cacheable(
-    (node: SegNode, levelCoord: number) => buildEntryKey(node),
-    (node: SegNode, levelCoord: number) => { // returns forwardPressure
+    (node: SegNode, levelCoord: number, stackDepth: number) => buildEntryKey(node),
+    (node: SegNode, levelCoord: number, stackDepth: number) => { // returns forwardPressure
       let segIndex = node.segInput.index
-      let partIndex = (partIndexHash[segIndex] = (partIndexHash[segIndex] || 0) + 1)
+      let partIndex = partIndexHash[segIndex] || 0
+      partIndexHash[segIndex] = partIndex + 1 // increment in the store
+
       let rect: TimeColSegRect = {
         ...node,
         partIndex,
         levelCoord,
-        zCoord,
-        forwardPressure: 0 // will assign after recursing
+        stackDepth,
+        stackForward: 0 // will assign after recursing
       }
-      zCoord++
       rects.push(rect)
-      let forwardPressure = processNodes(node.nextLevelNodes, levelCoord + node.thickness) + 1
-      rect.forwardPressure = forwardPressure
-      return forwardPressure
+
+      return (
+        rect.stackForward = processNodes(node.nextLevelNodes, levelCoord + node.thickness, stackDepth + 1) + 1
+      )
     }
   )
 
-  function processNodes(nodes: SegNode[], levelCoord: number) { // returns forwardPressure
-    let forwardPressure = 0
-
+  function processNodes(nodes: SegNode[], levelCoord: number, stackDepth: number) { // returns stackForward
+    let stackForward = 0
     for (let node of nodes) {
-      forwardPressure = Math.max(processNode(node, levelCoord), forwardPressure)
+      stackForward = Math.max(processNode(node, levelCoord, stackDepth), stackForward)
     }
-
-    return forwardPressure
+    return stackForward
   }
 
-  processNodes(topLevelNodes, 0)
+  processNodes(topLevelNodes, 0, 0)
   return rects // TODO: sort rects by levelCoord to be consistent with toRects?
 }
 

@@ -159,7 +159,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     let segRects = computeFgSegPlacements(segInputs)
 
     return segRects.map((segRect) => {
-      let seg = segs[segRect.segInput.index]
+      let seg = segs[segRect.segInput.index] as TimeColsSeg
       let instanceId = seg.eventRange.instance.instanceId
       let isMirror = isDragging || isResizing || isDateSelecting
       let positionCss = {
@@ -171,7 +171,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
       return (
         <div
-          className={'fc-timegrid-event-harness' + (seg.level > 0 ? ' fc-timegrid-event-harness-inset' : '')}
+          className={'fc-timegrid-event-harness' + (segRect.stackForward > 0 ? ' fc-timegrid-event-harness-inset' : '')}
           key={instanceId + ':' + segRect.partIndex}
           style={{
             visibility: segIsInvisible[instanceId] ? 'hidden' : ('' as any),
@@ -285,12 +285,12 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     }
 
     let props = {
-      zIndex: segRect.zCoord + 1, // convert from 0-base to 1-based
+      zIndex: segRect.stackDepth + 1, // convert from 0-base to 1-based
       left: left * 100 + '%',
       right: right * 100 + '%',
     }
 
-    if (shouldOverlap && segRect.forwardPressure) {
+    if (shouldOverlap && !segRect.stackForward) {
       // add padding to the edge so that forward stacked events don't cover the resizer's icon
       props[isRtl ? 'marginLeft' : 'marginRight'] = 10 * 2 // 10 is a guesstimate of the icon's width
     }
