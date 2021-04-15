@@ -1,4 +1,4 @@
-import { ComponentChildren, createElement, Fragment } from '../vdom'
+import { ComponentChildren, createElement, Fragment, VNode } from '../vdom'
 import { BaseComponent } from '../vdom-util'
 import { buildSegTimeText, EventContentArg } from '../component/event-rendering'
 import { EventRoot, MinimalEventProps } from './EventRoot'
@@ -20,6 +20,7 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
   render() {
     let { props, context } = this
     let { seg } = props
+    let segAnchorAttrs = getSegAnchorAttrs(seg)
     let timeFormat = context.options.eventTimeFormat || props.defaultTimeFormat
     let timeText = buildSegTimeText(
       seg,
@@ -28,6 +29,8 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
       props.defaultDisplayEventTime,
       props.defaultDisplayEventEnd,
     )
+
+    let WrapperElement: VNode['type'] = Object.keys(segAnchorAttrs).length ? 'a' : 'span'
 
     return (
       <EventRoot
@@ -45,14 +48,14 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
         isToday={props.isToday}
       >
         {(rootElRef, classNames, innerElRef, innerContent, hookProps) => (
-          <a
+          <WrapperElement
             className={props.extraClassNames.concat(classNames).join(' ')}
             style={{
               borderColor: hookProps.borderColor,
               backgroundColor: hookProps.backgroundColor,
             }}
             ref={rootElRef}
-            {...getSegAnchorAttrs(seg)}
+            {...segAnchorAttrs}
           >
             <div className="fc-event-main" ref={innerElRef} style={{ color: hookProps.textColor }}>
               {innerContent}
@@ -61,7 +64,7 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
               <div className="fc-event-resizer fc-event-resizer-start" />}
             {hookProps.isEndResizable &&
               <div className="fc-event-resizer fc-event-resizer-end" />}
-          </a>
+          </WrapperElement>
         )}
       </EventRoot>
     )
