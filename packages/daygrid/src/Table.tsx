@@ -160,6 +160,7 @@ export class Table extends DateComponent<TableProps, TableState> {
                       onMoreClick={(arg) => {
                         this.handleMoreLinkClick({ ...arg, fromRow: row })
                       }}
+                      forPrint={props.forPrint}
                     />
                   ))}
                 </tbody>
