@@ -162,18 +162,12 @@ function stretchWeb(topLevelNodes: SegNode[], totalThickness: number): SegNode[]
 // not sorted in any particular order
 function webToRects(topLevelNodes: SegNode[]): TimeColSegRect[] {
   let rects: TimeColSegRect[] = []
-  let partIndexHash: { [segId: string]: number } = {}
 
   const processNode = cacheable(
     (node: SegNode, levelCoord: number, stackDepth: number) => buildEntryKey(node),
     (node: SegNode, levelCoord: number, stackDepth: number) => { // returns forwardPressure
-      let segIndex = node.segInput.index
-      let partIndex = partIndexHash[segIndex] || 0
-      partIndexHash[segIndex] = partIndex + 1 // increment in the store
-
       let rect: TimeColSegRect = {
         ...node,
-        partIndex,
         levelCoord,
         stackDepth,
         stackForward: 0 // will assign after recursing

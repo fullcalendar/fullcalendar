@@ -14,7 +14,6 @@ export interface SegEntry {
 }
 
 export interface SegRect extends SegEntry {
-  partIndex: number // TODO: rename to sliceIndex?
   levelCoord: number
 }
 
@@ -179,18 +178,13 @@ export class SegHierarchy {
     let { entriesByLevel, levelCoords } = this
     let levelCnt = entriesByLevel.length
     let rects: SegRect[] = []
-    let partIndexHash: { [segId: string]: number } = {}
 
     for (let level = 0; level < levelCnt; level++) {
       let entries = entriesByLevel[level]
       let levelCoord = levelCoords[level]
 
       for (let entry of entries) {
-        let segIndex = entry.segInput.index
-        let partIndex = partIndexHash[segIndex] || 0
-        partIndexHash[segIndex] = partIndex + 1 // increment the store
-
-        rects.push({ ...entry, partIndex, levelCoord })
+        rects.push({ ...entry, levelCoord })
       }
     }
 

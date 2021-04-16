@@ -169,7 +169,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
       return (
         <div
           className={'fc-timegrid-event-harness' + (segRect.stackForward > 0 ? ' fc-timegrid-event-harness-inset' : '')}
-          key={instanceId + ':' + segRect.partIndex}
+          key={instanceId}
           style={{
             visibility: segIsInvisible[instanceId] ? 'hidden' : ('' as any),
             ...positionCss,

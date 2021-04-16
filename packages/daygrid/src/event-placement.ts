@@ -12,11 +12,8 @@ import {
 import { TableCellModel } from './TableCell'
 import { TableSeg } from './TableSeg'
 
-// TODO: print-mode where every placement is non-absolute?
-
 export interface TableSegPlacement {
   seg: TableSeg
-  partIndex: number
   isVisible: boolean
   isAbsolute: boolean
   absoluteTop: number // populated regardless of isAbsolute
@@ -76,7 +73,6 @@ export function computeFgSegPlacement(
   for (let seg of unknownHeightSegs) {
     multiColPlacements[seg.firstCol].push({
       seg,
-      partIndex: 0,
       isVisible: false,
       isAbsolute: true,
       absoluteTop: 0,
@@ -87,7 +83,6 @@ export function computeFgSegPlacement(
       moreCnts[col]++
       singleColPlacements[col].push({
         seg: resliceSeg(seg, col, col + 1, cells),
-        partIndex: 0,
         isVisible: false,
         isAbsolute: false,
         absoluteTop: 0,
@@ -105,7 +100,6 @@ export function computeFgSegPlacement(
 
     multiColPlacements[hiddenEntry.spanStart].push({
       seg,
-      partIndex: 0,
       isVisible: false,
       isAbsolute: true,
       absoluteTop: 0,
@@ -116,7 +110,6 @@ export function computeFgSegPlacement(
       moreCnts[col]++
       singleColPlacements[col].push({
         seg: resliceSeg(seg, col, col + 1, cells),
-        partIndex: 0,
         isVisible: false,
         isAbsolute: false,
         absoluteTop: 0,
@@ -157,7 +150,6 @@ function placeRects(rects: SegRect[], segs: TableSeg[], cells: TableCellModel[])
       let seg = segs[rect.segInput.index]
       singlePlacements.push({
         seg: resliceSeg(seg, col, col + 1, cells),
-        partIndex: rect.partIndex,
         isVisible: true,
         isAbsolute: false,
         absoluteTop: 0,
@@ -183,7 +175,6 @@ function placeRects(rects: SegRect[], segs: TableSeg[], cells: TableCellModel[])
         if (isFirstCol) {
           multiPlacements.push({
             seg: resliceSeg(seg, rect.spanStart, rect.spanEnd, cells),
-            partIndex: rect.partIndex,
             isVisible: true,
             isAbsolute: true,
             absoluteTop: rect.levelCoord,
@@ -194,7 +185,6 @@ function placeRects(rects: SegRect[], segs: TableSeg[], cells: TableCellModel[])
         if (isFirstCol) {
           multiPlacements.push({
             seg: resliceSeg(seg, rect.spanStart, rect.spanEnd, cells),
-            partIndex: rect.partIndex,
             isVisible: true,
             isAbsolute: false,
             absoluteTop: 0,

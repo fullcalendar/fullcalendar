@@ -96,12 +96,14 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
         {props.renderIntro && props.renderIntro()}
         {props.cells.map((cell, col) => {
           let normalFgNodes = this.renderFgSegs(
+            col,
             props.forPrint ? singleColPlacements[col] : multiColPlacements[col],
             selectedInstanceHash,
             props.todayRange,
           )
 
           let mirrorFgNodes = this.renderFgSegs(
+            col,
             buildMirrorPlacements(mirrorSegsByCol[col], multiColPlacements),
             {},
             props.todayRange,
@@ -190,6 +192,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   }
 
   renderFgSegs(
+    col: number,
     segPlacements: TableSegPlacement[],
     selectedInstanceHash: { [instanceId: string]: any }, // for hiding the original in event dnd/resize
     todayRange: DateRange,
@@ -207,7 +210,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
       for (let placement of segPlacements) {
         let seg = placement.seg
         let { instanceId } = seg.eventRange.instance
-        let key = instanceId + ':' + placement.partIndex
+        let key = instanceId + ':' + col
         let isSelected = selectedInstanceHash[instanceId]
         let isMirror = isDragging || isResizing || isDateSelecting
         let isVisible = placement.isVisible && !isSelected
@@ -380,7 +383,6 @@ function buildMirrorPlacements(mirrorSegs: TableSeg[], colPlacements: TableSegPl
   let topsByInstanceId = buildAbsoluteTopHash(colPlacements)
   return mirrorSegs.map((seg: TableSeg) => ({
     seg,
-    partIndex: 0,
     isVisible: true,
     isAbsolute: true,
     absoluteTop: topsByInstanceId[seg.eventRange.instance.instanceId],
