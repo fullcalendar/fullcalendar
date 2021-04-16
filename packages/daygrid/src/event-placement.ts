@@ -17,7 +17,7 @@ import { TableSeg } from './TableSeg'
 export interface TableSegPlacement {
   seg: TableSeg
   partIndex: number
-  isHidden: boolean
+  isVisible: boolean
   isAbsolute: boolean
   absoluteTop: number // populated regardless of isAbsolute
   marginTop: number
@@ -77,7 +77,7 @@ export function computeFgSegPlacement(
     multiColPlacements[seg.firstCol].push({
       seg,
       partIndex: 0,
-      isHidden: true,
+      isVisible: false,
       isAbsolute: true,
       absoluteTop: 0,
       marginTop: 0,
@@ -88,7 +88,7 @@ export function computeFgSegPlacement(
       singleColPlacements[col].push({
         seg: resliceSeg(seg, col, col + 1, cells),
         partIndex: 0,
-        isHidden: true,
+        isVisible: false,
         isAbsolute: false,
         absoluteTop: 0,
         marginTop: 0,
@@ -106,7 +106,7 @@ export function computeFgSegPlacement(
     multiColPlacements[hiddenEntry.spanStart].push({
       seg,
       partIndex: 0,
-      isHidden: true,
+      isVisible: false,
       isAbsolute: true,
       absoluteTop: 0,
       marginTop: 0,
@@ -117,7 +117,7 @@ export function computeFgSegPlacement(
       singleColPlacements[col].push({
         seg: resliceSeg(seg, col, col + 1, cells),
         partIndex: 0,
-        isHidden: true,
+        isVisible: false,
         isAbsolute: false,
         absoluteTop: 0,
         marginTop: 0,
@@ -158,7 +158,7 @@ function placeRects(rects: SegRect[], segs: TableSeg[], cells: TableCellModel[])
       singlePlacements.push({
         seg: resliceSeg(seg, col, col + 1, cells),
         partIndex: rect.partIndex,
-        isHidden: false,
+        isVisible: true,
         isAbsolute: false,
         absoluteTop: 0,
         marginTop: rect.levelCoord - currentHeight
@@ -184,7 +184,7 @@ function placeRects(rects: SegRect[], segs: TableSeg[], cells: TableCellModel[])
           multiPlacements.push({
             seg: resliceSeg(seg, rect.spanStart, rect.spanEnd, cells),
             partIndex: rect.partIndex,
-            isHidden: false,
+            isVisible: true,
             isAbsolute: true,
             absoluteTop: rect.levelCoord,
             marginTop: 0,
@@ -195,7 +195,7 @@ function placeRects(rects: SegRect[], segs: TableSeg[], cells: TableCellModel[])
           multiPlacements.push({
             seg: resliceSeg(seg, rect.spanStart, rect.spanEnd, cells),
             partIndex: rect.partIndex,
-            isHidden: false,
+            isVisible: true,
             isAbsolute: false,
             absoluteTop: 0,
             marginTop: currentMarginTop // claim the margin

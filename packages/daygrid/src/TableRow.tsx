@@ -191,14 +191,14 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
   renderFgSegs(
     segPlacements: TableSegPlacement[],
-    selectedInstanceHash: { [instanceId: string]: any },
+    selectedInstanceHash: { [instanceId: string]: any }, // for hiding the original in event dnd/resize
     todayRange: DateRange,
     isDragging?: boolean,
     isResizing?: boolean,
     isDateSelecting?: boolean,
   ): VNode[] {
     let { context } = this
-    let { eventSelection } = this.props
+    let { eventSelection } = this.props // being selected by touch. bad vocab confusion with selectedInstanceHash!
     let { framePositions } = this.state
     let defaultDisplayEventEnd = this.props.cells.length === 1 // colCnt === 1
     let nodes: VNode[] = []
@@ -210,8 +210,8 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
         let key = instanceId + ':' + placement.partIndex
         let isSelected = selectedInstanceHash[instanceId]
         let isMirror = isDragging || isResizing || isDateSelecting
-        let isHidden = placement.isHidden || isSelected
-        let isAbsolute = placement.isAbsolute || isHidden || isMirror
+        let isVisible = placement.isVisible && !isSelected
+        let isAbsolute = placement.isAbsolute
         let left: CssDimValue = ''
         let right: CssDimValue = ''
 
@@ -235,7 +235,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
             key={key}
             ref={isMirror ? null : this.segHarnessRefs.createRef(key)}
             style={{
-              visibility: isHidden ? 'hidden' : ('' as any),
+              visibility: isVisible ? ('' as any) : 'hidden',
               marginTop: isAbsolute ? '' : placement.marginTop,
               top: isAbsolute ? placement.absoluteTop : '',
               left: left,
@@ -381,7 +381,7 @@ function buildMirrorPlacements(mirrorSegs: TableSeg[], colPlacements: TableSegPl
   return mirrorSegs.map((seg: TableSeg) => ({
     seg,
     partIndex: 0,
-    isHidden: false,
+    isVisible: true,
     isAbsolute: true,
     absoluteTop: topsByInstanceId[seg.eventRange.instance.instanceId],
     marginTop: 0

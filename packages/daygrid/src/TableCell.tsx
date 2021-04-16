@@ -192,7 +192,7 @@ export class TableCell extends DateComponent<TableCellProps> {
       for (let placement of singlePlacements) {
         allSegs.push(placement.seg)
 
-        if (placement.isHidden) {
+        if (!placement.isVisible) {
           hiddenSegs.push(placement.seg)
         }
       }
