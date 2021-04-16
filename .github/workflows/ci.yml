@@ -50,7 +50,6 @@ jobs:
             example-projects/next-scheduler/node_modules
             example-projects/nuxt/node_modules
             example-projects/vue-vuex/node_modules
-            example-projects/vue-typescript/node_modules
             example-projects/parcel/node_modules
           key: example-projects
       - name: Check Dependencies
@@ -86,7 +85,6 @@ jobs:
             example-projects/next-scheduler/node_modules
             example-projects/nuxt/node_modules
             example-projects/vue-vuex/node_modules
-            example-projects/vue-typescript/node_modules
             example-projects/parcel/node_modules
           key: example-projects
       - name: Check Dependencies
@@ -124,7 +122,6 @@ jobs:
             example-projects/next-scheduler/node_modules
             example-projects/nuxt/node_modules
             example-projects/vue-vuex/node_modules
-            example-projects/vue-typescript/node_modules
             example-projects/parcel/node_modules
           key: example-projects
       - name: Check Dependencies

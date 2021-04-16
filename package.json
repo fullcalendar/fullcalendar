@@ -34,7 +34,6 @@
     "!example-projects/next-scheduler",
     "!example-projects/nuxt",
     "!example-projects/vue-vuex",
-    "!example-projects/vue-typescript",
     "!example-projects/parcel"
   ],
   "scripts": {
