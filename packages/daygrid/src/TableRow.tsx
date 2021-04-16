@@ -86,7 +86,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
       props.cells
     )
 
-    let selectedInstanceHash = // TODO: messy way to compute this
+    let isForcedInvisible = // TODO: messy way to compute this
       (props.eventDrag && props.eventDrag.affectedInstances) ||
       (props.eventResize && props.eventResize.affectedInstances) ||
       {}
@@ -98,15 +98,15 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
           let normalFgNodes = this.renderFgSegs(
             col,
             props.forPrint ? singleColPlacements[col] : multiColPlacements[col],
-            selectedInstanceHash,
             props.todayRange,
+            isForcedInvisible,
           )
 
           let mirrorFgNodes = this.renderFgSegs(
             col,
             buildMirrorPlacements(mirrorSegsByCol[col], multiColPlacements),
-            {},
             props.todayRange,
+            {},
             Boolean(props.eventDrag),
             Boolean(props.eventResize),
             false, // date-selecting (because mirror is never drawn for date selection)
@@ -194,16 +194,17 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   renderFgSegs(
     col: number,
     segPlacements: TableSegPlacement[],
-    selectedInstanceHash: { [instanceId: string]: any }, // for hiding the original in event dnd/resize
     todayRange: DateRange,
+    isForcedInvisible: { [instanceId: string]: any },
     isDragging?: boolean,
     isResizing?: boolean,
     isDateSelecting?: boolean,
   ): VNode[] {
     let { context } = this
-    let { eventSelection } = this.props // being selected by touch. bad vocab confusion with selectedInstanceHash!
+    let { eventSelection } = this.props
     let { framePositions } = this.state
     let defaultDisplayEventEnd = this.props.cells.length === 1 // colCnt === 1
+    let isMirror = isDragging || isResizing || isDateSelecting
     let nodes: VNode[] = []
 
     if (framePositions) {
@@ -211,9 +212,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
         let seg = placement.seg
         let { instanceId } = seg.eventRange.instance
         let key = instanceId + ':' + col
-        let isSelected = selectedInstanceHash[instanceId]
-        let isMirror = isDragging || isResizing || isDateSelecting
-        let isVisible = placement.isVisible && !isSelected
+        let isVisible = placement.isVisible && !isForcedInvisible[instanceId]
         let isAbsolute = placement.isAbsolute
         let left: CssDimValue = ''
         let right: CssDimValue = ''
@@ -380,7 +379,7 @@ function buildMirrorPlacements(mirrorSegs: TableSeg[], colPlacements: TableSegPl
   if (!mirrorSegs.length) {
     return []
   }
-  let topsByInstanceId = buildAbsoluteTopHash(colPlacements)
+  let topsByInstanceId = buildAbsoluteTopHash(colPlacements) // TODO: cache this at first render?
   return mirrorSegs.map((seg: TableSeg) => ({
     seg,
     isVisible: true,
