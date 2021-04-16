@@ -34,7 +34,7 @@ for (let projName of projNames) {
     each of these projects need to be built with old-fashioned npm-install in their individual directories.
     to exclude them from yarn workspaces and cache their directories in CI, keep these files in sync:
       - package.json
-      - .travis.yml
+      - .github/workflows/ci.yml
     */
     case 'next': // somehow incompatible with babel-plugin-transform-require-ignore. REVISIT
     case 'next-scheduler': // same

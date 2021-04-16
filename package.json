@@ -37,9 +37,6 @@
     "!example-projects/vue-typescript",
     "!example-projects/parcel"
   ],
-  "resolutions": {
-    "karma": "patch:karma@~5.2.3#./scripts/karma-patch/patch.diff"
-  },
   "scripts": {
     "build": "gulp build",
     "watch": "gulp watch",
@@ -56,10 +53,6 @@
     "test:ci": "gulp testCi",
     "archive": "gulp archive",
     "ci:all": "./scripts/ci-all.sh",
-    "ci:lint": "yarn run lint && yarn run build && yarn run lintBuilt",
-    "ci:test": "yarn run build && yarn run test:ci",
-    "ci:contrib": "yarn run build && yarn run contrib:run all ci && FULLCALENDAR_FORCE_REACT=1 yarn run test:ci",
-    "ci:examples": "yarn run build && yarn run contrib:run all build && yarn run example:run all build",
     "update-readmes": "node ./scripts/update-readmes.js",
     "update-licenses": "node ./scripts/update-licenses.js",
     "update-package-jsons": "node ./scripts/update-package-jsons.js",
@@ -78,7 +71,7 @@
     "@types/node": "^12.12.14",
     "@typescript-eslint/eslint-plugin": "^4.4.1",
     "@typescript-eslint/parser": "^4.6.1",
-    "@yarnpkg/pnpify": "^2.3.3",
+    "@yarnpkg/pnpify": "^2.4.0",
     "autoprefixer": "^9.8.4",
     "bootstrap": "^3.4.1",
     "chokidar": "^2.1.5",
@@ -102,7 +95,7 @@
     "gulp-zip": "^5.0.0",
     "handlebars": "^4.1.2",
     "jasmine-core": "2.5.2",
-    "karma": "^5.2.3",
+    "karma": "^6.3.2",
     "karma-chrome-launcher": "^3.1.0",
     "karma-jasmine": "^4.0.1",
     "karma-sourcemap-loader": "^0.3.8",
