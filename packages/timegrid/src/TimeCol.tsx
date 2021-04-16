@@ -123,10 +123,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
   renderPrintFgSegs(segs: TimeColsSeg[]) {
     let { props } = this
-
-    // not DRY
-    segs = sortEventSegs(segs, this.context.options.eventOrder) as TimeColsSeg[]
-
+    segs = sortEventSegs(segs, this.context.options.eventOrder) as TimeColsSeg[] // not DRY
     return segs.map((seg) => (
       <div
         className="fc-timegrid-event-harness"
@@ -154,7 +151,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
   ) {
     let { props } = this
 
-    segs = sortEventSegs(segs, this.context.options.eventOrder) as TimeColsSeg[]
+    segs = sortEventSegs(segs, this.context.options.eventOrder) as TimeColsSeg[] // not DRY
     let segInputs = this.buildSegInputs(segs)
     let segRects = computeFgSegPlacements(segInputs)
 

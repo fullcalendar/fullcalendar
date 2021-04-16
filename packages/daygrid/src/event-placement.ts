@@ -20,7 +20,7 @@ export interface TableSegPlacement {
 }
 
 export function computeFgSegPlacement(
-  segs: TableSeg[],
+  segs: TableSeg[], // assumed already sorted
   dayMaxEvents: boolean | number,
   dayMaxEventRows: boolean | number,
   eventInstanceHeights: { [instanceId: string]: number },
@@ -40,20 +40,34 @@ export function computeFgSegPlacement(
     hierarchy.hiddenConsumes = true
   }
 
-  let segInputs: SegInput[] = segs.map((seg: TableSeg, i: number) => {
+  let hiddenEntries: SegEntry[]  = []
+  let segInputs: SegInput[] = []
+
+  for (let i = 0; i < segs.length; i++) {
+    let seg = segs[i]
     let { instanceId } = seg.eventRange.instance
     let eventHeight = eventInstanceHeights[instanceId]
-
-    return {
-      index: i,
+    let geomProps = {
       spanStart: seg.firstCol,
       spanEnd: seg.lastCol + 1,
       thickness: eventHeight || 0,
-      forceAbsolute: seg.isStart || seg.isEnd || eventHeight == null,
     }
-  })
 
-  let hiddenEntries = hierarchy.addSegs(segInputs)
+    if (eventHeight == null) {
+      hiddenEntries.push({
+        segInput: { index: i, ...geomProps, forceAbsolute: true },
+        ...geomProps
+      })
+    } else {
+      segInputs.push({
+        index: i,
+        ...geomProps,
+        forceAbsolute: seg.isStart || seg.isEnd,
+      })
+    }
+  }
+
+  hiddenEntries.push(...hierarchy.addSegs(segInputs))
   let segRects = hierarchy.toRects()
   let { placementsByFirstCol, placementsByEachCol, leftoverMarginsByCol } = placeRects(segRects, segs, colCnt)
 
@@ -131,7 +145,7 @@ function placeRects(rects: SegRect[], segs: TableSeg[], colCnt: number) {
       isHidden: false,
       absoluteTop: rect.levelCoord,
       marginTop: 0, // will compute later
-      height: rect.thickness
+      height: rect.thickness // hack. only for this function
     }
 
     placementsByFirstCol[rect.spanStart].push(placement)

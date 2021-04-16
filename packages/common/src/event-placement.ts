@@ -4,7 +4,7 @@ export interface SegInput {
   spanStart: number
   spanEnd: number
   thickness: number
-  forceAbsolute?: boolean // TODO: kill
+  forceAbsolute?: boolean // TODO: kill. not used within this file
 }
 
 export interface SegEntry {
@@ -15,7 +15,7 @@ export interface SegEntry {
 }
 
 export interface SegRect extends SegEntry {
-  partIndex: number
+  partIndex: number // TODO: rename to sliceIndex?
   levelCoord: number
 }
 

@@ -25,6 +25,7 @@ export interface TimeColSegRect extends SegRect {
   stackForward: number
 }
 
+// segInputs assumed sorted
 export function computeFgSegPlacements(segInputs: SegInput[]): TimeColSegRect[] {
   let hierarchy = new SegHierarchy()
   hierarchy.addSegs(segInputs)
