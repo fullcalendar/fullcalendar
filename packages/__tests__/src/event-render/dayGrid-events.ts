@@ -46,8 +46,8 @@ describe('dayGrid advanced event rendering', () => {
     let visibleEventEls = filterVisibleEls(eventEls)
     let moreLinkEls = dayGridWrapper.getMoreEls()
 
-    expect(visibleEventEls.length).toBe(2)
-    expect(moreLinkEls.length).toBe(2)
+    expect(visibleEventEls.length).toBe(3)
+    expect(moreLinkEls.length).toBe(1)
     expect(anyElsIntersect(visibleEventEls.concat(moreLinkEls))).toBe(false)
   })
 
@@ -119,6 +119,43 @@ describe('dayGrid advanced event rendering', () => {
     expect(visibleEventEls.length).toBe(2)
     expect(moreLinkEls.length).toBe(3)
     expect(anyElsIntersect(visibleEventEls.concat(moreLinkEls))).toBe(false)
+  })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/6187
+  it('will partially slice long events that are beyond dayMaxEvents', () => {
+    let calendar = initCalendar({
+      initialDate: '2020-03-21',
+      initialView: 'dayGridMonth',
+      dayMaxEvents: 3,
+      eventOrder: 'start,title',
+      events: [
+        {
+          title: 'A',
+          start: '2020-03-19',
+        },
+        {
+          title: 'B',
+          start: '2020-03-19',
+        },
+        {
+          title: 'C',
+          start: '2020-03-19',
+        },
+        {
+          title: 'D',
+          start: '2020-03-19',
+          end: '2020-03-21',
+        }
+      ]
+    })
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEls = dayGridWrapper.getEventEls()
+    let visibleEventEls = filterVisibleEls(eventEls)
+    let moreLinkEls = dayGridWrapper.getMoreEls()
+
+    expect(visibleEventEls.length).toBe(4)
+    expect(moreLinkEls.length).toBe(1)
   })
 
   it('won\'t intersect when doing custom rendering', () => {
