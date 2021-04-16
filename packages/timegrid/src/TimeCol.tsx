@@ -201,7 +201,12 @@ export class TimeCol extends BaseComponent<TimeColProps> {
         spanStart + (eventMinHeight || 0), // yuck
         slatCoords.computeDateTop(seg.end, date),
       )
-      segInputs.push({ index: i, spanStart, spanEnd, thickness: 1 })
+      segInputs.push({
+        index: i,
+        spanStart: Math.round(spanStart), // for barely-overlapping collisions
+        spanEnd: Math.round(spanEnd), //
+        thickness: 1
+      })
     }
 
     return segInputs

@@ -52,7 +52,7 @@ export interface TableRowProps {
 interface TableRowState {
   framePositions: PositionCache
   maxContentHeight: number | null
-  eventInstanceHeights: { [instanceId: string]: number }
+  eventInstanceHeights: { [instanceId: string]: number } // integers
 }
 
 export class TableRow extends DateComponent<TableRowProps, TableRowState> {
@@ -343,9 +343,8 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
     // get the max height amongst instance segs
     for (let key in segElMap) {
-      let height = segElMap[key].getBoundingClientRect().height
+      let height = Math.round(segElMap[key].getBoundingClientRect().height)
       let instanceId = key.split(':')[0] // deconstruct how renderFgSegs makes the key
-
       eventInstanceHeights[instanceId] = Math.max(eventInstanceHeights[instanceId] || 0, height)
     }
 

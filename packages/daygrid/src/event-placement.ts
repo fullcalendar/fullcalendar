@@ -80,7 +80,6 @@ export function computeFgSegPlacement(
     })
 
     for (let col = seg.firstCol; col <= seg.lastCol; col++) {
-      moreCnts[col]++
       singleColPlacements[col].push({
         seg: resliceSeg(seg, col, col + 1, cells),
         isVisible: false,
@@ -273,22 +272,25 @@ class DayGridSegHierarchy extends SegHierarchy {
     if (this.hiddenConsumes && level >= 0) {
       for (let lateral = insertion.lateralStart; lateral < insertion.lateralEnd; lateral++) {
         const leadingEntry = entriesByLevel[level][lateral]
-        const leadingEntryId = buildEntryKey(leadingEntry)
 
-        if (!forceHidden[leadingEntryId]) {
-          forceHidden[leadingEntryId] = true
+        if (this.allowReslicing) {
+          const placeholderEntry = {
+            ...leadingEntry,
+            spanStart: Math.max(leadingEntry.spanStart, entry.spanStart),
+            spanEnd: Math.min(leadingEntry.spanEnd, entry.spanEnd)
+          }
+          const placeholderEntryId = buildEntryKey(placeholderEntry)
 
-          if (this.allowReslicing) {
-            // trim down the touchingEntry in the hierarchy. intersect with the new entry
-            entriesByLevel[level][lateral] = {
-              ...leadingEntry,
-              spanStart: Math.max(leadingEntry.spanStart, entry.spanStart),
-              spanEnd: Math.min(leadingEntry.spanEnd, entry.spanEnd)
-            }
+          if (!forceHidden[placeholderEntryId]) {
+            forceHidden[placeholderEntryId] = true
+            entriesByLevel[level][lateral] = placeholderEntry
+            this.splitEntry(leadingEntry, entry, hiddenEntries) // split up the leadingEntry
+          }
+        } else {
+          const placeholderEntryId = buildEntryKey(leadingEntry)
 
-            // split up the leadingEntry
-            this.splitEntry(leadingEntry, entry, hiddenEntries)
-          } else {
+          if (!forceHidden[placeholderEntryId]) {
+            forceHidden[placeholderEntryId] = true
             hiddenEntries.push(leadingEntry)
           }
         }

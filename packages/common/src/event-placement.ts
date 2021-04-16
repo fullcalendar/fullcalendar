@@ -3,10 +3,10 @@ export interface SegInput {
   index: number
   spanStart: number
   spanEnd: number
-  thickness: number
+  thickness: number // should be an integer
 }
 
-export interface SegEntry {
+export interface SegEntry { // might be a sliced version of SegInput
   segInput: SegInput
   spanStart: number
   spanEnd: number
@@ -77,7 +77,7 @@ export class SegHierarchy {
     }
   }
 
-  splitEntry(entry: SegEntry, barrier: SegEntry, hiddenEntries: SegEntry[], forceSplit?: boolean): number {
+  splitEntry(entry: SegEntry, barrier: SegEntry, hiddenEntries: SegEntry[]): number {
     let partCnt = 0
     let splitHiddenEntries: SegEntry[] = []
 
@@ -97,11 +97,11 @@ export class SegHierarchy {
       }, splitHiddenEntries)
     }
 
-    if (partCnt || forceSplit) {
+    if (partCnt) {
       hiddenEntries.push({
         ...entry,
-        spanStart: barrier.spanStart,
-        spanEnd: barrier.spanEnd
+        spanStart: Math.max(barrier.spanStart, entry.spanStart), // intersect
+        spanEnd: Math.min(barrier.spanEnd, entry.spanEnd), // intersect
       }, ...splitHiddenEntries)
       return partCnt
 
@@ -236,49 +236,3 @@ export function binarySearch<Item>(
 
   return [startIndex, 0]
 }
-
-// testing
-// ---------------------------------------------------------------------------------------------------------------------
-
-// document.addEventListener('DOMContentLoaded', function() {
-//   let hierarchyInput: { spanStart: number, spanEnd: number, thickness: number }[] = [
-//     { spanStart: 0, spanEnd: 3, thickness: 2 },
-//     { spanStart: 0, spanEnd: 1, thickness: 1 },
-//     { spanStart: 1, spanEnd: 2, thickness: 10 },
-//     { spanStart: 2, spanEnd: 3, thickness: 1 },
-//     { spanStart: 3, spanEnd: 4, thickness: 10 },
-//     { spanStart: 4, spanEnd: 5, thickness: 1 },
-//     { spanStart: 0, spanEnd: 5, thickness: 2 },
-
-//     // { spanStart: 0, spanEnd: 1, thickness: 1 },
-//     // { spanStart: 1, spanEnd: 2, thickness: 10 },
-//     // { spanStart: 2, spanEnd: 3, thickness: 1 },
-//     // { spanStart: 0, spanEnd: 1, thickness: 1 },
-//     // { spanStart: 2, spanEnd: 4, thickness: 1 },
-//     // { spanStart: 0, spanEnd: 3, thickness: 1 },
-//     // { spanStart: 3, spanEnd: 4, thickness: 1 },
-//     // { spanStart: 3, spanEnd: 4, thickness: 1 },
-//     // { spanStart: 2, spanEnd: 3, thickness: 1 },
-
-//     // { spanStart: 0, spanEnd: 1, thickness: 1 },
-//     // { spanStart: 0, spanEnd: 1, thickness: 1 },
-//     // { spanStart: 0, spanEnd: 1, thickness: 1 },
-//     // { spanStart: 0, spanEnd: 4, thickness: 1 },
-//     // { spanStart: 3, spanEnd: 4, thickness: 1 },
-//     // { spanStart: 3, spanEnd: 4, thickness: 1 }
-//   ]
-// })
-
-// function logRects(rects: SegRect[]) {
-//   console.log('[')
-//   for (let rect of rects) {
-//     console.log(JSON.stringify({
-//       segId: rect.segInput.index + ':' + rect.partId,
-//       spanStart: rect.spanStart,
-//       spanEnd: rect.spanEnd,
-//       levelCoord: rect.levelCoord,
-//       thickness: rect.thickness
-//     }))
-//   }
-//   console.log(']')
-// }
