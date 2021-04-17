@@ -1,4 +1,11 @@
 
+v5.7.0
+------
+- fix: events can be completely hidden behind others with custom eventOrder (#6019)
+- fix: +more shows on days with less events than dayMaxEvents (#6187)
+- fix: less homogeneous event widths in timegrid (#5004)
+
+
 v5.6.0 (2021-03-28)
 -------------------
 
