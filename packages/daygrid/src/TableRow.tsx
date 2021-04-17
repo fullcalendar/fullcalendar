@@ -15,7 +15,7 @@ import {
   isPropsEqual,
   createRef,
   buildEventRangeKey,
-  sortEventSegs
+  sortEventSegs,
 } from '@fullcalendar/common'
 import { TableSeg, splitSegsByFirstCol } from './TableSeg'
 import { TableCell, TableCellModel, MoreLinkArg } from './TableCell'
@@ -83,7 +83,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
       props.dayMaxEventRows,
       state.eventInstanceHeights,
       state.maxContentHeight,
-      props.cells
+      props.cells,
     )
 
     let isForcedInvisible = // TODO: messy way to compute this
@@ -240,8 +240,8 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               visibility: isVisible ? ('' as any) : 'hidden',
               marginTop: isAbsolute ? '' : placement.marginTop,
               top: isAbsolute ? placement.absoluteTop : '',
-              left: left,
-              right: right,
+              left,
+              right,
             }}
           >
             {hasListItemDisplay(seg) ? (
@@ -384,7 +384,7 @@ function buildMirrorPlacements(mirrorSegs: TableSeg[], colPlacements: TableSegPl
     isVisible: true,
     isAbsolute: true,
     absoluteTop: topsByInstanceId[seg.eventRange.instance.instanceId],
-    marginTop: 0
+    marginTop: 0,
   }))
 }
 

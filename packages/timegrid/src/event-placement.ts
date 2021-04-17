@@ -46,22 +46,22 @@ function buildWeb(hierarchy: SegHierarchy): SegNode[] {
 
       return [
         { ...entry, nextLevelNodes: nextLevelRes[0] },
-        entry.thickness + nextLevelRes[1] // the pressure builds
+        entry.thickness + nextLevelRes[1], // the pressure builds
       ]
-    }
+    },
   )
 
   return buildNodes(
     entriesByLevel.length
       ? { level: 0, lateralStart: 0, lateralEnd: entriesByLevel[0].length }
       : null,
-    buildNode
+    buildNode,
   )[0]
 }
 
 function buildNodes(
   siblingRange: SegSiblingRange | null,
-  buildNode: (level: number, lateral: number) => SegNodeAndPressure
+  buildNode: (level: number, lateral: number) => SegNodeAndPressure,
 ): [SegNode[], number] { // number is maxPressure
   if (!siblingRange) {
     return [[], 0]
@@ -73,14 +73,14 @@ function buildNodes(
 
   while (lateral < lateralEnd) {
     pairs.push(buildNode(level, lateral))
-    lateral++
+    lateral += 1
   }
 
   pairs.sort(cmpDescPressures)
 
   return [
     pairs.map(extractNode),
-    pairs[0][1] // first item's pressure
+    pairs[0][1], // first item's pressure
   ]
 }
 
@@ -100,9 +100,9 @@ function findNextLevelSegs(hierarchy: SegHierarchy, subjectLevel: number, subjec
   let level = subjectLevel
 
   // skip past levels that are too high up
-  for (; level < levelCnt && levelCoords[level] < afterSubject; level++) ; // do nothing
+  for (; level < levelCnt && levelCoords[level] < afterSubject; level += 1) ; // do nothing
 
-  for (; level < levelCnt; level++) {
+  for (; level < levelCnt; level += 1) {
     let entries = entriesByLevel[level]
     let entry: SegEntry
     let searchIndex = binarySearch(entries, subjectEntry.spanStart, getEntrySpanEnd)
@@ -112,7 +112,7 @@ function findNextLevelSegs(hierarchy: SegHierarchy, subjectLevel: number, subjec
     while ( // loop through entries that horizontally intersect
       (entry = entries[lateralEnd]) && // but not past the whole seg list
       entry.spanStart < subjectEntry.spanEnd
-    ) { lateralEnd++ }
+    ) { lateralEnd += 1 }
 
     if (lateralStart < lateralEnd) {
       return { level, lateralStart, lateralEnd }
@@ -151,9 +151,9 @@ function stretchWeb(topLevelNodes: SegNode[], totalThickness: number): SegNode[]
       return [endCoord - newThickness, {
         ...node,
         thickness: newThickness,
-        nextLevelNodes: newChildren
+        nextLevelNodes: newChildren,
       }]
-    }
+    },
   )
 
   return topLevelNodes.map((node: SegNode) => stretchNode(node, 0, 0)[1])
@@ -170,14 +170,14 @@ function webToRects(topLevelNodes: SegNode[]): TimeColSegRect[] {
         ...node,
         levelCoord,
         stackDepth,
-        stackForward: 0 // will assign after recursing
+        stackForward: 0, // will assign after recursing
       }
       rects.push(rect)
 
       return (
         rect.stackForward = processNodes(node.nextLevelNodes, levelCoord + node.thickness, stackDepth + 1) + 1
       )
-    }
+    },
   )
 
   function processNodes(nodes: SegNode[], levelCoord: number, stackDepth: number) { // returns stackForward
@@ -235,7 +235,7 @@ function groupIntersectingEntries(entries: SegEntry[]): SegEntryGroup[] {
 
 function cacheable<Args extends any[], Res>(
   keyFunc: (...args: Args) => string,
-  workFunc: (...args: Args) => Res
+  workFunc: (...args: Args) => Res,
 ): ((...args: Args) => Res) {
   const cache: { [key: string]: Res } = {}
 

@@ -26,7 +26,7 @@ export function computeFgSegPlacement(
   dayMaxEventRows: boolean | number,
   eventInstanceHeights: { [instanceId: string]: number },
   maxContentHeight: number | null,
-  cells: TableCellModel[]
+  cells: TableCellModel[],
 ) {
   let hierarchy = new DayGridSegHierarchy()
   hierarchy.allowReslicing = true
@@ -44,7 +44,7 @@ export function computeFgSegPlacement(
   // create segInputs only for segs with known heights
   let segInputs: SegInput[] = []
   let unknownHeightSegs: TableSeg[] = []
-  for (let i = 0; i < segs.length; i++) {
+  for (let i = 0; i < segs.length; i += 1) {
     let seg = segs[i]
     let { instanceId } = seg.eventRange.instance
     let eventHeight = eventInstanceHeights[instanceId]
@@ -54,7 +54,7 @@ export function computeFgSegPlacement(
         index: i,
         spanStart: seg.firstCol,
         spanEnd: seg.lastCol + 1,
-        thickness: eventHeight
+        thickness: eventHeight,
       })
     } else {
       unknownHeightSegs.push(seg)
@@ -79,7 +79,7 @@ export function computeFgSegPlacement(
       marginTop: 0,
     })
 
-    for (let col = seg.firstCol; col <= seg.lastCol; col++) {
+    for (let col = seg.firstCol; col <= seg.lastCol; col += 1) {
       singleColPlacements[col].push({
         seg: resliceSeg(seg, col, col + 1, cells),
         isVisible: false,
@@ -91,7 +91,7 @@ export function computeFgSegPlacement(
   }
 
   // add the hidden entries
-  for (let col = 0; col < cells.length; col++) {
+  for (let col = 0; col < cells.length; col += 1) {
     moreCnts.push(0)
   }
   for (let hiddenEntry of hiddenEntries) {
@@ -105,8 +105,8 @@ export function computeFgSegPlacement(
       marginTop: 0,
     })
 
-    for (let col = hiddenEntry.spanStart; col < hiddenEntry.spanEnd; col++) {
-      moreCnts[col]++
+    for (let col = hiddenEntry.spanStart; col < hiddenEntry.spanEnd; col += 1) {
+      moreCnts[col] += 1
       singleColPlacements[col].push({
         seg: resliceSeg(seg, col, col + 1, cells),
         isVisible: false,
@@ -118,7 +118,7 @@ export function computeFgSegPlacement(
   }
 
   // deal with leftover margins
-  for (let col = 0; col < cells.length; col++) {
+  for (let col = 0; col < cells.length; col += 1) {
     if (moreCnts[col]) {
       moreMarginTops.push(leftoverMargins[col])
       cellPaddingBottoms.push(0)
@@ -132,13 +132,13 @@ export function computeFgSegPlacement(
 }
 
 // rects ordered by top coord, then left
-function placeRects(rects: SegRect[], segs: TableSeg[], cells: TableCellModel[]) {
-  let rectsByEachCol = groupRectsByEachCol(rects, cells.length)
+function placeRects(allRects: SegRect[], segs: TableSeg[], cells: TableCellModel[]) {
+  let rectsByEachCol = groupRectsByEachCol(allRects, cells.length)
   let singleColPlacements: TableSegPlacement[][] = []
   let multiColPlacements: TableSegPlacement[][] = []
   let leftoverMargins: number[] = []
 
-  for (let col = 0; col < cells.length; col++) {
+  for (let col = 0; col < cells.length; col += 1) {
     let rects = rectsByEachCol[col]
 
     // compute all static segs in singlePlacements
@@ -152,7 +152,7 @@ function placeRects(rects: SegRect[], segs: TableSeg[], cells: TableCellModel[])
         isVisible: true,
         isAbsolute: false,
         absoluteTop: 0,
-        marginTop: rect.levelCoord - currentHeight
+        marginTop: rect.levelCoord - currentHeight,
       })
       currentHeight = rect.levelCoord + rect.thickness
     }
@@ -180,17 +180,15 @@ function placeRects(rects: SegRect[], segs: TableSeg[], cells: TableCellModel[])
             marginTop: 0,
           })
         }
-      } else {
-        if (isFirstCol) {
-          multiPlacements.push({
-            seg: resliceSeg(seg, rect.spanStart, rect.spanEnd, cells),
-            isVisible: true,
-            isAbsolute: false,
-            absoluteTop: 0,
-            marginTop: currentMarginTop // claim the margin
-          })
-          currentMarginTop = 0
-        }
+      } else if (isFirstCol) {
+        multiPlacements.push({
+          seg: resliceSeg(seg, rect.spanStart, rect.spanEnd, cells),
+          isVisible: true,
+          isAbsolute: false,
+          absoluteTop: 0,
+          marginTop: currentMarginTop, // claim the margin
+        })
+        currentMarginTop = 0
       }
     }
 
@@ -205,12 +203,12 @@ function placeRects(rects: SegRect[], segs: TableSeg[], cells: TableCellModel[])
 function groupRectsByEachCol(rects: SegRect[], colCnt: number): SegRect[][] {
   let rectsByEachCol: SegRect[][] = []
 
-  for (let col = 0; col < colCnt; col++) {
+  for (let col = 0; col < colCnt; col += 1) {
     rectsByEachCol.push([])
   }
 
   for (let rect of rects) {
-    for (let col = rect.spanStart; col < rect.spanEnd; col++) {
+    for (let col = rect.spanStart; col < rect.spanEnd; col += 1) {
       rectsByEachCol[col].push(rect)
     }
   }
@@ -227,7 +225,7 @@ function resliceSeg(seg: TableSeg, spanStart: number, spanEnd: number, cells: Ta
   let origRange = eventRange.range
   let slicedRange = intersectRanges(origRange, {
     start: cells[spanStart].date,
-    end: addDays(cells[spanEnd - 1].date, 1)
+    end: addDays(cells[spanEnd - 1].date, 1),
   })
 
   return {
@@ -258,7 +256,7 @@ class DayGridSegHierarchy extends SegHierarchy {
     const excludeHidden = (entry: SegEntry) => !this.forceHidden[buildEntryKey(entry)]
 
     // remove the forced-hidden segs
-    for (let level = 0; level < entriesByLevel.length; level++) {
+    for (let level = 0; level < entriesByLevel.length; level += 1) {
       entriesByLevel[level] = entriesByLevel[level].filter(excludeHidden)
     }
 
@@ -270,14 +268,14 @@ class DayGridSegHierarchy extends SegHierarchy {
     const level = insertion.nextLevel - 1
 
     if (this.hiddenConsumes && level >= 0) {
-      for (let lateral = insertion.lateralStart; lateral < insertion.lateralEnd; lateral++) {
+      for (let lateral = insertion.lateralStart; lateral < insertion.lateralEnd; lateral += 1) {
         const leadingEntry = entriesByLevel[level][lateral]
 
         if (this.allowReslicing) {
           const placeholderEntry = {
             ...leadingEntry,
             spanStart: Math.max(leadingEntry.spanStart, entry.spanStart),
-            spanEnd: Math.min(leadingEntry.spanEnd, entry.spanEnd)
+            spanEnd: Math.min(leadingEntry.spanEnd, entry.spanEnd),
           }
           const placeholderEntryId = buildEntryKey(placeholderEntry)
 

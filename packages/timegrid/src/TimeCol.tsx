@@ -163,7 +163,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
         ...this.computeSegTopBottomCss(segRect.segInput),
         // mirrors will span entire column width
         // also, won't assign z-index, which is good, fc-event-mirror will overpower other harnesses
-        ...(isMirror ? { left: 0, right: 0 } : this.computeSegLeftRightCss(segRect))
+        ...(isMirror ? { left: 0, right: 0 } : this.computeSegLeftRightCss(segRect)),
       }
 
       return (
@@ -194,7 +194,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     let { eventMinHeight } = this.context.options
     let segInputs: SegInput[] = []
 
-    for (let i = 0; i < segs.length; i++) {
+    for (let i = 0; i < segs.length; i += 1) {
       let seg = segs[i]
       let spanStart = slatCoords.computeDateTop(seg.start, date)
       let spanEnd = Math.max(
@@ -205,7 +205,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
         index: i,
         spanStart: Math.round(spanStart), // for barely-overlapping collisions
         spanEnd: Math.round(spanEnd), //
-        thickness: 1
+        thickness: 1,
       })
     }
 

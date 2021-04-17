@@ -1,4 +1,3 @@
-
 export interface SegInput {
   index: number
   spanStart: number
@@ -57,10 +56,9 @@ export class SegHierarchy {
     if (this.isInsertionValid(insertion, entry)) {
       this.insertEntryAt(entry, insertion)
       return 1
-
-    } else {
-      return this.handleInvalidInsertion(insertion, entry, hiddenEntries)
     }
+
+    return this.handleInvalidInsertion(insertion, entry, hiddenEntries)
   }
 
   isInsertionValid(insertion: SegInsertion, entry: SegEntry) {
@@ -71,10 +69,10 @@ export class SegHierarchy {
   handleInvalidInsertion(insertion: SegInsertion, entry: SegEntry, hiddenEntries: SegEntry[]) {
     if (this.allowReslicing && insertion.touchingEntry) {
       return this.splitEntry(entry, insertion.touchingEntry, hiddenEntries)
-    } else {
-      hiddenEntries.push(entry)
-      return 0
     }
+
+    hiddenEntries.push(entry)
+    return 0
   }
 
   splitEntry(entry: SegEntry, barrier: SegEntry, hiddenEntries: SegEntry[]): number {
@@ -85,7 +83,7 @@ export class SegHierarchy {
       partCnt += this.insertEntry({
         ...entry,
         spanStart: entry.spanStart,
-        spanEnd: barrier.spanStart
+        spanEnd: barrier.spanStart,
       }, splitHiddenEntries)
     }
 
@@ -104,11 +102,10 @@ export class SegHierarchy {
         spanEnd: Math.min(barrier.spanEnd, entry.spanEnd), // intersect
       }, ...splitHiddenEntries)
       return partCnt
-
-    } else {
-      hiddenEntries.push(entry)
-      return 0
     }
+
+    hiddenEntries.push(entry)
+    return 0
   }
 
   insertEntryAt(entry: SegEntry, insertion: SegInsertion): void {
@@ -157,10 +154,10 @@ export class SegHierarchy {
           touchingEntry = entry
           resCoord = levelCoord + entry.thickness // move to bottom of colliding entry
         }
-        lateralEnd++
+        lateralEnd += 1
       }
 
-      level++
+      level += 1
     }
 
     return {
@@ -169,7 +166,7 @@ export class SegHierarchy {
       lateralStart,
       lateralEnd,
       touchingEntry,
-      stackCnt: touchingEntry ? stackCnts[buildEntryKey(touchingEntry)] + 1 : 0
+      stackCnt: touchingEntry ? stackCnts[buildEntryKey(touchingEntry)] + 1 : 0,
     }
   }
 
@@ -179,7 +176,7 @@ export class SegHierarchy {
     let levelCnt = entriesByLevel.length
     let rects: SegRect[] = []
 
-    for (let level = 0; level < levelCnt; level++) {
+    for (let level = 0; level < levelCnt; level += 1) {
       let entries = entriesByLevel[level]
       let levelCoord = levelCoords[level]
 
@@ -210,14 +207,15 @@ function insertAt<Item>(arr: Item[], index: number, item: Item) {
 export function binarySearch<Item>(
   a: Item[],
   searchVal: number,
-  getItemVal: (item: Item) => number
+  getItemVal: (item: Item) => number,
 ): [number, number] { // returns [level, isExactMatch ? 1 : 0]
   let startIndex = 0
   let endIndex = a.length // exclusive
 
   if (!endIndex || searchVal < getItemVal(a[startIndex])) { // no items OR before first item
     return [0, 0]
-  } else if (searchVal > getItemVal(a[endIndex - 1])) { // after last item
+  }
+  if (searchVal > getItemVal(a[endIndex - 1])) { // after last item
     return [endIndex, 0]
   }
 

@@ -91,7 +91,6 @@ describe('dayMaxEventRows', () => { // TODO: rename file
         expect(moreEls.length).toBe(1)
         expect(moreEls[0]).toHaveText('+2 more')
         expect(moreEls[0]).toBeBoundedBy(cells[2])
-
       })
 
       // https://github.com/fullcalendar/fullcalendar/issues/6187
