@@ -29,7 +29,7 @@ for (let projName of projNames) {
     projName = "parcel-2";
   } else if (projName === "next" || projName === "next-scheduler") {
     console.info("This example is disabled till the next major release");
-    process.exit(1);
+    process.exit();
   }
 
   const projDir = path.join(examplesDir, projName);
