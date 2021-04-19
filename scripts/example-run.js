@@ -23,52 +23,37 @@ let projNames =
     : [givenProjName];
 
 for (let projName of projNames) {
-  let projDir = path.join(examplesDir, projName);
+  // Rewrite projDir and projName to redirect parcel to parcel-2 directory
+  if (projName === "parcel") {
+    console.info("Redirecting to 'parcel-2' directory");
+    projName = "parcel-2";
+  } else if (projName === "next" || projName === "next-scheduler") {
+    console.info("This example is disabled till the next major release");
+    process.exit(1);
+  }
+
+  const projDir = path.join(examplesDir, projName);
 
   console.log("");
   console.log("PROJECT:", projName);
   console.log(projDir);
 
-  switch (projName) {
-    /*
-    each of these projects need to be built with old-fashioned npm-install in their individual directories.
-    to exclude them from yarn workspaces and cache their directories in CI, keep these files in sync:
-      - package.json
-      - .github/workflows/ci.yml
-    */
-    case "next": // somehow incompatible with babel-plugin-transform-require-ignore. REVISIT
-    case "next-scheduler": // same
-    case "nuxt": // nuxt cli tool uses webpack 4
-    case "vue-vuex": // vue cli tool uses webpack 4
-    case "parcel": // doesn't support pnp yet. parcel 2 WILL
-      console.log("Using NPM simulation");
-      console.log();
-      exec.sync(["yarn", "run", "example:npm", projName, runCmd], {
-        cwd: rootDir,
-        exitOnError: true,
-        live: true,
-      });
-      break;
-
-    case "angular":
-      console.log("Using PnP simulation");
-      console.log();
-      exec.sync(["yarn", "run", "example:pnp", projName, runCmd], {
-        cwd: rootDir,
-        exitOnError: true,
-        live: true,
-      });
-      break;
-
-    default:
-      console.log("Normal Yarn execution");
-      console.log();
-      exec.sync(["yarn", "run", runCmd], {
-        cwd: projDir,
-        exitOnError: true,
-        live: true,
-      });
-      break;
+  if (projName === "angular") {
+    console.log("Using PnP simulation");
+    console.log();
+    exec.sync(["yarn", "run", "example:pnp", projName, runCmd], {
+      cwd: rootDir,
+      exitOnError: true,
+      live: true,
+    });
+  } else {
+    console.log("Normal Yarn execution");
+    console.log();
+    exec.sync(["yarn", "run", runCmd], {
+      cwd: projDir,
+      exitOnError: true,
+      live: true,
+    });
   }
 
   console.log("");

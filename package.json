@@ -29,12 +29,7 @@
     "packages-premium/*",
     "packages-contrib/*",
     "packages-contrib/angular/dist/fullcalendar",
-    "example-projects/*",
-    "!example-projects/next",
-    "!example-projects/next-scheduler",
-    "!example-projects/nuxt",
-    "!example-projects/vue-vuex",
-    "!example-projects/parcel"
+    "example-projects/*"
   ],
   "scripts": {
     "build": "gulp build",
