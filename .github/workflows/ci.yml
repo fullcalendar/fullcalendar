@@ -68,6 +68,7 @@ jobs:
         run: yarn run gulp testCi
   contrib:
     name: Contrib
+    if: false # disable for now
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
