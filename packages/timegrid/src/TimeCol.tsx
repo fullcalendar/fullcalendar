@@ -157,7 +157,8 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     let { eventSelection, todayRange, nowDate } = this.props
     let isMirror = isDragging || isResizing || isDateSelecting
     let segInputs = this.buildSegInputs(segs)
-    let segRects = isMirror ? computeFgSegPlacements(segInputs) : this.computeFgSegPlacements(segInputs)
+    let segRects = isMirror ? computeFgSegPlacements(segInputs) : // don't use memoized
+      this.computeFgSegPlacements(segInputs, this.context.options.timeGridEventMaxStack)
 
     return segRects.map((segRect) => {
       let seg = segs[segRect.segInput.index] as TimeColsSeg

@@ -26,9 +26,18 @@ export interface TimeColSegRect extends SegRect {
 }
 
 // segInputs assumed sorted
-export function computeFgSegPlacements(segInputs: SegInput[]): TimeColSegRect[] {
+export function computeFgSegPlacements(
+  segInputs: SegInput[],
+  maxStack?: number,
+): TimeColSegRect[] {
   let hierarchy = new SegHierarchy()
-  hierarchy.addSegs(segInputs)
+  if (maxStack != null) {
+    hierarchy.maxStackCnt = maxStack
+  }
+
+  let hiddenSegs = hierarchy.addSegs(segInputs)
+  console.log(hiddenSegs)
+
   let web = buildWeb(hierarchy)
   web = stretchWeb(web, 1) // all levelCoords/thickness will have 0.0-1.0
   return webToRects(web)
