@@ -1,7 +1,7 @@
 import {
   Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta,
   DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill,
-  DateProfile, config, buildEventRangeKey, sortEventSegs, SegInput,
+  DateProfile, config, buildEventRangeKey, sortEventSegs, SegInput, memoize,
 } from '@fullcalendar/common'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
@@ -33,6 +33,9 @@ export interface TimeColProps {
 config.timeGridEventCondensedHeight = 30
 
 export class TimeCol extends BaseComponent<TimeColProps> {
+  sortEventSegs = memoize(sortEventSegs)
+  computeFgSegPlacements = memoize(computeFgSegPlacements) // only for non-print, non-mirror
+
   render() {
     let { props, context } = this
     let isSelectMirror = context.options.selectMirror
@@ -47,6 +50,8 @@ export class TimeCol extends BaseComponent<TimeColProps> {
       (props.eventDrag && props.eventDrag.affectedInstances) ||
       (props.eventResize && props.eventResize.affectedInstances) ||
       {}
+
+    let sortedFgSegs = this.sortEventSegs(props.fgEventSegs, context.options.eventOrder) as TimeColsSeg[]
 
     return (
       <DayCellRoot
@@ -71,7 +76,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
               </div>
               <div className="fc-timegrid-col-events">
                 {this.renderFgSegs(
-                  props.fgEventSegs,
+                  sortedFgSegs,
                   interactionAffectedInstances,
                 )}
               </div>
@@ -102,7 +107,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
   }
 
   renderFgSegs(
-    segs: TimeColsSeg[],
+    sortedFgSegs: TimeColsSeg[],
     segIsInvisible: { [instanceId: string]: any },
     isDragging?: boolean,
     isResizing?: boolean,
@@ -111,20 +116,20 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     let { props } = this
 
     if (props.forPrint) {
-      return this.renderPrintFgSegs(segs)
+      return this.renderPrintFgSegs(sortedFgSegs)
     }
 
     if (props.slatCoords) {
-      return this.renderPositionedFgSegs(segs, segIsInvisible, isDragging, isResizing, isDateSelecting)
+      return this.renderPositionedFgSegs(sortedFgSegs, segIsInvisible, isDragging, isResizing, isDateSelecting)
     }
 
     return null
   }
 
-  renderPrintFgSegs(segs: TimeColsSeg[]) {
-    let { props } = this
-    segs = sortEventSegs(segs, this.context.options.eventOrder) as TimeColsSeg[] // not DRY
-    return segs.map((seg) => (
+  renderPrintFgSegs(sortedFgSegs: TimeColsSeg[]) {
+    let { todayRange, nowDate } = this.props
+
+    return sortedFgSegs.map((seg) => (
       <div
         className="fc-timegrid-event-harness"
         key={seg.eventRange.instance.instanceId}
@@ -136,29 +141,27 @@ export class TimeCol extends BaseComponent<TimeColProps> {
           isDateSelecting={false}
           isSelected={false}
           isCondensed={false}
-          {...getSegMeta(seg, props.todayRange, props.nowDate)}
+          {...getSegMeta(seg, todayRange, nowDate)}
         />
       </div>
     ))
   }
 
   renderPositionedFgSegs(
-    segs: TimeColsSeg[],
+    segs: TimeColsSeg[], // if not mirror, needs to be sorted
     segIsInvisible: { [instanceId: string]: any },
     isDragging?: boolean,
     isResizing?: boolean,
     isDateSelecting?: boolean,
   ) {
-    let { props } = this
-
-    segs = sortEventSegs(segs, this.context.options.eventOrder) as TimeColsSeg[] // not DRY
+    let { eventSelection, todayRange, nowDate } = this.props
+    let isMirror = isDragging || isResizing || isDateSelecting
     let segInputs = this.buildSegInputs(segs)
-    let segRects = computeFgSegPlacements(segInputs)
+    let segRects = isMirror ? computeFgSegPlacements(segInputs) : this.computeFgSegPlacements(segInputs)
 
     return segRects.map((segRect) => {
       let seg = segs[segRect.segInput.index] as TimeColsSeg
       let instanceId = seg.eventRange.instance.instanceId
-      let isMirror = isDragging || isResizing || isDateSelecting
       let positionCss = {
         ...this.computeSegTopBottomCss(segRect.segInput),
         // mirrors will span entire column width
@@ -180,9 +183,9 @@ export class TimeCol extends BaseComponent<TimeColProps> {
             isDragging={isDragging}
             isResizing={isResizing}
             isDateSelecting={isDateSelecting}
-            isSelected={instanceId === props.eventSelection}
+            isSelected={instanceId === eventSelection}
             isCondensed={(seg.bottom - seg.top) < config.timeGridEventCondensedHeight}
-            {...getSegMeta(seg, props.todayRange, props.nowDate)}
+            {...getSegMeta(seg, todayRange, nowDate)}
           />
         </div>
       )
