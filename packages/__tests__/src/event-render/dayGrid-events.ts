@@ -46,8 +46,8 @@ describe('dayGrid advanced event rendering', () => {
     let visibleEventEls = filterVisibleEls(eventEls)
     let moreLinkEls = dayGridWrapper.getMoreEls()
 
-    expect(visibleEventEls.length).toBe(2)
-    expect(moreLinkEls.length).toBe(2)
+    expect(visibleEventEls.length).toBe(3)
+    expect(moreLinkEls.length).toBe(1)
     expect(anyElsIntersect(visibleEventEls.concat(moreLinkEls))).toBe(false)
   })
 

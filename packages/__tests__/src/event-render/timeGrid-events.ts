@@ -3,7 +3,7 @@ import { anyElsObscured } from '../lib/dom-geom'
 
 describe('timeGrid event rendering', () => {
   // https://github.com/fullcalendar/fullcalendar/issues/6019
-  xit('renders without intersecting when sorted by title', () => {
+  it('renders without intersecting when sorted by title', () => {
     let calendar = initCalendar({
       initialView: 'timeGridWeek',
       initialDate: '2020-12-15',
@@ -58,10 +58,12 @@ describe('timeGrid event rendering', () => {
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/2758
-  xit('renders without intersecting when sorted by title', () => {
+  it('renders without intersecting when sorted by title', () => {
     let calendar = initCalendar({
       initialDate: '2015-04-22',
       initialView: 'timeGridDay',
+      scrollTime: '09:00',
+      slotEventOverlap: false,
       editable: true,
       events: [
         {

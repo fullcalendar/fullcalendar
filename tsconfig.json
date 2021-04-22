@@ -4,8 +4,8 @@
   "references": [
     { "path": "packages/__tests__" },
     { "path": "packages/bundle" },
-    { "path": "packages/core" },
     { "path": "packages/core-preact" },
+    { "path": "packages/core" },
     { "path": "packages/common" },
     { "path": "packages/daygrid" },
     { "path": "packages/timegrid" },

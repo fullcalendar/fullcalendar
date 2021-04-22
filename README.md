@@ -1,4 +1,4 @@
-# FullCalendar [![Build Status](https://github.com/fullcalendar/fullcalendar/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/fullcalendar/fullcalendar/actions/workflows/ci.yml)
+# FullCalendar
 
 A full-sized drag & drop JavaScript event calendar
 

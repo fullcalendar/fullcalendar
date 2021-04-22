@@ -20,6 +20,7 @@ import {
 } from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
 import { TableCellTop } from './TableCellTop'
+import { TableSegPlacement } from './event-placement'
 
 export interface TableCellProps {
   date: DateMarker
@@ -33,7 +34,6 @@ export interface TableCellProps {
   fgContentElRef?: Ref<HTMLDivElement> // TODO: rename!!! classname confusion. is the "event" div
   fgContent: ComponentChildren
   fgPaddingBottom: CssDimValue
-  // hasEvents: boolean // TODO: when reviving, event should "have events" even when none *start* on the cell
   moreCnt: number
   moreMarginTop: number
   showDayNumber: boolean
@@ -42,8 +42,7 @@ export interface TableCellProps {
   todayRange: DateRange
   buildMoreLinkText: (num: number) => string
   onMoreClick?: (arg: MoreLinkArg) => void
-  segsByEachCol: TableSeg[] // for more-popover. includes segs that aren't rooted in this cell but that pass over it
-  segIsHidden: { [instanceId: string]: boolean } // for more-popover. TODO: rename to be about selected instances
+  singlePlacements: TableSegPlacement[]
 }
 
 export interface TableCellModel { // TODO: move somewhere else. combine with DayTableCell?
@@ -184,19 +183,25 @@ export class TableCell extends DateComponent<TableCellProps> {
   }
 
   handleMoreLinkClick = (ev: VUIEvent) => {
-    let { props } = this
+    let { singlePlacements, onMoreClick, date, moreCnt } = this.props
 
-    if (props.onMoreClick) {
-      let allSegs = props.segsByEachCol
-      let hiddenSegs = allSegs.filter(
-        (seg: TableSeg) => props.segIsHidden[seg.eventRange.instance.instanceId],
-      )
+    if (onMoreClick) {
+      let allSegs: TableSeg[] = []
+      let hiddenSegs: TableSeg[] = []
 
-      props.onMoreClick({
-        date: props.date,
+      for (let placement of singlePlacements) {
+        allSegs.push(placement.seg)
+
+        if (!placement.isVisible) {
+          hiddenSegs.push(placement.seg)
+        }
+      }
+
+      onMoreClick({
+        date,
         allSegs,
         hiddenSegs,
-        moreCnt: props.moreCnt,
+        moreCnt,
         dayEl: this.rootEl,
         ev,
       })
