@@ -6,6 +6,8 @@ import {
   getEntrySpanEnd,
   binarySearch,
   SegInput,
+  SegEntryGroup,
+  groupIntersectingEntries,
 } from '@fullcalendar/common'
 
 interface SegNode extends SegEntry {
@@ -23,12 +25,6 @@ interface SegSiblingRange { // will ALWAYS have span of 1 or more items. if not,
 export interface TimeColSegRect extends SegRect {
   stackDepth: number
   stackForward: number
-}
-
-export interface SegEntryGroup {
-  spanStart: number
-  spanEnd: number
-  entries: SegEntry[]
 }
 
 // segInputs assumed sorted
@@ -210,37 +206,6 @@ function webToRects(topLevelNodes: SegNode[]): TimeColSegRect[] {
 
   processNodes(topLevelNodes, 0, 0)
   return rects // TODO: sort rects by levelCoord to be consistent with toRects?
-}
-
-// returns in no specific order
-function groupIntersectingEntries(entries: SegEntry[]): SegEntryGroup[] {
-  let groups: SegEntryGroup[] = []
-
-  for (let entry of entries) {
-    let filteredMerges: SegEntryGroup[] = []
-    let hungryMerge: SegEntryGroup = { // the merge that will eat what is collides with
-      spanStart: entry.spanStart,
-      spanEnd: entry.spanEnd,
-      entries: [entry]
-    }
-
-    for (let merge of groups) {
-      if (merge.spanStart < hungryMerge.spanEnd && merge.spanEnd > hungryMerge.spanStart) { // collides?
-        hungryMerge = {
-          spanStart: Math.min(merge.spanStart, hungryMerge.spanStart),
-          spanEnd: Math.max(merge.spanEnd, hungryMerge.spanEnd),
-          entries: merge.entries.concat(hungryMerge.entries)
-        }
-      } else {
-        filteredMerges.push(merge)
-      }
-    }
-
-    filteredMerges.push(hungryMerge)
-    groups = filteredMerges
-  }
-
-  return groups
 }
 
 // TODO: move to general util
