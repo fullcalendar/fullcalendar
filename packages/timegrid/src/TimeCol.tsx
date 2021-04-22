@@ -1,7 +1,7 @@
 import {
   Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta,
   DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill,
-  DateProfile, config, buildEventRangeKey, sortEventSegs, SegInput, memoize, SegEntryGroup
+  DateProfile, config, buildEventRangeKey, sortEventSegs, SegInput, memoize, SegEntryGroup,
 } from '@fullcalendar/common'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
@@ -204,8 +204,9 @@ export class TimeCol extends BaseComponent<TimeColProps> {
       let positionCss = this.computeSegTopBottomCss(hiddenGroup)
 
       return (
-        <div className='fc-event-more fc-timegrid-event-more' style={positionCss}>
-          +{hiddenGroup.entries.length}{/* TODO: more customizable way to build this text. search buildMoreLinkText */}
+        <div className="fc-event-more fc-timegrid-event-more" style={positionCss}>
+          {'+' + hiddenGroup.entries.length}
+          {/* TODO: more customizable way to build this text. search buildMoreLinkText */}
         </div>
       )
     })

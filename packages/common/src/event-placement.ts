@@ -212,7 +212,7 @@ export function groupIntersectingEntries(entries: SegEntry[]): SegEntryGroup[] {
     let hungryMerge: SegEntryGroup = { // the merge that will eat what is collides with
       spanStart: entry.spanStart,
       spanEnd: entry.spanEnd,
-      entries: [entry]
+      entries: [entry],
     }
 
     for (let merge of groups) {
@@ -220,7 +220,7 @@ export function groupIntersectingEntries(entries: SegEntry[]): SegEntryGroup[] {
         hungryMerge = {
           spanStart: Math.min(merge.spanStart, hungryMerge.spanStart),
           spanEnd: Math.max(merge.spanEnd, hungryMerge.spanEnd),
-          entries: merge.entries.concat(hungryMerge.entries)
+          entries: merge.entries.concat(hungryMerge.entries),
         }
       } else {
         filteredMerges.push(merge)
