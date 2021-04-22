@@ -25,22 +25,33 @@ export interface TimeColSegRect extends SegRect {
   stackForward: number
 }
 
+export interface SegEntryGroup {
+  spanStart: number
+  spanEnd: number
+  entries: SegEntry[]
+}
+
 // segInputs assumed sorted
 export function computeFgSegPlacements(
   segInputs: SegInput[],
   maxStack?: number,
-): TimeColSegRect[] {
+): {
+  segRects: TimeColSegRect[],
+  hiddenGroups: SegEntryGroup[]
+} {
   let hierarchy = new SegHierarchy()
   if (maxStack != null) {
     hierarchy.maxStackCnt = maxStack
   }
 
-  let hiddenSegs = hierarchy.addSegs(segInputs)
-  console.log(hiddenSegs)
+  let hiddenEntries = hierarchy.addSegs(segInputs)
+  let hiddenGroups = groupIntersectingEntries(hiddenEntries)
 
   let web = buildWeb(hierarchy)
   web = stretchWeb(web, 1) // all levelCoords/thickness will have 0.0-1.0
-  return webToRects(web)
+  let segRects = webToRects(web)
+
+  return { segRects, hiddenGroups }
 }
 
 function buildWeb(hierarchy: SegHierarchy): SegNode[] {
@@ -201,13 +212,6 @@ function webToRects(topLevelNodes: SegNode[]): TimeColSegRect[] {
   return rects // TODO: sort rects by levelCoord to be consistent with toRects?
 }
 
-/* TODO: for event-limit display
-interface SegEntryGroup {
-  spanStart: number
-  spanEnd: number
-  entries: SegEntry[]
-}
-
 // returns in no specific order
 function groupIntersectingEntries(entries: SegEntry[]): SegEntryGroup[] {
   let groups: SegEntryGroup[] = []
@@ -238,7 +242,6 @@ function groupIntersectingEntries(entries: SegEntry[]): SegEntryGroup[] {
 
   return groups
 }
-*/
 
 // TODO: move to general util
 

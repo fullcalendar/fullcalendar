@@ -5,7 +5,7 @@ import {
 } from '@fullcalendar/common'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { computeFgSegPlacements, TimeColSegRect } from './event-placement'
+import { computeFgSegPlacements, SegEntryGroup, TimeColSegRect } from './event-placement'
 import { TimeColEvent } from './TimeColEvent'
 import { TimeColMisc } from './TimeColMisc'
 
@@ -157,37 +157,55 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     let { eventSelection, todayRange, nowDate } = this.props
     let isMirror = isDragging || isResizing || isDateSelecting
     let segInputs = this.buildSegInputs(segs)
-    let segRects = isMirror ? computeFgSegPlacements(segInputs) : // don't use memoized
+    let { segRects, hiddenGroups } = isMirror ? computeFgSegPlacements(segInputs) : // don't use memoized
       this.computeFgSegPlacements(segInputs, this.context.options.timeGridEventMaxStack)
 
-    return segRects.map((segRect) => {
-      let seg = segs[segRect.segInput.index] as TimeColsSeg
-      let instanceId = seg.eventRange.instance.instanceId
-      let positionCss = {
-        ...this.computeSegTopBottomCss(segRect.segInput),
-        // mirrors will span entire column width
-        // also, won't assign z-index, which is good, fc-event-mirror will overpower other harnesses
-        ...(isMirror ? { left: 0, right: 0 } : this.computeSegLeftRightCss(segRect)),
-      }
+    return (
+      <Fragment>
+        {this.renderHiddenGroups(hiddenGroups, segs)}
+        {segRects.map((segRect) => {
+          let seg = segs[segRect.segInput.index] as TimeColsSeg
+          let instanceId = seg.eventRange.instance.instanceId
+          let positionCss = {
+            ...this.computeSegTopBottomCss(segRect.segInput),
+            // mirrors will span entire column width
+            // also, won't assign z-index, which is good, fc-event-mirror will overpower other harnesses
+            ...(isMirror ? { left: 0, right: 0 } : this.computeSegLeftRightCss(segRect)),
+          }
+
+          return (
+            <div
+              className={'fc-timegrid-event-harness' + (segRect.stackForward > 0 ? ' fc-timegrid-event-harness-inset' : '')}
+              key={instanceId}
+              style={{
+                visibility: segIsInvisible[instanceId] ? 'hidden' : ('' as any),
+                ...positionCss,
+              }}
+            >
+              <TimeColEvent
+                seg={seg}
+                isDragging={isDragging}
+                isResizing={isResizing}
+                isDateSelecting={isDateSelecting}
+                isSelected={instanceId === eventSelection}
+                isCondensed={(seg.bottom - seg.top) < config.timeGridEventCondensedHeight}
+                {...getSegMeta(seg, todayRange, nowDate)}
+              />
+            </div>
+          )
+        })}
+      </Fragment>
+    )
+  }
+
+  // will already have eventMinHeight applied because segInputs already had it
+  renderHiddenGroups(hiddenGroups: SegEntryGroup[], segs: TimeColsSeg[]) {
+    return hiddenGroups.map((hiddenGroup) => {
+      let positionCss = this.computeSegTopBottomCss(hiddenGroup)
 
       return (
-        <div
-          className={'fc-timegrid-event-harness' + (segRect.stackForward > 0 ? ' fc-timegrid-event-harness-inset' : '')}
-          key={instanceId}
-          style={{
-            visibility: segIsInvisible[instanceId] ? 'hidden' : ('' as any),
-            ...positionCss,
-          }}
-        >
-          <TimeColEvent
-            seg={seg}
-            isDragging={isDragging}
-            isResizing={isResizing}
-            isDateSelecting={isDateSelecting}
-            isSelected={instanceId === eventSelection}
-            isCondensed={(seg.bottom - seg.top) < config.timeGridEventCondensedHeight}
-            {...getSegMeta(seg, todayRange, nowDate)}
-          />
+        <div className='fc-event-more fc-timegrid-event-more' style={positionCss}>
+          +{hiddenGroup.entries.length}{/* TODO: more customizable way to build this text. search buildMoreLinkText */}
         </div>
       )
     })
@@ -262,10 +280,10 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     ))
   }
 
-  computeSegTopBottomCss(segInput: SegInput) {
+  computeSegTopBottomCss(segLike: { spanStart: number, spanEnd: number }) {
     return {
-      top: segInput.spanStart,
-      bottom: -segInput.spanEnd,
+      top: segLike.spanStart,
+      bottom: -segLike.spanEnd,
     }
   }
 
