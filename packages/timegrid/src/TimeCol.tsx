@@ -1,11 +1,11 @@
 import {
   Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta,
   DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill,
-  DateProfile, config, buildEventRangeKey, sortEventSegs, SegInput, memoize,
+  DateProfile, config, buildEventRangeKey, sortEventSegs, SegInput, memoize, SegEntryGroup
 } from '@fullcalendar/common'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { computeFgSegPlacements, SegEntryGroup, TimeColSegRect } from './event-placement'
+import { computeFgSegPlacements, TimeColSegRect } from './event-placement'
 import { TimeColEvent } from './TimeColEvent'
 import { TimeColMisc } from './TimeColMisc'
 

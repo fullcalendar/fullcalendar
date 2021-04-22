@@ -24,7 +24,8 @@
 }
 
 .fc-timegrid-event-more {
-  position: absolute;
+  position: absolute; // TODO: converge with fc-timegrid-event below?
+  top: 0; // for when not yet positioned
   z-index: 999; // hack
   background: #ccc; // TODO: variable?
   padding: 2px;
@@ -64,7 +65,7 @@
 
   & .fc-timegrid-event {
     position: absolute; // absolute WITHIN the harness
-    top: 0;
+    top: 0; // for when not yet positioned
     bottom: 1px; // stay away from bottom slot line
     left: 0;
     right: 0;
