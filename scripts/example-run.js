@@ -22,7 +22,7 @@ let projNames =
     ? globby.sync("*", { cwd: examplesDir, onlyDirectories: true })
     : [givenProjName];
 
-for (let projName of projNames) {
+projNames.forEach((projName) => {
   // Rewrite projDir and projName to redirect parcel to parcel-2 directory
   if (projName === "parcel") {
     console.info("Redirecting to 'parcel-2' directory");
@@ -38,23 +38,20 @@ for (let projName of projNames) {
   console.log("PROJECT:", projName);
   console.log(projDir);
 
+  let execCmd = [runCmd];
+
   if (projName === "angular") {
     console.log("Using PnP simulation");
-    console.log();
-    exec.sync(["yarn", "run", "example:pnp", projName, runCmd], {
-      cwd: rootDir,
-      exitOnError: true,
-      live: true,
-    });
+    execCmd = ["example:pnp", projName, runCmd];
   } else {
     console.log("Normal Yarn execution");
-    console.log();
-    exec.sync(["yarn", "run", runCmd], {
-      cwd: projDir,
-      exitOnError: true,
-      live: true,
-    });
   }
 
-  console.log("");
-}
+  console.log();
+  exec.sync(["yarn", "run", ...execCmd], {
+    cwd: projDir,
+    exitOnError: true,
+    live: true,
+  });
+  console.log();
+});
