@@ -40,7 +40,7 @@ projNames.forEach((projName) => {
   // Don't run disabled projects
   if (disabledProjects.includes(projName)) {
     console.info("This example is disabled till the next major release");
-    process.exit();
+    return;
   }
 
   const projDir = path.join(examplesDir, projName);
