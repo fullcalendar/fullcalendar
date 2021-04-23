@@ -6,6 +6,8 @@ import {
   getEntrySpanEnd,
   binarySearch,
   SegInput,
+  SegEntryGroup,
+  groupIntersectingEntries,
 } from '@fullcalendar/common'
 
 interface SegNode extends SegEntry {
@@ -26,12 +28,23 @@ export interface TimeColSegRect extends SegRect {
 }
 
 // segInputs assumed sorted
-export function computeFgSegPlacements(segInputs: SegInput[]): TimeColSegRect[] {
+export function computeFgSegPlacements(
+  segInputs: SegInput[],
+  maxStack?: number,
+): { segRects: TimeColSegRect[], hiddenGroups: SegEntryGroup[] } {
   let hierarchy = new SegHierarchy()
-  hierarchy.addSegs(segInputs)
+  if (maxStack != null) {
+    hierarchy.maxStackCnt = maxStack
+  }
+
+  let hiddenEntries = hierarchy.addSegs(segInputs)
+  let hiddenGroups = groupIntersectingEntries(hiddenEntries)
+
   let web = buildWeb(hierarchy)
   web = stretchWeb(web, 1) // all levelCoords/thickness will have 0.0-1.0
-  return webToRects(web)
+  let segRects = webToRects(web)
+
+  return { segRects, hiddenGroups }
 }
 
 function buildWeb(hierarchy: SegHierarchy): SegNode[] {
@@ -191,45 +204,6 @@ function webToRects(topLevelNodes: SegNode[]): TimeColSegRect[] {
   processNodes(topLevelNodes, 0, 0)
   return rects // TODO: sort rects by levelCoord to be consistent with toRects?
 }
-
-/* TODO: for event-limit display
-interface SegEntryGroup {
-  spanStart: number
-  spanEnd: number
-  entries: SegEntry[]
-}
-
-// returns in no specific order
-function groupIntersectingEntries(entries: SegEntry[]): SegEntryGroup[] {
-  let groups: SegEntryGroup[] = []
-
-  for (let entry of entries) {
-    let filteredMerges: SegEntryGroup[] = []
-    let hungryMerge: SegEntryGroup = { // the merge that will eat what is collides with
-      spanStart: entry.spanStart,
-      spanEnd: entry.spanEnd,
-      entries: [entry]
-    }
-
-    for (let merge of groups) {
-      if (merge.spanStart < hungryMerge.spanEnd && merge.spanEnd > hungryMerge.spanStart) { // collides?
-        hungryMerge = {
-          spanStart: Math.min(merge.spanStart, hungryMerge.spanStart),
-          spanEnd: Math.max(merge.spanEnd, hungryMerge.spanEnd),
-          entries: merge.entries.concat(hungryMerge.entries)
-        }
-      } else {
-        filteredMerges.push(merge)
-      }
-    }
-
-    filteredMerges.push(hungryMerge)
-    groups = filteredMerges
-  }
-
-  return groups
-}
-*/
 
 // TODO: move to general util
 

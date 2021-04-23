@@ -156,7 +156,7 @@ export class TableCell extends DateComponent<TableCellProps> {
                       {(rootElRef, classNames, innerElRef, innerContent) => (
                         <a
                           ref={rootElRef}
-                          className={['fc-daygrid-more-link'].concat(classNames).join(' ')}
+                          className={['fc-daygrid-more-link', 'fc-event-more'].concat(classNames).join(' ')}
                           onClick={this.handleMoreLinkClick}
                         >
                           {innerContent}

@@ -1,14 +1,17 @@
 
 .fc-timegrid-event-harness-inset .fc-timegrid-event,
-.fc-timegrid-event.fc-event-mirror {
+.fc-timegrid-event.fc-event-mirror,
+.fc-timegrid-event-more {
   box-shadow: 0px 0px 0px 1px var(--fc-page-bg-color);
 }
 
-.fc-timegrid-event { // events need to be root
-
+.fc-timegrid-event,
+.fc-timegrid-event-more { // events need to be root
   font-size: var(--fc-small-font-size);
   border-radius: 3px;
+}
 
+.fc-timegrid-event { // events need to be root
   & .fc-event-main {
     padding: 1px 1px 0;
   }
@@ -18,7 +21,28 @@
     font-size: var(--fc-small-font-size);
     margin-bottom: 1px;
   }
+}
 
+.fc-timegrid-event-more {
+  position: absolute; // TODO: converge with fc-timegrid-event below?
+  top: 0; // for when not yet positioned
+  z-index: 999; // hack
+  background: #ccc; // TODO: variable?
+  padding: 2px;
+  margin-bottom: 1px; // match the space below each event
+  cursor: pointer;
+}
+
+
+.fc-direction-ltr {
+  & .fc-timegrid-event-more {
+    right: 0;
+  }
+}
+.fc-direction-rtl {
+  & .fc-timegrid-event-more {
+    left: 0;
+  }
 }
 
 .fc-timegrid-event-condensed {
@@ -35,17 +59,15 @@
   & .fc-event-title {
     font-size: var(--fc-small-font-size)
   }
-
 }
 
 .fc-media-screen {
 
   & .fc-timegrid-event {
     position: absolute; // absolute WITHIN the harness
-    top: 0;
+    top: 0; // for when not yet positioned
     bottom: 1px; // stay away from bottom slot line
     left: 0;
     right: 0;
   }
-
 }

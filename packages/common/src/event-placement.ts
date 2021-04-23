@@ -25,6 +25,12 @@ export interface SegInsertion {
   stackCnt: number
 }
 
+export interface SegEntryGroup {
+  spanStart: number
+  spanEnd: number
+  entries: SegEntry[]
+}
+
 export class SegHierarchy {
   // settings
   allowReslicing: boolean = false
@@ -195,6 +201,37 @@ export function getEntrySpanEnd(entry: SegEntry) {
 
 export function buildEntryKey(entry: SegEntry) {
   return entry.segInput.index + ':' + entry.spanStart
+}
+
+// returns in no specific order
+export function groupIntersectingEntries(entries: SegEntry[]): SegEntryGroup[] {
+  let groups: SegEntryGroup[] = []
+
+  for (let entry of entries) {
+    let filteredMerges: SegEntryGroup[] = []
+    let hungryMerge: SegEntryGroup = { // the merge that will eat what is collides with
+      spanStart: entry.spanStart,
+      spanEnd: entry.spanEnd,
+      entries: [entry],
+    }
+
+    for (let merge of groups) {
+      if (merge.spanStart < hungryMerge.spanEnd && merge.spanEnd > hungryMerge.spanStart) { // collides?
+        hungryMerge = {
+          spanStart: Math.min(merge.spanStart, hungryMerge.spanStart),
+          spanEnd: Math.max(merge.spanEnd, hungryMerge.spanEnd),
+          entries: merge.entries.concat(hungryMerge.entries),
+        }
+      } else {
+        filteredMerges.push(merge)
+      }
+    }
+
+    filteredMerges.push(hungryMerge)
+    groups = filteredMerges
+  }
+
+  return groups
 }
 
 // general util
