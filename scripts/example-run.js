@@ -10,7 +10,14 @@ const runCmd = process.argv[3];
 ///////////////////////////////////////////////////////
 // Project Settings
 const redirectProjects = [["parcel", "parcel-2"]];
-const disabledProjects = ["next", "next-scheduler"];
+const disabledProjects = [
+  ["next", "This example is disabled till the next major release"],
+  ["next-scheduler", "This example is disabled till the next major release"],
+  [
+    "parcel-2",
+    "There is currently a bug in parcel bundler which prevents this from working",
+  ],
+];
 const pnpSimulatedProjects = ["angular"];
 ///////////////////////////////////////////////////////
 
@@ -38,15 +45,16 @@ projNames.forEach((projName) => {
   }
 
   // Don't run disabled projects
-  if (disabledProjects.includes(projName)) {
-    console.info("This example is disabled till the next major release");
+  const disabled = disabledProjects.find(([val]) => val === projName);
+  if (disabled) {
+    console.info(disabled[1]);
     return;
   }
 
   const projDir = path.join(examplesDir, projName);
 
-  console.log("");
-  console.log("PROJECT:", projName);
+  console.log();
+  console.info("PROJECT:", projName);
   console.log(projDir);
 
   // Decide whether to simulate pnp or run normal yarn
@@ -58,6 +66,7 @@ projNames.forEach((projName) => {
     console.log("Normal Yarn execution");
   }
 
+  // Execute
   console.log();
   exec.sync(["yarn", "run", ...execCmd], {
     cwd: projDir,
