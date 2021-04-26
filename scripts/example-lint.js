@@ -11,25 +11,38 @@ const projNames =
     ? globby.sync("*", { cwd: examplesDir, onlyDirectories: true })
     : [givenProjName];
 
-
-for (let projName of projNames) {
+projNames.forEach((projName) => {
   const projDir = path.join(examplesDir, projName);
 
-  console.log("");
-  console.log("PROJECT:", projName);
+  console.log();
+  console.info("PROJECT:", projName);
   console.log(projDir);
 
-  exec.sync(["yarn", "run", "prettier", "--write", "./src"], {
+  const { success } = exec.sync(["yarn", "run", "lint"], {
     cwd: projDir,
     exitOnError: false,
     live: true,
   });
 
-  exec.sync(["yarn", "run", "eslint", "--fix", "./src/**/*[.tsx,.ts,.jsx,.js]"], {
-    cwd: projDir,
-    exitOnError: false,
-    live: true,
-  });
+  if (!success) {
+    console.log("Could not execute lint script, attempting generic linting");
 
-  console.log("");
-}
+    // Prettier is currently not part of any workspace, I will defer on adding it as a dependency
+    // exec.sync(["yarn", "run", "prettier", "--write", "./src"], {
+    //   cwd: projDir,
+    //   exitOnError: false,
+    //   live: true,
+    // });
+
+    exec.sync(
+      "yarn exec eslint src/ --fix-dry-run --config ../.eslintrc.json --ext .tsx,.ts,.jsx,.js",
+      {
+        cwd: projDir,
+        exitOnError: false,
+        live: true,
+      }
+    );
+  }
+
+  console.log();
+});
