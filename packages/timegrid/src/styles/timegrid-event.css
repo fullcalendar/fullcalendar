@@ -43,7 +43,7 @@
   z-index: 9999; // hack
   color: var(--fc-event-more-text-color);
   background: var(--fc-event-more-bg-color);
-  cursor: pointer; // will always be an <a> tag?
+  cursor: pointer;
 }
 
 .fc-timegrid-event-more-inner { // has fc-sticky

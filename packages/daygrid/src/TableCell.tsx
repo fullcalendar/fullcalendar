@@ -40,7 +40,6 @@ export interface TableCellProps {
   showWeekNumber: boolean
   forceDayTop: boolean
   todayRange: DateRange
-  buildMoreLinkText: (num: number) => string
   singlePlacements: TableSegPlacement[]
 }
 
@@ -61,7 +60,6 @@ export class TableCell extends DateComponent<TableCellProps> {
     let { options } = this.context
     let { props } = this
     let { date, dateProfile } = props
-
     let navLinkAttrs = options.navLinks
       ? { 'data-navlink': buildNavLinkData(date, 'week'), tabIndex: 0 }
       : {}
@@ -114,7 +112,7 @@ export class TableCell extends DateComponent<TableCellProps> {
                 {props.fgContent}
                 {Boolean(props.moreCnt) && (
                   <div className="fc-daygrid-day-bottom" style={{ marginTop: props.moreMarginTop }}>
-                    <MoreLinkRoot moreCnt={props.moreCnt} buildMoreLinkText={props.buildMoreLinkText}>
+                    <MoreLinkRoot moreCnt={props.moreCnt}>
                       {(rootElRef, classNames, innerElRef, innerContent) => (
                         <a
                           ref={rootElRef}

@@ -52,7 +52,6 @@ export class Table extends DateComponent<TableProps> {
   private splitDateSelectionSegs = memoize(splitSegsByRow)
   private splitEventDrag = memoize(splitInteractionByRow)
   private splitEventResize = memoize(splitInteractionByRow)
-  private buildBuildMoreLinkText = memoize(buildBuildMoreLinkText)
   private rootEl: HTMLElement
   private rowRefs = new RefMap<TableRow>()
   private rowPositions: PositionCache
@@ -69,7 +68,6 @@ export class Table extends DateComponent<TableProps> {
     let dateSelectionSegsByRow = this.splitDateSelectionSegs(props.dateSelectionSegs, rowCnt)
     let eventDragByRow = this.splitEventDrag(props.eventDrag, rowCnt)
     let eventResizeByRow = this.splitEventResize(props.eventResize, rowCnt)
-    let buildMoreLinkText = this.buildBuildMoreLinkText(this.context.options.moreLinkText)
 
     let limitViaBalanced = dayMaxEvents === true || dayMaxEventRows === true
 
@@ -136,7 +134,6 @@ export class Table extends DateComponent<TableProps> {
                       dayMaxEventRows={dayMaxEventRows}
                       clientWidth={props.clientWidth}
                       clientHeight={props.clientHeight}
-                      buildMoreLinkText={buildMoreLinkText}
                       forPrint={props.forPrint}
                     />
                   ))}
@@ -208,15 +205,6 @@ export class Table extends DateComponent<TableProps> {
     let end = addDays(start, 1)
     return { start, end }
   }
-}
-
-// builds the FUNCTION
-function buildBuildMoreLinkText(moreLinkTextInput): (num: number) => string {
-  if (typeof moreLinkTextInput === 'function') {
-    return moreLinkTextInput
-  }
-
-  return (num) => `+${num} ${moreLinkTextInput}`
 }
 
 function isSegAllDay(seg: TableSeg) {

@@ -44,7 +44,6 @@ export interface TableRowProps {
   todayRange: DateRange
   showDayNumbers: boolean
   showWeekNumbers: boolean
-  buildMoreLinkText: (num: number) => string
   forPrint: boolean
 }
 
@@ -126,7 +125,6 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               extraDataAttrs={cell.extraDataAttrs}
               extraClassNames={cell.extraClassNames}
               moreCnt={moreCnts[col]}
-              buildMoreLinkText={props.buildMoreLinkText}
               moreMarginTop={moreMarginTops[col]}
               singlePlacements={singleColPlacements[col]}
               fgPaddingBottom={cellPaddingBottoms[col]}
