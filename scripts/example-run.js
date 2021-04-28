@@ -38,9 +38,8 @@ const projNames =
 
 projNames.forEach((projName) => {
   // Don't run disabled projects
-  if (Object.keys(disabledProjects).includes(projName)) {
-    const disabled = disabledProjects[projName]
-    console.info(disabled)
+  if (disabledProjects.hasOwnProperty(projName)) {
+    console.info(disabledProjects[projName])
     return
   }
 
@@ -51,7 +50,7 @@ projNames.forEach((projName) => {
   console.log(projDir)
 
   // Decide whether to simulate pnp or run normal yarn
-  if (Object.keys(pnpSimulatedProjects).includes(projName)) {
+  if (pnpSimulatedProjects.hasOwnProperty(projName)) {
     console.log('Using PnP simulation')
     console.log()
     exec.sync(['yarn', 'run', 'example:pnp', projName, runCmd], {
