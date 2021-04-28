@@ -7,16 +7,16 @@ import {
   CssDimValue,
   DateRange,
   buildNavLinkData,
-  RenderHook,
   WeekNumberRoot,
   DayCellRoot,
   DateProfile,
   VUIEvent,
   setRef,
   createFormatter,
-  ViewApi,
   Dictionary,
-  MountArg,
+  MoreLinkRoot,
+  EventApi,
+  EventSegment,
 } from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
 import { TableCellTop } from './TableCellTop'
@@ -41,7 +41,6 @@ export interface TableCellProps {
   forceDayTop: boolean
   todayRange: DateRange
   buildMoreLinkText: (num: number) => string
-  onMoreClick?: (arg: MoreLinkArg) => void
   singlePlacements: TableSegPlacement[]
 }
 
@@ -53,45 +52,15 @@ export interface TableCellModel { // TODO: move somewhere else. combine with Day
   extraClassNames?: string[]
 }
 
-export interface MoreLinkArg {
-  date: DateMarker
-  allSegs: TableSeg[]
-  hiddenSegs: TableSeg[]
-  moreCnt: number
-  dayEl: HTMLElement
-  ev: VUIEvent
-}
-
-export interface HookProps {
-  date: Date
-  isPast: boolean
-  isFuture: boolean
-  isToday: boolean
-}
-
-export interface MoreLinkContentArg {
-  num: number
-  text: string
-  view: ViewApi
-}
-
-export type MoreLinkMountArg = MountArg<MoreLinkContentArg>
-
 const DEFAULT_WEEK_NUM_FORMAT = createFormatter({ week: 'narrow' })
 
 export class TableCell extends DateComponent<TableCellProps> {
   private rootEl: HTMLElement
 
   render() {
-    let { options, viewApi } = this.context
+    let { options } = this.context
     let { props } = this
     let { date, dateProfile } = props
-
-    let hookProps: MoreLinkContentArg = {
-      num: props.moreCnt,
-      text: props.buildMoreLinkText(props.moreCnt),
-      view: viewApi,
-    }
 
     let navLinkAttrs = options.navLinks
       ? { 'data-navlink': buildNavLinkData(date, 'week'), tabIndex: 0 }
@@ -145,24 +114,17 @@ export class TableCell extends DateComponent<TableCellProps> {
                 {props.fgContent}
                 {Boolean(props.moreCnt) && (
                   <div className="fc-daygrid-day-bottom" style={{ marginTop: props.moreMarginTop }}>
-                    <RenderHook<MoreLinkContentArg> // needed?
-                      hookProps={hookProps}
-                      classNames={options.moreLinkClassNames}
-                      content={options.moreLinkContent}
-                      defaultContent={renderMoreLinkInner}
-                      didMount={options.moreLinkDidMount}
-                      willUnmount={options.moreLinkWillUnmount}
-                    >
+                    <MoreLinkRoot moreCnt={props.moreCnt} buildMoreLinkText={props.buildMoreLinkText}>
                       {(rootElRef, classNames, innerElRef, innerContent) => (
                         <a
                           ref={rootElRef}
-                          className={['fc-daygrid-more-link', 'fc-event-more'].concat(classNames).join(' ')}
+                          className={['fc-daygrid-more-link'].concat(classNames).join(' ')}
                           onClick={this.handleMoreLinkClick}
                         >
                           {innerContent}
                         </a>
                       )}
-                    </RenderHook>
+                    </MoreLinkRoot>
                   </div>
                 )}
               </div>
@@ -178,41 +140,81 @@ export class TableCell extends DateComponent<TableCellProps> {
 
   handleRootEl = (el: HTMLElement) => {
     this.rootEl = el
-
     setRef(this.props.elRef, el)
   }
 
   handleMoreLinkClick = (ev: VUIEvent) => {
-    let { singlePlacements, onMoreClick, date, moreCnt } = this.props
+    let { props, context } = this
+    let { options, dateEnv } = context
+    let { moreLinkClick } = options
+    let allSegs: EventSegment[] = []
+    let hiddenSegs: EventSegment[] = []
 
-    if (onMoreClick) {
-      let allSegs: TableSeg[] = []
-      let hiddenSegs: TableSeg[] = []
+    function segForPublic(seg: TableSeg) {
+      let { def, instance, range } = seg.eventRange
+      return {
+        event: new EventApi(context, def, instance),
+        start: dateEnv.toDate(range.start),
+        end: dateEnv.toDate(range.end),
+        isStart: seg.isStart,
+        isEnd: seg.isEnd,
+      }
+    }
 
-      for (let placement of singlePlacements) {
-        allSegs.push(placement.seg)
+    for (let placement of props.singlePlacements) {
+      let publicSeg = segForPublic(placement.seg)
+      allSegs.push(publicSeg)
+      if (!placement.isVisible) {
+        hiddenSegs.push(publicSeg)
+      }
+    }
 
-        if (!placement.isVisible) {
-          hiddenSegs.push(placement.seg)
+    if (typeof moreLinkClick === 'function') {
+      moreLinkClick = moreLinkClick({
+        date: context.dateEnv.toDate(props.date),
+        allDay: true,
+        allSegs,
+        hiddenSegs,
+        jsEvent: ev,
+        view: context.viewApi,
+      }) as string | undefined
+    }
+
+    if (!moreLinkClick || moreLinkClick === 'popover') {
+      console.log('TODO: open popover', allSegs, this.rootEl)
+      /*
+      (!props.forPrint && (
+        <MorePopover
+          ref={this.morePopoverRef}
+          date={morePopoverState.date}
+          dateProfile={dateProfile}
+          segs={morePopoverState.allSegs}
+          alignmentEl={morePopoverState.dayEl}
+          topAlignmentEl={rowCnt === 1 ? props.headerAlignElRef.current : null}
+          selectedInstanceId={props.eventSelection}
+          hiddenInstances={// yuck
+            (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
+            (props.eventResize ? props.eventResize.affectedInstances : null) ||
+            {}
+          }
+          todayRange={todayRange}
+        />
+      )
+
+      let morePopoverHit = morePopover ? morePopover.positionToHit(leftPosition, topPosition, this.rootEl) : null
+      let { morePopoverState } = this.state
+      if (morePopoverHit) {
+        return {
+          row: morePopoverState.fromRow,
+          col: morePopoverState.fromCol,
+          ...morePopoverHit,
         }
       }
 
-      onMoreClick({
-        date,
-        allSegs,
-        hiddenSegs,
-        moreCnt,
-        dayEl: this.rootEl,
-        ev,
-      })
+      TODO: address ticket where event refreshing closes popover
+      */
+    } else if (typeof moreLinkClick === 'string') { // a view name
+      context.calendarApi.zoomTo(props.date, moreLinkClick)
     }
   }
-}
-
-TableCell.addPropsEquality({
-  onMoreClick: true, // never forces rerender
-})
-
-function renderMoreLinkInner(props) {
-  return props.text
 }

@@ -19,6 +19,8 @@ export { ViewComponentType, SpecificViewContentArg, SpecificViewMountArg } from 
 export { ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler } from './common/render-hook'
 export { NowIndicatorContentArg, NowIndicatorMountArg } from './common/NowIndicatorRoot'
 export { WeekNumberContentArg, WeekNumberMountArg } from './common/WeekNumberRoot'
+export { MoreLinkContentArg, MoreLinkMountArg } from './common/MoreLinkRoot'
+export * from './common/more-link'
 export {
   SlotLaneContentArg, SlotLaneMountArg,
   SlotLabelContentArg, SlotLabelMountArg,

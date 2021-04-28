@@ -14,16 +14,12 @@ import {
   DateRange,
   NowTimer,
   DateMarker,
-  EventApi,
   DateProfile,
   Fragment,
-  createRef,
 } from '@fullcalendar/common'
 import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg'
 import { TableRow } from './TableRow'
-import { TableCellModel, MoreLinkArg } from './TableCell'
-import { MorePopover } from './MorePopover'
-import { MoreLinkAction } from './more-link'
+import { TableCellModel } from './TableCell'
 
 export interface TableProps {
   elRef?: Ref<HTMLDivElement>
@@ -49,17 +45,7 @@ export interface TableProps {
   forPrint: boolean
 }
 
-interface TableState {
-  morePopoverState: MorePopoverState | null
-}
-
-interface MorePopoverState extends MoreLinkArg {
-  currentFgEventSegs: TableSeg[]
-  fromRow: number
-  fromCol: number
-}
-
-export class Table extends DateComponent<TableProps, TableState> {
+export class Table extends DateComponent<TableProps> {
   private splitBusinessHourSegs = memoize(splitSegsByRow)
   private splitBgEventSegs = memoize(splitSegsByRow)
   private splitFgEventSegs = memoize(splitSegsByRow)
@@ -68,19 +54,13 @@ export class Table extends DateComponent<TableProps, TableState> {
   private splitEventResize = memoize(splitInteractionByRow)
   private buildBuildMoreLinkText = memoize(buildBuildMoreLinkText)
   private rootEl: HTMLElement
-  private morePopoverRef = createRef<MorePopover>()
   private rowRefs = new RefMap<TableRow>()
   private rowPositions: PositionCache
   private colPositions: PositionCache
 
-  state: TableState = {
-    morePopoverState: null,
-  }
-
   render() {
     let { props } = this
     let { dateProfile, dayMaxEventRows, dayMaxEvents, expandRows } = props
-    let { morePopoverState } = this.state
     let rowCnt = props.cells.length
 
     let businessHourSegsByRow = this.splitBusinessHourSegs(props.businessHourSegs, rowCnt)
@@ -157,34 +137,11 @@ export class Table extends DateComponent<TableProps, TableState> {
                       clientWidth={props.clientWidth}
                       clientHeight={props.clientHeight}
                       buildMoreLinkText={buildMoreLinkText}
-                      onMoreClick={(arg) => {
-                        this.handleMoreLinkClick({ ...arg, fromRow: row })
-                      }}
                       forPrint={props.forPrint}
                     />
                   ))}
                 </tbody>
               </table>
-              { // clear popover on event mod
-                (!props.forPrint && morePopoverState && morePopoverState.currentFgEventSegs === props.fgEventSegs) && (
-                  <MorePopover
-                    ref={this.morePopoverRef}
-                    date={morePopoverState.date}
-                    dateProfile={dateProfile}
-                    segs={morePopoverState.allSegs}
-                    alignmentEl={morePopoverState.dayEl}
-                    topAlignmentEl={rowCnt === 1 ? props.headerAlignElRef.current : null}
-                    onCloseClick={this.handleMorePopoverClose}
-                    selectedInstanceId={props.eventSelection}
-                    hiddenInstances={// yuck
-                      (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-                      (props.eventResize ? props.eventResize.affectedInstances : null) ||
-                      {}
-                    }
-                    todayRange={todayRange}
-                  />
-                )
-              }
             </Fragment>
           )}
         </NowTimer>
@@ -195,55 +152,6 @@ export class Table extends DateComponent<TableProps, TableState> {
   handleRootEl = (rootEl: HTMLElement | null) => {
     this.rootEl = rootEl
     setRef(this.props.elRef, rootEl)
-  }
-
-  // TODO: bad names "more link click" versus "more click"
-  handleMoreLinkClick = (arg: MoreLinkArg & {fromRow: number, fromCol: number}) => {
-    let { context } = this
-    let { dateEnv } = context
-    let clickOption = context.options.moreLinkClick
-
-    function segForPublic(seg: TableSeg) {
-      let { def, instance, range } = seg.eventRange
-
-      return {
-        event: new EventApi(context, def, instance),
-        start: dateEnv.toDate(range.start),
-        end: dateEnv.toDate(range.end),
-        isStart: seg.isStart,
-        isEnd: seg.isEnd,
-      }
-    }
-
-    if (typeof clickOption === 'function') {
-      clickOption = clickOption({
-        date: dateEnv.toDate(arg.date),
-        allDay: true,
-        allSegs: arg.allSegs.map(segForPublic),
-        hiddenSegs: arg.hiddenSegs.map(segForPublic),
-        jsEvent: arg.ev,
-        view: context.viewApi,
-      }) as (MoreLinkAction | undefined) // hack to handle void
-    }
-
-    if (!clickOption || clickOption === 'popover') {
-      this.setState({
-        morePopoverState: {
-          ...arg,
-          currentFgEventSegs: this.props.fgEventSegs,
-          fromRow: arg.fromRow,
-          fromCol: arg.fromCol,
-        },
-      })
-    } else if (typeof clickOption === 'string') { // a view name
-      context.calendarApi.zoomTo(arg.date, clickOption)
-    }
-  }
-
-  handleMorePopoverClose = () => {
-    this.setState({
-      morePopoverState: null,
-    })
   }
 
   // Hit System
@@ -266,18 +174,6 @@ export class Table extends DateComponent<TableProps, TableState> {
   }
 
   positionToHit(leftPosition, topPosition) {
-    let morePopover = this.morePopoverRef.current
-    let morePopoverHit = morePopover ? morePopover.positionToHit(leftPosition, topPosition, this.rootEl) : null
-    let { morePopoverState } = this.state
-
-    if (morePopoverHit) {
-      return {
-        row: morePopoverState.fromRow,
-        col: morePopoverState.fromCol,
-        ...morePopoverHit,
-      }
-    }
-
     let { colPositions, rowPositions } = this
     let col = colPositions.leftToIndex(leftPosition)
     let row = rowPositions.topToIndex(topPosition)
@@ -314,6 +210,7 @@ export class Table extends DateComponent<TableProps, TableState> {
   }
 }
 
+// builds the FUNCTION
 function buildBuildMoreLinkText(moreLinkTextInput): (num: number) => string {
   if (typeof moreLinkTextInput === 'function') {
     return moreLinkTextInput

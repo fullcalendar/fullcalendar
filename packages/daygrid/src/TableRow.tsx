@@ -18,7 +18,7 @@ import {
   sortEventSegs,
 } from '@fullcalendar/common'
 import { TableSeg, splitSegsByFirstCol } from './TableSeg'
-import { TableCell, TableCellModel, MoreLinkArg } from './TableCell'
+import { TableCell, TableCellModel } from './TableCell'
 import { TableListItemEvent } from './TableListItemEvent'
 import { TableBlockEvent } from './TableBlockEvent'
 import { computeFgSegPlacement, TableSegPlacement } from './event-placement'
@@ -40,7 +40,6 @@ export interface TableRowProps {
   dayMaxEventRows: boolean | number
   clientWidth: number | null
   clientHeight: number | null // simply for causing an updateSize, for when liquid height
-  onMoreClick?: (arg: MoreLinkArg & {fromCol: number}) => void
   dateProfile: DateProfile
   todayRange: DateRange
   showDayNumbers: boolean
@@ -128,9 +127,6 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               extraClassNames={cell.extraClassNames}
               moreCnt={moreCnts[col]}
               buildMoreLinkText={props.buildMoreLinkText}
-              onMoreClick={(arg) => {
-                props.onMoreClick({ ...arg, fromCol: col })
-              }}
               moreMarginTop={moreMarginTops[col]}
               singlePlacements={singleColPlacements[col]}
               fgPaddingBottom={cellPaddingBottoms[col]}
@@ -365,10 +361,6 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     return this.props.cells.map((cell) => elMap[cell.key])
   }
 }
-
-TableRow.addPropsEquality({
-  onMoreClick: true, // never forces rerender
-})
 
 TableRow.addStateEquality({
   eventInstanceHeights: isPropsEqual,
