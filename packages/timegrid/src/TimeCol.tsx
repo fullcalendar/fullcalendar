@@ -205,8 +205,10 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
       return (
         <div className="fc-event-more fc-timegrid-event-more" style={positionCss}>
-          {'+' + hiddenGroup.entries.length}
-          {/* TODO: more customizable way to build this text. search buildMoreLinkText */}
+          <div className="fc-timegrid-event-more-inner fc-sticky">
+            {'+' + hiddenGroup.entries.length}
+            {/* TODO: more customizable way to build this text. search buildMoreLinkText */}
+          </div>
         </div>
       )
     })
