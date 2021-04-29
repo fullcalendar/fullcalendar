@@ -1,7 +1,7 @@
 import {
   Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta,
   DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill,
-  DateProfile, config, buildEventRangeKey, sortEventSegs, SegInput, memoize, SegEntryGroup,
+  DateProfile, config, buildEventRangeKey, sortEventSegs, SegInput, memoize, SegEntryGroup, SegEntry,
 } from '@fullcalendar/common'
 import { TimeColMoreLink } from './TimeColMoreLink'
 import { TimeColsSeg } from './TimeColsSeg'
@@ -203,11 +203,9 @@ export class TimeCol extends BaseComponent<TimeColProps> {
   renderHiddenGroups(hiddenGroups: SegEntryGroup[], segs: TimeColsSeg[]) {
     return hiddenGroups.map((hiddenGroup) => {
       let positionCss = this.computeSegTopBottomCss(hiddenGroup)
-
       return (
         <TimeColMoreLink
-          segEntries={hiddenGroup.entries}
-          segs={segs}
+          hiddenSegs={compileSegsFromEntries(hiddenGroup.entries, segs)}
           top={positionCss.top}
           bottom={positionCss.bottom}
         />
@@ -325,4 +323,8 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
     return props
   }
+}
+
+function compileSegsFromEntries(segEntries: SegEntry[], allSegs: TimeColsSeg[]) {
+  return segEntries.map((segEntry) => allSegs[segEntry.segInput.index])
 }

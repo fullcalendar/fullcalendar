@@ -107,6 +107,7 @@ export class TableCell extends DateComponent<TableCellProps> {
               >
                 {props.fgContent}
                 <TableCellMoreLink
+                  allDayDate={date}
                   singlePlacements={props.singlePlacements}
                   marginTop={props.moreMarginTop}
                   positionElRef={rootElRef}
