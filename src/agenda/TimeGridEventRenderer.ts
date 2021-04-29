@@ -154,6 +154,14 @@ export default class TimeGridEventRenderer extends EventRenderer {
     let level0
     let i
 
+    // IMPORTANT TO CLEAR OLD RESULTS :(
+    for (i = 0; i < segs.length; i++) {
+      let seg = segs[i]
+      seg.level = null
+      seg.forwardCoord = null
+      seg.backwardCoord = null
+      seg.forwardPressure = null
+    }
     this.sortEventSegs(segs) // order by certain criteria
     levels = buildSlotSegLevels(segs)
     computeForwardSlotSegs(levels)
@@ -183,7 +191,7 @@ export default class TimeGridEventRenderer extends EventRenderer {
     let forwardSegs = seg.forwardSegs
     let i
 
-    if (seg.forwardCoord === undefined) { // not already computed
+    if (seg.forwardCoord == null) { // not already computed
 
       if (!forwardSegs.length) {
 
