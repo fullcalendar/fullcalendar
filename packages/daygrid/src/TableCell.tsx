@@ -10,16 +10,13 @@ import {
   WeekNumberRoot,
   DayCellRoot,
   DateProfile,
-  VUIEvent,
   setRef,
   createFormatter,
   Dictionary,
-  MoreLinkRoot,
-  EventApi,
-  EventSegment,
+  createRef,
 } from '@fullcalendar/common'
-import { TableSeg } from './TableSeg'
 import { TableCellTop } from './TableCellTop'
+import { TableCellMoreLink } from './TableCellMoreLink'
 import { TableSegPlacement } from './event-placement'
 
 export interface TableCellProps {
@@ -34,7 +31,6 @@ export interface TableCellProps {
   fgContentElRef?: Ref<HTMLDivElement> // TODO: rename!!! classname confusion. is the "event" div
   fgContent: ComponentChildren
   fgPaddingBottom: CssDimValue
-  moreCnt: number
   moreMarginTop: number
   showDayNumber: boolean
   showWeekNumber: boolean
@@ -54,11 +50,11 @@ export interface TableCellModel { // TODO: move somewhere else. combine with Day
 const DEFAULT_WEEK_NUM_FORMAT = createFormatter({ week: 'narrow' })
 
 export class TableCell extends DateComponent<TableCellProps> {
-  private rootEl: HTMLElement
+  private rootElRef = createRef<HTMLElement>()
 
   render() {
-    let { options } = this.context
-    let { props } = this
+    let { props, context, rootElRef } = this
+    let { options } = context
     let { date, dateProfile } = props
     let navLinkAttrs = options.navLinks
       ? { 'data-navlink': buildNavLinkData(date, 'week'), tabIndex: 0 }
@@ -110,21 +106,11 @@ export class TableCell extends DateComponent<TableCellProps> {
                 style={{ paddingBottom: props.fgPaddingBottom }}
               >
                 {props.fgContent}
-                {Boolean(props.moreCnt) && (
-                  <div className="fc-daygrid-day-bottom" style={{ marginTop: props.moreMarginTop }}>
-                    <MoreLinkRoot moreCnt={props.moreCnt}>
-                      {(rootElRef, classNames, innerElRef, innerContent) => (
-                        <a
-                          ref={rootElRef}
-                          className={['fc-daygrid-more-link'].concat(classNames).join(' ')}
-                          onClick={this.handleMoreLinkClick}
-                        >
-                          {innerContent}
-                        </a>
-                      )}
-                    </MoreLinkRoot>
-                  </div>
-                )}
+                <TableCellMoreLink
+                  singlePlacements={props.singlePlacements}
+                  marginTop={props.moreMarginTop}
+                  positionElRef={rootElRef}
+                />
               </div>
               <div className="fc-daygrid-day-bg">
                 {props.bgContent}
@@ -137,82 +123,7 @@ export class TableCell extends DateComponent<TableCellProps> {
   }
 
   handleRootEl = (el: HTMLElement) => {
-    this.rootEl = el
+    setRef(this.rootElRef, el)
     setRef(this.props.elRef, el)
-  }
-
-  handleMoreLinkClick = (ev: VUIEvent) => {
-    let { props, context } = this
-    let { options, dateEnv } = context
-    let { moreLinkClick } = options
-    let allSegs: EventSegment[] = []
-    let hiddenSegs: EventSegment[] = []
-
-    function segForPublic(seg: TableSeg) {
-      let { def, instance, range } = seg.eventRange
-      return {
-        event: new EventApi(context, def, instance),
-        start: dateEnv.toDate(range.start),
-        end: dateEnv.toDate(range.end),
-        isStart: seg.isStart,
-        isEnd: seg.isEnd,
-      }
-    }
-
-    for (let placement of props.singlePlacements) {
-      let publicSeg = segForPublic(placement.seg)
-      allSegs.push(publicSeg)
-      if (!placement.isVisible) {
-        hiddenSegs.push(publicSeg)
-      }
-    }
-
-    if (typeof moreLinkClick === 'function') {
-      moreLinkClick = moreLinkClick({
-        date: context.dateEnv.toDate(props.date),
-        allDay: true,
-        allSegs,
-        hiddenSegs,
-        jsEvent: ev,
-        view: context.viewApi,
-      }) as string | undefined
-    }
-
-    if (!moreLinkClick || moreLinkClick === 'popover') {
-      console.log('TODO: open popover', allSegs, this.rootEl)
-      /*
-      (!props.forPrint && (
-        <MorePopover
-          ref={this.morePopoverRef}
-          date={morePopoverState.date}
-          dateProfile={dateProfile}
-          segs={morePopoverState.allSegs}
-          alignmentEl={morePopoverState.dayEl}
-          topAlignmentEl={rowCnt === 1 ? props.headerAlignElRef.current : null}
-          selectedInstanceId={props.eventSelection}
-          hiddenInstances={// yuck
-            (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-            (props.eventResize ? props.eventResize.affectedInstances : null) ||
-            {}
-          }
-          todayRange={todayRange}
-        />
-      )
-
-      let morePopoverHit = morePopover ? morePopover.positionToHit(leftPosition, topPosition, this.rootEl) : null
-      let { morePopoverState } = this.state
-      if (morePopoverHit) {
-        return {
-          row: morePopoverState.fromRow,
-          col: morePopoverState.fromCol,
-          ...morePopoverHit,
-        }
-      }
-
-      TODO: address ticket where event refreshing closes popover
-      */
-    } else if (typeof moreLinkClick === 'string') { // a view name
-      context.calendarApi.zoomTo(props.date, moreLinkClick)
-    }
   }
 }

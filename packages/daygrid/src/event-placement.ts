@@ -128,7 +128,7 @@ export function computeFgSegPlacement(
     }
   }
 
-  return { singleColPlacements, multiColPlacements, moreCnts, moreMarginTops, cellPaddingBottoms }
+  return { singleColPlacements, multiColPlacements, moreMarginTops, cellPaddingBottoms }
 }
 
 // rects ordered by top coord, then left

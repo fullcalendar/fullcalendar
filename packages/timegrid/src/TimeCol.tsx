@@ -2,8 +2,8 @@ import {
   Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta,
   DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill,
   DateProfile, config, buildEventRangeKey, sortEventSegs, SegInput, memoize, SegEntryGroup,
-  MoreLinkRoot, MoreLinkContentArg,
 } from '@fullcalendar/common'
+import { TimeColMoreLink } from './TimeColMoreLink'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { computeFgSegPlacements, TimeColSegRect } from './event-placement'
@@ -205,26 +205,14 @@ export class TimeCol extends BaseComponent<TimeColProps> {
       let positionCss = this.computeSegTopBottomCss(hiddenGroup)
 
       return (
-        <MoreLinkRoot moreCnt={hiddenGroup.entries.length} defaultContent={renderMoreLinkInner}>
-          {(rootElRef, classNames, innerElRef, innerContent) => (
-            <a
-              ref={rootElRef}
-              className={['fc-timegrid-event-more'].concat(classNames).join(' ')}
-              style={positionCss}
-              onClick={this.handleMoreLinkClick}
-            >
-              <div ref={innerElRef} className="fc-timegrid-event-more-inner fc-sticky">
-                {innerContent}
-              </div>
-            </a>
-          )}
-        </MoreLinkRoot>
+        <TimeColMoreLink
+          segEntries={hiddenGroup.entries}
+          segs={segs}
+          top={positionCss.top}
+          bottom={positionCss.bottom}
+        />
       )
     })
-  }
-
-  handleMoreLinkClick = () => {
-    console.log('more click')
   }
 
   buildSegInputs(segs: TimeColsSeg[]): SegInput[] {
@@ -337,8 +325,4 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
     return props
   }
-}
-
-function renderMoreLinkInner(props: MoreLinkContentArg) {
-  return props.shortText
 }
