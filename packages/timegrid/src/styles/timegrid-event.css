@@ -44,6 +44,7 @@
   color: var(--fc-event-more-text-color);
   background: var(--fc-event-more-bg-color);
   cursor: pointer;
+  margin-bottom: 1px; // match space below fc-timegrid-event
 }
 
 .fc-timegrid-event-more-inner { // has fc-sticky
@@ -55,7 +56,7 @@
   & .fc-timegrid-event {
     position: absolute; // absolute WITHIN the harness
     top: 0; // for when not yet positioned
-    bottom: 0; // "
+    bottom: 1px; // give some space from bottom
     left: 0;
     right: 0;
   }
