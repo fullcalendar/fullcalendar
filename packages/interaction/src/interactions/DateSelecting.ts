@@ -7,6 +7,7 @@ import {
 import { __assign } from 'tslib'
 import { HitDragging } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
+import { isDateSelectionValid } from '@fullcalendar/common/tsc/validation'
 
 /*
 Tracks when the user selects a portion of time of a component,
@@ -62,13 +63,20 @@ export class DateSelecting extends Interaction {
     let isInvalid = false
 
     if (hit) {
-      dragSelection = joinHitsIntoSelection(
-        this.hitDragging.initialHit!,
-        hit,
-        context.pluginHooks.dateSelectionTransformers,
-      )
+      let initialHit = this.hitDragging.initialHit!
+      let disallowed = hit.componentId === initialHit.componentId
+        && this.isHitComboAllowed
+        && !this.isHitComboAllowed(initialHit, hit)
 
-      if (!dragSelection || !this.component.isDateSelectionValid(dragSelection)) {
+      if (!disallowed) {
+        dragSelection = joinHitsIntoSelection(
+          initialHit,
+          hit,
+          context.pluginHooks.dateSelectionTransformers,
+        )
+      }
+
+      if (!dragSelection || !isDateSelectionValid(dragSelection, hit.dateProfile, context)) {
         isInvalid = true
         dragSelection = null
       }

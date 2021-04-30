@@ -178,7 +178,6 @@ export { PointerDragEvent } from './interactions/pointer'
 export { Hit } from './interactions/hit'
 export { dateSelectionJoinTransformer } from './interactions/date-selecting'
 export { eventDragMutationMassager, EventDropTransformers } from './interactions/event-dragging'
-export { EventResizeJoinTransforms } from './interactions/event-resizing'
 export { ElementDragging } from './interactions/ElementDragging'
 
 export { config } from './global-config'

@@ -102,7 +102,7 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
 
     if (rawHit) {
       return {
-        component: this,
+        dateProfile: this.props.dateProfile,
         dateSpan: rawHit.dateSpan,
         dayEl: rawHit.dayEl,
         rect: {

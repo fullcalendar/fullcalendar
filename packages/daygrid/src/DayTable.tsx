@@ -86,7 +86,7 @@ export class DayTable extends DateComponent<DayTableProps, ViewContext> {
 
     if (rawHit) {
       return {
-        component: this,
+        dateProfile: this.props.dateProfile,
         dateSpan: rawHit.dateSpan,
         dayEl: rawHit.dayEl,
         rect: {

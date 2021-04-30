@@ -9,7 +9,6 @@ import { CalendarContext } from './CalendarContext'
 import { isPropsValidTester } from './structs/constraint'
 import { eventDragMutationMassager, eventIsDraggableTransformer, EventDropTransformers } from './interactions/event-dragging'
 import { dateSelectionJoinTransformer } from './interactions/date-selecting'
-import { EventResizeJoinTransforms } from './interactions/event-resizing'
 import { ExternalDefTransform } from './interactions/external-element-dragging'
 import { InteractionClass } from './interactions/interaction'
 import { ThemeClass } from './theme/Theme'
@@ -44,7 +43,6 @@ export interface PluginDefInput {
   viewPropsTransformers?: ViewPropsTransformerClass[]
   isPropsValid?: isPropsValidTester
   externalDefTransforms?: ExternalDefTransform[]
-  eventResizeJoinTransforms?: EventResizeJoinTransforms[]
   viewContainerAppends?: ViewContainerAppend[]
   eventDropTransformers?: EventDropTransformers[]
   componentInteractions?: InteractionClass[]
@@ -81,7 +79,6 @@ export interface PluginHooks {
   viewPropsTransformers: ViewPropsTransformerClass[]
   isPropsValid: isPropsValidTester | null
   externalDefTransforms: ExternalDefTransform[]
-  eventResizeJoinTransforms: EventResizeJoinTransforms[]
   viewContainerAppends: ViewContainerAppend[]
   eventDropTransformers: EventDropTransformers[]
   componentInteractions: InteractionClass[]

@@ -9,7 +9,7 @@ import {
   DayCellRoot,
   DayCellContent,
   DateProfile,
-  createRef,
+  Hit,
 } from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
 import { TableBlockEvent } from './TableBlockEvent'
@@ -30,7 +30,7 @@ export interface MorePopoverProps {
 }
 
 export class MorePopover extends DateComponent<MorePopoverProps> {
-  private rootElRef = createRef<HTMLElement>()
+  rootEl: HTMLElement
 
   render() {
     let { options, dateEnv } = this.context
@@ -39,7 +39,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
     let title = dateEnv.format(date, options.dayPopoverFormat)
 
     return (
-      <DayCellRoot date={date} dateProfile={dateProfile} todayRange={todayRange} elRef={this.rootElRef}>
+      <DayCellRoot date={date} dateProfile={dateProfile} todayRange={todayRange} elRef={this.handleRootEl}>
         {(rootElRef, dayClassNames, dataAttrs) => (
           <Popover
             elRef={rootElRef}
@@ -58,7 +58,6 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
             </DayCellContent>
             {props.segs.map((seg) => {
               let instanceId = seg.eventRange.instance.instanceId
-
               return (
                 <div
                   className="fc-daygrid-event-harness"
@@ -95,36 +94,36 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
     )
   }
 
-  positionToHit(positionLeft: number, positionTop: number, originEl: HTMLElement) {
-    let rootEl = this.rootElRef.current
-
-    if (!originEl || !rootEl) { // why?
-      return null
+  handleRootEl = (rootEl: HTMLDivElement | null) => {
+    this.rootEl = rootEl
+    if (rootEl) {
+      this.context.registerInteractiveComponent(this, { el: rootEl })
+    } else {
+      this.context.unregisterInteractiveComponent(this)
     }
+  }
 
-    let originRect = originEl.getBoundingClientRect()
-    let elRect = rootEl.getBoundingClientRect()
-    let newOriginLeft = elRect.left - originRect.left
-    let newOriginTop = elRect.top - originRect.top
-    let localLeft = positionLeft - newOriginLeft
-    let localTop = positionTop - newOriginTop
-    let date = this.props.date
+  queryHit(positionLeft: number, positionTop: number, elWidth: number, elHeight: number): Hit {
+    let { rootEl, props } = this
+    let { date } = props
 
-    if ( // ugly way to detect intersection
-      localLeft >= 0 && localLeft < elRect.width &&
-      localTop >= 0 && localTop < elRect.height
+    if (
+      positionLeft >= 0 && positionLeft < elWidth &&
+      positionTop >= 0 && positionTop < elHeight
     ) {
       return {
+        dateProfile: props.dateProfile,
         dateSpan: {
+          resourceId: '',
           allDay: true,
           range: { start: date, end: addDays(date, 1) },
         },
         dayEl: rootEl,
-        relativeRect: {
-          left: newOriginLeft,
-          top: newOriginTop,
-          right: elRect.width,
-          bottom: elRect.height,
+        rect: {
+          left: 0,
+          top: 0,
+          right: elWidth,
+          bottom: elHeight,
         },
         layer: 1, // important when comparing with hits from other components
       }
