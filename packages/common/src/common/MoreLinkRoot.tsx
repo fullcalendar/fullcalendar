@@ -1,6 +1,7 @@
 import { EventApi } from '../api/EventApi'
 import { Seg } from '../component/DateComponent'
 import { DateMarker } from '../datelib/marker'
+import { Dictionary } from '../options'
 import { ComponentChildren, createElement, Ref, RefObject } from '../vdom'
 import { BaseComponent } from '../vdom-util'
 import { ViewApi } from '../ViewApi'
@@ -19,6 +20,7 @@ export interface MoreLinkRootProps { // what the MoreLinkRoot component receives
   allDayDate: DateMarker | null
   allSegs: Seg[]
   hiddenSegs: Seg[]
+  extraDateSpan?: Dictionary
   positionElRef: RefObject<HTMLElement>
   defaultContent?: (hookProps: MoreLinkContentArg) => ComponentChildren // not used by anyone yet
   children: MoreLinkChildren
@@ -101,7 +103,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps> {
     }
 
     if (!moreLinkClick || moreLinkClick === 'popover') {
-      console.log('open popover', date, props.hiddenSegs, props.positionElRef.current)
+      console.log('open popover', date, props.hiddenSegs, props.positionElRef.current, props.extraDateSpan)
       /*
       (!props.forPrint && (
         <MorePopover
@@ -120,16 +122,6 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps> {
           todayRange={todayRange}
         />
       )
-
-      let morePopoverHit = morePopover ? morePopover.positionToHit(leftPosition, topPosition, this.rootEl) : null
-      let { morePopoverState } = this.state
-      if (morePopoverHit) {
-        return {
-          row: morePopoverState.fromRow,
-          col: morePopoverState.fromCol,
-          ...morePopoverHit,
-        }
-      }
       */
 
     } else if (typeof moreLinkClick === 'string') { // a view name

@@ -1,5 +1,5 @@
 import {
-  createElement, MoreLinkContentArg, MoreLinkRoot, BaseComponent, createRef, setRef,
+  createElement, MoreLinkContentArg, MoreLinkRoot, BaseComponent, createRef, setRef, Dictionary,
 } from '@fullcalendar/common'
 import { TimeColsSeg } from './TimeColsSeg'
 
@@ -7,6 +7,7 @@ export interface TimeColMoreLinkProps {
   hiddenSegs: TimeColsSeg[]
   top: number
   bottom: number
+  extraDateSpan?: Dictionary
 }
 
 export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
@@ -20,6 +21,7 @@ export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
         hiddenSegs={props.hiddenSegs}
         positionElRef={this.rootElRef}
         defaultContent={renderMoreLinkInner}
+        extraDateSpan={props.extraDateSpan}
       >
         {(rootElRef, classNames, innerElRef, innerContent, handleClick) => (
           <a

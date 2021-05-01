@@ -25,6 +25,7 @@ export interface TableCellProps {
   extraHookProps?: Dictionary
   extraDataAttrs?: Dictionary
   extraClassNames?: string[]
+  extraDateSpan?: Dictionary
   elRef?: Ref<HTMLTableCellElement>
   innerElRef?: Ref<HTMLDivElement>
   bgContent: ComponentChildren
@@ -37,14 +38,6 @@ export interface TableCellProps {
   forceDayTop: boolean
   todayRange: DateRange
   singlePlacements: TableSegPlacement[]
-}
-
-export interface TableCellModel { // TODO: move somewhere else. combine with DayTableCell?
-  key: string
-  date: DateMarker
-  extraHookProps?: Dictionary
-  extraDataAttrs?: Dictionary
-  extraClassNames?: string[]
 }
 
 const DEFAULT_WEEK_NUM_FORMAT = createFormatter({ week: 'narrow' })
@@ -111,6 +104,7 @@ export class TableCell extends DateComponent<TableCellProps> {
                   singlePlacements={props.singlePlacements}
                   marginTop={props.moreMarginTop}
                   positionElRef={rootElRef}
+                  extraDateSpan={props.extraDateSpan}
                 />
               </div>
               <div className="fc-daygrid-day-bg">

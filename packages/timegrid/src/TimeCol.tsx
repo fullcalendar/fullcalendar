@@ -1,7 +1,7 @@
 import {
   Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta,
   DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill,
-  DateProfile, config, buildEventRangeKey, sortEventSegs, SegInput, memoize, SegEntryGroup, SegEntry,
+  DateProfile, config, buildEventRangeKey, sortEventSegs, SegInput, memoize, SegEntryGroup, SegEntry, Dictionary,
 } from '@fullcalendar/common'
 import { TimeColMoreLink } from './TimeColMoreLink'
 import { TimeColsSeg } from './TimeColsSeg'
@@ -19,6 +19,7 @@ export interface TimeColProps {
   extraDataAttrs?: any
   extraHookProps?: any
   extraClassNames?: string[]
+  extraDateSpan?: Dictionary
   fgEventSegs: TimeColsSeg[]
   bgEventSegs: TimeColsSeg[]
   businessHourSegs: TimeColsSeg[]
@@ -201,6 +202,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
   // will already have eventMinHeight applied because segInputs already had it
   renderHiddenGroups(hiddenGroups: SegEntryGroup[], segs: TimeColsSeg[]) {
+    let { extraDateSpan } = this.props
     return hiddenGroups.map((hiddenGroup) => {
       let positionCss = this.computeSegTopBottomCss(hiddenGroup)
       return (
@@ -208,6 +210,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
           hiddenSegs={compileSegsFromEntries(hiddenGroup.entries, segs)}
           top={positionCss.top}
           bottom={positionCss.bottom}
+          extraDateSpan={extraDateSpan}
         />
       )
     })

@@ -3,7 +3,7 @@ import { Hit } from './hit'
 
 export abstract class Interaction {
   component: DateComponent<any>
-  isHitComboAllowed: (hit0: Hit, hit1: Hit) => boolean
+  isHitComboAllowed: ((hit0: Hit, hit1: Hit) => boolean) | null
 
   constructor(settings: InteractionSettings) {
     this.component = settings.component

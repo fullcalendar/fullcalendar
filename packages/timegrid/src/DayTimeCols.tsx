@@ -13,7 +13,6 @@ import {
   DayTableModel,
   DateEnv,
   DateMarker,
-  Hit,
   NowTimer,
   CssDimValue,
   Duration,
@@ -65,7 +64,6 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
         {(nowDate: DateMarker, todayRange: DateRange) => (
           <TimeCols
             ref={this.timeColsRef}
-            rootElRef={this.handleRootEl}
             {...this.slicer.sliceProps(props, dateProfile, null, context, dayRanges)}
             forPrint={props.forPrint}
             axis={props.axis}
@@ -87,35 +85,6 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
         )}
       </NowTimer>
     )
-  }
-
-  handleRootEl = (rootEl: HTMLDivElement | null) => {
-    if (rootEl) {
-      this.context.registerInteractiveComponent(this, { el: rootEl })
-    } else {
-      this.context.unregisterInteractiveComponent(this)
-    }
-  }
-
-  queryHit(positionLeft: number, positionTop: number): Hit {
-    let rawHit = this.timeColsRef.current.positionToHit(positionLeft, positionTop)
-
-    if (rawHit) {
-      return {
-        dateProfile: this.props.dateProfile,
-        dateSpan: rawHit.dateSpan,
-        dayEl: rawHit.dayEl,
-        rect: {
-          left: rawHit.relativeRect.left,
-          right: rawHit.relativeRect.right,
-          top: rawHit.relativeRect.top,
-          bottom: rawHit.relativeRect.bottom,
-        },
-        layer: 0,
-      }
-    }
-
-    return null
   }
 }
 

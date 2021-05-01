@@ -5,6 +5,7 @@ import {
   BaseComponent,
   memoize,
   DateMarker,
+  Dictionary,
 } from '@fullcalendar/common'
 import { TableSegPlacement } from './event-placement'
 import { TableSeg } from './TableSeg'
@@ -14,6 +15,7 @@ export interface TableCellMoreLinkProps {
   singlePlacements: TableSegPlacement[]
   marginTop: number
   positionElRef: RefObject<HTMLElement>
+  extraDateSpan?: Dictionary
 }
 
 export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
@@ -29,6 +31,7 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
           allSegs={allSegs}
           hiddenSegs={hiddenSegs}
           positionElRef={props.positionElRef}
+          extraDateSpan={props.extraDateSpan}
         >
           {(rootElRef, classNames, innerElRef, innerContent, handleClick) => (
             <a

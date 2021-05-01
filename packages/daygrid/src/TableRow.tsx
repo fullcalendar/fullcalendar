@@ -16,9 +16,10 @@ import {
   createRef,
   buildEventRangeKey,
   sortEventSegs,
+  DayTableCell,
 } from '@fullcalendar/common'
 import { TableSeg, splitSegsByFirstCol } from './TableSeg'
-import { TableCell, TableCellModel } from './TableCell'
+import { TableCell } from './TableCell'
 import { TableListItemEvent } from './TableListItemEvent'
 import { TableBlockEvent } from './TableBlockEvent'
 import { computeFgSegPlacement, TableSegPlacement } from './event-placement'
@@ -27,7 +28,7 @@ import { hasListItemDisplay } from './event-rendering'
 // TODO: attach to window resize?
 
 export interface TableRowProps {
-  cells: TableCellModel[]
+  cells: DayTableCell[]
   renderIntro?: () => VNode
   businessHourSegs: TableSeg[]
   bgEventSegs: TableSeg[]
@@ -124,6 +125,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               extraHookProps={cell.extraHookProps}
               extraDataAttrs={cell.extraDataAttrs}
               extraClassNames={cell.extraClassNames}
+              extraDateSpan={cell.extraDateSpan}
               moreMarginTop={moreMarginTops[col]}
               singlePlacements={singleColPlacements[col]}
               fgPaddingBottom={cellPaddingBottoms[col]}

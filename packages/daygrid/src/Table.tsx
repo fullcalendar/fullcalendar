@@ -6,25 +6,23 @@ import {
   CssDimValue,
   createElement,
   PositionCache,
-  Ref,
   memoize,
   addDays,
   RefMap,
-  setRef,
   DateRange,
   NowTimer,
   DateMarker,
   DateProfile,
   Fragment,
+  Hit,
+  DayTableCell,
 } from '@fullcalendar/common'
 import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg'
 import { TableRow } from './TableRow'
-import { TableCellModel } from './TableCell'
 
 export interface TableProps {
-  elRef?: Ref<HTMLDivElement>
   dateProfile: DateProfile
-  cells: TableCellModel[][] // cells-BY-ROW
+  cells: DayTableCell[][] // cells-BY-ROW
   renderRowIntro?: () => VNode
   colGroupNode: VNode
   tableMinWidth: CssDimValue
@@ -43,6 +41,7 @@ export interface TableProps {
   dayMaxEventRows: boolean | number
   headerAlignElRef?: RefObject<HTMLElement>
   forPrint: boolean
+  isHitComboAllowed?: (hit0: Hit, hit1: Hit) => boolean
 }
 
 export class Table extends DateComponent<TableProps> {
@@ -148,7 +147,15 @@ export class Table extends DateComponent<TableProps> {
 
   handleRootEl = (rootEl: HTMLElement | null) => {
     this.rootEl = rootEl
-    setRef(this.props.elRef, rootEl)
+
+    if (rootEl) {
+      this.context.registerInteractiveComponent(this, {
+        el: rootEl,
+        isHitComboAllowed: this.props.isHitComboAllowed
+      })
+    } else {
+      this.context.unregisterInteractiveComponent(this)
+    }
   }
 
   // Hit System
@@ -170,26 +177,29 @@ export class Table extends DateComponent<TableProps> {
     )
   }
 
-  positionToHit(leftPosition, topPosition) {
+  queryHit(positionLeft: number, positionTop: number): Hit {
     let { colPositions, rowPositions } = this
-    let col = colPositions.leftToIndex(leftPosition)
-    let row = rowPositions.topToIndex(topPosition)
+    let col = colPositions.leftToIndex(positionLeft)
+    let row = rowPositions.topToIndex(positionTop)
 
     if (row != null && col != null) {
+      let cell = this.props.cells[row][col]
+
       return {
-        row,
-        col,
+        dateProfile: this.props.dateProfile,
         dateSpan: {
           range: this.getCellRange(row, col),
           allDay: true,
+          ...cell.extraDateSpan,
         },
         dayEl: this.getCellEl(row, col),
-        relativeRect: {
+        rect: {
           left: colPositions.lefts[col],
           right: colPositions.rights[col],
           top: rowPositions.tops[row],
           bottom: rowPositions.bottoms[row],
         },
+        layer: 0,
       }
     }
 

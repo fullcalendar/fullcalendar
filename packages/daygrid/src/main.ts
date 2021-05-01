@@ -7,7 +7,6 @@ export { DayTable } from './DayTable'
 export { DayTableSlicer } from './DayTableSlicer'
 export { Table } from './Table'
 export { TableSeg } from './TableSeg'
-export { TableCellModel } from './TableCell'
 export { TableView } from './TableView'
 export { buildDayTableModel } from './DayTableView'
 export { DayTableView as DayGridView } // export as old name!

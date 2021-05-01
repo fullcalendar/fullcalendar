@@ -10,6 +10,7 @@ import {
   DayCellContent,
   DateProfile,
   Hit,
+  Dictionary,
 } from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
 import { TableBlockEvent } from './TableBlockEvent'
@@ -27,6 +28,7 @@ export interface MorePopoverProps {
   topAlignmentEl?: HTMLElement
   onCloseClick?: () => void
   todayRange: DateRange
+  extraDateSpan: Dictionary
 }
 
 export class MorePopover extends DateComponent<MorePopoverProps> {
@@ -114,9 +116,9 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
       return {
         dateProfile: props.dateProfile,
         dateSpan: {
-          resourceId: '',
           allDay: true,
           range: { start: date, end: addDays(date, 1) },
+          ...props.extraDateSpan,
         },
         dayEl: rootEl,
         rect: {

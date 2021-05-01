@@ -8,8 +8,8 @@ import {
   EventRenderRange,
   intersectRanges,
   addDays,
+  DayTableCell,
 } from '@fullcalendar/common'
-import { TableCellModel } from './TableCell'
 import { TableSeg } from './TableSeg'
 
 export interface TableSegPlacement {
@@ -26,7 +26,7 @@ export function computeFgSegPlacement(
   dayMaxEventRows: boolean | number,
   eventInstanceHeights: { [instanceId: string]: number },
   maxContentHeight: number | null,
-  cells: TableCellModel[],
+  cells: DayTableCell[],
 ) {
   let hierarchy = new DayGridSegHierarchy()
   hierarchy.allowReslicing = true
@@ -132,7 +132,7 @@ export function computeFgSegPlacement(
 }
 
 // rects ordered by top coord, then left
-function placeRects(allRects: SegRect[], segs: TableSeg[], cells: TableCellModel[]) {
+function placeRects(allRects: SegRect[], segs: TableSeg[], cells: DayTableCell[]) {
   let rectsByEachCol = groupRectsByEachCol(allRects, cells.length)
   let singleColPlacements: TableSegPlacement[][] = []
   let multiColPlacements: TableSegPlacement[][] = []
@@ -216,7 +216,7 @@ function groupRectsByEachCol(rects: SegRect[], colCnt: number): SegRect[][] {
   return rectsByEachCol
 }
 
-function resliceSeg(seg: TableSeg, spanStart: number, spanEnd: number, cells: TableCellModel[]): TableSeg {
+function resliceSeg(seg: TableSeg, spanStart: number, spanEnd: number, cells: DayTableCell[]): TableSeg {
   if (seg.firstCol === spanStart && seg.lastCol === spanEnd - 1) {
     return seg
   }
