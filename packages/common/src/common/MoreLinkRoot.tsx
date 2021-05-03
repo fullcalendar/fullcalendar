@@ -1,11 +1,15 @@
 import { EventApi } from '../api/EventApi'
 import { Seg } from '../component/DateComponent'
+import { DateRange } from '../datelib/date-range'
 import { DateMarker } from '../datelib/marker'
+import { DateProfile } from '../DateProfileGenerator'
 import { Dictionary } from '../options'
-import { ComponentChildren, createElement, Ref, RefObject } from '../vdom'
+import { memoize } from '../util/memoize'
+import { ComponentChildren, createElement, Fragment, Ref, RefObject } from '../vdom'
 import { BaseComponent } from '../vdom-util'
 import { ViewApi } from '../ViewApi'
 import { ViewContext, ViewContextType } from '../ViewContext'
+import { MorePopover } from './MorePopover'
 import { MountArg, RenderHook } from './render-hook'
 
 export type MoreLinkChildren = (
@@ -17,11 +21,13 @@ export type MoreLinkChildren = (
 ) => ComponentChildren
 
 export interface MoreLinkRootProps { // what the MoreLinkRoot component receives
+  dateProfile: DateProfile
+  todayRange: DateRange
   allDayDate: DateMarker | null
   allSegs: Seg[]
   hiddenSegs: Seg[]
   extraDateSpan?: Dictionary
-  positionElRef: RefObject<HTMLElement>
+  alignmentElRef: RefObject<HTMLElement>
   defaultContent?: (hookProps: MoreLinkContentArg) => ComponentChildren // not used by anyone yet
   children: MoreLinkChildren
 }
@@ -35,7 +41,16 @@ export interface MoreLinkContentArg { // what the render-hooks receive
 
 export type MoreLinkMountArg = MountArg<MoreLinkContentArg>
 
-export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps> {
+interface MoreLinkRootState {
+  isPopoverOpen: boolean
+}
+
+export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootState> {
+  computeDate = memoize(computeDate)
+  state = {
+    isPopoverOpen: false // HACK
+  }
+
   render(props: MoreLinkRootProps) {
     return (
       <ViewContextType.Consumer>
@@ -55,18 +70,30 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps> {
           }
 
           return (
-            <RenderHook<MoreLinkContentArg>
-              hookProps={hookProps}
-              classNames={options.moreLinkClassNames}
-              content={options.moreLinkContent}
-              defaultContent={props.defaultContent || renderMoreLinkInner}
-              didMount={options.moreLinkDidMount}
-              willUnmount={options.moreLinkWillUnmount}
-            >
-              {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
-                rootElRef, ['fc-event-more'].concat(customClassNames), innerElRef, innerContent, this.handleClick
+            <Fragment>
+              <RenderHook<MoreLinkContentArg>
+                hookProps={hookProps}
+                classNames={options.moreLinkClassNames}
+                content={options.moreLinkContent}
+                defaultContent={props.defaultContent || renderMoreLinkInner}
+                didMount={options.moreLinkDidMount}
+                willUnmount={options.moreLinkWillUnmount}
+              >
+                {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
+                  rootElRef, ['fc-event-more'].concat(customClassNames), innerElRef, innerContent, this.handleClick
+                )}
+              </RenderHook>
+              {this.state.isPopoverOpen && (
+                <MorePopover
+                  date={this.computeDate(props.allDayDate, props.hiddenSegs, context)}
+                  dateProfile={props.dateProfile}
+                  todayRange={props.todayRange}
+                  extraDateSpan={props.extraDateSpan}
+                  alignmentEl={props.alignmentElRef.current}
+                  onClose={this.handlePopoverClose}
+                >this is some stuff</MorePopover>
               )}
-            </RenderHook>
+            </Fragment>
           )
         }}
       </ViewContextType.Consumer>
@@ -76,9 +103,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps> {
   handleClick = (ev: MouseEvent) => {
     let { props, context } = this
     let { moreLinkClick } = context.options
-    let allDay = Boolean(props.allDayDate)
-    let date = allDay ? context.dateEnv.toDate(props.allDayDate) :
-      context.dateEnv.toDate(getEarliestSeg(props.hiddenSegs).eventRange.range.start)
+    let date = context.dateEnv.toDate(this.computeDate(props.allDayDate, props.hiddenSegs, context))
 
     function buildPublicSeg(seg: Seg) {
       let { def, instance, range } = seg.eventRange
@@ -94,7 +119,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps> {
     if (typeof moreLinkClick === 'function') {
       moreLinkClick = moreLinkClick({
         date,
-        allDay,
+        allDay: Boolean(props.allDayDate),
         allSegs: props.allSegs.map(buildPublicSeg),
         hiddenSegs: props.hiddenSegs.map(buildPublicSeg),
         jsEvent: ev,
@@ -103,30 +128,15 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps> {
     }
 
     if (!moreLinkClick || moreLinkClick === 'popover') {
-      console.log('open popover', date, props.hiddenSegs, props.positionElRef.current, props.extraDateSpan)
-      /*
-      (!props.forPrint && (
-        <MorePopover
-          ref={this.morePopoverRef}
-          date={morePopoverState.date}
-          dateProfile={dateProfile}
-          segs={morePopoverState.allSegs}
-          alignmentEl={morePopoverState.dayEl}
-          topAlignmentEl={rowCnt === 1 ? props.headerAlignElRef.current : null}
-          selectedInstanceId={props.eventSelection}
-          hiddenInstances={// yuck
-            (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-            (props.eventResize ? props.eventResize.affectedInstances : null) ||
-            {}
-          }
-          todayRange={todayRange}
-        />
-      )
-      */
+      this.setState({ isPopoverOpen: true })
 
     } else if (typeof moreLinkClick === 'string') { // a view name
       context.calendarApi.zoomTo(date, moreLinkClick)
     }
+  }
+
+  handlePopoverClose = () => {
+    this.setState({ isPopoverOpen: false })
   }
 }
 
@@ -140,4 +150,9 @@ function getEarliestSeg(segs: Seg[]): Seg {
 
 function getEarlierSeg(seg0, seg1) {
   return seg0.eventRange.range.start < seg1.eventRange.range.start ? seg0 : seg1
+}
+
+function computeDate(allDayDate: DateMarker, segs: Seg[], context: ViewContext) {
+  return allDayDate ? context.dateEnv.toDate(allDayDate) :
+    context.dateEnv.toDate(getEarliestSeg(segs).eventRange.range.start)
 }

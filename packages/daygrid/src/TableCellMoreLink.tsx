@@ -6,6 +6,8 @@ import {
   memoize,
   DateMarker,
   Dictionary,
+  DateProfile,
+  DateRange,
 } from '@fullcalendar/common'
 import { TableSegPlacement } from './event-placement'
 import { TableSeg } from './TableSeg'
@@ -14,8 +16,10 @@ export interface TableCellMoreLinkProps {
   allDayDate: DateMarker
   singlePlacements: TableSegPlacement[]
   marginTop: number
-  positionElRef: RefObject<HTMLElement>
+  alignmentElRef: RefObject<HTMLElement>
   extraDateSpan?: Dictionary
+  dateProfile: DateProfile
+  todayRange: DateRange
 }
 
 export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
@@ -27,10 +31,12 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
     return Boolean(hiddenSegs.length) && (
       <div className="fc-daygrid-day-bottom" style={{ marginTop: props.marginTop }}>
         <MoreLinkRoot
+          dateProfile={props.dateProfile}
+          todayRange={props.todayRange}
           allDayDate={props.allDayDate}
           allSegs={allSegs}
           hiddenSegs={hiddenSegs}
-          positionElRef={props.positionElRef}
+          alignmentElRef={props.alignmentElRef}
           extraDateSpan={props.extraDateSpan}
         >
           {(rootElRef, classNames, innerElRef, innerContent, handleClick) => (
@@ -45,6 +51,59 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
         </MoreLinkRoot>
       </div>
     )
+
+    /*
+      (!props.forPrint && (
+        <MorePopover
+          ref={this.morePopoverRef}
+          date={morePopoverState.date}
+          dateProfile={dateProfile}
+          segs={morePopoverState.allSegs}
+          alignmentEl={morePopoverState.dayEl}
+          topAlignmentEl={rowCnt === 1 ? props.headerAlignElRef.current : null}
+          selectedInstanceId={props.eventSelection}
+          hiddenInstances={// yuck
+            (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
+            (props.eventResize ? props.eventResize.affectedInstances : null) ||
+            {}
+          }
+          todayRange={todayRange}
+        />
+      )
+
+      {props.segs.map((seg) => {
+        let instanceId = seg.eventRange.instance.instanceId
+        return (
+          <div
+            className="fc-daygrid-event-harness"
+            key={instanceId}
+            style={{
+              visibility: hiddenInstances[instanceId] ? 'hidden' : ('' as any),
+            }}
+          >
+            {hasListItemDisplay(seg) ? (
+              <TableListItemEvent
+                seg={seg}
+                isDragging={false}
+                isSelected={instanceId === selectedInstanceId}
+                defaultDisplayEventEnd={false}
+                {...getSegMeta(seg, todayRange)}
+              />
+            ) : (
+              <TableBlockEvent
+                seg={seg}
+                isDragging={false}
+                isResizing={false}
+                isDateSelecting={false}
+                isSelected={instanceId === selectedInstanceId}
+                defaultDisplayEventEnd={false}
+                {...getSegMeta(seg, todayRange)}
+              />
+            )}
+          </div>
+        )
+      })}
+      */
   }
 }
 

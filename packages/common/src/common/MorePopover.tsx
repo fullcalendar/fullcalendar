@@ -1,34 +1,22 @@
-import {
-  DateComponent,
-  DateMarker,
-  createElement,
-  EventInstanceHash,
-  addDays,
-  DateRange,
-  getSegMeta,
-  DayCellRoot,
-  DayCellContent,
-  DateProfile,
-  Hit,
-  Dictionary,
-} from '@fullcalendar/common'
-import { TableSeg } from './TableSeg'
-import { TableBlockEvent } from './TableBlockEvent'
-import { TableListItemEvent } from './TableListItemEvent'
+import { DateComponent } from '../component/DateComponent'
+import { DateRange } from '../datelib/date-range'
+import { addDays, DateMarker } from '../datelib/marker'
+import { DateProfile } from '../DateProfileGenerator'
+import { Hit } from '../interactions/hit'
+import { Dictionary } from '../options'
+import { createElement, ComponentChildren } from '../vdom'
+import { DayCellContent } from './DayCellContent'
+import { DayCellRoot } from './DayCellRoot'
 import { Popover } from './Popover'
-import { hasListItemDisplay } from './event-rendering'
 
 export interface MorePopoverProps {
   date: DateMarker
   dateProfile: DateProfile
-  segs: TableSeg[]
-  selectedInstanceId: string
-  hiddenInstances: EventInstanceHash
   alignmentEl: HTMLElement
-  topAlignmentEl?: HTMLElement
-  onCloseClick?: () => void
   todayRange: DateRange
   extraDateSpan: Dictionary
+  children: ComponentChildren
+  onClose?: () => void
 }
 
 export class MorePopover extends DateComponent<MorePopoverProps> {
@@ -37,7 +25,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
   render() {
     let { options, dateEnv } = this.context
     let { props } = this
-    let { date, hiddenInstances, todayRange, dateProfile, selectedInstanceId } = props
+    let { date, todayRange, dateProfile } = props
     let title = dateEnv.format(date, options.dayPopoverFormat)
 
     return (
@@ -48,9 +36,8 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
             title={title}
             extraClassNames={['fc-more-popover'].concat(dayClassNames)}
             extraAttrs={dataAttrs}
-            onClose={props.onCloseClick}
             alignmentEl={props.alignmentEl}
-            topAlignmentEl={props.topAlignmentEl}
+            onClose={props.onClose}
           >
             <DayCellContent date={date} dateProfile={dateProfile} todayRange={todayRange}>
               {(innerElRef, innerContent) => (
@@ -58,38 +45,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
                   <div className="fc-more-popover-misc" ref={innerElRef}>{innerContent}</div>
               )}
             </DayCellContent>
-            {props.segs.map((seg) => {
-              let instanceId = seg.eventRange.instance.instanceId
-              return (
-                <div
-                  className="fc-daygrid-event-harness"
-                  key={instanceId}
-                  style={{
-                    visibility: hiddenInstances[instanceId] ? 'hidden' : ('' as any),
-                  }}
-                >
-                  {hasListItemDisplay(seg) ? (
-                    <TableListItemEvent
-                      seg={seg}
-                      isDragging={false}
-                      isSelected={instanceId === selectedInstanceId}
-                      defaultDisplayEventEnd={false}
-                      {...getSegMeta(seg, todayRange)}
-                    />
-                  ) : (
-                    <TableBlockEvent
-                      seg={seg}
-                      isDragging={false}
-                      isResizing={false}
-                      isDateSelecting={false}
-                      isSelected={instanceId === selectedInstanceId}
-                      defaultDisplayEventEnd={false}
-                      {...getSegMeta(seg, todayRange)}
-                    />
-                  )}
-                </div>
-              )
-            })}
+            {props.children}
           </Popover>
         )}
       </DayCellRoot>

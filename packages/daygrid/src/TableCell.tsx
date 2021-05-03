@@ -103,8 +103,10 @@ export class TableCell extends DateComponent<TableCellProps> {
                   allDayDate={date}
                   singlePlacements={props.singlePlacements}
                   marginTop={props.moreMarginTop}
-                  positionElRef={rootElRef}
+                  alignmentElRef={rootElRef}
                   extraDateSpan={props.extraDateSpan}
+                  dateProfile={props.dateProfile}
+                  todayRange={props.todayRange}
                 />
               </div>
               <div className="fc-daygrid-day-bg">

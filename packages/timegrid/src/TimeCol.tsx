@@ -202,7 +202,8 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
   // will already have eventMinHeight applied because segInputs already had it
   renderHiddenGroups(hiddenGroups: SegEntryGroup[], segs: TimeColsSeg[]) {
-    let { extraDateSpan } = this.props
+    let { extraDateSpan, dateProfile, todayRange } = this.props
+
     return hiddenGroups.map((hiddenGroup) => {
       let positionCss = this.computeSegTopBottomCss(hiddenGroup)
       return (
@@ -211,6 +212,8 @@ export class TimeCol extends BaseComponent<TimeColProps> {
           top={positionCss.top}
           bottom={positionCss.bottom}
           extraDateSpan={extraDateSpan}
+          dateProfile={dateProfile}
+          todayRange={todayRange}
         />
       )
     })

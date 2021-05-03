@@ -2,6 +2,5 @@
 @import '../../common/src/styles/mixins';
 
 @import './styles/vars';
-@import './styles/popover';
 @import './styles/daygrid';
 @import './styles/daygrid-event';
