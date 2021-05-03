@@ -15,6 +15,8 @@ const disabledProjects = {
   parcel: 'This example is being transitioned to a newer version',
   'parcel-2':
     'There is currently a bug in parcel which prevents this from working',
+    // https://github.com/parcel-bundler/parcel/issues/4729
+    // tries to load babel within each fc file and fails
 }
 const pnpSimulatedProjects = {
   angular: 'Angular CLI does not support Yarn PnP',

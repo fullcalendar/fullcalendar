@@ -43,6 +43,7 @@
     "clean": "./scripts/clean.sh",
     "lint": "gulp lint",
     "lintBuilt": "gulp lintBuilt",
+    "lintExamples": "node ./scripts/example-lint.js",
     "eslint:dir": "node ./scripts/eslint-dir.js",
     "test": "gulp test",
     "test:ci": "gulp testCi",
