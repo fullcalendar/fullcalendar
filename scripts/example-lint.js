@@ -4,12 +4,26 @@ const globby = require('globby')
 
 const rootDir = path.resolve(__dirname, '..')
 const examplesDir = path.join(rootDir, 'example-projects')
-const givenProjName = process.argv[2] || 'all'
+const givenProjName = process.argv[2]
+
+///////////////////////////////////////////////////////
+// Project Settings
+const specialMatchers = {
+  next: 'pages/',
+  'next-scheduler': 'pages/',
+  nuxt: 'pages/ ',
+}
+///////////////////////////////////////////////////////
+
+const hasLinting = (projDir) => {
+  const packageJSON = require(`${projDir}/package.json`)
+  return packageJSON.scripts && packageJSON.scripts.lint
+}
 
 const projNames =
-  givenProjName === 'all'
-    ? globby.sync('*', { cwd: examplesDir, onlyDirectories: true })
-    : [givenProjName]
+  givenProjName && givenProjName !== 'all'
+    ? [givenProjName]
+    : globby.sync('*', { cwd: examplesDir, onlyDirectories: true })
 
 projNames.forEach((projName) => {
   const projDir = path.join(examplesDir, projName)
@@ -18,24 +32,24 @@ projNames.forEach((projName) => {
   console.info('PROJECT:', projName)
   console.log(projDir)
 
-  const { success } = exec.sync(['yarn', 'run', 'lint'], {
-    cwd: projDir,
-    exitOnError: false,
-    live: true,
-  })
-
-  if (!success) {
-    console.log('Could not execute lint script, attempting generic linting')
+  if (hasLinting(projDir)) {
+    exec.sync(['yarn', 'run', 'lint'], {
+      cwd: projDir,
+      exitOnError: false,
+      live: true,
+    })
+  } else {
+    const pattern = specialMatchers[projName] || 'src/'
 
     // Prettier is currently not part of any workspace, I will defer on adding it as a dependency
-    // exec.sync(["yarn", "run", "prettier", "--write", "./src"], {
+    // exec.sync(["yarn", "exec", "prettier", "--write", "./src"], {
     //   cwd: projDir,
     //   exitOnError: false,
     //   live: true,
     // });
 
     exec.sync(
-      'yarn exec eslint src/ --fix-dry-run --config ../.eslintrc.json --ext .tsx,.ts,.jsx,.js',
+      `yarn exec eslint ${pattern} --fix-dry-run --config ../.eslintrc.json --ext .tsx,.ts,.jsx,.js`,
       {
         cwd: projDir,
         exitOnError: false,
