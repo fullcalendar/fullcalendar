@@ -7,7 +7,7 @@ import {
 import { __assign } from 'tslib'
 import { HitDragging } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
-import { isDateSelectionValid } from '@fullcalendar/common/tsc/validation'
+import { isDateSelectionValid } from '@fullcalendar/common'
 
 /*
 Tracks when the user selects a portion of time of a component,

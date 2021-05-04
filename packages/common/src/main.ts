@@ -216,7 +216,7 @@ export { Slicer, SlicedProps } from './common/slicing-utils'
 
 export { EventMutation, applyMutationToEventStore } from './structs/event-mutation'
 export { Constraint, ConstraintInput, AllowFunc } from './structs/constraint'
-export { isPropsValid, isInteractionValid } from './validation'
+export { isPropsValid, isInteractionValid, isDateSelectionValid } from './validation'
 
 export { requestJson } from './util/requestJson'
 
