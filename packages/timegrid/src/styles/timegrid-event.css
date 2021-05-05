@@ -1,18 +1,13 @@
 
-.fc-timegrid-event:not(:last-child) {
-  margin-bottom: 8px;
-}
-
 .fc-timegrid-event-harness {
   position: absolute; // top/left/right/bottom will all be set by JS
 
   & > .fc-timegrid-event {
     position: absolute; // absolute WITHIN the harness
     top: 0; // for when not yet positioned
-    bottom: 1px; // give some space from bottom
+    bottom: 0; // "
     left: 0;
     right: 0;
-    margin-bottom: 0;
   }
 }
 
@@ -29,6 +24,8 @@
 }
 
 .fc-timegrid-event { // events need to be root
+  margin-bottom: 1px; // give some space from bottom
+
   & .fc-event-main {
     padding: 1px 1px 0;
   }

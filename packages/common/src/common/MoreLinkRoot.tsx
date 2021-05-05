@@ -30,7 +30,7 @@ export interface MoreLinkRootProps { // what the MoreLinkRoot component receives
   extraDateSpan?: Dictionary
   alignmentElRef: RefObject<HTMLElement>
   defaultContent?: (hookProps: MoreLinkContentArg) => ComponentChildren
-  popoverContent?: () => VNode
+  popoverContent: () => VNode
   children: MoreLinkChildren
 }
 
@@ -98,7 +98,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
                   alignmentEl={props.alignmentElRef.current}
                   onClose={this.handlePopoverClose}
                 >
-                  {props.popoverContent && props.popoverContent()}
+                  {props.popoverContent()}
                 </MorePopover>
               )}
             </Fragment>
