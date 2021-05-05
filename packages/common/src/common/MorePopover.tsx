@@ -12,6 +12,7 @@ import { Popover } from './Popover'
 export interface MorePopoverProps {
   date: DateMarker
   dateProfile: DateProfile
+  parentEl: HTMLElement
   alignmentEl: HTMLElement
   todayRange: DateRange
   extraDateSpan: Dictionary
@@ -36,6 +37,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
             title={title}
             extraClassNames={['fc-more-popover'].concat(dayClassNames)}
             extraAttrs={dataAttrs}
+            parentEl={props.parentEl}
             alignmentEl={props.alignmentEl}
             onClose={props.onClose}
           >

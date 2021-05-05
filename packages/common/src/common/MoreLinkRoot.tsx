@@ -4,8 +4,9 @@ import { DateRange } from '../datelib/date-range'
 import { DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
 import { Dictionary } from '../options'
+import { elementClosest } from '../util/dom-manip'
 import { memoize } from '../util/memoize'
-import { ComponentChildren, createElement, Fragment, Ref, RefObject } from '../vdom'
+import { ComponentChildren, createElement, createRef, Fragment, Ref, RefObject } from '../vdom'
 import { BaseComponent } from '../vdom-util'
 import { ViewApi } from '../ViewApi'
 import { ViewContext, ViewContextType } from '../ViewContext'
@@ -46,7 +47,9 @@ interface MoreLinkRootState {
 }
 
 export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootState> {
+  linkElRef = createRef<HTMLElement>()
   computeDate = memoize(computeDate)
+
   state = {
     isPopoverOpen: false // HACK
   }
@@ -72,6 +75,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
           return (
             <Fragment>
               <RenderHook<MoreLinkContentArg>
+                elRef={this.linkElRef}
                 hookProps={hookProps}
                 classNames={options.moreLinkClassNames}
                 content={options.moreLinkContent}
@@ -89,6 +93,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
                   dateProfile={props.dateProfile}
                   todayRange={props.todayRange}
                   extraDateSpan={props.extraDateSpan}
+                  parentEl={elementClosest(this.linkElRef.current, '.fc') /* TODO: don't access DOM here. but wasn't ready in ref callback */}
                   alignmentEl={props.alignmentElRef.current}
                   onClose={this.handlePopoverClose}
                 >this is some stuff</MorePopover>

@@ -1,7 +1,7 @@
 import { Dictionary } from '../options'
-import { DelayedRunner } from '../util/DelayedRunner'
+import { computeClippedClientRect } from '../util/dom-geom'
 import { applyStyle } from '../util/dom-manip'
-import { createElement, ComponentChildren, Ref } from '../vdom'
+import { createElement, ComponentChildren, Ref, createPortal } from '../vdom'
 import { BaseComponent, setRef } from '../vdom-util'
 
 export interface PopoverProps {
@@ -9,17 +9,16 @@ export interface PopoverProps {
   title: string
   extraClassNames?: string[]
   extraAttrs?: Dictionary
+  parentEl: HTMLElement
   alignmentEl: HTMLElement
   children?: ComponentChildren
   onClose?: () => void
 }
 
 const PADDING_FROM_VIEWPORT = 10
-const SCROLL_DEBOUNCE = 10
 
 export class Popover extends BaseComponent<PopoverProps> {
   private rootEl: HTMLElement
-  private repositioner = new DelayedRunner(this.updateSize.bind(this))
 
   render() {
     let { theme } = this.context
@@ -31,7 +30,7 @@ export class Popover extends BaseComponent<PopoverProps> {
       props.extraClassNames || [],
     )
 
-    return (
+    return createPortal(
       <div className={classNames.join(' ')} {...props.extraAttrs} ref={this.handleRootEl}>
         <div className={'fc-popover-header ' + theme.getClass('popoverHeader')}>
           <span className="fc-popover-title">
@@ -42,19 +41,18 @@ export class Popover extends BaseComponent<PopoverProps> {
         <div className={'fc-popover-body ' + theme.getClass('popoverContent')}>
           {props.children}
         </div>
-      </div>
+      </div>,
+      props.parentEl,
     )
   }
 
   componentDidMount() {
     document.addEventListener('mousedown', this.handleDocumentMousedown)
-    document.addEventListener('scroll', this.handleDocumentScroll)
     this.updateSize()
   }
 
   componentWillUnmount() {
     document.removeEventListener('mousedown', this.handleDocumentMousedown)
-    document.removeEventListener('scroll', this.handleDocumentScroll)
   }
 
   handleRootEl = (el: HTMLElement | null) => {
@@ -73,10 +71,6 @@ export class Popover extends BaseComponent<PopoverProps> {
     }
   }
 
-  handleDocumentScroll = () => {
-    this.repositioner.request(SCROLL_DEBOUNCE)
-  }
-
   handleCloseClick = () => {
     let { onClose } = this.props
     if (onClose) {
@@ -85,34 +79,29 @@ export class Popover extends BaseComponent<PopoverProps> {
   }
 
   private updateSize() {
+    let { isRtl } = this.context
     let { alignmentEl } = this.props
     let { rootEl } = this
 
-    if (!rootEl) {
-      return // not sure why this was null, but we shouldn't let external components call updateSize() anyway
+    let alignmentRect = computeClippedClientRect(alignmentEl)
+    if (alignmentRect) {
+      let popoverDims = rootEl.getBoundingClientRect()
+
+      // position relative to viewport
+      let popoverTop = alignmentRect.top
+      let popoverLeft = isRtl ? alignmentRect.right - popoverDims.width : alignmentRect.left
+
+      // constrain
+      popoverTop = Math.max(popoverTop, PADDING_FROM_VIEWPORT)
+      popoverLeft = Math.min(popoverLeft, window.innerWidth - PADDING_FROM_VIEWPORT - popoverDims.width)
+      popoverLeft = Math.max(popoverLeft, PADDING_FROM_VIEWPORT)
+
+      let offsetParent = rootEl.offsetParent
+      let origin = offsetParent.getBoundingClientRect()
+      applyStyle(rootEl, {
+        top: popoverTop - origin.top,
+        left: popoverLeft - origin.left
+      })
     }
-
-    applyStyle(rootEl, { top: 0, left: 0 })
-    return
-
-    let dims = rootEl.getBoundingClientRect() // only used for width,height
-    let alignment = alignmentEl.getBoundingClientRect()
-
-    let top = alignment.top
-    top = Math.min(top, window.innerHeight - dims.height - PADDING_FROM_VIEWPORT)
-    top = Math.max(top, PADDING_FROM_VIEWPORT)
-
-    let left: number
-
-    if (this.context.isRtl) {
-      left = alignment.right - dims.width
-    } else {
-      left = alignment.left
-    }
-
-    left = Math.min(left, window.innerWidth - dims.width - PADDING_FROM_VIEWPORT)
-    left = Math.max(left, PADDING_FROM_VIEWPORT)
-
-    applyStyle(rootEl, { top, left })
   }
 }

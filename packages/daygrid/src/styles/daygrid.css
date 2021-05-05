@@ -6,7 +6,6 @@ $daygrid-topbottom-z: 4;
 $daygrid-weeknum-z: 5;
 $daygrid-event-z: 6;
 $daygrid-event-mirror-z: 7;
-$daygrid-popover-z: 8;
 
 
 // help things clear margins of inner content
@@ -149,10 +148,6 @@ $daygrid-popover-z: 8;
   }
 
   // popover
-
-  & .fc-more-popover {
-    z-index: $daygrid-popover-z;
-  }
 
   & .fc-more-popover .fc-popover-body {
     min-width: 220px;
