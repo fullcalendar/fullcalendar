@@ -94,7 +94,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
                   dateProfile={props.dateProfile}
                   todayRange={props.todayRange}
                   extraDateSpan={props.extraDateSpan}
-                  parentEl={elementClosest(this.linkElRef.current, '.fc-view-harness') /* TODO: don't access DOM here. but wasn't ready in ref callback */}
+                  parentEl={elementClosest(this.linkElRef.current, '.fc-view-harness') /* TODO: move to did mount. don't access DOM here. but wasn't ready in ref callback */}
                   alignmentEl={props.alignmentElRef.current}
                   onClose={this.handlePopoverClose}
                 >

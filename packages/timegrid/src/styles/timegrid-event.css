@@ -1,4 +1,21 @@
 
+.fc-timegrid-event:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+.fc-timegrid-event-harness {
+  position: absolute; // top/left/right/bottom will all be set by JS
+
+  & > .fc-timegrid-event {
+    position: absolute; // absolute WITHIN the harness
+    top: 0; // for when not yet positioned
+    bottom: 1px; // give some space from bottom
+    left: 0;
+    right: 0;
+    margin-bottom: 0;
+  }
+}
+
 .fc-timegrid-event-harness-inset .fc-timegrid-event,
 .fc-timegrid-event.fc-event-mirror,
 .fc-timegrid-event-more {
@@ -50,16 +67,6 @@
 .fc-timegrid-event-more-inner { // has fc-sticky
   padding: 3px 2px;
   top: 0;
-}
-
-.fc-media-screen {
-  & .fc-timegrid-event {
-    position: absolute; // absolute WITHIN the harness
-    top: 0; // for when not yet positioned
-    bottom: 1px; // give some space from bottom
-    left: 0;
-    right: 0;
-  }
 }
 
 .fc-direction-ltr {

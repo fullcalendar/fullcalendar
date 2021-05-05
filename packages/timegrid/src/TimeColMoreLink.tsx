@@ -1,6 +1,7 @@
 import {
-  createElement, MoreLinkContentArg, MoreLinkRoot, BaseComponent, createRef, setRef, Dictionary, DateProfile, DateRange,
+  createElement, MoreLinkContentArg, MoreLinkRoot, BaseComponent, createRef, setRef, Dictionary, DateProfile, DateRange, DateMarker,
 } from '@fullcalendar/common'
+import { renderPlainFgSegs } from './TimeCol'
 import { TimeColsSeg } from './TimeColsSeg'
 
 export interface TimeColMoreLinkProps {
@@ -10,6 +11,8 @@ export interface TimeColMoreLinkProps {
   extraDateSpan?: Dictionary
   dateProfile: DateProfile
   todayRange: DateRange
+  nowDate: DateMarker
+  eventSelection: string
 }
 
 export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
@@ -26,6 +29,7 @@ export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
         extraDateSpan={props.extraDateSpan}
         dateProfile={props.dateProfile}
         todayRange={props.todayRange}
+        popoverContent={() => renderPlainFgSegs(props.hiddenSegs, props)}
       >
         {(rootElRef, classNames, innerElRef, innerContent, handleClick) => (
           <a
