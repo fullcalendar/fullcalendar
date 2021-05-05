@@ -153,6 +153,7 @@ export {
 export {
   formatIsoTimeString,
   formatDayString,
+  buildIsoString,
 } from './datelib/formatting-utils'
 export { NamedTimeZoneImpl } from './datelib/timezone'
 export { parse as parseMarker } from './datelib/parsing'

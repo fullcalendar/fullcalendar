@@ -28,7 +28,6 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
     let { props } = this
     let { date, todayRange, dateProfile } = props
     let title = dateEnv.format(date, options.dayPopoverFormat)
-
     return (
       <DayCellRoot date={date} dateProfile={dateProfile} todayRange={todayRange} elRef={this.handleRootEl}>
         {(rootElRef, dayClassNames, dataAttrs) => (

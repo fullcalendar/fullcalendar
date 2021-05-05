@@ -31,7 +31,10 @@ export interface TimeColSegRect extends SegRect {
 export function computeFgSegPlacements(
   segInputs: SegInput[],
   maxStack?: number,
-): { segRects: TimeColSegRect[], hiddenGroups: SegEntryGroup[] } {
+): {
+  segRects: TimeColSegRect[]
+  hiddenGroups: SegEntryGroup[]
+} {
   let hierarchy = new SegHierarchy()
   if (maxStack != null) {
     hierarchy.maxStackCnt = maxStack
