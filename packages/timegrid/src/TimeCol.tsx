@@ -327,7 +327,7 @@ export function renderPlainFgSegs(
     eventSelection: string
     eventDrag: EventSegUiInteractionState | null
     eventResize: EventSegUiInteractionState | null
-  }
+  },
 ) {
   let hiddenInstances =
     (eventDrag ? eventDrag.affectedInstances : null) ||

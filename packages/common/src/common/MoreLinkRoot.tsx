@@ -53,7 +53,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
   linkElRef = createRef<HTMLElement>()
 
   state = {
-    isPopoverOpen: false
+    isPopoverOpen: false,
   }
 
   render(props: MoreLinkRootProps) {
@@ -87,7 +87,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
                 willUnmount={options.moreLinkWillUnmount}
               >
                 {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
-                  rootElRef, ['fc-event-more'].concat(customClassNames), innerElRef, innerContent, this.handleClick
+                  rootElRef, ['fc-event-more'].concat(customClassNames), innerElRef, innerContent, this.handleClick,
                 )}
               </RenderHook>
               {this.state.isPopoverOpen && (
@@ -145,7 +145,6 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
 
     if (!moreLinkClick || moreLinkClick === 'popover') {
       this.setState({ isPopoverOpen: true })
-
     } else if (typeof moreLinkClick === 'string') { // a view name
       context.calendarApi.zoomTo(date, moreLinkClick)
     }

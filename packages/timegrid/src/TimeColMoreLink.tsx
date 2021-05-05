@@ -1,5 +1,6 @@
 import {
-  createElement, MoreLinkContentArg, MoreLinkRoot, BaseComponent, createRef, setRef, Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState,
+  createElement, MoreLinkContentArg, MoreLinkRoot, BaseComponent, createRef, setRef,
+  Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState,
 } from '@fullcalendar/common'
 import { renderPlainFgSegs } from './TimeCol'
 import { TimeColsSeg } from './TimeColsSeg'
@@ -56,4 +57,3 @@ export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
 function renderMoreLinkInner(props: MoreLinkContentArg) {
   return props.shortText
 }
-

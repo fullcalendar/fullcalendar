@@ -102,7 +102,7 @@ export class Popover extends BaseComponent<PopoverProps> {
       let origin = rootEl.offsetParent.getBoundingClientRect()
       applyStyle(rootEl, {
         top: popoverTop - origin.top,
-        left: popoverLeft - origin.left
+        left: popoverLeft - origin.left,
       })
     }
   }

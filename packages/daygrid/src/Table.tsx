@@ -151,7 +151,7 @@ export class Table extends DateComponent<TableProps> {
     if (rootEl) {
       this.context.registerInteractiveComponent(this, {
         el: rootEl,
-        isHitComboAllowed: this.props.isHitComboAllowed
+        isHitComboAllowed: this.props.isHitComboAllowed,
       })
     } else {
       this.context.unregisterInteractiveComponent(this)

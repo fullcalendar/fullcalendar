@@ -19,7 +19,7 @@ import { DateProfile } from './DateProfileGenerator'
 export function isInteractionValid(
   interaction: EventInteractionState,
   dateProfile: DateProfile,
-  context: CalendarContext
+  context: CalendarContext,
 ) {
   let { instances } = interaction.mutatedEvents
   for (let instanceId in instances) {
