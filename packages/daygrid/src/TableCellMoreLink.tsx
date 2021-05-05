@@ -35,7 +35,8 @@ export interface TableCellMoreLinkProps {
 export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
   compileSegs = memoize(compileSegs)
 
-  render(props: TableCellMoreLinkProps) {
+  render() {
+    let { props } = this
     let { allSegs, hiddenSegs } = this.compileSegs(props.singlePlacements)
 
     return Boolean(hiddenSegs.length) && (

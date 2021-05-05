@@ -21,7 +21,8 @@ export interface TimeColMoreLinkProps {
 export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
   rootElRef = createRef<HTMLElement>()
 
-  render(props: TimeColMoreLinkProps) {
+  render() {
+    let { props } = this
     return (
       <MoreLinkRoot
         allDayDate={null}
