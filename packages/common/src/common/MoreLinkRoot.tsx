@@ -56,7 +56,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
     isPopoverOpen: false,
   }
 
-  render(props: MoreLinkRootProps) {
+  render(props: MoreLinkRootProps): any { // hack for (p)react types
     return (
       <ViewContextType.Consumer>
         {(context: ViewContext) => {
