@@ -93,7 +93,7 @@ export class Popover extends BaseComponent<PopoverProps> {
 
       // constrain
       popoverTop = Math.max(popoverTop, PADDING_FROM_VIEWPORT)
-      popoverLeft = Math.min(popoverLeft, window.innerWidth - PADDING_FROM_VIEWPORT - popoverDims.width)
+      popoverLeft = Math.min(popoverLeft, document.documentElement.clientWidth - PADDING_FROM_VIEWPORT - popoverDims.width)
       popoverLeft = Math.max(popoverLeft, PADDING_FROM_VIEWPORT)
 
       let origin = rootEl.offsetParent.getBoundingClientRect()
