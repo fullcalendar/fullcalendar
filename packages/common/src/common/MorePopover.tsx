@@ -1,6 +1,6 @@
 import { DateComponent } from '../component/DateComponent'
 import { DateRange } from '../datelib/date-range'
-import { addDays, DateMarker } from '../datelib/marker'
+import { DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
 import { Hit } from '../interactions/hit'
 import { Dictionary } from '../options'
@@ -10,7 +10,8 @@ import { DayCellRoot } from './DayCellRoot'
 import { Popover } from './Popover'
 
 export interface MorePopoverProps {
-  date: DateMarker
+  startDate: DateMarker
+  endDate: DateMarker
   dateProfile: DateProfile
   parentEl: HTMLElement
   alignmentEl: HTMLElement
@@ -26,21 +27,21 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
   render() {
     let { options, dateEnv } = this.context
     let { props } = this
-    let { date, todayRange, dateProfile } = props
-    let title = dateEnv.format(date, options.dayPopoverFormat)
+    let { startDate, todayRange, dateProfile } = props
+    let title = dateEnv.format(startDate, options.dayPopoverFormat)
     return (
-      <DayCellRoot date={date} dateProfile={dateProfile} todayRange={todayRange} elRef={this.handleRootEl}>
+      <DayCellRoot date={startDate} dateProfile={dateProfile} todayRange={todayRange} elRef={this.handleRootEl}>
         {(rootElRef, dayClassNames, dataAttrs) => (
           <Popover
             elRef={rootElRef}
             title={title}
             extraClassNames={['fc-more-popover'].concat(dayClassNames)}
-            extraAttrs={dataAttrs}
+            extraAttrs={dataAttrs /* TODO: make these time-based when not whole-day? */}
             parentEl={props.parentEl}
             alignmentEl={props.alignmentEl}
             onClose={props.onClose}
           >
-            <DayCellContent date={date} dateProfile={dateProfile} todayRange={todayRange}>
+            <DayCellContent date={startDate} dateProfile={dateProfile} todayRange={todayRange}>
               {(innerElRef, innerContent) => (
                 innerContent &&
                   <div className="fc-more-popover-misc" ref={innerElRef}>{innerContent}</div>
@@ -67,7 +68,6 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
 
   queryHit(positionLeft: number, positionTop: number, elWidth: number, elHeight: number): Hit {
     let { rootEl, props } = this
-    let { date } = props
 
     if (
       positionLeft >= 0 && positionLeft < elWidth &&
@@ -77,7 +77,10 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
         dateProfile: props.dateProfile,
         dateSpan: {
           allDay: true,
-          range: { start: date, end: addDays(date, 1) },
+          range: {
+            start: props.startDate,
+            end: props.endDate,
+          },
           ...props.extraDateSpan,
         },
         dayEl: rootEl,

@@ -1,11 +1,10 @@
 import { EventApi } from '../api/EventApi'
 import { Seg } from '../component/DateComponent'
 import { DateRange } from '../datelib/date-range'
-import { DateMarker } from '../datelib/marker'
+import { addDays, DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
 import { Dictionary } from '../options'
 import { elementClosest } from '../util/dom-manip'
-import { memoize } from '../util/memoize'
 import { ComponentChildren, createElement, createRef, Fragment, Ref, RefObject, VNode } from '../vdom'
 import { BaseComponent } from '../vdom-util'
 import { ViewApi } from '../ViewApi'
@@ -49,7 +48,6 @@ interface MoreLinkRootState {
 
 export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootState> {
   linkElRef = createRef<HTMLElement>()
-  computeDate = memoize(computeDate)
 
   state = {
     isPopoverOpen: false
@@ -63,6 +61,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
           let { moreLinkText } = options
           let { hiddenSegs } = props
           let moreCnt = hiddenSegs.length
+          let range = computeRange(props)
 
           let hookProps: MoreLinkContentArg = {
             num: moreCnt,
@@ -90,7 +89,8 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
               </RenderHook>
               {this.state.isPopoverOpen && (
                 <MorePopover
-                  date={computeDate(props)}
+                  startDate={range.start}
+                  endDate={range.end}
                   dateProfile={props.dateProfile}
                   todayRange={props.todayRange}
                   extraDateSpan={props.extraDateSpan}
@@ -111,7 +111,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
   handleClick = (ev: MouseEvent) => {
     let { props, context } = this
     let { moreLinkClick } = context.options
-    let date = computeDate(props)
+    let date = computeRange(props).start
 
     function buildPublicSeg(seg: Seg) {
       let { def, instance, range } = seg.eventRange
@@ -152,6 +152,17 @@ function renderMoreLinkInner(props: MoreLinkContentArg) {
   return props.text
 }
 
-function computeDate(props: MoreLinkRootProps) {
-  return props.allDayDate || props.hiddenSegs[0].eventRange.range.start
+function computeRange(props: MoreLinkRootProps): DateRange {
+  if (props.allDayDate) {
+    return {
+      start: props.allDayDate,
+      end: addDays(props.allDayDate, 1),
+    }
+  }
+
+  let { hiddenSegs } = props
+  return {
+    start: hiddenSegs[0].eventRange.range.start,
+    end: hiddenSegs[hiddenSegs.length - 1].eventRange.range.end,
+  }
 }
