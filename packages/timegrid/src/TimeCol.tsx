@@ -181,7 +181,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
   // will already have eventMinHeight applied because segInputs already had it
   renderHiddenGroups(hiddenGroups: SegEntryGroup[], segs: TimeColsSeg[]) {
-    let { extraDateSpan, dateProfile, todayRange, nowDate, eventSelection } = this.props
+    let { extraDateSpan, dateProfile, todayRange, nowDate, eventSelection, eventDrag, eventResize } = this.props
     return (
       <Fragment>
         {hiddenGroups.map((hiddenGroup) => {
@@ -198,6 +198,8 @@ export class TimeCol extends BaseComponent<TimeColProps> {
               todayRange={todayRange}
               nowDate={nowDate}
               eventSelection={eventSelection}
+              eventDrag={eventDrag}
+              eventResize={eventResize}
             />
           )
         })}
@@ -319,23 +321,37 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
 export function renderPlainFgSegs(
   sortedFgSegs: TimeColsSeg[],
-  { todayRange, nowDate, eventSelection }: { todayRange: DateRange, nowDate: DateMarker, eventSelection: string}
+  { todayRange, nowDate, eventSelection, eventDrag, eventResize }: {
+    todayRange: DateRange
+    nowDate: DateMarker
+    eventSelection: string
+    eventDrag: EventSegUiInteractionState | null
+    eventResize: EventSegUiInteractionState | null
+  }
 ) {
+  let hiddenInstances =
+    (eventDrag ? eventDrag.affectedInstances : null) ||
+    (eventResize ? eventResize.affectedInstances : null) ||
+    {}
   return (
     <Fragment>
       {sortedFgSegs.map((seg) => {
         let instanceId = seg.eventRange.instance.instanceId
         return (
-          <TimeColEvent
+          <div
             key={instanceId}
-            seg={seg}
-            isDragging={false}
-            isResizing={false}
-            isDateSelecting={false}
-            isSelected={instanceId === eventSelection}
-            isCondensed={false}
-            {...getSegMeta(seg, todayRange, nowDate)}
-          />
+            style={{ visibility: hiddenInstances[instanceId] ? 'hidden' : ('' as any) }}
+          >
+            <TimeColEvent
+              seg={seg}
+              isDragging={false}
+              isResizing={false}
+              isDateSelecting={false}
+              isSelected={instanceId === eventSelection}
+              isCondensed={false}
+              {...getSegMeta(seg, todayRange, nowDate)}
+            />
+          </div>
         )
       })}
     </Fragment>

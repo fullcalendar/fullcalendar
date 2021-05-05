@@ -1,5 +1,5 @@
 import {
-  createElement, MoreLinkContentArg, MoreLinkRoot, BaseComponent, createRef, setRef, Dictionary, DateProfile, DateRange, DateMarker,
+  createElement, MoreLinkContentArg, MoreLinkRoot, BaseComponent, createRef, setRef, Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState,
 } from '@fullcalendar/common'
 import { renderPlainFgSegs } from './TimeCol'
 import { TimeColsSeg } from './TimeColsSeg'
@@ -13,6 +13,8 @@ export interface TimeColMoreLinkProps {
   todayRange: DateRange
   nowDate: DateMarker
   eventSelection: string
+  eventDrag: EventSegUiInteractionState
+  eventResize: EventSegUiInteractionState
 }
 
 export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
