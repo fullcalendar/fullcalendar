@@ -29,7 +29,7 @@ export interface MoreLinkRootProps { // what the MoreLinkRoot component receives
   hiddenSegs: Seg[]
   extraDateSpan?: Dictionary
   alignmentElRef: RefObject<HTMLElement>
-  defaultContent?: (hookProps: MoreLinkContentArg) => ComponentChildren // not used by anyone yet
+  defaultContent?: (hookProps: MoreLinkContentArg) => ComponentChildren
   popoverContent?: () => VNode
   children: MoreLinkChildren
 }
@@ -90,7 +90,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
               </RenderHook>
               {this.state.isPopoverOpen && (
                 <MorePopover
-                  date={this.computeDate(props.allDayDate, props.hiddenSegs, context)}
+                  date={this.computeDate(props.allDayDate, props.hiddenSegs)}
                   dateProfile={props.dateProfile}
                   todayRange={props.todayRange}
                   extraDateSpan={props.extraDateSpan}
@@ -111,7 +111,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
   handleClick = (ev: MouseEvent) => {
     let { props, context } = this
     let { moreLinkClick } = context.options
-    let date = context.dateEnv.toDate(this.computeDate(props.allDayDate, props.hiddenSegs, context))
+    let date = context.dateEnv.toDate(this.computeDate(props.allDayDate, props.hiddenSegs))
 
     function buildPublicSeg(seg: Seg) {
       let { def, instance, range } = seg.eventRange
@@ -160,7 +160,6 @@ function getEarlierSeg(seg0, seg1) {
   return seg0.eventRange.range.start < seg1.eventRange.range.start ? seg0 : seg1
 }
 
-function computeDate(allDayDate: DateMarker, segs: Seg[], context: ViewContext) {
-  return allDayDate ? context.dateEnv.toDate(allDayDate) :
-    context.dateEnv.toDate(getEarliestSeg(segs).eventRange.range.start)
+function computeDate(allDayDate: DateMarker, segs: Seg[]) {
+  return allDayDate ? allDayDate : getEarliestSeg(segs).eventRange.range.start
 }
