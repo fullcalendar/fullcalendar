@@ -16,9 +16,10 @@ import {
   createRef,
   buildEventRangeKey,
   sortEventSegs,
+  DayTableCell,
 } from '@fullcalendar/common'
 import { TableSeg, splitSegsByFirstCol } from './TableSeg'
-import { TableCell, TableCellModel, MoreLinkArg } from './TableCell'
+import { TableCell } from './TableCell'
 import { TableListItemEvent } from './TableListItemEvent'
 import { TableBlockEvent } from './TableBlockEvent'
 import { computeFgSegPlacement, TableSegPlacement } from './event-placement'
@@ -27,7 +28,7 @@ import { hasListItemDisplay } from './event-rendering'
 // TODO: attach to window resize?
 
 export interface TableRowProps {
-  cells: TableCellModel[]
+  cells: DayTableCell[]
   renderIntro?: () => VNode
   businessHourSegs: TableSeg[]
   bgEventSegs: TableSeg[]
@@ -40,12 +41,10 @@ export interface TableRowProps {
   dayMaxEventRows: boolean | number
   clientWidth: number | null
   clientHeight: number | null // simply for causing an updateSize, for when liquid height
-  onMoreClick?: (arg: MoreLinkArg & {fromCol: number}) => void
   dateProfile: DateProfile
   todayRange: DateRange
   showDayNumbers: boolean
   showWeekNumbers: boolean
-  buildMoreLinkText: (num: number) => string
   forPrint: boolean
 }
 
@@ -77,7 +76,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     let highlightSegsByCol = splitSegsByFirstCol(this.getHighlightSegs(), colCnt)
     let mirrorSegsByCol = splitSegsByFirstCol(this.getMirrorSegs(), colCnt)
 
-    let { singleColPlacements, multiColPlacements, moreCnts, moreMarginTops, cellPaddingBottoms } = computeFgSegPlacement(
+    let { singleColPlacements, multiColPlacements, moreMarginTops, cellPaddingBottoms } = computeFgSegPlacement(
       sortEventSegs(props.fgEventSegs, context.options.eventOrder) as TableSeg[],
       props.dayMaxEvents,
       props.dayMaxEventRows,
@@ -123,14 +122,13 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               showWeekNumber={props.showWeekNumbers && col === 0}
               forceDayTop={props.showWeekNumbers /* even displaying weeknum for row, not necessarily day */}
               todayRange={props.todayRange}
+              eventSelection={props.eventSelection}
+              eventDrag={props.eventDrag}
+              eventResize={props.eventResize}
               extraHookProps={cell.extraHookProps}
               extraDataAttrs={cell.extraDataAttrs}
               extraClassNames={cell.extraClassNames}
-              moreCnt={moreCnts[col]}
-              buildMoreLinkText={props.buildMoreLinkText}
-              onMoreClick={(arg) => {
-                props.onMoreClick({ ...arg, fromCol: col })
-              }}
+              extraDateSpan={cell.extraDateSpan}
               moreMarginTop={moreMarginTops[col]}
               singlePlacements={singleColPlacements[col]}
               fgPaddingBottom={cellPaddingBottoms[col]}
@@ -365,10 +363,6 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     return this.props.cells.map((cell) => elMap[cell.key])
   }
 }
-
-TableRow.addPropsEquality({
-  onMoreClick: true, // never forces rerender
-})
 
 TableRow.addStateEquality({
   eventInstanceHeights: isPropsEqual,

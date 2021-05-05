@@ -203,19 +203,20 @@ export function buildEntryKey(entry: SegEntry) {
   return entry.segInput.index + ':' + entry.spanStart
 }
 
-// returns in no specific order
+// does not accept entries in any particular order.
+// does not return groups in any particular order, nor are the entries within groups sorted.
 export function groupIntersectingEntries(entries: SegEntry[]): SegEntryGroup[] {
-  let groups: SegEntryGroup[] = []
+  let merges: SegEntryGroup[] = []
 
   for (let entry of entries) {
     let filteredMerges: SegEntryGroup[] = []
-    let hungryMerge: SegEntryGroup = { // the merge that will eat what is collides with
+    let hungryMerge: SegEntryGroup = { // the merge that will eat what it collides with
       spanStart: entry.spanStart,
       spanEnd: entry.spanEnd,
       entries: [entry],
     }
 
-    for (let merge of groups) {
+    for (let merge of merges) {
       if (merge.spanStart < hungryMerge.spanEnd && merge.spanEnd > hungryMerge.spanStart) { // collides?
         hungryMerge = {
           spanStart: Math.min(merge.spanStart, hungryMerge.spanStart),
@@ -228,10 +229,10 @@ export function groupIntersectingEntries(entries: SegEntry[]): SegEntryGroup[] {
     }
 
     filteredMerges.push(hungryMerge)
-    groups = filteredMerges
+    merges = filteredMerges
   }
 
-  return groups
+  return merges
 }
 
 // general util

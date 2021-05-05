@@ -103,7 +103,8 @@ export class DayGridWrapper {
   }
 
   getMorePopoverEl() {
-    return this.el.parentNode.querySelector('.fc-more-popover') as HTMLElement // popover lives as a sibling
+    let viewWrapperEl = this.el.closest('.fc-view-harness')
+    return viewWrapperEl.querySelector('.fc-more-popover') as HTMLElement
   }
 
   getMorePopoverHeaderEl() {

@@ -11,15 +11,33 @@ import { CalendarContext } from './CalendarContext'
 import { buildDateSpanApiWithContext } from './calendar-utils'
 import { Constraint } from './structs/constraint'
 import { expandRecurring } from './structs/recurring-event'
+import { DateProfile } from './DateProfileGenerator'
 
 // high-level segmenting-aware tester functions
 // ------------------------------------------------------------------------------------------------------------------------
 
-export function isInteractionValid(interaction: EventInteractionState, context: CalendarContext) {
+export function isInteractionValid(
+  interaction: EventInteractionState,
+  dateProfile: DateProfile,
+  context: CalendarContext,
+) {
+  let { instances } = interaction.mutatedEvents
+  for (let instanceId in instances) {
+    if (!rangeContainsRange(dateProfile.validRange, instances[instanceId].range)) {
+      return false
+    }
+  }
   return isNewPropsValid({ eventDrag: interaction }, context) // HACK: the eventDrag props is used for ALL interactions
 }
 
-export function isDateSelectionValid(dateSelection: DateSpan, context: CalendarContext) {
+export function isDateSelectionValid(
+  dateSelection: DateSpan,
+  dateProfile: DateProfile,
+  context: CalendarContext,
+) {
+  if (!rangeContainsRange(dateProfile.validRange, dateSelection.range)) {
+    return false
+  }
   return isNewPropsValid({ dateSelection }, context)
 }
 

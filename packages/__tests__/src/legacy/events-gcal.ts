@@ -18,7 +18,7 @@ describe('Google Calendar plugin', () => {
 
   // Google sometimes stops returning old events. Will need to update this sometimes.
   const DEFAULT_MONTH = '2020-05'
-  const NUM_EVENTS = 3 // number of holidays
+  const NUM_EVENTS = 4 // number of holidays
 
   let currentWarnArgs
   let oldConsoleWarn

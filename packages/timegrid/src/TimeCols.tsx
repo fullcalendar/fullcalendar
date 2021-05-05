@@ -1,10 +1,9 @@
 import {
-  createElement, VNode, Ref,
+  createElement, VNode,
   addDurations,
   multiplyDuration,
   wholeDivideDurations,
   DateMarker,
-  BaseComponent,
   EventSegUiInteractionState,
   memoize,
   CssDimValue,
@@ -14,8 +13,10 @@ import {
   DateRange,
   Duration,
   DateProfile,
+  DayTableCell,
+  Hit,
+  DateComponent,
 } from '@fullcalendar/common'
-import { TableCellModel } from '@fullcalendar/daygrid' // TODO: good to use this interface?
 import { TimeColsSlats } from './TimeColsSlats'
 import { TimeSlatMeta } from './time-slat-meta'
 import { TimeColsContent } from './TimeColsContent'
@@ -23,7 +24,7 @@ import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { TimeColsSeg } from './TimeColsSeg'
 
 export interface TimeColsProps {
-  cells: TableCellModel[]
+  cells: DayTableCell[]
   dateProfile: DateProfile
   slotDuration: Duration
   nowDate: DateMarker
@@ -35,7 +36,6 @@ export interface TimeColsProps {
   eventSelection: string
   eventDrag: EventSegUiInteractionState | null
   eventResize: EventSegUiInteractionState | null
-  rootElRef?: Ref<HTMLDivElement>
   tableColGroupNode: VNode
   tableMinWidth: CssDimValue
   clientWidth: number | null
@@ -47,6 +47,7 @@ export interface TimeColsProps {
   axis: boolean
   slatMetas: TimeSlatMeta[]
   onSlatCoords?: (slatCoords: TimeColsSlatsCoords) => void
+  isHitComboAllowed?: (hit0: Hit, hit1: Hit) => boolean
 }
 
 interface TimeColsState {
@@ -56,7 +57,7 @@ interface TimeColsState {
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
 
-export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
+export class TimeCols extends DateComponent<TimeColsProps, TimeColsState> {
   private processSlotOptions = memoize(processSlotOptions)
   private scrollResponder: ScrollResponder
   private colCoords: PositionCache
@@ -71,7 +72,7 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
     return (
       <div
         className="fc-timegrid-body"
-        ref={props.rootElRef}
+        ref={this.handleRootEl}
         style={{
           // these props are important to give this wrapper correct dimensions for interactions
           // TODO: if we set it here, can we avoid giving to inner tables?
@@ -112,6 +113,17 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
         />
       </div>
     )
+  }
+
+  handleRootEl = (el: HTMLElement | null) => {
+    if (el) {
+      this.context.registerInteractiveComponent(this, {
+        el,
+        isHitComboAllowed: this.props.isHitComboAllowed,
+      })
+    } else {
+      this.context.unregisterInteractiveComponent(this)
+    }
   }
 
   componentDidMount() {
@@ -159,7 +171,7 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
     }
   }
 
-  positionToHit(positionLeft, positionTop) {
+  queryHit(positionLeft: number, positionTop: number): Hit {
     let { dateEnv, options } = this.context
     let { colCoords } = this
     let { dateProfile } = this.props
@@ -170,6 +182,7 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
     let slatIndex = slatCoords.positions.topToIndex(positionTop)
 
     if (colIndex != null && slatIndex != null) {
+      let cell = this.props.cells[colIndex]
       let slatTop = slatCoords.positions.tops[slatIndex]
       let slatHeight = slatCoords.positions.getHeight(slatIndex)
       let partial = (positionTop - slatTop) / slatHeight // floating point number between 0 and 1
@@ -186,18 +199,20 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
       let end = dateEnv.add(start, snapDuration)
 
       return {
-        col: colIndex,
+        dateProfile,
         dateSpan: {
           range: { start, end },
           allDay: false,
+          ...cell.extraDateSpan,
         },
         dayEl: colCoords.els[colIndex],
-        relativeRect: {
+        rect: {
           left: colCoords.lefts[colIndex],
           right: colCoords.rights[colIndex],
           top: slatTop,
           bottom: slatTop + slatHeight,
         },
+        layer: 0,
       }
     }
 

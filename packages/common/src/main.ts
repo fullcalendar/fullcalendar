@@ -153,6 +153,7 @@ export {
 export {
   formatIsoTimeString,
   formatDayString,
+  buildIsoString,
 } from './datelib/formatting-utils'
 export { NamedTimeZoneImpl } from './datelib/timezone'
 export { parse as parseMarker } from './datelib/parsing'
@@ -178,7 +179,6 @@ export { PointerDragEvent } from './interactions/pointer'
 export { Hit } from './interactions/hit'
 export { dateSelectionJoinTransformer } from './interactions/date-selecting'
 export { eventDragMutationMassager, EventDropTransformers } from './interactions/event-dragging'
-export { EventResizeJoinTransforms } from './interactions/event-resizing'
 export { ElementDragging } from './interactions/ElementDragging'
 
 export { config } from './global-config'
@@ -217,7 +217,7 @@ export { Slicer, SlicedProps } from './common/slicing-utils'
 
 export { EventMutation, applyMutationToEventStore } from './structs/event-mutation'
 export { Constraint, ConstraintInput, AllowFunc } from './structs/constraint'
-export { isPropsValid, isInteractionValid } from './validation'
+export { isPropsValid, isInteractionValid, isDateSelectionValid } from './validation'
 
 export { requestJson } from './util/requestJson'
 
@@ -264,6 +264,7 @@ export { DayCellContent, DayCellContentProps } from './common/DayCellContent'
 export { EventRoot, MinimalEventProps } from './common/EventRoot'
 export { renderFill, BgEvent, BgEventProps } from './common/bg-fill'
 export { WeekNumberRoot, WeekNumberRootProps } from './common/WeekNumberRoot'
+export { MoreLinkRoot, MoreLinkRootProps, MoreLinkContentArg, MoreLinkMountArg } from './common/MoreLinkRoot'
 
 export { ViewRoot, ViewRootProps } from './common/ViewRoot'
 export { triggerDateSelect, DatePointTransform, DateSpanTransform, DateSelectionApi, getDefaultEventEnd } from './calendar-utils'

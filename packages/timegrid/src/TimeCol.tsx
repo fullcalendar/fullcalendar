@@ -1,8 +1,9 @@
 import {
   Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta,
-  DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill,
-  DateProfile, config, buildEventRangeKey, sortEventSegs, SegInput, memoize, SegEntryGroup,
+  DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill, buildIsoString,
+  DateProfile, config, buildEventRangeKey, sortEventSegs, SegInput, memoize, SegEntryGroup, SegEntry, Dictionary,
 } from '@fullcalendar/common'
+import { TimeColMoreLink } from './TimeColMoreLink'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { computeFgSegPlacements, TimeColSegRect } from './event-placement'
@@ -18,6 +19,7 @@ export interface TimeColProps {
   extraDataAttrs?: any
   extraHookProps?: any
   extraClassNames?: string[]
+  extraDateSpan?: Dictionary
   fgEventSegs: TimeColsSeg[]
   bgEventSegs: TimeColsSeg[]
   businessHourSegs: TimeColsSeg[]
@@ -116,7 +118,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     let { props } = this
 
     if (props.forPrint) {
-      return this.renderPrintFgSegs(sortedFgSegs)
+      return renderPlainFgSegs(sortedFgSegs, props)
     }
 
     if (props.slatCoords) {
@@ -124,27 +126,6 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     }
 
     return null
-  }
-
-  renderPrintFgSegs(sortedFgSegs: TimeColsSeg[]) {
-    let { todayRange, nowDate } = this.props
-
-    return sortedFgSegs.map((seg) => (
-      <div
-        className="fc-timegrid-event-harness"
-        key={seg.eventRange.instance.instanceId}
-      >
-        <TimeColEvent
-          seg={seg}
-          isDragging={false}
-          isResizing={false}
-          isDateSelecting={false}
-          isSelected={false}
-          isCondensed={false}
-          {...getSegMeta(seg, todayRange, nowDate)}
-        />
-      </div>
-    ))
   }
 
   renderPositionedFgSegs(
@@ -200,16 +181,30 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
   // will already have eventMinHeight applied because segInputs already had it
   renderHiddenGroups(hiddenGroups: SegEntryGroup[], segs: TimeColsSeg[]) {
-    return hiddenGroups.map((hiddenGroup) => {
-      let positionCss = this.computeSegTopBottomCss(hiddenGroup)
-
-      return (
-        <div className="fc-event-more fc-timegrid-event-more" style={positionCss}>
-          {'+' + hiddenGroup.entries.length}
-          {/* TODO: more customizable way to build this text. search buildMoreLinkText */}
-        </div>
-      )
-    })
+    let { extraDateSpan, dateProfile, todayRange, nowDate, eventSelection, eventDrag, eventResize } = this.props
+    return (
+      <Fragment>
+        {hiddenGroups.map((hiddenGroup) => {
+          let positionCss = this.computeSegTopBottomCss(hiddenGroup)
+          let hiddenSegs = compileSegsFromEntries(hiddenGroup.entries, segs)
+          return (
+            <TimeColMoreLink
+              key={buildIsoString(hiddenSegs[0].start)}
+              hiddenSegs={hiddenSegs}
+              top={positionCss.top}
+              bottom={positionCss.bottom}
+              extraDateSpan={extraDateSpan}
+              dateProfile={dateProfile}
+              todayRange={todayRange}
+              nowDate={nowDate}
+              eventSelection={eventSelection}
+              eventDrag={eventDrag}
+              eventResize={eventResize}
+            />
+          )
+        })}
+      </Fragment>
+    )
   }
 
   buildSegInputs(segs: TimeColsSeg[]): SegInput[] {
@@ -322,4 +317,53 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
     return props
   }
+}
+
+export function renderPlainFgSegs(
+  sortedFgSegs: TimeColsSeg[],
+  { todayRange, nowDate, eventSelection, eventDrag, eventResize }: {
+    todayRange: DateRange
+    nowDate: DateMarker
+    eventSelection: string
+    eventDrag: EventSegUiInteractionState | null
+    eventResize: EventSegUiInteractionState | null
+  },
+) {
+  let hiddenInstances =
+    (eventDrag ? eventDrag.affectedInstances : null) ||
+    (eventResize ? eventResize.affectedInstances : null) ||
+    {}
+  return (
+    <Fragment>
+      {sortedFgSegs.map((seg) => {
+        let instanceId = seg.eventRange.instance.instanceId
+        return (
+          <div
+            key={instanceId}
+            style={{ visibility: hiddenInstances[instanceId] ? 'hidden' : ('' as any) }}
+          >
+            <TimeColEvent
+              seg={seg}
+              isDragging={false}
+              isResizing={false}
+              isDateSelecting={false}
+              isSelected={instanceId === eventSelection}
+              isCondensed={false}
+              {...getSegMeta(seg, todayRange, nowDate)}
+            />
+          </div>
+        )
+      })}
+    </Fragment>
+  )
+}
+
+// will be sorted
+function compileSegsFromEntries(segEntries: SegEntry[], allSegs: TimeColsSeg[]) {
+  let segs = segEntries.map((segEntry) => allSegs[segEntry.segInput.index])
+  return segs.sort(cmpSegs)
+}
+
+function cmpSegs(seg0: TimeColsSeg, seg1: TimeColsSeg) {
+  return seg0.start.valueOf() - seg1.start.valueOf()
 }

@@ -1,4 +1,6 @@
-import { EventApi, ViewApi, VUIEvent } from '@fullcalendar/common'
+import { EventApi } from '../api/EventApi'
+import { VUIEvent } from '../vdom'
+import { ViewApi } from '../ViewApi'
 
 export interface EventSegment {
   event: EventApi
@@ -12,11 +14,11 @@ export type MoreLinkAction = MoreLinkSimpleAction | MoreLinkHandler
 export type MoreLinkSimpleAction = 'popover' | 'week' | 'day' | 'timeGridWeek' | 'timeGridDay' | string
 
 export interface MoreLinkArg {
-  date: Date,
-  allDay: boolean,
-  allSegs: EventSegment[],
-  hiddenSegs: EventSegment[],
-  jsEvent: VUIEvent,
+  date: Date
+  allDay: boolean
+  allSegs: EventSegment[]
+  hiddenSegs: EventSegment[]
+  jsEvent: VUIEvent
   view: ViewApi
 }
 

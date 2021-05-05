@@ -11,15 +11,15 @@ import {
   DateRange,
   NowIndicatorRoot,
   DateProfile,
+  DayTableCell,
 } from '@fullcalendar/common'
-import { TableCellModel } from '@fullcalendar/daygrid' // TODO: good to use this interface?
 import { TimeColsSeg, splitSegsByCol, splitInteractionByCol } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { TimeCol } from './TimeCol'
 
 export interface TimeColsContentProps {
   axis: boolean
-  cells: TableCellModel[]
+  cells: DayTableCell[]
   dateProfile: DateProfile
   nowDate: DateMarker
   todayRange: DateRange
@@ -108,6 +108,7 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
                   extraHookProps={cell.extraHookProps}
                   extraDataAttrs={cell.extraDataAttrs}
                   extraClassNames={cell.extraClassNames}
+                  extraDateSpan={cell.extraDateSpan}
                   fgEventSegs={fgEventSegsByRow[i]}
                   bgEventSegs={bgEventSegsByRow[i]}
                   businessHourSegs={businessHourSegsByRow[i]}
@@ -154,6 +155,6 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
   }
 }
 
-function collectCellEls(elMap: { [key: string]: HTMLElement }, cells: TableCellModel[]) {
+function collectCellEls(elMap: { [key: string]: HTMLElement }, cells: DayTableCell[]) {
   return cells.map((cell) => elMap[cell.key])
 }

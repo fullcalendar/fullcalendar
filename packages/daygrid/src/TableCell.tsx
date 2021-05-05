@@ -7,19 +7,17 @@ import {
   CssDimValue,
   DateRange,
   buildNavLinkData,
-  RenderHook,
   WeekNumberRoot,
   DayCellRoot,
   DateProfile,
-  VUIEvent,
   setRef,
   createFormatter,
-  ViewApi,
   Dictionary,
-  MountArg,
+  createRef,
+  EventSegUiInteractionState,
 } from '@fullcalendar/common'
-import { TableSeg } from './TableSeg'
 import { TableCellTop } from './TableCellTop'
+import { TableCellMoreLink } from './TableCellMoreLink'
 import { TableSegPlacement } from './event-placement'
 
 export interface TableCellProps {
@@ -28,71 +26,33 @@ export interface TableCellProps {
   extraHookProps?: Dictionary
   extraDataAttrs?: Dictionary
   extraClassNames?: string[]
+  extraDateSpan?: Dictionary
   elRef?: Ref<HTMLTableCellElement>
   innerElRef?: Ref<HTMLDivElement>
   bgContent: ComponentChildren
   fgContentElRef?: Ref<HTMLDivElement> // TODO: rename!!! classname confusion. is the "event" div
   fgContent: ComponentChildren
   fgPaddingBottom: CssDimValue
-  moreCnt: number
   moreMarginTop: number
   showDayNumber: boolean
   showWeekNumber: boolean
   forceDayTop: boolean
   todayRange: DateRange
-  buildMoreLinkText: (num: number) => string
-  onMoreClick?: (arg: MoreLinkArg) => void
+  eventSelection: string
+  eventDrag: EventSegUiInteractionState | null
+  eventResize: EventSegUiInteractionState | null
   singlePlacements: TableSegPlacement[]
 }
-
-export interface TableCellModel { // TODO: move somewhere else. combine with DayTableCell?
-  key: string
-  date: DateMarker
-  extraHookProps?: Dictionary
-  extraDataAttrs?: Dictionary
-  extraClassNames?: string[]
-}
-
-export interface MoreLinkArg {
-  date: DateMarker
-  allSegs: TableSeg[]
-  hiddenSegs: TableSeg[]
-  moreCnt: number
-  dayEl: HTMLElement
-  ev: VUIEvent
-}
-
-export interface HookProps {
-  date: Date
-  isPast: boolean
-  isFuture: boolean
-  isToday: boolean
-}
-
-export interface MoreLinkContentArg {
-  num: number
-  text: string
-  view: ViewApi
-}
-
-export type MoreLinkMountArg = MountArg<MoreLinkContentArg>
 
 const DEFAULT_WEEK_NUM_FORMAT = createFormatter({ week: 'narrow' })
 
 export class TableCell extends DateComponent<TableCellProps> {
-  private rootEl: HTMLElement
+  private rootElRef = createRef<HTMLElement>()
 
   render() {
-    let { options, viewApi } = this.context
-    let { props } = this
+    let { props, context, rootElRef } = this
+    let { options } = context
     let { date, dateProfile } = props
-
-    let hookProps: MoreLinkContentArg = {
-      num: props.moreCnt,
-      text: props.buildMoreLinkText(props.moreCnt),
-      view: viewApi,
-    }
-
     let navLinkAttrs = options.navLinks
       ? { 'data-navlink': buildNavLinkData(date, 'week'), tabIndex: 0 }
       : {}
@@ -143,28 +103,19 @@ export class TableCell extends DateComponent<TableCellProps> {
                 style={{ paddingBottom: props.fgPaddingBottom }}
               >
                 {props.fgContent}
-                {Boolean(props.moreCnt) && (
-                  <div className="fc-daygrid-day-bottom" style={{ marginTop: props.moreMarginTop }}>
-                    <RenderHook<MoreLinkContentArg> // needed?
-                      hookProps={hookProps}
-                      classNames={options.moreLinkClassNames}
-                      content={options.moreLinkContent}
-                      defaultContent={renderMoreLinkInner}
-                      didMount={options.moreLinkDidMount}
-                      willUnmount={options.moreLinkWillUnmount}
-                    >
-                      {(rootElRef, classNames, innerElRef, innerContent) => (
-                        <a
-                          ref={rootElRef}
-                          className={['fc-daygrid-more-link', 'fc-event-more'].concat(classNames).join(' ')}
-                          onClick={this.handleMoreLinkClick}
-                        >
-                          {innerContent}
-                        </a>
-                      )}
-                    </RenderHook>
-                  </div>
-                )}
+                <TableCellMoreLink
+                  allDayDate={date}
+                  singlePlacements={props.singlePlacements}
+                  marginTop={props.moreMarginTop}
+                  alignmentElRef={rootElRef}
+                  alignGridTop={!props.showDayNumber}
+                  extraDateSpan={props.extraDateSpan}
+                  dateProfile={props.dateProfile}
+                  eventSelection={props.eventSelection}
+                  eventDrag={props.eventDrag}
+                  eventResize={props.eventResize}
+                  todayRange={props.todayRange}
+                />
               </div>
               <div className="fc-daygrid-day-bg">
                 {props.bgContent}
@@ -177,42 +128,7 @@ export class TableCell extends DateComponent<TableCellProps> {
   }
 
   handleRootEl = (el: HTMLElement) => {
-    this.rootEl = el
-
+    setRef(this.rootElRef, el)
     setRef(this.props.elRef, el)
   }
-
-  handleMoreLinkClick = (ev: VUIEvent) => {
-    let { singlePlacements, onMoreClick, date, moreCnt } = this.props
-
-    if (onMoreClick) {
-      let allSegs: TableSeg[] = []
-      let hiddenSegs: TableSeg[] = []
-
-      for (let placement of singlePlacements) {
-        allSegs.push(placement.seg)
-
-        if (!placement.isVisible) {
-          hiddenSegs.push(placement.seg)
-        }
-      }
-
-      onMoreClick({
-        date,
-        allSegs,
-        hiddenSegs,
-        moreCnt,
-        dayEl: this.rootEl,
-        ev,
-      })
-    }
-  }
-}
-
-TableCell.addPropsEquality({
-  onMoreClick: true, // never forces rerender
-})
-
-function renderMoreLinkInner(props) {
-  return props.text
 }

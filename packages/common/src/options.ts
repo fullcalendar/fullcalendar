@@ -38,6 +38,9 @@ import {
   EventContentArg, EventMountArg,
   DatesSetArg,
   EventApi, EventAddArg, EventChangeArg, EventRemoveArg,
+  MoreLinkContentArg,
+  MoreLinkMountArg,
+  MoreLinkAction,
 } from './api-type-deps'
 
 // base options
@@ -213,6 +216,12 @@ export const BASE_OPTION_REFINERS = {
 
   // only used by list-view, but languages define the value, so we need it in base options
   noEventsText: String,
+
+  moreLinkClick: identity as Identity<MoreLinkAction>,
+  moreLinkClassNames: identity as Identity<ClassNamesGenerator<MoreLinkContentArg>>,
+  moreLinkContent: identity as Identity<CustomContentGenerator<MoreLinkContentArg>>,
+  moreLinkDidMount: identity as Identity<DidMountHandler<MoreLinkMountArg>>,
+  moreLinkWillUnmount: identity as Identity<WillUnmountHandler<MoreLinkMountArg>>,
 }
 
 type BuiltInBaseOptionRefiners = typeof BASE_OPTION_REFINERS
