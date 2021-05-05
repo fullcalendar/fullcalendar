@@ -57,7 +57,10 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
   handleRootEl = (rootEl: HTMLDivElement | null) => {
     this.rootEl = rootEl
     if (rootEl) {
-      this.context.registerInteractiveComponent(this, { el: rootEl })
+      this.context.registerInteractiveComponent(this, {
+        el: rootEl,
+        useEventCenter: false,
+      })
     } else {
       this.context.unregisterInteractiveComponent(this)
     }

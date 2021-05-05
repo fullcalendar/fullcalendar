@@ -96,8 +96,7 @@ export class Popover extends BaseComponent<PopoverProps> {
       popoverLeft = Math.min(popoverLeft, window.innerWidth - PADDING_FROM_VIEWPORT - popoverDims.width)
       popoverLeft = Math.max(popoverLeft, PADDING_FROM_VIEWPORT)
 
-      let offsetParent = rootEl.offsetParent
-      let origin = offsetParent.getBoundingClientRect()
+      let origin = rootEl.offsetParent.getBoundingClientRect()
       applyStyle(rootEl, {
         top: popoverTop - origin.top,
         left: popoverLeft - origin.left

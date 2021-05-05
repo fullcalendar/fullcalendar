@@ -122,6 +122,9 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               showWeekNumber={props.showWeekNumbers && col === 0}
               forceDayTop={props.showWeekNumbers /* even displaying weeknum for row, not necessarily day */}
               todayRange={props.todayRange}
+              eventSelection={props.eventSelection}
+              eventDrag={props.eventDrag}
+              eventResize={props.eventResize}
               extraHookProps={cell.extraHookProps}
               extraDataAttrs={cell.extraDataAttrs}
               extraClassNames={cell.extraClassNames}

@@ -6,7 +6,7 @@ import { DateProfile } from '../DateProfileGenerator'
 import { Dictionary } from '../options'
 import { elementClosest } from '../util/dom-manip'
 import { memoize } from '../util/memoize'
-import { ComponentChildren, createElement, createRef, Fragment, Ref, RefObject } from '../vdom'
+import { ComponentChildren, createElement, createRef, Fragment, Ref, RefObject, VNode } from '../vdom'
 import { BaseComponent } from '../vdom-util'
 import { ViewApi } from '../ViewApi'
 import { ViewContext, ViewContextType } from '../ViewContext'
@@ -30,6 +30,7 @@ export interface MoreLinkRootProps { // what the MoreLinkRoot component receives
   extraDateSpan?: Dictionary
   alignmentElRef: RefObject<HTMLElement>
   defaultContent?: (hookProps: MoreLinkContentArg) => ComponentChildren // not used by anyone yet
+  popoverContent?: () => VNode
   children: MoreLinkChildren
 }
 
@@ -51,7 +52,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
   computeDate = memoize(computeDate)
 
   state = {
-    isPopoverOpen: false // HACK
+    isPopoverOpen: false
   }
 
   render(props: MoreLinkRootProps) {
@@ -93,10 +94,12 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
                   dateProfile={props.dateProfile}
                   todayRange={props.todayRange}
                   extraDateSpan={props.extraDateSpan}
-                  parentEl={elementClosest(this.linkElRef.current, '.fc') /* TODO: don't access DOM here. but wasn't ready in ref callback */}
+                  parentEl={elementClosest(this.linkElRef.current, '.fc-view-harness') /* TODO: don't access DOM here. but wasn't ready in ref callback */}
                   alignmentEl={props.alignmentElRef.current}
                   onClose={this.handlePopoverClose}
-                >this is some stuff</MorePopover>
+                >
+                  {props.popoverContent && props.popoverContent()}
+                </MorePopover>
               )}
             </Fragment>
           )

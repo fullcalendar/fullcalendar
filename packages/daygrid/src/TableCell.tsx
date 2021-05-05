@@ -14,6 +14,7 @@ import {
   createFormatter,
   Dictionary,
   createRef,
+  EventSegUiInteractionState,
 } from '@fullcalendar/common'
 import { TableCellTop } from './TableCellTop'
 import { TableCellMoreLink } from './TableCellMoreLink'
@@ -37,6 +38,9 @@ export interface TableCellProps {
   showWeekNumber: boolean
   forceDayTop: boolean
   todayRange: DateRange
+  eventSelection: string
+  eventDrag: EventSegUiInteractionState | null
+  eventResize: EventSegUiInteractionState | null
   singlePlacements: TableSegPlacement[]
 }
 
@@ -106,6 +110,9 @@ export class TableCell extends DateComponent<TableCellProps> {
                   alignmentElRef={rootElRef}
                   extraDateSpan={props.extraDateSpan}
                   dateProfile={props.dateProfile}
+                  eventSelection={props.eventSelection}
+                  eventDrag={props.eventDrag}
+                  eventResize={props.eventResize}
                   todayRange={props.todayRange}
                 />
               </div>

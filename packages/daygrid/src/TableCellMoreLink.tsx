@@ -8,8 +8,14 @@ import {
   Dictionary,
   DateProfile,
   DateRange,
+  EventSegUiInteractionState,
+  Fragment,
+  getSegMeta,
 } from '@fullcalendar/common'
 import { TableSegPlacement } from './event-placement'
+import { hasListItemDisplay } from './event-rendering'
+import { TableBlockEvent } from './TableBlockEvent'
+import { TableListItemEvent } from './TableListItemEvent'
 import { TableSeg } from './TableSeg'
 
 export interface TableCellMoreLinkProps {
@@ -20,6 +26,9 @@ export interface TableCellMoreLinkProps {
   extraDateSpan?: Dictionary
   dateProfile: DateProfile
   todayRange: DateRange
+  eventSelection: string
+  eventDrag: EventSegUiInteractionState | null
+  eventResize: EventSegUiInteractionState | null
 }
 
 export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
@@ -38,6 +47,48 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
           hiddenSegs={hiddenSegs}
           alignmentElRef={props.alignmentElRef}
           extraDateSpan={props.extraDateSpan}
+          popoverContent={() => {
+            let hiddenInstances =
+              (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
+              (props.eventResize ? props.eventResize.affectedInstances : null) ||
+              {}
+            return (
+              <Fragment>
+                {allSegs.map((seg) => {
+                  let instanceId = seg.eventRange.instance.instanceId
+                  return (
+                    <div
+                      className="fc-daygrid-event-harness"
+                      key={instanceId}
+                      style={{
+                        visibility: hiddenInstances[instanceId] ? 'hidden' : ('' as any),
+                      }}
+                    >
+                      {hasListItemDisplay(seg) ? (
+                        <TableListItemEvent
+                          seg={seg}
+                          isDragging={false}
+                          isSelected={instanceId === props.eventSelection}
+                          defaultDisplayEventEnd={false}
+                          {...getSegMeta(seg, props.todayRange)}
+                        />
+                      ) : (
+                        <TableBlockEvent
+                          seg={seg}
+                          isDragging={false}
+                          isResizing={false}
+                          isDateSelecting={false}
+                          isSelected={instanceId === props.eventSelection}
+                          defaultDisplayEventEnd={false}
+                          {...getSegMeta(seg, props.todayRange)}
+                        />
+                      )}
+                    </div>
+                  )
+                })}
+              </Fragment>
+            )
+          }}
         >
           {(rootElRef, classNames, innerElRef, innerContent, handleClick) => (
             <a
@@ -51,59 +102,6 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
         </MoreLinkRoot>
       </div>
     )
-
-    /*
-      (!props.forPrint && (
-        <MorePopover
-          ref={this.morePopoverRef}
-          date={morePopoverState.date}
-          dateProfile={dateProfile}
-          segs={morePopoverState.allSegs}
-          alignmentEl={morePopoverState.dayEl}
-          topAlignmentEl={rowCnt === 1 ? props.headerAlignElRef.current : null}
-          selectedInstanceId={props.eventSelection}
-          hiddenInstances={// yuck
-            (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-            (props.eventResize ? props.eventResize.affectedInstances : null) ||
-            {}
-          }
-          todayRange={todayRange}
-        />
-      )
-
-      {props.segs.map((seg) => {
-        let instanceId = seg.eventRange.instance.instanceId
-        return (
-          <div
-            className="fc-daygrid-event-harness"
-            key={instanceId}
-            style={{
-              visibility: hiddenInstances[instanceId] ? 'hidden' : ('' as any),
-            }}
-          >
-            {hasListItemDisplay(seg) ? (
-              <TableListItemEvent
-                seg={seg}
-                isDragging={false}
-                isSelected={instanceId === selectedInstanceId}
-                defaultDisplayEventEnd={false}
-                {...getSegMeta(seg, todayRange)}
-              />
-            ) : (
-              <TableBlockEvent
-                seg={seg}
-                isDragging={false}
-                isResizing={false}
-                isDateSelecting={false}
-                isSelected={instanceId === selectedInstanceId}
-                defaultDisplayEventEnd={false}
-                {...getSegMeta(seg, todayRange)}
-              />
-            )}
-          </div>
-        )
-      })}
-      */
   }
 }
 

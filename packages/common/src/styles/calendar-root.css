@@ -4,9 +4,6 @@
   display: flex;
   flex-direction: column;
 
-  // for containing popovers
-  position: relative;
-
   font-size: 1em;
 
   &,
