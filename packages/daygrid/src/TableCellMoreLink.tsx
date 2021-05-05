@@ -22,7 +22,8 @@ export interface TableCellMoreLinkProps {
   allDayDate: DateMarker
   singlePlacements: TableSegPlacement[]
   marginTop: number
-  alignmentElRef: RefObject<HTMLElement>
+  alignmentElRef: RefObject<HTMLElement> // for popover
+  alignGridTop: boolean // for popover
   extraDateSpan?: Dictionary
   dateProfile: DateProfile
   todayRange: DateRange
@@ -46,6 +47,7 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
           allSegs={allSegs}
           hiddenSegs={hiddenSegs}
           alignmentElRef={props.alignmentElRef}
+          alignGridTop={props.alignGridTop}
           extraDateSpan={props.extraDateSpan}
           popoverContent={() => {
             let hiddenInstances =

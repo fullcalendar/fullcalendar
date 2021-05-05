@@ -27,7 +27,9 @@ export interface MoreLinkRootProps { // what the MoreLinkRoot component receives
   allSegs: Seg[]
   hiddenSegs: Seg[]
   extraDateSpan?: Dictionary
-  alignmentElRef: RefObject<HTMLElement>
+  alignmentElRef: RefObject<HTMLElement> // for popover
+  alignGridTop?: boolean // for popover
+  topAlignmentElRef?: RefObject<HTMLElement>
   defaultContent?: (hookProps: MoreLinkContentArg) => ComponentChildren
   popoverContent: () => VNode
   children: MoreLinkChildren
@@ -47,6 +49,7 @@ interface MoreLinkRootState {
 }
 
 export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootState> {
+  parentEl: HTMLElement | null = null
   linkElRef = createRef<HTMLElement>()
 
   state = {
@@ -94,8 +97,9 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
                   dateProfile={props.dateProfile}
                   todayRange={props.todayRange}
                   extraDateSpan={props.extraDateSpan}
-                  parentEl={elementClosest(this.linkElRef.current, '.fc-view-harness') /* TODO: move to did mount. don't access DOM here. but wasn't ready in ref callback */}
+                  parentEl={this.parentEl}
                   alignmentEl={props.alignmentElRef.current}
+                  alignGridTop={props.alignGridTop}
                   onClose={this.handlePopoverClose}
                 >
                   {props.popoverContent()}
@@ -106,6 +110,10 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
         }}
       </ViewContextType.Consumer>
     )
+  }
+
+  componentDidMount() { // dom is finally inserted at this point
+    this.parentEl = elementClosest(this.linkElRef.current, '.fc-view-harness')
   }
 
   handleClick = (ev: MouseEvent) => {

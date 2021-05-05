@@ -1,6 +1,6 @@
 import { Dictionary } from '../options'
 import { computeClippedClientRect } from '../util/dom-geom'
-import { applyStyle } from '../util/dom-manip'
+import { applyStyle, elementClosest } from '../util/dom-manip'
 import { createElement, ComponentChildren, Ref, createPortal } from '../vdom'
 import { BaseComponent, setRef } from '../vdom-util'
 
@@ -11,6 +11,7 @@ export interface PopoverProps {
   extraAttrs?: Dictionary
   parentEl: HTMLElement
   alignmentEl: HTMLElement
+  alignGridTop?: boolean
   children?: ComponentChildren
   onClose?: () => void
 }
@@ -80,7 +81,7 @@ export class Popover extends BaseComponent<PopoverProps> {
 
   private updateSize() {
     let { isRtl } = this.context
-    let { alignmentEl } = this.props
+    let { alignmentEl, alignGridTop } = this.props
     let { rootEl } = this
 
     let alignmentRect = computeClippedClientRect(alignmentEl)
@@ -88,7 +89,9 @@ export class Popover extends BaseComponent<PopoverProps> {
       let popoverDims = rootEl.getBoundingClientRect()
 
       // position relative to viewport
-      let popoverTop = alignmentRect.top
+      let popoverTop = alignGridTop
+        ? elementClosest(alignmentEl, '.fc-scrollgrid').getBoundingClientRect().top
+        : alignmentRect.top
       let popoverLeft = isRtl ? alignmentRect.right - popoverDims.width : alignmentRect.left
 
       // constrain

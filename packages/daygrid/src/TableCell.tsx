@@ -108,6 +108,7 @@ export class TableCell extends DateComponent<TableCellProps> {
                   singlePlacements={props.singlePlacements}
                   marginTop={props.moreMarginTop}
                   alignmentElRef={rootElRef}
+                  alignGridTop={!props.showDayNumber}
                   extraDateSpan={props.extraDateSpan}
                   dateProfile={props.dateProfile}
                   eventSelection={props.eventSelection}
