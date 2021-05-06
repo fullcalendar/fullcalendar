@@ -135,4 +135,36 @@ describe('timeGrid event rendering', () => {
 
     expect(obscured).toBe(false)
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/5004
+  it('renders event widths somewhat equally', () => {
+    let calendar = initCalendar({
+      initialView: 'timeGridDay',
+      initialDate: '2019-08-01',
+      slotDuration: '00:15:00',
+      slotEventOverlap: false,
+      events: [
+        {start: '2019-08-01 08:00', end: '2019-08-01 09:00'},
+        {start: '2019-08-01 08:00', end: '2019-08-01 09:00'},
+        {start: '2019-08-01 08:30', end: '2019-08-01 09:30'},
+        {start: '2019-08-01 09:00', end: '2019-08-01 10:00'},
+        {start: '2019-08-01 09:00', end: '2019-08-01 10:00'},
+        {start: '2019-08-01 09:30', end: '2019-08-01 10:30'},
+        {start: '2019-08-01 09:30', end: '2019-08-01 10:30'},
+        {start: '2019-08-01 10:00', end: '2019-08-01 11:00'},
+        {start: '2019-08-01 10:00', end: '2019-08-01 11:00'},
+        {start: '2019-08-01 10:00', end: '2019-08-01 11:00'},
+        {start: '2019-08-01 10:00', end: '2019-08-01 11:00'},
+        {start: '2019-08-01 10:00', end: '2019-08-01 11:00'},
+        {start: '2019-08-01 10:00', end: '2019-08-01 11:00'},
+        {start: '2019-08-01 10:00', end: '2019-08-01 11:00'},
+      ],
+    })
+    let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+    let eventEls = timeGridWrapper.getEventEls()
+    let eventWidths = eventEls.map((eventEl) => eventEl.getBoundingClientRect().width)
+    eventWidths.sort() // sorts highest to lowest
+    eventWidths.splice(0, 1) // remove first item, which is exceptionally wide event
+    expect(Math.abs(eventWidths[0] - eventWidths[eventWidths.length - 1])).toBeLessThan(1)
+  })
 })

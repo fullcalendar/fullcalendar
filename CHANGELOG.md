@@ -5,9 +5,9 @@ v5.7.0
 - feature: timeGridEventShortHeight
 - fix: events can be completely hidden behind others with custom eventOrder (#6019)
 - fix: +more shows on days with less events than dayMaxEvents (#6187)
+- fix: less homogeneous event widths in timegrid (#5004)
 
 write tests:
-- fix: less homogeneous event widths in timegrid (#5004)
 - feature: +more popover for timegrid (#4218)
 - feature: +more popover for timeline (#4827)
 
