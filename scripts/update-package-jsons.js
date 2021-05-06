@@ -12,7 +12,6 @@ const PROPS_TO_COPY = [
   'repository',
   'license',
   'author',
-  'copyright'
 ]
 
 exec([ path.join(__dirname, 'require-clean-working-tree.sh') ])
