@@ -200,7 +200,8 @@ export const BASE_OPTION_REFINERS = {
   eventLongPressDelay: Number,
 
   selectMirror: Boolean,
-  eventMinHeight: Number, // TODO: kill this setting
+  eventMinHeight: Number,
+  timeGridEventShortHeight: Number, // TODO: move to timegrid plugin when plugins can provide defaults
   slotEventOverlap: Boolean,
   plugins: identity as Identity<PluginDef[]>,
   firstDay: Number,
@@ -283,6 +284,8 @@ export const BASE_OPTION_DEFAULTS = {
   expandRows: false,
   navLinks: false,
   selectable: false,
+  eventMinHeight: 15,
+  timeGridEventShortHeight: 30,
 }
 
 export type BaseOptionsRefined = DefaultedRefinedOptions<

@@ -597,6 +597,6 @@ function checkEventRenderingMatch(expectedRects, eventEls) {
 export function queryEventElInfo(eventEl: HTMLElement) {
   return {
     timeText: $(eventEl.querySelector('.fc-event-time')).text(),
-    isShort: eventEl.classList.contains('fc-timegrid-event-condensed'),
+    isShort: eventEl.classList.contains('fc-timegrid-event-short'),
   }
 }

@@ -37,7 +37,7 @@
   }
 }
 
-.fc-timegrid-event-condensed {
+.fc-timegrid-event-short {
   & .fc-event-main-frame {
     flex-direction: row;
     overflow: hidden;

@@ -1,6 +1,8 @@
 
 v5.7.0
 ------
+- feature: eventMinHeight (#961)
+- feature: timeGridEventShortHeight
 - fix: events can be completely hidden behind others with custom eventOrder (#6019)
 - fix: +more shows on days with less events than dayMaxEvents (#6187)
 
@@ -8,7 +10,6 @@ write tests:
 - fix: less homogeneous event widths in timegrid (#5004)
 - feature: +more popover for timegrid (#4218)
 - feature: +more popover for timeline (#4827)
-- feature: eventMinHeight (#961)
 
 verify manually (then, write tests):
 - fix: +more popover can be scrolled down with page scroll (#5532)
@@ -25,6 +26,9 @@ not yet implemented:
 - feature: eventMinWidth (#4823)
 - misc: ensure only yarn (#5504)
 - misc: ensure building on windows (#5366)
+
+breaking changes:
+- renamed fc-timegrid-event-condensed className to fc-timegrid-event-short
 
 
 v5.6.0 (2021-03-28)

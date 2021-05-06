@@ -32,8 +32,6 @@ export interface TimeColProps {
   forPrint: boolean
 }
 
-config.timeGridEventCondensedHeight = 30
-
 export class TimeCol extends BaseComponent<TimeColProps> {
   sortEventSegs = memoize(sortEventSegs)
   computeFgSegPlacements = memoize(computeFgSegPlacements) // only for non-print, non-mirror
@@ -135,11 +133,12 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     isResizing?: boolean,
     isDateSelecting?: boolean,
   ) {
+    let { timeGridEventMaxStack, timeGridEventShortHeight } = this.context.options
     let { eventSelection, todayRange, nowDate } = this.props
     let isMirror = isDragging || isResizing || isDateSelecting
     let segInputs = this.buildSegInputs(segs)
     let { segRects, hiddenGroups } = isMirror ? computeFgSegPlacements(segInputs) : // don't use memoized
-      this.computeFgSegPlacements(segInputs, this.context.options.timeGridEventMaxStack)
+      this.computeFgSegPlacements(segInputs, timeGridEventMaxStack)
 
     return (
       <Fragment>
@@ -169,7 +168,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
                 isResizing={isResizing}
                 isDateSelecting={isDateSelecting}
                 isSelected={instanceId === eventSelection}
-                isCondensed={(seg.bottom - seg.top) < config.timeGridEventCondensedHeight}
+                isShort={(segRect.spanEnd - segRect.spanStart) < timeGridEventShortHeight}
                 {...getSegMeta(seg, todayRange, nowDate)}
               />
             </div>
@@ -348,7 +347,7 @@ export function renderPlainFgSegs(
               isResizing={false}
               isDateSelecting={false}
               isSelected={instanceId === eventSelection}
-              isCondensed={false}
+              isShort={false}
               {...getSegMeta(seg, todayRange, nowDate)}
             />
           </div>

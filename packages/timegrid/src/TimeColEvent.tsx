@@ -7,7 +7,7 @@ const DEFAULT_TIME_FORMAT = createFormatter({
 })
 
 export interface TimeColEventProps extends MinimalEventProps {
-  isCondensed: boolean
+  isShort: boolean
 }
 
 export class TimeColEvent extends BaseComponent<TimeColEventProps> {
@@ -17,8 +17,8 @@ export class TimeColEvent extends BaseComponent<TimeColEventProps> {
       'fc-v-event',
     ]
 
-    if (this.props.isCondensed) {
-      classNames.push('fc-timegrid-event-condensed')
+    if (this.props.isShort) {
+      classNames.push('fc-timegrid-event-short')
     }
 
     return (
