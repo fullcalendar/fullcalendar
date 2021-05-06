@@ -29,6 +29,7 @@ not yet implemented:
 
 breaking changes:
 - renamed fc-timegrid-event-condensed className to fc-timegrid-event-short
+- removed config.timeGridEventCondensedHeight
 
 
 v5.6.0 (2021-03-28)

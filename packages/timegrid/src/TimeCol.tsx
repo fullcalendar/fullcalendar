@@ -1,7 +1,7 @@
 import {
   Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta,
   DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill, buildIsoString,
-  DateProfile, config, buildEventRangeKey, sortEventSegs, SegInput, memoize, SegEntryGroup, SegEntry, Dictionary,
+  DateProfile, buildEventRangeKey, sortEventSegs, SegInput, memoize, SegEntryGroup, SegEntry, Dictionary,
 } from '@fullcalendar/common'
 import { TimeColMoreLink } from './TimeColMoreLink'
 import { TimeColsSeg } from './TimeColsSeg'
