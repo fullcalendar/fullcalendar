@@ -3570,6 +3570,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@fullcalendar-example-projects/lit@workspace:example-projects/lit":
+  version: 0.0.0-use.local
+  resolution: "@fullcalendar-example-projects/lit@workspace:example-projects/lit"
+  dependencies:
+    "@fullcalendar/core": ^5.5.0
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/list": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
+    "@rollup/plugin-node-resolve": ^7.1.3
+    lit: ^2.0.0-rc.1
+    rollup: ^1.20.0||^2.0.0
+    rollup-plugin-postcss: ^2.8.2
+  languageName: unknown
+  linkType: soft
+
 "@fullcalendar-example-projects/locales@workspace:example-projects/locales":
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/locales@workspace:example-projects/locales"
@@ -4411,6 +4427,13 @@ __metadata:
     merge-source-map: ^1.1.0
     schema-utils: ^2.7.0
   checksum: f464969fce1c810faa4b134f4f2ac789df72400af06f408996fbfc5785bdc3c7da5c2cddfbd96230768de94bee33c7f2c17ef044e0c593cd352ac609af920c0f
+  languageName: node
+  linkType: hard
+
+"@lit/reactive-element@npm:^1.0.0-rc.1":
+  version: 1.0.0-rc.1
+  resolution: "@lit/reactive-element@npm:1.0.0-rc.1"
+  checksum: 6850cedae11d9e64cbaff7aba754d221067052d99f3bc3d764cf48e43268e40508e94574704a646e15c139d9adb0b87e1061524a2090705fa1075c1fa6490032
   languageName: node
   linkType: hard
 
@@ -6358,6 +6381,13 @@ __metadata:
   version: 1.0.0
   resolution: "@types/treeify@npm:1.0.0"
   checksum: f7b82d91a4be51d5b93fb1e245ea71768e06a567daa1ff84fe075c3e62ce90f2703fa8258f0f093f92816416fe2f41c3177e5005114613adbdddabe2ddc3e593
+  languageName: node
+  linkType: hard
+
+"@types/trusted-types@npm:^1.0.1":
+  version: 1.0.6
+  resolution: "@types/trusted-types@npm:1.0.6"
+  checksum: a2eb3e307d4fa212888285de782e96bd083dbabb991c3803aed124d50c9637529699299319ec8be301b3c5668067f6ea07785c3c6099f99d92783a3dab48de29
   languageName: node
   linkType: hard
 
@@ -18446,6 +18476,36 @@ fsevents@~2.3.1:
   version: 1.1.6
   resolution: "lines-and-columns@npm:1.1.6"
   checksum: 798b80ed7ae3fba34d43fe29591ccb4f16f6fca1da4e1f9922b92264b91d931012433c248daf8e44caa74feb40c0eaa0f27a14f8ee68b6ffb425f3c3f785af27
+  languageName: node
+  linkType: hard
+
+"lit-element@npm:^3.0.0-rc.1":
+  version: 3.0.0-rc.1
+  resolution: "lit-element@npm:3.0.0-rc.1"
+  dependencies:
+    "@lit/reactive-element": ^1.0.0-rc.1
+    lit-html: ^2.0.0-rc.1
+  checksum: a424ed1e06dc7db635b99048f100b9b4fa7843c8270e2c9fdbf537017a9efcd648b686ce4a077f0acc1ed233a10dcfd21c017068266fdd04f383ea78efd78379
+  languageName: node
+  linkType: hard
+
+"lit-html@npm:^2.0.0-rc.1":
+  version: 2.0.0-rc.2
+  resolution: "lit-html@npm:2.0.0-rc.2"
+  dependencies:
+    "@types/trusted-types": ^1.0.1
+  checksum: af0162ae34ae700af8acae6b381f96b66cbc729203336a723e9a3fbfbc682a0bcac1e04c1a83b0ea1faf0614013b23f079af5cd5d715cc63690f7dc7287e49ea
+  languageName: node
+  linkType: hard
+
+"lit@npm:^2.0.0-rc.1":
+  version: 2.0.0-rc.1
+  resolution: "lit@npm:2.0.0-rc.1"
+  dependencies:
+    "@lit/reactive-element": ^1.0.0-rc.1
+    lit-element: ^3.0.0-rc.1
+    lit-html: ^2.0.0-rc.1
+  checksum: 5f69ec056dfa988156b41270e200759e64f1ec0bf232ff460c6b2504eeced81c3a1b2f07e25319590c8b7b7a7b52fc2faf49288eaafaf6ee7a628054bfae5c18
   languageName: node
   linkType: hard
 
