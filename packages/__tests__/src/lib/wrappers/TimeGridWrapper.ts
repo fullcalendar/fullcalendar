@@ -91,6 +91,27 @@ export class TimeGridWrapper {
     return Boolean(this.el.querySelector('.fc-timegrid-slots'))
   }
 
+  getMoreEls() {
+    return findElements(this.el, '.fc-timegrid-more-link')
+  }
+
+  openMorePopover(index?) {
+    $(this.getMoreEls()[index || 0]).simulate('click')
+  }
+
+  getMorePopoverEl() {
+    let viewWrapperEl = this.el.closest('.fc-view-harness')
+    return viewWrapperEl.querySelector('.fc-more-popover') as HTMLElement
+  }
+
+  getMorePopoverEventEls() {
+    return findElements(this.getMorePopoverEl(), '.fc-event')
+  }
+
+  closeMorePopover() {
+    $(this.getMorePopoverEl().querySelector('.fc-popover-close')).simulate('click')
+  }
+
   hasNowIndicator() {
     let hasArrow = Boolean(this.getNowIndicatorArrowEl())
     let hasLine = Boolean(this.getNowIndicatorLineEl())
