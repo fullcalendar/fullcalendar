@@ -11,9 +11,9 @@ v5.7.0
 - fix: +more popover can be scrolled down with page scroll (#5532)
 - fix: +more popover falls behind the sticky dates header (#5782)
 - fix: all-day events are displayed in front of the sticky header (#5596)
+- fix: respect duration in eventOrder as highest precedence (#5481)
 
 verify manually (then, write tests):
-- fix: respect duration in eventOrder as highest precedence (#5481)
 - fix: refetching events should keep event popover open (#3958)
 - fix: alphabetic ordering for events in more popover (#5767)
 - timeGridEventShortHeight
