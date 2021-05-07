@@ -1,7 +1,7 @@
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { TimeGridWrapper } from '../lib/wrappers/TimeGridWrapper'
 
-fdescribe('timeGridEventMaxStack', () => {
+describe('timeGridEventMaxStack', () => {
   pushOptions({
     initialView: 'timeGridDay',
     initialDate: '2021-05-07',
@@ -33,9 +33,9 @@ fdescribe('timeGridEventMaxStack', () => {
     let calendar = initCalendar({
       editable: true,
       events: [
-        { id: 'a', start: '2021-05-07T00:00:00', end: '2021-05-07T01:00:00' },
-        { id: 'b', start: '2021-05-07T00:00:00', end: '2021-05-07T01:00:00' },
-        { id: 'c', start: '2021-05-07T00:00:00', end: '2021-05-07T01:00:00' }, // hidden
+        { id: '1', start: '2021-05-07T00:00:00', end: '2021-05-07T01:00:00' },
+        { id: '2', start: '2021-05-07T00:00:00', end: '2021-05-07T01:00:00' },
+        { id: '3', start: '2021-05-07T00:00:00', end: '2021-05-07T01:00:00' }, // hidden
       ],
     })
     let timeGrid = new TimeGridViewWrapper(calendar).timeGrid
@@ -46,7 +46,7 @@ fdescribe('timeGridEventMaxStack', () => {
       $(moreEventEls).simulate('drag', {
         end: timeGrid.getPoint(newStart),
         onRelease() {
-          let event = calendar.getEventById('c')
+          let event = calendar.getEventById('3')
           expect(event.start).toEqualDate(newStart)
           done()
         }
@@ -75,10 +75,10 @@ fdescribe('timeGridEventMaxStack', () => {
     let calendar = initCalendar({
       eventOrder: 'title',
       events: [
-        { title: 'a', start: '2021-05-07T00:00:00', end: '2021-05-07T02:00:00' },
-        { title: 'b', start: '2021-05-07T00:00:00', end: '2021-05-07T02:00:00' },
-        { title: 'c', start: '2021-05-07T01:00:00', end: '2021-05-07T03:00:00' }, // hidden
-        { title: 'd', start: '2021-05-07T00:30:00', end: '2021-05-07T02:30:00' }, // hidden
+        { title: '1', start: '2021-05-07T00:00:00', end: '2021-05-07T02:00:00' },
+        { title: '2', start: '2021-05-07T00:00:00', end: '2021-05-07T02:00:00' },
+        { title: '3', start: '2021-05-07T01:00:00', end: '2021-05-07T03:00:00' }, // hidden
+        { title: '4', start: '2021-05-07T00:30:00', end: '2021-05-07T02:30:00' }, // hidden
       ],
     })
     let timeGrid = new TimeGridViewWrapper(calendar).timeGrid
@@ -89,7 +89,7 @@ fdescribe('timeGridEventMaxStack', () => {
     setTimeout(() => {
       let moreEventEls = timeGrid.getMorePopoverEventEls()
       expect(moreEventEls.length).toBe(2)
-      expect(TimeGridWrapper.getEventElInfo(moreEventEls[0]).title).toBe('c')
+      expect(TimeGridWrapper.getEventElInfo(moreEventEls[0]).title).toBe('3')
       done()
     })
   })

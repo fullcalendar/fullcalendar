@@ -108,10 +108,6 @@ export class TimeGridWrapper {
     return findElements(this.getMorePopoverEl(), '.fc-event')
   }
 
-  closeMorePopover() {
-    $(this.getMorePopoverEl().querySelector('.fc-popover-close')).simulate('click')
-  }
-
   hasNowIndicator() {
     let hasArrow = Boolean(this.getNowIndicatorArrowEl())
     let hasLine = Boolean(this.getNowIndicatorLineEl())
