@@ -4,7 +4,6 @@ v5.7.0
 - feature: +more popover for timegrid (#4218)
 - feature: +more popover for timeline (#4827)
 - feature: eventMinHeight (#961)
-- feature: timeGridEventShortHeight
 - fix: events can be completely hidden behind others with custom eventOrder (#6019)
 - fix: less homogeneous event widths in timegrid (#5004)
 - fix: +more shows on days with less events than dayMaxEvents (#6187)
@@ -15,12 +14,11 @@ v5.7.0
 
 verify manually (then, write tests):
 - fix: refetching events should keep event popover open (#3958)
-- fix: alphabetic ordering for events in more popover (#5767)
-- timeGridEventShortHeight
+- feature: timeGridEventShortHeight
 
 not yet implemented:
 - fix: accidental +more popover close with shadow dom (#6205)
-- feature: flag to ensure strict event ordering (#5766)
+- feature: flag to ensure strict event ordering (#5766, #5767)
 - feature: flag to maintain scroll state across dates/views (#6178)
 - feature: eventMinWidth (#4823)
 - misc: ensure only yarn (#5504)
