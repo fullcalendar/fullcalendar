@@ -1,7 +1,7 @@
 import frLocale from '@fullcalendar/core/locales/fr'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
-describe('moreLinkText', () => { // TODO: rename file
+describe('moreLinkText', () => {
   pushOptions({
     initialDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
     initialView: 'dayGridMonth',

@@ -1,6 +1,6 @@
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
-describe('more-link popover', () => { // TODO: rename file
+describe('more-link popover', () => {
   pushOptions({
     initialView: 'dayGridMonth',
     initialDate: '2014-08-01',

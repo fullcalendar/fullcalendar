@@ -2,7 +2,7 @@ import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { filterVisibleEls } from '../lib/dom-misc'
 
-describe('dayMaxEventRows', () => { // TODO: rename file
+describe('dayMaxEventRows', () => {
   pushOptions({
     initialDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
     dayMaxEventRows: 3,

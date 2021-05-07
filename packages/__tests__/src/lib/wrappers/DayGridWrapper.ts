@@ -164,6 +164,13 @@ export class DayGridWrapper {
     return findElements(this.el, '.fc-highlight')
   }
 
+  static getEventElInfo(eventEl) {
+    return {
+      title: $(eventEl).find('.fc-event-title').text(),
+      timeText: $(eventEl).find('.fc-event-time').text(),
+    }
+  }
+
   clickDate(date) {
     $.simulateMouseClick(this.getDayEl(date))
   }
