@@ -201,6 +201,7 @@ export const BASE_OPTION_REFINERS = {
 
   selectMirror: Boolean,
   eventMinHeight: Number,
+  eventMinWidth: Number,
   timeGridEventShortHeight: Number, // TODO: move to timegrid plugin when plugins can provide defaults
   slotEventOverlap: Boolean,
   plugins: identity as Identity<PluginDef[]>,
@@ -285,6 +286,7 @@ export const BASE_OPTION_DEFAULTS = {
   navLinks: false,
   selectable: false,
   eventMinHeight: 15,
+  eventMinWidth: 30,
   timeGridEventShortHeight: 30,
 }
 
