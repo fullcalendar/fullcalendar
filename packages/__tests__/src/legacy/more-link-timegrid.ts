@@ -1,4 +1,5 @@
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { TimeGridWrapper } from '../lib/wrappers/TimeGridWrapper'
 
 fdescribe('timeGridEventMaxStack', () => {
   pushOptions({
@@ -70,13 +71,14 @@ fdescribe('timeGridEventMaxStack', () => {
   })
 
   // TODO: test coords of more link
-  it('puts overlapping hidden events in same popover', (done) => {
+  it('puts overlapping hidden events in same popover, respecting eventOrder', (done) => {
     let calendar = initCalendar({
+      eventOrder: 'title',
       events: [
-        { start: '2021-05-07T00:00:00', end: '2021-05-07T02:00:00' },
-        { start: '2021-05-07T00:00:00', end: '2021-05-07T02:00:00' },
-        { start: '2021-05-07T00:30:00', end: '2021-05-07T02:30:00' }, // hidden
-        { start: '2021-05-07T01:00:00', end: '2021-05-07T03:00:00' }, // hidden
+        { title: 'a', start: '2021-05-07T00:00:00', end: '2021-05-07T02:00:00' },
+        { title: 'b', start: '2021-05-07T00:00:00', end: '2021-05-07T02:00:00' },
+        { title: 'c', start: '2021-05-07T01:00:00', end: '2021-05-07T03:00:00' }, // hidden
+        { title: 'd', start: '2021-05-07T00:30:00', end: '2021-05-07T02:30:00' }, // hidden
       ],
     })
     let timeGrid = new TimeGridViewWrapper(calendar).timeGrid
@@ -87,6 +89,7 @@ fdescribe('timeGridEventMaxStack', () => {
     setTimeout(() => {
       let moreEventEls = timeGrid.getMorePopoverEventEls()
       expect(moreEventEls.length).toBe(2)
+      expect(TimeGridWrapper.getEventElInfo(moreEventEls[0]).title).toBe('c')
       done()
     })
   })

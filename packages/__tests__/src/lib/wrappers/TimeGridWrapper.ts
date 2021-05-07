@@ -560,6 +560,13 @@ export class TimeGridWrapper {
     return this.getEventEls().map((eventEl) => $(eventEl.querySelector('.fc-event-time')).text())
   }
 
+  static getEventElInfo(eventEl) {
+    return {
+      title: $(eventEl).find('.fc-event-title').text(),
+      timeText: $(eventEl).find('.fc-event-time').text(),
+    }
+  }
+
   /*
   Returns a boolean.
   TODO: check isStart/isEnd.
