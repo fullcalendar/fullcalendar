@@ -41,11 +41,11 @@ export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
               setRef(rootElRef, el)
               setRef(this.rootElRef, el)
             }}
-            className={['fc-timegrid-event-more'].concat(classNames).join(' ')}
+            className={['fc-timegrid-more-link'].concat(classNames).join(' ')}
             style={{ top: props.top, bottom: props.bottom }}
             onClick={handleClick}
           >
-            <div ref={innerElRef} className="fc-timegrid-event-more-inner fc-sticky">
+            <div ref={innerElRef} className="fc-timegrid-more-link-inner fc-sticky">
               {innerContent}
             </div>
           </a>

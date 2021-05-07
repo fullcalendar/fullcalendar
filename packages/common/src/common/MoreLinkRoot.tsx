@@ -88,7 +88,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
                 willUnmount={options.moreLinkWillUnmount}
               >
                 {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
-                  rootElRef, ['fc-event-more'].concat(customClassNames), innerElRef, innerContent, this.handleClick,
+                  rootElRef, ['fc-more-link'].concat(customClassNames), innerElRef, innerContent, this.handleClick,
                 )}
               </RenderHook>
               {this.state.isPopoverOpen && (
