@@ -1,6 +1,6 @@
 import {
   Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta,
-  DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill, buildIsoString,
+  DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill, buildIsoString, computeEarliestSegStart,
   DateProfile, buildEventRangeKey, sortEventSegs, SegInput, memoize, SegEntryGroup, SegEntry, Dictionary,
 } from '@fullcalendar/common'
 import { TimeColMoreLink } from './TimeColMoreLink'
@@ -188,7 +188,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
           let hiddenSegs = compileSegsFromEntries(hiddenGroup.entries, segs)
           return (
             <TimeColMoreLink
-              key={buildIsoString(hiddenSegs[0].start)}
+              key={buildIsoString(computeEarliestSegStart(hiddenSegs))}
               hiddenSegs={hiddenSegs}
               top={positionCss.top}
               bottom={positionCss.bottom}
@@ -357,12 +357,9 @@ export function renderPlainFgSegs(
   )
 }
 
-// will be sorted
-function compileSegsFromEntries(segEntries: SegEntry[], allSegs: TimeColsSeg[]) {
-  let segs = segEntries.map((segEntry) => allSegs[segEntry.segInput.index])
-  return segs.sort(cmpSegs)
-}
-
-function cmpSegs(seg0: TimeColsSeg, seg1: TimeColsSeg) {
-  return seg0.start.valueOf() - seg1.start.valueOf()
+function compileSegsFromEntries(
+  segEntries: SegEntry[],
+  allSegs: TimeColsSeg[],
+): TimeColsSeg[] {
+  return segEntries.map((segEntry) => allSegs[segEntry.segInput.index])
 }

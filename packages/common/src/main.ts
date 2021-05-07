@@ -264,7 +264,7 @@ export { DayCellContent, DayCellContentProps } from './common/DayCellContent'
 export { EventRoot, MinimalEventProps } from './common/EventRoot'
 export { renderFill, BgEvent, BgEventProps } from './common/bg-fill'
 export { WeekNumberRoot, WeekNumberRootProps } from './common/WeekNumberRoot'
-export { MoreLinkRoot, MoreLinkRootProps, MoreLinkContentArg, MoreLinkMountArg } from './common/MoreLinkRoot'
+export { MoreLinkRoot, MoreLinkRootProps, MoreLinkContentArg, MoreLinkMountArg, computeEarliestSegStart } from './common/MoreLinkRoot'
 
 export { ViewRoot, ViewRootProps } from './common/ViewRoot'
 export { triggerDateSelect, DatePointTransform, DateSpanTransform, DateSelectionApi, getDefaultEventEnd } from './calendar-utils'

@@ -170,7 +170,23 @@ function computeRange(props: MoreLinkRootProps): DateRange {
 
   let { hiddenSegs } = props
   return {
-    start: hiddenSegs[0].eventRange.range.start,
-    end: hiddenSegs[hiddenSegs.length - 1].eventRange.range.end,
+    start: computeEarliestSegStart(hiddenSegs),
+    end: computeLatestSegEnd(hiddenSegs),
   }
+}
+
+export function computeEarliestSegStart(segs: Seg[]): DateMarker {
+  return segs.reduce(pickEarliestStart).eventRange.range.start
+}
+
+function pickEarliestStart(seg0: Seg, seg1: Seg): Seg {
+  return seg0.eventRange.range.start < seg1.eventRange.range.start ? seg0 : seg1
+}
+
+function computeLatestSegEnd(segs: Seg[]): DateMarker {
+  return segs.reduce(pickLatestEnd).eventRange.range.end
+}
+
+function pickLatestEnd(seg0: Seg, seg1: Seg): Seg {
+  return seg0.eventRange.range.end > seg1.eventRange.range.end ? seg0 : seg1
 }
