@@ -4,6 +4,7 @@ v5.7.0
 
 - feature: +more popover for timegrid (timeGridEventMaxStack) (#4218)
 - feature: +more popover for timeline (timelineEventMaxStack) (#4827)
+- feature: timeGridEventShortHeight
 - feature: eventMinHeight (#961)
 - feature: eventMinWidth (#4823)
 - fix: events can be completely hidden behind others with custom eventOrder (#6019)
@@ -16,7 +17,6 @@ v5.7.0
 
 verify manually (then, write tests):
 - fix: refetching events should keep event popover open (#3958)
-- feature: timeGridEventShortHeight
 
 not yet implemented:
 - fix: accidental +more popover close with shadow dom (#6205)
