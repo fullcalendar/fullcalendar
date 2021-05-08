@@ -16,11 +16,11 @@ v5.7.0
 - fix: respect duration in eventOrder as highest precedence (#5481)
 - fix: refetching events should keep event popover open (#3958)
 - fix: accidental +more popover close with shadow dom (#6205)
+- dev: when attempting `npm install` in the dev repo, will throw an error saying to use yarn (#5504)
 
 not yet implemented:
 - feature: flag to ensure strict event ordering (#5766, #5767)
 - feature: flag to maintain scroll state across dates/views (#6178)
-- misc: ensure only yarn (#5504)
 - misc: ensure building on windows (#5366)
 
 breaking changes:

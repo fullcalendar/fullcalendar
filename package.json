@@ -32,6 +32,7 @@
     "example-projects/*"
   ],
   "scripts": {
+    "preinstall": "node ./scripts/ensure-yarn.js",
     "build": "gulp build",
     "watch": "gulp watch",
     "contrib:run": "node ./scripts/contrib-run.js",
