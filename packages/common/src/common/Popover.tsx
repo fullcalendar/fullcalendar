@@ -1,6 +1,6 @@
 import { Dictionary } from '../options'
 import { computeClippedClientRect } from '../util/dom-geom'
-import { applyStyle, elementClosest } from '../util/dom-manip'
+import { applyStyle, elementClosest, getEventTargetViaRoot } from '../util/dom-manip'
 import { createElement, ComponentChildren, Ref, createPortal } from '../vdom'
 import { BaseComponent, setRef } from '../vdom-util'
 
@@ -67,7 +67,7 @@ export class Popover extends BaseComponent<PopoverProps> {
   // Triggered when the user clicks *anywhere* in the document, for the autoHide feature
   handleDocumentMousedown = (ev) => {
     // only hide the popover if the click happened outside the popover
-    const target = ev.composedPath?.()[0] ?? ev.target
+    const target = getEventTargetViaRoot(ev) as HTMLElement
     if (!this.rootEl.contains(target)) {
       this.handleCloseClick()
     }

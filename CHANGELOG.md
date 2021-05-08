@@ -15,9 +15,9 @@ v5.7.0
 - fix: all-day events are displayed in front of the sticky header (#5596)
 - fix: respect duration in eventOrder as highest precedence (#5481)
 - fix: refetching events should keep event popover open (#3958)
+- fix: accidental +more popover close with shadow dom (#6205)
 
 not yet implemented:
-- fix: accidental +more popover close with shadow dom (#6205)
 - feature: flag to ensure strict event ordering (#5766, #5767)
 - feature: flag to maintain scroll state across dates/views (#6178)
 - misc: ensure only yarn (#5504)
