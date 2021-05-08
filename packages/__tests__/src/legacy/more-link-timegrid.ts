@@ -49,7 +49,7 @@ describe('timeGridEventMaxStack', () => {
           let event = calendar.getEventById('3')
           expect(event.start).toEqualDate(newStart)
           done()
-        }
+        },
       })
     })
   })

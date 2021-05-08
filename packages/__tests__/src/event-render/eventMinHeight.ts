@@ -17,7 +17,7 @@ describe('eventMinHeight', () => {
 
   it('can be set and rendered', () => {
     let calendar = initCalendar({
-      eventMinHeight: 40
+      eventMinHeight: 40,
     })
     let eventEl = new CalendarWrapper(calendar).getFirstEventEl()
     expect(eventEl.offsetHeight).toBeGreaterThanOrEqual(39)

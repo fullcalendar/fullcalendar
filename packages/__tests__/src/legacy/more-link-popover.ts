@@ -550,11 +550,11 @@ describe('more-link popover', () => {
           callback(testEvents.slice(0, -1).concat([
             {
               ...testEvents[testEvents.length - 1],
-              title: newTitle
-            }
+              title: newTitle,
+            },
           ]))
         }
-      }
+      },
     })
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
