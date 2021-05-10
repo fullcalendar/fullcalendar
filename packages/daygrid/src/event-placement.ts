@@ -24,12 +24,14 @@ export function computeFgSegPlacement(
   segs: TableSeg[], // assumed already sorted
   dayMaxEvents: boolean | number,
   dayMaxEventRows: boolean | number,
+  strictOrder: boolean,
   eventInstanceHeights: { [instanceId: string]: number },
   maxContentHeight: number | null,
   cells: DayTableCell[],
 ) {
   let hierarchy = new DayGridSegHierarchy()
   hierarchy.allowReslicing = true
+  hierarchy.strictOrder = strictOrder
 
   if (dayMaxEvents === true || dayMaxEventRows === true) {
     hierarchy.maxCoord = maxContentHeight
@@ -128,7 +130,7 @@ export function computeFgSegPlacement(
     }
   }
 
-  return { singleColPlacements, multiColPlacements, moreMarginTops, cellPaddingBottoms }
+  return { singleColPlacements, multiColPlacements, moreCnts, moreMarginTops, cellPaddingBottoms }
 }
 
 // rects ordered by top coord, then left

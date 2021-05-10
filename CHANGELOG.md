@@ -7,6 +7,7 @@ v5.7.0
 - feature: timeGridEventShortHeight
 - feature: eventMinHeight (#961)
 - feature: eventMinWidth (#4823)
+- feature: flag to ensure strict event ordering (#5766, #5767)
 - fix: events can be completely hidden behind others with custom eventOrder (#6019)
 - fix: less homogeneous event widths in timegrid (#5004)
 - fix: +more shows on days with less events than dayMaxEvents (#6187)
@@ -19,11 +20,10 @@ v5.7.0
 - dev: when attempting `npm install` in the dev repo, will throw an error saying to use yarn (#5504)
 
 not yet implemented:
-- feature: flag to ensure strict event ordering (#5766, #5767)
 - feature: flag to maintain scroll state across dates/views (#6178)
 - misc: ensure building on windows (#5366)
 
-breaking changes:
+obscure breaking changes:
 - renamed fc-timegrid-event-condensed className to fc-timegrid-event-short
 - removed config.timeGridEventCondensedHeight
 

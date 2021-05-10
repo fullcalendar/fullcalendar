@@ -33,6 +33,7 @@ export interface SegEntryGroup {
 
 export class SegHierarchy {
   // settings
+  strictOrder: boolean = false
   allowReslicing: boolean = false
   maxCoord: number = -1 // -1 means no max
   maxStackCnt: number = -1 // -1 means no max
@@ -130,19 +131,24 @@ export class SegHierarchy {
   }
 
   findInsertion(newEntry: SegEntry): SegInsertion {
-    let { levelCoords, entriesByLevel, stackCnts } = this
+    let { levelCoords, entriesByLevel, stackCnts, strictOrder } = this
     let levelCnt = levelCoords.length
-    let level = 0 // running value while iterating all segs
+    let level // running value while iterating all segs
     let levelCoord // "
     let lateralStart = 0 // "
     let lateralEnd = 0 // "
     let resCoord = 0 // the levelCoord for newSeg
     let touchingEntry: SegEntry = null
 
-    while (
-      level < levelCnt && // within bounds
-      (levelCoord = levelCoords[level]) < resCoord + newEntry.thickness // level's top collides with newEntry's current bottom
-    ) {
+    for (level = 0; level < levelCnt; level++) {
+      levelCoord = levelCoords[level]
+
+      // if the current level is past the placed entry, we have found a good
+      // empty space and can stop. only if not strict-ordering mode.
+      if (!strictOrder && levelCoord >= resCoord + newEntry.thickness) {
+        break
+      }
+
       let entries = entriesByLevel[level]
       let entry: SegEntry
       let searchRes = binarySearch(entries, newEntry.spanStart, getEntrySpanEnd)
@@ -153,17 +159,19 @@ export class SegHierarchy {
         (entry = entries[lateralEnd]) && // but not past the whole entry list
         entry.spanStart < newEntry.spanEnd
       ) {
-        if ( // vertically intersects?
-          resCoord < levelCoord + entry.thickness &&
-          resCoord + newEntry.thickness > levelCoord
+        if (
+          strictOrder ||
+          ( // vertically intersects?
+            resCoord < levelCoord + entry.thickness &&
+            resCoord + newEntry.thickness > levelCoord
+          )
         ) {
+          // push down the potential destination
           touchingEntry = entry
           resCoord = levelCoord + entry.thickness // move to bottom of colliding entry
         }
         lateralEnd += 1
       }
-
-      level += 1
     }
 
     return {

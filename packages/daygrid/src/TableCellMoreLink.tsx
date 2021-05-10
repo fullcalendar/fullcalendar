@@ -21,6 +21,7 @@ import { TableSeg } from './TableSeg'
 export interface TableCellMoreLinkProps {
   allDayDate: DateMarker
   singlePlacements: TableSegPlacement[]
+  moreCnt: number // can't rely on invisibleSegs.length because don't want more link when unknown seg dims
   marginTop: number
   alignmentElRef: RefObject<HTMLElement> // for popover
   alignGridTop: boolean // for popover
@@ -37,21 +38,21 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
 
   render() {
     let { props } = this
-    let { allSegs, hiddenSegs } = this.compileSegs(props.singlePlacements)
+    let { allSegs, invisibleSegs } = this.compileSegs(props.singlePlacements)
 
-    return Boolean(hiddenSegs.length) && (
+    return Boolean(props.moreCnt) && (
       <div className="fc-daygrid-day-bottom" style={{ marginTop: props.marginTop }}>
         <MoreLinkRoot
           dateProfile={props.dateProfile}
           todayRange={props.todayRange}
           allDayDate={props.allDayDate}
           allSegs={allSegs}
-          hiddenSegs={hiddenSegs}
+          hiddenSegs={invisibleSegs}
           alignmentElRef={props.alignmentElRef}
           alignGridTop={props.alignGridTop}
           extraDateSpan={props.extraDateSpan}
           popoverContent={() => {
-            let hiddenInstances =
+            let isForcedInvisible =
               (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
               (props.eventResize ? props.eventResize.affectedInstances : null) ||
               {}
@@ -64,7 +65,7 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
                       className="fc-daygrid-event-harness"
                       key={instanceId}
                       style={{
-                        visibility: hiddenInstances[instanceId] ? 'hidden' : ('' as any),
+                        visibility: isForcedInvisible[instanceId] ? 'hidden' : ('' as any),
                       }}
                     >
                       {hasListItemDisplay(seg) ? (
@@ -110,18 +111,18 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
 
 function compileSegs(singlePlacements: TableSegPlacement[]): {
   allSegs: TableSeg[]
-  hiddenSegs: TableSeg[]
+  invisibleSegs: TableSeg[]
 } {
   let allSegs: TableSeg[] = []
-  let hiddenSegs: TableSeg[] = []
+  let invisibleSegs: TableSeg[] = []
 
   for (let placement of singlePlacements) {
     allSegs.push(placement.seg)
 
     if (!placement.isVisible) {
-      hiddenSegs.push(placement.seg)
+      invisibleSegs.push(placement.seg)
     }
   }
 
-  return { allSegs, hiddenSegs }
+  return { allSegs, invisibleSegs }
 }

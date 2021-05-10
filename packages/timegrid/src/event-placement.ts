@@ -30,11 +30,15 @@ export interface TimeColSegRect extends SegRect {
 // segInputs assumed sorted
 export function computeFgSegPlacements(
   segInputs: SegInput[],
-  maxStack?: number,
+  strictOrder?: boolean,
+  maxStackCnt?: number,
 ): { segRects: TimeColSegRect[], hiddenGroups: SegEntryGroup[] } {
   let hierarchy = new SegHierarchy()
-  if (maxStack != null) {
-    hierarchy.maxStackCnt = maxStack
+  if (strictOrder != null) {
+    hierarchy.strictOrder = strictOrder
+  }
+  if (maxStackCnt != null) {
+    hierarchy.maxStackCnt = maxStackCnt
   }
 
   let hiddenEntries = hierarchy.addSegs(segInputs)

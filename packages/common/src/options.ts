@@ -118,6 +118,7 @@ export const BASE_OPTION_REFINERS = {
   unselectAuto: Boolean,
   dropAccept: identity as Identity<string | ((this: CalendarApi, draggable: any) => boolean)>, // TODO: type draggable
   eventOrder: parseFieldSpecs,
+  eventOrderStrict: Boolean,
 
   handleWindowResize: Boolean,
   windowResizeDelay: Number,

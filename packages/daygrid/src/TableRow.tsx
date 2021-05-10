@@ -69,6 +69,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
   render() {
     let { props, state, context } = this
+    let { options } = context
     let colCnt = props.cells.length
 
     let businessHoursByCol = splitSegsByFirstCol(props.businessHourSegs, colCnt)
@@ -76,10 +77,11 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     let highlightSegsByCol = splitSegsByFirstCol(this.getHighlightSegs(), colCnt)
     let mirrorSegsByCol = splitSegsByFirstCol(this.getMirrorSegs(), colCnt)
 
-    let { singleColPlacements, multiColPlacements, moreMarginTops, cellPaddingBottoms } = computeFgSegPlacement(
-      sortEventSegs(props.fgEventSegs, context.options.eventOrder) as TableSeg[],
+    let { singleColPlacements, multiColPlacements, moreCnts, moreMarginTops, cellPaddingBottoms } = computeFgSegPlacement(
+      sortEventSegs(props.fgEventSegs, options.eventOrder) as TableSeg[],
       props.dayMaxEvents,
       props.dayMaxEventRows,
+      options.eventOrderStrict,
       state.eventInstanceHeights,
       state.maxContentHeight,
       props.cells,
@@ -129,6 +131,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               extraDataAttrs={cell.extraDataAttrs}
               extraClassNames={cell.extraClassNames}
               extraDateSpan={cell.extraDateSpan}
+              moreCnt={moreCnts[col]}
               moreMarginTop={moreMarginTops[col]}
               singlePlacements={singleColPlacements[col]}
               fgPaddingBottom={cellPaddingBottoms[col]}

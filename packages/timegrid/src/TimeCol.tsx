@@ -133,12 +133,12 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     isResizing?: boolean,
     isDateSelecting?: boolean,
   ) {
-    let { timeGridEventMaxStack, timeGridEventShortHeight } = this.context.options
+    let { timeGridEventMaxStack, timeGridEventShortHeight, eventOrderStrict } = this.context.options
     let { eventSelection, todayRange, nowDate } = this.props
     let isMirror = isDragging || isResizing || isDateSelecting
     let segInputs = this.buildSegInputs(segs)
     let { segRects, hiddenGroups } = isMirror ? computeFgSegPlacements(segInputs) : // don't use memoized
-      this.computeFgSegPlacements(segInputs, timeGridEventMaxStack)
+      this.computeFgSegPlacements(segInputs, eventOrderStrict, timeGridEventMaxStack)
 
     return (
       <Fragment>

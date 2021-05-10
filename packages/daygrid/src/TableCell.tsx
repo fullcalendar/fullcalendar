@@ -33,6 +33,7 @@ export interface TableCellProps {
   fgContentElRef?: Ref<HTMLDivElement> // TODO: rename!!! classname confusion. is the "event" div
   fgContent: ComponentChildren
   fgPaddingBottom: CssDimValue
+  moreCnt: number
   moreMarginTop: number
   showDayNumber: boolean
   showWeekNumber: boolean
@@ -106,6 +107,7 @@ export class TableCell extends DateComponent<TableCellProps> {
                 <TableCellMoreLink
                   allDayDate={date}
                   singlePlacements={props.singlePlacements}
+                  moreCnt={props.moreCnt}
                   marginTop={props.moreMarginTop}
                   alignmentElRef={rootElRef}
                   alignGridTop={!props.showDayNumber}
