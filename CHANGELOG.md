@@ -19,10 +19,7 @@ v5.7.0
 - fix: refetching events should keep event popover open (#3958)
 - fix: accidental +more popover close with shadow dom (#6205)
 - dev: when attempting `npm install` in the dev repo, will throw an error saying to use yarn (#5504)
-
-not yet implemented:
-- misc: ensure building on windows (#5366)
-
+- dev: ensure building on windows works (#5366)
 obscure breaking changes:
 - renamed fc-timegrid-event-condensed className to fc-timegrid-event-short
 - removed config.timeGridEventCondensedHeight
