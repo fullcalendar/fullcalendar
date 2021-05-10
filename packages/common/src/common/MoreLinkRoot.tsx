@@ -49,8 +49,8 @@ interface MoreLinkRootState {
 }
 
 export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootState> {
-  parentEl: HTMLElement | null = null
-  linkElRef = createRef<HTMLElement>()
+  private linkElRef = createRef<HTMLElement>()
+  private parentEl: HTMLElement
 
   state = {
     isPopoverOpen: false,
@@ -113,8 +113,18 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
     )
   }
 
-  componentDidMount() { // dom is finally inserted at this point
-    this.parentEl = elementClosest(this.linkElRef.current, '.fc-view-harness')
+  componentDidMount() {
+    this.updateParentEl()
+  }
+
+  componentDidUpdate() {
+    this.updateParentEl()
+  }
+
+  updateParentEl() {
+    if (this.linkElRef.current) {
+      this.parentEl = elementClosest(this.linkElRef.current, '.fc-view-harness')
+    }
   }
 
   handleClick = (ev: MouseEvent) => {

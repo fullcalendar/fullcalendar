@@ -346,8 +346,6 @@ describe('more-link popover', () => {
         expect(dateClickCalled).toBe(false)
         done()
       }, 500)
-
-      done()
     })
   })
 
