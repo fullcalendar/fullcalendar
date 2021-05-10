@@ -293,7 +293,7 @@ describe('dayGrid advanced event rendering', () => {
       },
       events: [
         { id: '1', start: '2020-05-05' },
-      ]
+      ],
     })
     expect(renderedMoreLink).toBe(false)
   })
@@ -310,7 +310,7 @@ describe('dayGrid advanced event rendering', () => {
       ],
       eventDidMount(arg) {
         arg.el.setAttribute('data-event-id', arg.event.id)
-      }
+      },
     })
     let el1 = document.querySelector('[data-event-id="1"]')
     let el2 = document.querySelector('[data-event-id="2"]')

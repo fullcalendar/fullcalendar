@@ -140,7 +140,7 @@ export class SegHierarchy {
     let resCoord = 0 // the levelCoord for newSeg
     let touchingEntry: SegEntry = null
 
-    for (level = 0; level < levelCnt; level++) {
+    for (level = 0; level < levelCnt; level += 1) {
       levelCoord = levelCoords[level]
 
       // if the current level is past the placed entry, we have found a good
