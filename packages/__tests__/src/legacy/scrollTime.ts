@@ -37,10 +37,10 @@ describe('scrollTime', () => {
     expect(diff).toBeLessThan(3)
   })
 
-  it('doesn\'t get applied on navigation when preserveScroll is true', () => {
+  it('doesn\'t get applied on navigation when scrollTimeReset is false', () => {
     let calendar = initCalendar({
       scrollTime: '02:00:00',
-      preserveScroll: true,
+      scrollTimeReset: false,
       height: 400, // short enough to make scrolling happen
     })
     let viewWrapper = new TimeGridViewWrapper(calendar)

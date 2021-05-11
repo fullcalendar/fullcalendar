@@ -76,7 +76,7 @@ export function buildViewContext(
         execFunc,
         emitter,
         createDuration(viewOptions.scrollTime),
-        viewOptions.preserveScroll,
+        viewOptions.scrollTimeReset,
       )
     },
     registerInteractiveComponent,

@@ -8,7 +8,7 @@ v5.7.0
 - feature: eventMinHeight for timegrid (#961)
 - feature: eventMinWidth for timeline (#4823)
 - feature: eventOrderStrict flag to ensure strict event ordering (#5766, #5767)
-- feature: flag to maintain scroll state across dates (#6178)
+- feature: scrollTimeReset flag to not reset scroll state across dates (#6178)
 - fix: events can be completely hidden behind others with custom eventOrder (#6019)
 - fix: less homogeneous event widths in timegrid (#5004)
 - fix: +more shows on days with less events than dayMaxEvents (#6187)
