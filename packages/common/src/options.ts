@@ -205,7 +205,7 @@ export const BASE_OPTION_REFINERS = {
   eventMaxStack: Number,
   eventMinHeight: Number,
   eventMinWidth: Number,
-  timeGridEventShortHeight: Number, // TODO: move to timegrid plugin when plugins can provide defaults
+  eventShortHeight: Number,
   slotEventOverlap: Boolean,
   plugins: identity as Identity<PluginDef[]>,
   firstDay: Number,
@@ -291,7 +291,7 @@ export const BASE_OPTION_DEFAULTS = {
   selectable: false,
   eventMinHeight: 15,
   eventMinWidth: 30,
-  timeGridEventShortHeight: 30,
+  eventShortHeight: 30,
 }
 
 export type BaseOptionsRefined = DefaultedRefinedOptions<

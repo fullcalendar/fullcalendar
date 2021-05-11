@@ -4,9 +4,9 @@ v5.7.0
 
 - feature: +more popover for timegrid (#4218)
 - feature: +more popover for timeline (#4827)
-- feature: timeGridEventShortHeight
-- feature: eventMinHeight (#961)
-- feature: eventMinWidth (#4823)
+- feature: eventShortHeight for timegrid
+- feature: eventMinHeight for timegrid (#961)
+- feature: eventMinWidth for timeline (#4823)
 - feature: flag to ensure strict event ordering (#5766, #5767)
 - feature: flag to maintain scroll state across dates (#6178)
 - fix: events can be completely hidden behind others with custom eventOrder (#6019)

@@ -19,7 +19,7 @@ describe('short timegrid events', () => {
     let calendar = initCalendar({
       initialView: 'timeGridWeek',
       initialDate: '2017-08-10',
-      timeGridEventShortHeight: 200,
+      eventShortHeight: 200,
       events: [
         { start: '2017-08-10T10:30:00', end: '2017-08-10T12:30:00', title: 'event a' },
       ],

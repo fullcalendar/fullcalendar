@@ -133,7 +133,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     isResizing?: boolean,
     isDateSelecting?: boolean,
   ) {
-    let { eventMaxStack, timeGridEventShortHeight, eventOrderStrict } = this.context.options
+    let { eventMaxStack, eventShortHeight, eventOrderStrict } = this.context.options
     let { eventSelection, todayRange, nowDate } = this.props
     let isMirror = isDragging || isResizing || isDateSelecting
     let segInputs = this.buildSegInputs(segs)
@@ -168,7 +168,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
                 isResizing={isResizing}
                 isDateSelecting={isDateSelecting}
                 isSelected={instanceId === eventSelection}
-                isShort={(segRect.spanEnd - segRect.spanStart) < timeGridEventShortHeight}
+                isShort={(segRect.spanEnd - segRect.spanStart) < eventShortHeight}
                 {...getSegMeta(seg, todayRange, nowDate)}
               />
             </div>
