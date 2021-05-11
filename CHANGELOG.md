@@ -2,8 +2,8 @@
 v5.7.0
 ------
 
-- feature: +more popover for timegrid (timeGridEventMaxStack) (#4218)
-- feature: +more popover for timeline (timelineEventMaxStack) (#4827)
+- feature: +more popover for timegrid (#4218)
+- feature: +more popover for timeline (#4827)
 - feature: timeGridEventShortHeight
 - feature: eventMinHeight (#961)
 - feature: eventMinWidth (#4823)

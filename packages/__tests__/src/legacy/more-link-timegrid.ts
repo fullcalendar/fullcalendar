@@ -1,12 +1,12 @@
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { TimeGridWrapper } from '../lib/wrappers/TimeGridWrapper'
 
-describe('timeGridEventMaxStack', () => {
+describe('eventMaxStack', () => {
   pushOptions({
     initialView: 'timeGridDay',
     initialDate: '2021-05-07',
     scrollTime: 0,
-    timeGridEventMaxStack: 2,
+    eventMaxStack: 2,
   })
 
   it('puts hidden events in a popover', (done) => {

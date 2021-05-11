@@ -202,6 +202,7 @@ export const BASE_OPTION_REFINERS = {
   eventLongPressDelay: Number,
 
   selectMirror: Boolean,
+  eventMaxStack: Number,
   eventMinHeight: Number,
   eventMinWidth: Number,
   timeGridEventShortHeight: Number, // TODO: move to timegrid plugin when plugins can provide defaults
