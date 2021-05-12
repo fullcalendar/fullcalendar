@@ -4,7 +4,6 @@ import {
   createElement,
   DateMarker,
   DateComponent,
-  CssDimValue,
   DateRange,
   buildNavLinkData,
   WeekNumberRoot,
@@ -32,7 +31,6 @@ export interface TableCellProps {
   bgContent: ComponentChildren
   fgContentElRef?: Ref<HTMLDivElement> // TODO: rename!!! classname confusion. is the "event" div
   fgContent: ComponentChildren
-  fgPaddingBottom: CssDimValue
   moreCnt: number
   moreMarginTop: number
   showDayNumber: boolean
@@ -101,23 +99,23 @@ export class TableCell extends DateComponent<TableCellProps> {
               <div
                 className="fc-daygrid-day-events"
                 ref={props.fgContentElRef}
-                style={{ paddingBottom: props.fgPaddingBottom }}
               >
                 {props.fgContent}
-                <TableCellMoreLink
-                  allDayDate={date}
-                  singlePlacements={props.singlePlacements}
-                  moreCnt={props.moreCnt}
-                  marginTop={props.moreMarginTop}
-                  alignmentElRef={rootElRef}
-                  alignGridTop={!props.showDayNumber}
-                  extraDateSpan={props.extraDateSpan}
-                  dateProfile={props.dateProfile}
-                  eventSelection={props.eventSelection}
-                  eventDrag={props.eventDrag}
-                  eventResize={props.eventResize}
-                  todayRange={props.todayRange}
-                />
+                <div className="fc-daygrid-day-bottom" style={{ marginTop: props.moreMarginTop }}>
+                  <TableCellMoreLink
+                    allDayDate={date}
+                    singlePlacements={props.singlePlacements}
+                    moreCnt={props.moreCnt}
+                    alignmentElRef={rootElRef}
+                    alignGridTop={!props.showDayNumber}
+                    extraDateSpan={props.extraDateSpan}
+                    dateProfile={props.dateProfile}
+                    eventSelection={props.eventSelection}
+                    eventDrag={props.eventDrag}
+                    eventResize={props.eventResize}
+                    todayRange={props.todayRange}
+                  />
+                </div>
               </div>
               <div className="fc-daygrid-day-bg">
                 {props.bgContent}

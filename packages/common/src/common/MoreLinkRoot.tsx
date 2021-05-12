@@ -24,6 +24,7 @@ export interface MoreLinkRootProps { // what the MoreLinkRoot component receives
   dateProfile: DateProfile
   todayRange: DateRange
   allDayDate: DateMarker | null
+  moreCnt: number // can't always derive from hiddenSegs. some hiddenSegs might be due to lack of dimensions
   allSegs: Seg[]
   hiddenSegs: Seg[]
   extraDateSpan?: Dictionary
@@ -63,8 +64,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
         {(context: ViewContext) => {
           let { viewApi, options, calendarApi } = context
           let { moreLinkText } = options
-          let { hiddenSegs } = props
-          let moreCnt = hiddenSegs.length
+          let { moreCnt } = props
           let range = computeRange(props)
 
           let hookProps: MoreLinkContentArg = {
@@ -78,19 +78,21 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
 
           return (
             <Fragment>
-              <RenderHook<MoreLinkContentArg>
-                elRef={this.linkElRef}
-                hookProps={hookProps}
-                classNames={options.moreLinkClassNames}
-                content={options.moreLinkContent}
-                defaultContent={props.defaultContent || renderMoreLinkInner}
-                didMount={options.moreLinkDidMount}
-                willUnmount={options.moreLinkWillUnmount}
-              >
-                {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
-                  rootElRef, ['fc-more-link'].concat(customClassNames), innerElRef, innerContent, this.handleClick,
-                )}
-              </RenderHook>
+              {Boolean(props.moreCnt) && (
+                <RenderHook<MoreLinkContentArg>
+                  elRef={this.linkElRef}
+                  hookProps={hookProps}
+                  classNames={options.moreLinkClassNames}
+                  content={options.moreLinkContent}
+                  defaultContent={props.defaultContent || renderMoreLinkInner}
+                  didMount={options.moreLinkDidMount}
+                  willUnmount={options.moreLinkWillUnmount}
+                >
+                  {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
+                    rootElRef, ['fc-more-link'].concat(customClassNames), innerElRef, innerContent, this.handleClick,
+                  )}
+                </RenderHook>
+              )}
               {this.state.isPopoverOpen && (
                 <MorePopover
                   startDate={range.start}

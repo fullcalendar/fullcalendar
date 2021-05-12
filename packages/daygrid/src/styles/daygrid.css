@@ -125,7 +125,9 @@ $daygrid-event-mirror-z: 7;
 
   & .fc-daygrid-day-bottom {
     font-size: .85em;
-    margin: 2px 3px 0;
+    padding: 2px 3px 0;
+
+    &:before { @include clearfix; }
   }
 
   & .fc-daygrid-more-link {

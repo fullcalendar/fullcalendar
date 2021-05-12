@@ -69,7 +69,6 @@ export function computeFgSegPlacement(
 
   let moreCnts: number[] = []
   let moreMarginTops: number[] = []
-  let cellPaddingBottoms: number[] = []
 
   // add segs with unknown heights
   for (let seg of unknownHeightSegs) {
@@ -121,16 +120,10 @@ export function computeFgSegPlacement(
 
   // deal with leftover margins
   for (let col = 0; col < cells.length; col += 1) {
-    if (moreCnts[col]) {
-      moreMarginTops.push(leftoverMargins[col])
-      cellPaddingBottoms.push(0)
-    } else {
-      moreMarginTops.push(0)
-      cellPaddingBottoms.push(leftoverMargins[col])
-    }
+    moreMarginTops.push(leftoverMargins[col])
   }
 
-  return { singleColPlacements, multiColPlacements, moreCnts, moreMarginTops, cellPaddingBottoms }
+  return { singleColPlacements, multiColPlacements, moreCnts, moreMarginTops }
 }
 
 // rects ordered by top coord, then left

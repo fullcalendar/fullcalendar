@@ -21,8 +21,7 @@ import { TableSeg } from './TableSeg'
 export interface TableCellMoreLinkProps {
   allDayDate: DateMarker
   singlePlacements: TableSegPlacement[]
-  moreCnt: number // can't rely on invisibleSegs.length because don't want more link when unknown seg dims
-  marginTop: number
+  moreCnt: number
   alignmentElRef: RefObject<HTMLElement> // for popover
   alignGridTop: boolean // for popover
   extraDateSpan?: Dictionary
@@ -45,6 +44,7 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
         dateProfile={props.dateProfile}
         todayRange={props.todayRange}
         allDayDate={props.allDayDate}
+        moreCnt={props.moreCnt}
         allSegs={allSegs}
         hiddenSegs={invisibleSegs}
         alignmentElRef={props.alignmentElRef}
@@ -94,17 +94,13 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
         }}
       >
         {(rootElRef, classNames, innerElRef, innerContent, handleClick) => (
-          Boolean(props.moreCnt) && ( // don't render if not count!
-            <div className="fc-daygrid-day-bottom" style={{ marginTop: props.marginTop }}>
-              <a
-                ref={rootElRef}
-                className={['fc-daygrid-more-link'].concat(classNames).join(' ')}
-                onClick={handleClick}
-              >
-                {innerContent}
-              </a>
-            </div>
-          )
+          <a
+            ref={rootElRef}
+            className={['fc-daygrid-more-link'].concat(classNames).join(' ')}
+            onClick={handleClick}
+          >
+            {innerContent}
+          </a>
         )}
       </MoreLinkRoot>
     )

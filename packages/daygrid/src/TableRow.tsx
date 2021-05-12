@@ -77,7 +77,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     let highlightSegsByCol = splitSegsByFirstCol(this.getHighlightSegs(), colCnt)
     let mirrorSegsByCol = splitSegsByFirstCol(this.getMirrorSegs(), colCnt)
 
-    let { singleColPlacements, multiColPlacements, moreCnts, moreMarginTops, cellPaddingBottoms } = computeFgSegPlacement(
+    let { singleColPlacements, multiColPlacements, moreCnts, moreMarginTops } = computeFgSegPlacement(
       sortEventSegs(props.fgEventSegs, options.eventOrder) as TableSeg[],
       props.dayMaxEvents,
       props.dayMaxEventRows,
@@ -134,7 +134,6 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               moreCnt={moreCnts[col]}
               moreMarginTop={moreMarginTops[col]}
               singlePlacements={singleColPlacements[col]}
-              fgPaddingBottom={cellPaddingBottoms[col]}
               fgContentElRef={this.fgElRefs.createRef(cell.key)}
               fgContent={( // Fragment scopes the keys
                 <Fragment>

@@ -26,6 +26,7 @@ export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
     return (
       <MoreLinkRoot
         allDayDate={null}
+        moreCnt={props.hiddenSegs.length}
         allSegs={props.hiddenSegs}
         hiddenSegs={props.hiddenSegs}
         alignmentElRef={this.rootElRef}
