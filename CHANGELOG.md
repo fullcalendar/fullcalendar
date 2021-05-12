@@ -1,6 +1,6 @@
 
-v5.7.0
-------
+v5.7.0 (2021-05-11)
+-------------------
 
 - feature: +more popover for timegrid (#4218)
 - feature: +more popover for timeline (#4827)
