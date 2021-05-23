@@ -103,7 +103,8 @@ export class DayGridWrapper {
   }
 
   getMorePopoverEl() {
-    return this.el.parentNode.querySelector('.fc-more-popover') as HTMLElement // popover lives as a sibling
+    let viewWrapperEl = this.el.closest('.fc-view-harness')
+    return viewWrapperEl.querySelector('.fc-more-popover') as HTMLElement
   }
 
   getMorePopoverHeaderEl() {
@@ -161,6 +162,13 @@ export class DayGridWrapper {
 
   getHighlightEls() { // FG events
     return findElements(this.el, '.fc-highlight')
+  }
+
+  static getEventElInfo(eventEl) {
+    return {
+      title: $(eventEl).find('.fc-event-title').text(),
+      timeText: $(eventEl).find('.fc-event-time').text(),
+    }
   }
 
   clickDate(date) {

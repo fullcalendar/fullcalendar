@@ -17,6 +17,7 @@ export class ScrollResponder {
     private execFunc: ScrollRequestHandler,
     private emitter: Emitter<CalendarListeners>,
     private scrollTime: Duration,
+    private scrollTimeReset: boolean,
   ) {
     emitter.on('_scrollRequest', this.handleScrollRequest)
     this.fireInitialScroll()
@@ -27,7 +28,7 @@ export class ScrollResponder {
   }
 
   update(isDatesNew: boolean) {
-    if (isDatesNew) {
+    if (isDatesNew && this.scrollTimeReset) {
       this.fireInitialScroll() // will drain
     } else {
       this.drain()

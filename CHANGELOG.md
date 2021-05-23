@@ -1,4 +1,30 @@
 
+v5.7.0 (2021-05-11)
+-------------------
+
+- feature: +more popover for timegrid (#4218)
+- feature: +more popover for timeline (#4827)
+- feature: eventShortHeight for timegrid
+- feature: eventMinHeight for timegrid (#961)
+- feature: eventMinWidth for timeline (#4823)
+- feature: eventOrderStrict flag to ensure strict event ordering (#5766, #5767)
+- feature: scrollTimeReset flag to not reset scroll state across dates (#6178)
+- fix: events can be completely hidden behind others with custom eventOrder (#6019)
+- fix: less homogeneous event widths in timegrid (#5004)
+- fix: +more shows on days with less events than dayMaxEvents (#6187)
+- fix: +more popover can be scrolled down with page scroll (#5532)
+- fix: +more popover falls behind the sticky dates header (#5782)
+- fix: all-day events are displayed in front of the sticky header (#5596)
+- fix: respect duration in eventOrder as highest precedence (#5481)
+- fix: refetching events should keep event popover open (#3958)
+- fix: accidental +more popover close with shadow dom (#6205)
+- dev: when attempting `npm install` in the dev repo, will throw an error saying to use yarn (#5504)
+- dev: ensure building on windows works (#5366)
+obscure breaking changes:
+- renamed fc-timegrid-event-condensed className to fc-timegrid-event-short
+- removed config.timeGridEventCondensedHeight
+
+
 v5.6.0 (2021-03-28)
 -------------------
 

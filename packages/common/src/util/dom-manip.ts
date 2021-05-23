@@ -93,3 +93,13 @@ export function applyStyleProp(el: HTMLElement, name: string, val) {
     el.style[name] = val
   }
 }
+
+// Event Handling
+// ----------------------------------------------------------------------------------------------------------------
+
+// if intercepting bubbled events at the document/window/body level,
+// and want to see originating element (the 'target'), use this util instead
+// of `ev.target` because it goes within web-component boundaries.
+export function getEventTargetViaRoot(ev: Event) {
+  return ev.composedPath?.()[0] ?? ev.target
+}

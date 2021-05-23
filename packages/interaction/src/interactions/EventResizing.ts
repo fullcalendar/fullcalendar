@@ -10,8 +10,7 @@ import {
   EventRenderRange, getElSeg,
   createDuration,
   EventInteractionState,
-  EventResizeJoinTransforms,
-  Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration, EventChangeArg, buildEventApis,
+  Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration, EventChangeArg, buildEventApis, isInteractionValid,
 } from '@fullcalendar/common'
 import { __assign } from 'tslib'
 import { HitDragging, isHitsEqual } from './HitDragging'
@@ -119,23 +118,27 @@ export class EventResizing extends Interaction {
     }
 
     if (hit) {
-      mutation = computeMutation(
-        initialHit,
-        hit,
-        (ev.subjectEl as HTMLElement).classList.contains('fc-event-resizer-start'),
-        eventInstance.range,
-        context.pluginHooks.eventResizeJoinTransforms,
-      )
+      let disallowed = hit.componentId === initialHit.componentId
+        && this.isHitComboAllowed
+        && !this.isHitComboAllowed(initialHit, hit)
+
+      if (!disallowed) {
+        mutation = computeMutation(
+          initialHit,
+          hit,
+          (ev.subjectEl as HTMLElement).classList.contains('fc-event-resizer-start'),
+          eventInstance.range,
+        )
+      }
     }
 
     if (mutation) {
       mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, context.getCurrentData().eventUiBases, mutation, context)
       interaction.mutatedEvents = mutatedRelevantEvents
 
-      if (!this.component.isInteractionValid(interaction)) {
+      if (!isInteractionValid(interaction, hit.dateProfile, context)) {
         isInvalid = true
         mutation = null
-
         mutatedRelevantEvents = null
         interaction.mutatedEvents = null
       }
@@ -237,40 +240,23 @@ function computeMutation(
   hit1: Hit,
   isFromStart: boolean,
   instanceRange: DateRange,
-  transforms: EventResizeJoinTransforms[],
 ): EventMutation | null {
-  let dateEnv = hit0.component.context.dateEnv
+  let dateEnv = hit0.context.dateEnv
   let date0 = hit0.dateSpan.range.start
   let date1 = hit1.dateSpan.range.start
 
   let delta = diffDates(
     date0, date1,
     dateEnv,
-    hit0.component.largeUnit,
+    hit0.largeUnit,
   )
-
-  let props = {} as EventMutation
-
-  for (let transform of transforms) {
-    let res = transform(hit0, hit1)
-
-    if (res === false) {
-      return null
-    }
-
-    if (res) {
-      __assign(props, res)
-    }
-  }
 
   if (isFromStart) {
     if (dateEnv.add(instanceRange.start, delta) < instanceRange.end) {
-      props.startDelta = delta
-      return props
+      return { startDelta: delta }
     }
   } else if (dateEnv.add(instanceRange.end, delta) > instanceRange.start) {
-    props.endDelta = delta
-    return props
+    return { endDelta: delta }
   }
 
   return null

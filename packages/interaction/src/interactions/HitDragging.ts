@@ -87,7 +87,6 @@ export class HitDragging {
     }
 
     let initialHit = this.initialHit = this.queryHitForOffset(adjustedPoint.left, adjustedPoint.top)
-
     if (initialHit) {
       if (this.useSubjectCenter && subjectRect) {
         let slicedSubjectRect = intersectRects(subjectRect, initialHit.rect)
@@ -142,7 +141,6 @@ export class HitDragging {
   prepareHits() {
     this.offsetTrackers = mapHash(this.droppableStore, (interactionSettings) => {
       interactionSettings.component.prepareHits()
-
       return new OffsetTracker(interactionSettings.el)
     })
   }
@@ -183,16 +181,16 @@ export class HitDragging {
           positionTop >= 0 && positionTop < height
         ) {
           let hit = component.queryHit(positionLeft, positionTop, width, height)
-          let dateProfile = component.context.getCurrentData().dateProfile
-
           if (
-            hit &&
-            (
-              // make sure the hit is within activeRange, meaning it's not a deal cell
-              rangeContainsRange(dateProfile.activeRange, hit.dateSpan.range)
+            hit && (
+              // make sure the hit is within activeRange, meaning it's not a dead cell
+              rangeContainsRange(hit.dateProfile.activeRange, hit.dateSpan.range)
             ) &&
             (!bestHit || hit.layer > bestHit.layer)
           ) {
+            hit.componentId = id
+            hit.context = component.context
+
             // TODO: better way to re-orient rectangle
             hit.rect.left += originLeft
             hit.rect.right += originLeft

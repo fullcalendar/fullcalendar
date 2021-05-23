@@ -84,7 +84,7 @@ function parseSection(
         if ((customButtonProps = calendarCustomButtons[buttonName])) {
           buttonClick = (ev: UIEvent) => {
             if (customButtonProps.click) {
-              customButtonProps.click.call(ev.target, ev, ev.target)
+              customButtonProps.click.call(ev.target, ev, ev.target) // TODO: use Calendar this context?
             }
           };
           (buttonIcon = theme.getCustomButtonIconClass(customButtonProps)) ||

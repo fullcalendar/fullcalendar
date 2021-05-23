@@ -33,7 +33,7 @@ Please edit the original files in the `packages/core/locales/` directory.
 
 ## Getting Set Up
 
-You will need [Git][git], [Node][node] and [Yarn][yarn] installed.
+You will need a bash-like environment with [Git][git], [Node][node] and [Yarn][yarn] installed.
 
 Then, clone FullCalendar's git repo:
 
@@ -41,12 +41,12 @@ Then, clone FullCalendar's git repo:
 
 The recursive flag will clone all submodules as well. fullcalendar-scheduler and the example projects are located within submodules.
 
-Enter the directory and install FullCalendar's dependencies:
+Enter the directory and install FullCalendar's dependencies. You **must** use yarn. NPM will not work.
 
 	cd fullcalendar
 	yarn install
 
-*NOTE:* The install command will take a LONG time. We are working to fix this.
+This has been tested on Mac, Linux, and Windows via ["Ubuntu on Windows"](https://ubuntu.com/wsl).
 
 
 ## Development Workflow

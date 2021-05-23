@@ -2,7 +2,7 @@ import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { filterVisibleEls } from '../lib/dom-misc'
 
-describe('dayMaxEventRows', () => { // TODO: rename file
+describe('dayMaxEventRows', () => {
   pushOptions({
     initialDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
     dayMaxEventRows: 3,
@@ -73,30 +73,28 @@ describe('dayMaxEventRows', () => { // TODO: rename file
         expect(moreEls[1]).toBeBoundedBy(cells[3])
       })
 
-      it('will render a link in a multi-day event\'s second column ' +
-        'if it has already been hidden in the first',
-      () => {
+      it('will render a pertially hidden single-day event', () => {
         let calendar = initCalendar({
           events: [
             { title: 'event1', start: '2014-07-29', end: '2014-07-31' },
             { title: 'event2', start: '2014-07-29', end: '2014-07-31' },
-            { title: 'event2', start: '2014-07-29', end: '2014-07-31' },
-            { title: 'event2', start: '2014-07-29' },
+            { title: 'event3', start: '2014-07-29', end: '2014-07-31' },
+            { title: 'event4', start: '2014-07-29' },
           ],
         })
         let dayGridWrapper = new ViewWrapper(calendar).dayGrid
+        let eventEls = dayGridWrapper.getEventEls()
+        let visibleEventEls = filterVisibleEls(eventEls)
         let moreEls = dayGridWrapper.getMoreEls()
         let cells = dayGridWrapper.getAllDayEls()
-        expect(moreEls.length).toBe(2)
+        expect(visibleEventEls.length).toBe(3)
+        expect(moreEls.length).toBe(1)
         expect(moreEls[0]).toHaveText('+2 more')
         expect(moreEls[0]).toBeBoundedBy(cells[2])
-        expect(moreEls[1]).toHaveText('+1 more')
-        expect(moreEls[1]).toBeBoundedBy(cells[3])
       })
 
-      it('will render a link in a multi-day event\'s second column ' +
-        'if it has already been hidden in the first even if he second column hardly has any events',
-      () => {
+      // https://github.com/fullcalendar/fullcalendar/issues/6187
+      it('will render a partially multi-day hidden event', () => {
         let calendar = initCalendar({
           events: [
             { title: 'event1', start: '2014-07-28', end: '2014-07-30' },
@@ -106,11 +104,14 @@ describe('dayMaxEventRows', () => { // TODO: rename file
           ],
         })
         let dayGridWrapper = new ViewWrapper(calendar).dayGrid
+        let eventEls = dayGridWrapper.getEventEls()
+        let visibleEventEls = filterVisibleEls(eventEls)
         let moreEls = dayGridWrapper.getMoreEls()
         let cells = dayGridWrapper.getDayElsInRow(0)
-        expect(moreEls.length).toBe(3)
-        expect(moreEls[0]).toHaveText('+1 more')
-        expect(moreEls[0]).toBeBoundedBy(cells[1])
+        expect(visibleEventEls.length).toBe(4)
+        expect(moreEls.length).toBe(1)
+        expect(moreEls[0]).toHaveText('+2 more')
+        expect(moreEls[0]).toBeBoundedBy(cells[2])
       })
 
       it('will render a link in place of a hidden single day event, if covered by a multi-day', () => {

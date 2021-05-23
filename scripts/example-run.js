@@ -2,10 +2,26 @@ const path = require('path')
 const exec = require('./lib/shell')
 const globby = require('globby')
 
-let rootDir = path.resolve(__dirname, '..')
-let examplesDir = path.join(rootDir, 'example-projects')
-let givenProjName = process.argv[2]
-let runCmd = process.argv[3]
+const rootDir = path.resolve(__dirname, '..')
+const examplesDir = path.join(rootDir, 'example-projects')
+const givenProjName = process.argv[2]
+const runCmd = process.argv[3]
+
+///////////////////////////////////////////////////////
+// Project Settings
+const disabledProjects = {
+  next: 'This example is disabled till the next major release',
+  'next-scheduler': 'This example is disabled till the next major release',
+  parcel: 'This example is being transitioned to a newer version',
+  'parcel-2':
+    'There is currently a bug in parcel which prevents this from working',
+    // https://github.com/parcel-bundler/parcel/issues/4729
+    // tries to load babel within each fc file and fails
+}
+const pnpSimulatedProjects = {
+  angular: 'Angular CLI does not support Yarn PnP',
+}
+///////////////////////////////////////////////////////
 
 if (!givenProjName) {
   console.error('Must specify an example-project name, or "all"')
@@ -17,57 +33,41 @@ if (!runCmd) {
   process.exit(1)
 }
 
-let projNames = givenProjName === 'all' ?
-  globby.sync('*', { cwd: examplesDir, onlyDirectories: true }) :
-  [ givenProjName ]
+const projNames =
+  givenProjName === 'all'
+    ? globby.sync('*', { cwd: examplesDir, onlyDirectories: true })
+    : [givenProjName]
 
-for (let projName of projNames) {
-  let projDir = path.join(examplesDir, projName)
-
-  console.log('')
-  console.log('PROJECT:', projName)
-  console.log(projDir)
-
-  switch(projName) {
-
-    /*
-    each of these projects need to be built with old-fashioned npm-install in their individual directories.
-    to exclude them from yarn workspaces and cache their directories in CI, keep these files in sync:
-      - package.json
-      - .github/workflows/ci.yml
-    */
-    case 'next': // somehow incompatible with babel-plugin-transform-require-ignore. REVISIT
-    case 'next-scheduler': // same
-    case 'nuxt': // nuxt cli tool uses webpack 4
-    case 'vue-typescript': // vue cli tool uses webpack 4
-    case 'vue-vuex': // vue cli tool uses webpack 4
-    case 'parcel': // doesn't support pnp yet. parcel 2 WILL
-      console.log('Using NPM simulation')
-      console.log()
-      exec.sync(
-        [ 'yarn', 'run', 'example:npm', projName, runCmd ],
-        { cwd: rootDir, exitOnError: true, live: true }
-      )
-      break
-
-    case 'angular':
-      console.log('Using PnP simulation')
-      console.log()
-      exec.sync(
-        [ 'yarn', 'run', 'example:pnp', projName, runCmd ],
-        { cwd: rootDir, exitOnError: true, live: true }
-      )
-      break
-
-    default:
-      console.log('Normal Yarn execution')
-      console.log()
-      exec.sync(
-        [ 'yarn', 'run', runCmd ],
-        { cwd: projDir, exitOnError: true, live: true }
-      )
-      break
+projNames.forEach((projName) => {
+  // Don't run disabled projects
+  if (disabledProjects.hasOwnProperty(projName)) {
+    console.info(disabledProjects[projName])
+    return
   }
 
-  console.log('')
-}
+  const projDir = path.join(examplesDir, projName)
+
+  console.log()
+  console.info('PROJECT:', projName)
+  console.log(projDir)
+
+  // Decide whether to simulate pnp or run normal yarn
+  if (pnpSimulatedProjects.hasOwnProperty(projName)) {
+    console.log('Using PnP simulation')
+    console.log()
+    exec.sync(['yarn', 'run', 'example:pnp', projName, runCmd], {
+      cwd: rootDir,
+      exitOnError: true,
+      live: true,
+    })
+  } else {
+    console.log('Normal Yarn execution')
+    console.log()
+    exec.sync(['yarn', 'run', runCmd], {
+      cwd: projDir,
+      exitOnError: true,
+      live: true,
+    })
+  }
+  console.log()
+})

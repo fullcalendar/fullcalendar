@@ -1,4 +1,5 @@
 import * as preact from 'preact'
+import * as preactCompat from 'preact/compat'
 
 // NOTE: this file cannot include other helper files. because of how dts is generated
 
@@ -17,6 +18,7 @@ declare global {
     export import createRef = preact.createRef
     export import Fragment = preact.Fragment
     export import createContext = preact.createContext
+    export import createPortal = preactCompat.createPortal
     export type VUIEvent = UIEvent
     export function flushToDom(): void
     export function unmountComponentAtNode(node: HTMLElement): void
@@ -35,6 +37,7 @@ if (globalObj.FullCalendarVDom) {
     createRef: preact.createRef,
     Fragment: preact.Fragment,
     createContext, // custom implementation
+    createPortal: preactCompat.createPortal,
     flushToDom,
     unmountComponentAtNode,
   }

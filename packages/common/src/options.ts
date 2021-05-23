@@ -38,6 +38,9 @@ import {
   EventContentArg, EventMountArg,
   DatesSetArg,
   EventApi, EventAddArg, EventChangeArg, EventRemoveArg,
+  MoreLinkContentArg,
+  MoreLinkMountArg,
+  MoreLinkAction,
 } from './api-type-deps'
 
 // base options
@@ -54,6 +57,7 @@ export const BASE_OPTION_REFINERS = {
   defaultTimedEventDuration: createDuration,
   nextDayThreshold: createDuration,
   scrollTime: createDuration,
+  scrollTimeReset: Boolean,
   slotMinTime: createDuration,
   slotMaxTime: createDuration,
   dayPopoverFormat: createFormatter,
@@ -115,6 +119,7 @@ export const BASE_OPTION_REFINERS = {
   unselectAuto: Boolean,
   dropAccept: identity as Identity<string | ((this: CalendarApi, draggable: any) => boolean)>, // TODO: type draggable
   eventOrder: parseFieldSpecs,
+  eventOrderStrict: Boolean,
 
   handleWindowResize: Boolean,
   windowResizeDelay: Number,
@@ -197,7 +202,10 @@ export const BASE_OPTION_REFINERS = {
   eventLongPressDelay: Number,
 
   selectMirror: Boolean,
-  eventMinHeight: Number, // TODO: kill this setting
+  eventMaxStack: Number,
+  eventMinHeight: Number,
+  eventMinWidth: Number,
+  eventShortHeight: Number,
   slotEventOverlap: Boolean,
   plugins: identity as Identity<PluginDef[]>,
   firstDay: Number,
@@ -213,6 +221,12 @@ export const BASE_OPTION_REFINERS = {
 
   // only used by list-view, but languages define the value, so we need it in base options
   noEventsText: String,
+
+  moreLinkClick: identity as Identity<MoreLinkAction>,
+  moreLinkClassNames: identity as Identity<ClassNamesGenerator<MoreLinkContentArg>>,
+  moreLinkContent: identity as Identity<CustomContentGenerator<MoreLinkContentArg>>,
+  moreLinkDidMount: identity as Identity<DidMountHandler<MoreLinkMountArg>>,
+  moreLinkWillUnmount: identity as Identity<WillUnmountHandler<MoreLinkMountArg>>,
 }
 
 type BuiltInBaseOptionRefiners = typeof BASE_OPTION_REFINERS
@@ -249,6 +263,7 @@ export const BASE_OPTION_DEFAULTS = {
   editable: false,
   nowIndicator: false,
   scrollTime: '06:00:00',
+  scrollTimeReset: true,
   slotMinTime: '00:00:00',
   slotMaxTime: '24:00:00',
   showNonCurrentDates: true,
@@ -274,6 +289,9 @@ export const BASE_OPTION_DEFAULTS = {
   expandRows: false,
   navLinks: false,
   selectable: false,
+  eventMinHeight: 15,
+  eventMinWidth: 30,
+  eventShortHeight: 30,
 }
 
 export type BaseOptionsRefined = DefaultedRefinedOptions<

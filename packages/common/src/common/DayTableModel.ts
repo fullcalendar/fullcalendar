@@ -16,6 +16,7 @@ export interface DayTableCell {
   extraHookProps?: Dictionary
   extraDataAttrs?: Dictionary
   extraClassNames?: string[]
+  extraDateSpan?: Dictionary
 }
 
 export class DayTableModel {

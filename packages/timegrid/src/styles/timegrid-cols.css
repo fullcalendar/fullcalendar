@@ -42,11 +42,6 @@
     left: 0;
     right: 0;
   }
-
-  & .fc-timegrid-event-harness {
-    position: absolute; // top/left/right/bottom will all be set by JS
-  }
-
 }
 
 .fc {

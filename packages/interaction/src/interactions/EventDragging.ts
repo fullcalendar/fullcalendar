@@ -18,6 +18,7 @@ import {
   buildEventApis,
   EventAddArg,
   EventRemoveArg,
+  isInteractionValid,
 } from '@fullcalendar/common'
 import { __assign } from 'tslib'
 import { HitDragging, isHitsEqual } from './HitDragging'
@@ -165,8 +166,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
     }
 
     if (hit) {
-      let receivingComponent = hit.component
-      receivingContext = receivingComponent.context
+      receivingContext = hit.context
       let receivingOptions = receivingContext.options
 
       if (
@@ -184,10 +184,9 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
           )
           interaction.mutatedEvents = mutatedRelevantEvents
 
-          if (!receivingComponent.isInteractionValid(interaction)) {
+          if (!isInteractionValid(interaction, hit.dateProfile, receivingContext)) {
             isInvalid = true
             mutation = null
-
             mutatedRelevantEvents = null
             interaction.mutatedEvents = createEmptyEventStore()
           }
@@ -356,13 +355,13 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             ...buildDatePointApiWithContext(finalHit.dateSpan, receivingContext),
             draggedEl: ev.subjectEl as HTMLElement,
             jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-            view: finalHit.component.context.viewApi,
+            view: finalHit.context.viewApi,
           })
 
           receivingContext.emitter.trigger('eventReceive', {
             ...eventAddArg,
             draggedEl: ev.subjectEl as HTMLElement,
-            view: finalHit.component.context.viewApi,
+            view: finalHit.context.viewApi,
           })
         }
       } else {
@@ -437,7 +436,7 @@ function computeEventMutation(hit0: Hit, hit1: Hit, massagers: eventDragMutation
 
   if (dateSpan0.allDay !== dateSpan1.allDay) {
     standardProps.allDay = dateSpan1.allDay
-    standardProps.hasEnd = hit1.component.context.options.allDayMaintainDuration
+    standardProps.hasEnd = hit1.context.options.allDayMaintainDuration
 
     if (dateSpan1.allDay) {
       // means date1 is already start-of-day,
@@ -448,9 +447,9 @@ function computeEventMutation(hit0: Hit, hit1: Hit, massagers: eventDragMutation
 
   let delta = diffDates(
     date0, date1,
-    hit0.component.context.dateEnv,
-    hit0.component === hit1.component ?
-      hit0.component.largeUnit :
+    hit0.context.dateEnv,
+    hit0.componentId === hit1.componentId ?
+      hit0.largeUnit :
       null,
   )
 

@@ -78,7 +78,7 @@ export class ExternalElementDragging {
     }
 
     if (hit) {
-      receivingContext = hit.component.context
+      receivingContext = hit.context
 
       if (this.canDropElOnCalendar(ev.subjectEl as HTMLElement, receivingContext)) {
         droppableEvent = computeEventForDateSpan(
@@ -88,7 +88,7 @@ export class ExternalElementDragging {
         )
 
         interaction.mutatedEvents = eventTupleToStore(droppableEvent)
-        isInvalid = !isInteractionValid(interaction, receivingContext)
+        isInvalid = !isInteractionValid(interaction, hit.dateProfile, receivingContext)
 
         if (isInvalid) {
           interaction.mutatedEvents = createEmptyEventStore()
@@ -126,7 +126,7 @@ export class ExternalElementDragging {
 
     if (receivingContext && droppableEvent) {
       let finalHit = this.hitDragging.finalHit!
-      let finalView = finalHit.component.context.viewApi
+      let finalView = finalHit.context.viewApi
       let dragMeta = this.dragMeta!
 
       receivingContext.emitter.trigger('drop', {

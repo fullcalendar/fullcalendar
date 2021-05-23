@@ -19,6 +19,7 @@ export import render = FullCalendarVDom.render
 export import createRef = FullCalendarVDom.createRef
 export import Fragment = FullCalendarVDom.Fragment
 export import createContext = FullCalendarVDom.createContext
+export import createPortal = FullCalendarVDom.createPortal
 export import VUIEvent = FullCalendarVDom.VUIEvent
 export import flushToDom = FullCalendarVDom.flushToDom
 export import unmountComponentAtNode = FullCalendarVDom.unmountComponentAtNode

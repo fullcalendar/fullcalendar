@@ -1,213 +1,226 @@
-import { Seg, DateMarker, buildSegCompareObj, compareByFieldSpecs, sortEventSegs, OrderSpec, EventApi } from '@fullcalendar/common'
-import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
+import {
+  SegEntry,
+  SegHierarchy,
+  SegRect,
+  buildEntryKey,
+  getEntrySpanEnd,
+  binarySearch,
+  SegInput,
+  SegEntryGroup,
+  groupIntersectingEntries,
+} from '@fullcalendar/common'
 
-// UNFORTUNATELY, assigns results to the top/bottom/level/forwardCoord/backwardCoord props of the actual segs.
-// TODO: return hash (by instanceId) of results
-
-export function computeSegCoords(
-  segs: Seg[],
-  dayDate: DateMarker,
-  slatCoords: TimeColsSlatsCoords,
-  eventMinHeight: number,
-  eventOrderSpecs: OrderSpec<EventApi>[],
-) {
-  computeSegVerticals(segs, dayDate, slatCoords, eventMinHeight)
-  return computeSegHorizontals(segs, eventOrderSpecs) // requires top/bottom from computeSegVerticals
+interface SegNode extends SegEntry {
+  nextLevelNodes: SegNode[] // with highest-pressure first
 }
 
-// For each segment in an array, computes and assigns its top and bottom properties
-export function computeSegVerticals(segs: Seg[], dayDate: DateMarker, slatCoords: TimeColsSlatsCoords, eventMinHeight: number) {
-  for (let seg of segs) {
-    seg.top = slatCoords.computeDateTop(seg.start, dayDate)
-    seg.bottom = Math.max(
-      seg.top + (eventMinHeight || 0), // yuck
-      slatCoords.computeDateTop(seg.end, dayDate),
-    )
-  }
+type SegNodeAndPressure = [ SegNode, number ]
+
+interface SegSiblingRange { // will ALWAYS have span of 1 or more items. if not, will be null
+  level: number
+  lateralStart: number
+  lateralEnd: number
 }
 
-// Given an array of segments that are all in the same column, sets the backwardCoord and forwardCoord on each.
-// Assumed the segs are already ordered.
-// NOTE: Also reorders the given array by date!
-function computeSegHorizontals(segs: Seg[], eventOrderSpecs: OrderSpec<EventApi>[]) {
-  // IMPORTANT TO CLEAR OLD RESULTS :(
-  for (let seg of segs) {
-    seg.level = null
-    seg.forwardCoord = null
-    seg.backwardCoord = null
-    seg.forwardPressure = null
+export interface TimeColSegRect extends SegRect {
+  stackDepth: number
+  stackForward: number
+}
+
+// segInputs assumed sorted
+export function computeFgSegPlacements(
+  segInputs: SegInput[],
+  strictOrder?: boolean,
+  maxStackCnt?: number,
+): { segRects: TimeColSegRect[], hiddenGroups: SegEntryGroup[] } {
+  let hierarchy = new SegHierarchy()
+  if (strictOrder != null) {
+    hierarchy.strictOrder = strictOrder
+  }
+  if (maxStackCnt != null) {
+    hierarchy.maxStackCnt = maxStackCnt
   }
 
-  segs = sortEventSegs(segs, eventOrderSpecs)
+  let hiddenEntries = hierarchy.addSegs(segInputs)
+  let hiddenGroups = groupIntersectingEntries(hiddenEntries)
 
-  let level0
-  let levels = buildSlotSegLevels(segs)
-  computeForwardSlotSegs(levels)
+  let web = buildWeb(hierarchy)
+  web = stretchWeb(web, 1) // all levelCoords/thickness will have 0.0-1.0
+  let segRects = webToRects(web)
 
-  if ((level0 = levels[0])) {
-    for (let seg of level0) {
-      computeSlotSegPressures(seg)
+  return { segRects, hiddenGroups }
+}
+
+function buildWeb(hierarchy: SegHierarchy): SegNode[] {
+  const { entriesByLevel } = hierarchy
+
+  const buildNode = cacheable(
+    (level: number, lateral: number) => level + ':' + lateral,
+    (level: number, lateral: number): SegNodeAndPressure => {
+      let siblingRange = findNextLevelSegs(hierarchy, level, lateral)
+      let nextLevelRes = buildNodes(siblingRange, buildNode)
+      let entry = entriesByLevel[level][lateral]
+
+      return [
+        { ...entry, nextLevelNodes: nextLevelRes[0] },
+        entry.thickness + nextLevelRes[1], // the pressure builds
+      ]
+    },
+  )
+
+  return buildNodes(
+    entriesByLevel.length
+      ? { level: 0, lateralStart: 0, lateralEnd: entriesByLevel[0].length }
+      : null,
+    buildNode,
+  )[0]
+}
+
+function buildNodes(
+  siblingRange: SegSiblingRange | null,
+  buildNode: (level: number, lateral: number) => SegNodeAndPressure,
+): [SegNode[], number] { // number is maxPressure
+  if (!siblingRange) {
+    return [[], 0]
+  }
+
+  let { level, lateralStart, lateralEnd } = siblingRange
+  let lateral = lateralStart
+  let pairs: SegNodeAndPressure[] = []
+
+  while (lateral < lateralEnd) {
+    pairs.push(buildNode(level, lateral))
+    lateral += 1
+  }
+
+  pairs.sort(cmpDescPressures)
+
+  return [
+    pairs.map(extractNode),
+    pairs[0][1], // first item's pressure
+  ]
+}
+
+function cmpDescPressures(a: SegNodeAndPressure, b: SegNodeAndPressure) { // sort pressure high -> low
+  return b[1] - a[1]
+}
+
+function extractNode(a: SegNodeAndPressure): SegNode {
+  return a[0]
+}
+
+function findNextLevelSegs(hierarchy: SegHierarchy, subjectLevel: number, subjectLateral: number): SegSiblingRange | null {
+  let { levelCoords, entriesByLevel } = hierarchy
+  let subjectEntry = entriesByLevel[subjectLevel][subjectLateral]
+  let afterSubject = levelCoords[subjectLevel] + subjectEntry.thickness
+  let levelCnt = levelCoords.length
+  let level = subjectLevel
+
+  // skip past levels that are too high up
+  for (; level < levelCnt && levelCoords[level] < afterSubject; level += 1) ; // do nothing
+
+  for (; level < levelCnt; level += 1) {
+    let entries = entriesByLevel[level]
+    let entry: SegEntry
+    let searchIndex = binarySearch(entries, subjectEntry.spanStart, getEntrySpanEnd)
+    let lateralStart = searchIndex[0] + searchIndex[1] // if exact match (which doesn't collide), go to next one
+    let lateralEnd = lateralStart
+
+    while ( // loop through entries that horizontally intersect
+      (entry = entries[lateralEnd]) && // but not past the whole seg list
+      entry.spanStart < subjectEntry.spanEnd
+    ) { lateralEnd += 1 }
+
+    if (lateralStart < lateralEnd) {
+      return { level, lateralStart, lateralEnd }
     }
-
-    for (let seg of level0) {
-      computeSegForwardBack(seg, 0, 0, eventOrderSpecs)
-    }
   }
 
-  return segs
+  return null
 }
 
-// Builds an array of segments "levels". The first level will be the leftmost tier of segments if the calendar is
-// left-to-right, or the rightmost if the calendar is right-to-left. Assumes the segments are already ordered by date.
-function buildSlotSegLevels(segs: Seg[]) {
-  let levels = []
-  let i
-  let seg
-  let j
+function stretchWeb(topLevelNodes: SegNode[], totalThickness: number): SegNode[] {
+  const stretchNode = cacheable(
+    (node: SegNode, startCoord: number, prevThickness: number) => buildEntryKey(node),
+    (node: SegNode, startCoord: number, prevThickness: number): [number, SegNode] => { // [startCoord, node]
+      let { nextLevelNodes, thickness } = node
+      let allThickness = thickness + prevThickness
+      let thicknessFraction = thickness / allThickness
+      let endCoord: number
+      let newChildren: SegNode[] = []
 
-  for (i = 0; i < segs.length; i += 1) {
-    seg = segs[i]
-
-    // go through all the levels and stop on the first level where there are no collisions
-    for (j = 0; j < levels.length; j += 1) {
-      if (!computeSlotSegCollisions(seg, levels[j]).length) {
-        break
+      if (!nextLevelNodes.length) {
+        endCoord = totalThickness
+      } else {
+        for (let childNode of nextLevelNodes) {
+          if (endCoord === undefined) {
+            let res = stretchNode(childNode, startCoord, allThickness)
+            endCoord = res[0]
+            newChildren.push(res[1])
+          } else {
+            let res = stretchNode(childNode, endCoord, 0)
+            newChildren.push(res[1])
+          }
+        }
       }
-    }
 
-    seg.level = j;
-    (levels[j] || (levels[j] = [])).push(seg)
-  }
+      let newThickness = (endCoord - startCoord) * thicknessFraction
+      return [endCoord - newThickness, {
+        ...node,
+        thickness: newThickness,
+        nextLevelNodes: newChildren,
+      }]
+    },
+  )
 
-  return levels
+  return topLevelNodes.map((node: SegNode) => stretchNode(node, 0, 0)[1])
 }
 
-// Find all the segments in `otherSegs` that vertically collide with `seg`.
-// Append into an optionally-supplied `results` array and return.
-function computeSlotSegCollisions(seg: Seg, otherSegs: Seg[], results = []) {
-  for (let i = 0; i < otherSegs.length; i += 1) {
-    if (isSlotSegCollision(seg, otherSegs[i])) {
-      results.push(otherSegs[i])
-    }
-  }
+// not sorted in any particular order
+function webToRects(topLevelNodes: SegNode[]): TimeColSegRect[] {
+  let rects: TimeColSegRect[] = []
 
-  return results
-}
-
-// Do these segments occupy the same vertical space?
-function isSlotSegCollision(seg1: Seg, seg2: Seg) {
-  return seg1.bottom > seg2.top && seg1.top < seg2.bottom
-}
-
-// For every segment, figure out the other segments that are in subsequent
-// levels that also occupy the same vertical space. Accumulate in seg.forwardSegs
-function computeForwardSlotSegs(levels) {
-  let i
-  let level
-  let j
-  let seg
-  let k
-
-  for (i = 0; i < levels.length; i += 1) {
-    level = levels[i]
-
-    for (j = 0; j < level.length; j += 1) {
-      seg = level[j]
-
-      seg.forwardSegs = []
-      for (k = i + 1; k < levels.length; k += 1) {
-        computeSlotSegCollisions(seg, levels[k], seg.forwardSegs)
+  const processNode = cacheable(
+    (node: SegNode, levelCoord: number, stackDepth: number) => buildEntryKey(node),
+    (node: SegNode, levelCoord: number, stackDepth: number) => { // returns forwardPressure
+      let rect: TimeColSegRect = {
+        ...node,
+        levelCoord,
+        stackDepth,
+        stackForward: 0, // will assign after recursing
       }
-    }
-  }
-}
+      rects.push(rect)
 
-// Figure out which path forward (via seg.forwardSegs) results in the longest path until
-// the furthest edge is reached. The number of segments in this path will be seg.forwardPressure
-function computeSlotSegPressures(seg: Seg) {
-  let forwardSegs = seg.forwardSegs
-  let forwardPressure = 0
-  let i
-  let forwardSeg
-
-  if (seg.forwardPressure == null) { // not already computed
-    for (i = 0; i < forwardSegs.length; i += 1) {
-      forwardSeg = forwardSegs[i]
-
-      // figure out the child's maximum forward path
-      computeSlotSegPressures(forwardSeg)
-
-      // either use the existing maximum, or use the child's forward pressure
-      // plus one (for the forwardSeg itself)
-      forwardPressure = Math.max(
-        forwardPressure,
-        1 + forwardSeg.forwardPressure,
+      return (
+        rect.stackForward = processNodes(node.nextLevelNodes, levelCoord + node.thickness, stackDepth + 1) + 1
       )
-    }
+    },
+  )
 
-    seg.forwardPressure = forwardPressure
+  function processNodes(nodes: SegNode[], levelCoord: number, stackDepth: number) { // returns stackForward
+    let stackForward = 0
+    for (let node of nodes) {
+      stackForward = Math.max(processNode(node, levelCoord, stackDepth), stackForward)
+    }
+    return stackForward
   }
+
+  processNodes(topLevelNodes, 0, 0)
+  return rects // TODO: sort rects by levelCoord to be consistent with toRects?
 }
 
-// Calculate seg.forwardCoord and seg.backwardCoord for the segment, where both values range
-// from 0 to 1. If the calendar is left-to-right, the seg.backwardCoord maps to "left" and
-// seg.forwardCoord maps to "right" (via percentage). Vice-versa if the calendar is right-to-left.
-//
-// The segment might be part of a "series", which means consecutive segments with the same pressure
-// who's width is unknown until an edge has been hit. `seriesBackwardPressure` is the number of
-// segments behind this one in the current series, and `seriesBackwardCoord` is the starting
-// coordinate of the first segment in the series.
-function computeSegForwardBack(seg: Seg, seriesBackwardPressure, seriesBackwardCoord, eventOrderSpecs) {
-  let forwardSegs = seg.forwardSegs
-  let i
+// TODO: move to general util
 
-  if (seg.forwardCoord == null) { // not already computed
-    if (!forwardSegs.length) {
-      // if there are no forward segments, this segment should butt up against the edge
-      seg.forwardCoord = 1
-    } else {
-      // sort highest pressure first
-      sortForwardSegs(forwardSegs, eventOrderSpecs)
+function cacheable<Args extends any[], Res>(
+  keyFunc: (...args: Args) => string,
+  workFunc: (...args: Args) => Res,
+): ((...args: Args) => Res) {
+  const cache: { [key: string]: Res } = {}
 
-      // this segment's forwardCoord will be calculated from the backwardCoord of the
-      // highest-pressure forward segment.
-      computeSegForwardBack(forwardSegs[0], seriesBackwardPressure + 1, seriesBackwardCoord, eventOrderSpecs)
-      seg.forwardCoord = forwardSegs[0].backwardCoord
-    }
-
-    // calculate the backwardCoord from the forwardCoord. consider the series
-    seg.backwardCoord = seg.forwardCoord -
-      (seg.forwardCoord - seriesBackwardCoord) / // available width for series
-      (seriesBackwardPressure + 1) // # of segments in the series
-
-    // use this segment's coordinates to computed the coordinates of the less-pressurized
-    // forward segments
-    for (i = 0; i < forwardSegs.length; i += 1) {
-      computeSegForwardBack(forwardSegs[i], 0, seg.forwardCoord, eventOrderSpecs)
-    }
+  return (...args: Args) => {
+    let key = keyFunc(...args)
+    return (key in cache)
+      ? cache[key]
+      : (cache[key] = workFunc(...args))
   }
-}
-
-function sortForwardSegs(forwardSegs: Seg[], eventOrderSpecs) {
-  let objs = forwardSegs.map(buildTimeGridSegCompareObj)
-
-  let specs = [
-    // put higher-pressure first
-    { field: 'forwardPressure', order: -1 },
-    // put segments that are closer to initial edge first (and favor ones with no coords yet)
-    { field: 'backwardCoord', order: 1 },
-  ].concat(eventOrderSpecs)
-
-  objs.sort((obj0, obj1) => compareByFieldSpecs(obj0, obj1, specs))
-
-  return objs.map((c) => c._seg)
-}
-
-function buildTimeGridSegCompareObj(seg: Seg): any {
-  let obj = buildSegCompareObj(seg) as any
-
-  obj.forwardPressure = seg.forwardPressure
-  obj.backwardCoord = seg.backwardCoord
-
-  return obj
 }

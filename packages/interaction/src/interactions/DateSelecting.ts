@@ -2,7 +2,7 @@ import {
   compareNumbers, enableCursor, disableCursor, DateComponent, Hit,
   DateSpan, PointerDragEvent, dateSelectionJoinTransformer,
   Interaction, InteractionSettings, interactionSettingsToStore,
-  triggerDateSelect,
+  triggerDateSelect, isDateSelectionValid,
 } from '@fullcalendar/common'
 import { __assign } from 'tslib'
 import { HitDragging } from './HitDragging'
@@ -62,13 +62,20 @@ export class DateSelecting extends Interaction {
     let isInvalid = false
 
     if (hit) {
-      dragSelection = joinHitsIntoSelection(
-        this.hitDragging.initialHit!,
-        hit,
-        context.pluginHooks.dateSelectionTransformers,
-      )
+      let initialHit = this.hitDragging.initialHit!
+      let disallowed = hit.componentId === initialHit.componentId
+        && this.isHitComboAllowed
+        && !this.isHitComboAllowed(initialHit, hit)
 
-      if (!dragSelection || !this.component.isDateSelectionValid(dragSelection)) {
+      if (!disallowed) {
+        dragSelection = joinHitsIntoSelection(
+          initialHit,
+          hit,
+          context.pluginHooks.dateSelectionTransformers,
+        )
+      }
+
+      if (!dragSelection || !isDateSelectionValid(dragSelection, hit.dateProfile, context)) {
         isInvalid = true
         dragSelection = null
       }

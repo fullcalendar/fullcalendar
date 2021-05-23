@@ -1,4 +1,4 @@
-import { Rect } from './geom'
+import { intersectRects, Rect } from './geom'
 import { getIsRtlScrollbarOnLeft } from './scrollbar-side'
 import { computeScrollbarWidthsForEl } from './scrollbar-width'
 
@@ -81,6 +81,22 @@ export function computeRect(el): Rect {
     right: rect.right + window.pageXOffset,
     bottom: rect.bottom + window.pageYOffset,
   }
+}
+
+export function computeClippedClientRect(el: HTMLElement): Rect | null {
+  let clippingParents = getClippingParents(el)
+  let rect: Rect = el.getBoundingClientRect()
+
+  for (let clippingParent of clippingParents) {
+    let intersection = intersectRects(rect, clippingParent.getBoundingClientRect())
+    if (intersection) {
+      rect = intersection
+    } else {
+      return null
+    }
+  }
+
+  return rect
 }
 
 export function computeHeightAndMargins(el: HTMLElement) {

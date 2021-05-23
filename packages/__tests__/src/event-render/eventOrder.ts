@@ -1,4 +1,5 @@
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
 describe('eventOrder', () => {
   pushOptions({
@@ -87,14 +88,39 @@ describe('eventOrder', () => {
     })
   })
 
+  describe('when long event split across weeks', () => {
+    pushOptions({
+      events: [
+        { id: 'x', start: '2018-01-06', end: '2018-01-08' },
+        { id: 'y', start: '2018-01-06', end: '2018-01-07' },
+        { id: 'z', start: '2018-01-07', end: '2018-01-08' },
+      ],
+    })
+
+    it('should prioritize eventOrder duration', () => {
+      let calendar = initCalendar({
+        eventOrder: '-duration',
+      })
+      let dayGrid = new DayGridViewWrapper(calendar).dayGrid
+      let rowEls = dayGrid.getRowEls()
+      let xEvent0 = rowEls[0].querySelector('[data-event-id="x"]')
+      let xEvent1 = rowEls[1].querySelector('[data-event-id="x"]')
+      let yEvent = rowEls[0].querySelector('[data-event-id="y"]')
+      let zEvent = rowEls[1].querySelector('[data-event-id="z"]')
+
+      expect(xEvent0.getBoundingClientRect().top)
+        .toBeLessThan(yEvent.getBoundingClientRect().top)
+      expect(xEvent1.getBoundingClientRect().top)
+        .toBeLessThan(zEvent.getBoundingClientRect().top)
+    })
+  })
+
   function getEventOrder() {
     let objs = new CalendarWrapper(currentCalendar).getEventEls().map((el) => ({
       id: el.getAttribute('data-event-id'),
       top: el.getBoundingClientRect().top,
     }))
-
     objs.sort((a, b) => a.top - b.top)
-
     return objs.map((obj) => obj.id)
   }
 })

@@ -10,7 +10,6 @@ import {
   ViewContext,
   RefObject,
   CssDimValue,
-  Hit,
   DateProfile,
 } from '@fullcalendar/common'
 import { Table } from './Table'
@@ -50,7 +49,6 @@ export class DayTable extends DateComponent<DayTableProps, ViewContext> {
     return (
       <Table
         ref={this.tableRef}
-        elRef={this.handleRootEl}
         {...this.slicer.sliceProps(props, props.dateProfile, props.nextDayThreshold, context, props.dayTableModel)}
         dateProfile={props.dateProfile}
         cells={props.dayTableModel.cells}
@@ -67,38 +65,5 @@ export class DayTable extends DateComponent<DayTableProps, ViewContext> {
         forPrint={props.forPrint}
       />
     )
-  }
-
-  handleRootEl = (rootEl: HTMLDivElement | null) => {
-    if (rootEl) {
-      this.context.registerInteractiveComponent(this, { el: rootEl })
-    } else {
-      this.context.unregisterInteractiveComponent(this)
-    }
-  }
-
-  prepareHits() {
-    this.tableRef.current.prepareHits()
-  }
-
-  queryHit(positionLeft: number, positionTop: number): Hit {
-    let rawHit = this.tableRef.current.positionToHit(positionLeft, positionTop)
-
-    if (rawHit) {
-      return {
-        component: this,
-        dateSpan: rawHit.dateSpan,
-        dayEl: rawHit.dayEl,
-        rect: {
-          left: rawHit.relativeRect.left,
-          right: rawHit.relativeRect.right,
-          top: rawHit.relativeRect.top,
-          bottom: rawHit.relativeRect.bottom,
-        },
-        layer: 0,
-      }
-    }
-
-    return null
   }
 }

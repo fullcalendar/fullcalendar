@@ -91,6 +91,23 @@ export class TimeGridWrapper {
     return Boolean(this.el.querySelector('.fc-timegrid-slots'))
   }
 
+  getMoreEls() {
+    return findElements(this.el, '.fc-timegrid-more-link')
+  }
+
+  openMorePopover(index?) {
+    $(this.getMoreEls()[index || 0]).simulate('click')
+  }
+
+  getMorePopoverEl() {
+    let viewWrapperEl = this.el.closest('.fc-view-harness')
+    return viewWrapperEl.querySelector('.fc-more-popover') as HTMLElement
+  }
+
+  getMorePopoverEventEls() {
+    return findElements(this.getMorePopoverEl(), '.fc-event')
+  }
+
   hasNowIndicator() {
     let hasArrow = Boolean(this.getNowIndicatorArrowEl())
     let hasLine = Boolean(this.getNowIndicatorLineEl())
@@ -539,6 +556,13 @@ export class TimeGridWrapper {
     return this.getEventEls().map((eventEl) => $(eventEl.querySelector('.fc-event-time')).text())
   }
 
+  static getEventElInfo(eventEl) {
+    return {
+      title: $(eventEl).find('.fc-event-title').text(),
+      timeText: $(eventEl).find('.fc-event-time').text(),
+    }
+  }
+
   /*
   Returns a boolean.
   TODO: check isStart/isEnd.
@@ -597,6 +621,6 @@ function checkEventRenderingMatch(expectedRects, eventEls) {
 export function queryEventElInfo(eventEl: HTMLElement) {
   return {
     timeText: $(eventEl.querySelector('.fc-event-time')).text(),
-    isShort: eventEl.classList.contains('fc-timegrid-event-condensed'),
+    isShort: eventEl.classList.contains('fc-timegrid-event-short'),
   }
 }

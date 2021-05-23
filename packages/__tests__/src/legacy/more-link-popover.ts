@@ -2,8 +2,9 @@ import { EventInput } from '@fullcalendar/core'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { DayGridWrapper } from '../lib/wrappers/DayGridWrapper'
 
-describe('more-link popover', () => { // TODO: rename file
+describe('more-link popover', () => {
   let testEvents: EventInput[] = [
     { title: 'event1', start: '2014-07-28', end: '2014-07-30', className: 'event1' },
     { title: 'event2', start: '2014-07-29', end: '2014-07-31', className: 'event2' },
@@ -345,8 +346,6 @@ describe('more-link popover', () => { // TODO: rename file
         expect(dateClickCalled).toBe(false)
         done()
       }, 500)
-
-      done()
     })
   })
 
@@ -534,6 +533,36 @@ describe('more-link popover', () => { // TODO: rename file
 
         done()
       })
+    })
+  })
+
+  it('displays latest events after refetch', (done) => {
+    let fetchCnt = 0
+    let newTitle = 'cool'
+    let calendar = initCalendar({
+      events(info, callback) {
+        fetchCnt += 1
+        if (fetchCnt === 1) {
+          callback(testEvents)
+        } else {
+          callback(testEvents.slice(0, -1).concat([
+            {
+              ...testEvents[testEvents.length - 1],
+              title: newTitle,
+            },
+          ]))
+        }
+      },
+    })
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+    dayGridWrapper.openMorePopover()
+    setTimeout(() => {
+      calendar.refetchEvents()
+      let eventEls = dayGridWrapper.getMorePopoverEventEls()
+      let eventInfo = DayGridWrapper.getEventElInfo(eventEls[2])
+      expect(eventInfo.title).toBe(newTitle)
+      done()
     })
   })
 })

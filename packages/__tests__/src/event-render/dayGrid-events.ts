@@ -46,8 +46,8 @@ describe('dayGrid advanced event rendering', () => {
     let visibleEventEls = filterVisibleEls(eventEls)
     let moreLinkEls = dayGridWrapper.getMoreEls()
 
-    expect(visibleEventEls.length).toBe(2)
-    expect(moreLinkEls.length).toBe(2)
+    expect(visibleEventEls.length).toBe(3)
+    expect(moreLinkEls.length).toBe(1)
     expect(anyElsIntersect(visibleEventEls.concat(moreLinkEls))).toBe(false)
   })
 
@@ -282,5 +282,43 @@ describe('dayGrid advanced event rendering', () => {
       ],
     }, $container[0])
     $container.remove()
+  })
+
+  it('doesn\'t create more-link while positioning events with temporary unknown dimensions', () => {
+    let renderedMoreLink = false
+    initCalendar({
+      initialView: 'dayGridMonth',
+      moreLinkDidMount() {
+        renderedMoreLink = true
+      },
+      events: [
+        { id: '1', start: '2020-05-05' },
+      ],
+    })
+    expect(renderedMoreLink).toBe(false)
+  })
+
+  it('can render events with strict ordering', () => {
+    initCalendar({
+      initialView: 'dayGridMonth',
+      eventOrder: 'id',
+      eventOrderStrict: true,
+      events: [
+        { id: '1', start: '2020-05-05' },
+        { id: '2', start: '2020-05-03', end: '2020-05-08' },
+        { id: '3', start: '2020-05-04' },
+      ],
+      eventDidMount(arg) {
+        arg.el.setAttribute('data-event-id', arg.event.id)
+      },
+    })
+    let el1 = document.querySelector('[data-event-id="1"]')
+    let el2 = document.querySelector('[data-event-id="2"]')
+    let el3 = document.querySelector('[data-event-id="3"]')
+    let top1 = el1.getBoundingClientRect().top
+    let top2 = el2.getBoundingClientRect().top
+    let top3 = el3.getBoundingClientRect().top
+    expect(top1).toBeLessThan(top2)
+    expect(top2).toBeLessThan(top3)
   })
 })

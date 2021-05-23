@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@fullcalendar/core-preact",
-  "version": "5.6.0",
+  "version": "5.7.0",
   "title": "FullCalendar Core-Preact Package",
   "description": "Internal package",
   "docs": "https://fullcalendar.io/docs",

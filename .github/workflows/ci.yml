@@ -42,17 +42,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "14"
-      - name: Check Examples Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            example-projects/next/node_modules
-            example-projects/next-scheduler/node_modules
-            example-projects/nuxt/node_modules
-            example-projects/vue-vuex/node_modules
-            example-projects/vue-typescript/node_modules
-            example-projects/parcel/node_modules
-          key: example-projects
       - name: Check Dependencies
         uses: actions/cache@v2
         id: yarn-cache
@@ -68,6 +57,7 @@ jobs:
         run: yarn run gulp testCi
   contrib:
     name: Contrib
+    if: false # disable for now
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -78,17 +68,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "14"
-      - name: Check Examples Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            example-projects/next/node_modules
-            example-projects/next-scheduler/node_modules
-            example-projects/nuxt/node_modules
-            example-projects/vue-vuex/node_modules
-            example-projects/vue-typescript/node_modules
-            example-projects/parcel/node_modules
-          key: example-projects
       - name: Check Dependencies
         uses: actions/cache@v2
         id: yarn-cache
@@ -116,17 +95,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "14"
-      - name: Check Examples Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            example-projects/next/node_modules
-            example-projects/next-scheduler/node_modules
-            example-projects/nuxt/node_modules
-            example-projects/vue-vuex/node_modules
-            example-projects/vue-typescript/node_modules
-            example-projects/parcel/node_modules
-          key: example-projects
       - name: Check Dependencies
         uses: actions/cache@v2
         id: yarn-cache
