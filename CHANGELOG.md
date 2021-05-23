@@ -18,6 +18,7 @@ v5.7.0 (2021-05-11)
 - fix: respect duration in eventOrder as highest precedence (#5481)
 - fix: refetching events should keep event popover open (#3958)
 - fix: accidental +more popover close with shadow dom (#6205)
+- fix: dayGrid events stretched out of cells in print media (#6300)
 - dev: when attempting `npm install` in the dev repo, will throw an error saying to use yarn (#5504)
 - dev: ensure building on windows works (#5366)
 obscure breaking changes:
