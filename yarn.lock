@@ -3986,6 +3986,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@fullcalendar-example-projects/vue3-typescript@workspace:example-projects/vue3-typescript":
+  version: 0.0.0-use.local
+  resolution: "@fullcalendar-example-projects/vue3-typescript@workspace:example-projects/vue3-typescript"
+  dependencies:
+    "@fullcalendar/daygrid": ^5.5.0
+    "@fullcalendar/interaction": ^5.5.0
+    "@fullcalendar/timegrid": ^5.5.0
+    "@fullcalendar/vue3": ^5.5.0
+    "@vitejs/plugin-vue": ^1.2.2
+    "@vue/compiler-sfc": ^3.0.11
+    typescript: ^4.2.4
+    vite: ^2.3.2
+    vue: ^3.0.11
+  languageName: unknown
+  linkType: soft
+
 "@fullcalendar-example-projects/vue@workspace:example-projects/vue":
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/vue@workspace:example-projects/vue"
@@ -4350,7 +4366,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/vue3@workspace:packages-contrib/vue3":
+"@fullcalendar/vue3@^5.5.0, @fullcalendar/vue3@workspace:packages-contrib/vue3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/vue3@workspace:packages-contrib/vue3"
   dependencies:
@@ -7109,6 +7125,15 @@ __metadata:
     "@typescript-eslint/types": 4.7.0
     eslint-visitor-keys: ^2.0.0
   checksum: 6783a60258962dc8d05f8242d121fc9b6e52805b7505917ef406ae3b0807ce004933bbf1ff56de90682b7d786a856e1fd3287e43f0468a8d7780801f34a3a345
+  languageName: node
+  linkType: hard
+
+"@vitejs/plugin-vue@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "@vitejs/plugin-vue@npm:1.2.2"
+  peerDependencies:
+    "@vue/compiler-sfc": ^3.0.6
+  checksum: 0efe1b6d03e9b6f10e71ec157426742566aff8a00bca2d6d0ce04328694922a600eb34f0f5af4b723c3c132ed353a634735946c515683adcc93b736a6dc3d531
   languageName: node
   linkType: hard
 
@@ -13967,6 +13992,15 @@ __metadata:
     es6-iterator: ^2.0.3
     es6-symbol: ^3.1.1
   checksum: 8dfd50b2919e16cf246ea9d5f9271eef466924248bc98a48a718cc149d0f67b708628c8e4bd32fa945a813c7780f94270f21ac16fff33c854a348db7e19f084d
+  languageName: node
+  linkType: hard
+
+"esbuild@npm:^0.11.23":
+  version: 0.11.23
+  resolution: "esbuild@npm:0.11.23"
+  bin:
+    esbuild: bin/esbuild
+  checksum: 9226fc3d74f7555c96778c5d9204312c578e9c11b472deebfbab52c4ac58b9efc3a40be529368f6ccbe257d0059c6b8fd142c179824a3227d055d912c7b5a94a
   languageName: node
   linkType: hard
 
@@ -24407,7 +24441,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.1.10, postcss@npm:^8.3.0":
+"postcss@npm:^8.1.10, postcss@npm:^8.2.10, postcss@npm:^8.3.0":
   version: 8.3.0
   resolution: "postcss@npm:8.3.0"
   dependencies:
@@ -30443,6 +30477,24 @@ typescript@~3.9.7:
   bin:
     vite: bin/vite.js
   checksum: 0c297aabe47ad9aab5ac02478db2bb765e7fb67bb36eeba2a6c41ddea24c98799815005423c5ca8d1648ab2ecd5b7246c9364f867709b2dd53b5b476450ce3c3
+  languageName: node
+  linkType: hard
+
+"vite@npm:^2.3.2":
+  version: 2.3.4
+  resolution: "vite@npm:2.3.4"
+  dependencies:
+    esbuild: ^0.11.23
+    fsevents: ~2.3.1
+    postcss: ^8.2.10
+    resolve: ^1.19.0
+    rollup: ^2.38.5
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: 8f5c60cd48d85bae1a842c9cfe981da5b98fbba8bbf45c2ebed7d4dcf96f44ca5b5f2aad5d4c51ca1207ccdf3dca762c3395d934ac5427710d1a05351f029997
   languageName: node
   linkType: hard
 
