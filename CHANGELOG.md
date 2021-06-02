@@ -1,4 +1,10 @@
 
+v5.7.1 (2021-06-02)
+-------------------
+- updated Angular connector to support Angular 12 ([angular-369](https://github.com/fullcalendar/fullcalendar-angular/issues/369))
+- new Vue 3 connector ([vue-131](https://github.com/fullcalendar/fullcalendar-vue/issues/131))
+
+
 v5.7.0 (2021-05-11)
 -------------------
 
