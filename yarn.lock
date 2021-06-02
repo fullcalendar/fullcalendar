@@ -4069,7 +4069,7 @@ __metadata:
     "@angular/platform-browser": ~12.0.3
     "@angular/platform-browser-dynamic": ~12.0.3
     "@angular/router": ~12.0.3
-    "@fullcalendar/angular": ^5.7.0
+    "@fullcalendar/angular": ^5.7.1
     "@fullcalendar/core": ^5.7.0
     "@fullcalendar/daygrid": ^5.7.0
     "@fullcalendar/interaction": ^5.7.0
@@ -4598,7 +4598,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/angular@^5.7.0, @fullcalendar/angular@workspace:packages-contrib/angular/dist/fullcalendar":
+"@fullcalendar/angular@^5.7.1, @fullcalendar/angular@workspace:packages-contrib/angular/dist/fullcalendar":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/angular@workspace:packages-contrib/angular/dist/fullcalendar"
   dependencies:
