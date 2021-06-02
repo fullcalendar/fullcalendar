@@ -4520,7 +4520,7 @@ __metadata:
     "@fullcalendar/daygrid": ^5.7.0
     "@fullcalendar/interaction": ^5.7.0
     "@fullcalendar/timegrid": ^5.7.0
-    "@fullcalendar/vue3": ^5.7.0
+    "@fullcalendar/vue3": ^5.7.1
     "@vitejs/plugin-vue": ^1.2.2
     "@vue/compiler-sfc": ^3.0.11
     typescript: ^4.2.4
@@ -4896,7 +4896,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/vue3@^5.7.0, @fullcalendar/vue3@workspace:packages-contrib/vue3":
+"@fullcalendar/vue3@^5.7.1, @fullcalendar/vue3@workspace:packages-contrib/vue3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/vue3@workspace:packages-contrib/vue3"
   dependencies:
