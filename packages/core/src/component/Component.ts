@@ -47,6 +47,7 @@ export default class Component<PropsType> {
 
   uid: string
   props: PropsType | null
+  everRendered = false
   context: ComponentContext
 
   constructor() {
@@ -61,12 +62,7 @@ export default class Component<PropsType> {
   }
 
   receiveProps(props: PropsType, context: ComponentContext) {
-    let oldContext = this.context
-    this.context = context
-
-    if (!oldContext) {
-      this.firstContext(context)
-    }
+    this.receiveContext(context)
 
     let { anyChanges, comboProps } = recycleProps(this.props || {}, props, this.equalityFuncs)
 
@@ -74,15 +70,26 @@ export default class Component<PropsType> {
 
     if (anyChanges) {
 
-      if (oldContext) {
+      if (this.everRendered) {
         this.beforeUpdate()
       }
 
       this.render(comboProps, context)
 
-      if (oldContext) {
+      if (this.everRendered) {
         this.afterUpdate()
       }
+    }
+
+    this.everRendered = true
+  }
+
+  receiveContext(context: ComponentContext) {
+    let oldContext = this.context
+    this.context = context
+
+    if (!oldContext) {
+      this.firstContext(context)
     }
   }
 

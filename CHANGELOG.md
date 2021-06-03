@@ -1,8 +1,21 @@
 
-v4.4.1 (2021-06-03)
+v4.4.3 (2021-06-03)
 -------------------
 
 - fixed table-related bug with Chrome 91 and timeline slot widths (#6338)
+
+
+v4.4.2 (2020-05-28)
+-------------------
+
+Bump all packages so that all latest deps are fetched
+
+
+v4.4.1 (2020-05-27)
+-------------------
+
+- fix: loading callback does not fire for resources (#5278)
+- fix: calling `setOption` when there is a date selection causes a typeerror (#5266)
 
 
 v4.4.0 (2020-02-11)
