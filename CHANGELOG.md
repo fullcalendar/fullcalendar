@@ -1,4 +1,10 @@
 
+v4.4.1 (2021-06-03)
+-------------------
+
+- fixed table-related bug with Chrome 91 and timeline slot widths (#6338)
+
+
 v4.4.0 (2020-02-11)
 -------------------
 
