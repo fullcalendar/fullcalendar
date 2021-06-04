@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/common",
-  "version": "5.7.0",
+  "version": "5.7.2",
   "title": "FullCalendar Common",
   "description": "internal package",
   "docs": "https://fullcalendar.io/docs",

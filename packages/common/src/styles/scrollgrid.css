@@ -49,12 +49,9 @@
   }
 
   & .fc-scrollgrid-section-liquid {
-    height: auto;
-
     & > td {
       height: 100%; // better than `auto`, for firefox
     }
-
   }
 
   & .fc-scrollgrid-section > * {

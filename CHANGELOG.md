@@ -1,4 +1,10 @@
 
+v5.7.2 (2021-06-03)
+-------------------
+- fixed table-related Chrome 91 bug causing timegrid view with allDaySlot:false and certain
+  custom CSS to appear broken
+
+
 v5.7.1 (2021-06-02)
 -------------------
 - updated Angular connector to support Angular 12 ([angular-369](https://github.com/fullcalendar/fullcalendar-angular/issues/369))
