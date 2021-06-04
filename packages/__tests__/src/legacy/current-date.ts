@@ -1,9 +1,9 @@
-import { addDays } from '@fullcalendar/core'
+import { addDays, FormatRangeOptions } from '@fullcalendar/core'
 import { parseUtcDate } from '../lib/date-parsing'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 describe('current date', () => {
-  const TITLE_FORMAT = {
+  const TITLE_FORMAT: FormatRangeOptions = {
     month: 'long',
     day: 'numeric',
     year: 'numeric',

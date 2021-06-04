@@ -147,7 +147,7 @@ export class TimeGridWrapper {
   }
 
   dragEventToDate(eventEl: HTMLElement, dropDate, onBeforeRelease?) {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       $(eventEl).simulate('drag', {
         localPoint: { left: '50%', top: 5 }, // ahhh 5. overcome divider sometimes
         end: this.getPoint(dropDate),
@@ -158,7 +158,7 @@ export class TimeGridWrapper {
   }
 
   resizeEvent(eventEl: HTMLElement, origEndDate, newEndDate, onBeforeRelease?) {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       let resizerEl = $(eventEl).find('.' + CalendarWrapper.EVENT_RESIZER_CLASSNAME)
         .css('display', 'block')[0] // usually only displays on hover. force display
 
@@ -177,7 +177,7 @@ export class TimeGridWrapper {
   }
 
   resizeEventTouch(eventEl: HTMLElement, origEndDate, newEndDate) {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       setTimeout(() => { // wait for calendar to accept touch :(
         $(eventEl).simulate('drag', {
           isTouch: true,
@@ -209,7 +209,7 @@ export class TimeGridWrapper {
     startPoint.top += 2
     endPoint.top -= 2
 
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       $(this.getDayEls(start)).simulate('drag', {
         point: startPoint,
         end: endPoint,
@@ -226,7 +226,7 @@ export class TimeGridWrapper {
     startPoint.top += 2
     endPoint.top -= 2
 
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       setTimeout(() => { // wait for calendar to accept touch :(
         // QUESTION: why do we not need to do press-down first?
         $(dayEls).simulate('drag', {
@@ -240,7 +240,7 @@ export class TimeGridWrapper {
   }
 
   clickDate(date) {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       $(this.getDayEls(date)).simulate('drag', {
         point: this.getPoint(date),
         onRelease: () => resolve(),

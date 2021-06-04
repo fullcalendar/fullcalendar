@@ -176,7 +176,7 @@ export class DayGridWrapper {
   }
 
   selectDates(start, inclusiveEnd) {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       $(this.getDayEls(start)).simulate('drag', {
         point: getRectCenter(this.getDayEl(start).getBoundingClientRect()),
         end: getRectCenter(this.getDayEl(inclusiveEnd).getBoundingClientRect()),
@@ -186,7 +186,7 @@ export class DayGridWrapper {
   }
 
   selectDatesTouch(start, inclusiveEnd) {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       let startEl = this.getDayEl(start)
 
       setTimeout(() => { // wait for calendar to accept touch :(
@@ -201,7 +201,7 @@ export class DayGridWrapper {
   }
 
   dragEventToDate(eventEl: HTMLElement, startDate, endDate, isTouch?, onBeforeRelease?) {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       if (!startDate) {
         let rect1 = this.getDayEl(endDate).getBoundingClientRect()
         let point1 = getRectCenter(rect1)
@@ -234,7 +234,7 @@ export class DayGridWrapper {
   }
 
   resizeEvent(eventEl: HTMLElement, origEndDate, newEndDate, fromStart?) {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       let rect0 = this.getDayEl(origEndDate).getBoundingClientRect()
       let rect1 = this.getDayEl(newEndDate).getBoundingClientRect()
 
@@ -257,7 +257,7 @@ export class DayGridWrapper {
   }
 
   resizeEventTouch(eventEl: HTMLElement, origEndDate, newEndDate, fromStart?) {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       let rect0 = this.getDayEl(origEndDate).getBoundingClientRect()
       let rect1 = this.getDayEl(newEndDate).getBoundingClientRect()
 

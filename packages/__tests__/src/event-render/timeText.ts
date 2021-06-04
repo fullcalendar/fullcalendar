@@ -1,3 +1,4 @@
+import { FormatterInput } from '@fullcalendar/core'
 import { parseLocalDate } from '../lib/date-parsing'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
@@ -10,7 +11,11 @@ describe('the time text on events', () => {
     })
 
     it('renders segs with correct local timezone', () => {
-      let FORMAT = { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }
+      const FORMAT: FormatterInput = {
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZoneName: 'short',
+      }
 
       let calendar = initCalendar({
         timeZone: 'local',

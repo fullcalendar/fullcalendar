@@ -1,10 +1,12 @@
+import { FormatterInput } from "@fullcalendar/core"
+
 describe('Event::formatRange', () => {
   pushOptions({
     timeZone: 'America/New_York', // for forced timezone offsets
     locale: 'en',
   })
 
-  const FORMAT_SETTINGS = {
+  const FORMAT_SETTINGS: FormatterInput = {
     month: 'long',
     day: 'numeric',
     year: 'numeric',
