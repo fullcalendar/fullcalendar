@@ -19,7 +19,7 @@
     "components-jqueryui": "github:components/jqueryui",
     "jasmine-jquery": "^2.1.1",
     "jquery": "^3.4.0",
-    "jquery-simulate": "github:jquery/jquery-simulate",
+    "jquery-simulate": "github:jquery/jquery-simulate#main",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.31",
     "tslib": "^2.0.3",
