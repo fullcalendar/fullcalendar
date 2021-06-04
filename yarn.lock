@@ -10565,7 +10565,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"consola@npm:^2.10.0, consola@npm:^2.15.0, consola@npm:^2.15.3, consola@npm:^2.6.0, consola@npm:^2.9.0":
+"consola@npm:*, consola@npm:^2.10.0, consola@npm:^2.15.0, consola@npm:^2.15.3, consola@npm:^2.6.0, consola@npm:^2.9.0":
   version: 2.15.3
   resolution: "consola@npm:2.15.3"
   checksum: 914e2b0b24605a41f1a83ae29a0238558d01a01c40ada5817db81b2dd1543a540d59e38e81e736d05360246379a18013e6930b32231650898dfc4adb52a93523
@@ -14238,6 +14238,7 @@ fsevents@~2.3.1:
     "@types/jasmine-jquery": ^1.5.33
     "@types/jquery": ^3.3.29
     fullcalendar-tests: "*"
+    jquery: ^3.4.0
     tslib: ^2.0.3
     xhr-mock: ^2.5.1
   languageName: unknown
@@ -14360,7 +14361,7 @@ fsevents@~2.3.1:
     stylelint: ^13.6.1
     ts-loader: ^7.0.4
     typescript: ^4.3.2
-    webpack: ^5.3.1
+    webpack: ^5.38.1
     webpack-cli: ^4.1.0
   languageName: unknown
   linkType: soft
@@ -17301,7 +17302,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"jquery@npm:^3.4.0, jquery@npm:^3.5.1":
+"jquery@npm:*, jquery@npm:^3.4.0, jquery@npm:^3.5.1":
   version: 3.6.0
   resolution: "jquery@npm:3.6.0"
   checksum: a0a819022a1bdff5efa79bbd9d4d7352de5bd32dabe42108e6ec0797238dba36c09c108e0eea2724f5d03acc1b30ee87d76bec80e15b9510106532292ebe6ba4
@@ -29707,7 +29708,7 @@ typescript@~4.2.3:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.3.0, webpack@npm:^5.3.1, webpack@npm:^5.7.0":
+"webpack@npm:^5.3.0, webpack@npm:^5.38.1, webpack@npm:^5.7.0":
   version: 5.38.1
   resolution: "webpack@npm:5.38.1"
   dependencies:
