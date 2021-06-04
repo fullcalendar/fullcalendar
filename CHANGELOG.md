@@ -2,7 +2,7 @@
 v5.7.2 (2021-06-03)
 -------------------
 - fixed table-related Chrome 91 bug causing timegrid view with allDaySlot:false and certain
-  custom CSS to appear broken
+  custom CSS to appear broken (#6338, #6343)
 
 
 v5.7.1 (2021-06-02)
