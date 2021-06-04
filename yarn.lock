@@ -14350,8 +14350,8 @@ fsevents@~2.3.1:
     postcss-loader: ^3.0.0
     postcss-nesting: ^7.0.1
     react: ^17.0.1
-    rollup: ^2.21.0
-    rollup-plugin-dts: ^1.4.13
+    rollup: ^2.49.0
+    rollup-plugin-dts: ^3.0.2
     rollup-plugin-postcss: ^3.1.3
     rollup-plugin-sourcemaps: ^0.6.2
     semver: ^7.3.2
@@ -14359,7 +14359,7 @@ fsevents@~2.3.1:
     style-loader: ^2.0.0
     stylelint: ^13.6.1
     ts-loader: ^7.0.4
-    typescript: ^4.0.5
+    typescript: ^4.3.2
     webpack: ^5.3.1
     webpack-cli: ^4.1.0
   languageName: unknown
@@ -24900,18 +24900,19 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"rollup-plugin-dts@npm:^1.4.13":
-  version: 1.4.14
-  resolution: "rollup-plugin-dts@npm:1.4.14"
+"rollup-plugin-dts@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "rollup-plugin-dts@npm:3.0.2"
   dependencies:
-    "@babel/code-frame": ^7.10.4
+    "@babel/code-frame": ^7.12.13
+    magic-string: ^0.25.7
   peerDependencies:
-    rollup: ^2.33.1
-    typescript: ^4.0.5
+    rollup: ^2.48.0
+    typescript: ^4.2.4
   dependenciesMeta:
     "@babel/code-frame":
       optional: true
-  checksum: c7895edd745bd8a34b986f58c30e108607286940259d41da12cf806a68c05208d7c2b709833f86ce42a43d42cf7e3ffa6fcf01a4590bed8e783cfb1bbb9848a6
+  checksum: 11e32d247652210bbf052ef8d09551a031f774ee7dfd4f3c7d11e3fd6ee60f1856ebebdbd041104ea049f86ab1e413c3f8db6c1bab015895fe82707b9f1ce251
   languageName: node
   linkType: hard
 
@@ -25048,7 +25049,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"rollup@npm:^1.20.0||^2.0.0, rollup@npm:^2.21.0, rollup@npm:^2.35.1, rollup@npm:^2.37.0, rollup@npm:^2.38.5":
+"rollup@npm:^1.20.0||^2.0.0, rollup@npm:^2.21.0, rollup@npm:^2.35.1, rollup@npm:^2.37.0, rollup@npm:^2.38.5, rollup@npm:^2.49.0":
   version: 2.50.6
   resolution: "rollup@npm:2.50.6"
   dependencies:
@@ -28109,7 +28110,7 @@ typescript@4.0.5:
   languageName: node
   linkType: hard
 
-"typescript@^4.0.5, typescript@^4.2.4":
+"typescript@^4.0.5, typescript@^4.2.4, typescript@^4.3.2":
   version: 4.3.2
   resolution: "typescript@npm:4.3.2"
   bin:
@@ -28129,7 +28130,7 @@ typescript@4.0.5:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.0.5#builtin<compat/typescript>, typescript@patch:typescript@^4.2.4#builtin<compat/typescript>":
+"typescript@patch:typescript@^4.0.5#builtin<compat/typescript>, typescript@patch:typescript@^4.2.4#builtin<compat/typescript>, typescript@patch:typescript@^4.3.2#builtin<compat/typescript>":
   version: 4.3.2
   resolution: "typescript@patch:typescript@npm%3A4.3.2#builtin<compat/typescript>::version=4.3.2&hash=ddfc1b"
   bin:
