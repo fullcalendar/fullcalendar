@@ -41,7 +41,7 @@ export interface ChunkContentCallbackArgs { // TODO: util for wrapping tables!?
   tableColGroupNode: VNode
   tableMinWidth: CssDimValue
   clientWidth: number | null // important to know whether 0 or not-yet-determined. for headless testing
-  clientHeight: number| null //
+  clientHeight: number | null //
   expandRows: boolean
   syncRowHeights: boolean
   rowSyncHeights: number[]

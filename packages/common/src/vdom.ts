@@ -6,6 +6,7 @@ if (typeof FullCalendarVDom === 'undefined') {
   )
 }
 
+/* eslint-disable */
 export import Ref = FullCalendarVDom.Ref
 export import RefObject = FullCalendarVDom.RefObject
 export import ComponentType = FullCalendarVDom.ComponentType
@@ -23,3 +24,4 @@ export import createPortal = FullCalendarVDom.createPortal
 export import VUIEvent = FullCalendarVDom.VUIEvent
 export import flushToDom = FullCalendarVDom.flushToDom
 export import unmountComponentAtNode = FullCalendarVDom.unmountComponentAtNode
+/* eslint-enable */
