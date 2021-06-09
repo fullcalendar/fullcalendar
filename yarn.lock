@@ -2912,6 +2912,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/vue-typescript@workspace:example-projects/vue-typescript"
   dependencies:
+    "@fullcalendar/core": ^5.7.2
     "@fullcalendar/daygrid": ^5.7.2
     "@fullcalendar/interaction": ^5.7.2
     "@fullcalendar/timegrid": ^5.7.2
@@ -2946,6 +2947,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/vue3-typescript@workspace:example-projects/vue3-typescript"
   dependencies:
+    "@fullcalendar/core": ^5.7.2
     "@fullcalendar/daygrid": ^5.7.2
     "@fullcalendar/interaction": ^5.7.2
     "@fullcalendar/timegrid": ^5.7.2
