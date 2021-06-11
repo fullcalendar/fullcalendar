@@ -1,12 +1,12 @@
 import {
   Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta,
   DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill, buildIsoString, computeEarliestSegStart,
-  DateProfile, buildEventRangeKey, sortEventSegs, SegInput, memoize, SegEntryGroup, SegEntry, Dictionary,
+  DateProfile, buildEventRangeKey, sortEventSegs, memoize, SegEntryGroup, SegEntry, Dictionary,
 } from '@fullcalendar/common'
 import { TimeColMoreLink } from './TimeColMoreLink'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { computeFgSegPlacements, TimeColSegRect } from './event-placement'
+import { computeFgSegPlacements, computeSegVCoords, TimeColSegHCoords, TimeColSegVCoords } from './event-placement'
 import { TimeColEvent } from './TimeColEvent'
 import { TimeColMisc } from './TimeColMisc'
 
@@ -34,7 +34,7 @@ export interface TimeColProps {
 
 export class TimeCol extends BaseComponent<TimeColProps> {
   sortEventSegs = memoize(sortEventSegs)
-  computeFgSegPlacements = memoize(computeFgSegPlacements) // only for non-print, non-mirror
+  // TODO: memoize event-placement?
 
   render() {
     let { props, context } = this
@@ -114,16 +114,11 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     isDateSelecting?: boolean,
   ) {
     let { props } = this
-
     if (props.forPrint) {
       return renderPlainFgSegs(sortedFgSegs, props)
-    }
-
-    if (props.slatCoords) {
+    } else {
       return this.renderPositionedFgSegs(sortedFgSegs, segIsInvisible, isDragging, isResizing, isDateSelecting)
     }
-
-    return null
   }
 
   renderPositionedFgSegs(
@@ -133,33 +128,35 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     isResizing?: boolean,
     isDateSelecting?: boolean,
   ) {
-    let { eventMaxStack, eventShortHeight, eventOrderStrict } = this.context.options
-    let { eventSelection, todayRange, nowDate } = this.props
+    let { eventMaxStack, eventShortHeight, eventOrderStrict, eventMinHeight } = this.context.options
+    let { date, slatCoords, eventSelection, todayRange, nowDate } = this.props
     let isMirror = isDragging || isResizing || isDateSelecting
-    let segInputs = this.buildSegInputs(segs)
-    let { segRects, hiddenGroups } = isMirror ? computeFgSegPlacements(segInputs) : // don't use memoized
-      this.computeFgSegPlacements(segInputs, eventOrderStrict, eventMaxStack)
+    let segVCoords = computeSegVCoords(segs, date, slatCoords, eventMinHeight)
+    let { segPlacements, hiddenGroups } = computeFgSegPlacements(segs, segVCoords, eventOrderStrict, eventMaxStack)
 
     return (
       <Fragment>
         {this.renderHiddenGroups(hiddenGroups, segs)}
-        {segRects.map((segRect) => {
-          let seg = segs[segRect.segInput.index] as TimeColsSeg
+        {segPlacements.map((segPlacement) => {
+          let { seg, vcoords, hcoords } = segPlacement
           let instanceId = seg.eventRange.instance.instanceId
-          let positionCss = {
-            ...this.computeSegTopBottomCss(segRect.segInput),
-            // mirrors will span entire column width
-            // also, won't assign z-index, which is good, fc-event-mirror will overpower other harnesses
-            ...(isMirror ? { left: 0, right: 0 } : this.computeSegLeftRightCss(segRect)),
-          }
+          let isVisible = isMirror || (!segIsInvisible[instanceId] && vcoords && hcoords)
+          let vStyle = vcoords ? computeSegTopBottomCss(vcoords) : {}
+          let hStyle = (!isMirror && hcoords) ? this.computeSegLeftRightCss(hcoords) : { left: 0, right: 0 }
+          let isInset = hcoords && hcoords.stackForward > 0
+          let isShort = vcoords && (vcoords.spanEnd - vcoords.spanStart) < eventShortHeight
 
           return (
             <div
-              className={'fc-timegrid-event-harness' + (segRect.stackForward > 0 ? ' fc-timegrid-event-harness-inset' : '')}
+              className={
+                'fc-timegrid-event-harness' +
+                (isInset ? ' fc-timegrid-event-harness-inset' : '')
+              }
               key={instanceId}
               style={{
-                visibility: segIsInvisible[instanceId] ? 'hidden' : ('' as any),
-                ...positionCss,
+                visibility: isVisible ? ('' as any) : 'hidden',
+                ...vStyle,
+                ...hStyle,
               }}
             >
               <TimeColEvent
@@ -168,7 +165,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
                 isResizing={isResizing}
                 isDateSelecting={isDateSelecting}
                 isSelected={instanceId === eventSelection}
-                isShort={(segRect.spanEnd - segRect.spanStart) < eventShortHeight}
+                isShort={isShort}
                 {...getSegMeta(seg, todayRange, nowDate)}
               />
             </div>
@@ -184,7 +181,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     return (
       <Fragment>
         {hiddenGroups.map((hiddenGroup) => {
-          let positionCss = this.computeSegTopBottomCss(hiddenGroup)
+          let positionCss = computeSegTopBottomCss(hiddenGroup) // hiddenGroup conforms to TimeColSegVCoords
           let hiddenSegs = compileSegsFromEntries(hiddenGroup.entries, segs)
           return (
             <TimeColMoreLink
@@ -206,40 +203,18 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     )
   }
 
-  buildSegInputs(segs: TimeColsSeg[]): SegInput[] {
-    let { date, slatCoords } = this.props
-    let { eventMinHeight } = this.context.options
-    let segInputs: SegInput[] = []
-
-    for (let i = 0; i < segs.length; i += 1) {
-      let seg = segs[i]
-      let spanStart = slatCoords.computeDateTop(seg.start, date)
-      let spanEnd = Math.max(
-        spanStart + (eventMinHeight || 0), // yuck
-        slatCoords.computeDateTop(seg.end, date),
-      )
-      segInputs.push({
-        index: i,
-        spanStart: Math.round(spanStart), // for barely-overlapping collisions
-        spanEnd: Math.round(spanEnd), //
-        thickness: 1,
-      })
-    }
-
-    return segInputs
-  }
-
   renderFillSegs(segs: TimeColsSeg[], fillType: string) {
-    let { props } = this
+    let { props, context } = this
+    let segVCoords = computeSegVCoords(segs, props.date, props.slatCoords, context.options.eventMinHeight)
 
-    if (!props.slatCoords) { return null }
-
-    let segInputs = this.buildSegInputs(segs)
-
-    let children = segInputs.map((segInput) => {
-      let seg = segs[segInput.index]
+    let children = segVCoords.map((vcoords, i) => {
+      let seg = segs[i]
       return (
-        <div key={buildEventRangeKey(seg.eventRange)} className="fc-timegrid-bg-harness" style={this.computeSegTopBottomCss(segInput)}>
+        <div
+          key={buildEventRangeKey(seg.eventRange)}
+          className="fc-timegrid-bg-harness"
+          style={computeSegTopBottomCss(vcoords)}
+        >
           {fillType === 'bg-event' ?
             <BgEvent seg={seg} {...getSegMeta(seg, props.todayRange, props.nowDate)} /> :
             renderFill(fillType)}
@@ -275,18 +250,11 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     ))
   }
 
-  computeSegTopBottomCss(segLike: { spanStart: number, spanEnd: number }) {
-    return {
-      top: segLike.spanStart,
-      bottom: -segLike.spanEnd,
-    }
-  }
-
-  computeSegLeftRightCss(segRect: TimeColSegRect) {
+  computeSegLeftRightCss(segHCoords: TimeColSegHCoords) {
     let { isRtl, options } = this.context
     let shouldOverlap = options.slotEventOverlap
-    let nearCoord = segRect.levelCoord // the left side if LTR. the right side if RTL. floating-point
-    let farCoord = segRect.levelCoord + segRect.thickness // the right side if LTR. the left side if RTL. floating-point
+    let nearCoord = segHCoords.levelCoord // the left side if LTR. the right side if RTL. floating-point
+    let farCoord = segHCoords.levelCoord + segHCoords.thickness // the right side if LTR. the left side if RTL. floating-point
     let left // amount of space from left edge, a fraction of the total width
     let right // amount of space from right edge, a fraction of the total width
 
@@ -304,12 +272,12 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     }
 
     let props = {
-      zIndex: segRect.stackDepth + 1, // convert from 0-base to 1-based
+      zIndex: segHCoords.stackDepth + 1, // convert from 0-base to 1-based
       left: left * 100 + '%',
       right: right * 100 + '%',
     }
 
-    if (shouldOverlap && !segRect.stackForward) {
+    if (shouldOverlap && !segHCoords.stackForward) {
       // add padding to the edge so that forward stacked events don't cover the resizer's icon
       props[isRtl ? 'marginLeft' : 'marginRight'] = 10 * 2 // 10 is a guesstimate of the icon's width
     }
@@ -355,6 +323,13 @@ export function renderPlainFgSegs(
       })}
     </Fragment>
   )
+}
+
+function computeSegTopBottomCss(segVCoords: TimeColSegVCoords) {
+  return {
+    top: segVCoords.spanStart,
+    bottom: -segVCoords.spanEnd,
+  }
 }
 
 function compileSegsFromEntries(

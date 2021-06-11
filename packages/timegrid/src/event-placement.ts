@@ -8,7 +8,107 @@ import {
   SegInput,
   SegEntryGroup,
   groupIntersectingEntries,
+  DateMarker,
 } from '@fullcalendar/common'
+import { TimeColsSeg } from './TimeColsSeg'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
+
+// public interface
+// ------------------------------------------------------------------------------------------
+
+export interface TimeColSegVCoords {
+  spanStart: number
+  spanEnd: number
+}
+
+export interface TimeColSegHCoords {
+  levelCoord: number
+  thickness: number
+  stackDepth: number
+  stackForward: number
+}
+
+export interface TimeColFgSegPlacement {
+  seg: TimeColsSeg
+  vcoords?: TimeColSegVCoords
+  hcoords?: TimeColSegHCoords
+}
+
+export function computeSegVCoords(
+  segs: TimeColsSeg[],
+  colDate: DateMarker,
+  slatCoords: TimeColsSlatsCoords = null,
+  eventMinHeight: number = 0,
+): TimeColSegVCoords[] {
+  let vcoords: TimeColSegVCoords[] = []
+
+  if (slatCoords) {
+    for (let i = 0; i < segs.length; i += 1) {
+      let seg = segs[i]
+      let spanStart = slatCoords.computeDateTop(seg.start, colDate)
+      let spanEnd = Math.max(
+        spanStart + (eventMinHeight || 0), // yuck
+        slatCoords.computeDateTop(seg.end, colDate),
+      )
+      vcoords.push({
+        spanStart: Math.round(spanStart), // for barely-overlapping collisions
+        spanEnd: Math.round(spanEnd), //
+      })
+    }
+  }
+
+  return vcoords
+}
+
+// TODO: lots of conversion between objects in here
+//   change internals to accept public objects
+export function computeFgSegPlacements(
+  segs: TimeColsSeg[],
+  segVCoords: TimeColSegVCoords[], // might not have for every seg
+  eventOrderStrict?: boolean,
+  eventMaxStack?: number,
+): { segPlacements: TimeColFgSegPlacement[], hiddenGroups: SegEntryGroup[] } {
+  let segInputs: SegInput[] = []
+  let dumbSegs: TimeColsSeg[] = [] // segs without coords
+
+  for (let i = 0; i < segs.length; i += 1) {
+    let vcoords = segVCoords[i]
+    if (vcoords) {
+      segInputs.push({
+        index: i,
+        thickness: 1,
+        ...vcoords
+      })
+    } else {
+      dumbSegs.push(segs[i])
+    }
+  }
+
+  let { segRects, hiddenGroups } = buildPositioning(segInputs, eventOrderStrict, eventMaxStack)
+  let segPlacements: TimeColFgSegPlacement[] = []
+
+  for (let segRect of segRects) {
+    segPlacements.push({
+      seg: segs[segRect.segInput.index],
+      vcoords: { spanStart: segRect.spanStart, spanEnd: segRect.spanEnd },
+      hcoords: {
+        levelCoord: segRect.levelCoord,
+        thickness: segRect.thickness,
+        stackDepth: segRect.stackDepth,
+        stackForward: segRect.stackForward,
+      }
+    })
+  }
+
+  for (let dumbSeg of dumbSegs) {
+    segPlacements.push({ seg: dumbSeg })
+  }
+
+  return { segPlacements, hiddenGroups }
+}
+
+// internals
+// ------------------------------------------------------------------------------------------
 
 interface SegNode extends SegEntry {
   nextLevelNodes: SegNode[] // with highest-pressure first
@@ -22,13 +122,13 @@ interface SegSiblingRange { // will ALWAYS have span of 1 or more items. if not,
   lateralEnd: number
 }
 
-export interface TimeColSegRect extends SegRect {
+interface TimeColSegRect extends SegRect {
   stackDepth: number
   stackForward: number
 }
 
 // segInputs assumed sorted
-export function computeFgSegPlacements(
+function buildPositioning(
   segInputs: SegInput[],
   strictOrder?: boolean,
   maxStackCnt?: number,

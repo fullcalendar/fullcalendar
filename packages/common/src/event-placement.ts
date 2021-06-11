@@ -25,7 +25,7 @@ export interface SegInsertion {
   stackCnt: number
 }
 
-export interface SegEntryGroup {
+export interface SegEntryGroup { // TODO: extend from something like "SegHCoords" ?
   spanStart: number
   spanEnd: number
   entries: SegEntry[]
