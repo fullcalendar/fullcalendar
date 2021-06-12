@@ -9,6 +9,7 @@ import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { computeFgSegPlacements, computeSegVCoords, TimeColSegHCoords, TimeColSegVCoords } from './event-placement'
 import { TimeColEvent } from './TimeColEvent'
 import { TimeColMisc } from './TimeColMisc'
+import { CssDimValue } from '@fullcalendar/common'
 
 export interface TimeColProps {
   elRef?: Ref<HTMLTableCellElement>
@@ -78,6 +79,9 @@ export class TimeCol extends BaseComponent<TimeColProps> {
                 {this.renderFgSegs(
                   sortedFgSegs,
                   interactionAffectedInstances,
+                  false,
+                  false,
+                  false,
                 )}
               </div>
               <div className="fc-timegrid-col-events">
@@ -87,7 +91,6 @@ export class TimeCol extends BaseComponent<TimeColProps> {
                   Boolean(props.eventDrag),
                   Boolean(props.eventResize),
                   Boolean(isSelectMirror),
-                  // TODO: pass in left/right instead of using only computeSegTopBottomCss
                 )}
               </div>
               <div className="fc-timegrid-now-indicator-container">
@@ -109,9 +112,9 @@ export class TimeCol extends BaseComponent<TimeColProps> {
   renderFgSegs(
     sortedFgSegs: TimeColsSeg[],
     segIsInvisible: { [instanceId: string]: any },
-    isDragging?: boolean,
-    isResizing?: boolean,
-    isDateSelecting?: boolean,
+    isDragging: boolean,
+    isResizing: boolean,
+    isDateSelecting: boolean,
   ) {
     let { props } = this
     if (props.forPrint) {
@@ -124,9 +127,9 @@ export class TimeCol extends BaseComponent<TimeColProps> {
   renderPositionedFgSegs(
     segs: TimeColsSeg[], // if not mirror, needs to be sorted
     segIsInvisible: { [instanceId: string]: any },
-    isDragging?: boolean,
-    isResizing?: boolean,
-    isDateSelecting?: boolean,
+    isDragging: boolean,
+    isResizing: boolean,
+    isDateSelecting: boolean,
   ) {
     let { eventMaxStack, eventShortHeight, eventOrderStrict, eventMinHeight } = this.context.options
     let { date, slatCoords, eventSelection, todayRange, nowDate } = this.props
@@ -140,11 +143,11 @@ export class TimeCol extends BaseComponent<TimeColProps> {
         {segPlacements.map((segPlacement) => {
           let { seg, vcoords, hcoords } = segPlacement
           let instanceId = seg.eventRange.instance.instanceId
-          let isVisible = isMirror || (!segIsInvisible[instanceId] && vcoords && hcoords)
-          let vStyle = vcoords ? computeSegTopBottomCss(vcoords) : {}
-          let hStyle = (!isMirror && hcoords) ? this.computeSegLeftRightCss(hcoords) : { left: 0, right: 0 }
-          let isInset = hcoords && hcoords.stackForward > 0
-          let isShort = vcoords && (vcoords.spanEnd - vcoords.spanStart) < eventShortHeight
+          let isVisible = isMirror || Boolean(!segIsInvisible[instanceId] && vcoords && hcoords)
+          let vStyle = computeSegVStyle(vcoords)
+          let hStyle = (!isMirror && hcoords) ? this.computeSegHStyle(hcoords) : { left: 0, right: 0 }
+          let isInset = Boolean(hcoords) && hcoords.stackForward > 0
+          let isShort = Boolean(vcoords) && (vcoords.spanEnd - vcoords.spanStart) < eventShortHeight // look at other places for this problem
 
           return (
             <div
@@ -181,7 +184,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     return (
       <Fragment>
         {hiddenGroups.map((hiddenGroup) => {
-          let positionCss = computeSegTopBottomCss(hiddenGroup) // hiddenGroup conforms to TimeColSegVCoords
+          let positionCss = computeSegVStyle(hiddenGroup) // hiddenGroup conforms to TimeColSegVCoords
           let hiddenSegs = compileSegsFromEntries(hiddenGroup.entries, segs)
           return (
             <TimeColMoreLink
@@ -213,7 +216,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
         <div
           key={buildEventRangeKey(seg.eventRange)}
           className="fc-timegrid-bg-harness"
-          style={computeSegTopBottomCss(vcoords)}
+          style={computeSegVStyle(vcoords)}
         >
           {fillType === 'bg-event' ?
             <BgEvent seg={seg} {...getSegMeta(seg, props.todayRange, props.nowDate)} /> :
@@ -250,7 +253,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     ))
   }
 
-  computeSegLeftRightCss(segHCoords: TimeColSegHCoords) {
+  computeSegHStyle(segHCoords: TimeColSegHCoords) {
     let { isRtl, options } = this.context
     let shouldOverlap = options.slotEventOverlap
     let nearCoord = segHCoords.levelCoord // the left side if LTR. the right side if RTL. floating-point
@@ -325,7 +328,10 @@ export function renderPlainFgSegs(
   )
 }
 
-function computeSegTopBottomCss(segVCoords: TimeColSegVCoords) {
+function computeSegVStyle(segVCoords: TimeColSegVCoords | null): { top: CssDimValue, bottom: CssDimValue } {
+  if (!segVCoords) {
+    return { top: '', bottom: '' }
+  }
   return {
     top: segVCoords.spanStart,
     bottom: -segVCoords.spanEnd,

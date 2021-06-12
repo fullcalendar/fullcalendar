@@ -1,3 +1,4 @@
+import { CssDimValue } from '@fullcalendar/common'
 import {
   createElement, MoreLinkContentArg, MoreLinkRoot, BaseComponent, createRef, setRef,
   Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState,
@@ -7,8 +8,8 @@ import { TimeColsSeg } from './TimeColsSeg'
 
 export interface TimeColMoreLinkProps {
   hiddenSegs: TimeColsSeg[]
-  top: number
-  bottom: number
+  top: CssDimValue
+  bottom: CssDimValue
   extraDateSpan?: Dictionary
   dateProfile: DateProfile
   todayRange: DateRange
