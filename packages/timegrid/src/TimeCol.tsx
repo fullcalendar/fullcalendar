@@ -6,7 +6,8 @@ import {
 import { TimeColMoreLink } from './TimeColMoreLink'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { computeFgSegPlacements, computeSegVCoords, WebSegRect } from './event-placement'
+import { SegWebRect } from './seg-web'
+import { computeFgSegPlacements, computeSegVCoords } from './event-placement'
 import { TimeColEvent } from './TimeColEvent'
 import { TimeColMisc } from './TimeColMisc'
 
@@ -252,7 +253,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     ))
   }
 
-  computeSegHStyle(segHCoords: WebSegRect) {
+  computeSegHStyle(segHCoords: SegWebRect) {
     let { isRtl, options } = this.context
     let shouldOverlap = options.slotEventOverlap
     let nearCoord = segHCoords.levelCoord // the left side if LTR. the right side if RTL. floating-point

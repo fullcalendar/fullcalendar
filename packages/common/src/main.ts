@@ -167,7 +167,7 @@ export {
   SegSpan, SegRect, SegHierarchy, SegEntry, SegInsertion, buildEntryKey,
   getEntrySpanEnd, binarySearch, SegEntryGroup, groupIntersectingEntries,
   joinSpans, intersectSpans,
-} from './event-placement'
+} from './seg-hierarchy'
 
 export {
   Interaction,
