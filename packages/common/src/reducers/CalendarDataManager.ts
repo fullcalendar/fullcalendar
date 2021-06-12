@@ -231,9 +231,7 @@ export class CalendarDataManager {
     currentDate = reduceCurrentDate(currentDate, action)
     dateProfile = reduceDateProfile(dateProfile, action, currentDate, currentViewData.dateProfileGenerator)
 
-    if (!rangeContainsMarker(dateProfile.currentRange, currentDate)) {
-      currentDate = dateProfile.currentRange.start
-    }
+    currentDate = dateProfile.currentRange.start
 
     let eventSources = reduceEventSources(state.eventSources, action, dateProfile, calendarContext)
     let eventStore = reduceEventStore(state.eventStore, action, eventSources, dateProfile, calendarContext)
