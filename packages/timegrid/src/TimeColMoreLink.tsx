@@ -1,7 +1,6 @@
-import { CssDimValue } from '@fullcalendar/common'
 import {
   createElement, MoreLinkContentArg, MoreLinkRoot, BaseComponent, createRef, setRef,
-  Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState,
+  Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState, CssDimValue,
 } from '@fullcalendar/common'
 import { renderPlainFgSegs } from './TimeCol'
 import { TimeColsSeg } from './TimeColsSeg'

@@ -1,4 +1,3 @@
-
 export interface SegSpan {
   start: number
   end: number
@@ -89,11 +88,11 @@ export class SegHierarchy {
       }, splitHiddenEntries)
     }
 
-    if (barrierSpan.end < entrySpan.end) {
+    if (entrySpan.end > barrierSpan.end) {
       partCnt += this.insertEntry({
         index: entry.index,
         thickness: entry.thickness,
-        span: { start: entrySpan.start, end: barrierSpan.start },
+        span: { start: barrierSpan.end, end: entrySpan.end },
       }, splitHiddenEntries)
     }
 
@@ -238,7 +237,7 @@ export function groupIntersectingEntries(entries: SegEntry[]): SegEntryGroup[] {
 export function joinSpans(span0: SegSpan, span1: SegSpan): SegSpan {
   return {
     start: Math.min(span0.start, span1.start),
-    end: Math.max(span0.end, span1.end)
+    end: Math.max(span0.end, span1.end),
   }
 }
 

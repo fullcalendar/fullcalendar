@@ -119,9 +119,8 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     let { props } = this
     if (props.forPrint) {
       return renderPlainFgSegs(sortedFgSegs, props)
-    } else {
-      return this.renderPositionedFgSegs(sortedFgSegs, segIsInvisible, isDragging, isResizing, isDateSelecting)
     }
+    return this.renderPositionedFgSegs(sortedFgSegs, segIsInvisible, isDragging, isResizing, isDateSelecting)
   }
 
   renderPositionedFgSegs(
