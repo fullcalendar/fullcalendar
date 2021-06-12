@@ -1,15 +1,14 @@
 import {
   Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta,
   DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill, buildIsoString, computeEarliestSegStart,
-  DateProfile, buildEventRangeKey, sortEventSegs, memoize, SegEntryGroup, SegEntry, Dictionary,
+  DateProfile, buildEventRangeKey, sortEventSegs, memoize, SegEntryGroup, SegEntry, Dictionary, SegSpan, CssDimValue,
 } from '@fullcalendar/common'
 import { TimeColMoreLink } from './TimeColMoreLink'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { computeFgSegPlacements, computeSegVCoords, TimeColSegHCoords, TimeColSegVCoords } from './event-placement'
+import { computeFgSegPlacements, computeSegVCoords, WebSegRect } from './event-placement'
 import { TimeColEvent } from './TimeColEvent'
 import { TimeColMisc } from './TimeColMisc'
-import { CssDimValue } from '@fullcalendar/common'
 
 export interface TimeColProps {
   elRef?: Ref<HTMLTableCellElement>
@@ -141,13 +140,13 @@ export class TimeCol extends BaseComponent<TimeColProps> {
       <Fragment>
         {this.renderHiddenGroups(hiddenGroups, segs)}
         {segPlacements.map((segPlacement) => {
-          let { seg, vcoords, hcoords } = segPlacement
+          let { seg, rect } = segPlacement
           let instanceId = seg.eventRange.instance.instanceId
-          let isVisible = isMirror || Boolean(!segIsInvisible[instanceId] && vcoords && hcoords)
-          let vStyle = computeSegVStyle(vcoords)
-          let hStyle = (!isMirror && hcoords) ? this.computeSegHStyle(hcoords) : { left: 0, right: 0 }
-          let isInset = Boolean(hcoords) && hcoords.stackForward > 0
-          let isShort = Boolean(vcoords) && (vcoords.spanEnd - vcoords.spanStart) < eventShortHeight // look at other places for this problem
+          let isVisible = isMirror || Boolean(!segIsInvisible[instanceId] && rect)
+          let vStyle = computeSegVStyle(rect && rect.span)
+          let hStyle = (!isMirror && rect) ? this.computeSegHStyle(rect) : { left: 0, right: 0 }
+          let isInset = Boolean(rect) && rect.stackForward > 0
+          let isShort = Boolean(rect) && (rect.span.end - rect.span.start) < eventShortHeight // look at other places for this problem
 
           return (
             <div
@@ -184,7 +183,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     return (
       <Fragment>
         {hiddenGroups.map((hiddenGroup) => {
-          let positionCss = computeSegVStyle(hiddenGroup) // hiddenGroup conforms to TimeColSegVCoords
+          let positionCss = computeSegVStyle(hiddenGroup.span)
           let hiddenSegs = compileSegsFromEntries(hiddenGroup.entries, segs)
           return (
             <TimeColMoreLink
@@ -208,7 +207,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
 
   renderFillSegs(segs: TimeColsSeg[], fillType: string) {
     let { props, context } = this
-    let segVCoords = computeSegVCoords(segs, props.date, props.slatCoords, context.options.eventMinHeight)
+    let segVCoords = computeSegVCoords(segs, props.date, props.slatCoords, context.options.eventMinHeight) // don't assume all populated
 
     let children = segVCoords.map((vcoords, i) => {
       let seg = segs[i]
@@ -253,7 +252,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     ))
   }
 
-  computeSegHStyle(segHCoords: TimeColSegHCoords) {
+  computeSegHStyle(segHCoords: WebSegRect) {
     let { isRtl, options } = this.context
     let shouldOverlap = options.slotEventOverlap
     let nearCoord = segHCoords.levelCoord // the left side if LTR. the right side if RTL. floating-point
@@ -328,13 +327,13 @@ export function renderPlainFgSegs(
   )
 }
 
-function computeSegVStyle(segVCoords: TimeColSegVCoords | null): { top: CssDimValue, bottom: CssDimValue } {
+function computeSegVStyle(segVCoords: SegSpan | null): { top: CssDimValue, bottom: CssDimValue } {
   if (!segVCoords) {
     return { top: '', bottom: '' }
   }
   return {
-    top: segVCoords.spanStart,
-    bottom: -segVCoords.spanEnd,
+    top: segVCoords.start,
+    bottom: -segVCoords.end,
   }
 }
 
@@ -342,5 +341,5 @@ function compileSegsFromEntries(
   segEntries: SegEntry[],
   allSegs: TimeColsSeg[],
 ): TimeColsSeg[] {
-  return segEntries.map((segEntry) => allSegs[segEntry.segInput.index])
+  return segEntries.map((segEntry) => allSegs[segEntry.index])
 }

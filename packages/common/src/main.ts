@@ -164,8 +164,9 @@ export { EventSource, EventSourceHash } from './structs/event-source'
 export { EventSourceRefiners, EventSourceRefined } from './structs/event-source-parse'
 
 export {
-  SegInput, SegRect, SegHierarchy, SegEntry, SegInsertion, buildEntryKey,
+  SegSpan, SegRect, SegHierarchy, SegEntry, SegInsertion, buildEntryKey,
   getEntrySpanEnd, binarySearch, SegEntryGroup, groupIntersectingEntries,
+  joinSpans, intersectSpans,
 } from './event-placement'
 
 export {

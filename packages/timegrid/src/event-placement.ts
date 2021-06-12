@@ -1,11 +1,11 @@
 import {
+  SegSpan,
   SegEntry,
   SegHierarchy,
   SegRect,
   buildEntryKey,
   getEntrySpanEnd,
   binarySearch,
-  SegInput,
   SegEntryGroup,
   groupIntersectingEntries,
   DateMarker,
@@ -16,43 +16,30 @@ import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 // public interface
 // ------------------------------------------------------------------------------------------
 
-export interface TimeColSegVCoords {
-  spanStart: number
-  spanEnd: number
-}
-
-export interface TimeColSegHCoords {
-  levelCoord: number
-  thickness: number
-  stackDepth: number
-  stackForward: number
-}
-
 export interface TimeColFgSegPlacement {
   seg: TimeColsSeg
-  vcoords?: TimeColSegVCoords
-  hcoords?: TimeColSegHCoords
+  rect: WebSegRect | null
 }
 
 export function computeSegVCoords(
   segs: TimeColsSeg[],
   colDate: DateMarker,
   slatCoords: TimeColsSlatsCoords = null,
-  eventMinHeight: number = 0,
-): TimeColSegVCoords[] {
-  let vcoords: TimeColSegVCoords[] = []
+  eventMinHeight: number = 0, // might be null/undefined :(
+): SegSpan[] {
+  let vcoords: SegSpan[] = []
 
   if (slatCoords) {
     for (let i = 0; i < segs.length; i += 1) {
       let seg = segs[i]
       let spanStart = slatCoords.computeDateTop(seg.start, colDate)
       let spanEnd = Math.max(
-        spanStart + (eventMinHeight || 0), // yuck
+        spanStart + (eventMinHeight || 0), // :(
         slatCoords.computeDateTop(seg.end, colDate),
       )
       vcoords.push({
-        spanStart: Math.round(spanStart), // for barely-overlapping collisions
-        spanEnd: Math.round(spanEnd), //
+        start: Math.round(spanStart), // for barely-overlapping collisions
+        end: Math.round(spanEnd), //
       })
     }
   }
@@ -64,11 +51,11 @@ export function computeSegVCoords(
 //   change internals to accept public objects
 export function computeFgSegPlacements(
   segs: TimeColsSeg[],
-  segVCoords: TimeColSegVCoords[], // might not have for every seg
+  segVCoords: SegSpan[], // might not have for every seg
   eventOrderStrict?: boolean,
   eventMaxStack?: number,
 ): { segPlacements: TimeColFgSegPlacement[], hiddenGroups: SegEntryGroup[] } {
-  let segInputs: SegInput[] = []
+  let segInputs: SegEntry[] = []
   let dumbSegs: TimeColsSeg[] = [] // segs without coords
 
   for (let i = 0; i < segs.length; i += 1) {
@@ -77,7 +64,7 @@ export function computeFgSegPlacements(
       segInputs.push({
         index: i,
         thickness: 1,
-        ...vcoords
+        span: vcoords,
       })
     } else {
       dumbSegs.push(segs[i])
@@ -89,23 +76,24 @@ export function computeFgSegPlacements(
 
   for (let segRect of segRects) {
     segPlacements.push({
-      seg: segs[segRect.segInput.index],
-      vcoords: { spanStart: segRect.spanStart, spanEnd: segRect.spanEnd },
-      hcoords: {
-        levelCoord: segRect.levelCoord,
-        thickness: segRect.thickness,
-        stackDepth: segRect.stackDepth,
-        stackForward: segRect.stackForward,
-      }
+      seg: segs[segRect.index],
+      rect: segRect,
     })
   }
 
   for (let dumbSeg of dumbSegs) {
-    segPlacements.push({ seg: dumbSeg })
+    segPlacements.push({ seg: dumbSeg, rect: null })
   }
 
   return { segPlacements, hiddenGroups }
 }
+
+
+
+
+
+
+
 
 // internals
 // ------------------------------------------------------------------------------------------
@@ -122,17 +110,17 @@ interface SegSiblingRange { // will ALWAYS have span of 1 or more items. if not,
   lateralEnd: number
 }
 
-interface TimeColSegRect extends SegRect {
+export interface WebSegRect extends SegRect {
   stackDepth: number
   stackForward: number
 }
 
 // segInputs assumed sorted
 function buildPositioning(
-  segInputs: SegInput[],
+  segInputs: SegEntry[],
   strictOrder?: boolean,
   maxStackCnt?: number,
-): { segRects: TimeColSegRect[], hiddenGroups: SegEntryGroup[] } {
+): { segRects: WebSegRect[], hiddenGroups: SegEntryGroup[] } {
   let hierarchy = new SegHierarchy()
   if (strictOrder != null) {
     hierarchy.strictOrder = strictOrder
@@ -222,13 +210,13 @@ function findNextLevelSegs(hierarchy: SegHierarchy, subjectLevel: number, subjec
   for (; level < levelCnt; level += 1) {
     let entries = entriesByLevel[level]
     let entry: SegEntry
-    let searchIndex = binarySearch(entries, subjectEntry.spanStart, getEntrySpanEnd)
+    let searchIndex = binarySearch(entries, subjectEntry.span.start, getEntrySpanEnd)
     let lateralStart = searchIndex[0] + searchIndex[1] // if exact match (which doesn't collide), go to next one
     let lateralEnd = lateralStart
 
     while ( // loop through entries that horizontally intersect
       (entry = entries[lateralEnd]) && // but not past the whole seg list
-      entry.spanStart < subjectEntry.spanEnd
+      entry.span.start < subjectEntry.span.end
     ) { lateralEnd += 1 }
 
     if (lateralStart < lateralEnd) {
@@ -277,13 +265,13 @@ function stretchWeb(topLevelNodes: SegNode[], totalThickness: number): SegNode[]
 }
 
 // not sorted in any particular order
-function webToRects(topLevelNodes: SegNode[]): TimeColSegRect[] {
-  let rects: TimeColSegRect[] = []
+function webToRects(topLevelNodes: SegNode[]): WebSegRect[] {
+  let rects: WebSegRect[] = []
 
   const processNode = cacheable(
     (node: SegNode, levelCoord: number, stackDepth: number) => buildEntryKey(node),
     (node: SegNode, levelCoord: number, stackDepth: number) => { // returns forwardPressure
-      let rect: TimeColSegRect = {
+      let rect: WebSegRect = {
         ...node,
         levelCoord,
         stackDepth,

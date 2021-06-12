@@ -1,5 +1,4 @@
 import {
-  SegInput,
   SegHierarchy,
   SegRect,
   SegEntry,
@@ -9,6 +8,7 @@ import {
   intersectRanges,
   addDays,
   DayTableCell,
+  intersectSpans,
 } from '@fullcalendar/common'
 import { TableSeg } from './TableSeg'
 
@@ -44,7 +44,7 @@ export function computeFgSegPlacement(
   }
 
   // create segInputs only for segs with known heights
-  let segInputs: SegInput[] = []
+  let segInputs: SegEntry[] = []
   let unknownHeightSegs: TableSeg[] = []
   for (let i = 0; i < segs.length; i += 1) {
     let seg = segs[i]
@@ -54,9 +54,11 @@ export function computeFgSegPlacement(
     if (eventHeight != null) {
       segInputs.push({
         index: i,
-        spanStart: seg.firstCol,
-        spanEnd: seg.lastCol + 1,
         thickness: eventHeight,
+        span: {
+          start: seg.firstCol,
+          end: seg.lastCol + 1,
+        },
       })
     } else {
       unknownHeightSegs.push(seg)
@@ -96,9 +98,9 @@ export function computeFgSegPlacement(
     moreCnts.push(0)
   }
   for (let hiddenEntry of hiddenEntries) {
-    let seg = segs[hiddenEntry.segInput.index]
+    let seg = segs[hiddenEntry.index]
 
-    multiColPlacements[hiddenEntry.spanStart].push({
+    multiColPlacements[hiddenEntry.span.start].push({
       seg,
       isVisible: false,
       isAbsolute: true,
@@ -106,7 +108,7 @@ export function computeFgSegPlacement(
       marginTop: 0,
     })
 
-    for (let col = hiddenEntry.spanStart; col < hiddenEntry.spanEnd; col += 1) {
+    for (let col = hiddenEntry.span.start; col < hiddenEntry.span.end; col += 1) {
       moreCnts[col] += 1
       singleColPlacements[col].push({
         seg: resliceSeg(seg, col, col + 1, cells),
@@ -141,7 +143,7 @@ function placeRects(allRects: SegRect[], segs: TableSeg[], cells: DayTableCell[]
     let currentHeight = 0
     let currentMarginTop = 0
     for (let rect of rects) {
-      let seg = segs[rect.segInput.index]
+      let seg = segs[rect.index]
       singlePlacements.push({
         seg: resliceSeg(seg, col, col + 1, cells),
         isVisible: true,
@@ -157,9 +159,9 @@ function placeRects(allRects: SegRect[], segs: TableSeg[], cells: DayTableCell[]
     currentHeight = 0
     currentMarginTop = 0
     for (let rect of rects) {
-      let seg = segs[rect.segInput.index]
-      let isAbsolute = rect.spanEnd - rect.spanStart > 1 // multi-column?
-      let isFirstCol = rect.spanStart === col
+      let seg = segs[rect.index]
+      let isAbsolute = rect.span.end - rect.span.start > 1 // multi-column?
+      let isFirstCol = rect.span.start === col
 
       currentMarginTop += rect.levelCoord - currentHeight // amount of space since bottom of previous seg
       currentHeight = rect.levelCoord + rect.thickness // height will now be bottom of current seg
@@ -168,7 +170,7 @@ function placeRects(allRects: SegRect[], segs: TableSeg[], cells: DayTableCell[]
         currentMarginTop += rect.thickness
         if (isFirstCol) {
           multiPlacements.push({
-            seg: resliceSeg(seg, rect.spanStart, rect.spanEnd, cells),
+            seg: resliceSeg(seg, rect.span.start, rect.span.end, cells),
             isVisible: true,
             isAbsolute: true,
             absoluteTop: rect.levelCoord,
@@ -177,7 +179,7 @@ function placeRects(allRects: SegRect[], segs: TableSeg[], cells: DayTableCell[]
         }
       } else if (isFirstCol) {
         multiPlacements.push({
-          seg: resliceSeg(seg, rect.spanStart, rect.spanEnd, cells),
+          seg: resliceSeg(seg, rect.span.start, rect.span.end, cells),
           isVisible: true,
           isAbsolute: false,
           absoluteTop: 0,
@@ -203,7 +205,7 @@ function groupRectsByEachCol(rects: SegRect[], colCnt: number): SegRect[][] {
   }
 
   for (let rect of rects) {
-    for (let col = rect.spanStart; col < rect.spanEnd; col += 1) {
+    for (let col = rect.span.start; col < rect.span.end; col += 1) {
       rectsByEachCol[col].push(rect)
     }
   }
@@ -245,7 +247,7 @@ class DayGridSegHierarchy extends SegHierarchy {
   // allows us to keep hidden entries in the hierarchy so they take up space
   forceHidden: { [entryId: string]: true } = {}
 
-  addSegs(segInputs: SegInput[]): SegEntry[] {
+  addSegs(segInputs: SegEntry[]): SegEntry[] {
     const hiddenSegs = super.addSegs(segInputs)
     const { entriesByLevel } = this
     const excludeHidden = (entry: SegEntry) => !this.forceHidden[buildEntryKey(entry)]
@@ -267,10 +269,9 @@ class DayGridSegHierarchy extends SegHierarchy {
         const leadingEntry = entriesByLevel[level][lateral]
 
         if (this.allowReslicing) {
-          const placeholderEntry = {
+          const placeholderEntry: SegEntry = {
             ...leadingEntry,
-            spanStart: Math.max(leadingEntry.spanStart, entry.spanStart),
-            spanEnd: Math.min(leadingEntry.spanEnd, entry.spanEnd),
+            span: intersectSpans(leadingEntry.span, entry.span),
           }
           const placeholderEntryId = buildEntryKey(placeholderEntry)
 

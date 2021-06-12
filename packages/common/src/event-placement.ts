@@ -1,21 +1,16 @@
-export interface SegInput {
+
+export interface SegSpan {
+  start: number
+  end: number
+}
+
+export interface SegEntry {
   index: number
-  spanStart: number
-  spanEnd: number
   thickness: number // should be an integer
+  span: SegSpan
 }
 
-export interface SegEntry { // might be a sliced version of SegInput
-  segInput: SegInput
-  spanStart: number
-  spanEnd: number
-  thickness: number
-}
-
-export interface SegRect extends SegEntry {
-  levelCoord: number
-}
-
+// used internally. exposed for subclasses of SegHierarchy
 export interface SegInsertion {
   levelCoord: number
   nextLevel: number
@@ -25,10 +20,13 @@ export interface SegInsertion {
   stackCnt: number
 }
 
-export interface SegEntryGroup { // TODO: extend from something like "SegHCoords" ?
-  spanStart: number
-  spanEnd: number
+export interface SegRect extends SegEntry {
+  levelCoord: number
+}
+
+export interface SegEntryGroup {
   entries: SegEntry[]
+  span: SegSpan
 }
 
 export class SegHierarchy {
@@ -42,16 +40,11 @@ export class SegHierarchy {
   entriesByLevel: SegEntry[][] = [] // parallel with levelCoords
   stackCnts: { [entryId: string]: number } = {} // TODO: use better technique!?
 
-  addSegs(segInputs: SegInput[]): SegEntry[] {
+  addSegs(inputs: SegEntry[]): SegEntry[] {
     let hiddenEntries: SegEntry[] = []
 
-    for (let segInput of segInputs) {
-      this.insertEntry({
-        segInput,
-        spanStart: segInput.spanStart,
-        spanEnd: segInput.spanEnd,
-        thickness: segInput.thickness,
-      }, hiddenEntries)
+    for (let input of inputs) {
+      this.insertEntry(input, hiddenEntries)
     }
 
     return hiddenEntries
@@ -85,28 +78,30 @@ export class SegHierarchy {
   splitEntry(entry: SegEntry, barrier: SegEntry, hiddenEntries: SegEntry[]): number {
     let partCnt = 0
     let splitHiddenEntries: SegEntry[] = []
+    let entrySpan = entry.span
+    let barrierSpan = barrier.span
 
-    if (entry.spanStart < barrier.spanStart) {
+    if (entrySpan.start < barrierSpan.start) {
       partCnt += this.insertEntry({
-        ...entry,
-        spanStart: entry.spanStart,
-        spanEnd: barrier.spanStart,
+        index: entry.index,
+        thickness: entry.thickness,
+        span: { start: entrySpan.start, end: barrierSpan.start },
       }, splitHiddenEntries)
     }
 
-    if (barrier.spanEnd < entry.spanEnd) {
+    if (barrierSpan.end < entrySpan.end) {
       partCnt += this.insertEntry({
-        ...entry,
-        spanStart: barrier.spanEnd,
-        spanEnd: entry.spanEnd,
+        index: entry.index,
+        thickness: entry.thickness,
+        span: { start: entrySpan.start, end: barrierSpan.start },
       }, splitHiddenEntries)
     }
 
     if (partCnt) {
       hiddenEntries.push({
-        ...entry,
-        spanStart: Math.max(barrier.spanStart, entry.spanStart), // intersect
-        spanEnd: Math.min(barrier.spanEnd, entry.spanEnd), // intersect
+        index: entry.index,
+        thickness: entry.thickness,
+        span: intersectSpans(barrierSpan, entrySpan), // guaranteed to intersect
       }, ...splitHiddenEntries)
       return partCnt
     }
@@ -151,13 +146,13 @@ export class SegHierarchy {
 
       let entries = entriesByLevel[level]
       let entry: SegEntry
-      let searchRes = binarySearch(entries, newEntry.spanStart, getEntrySpanEnd)
+      let searchRes = binarySearch(entries, newEntry.span.start, getEntrySpanEnd)
       lateralStart = searchRes[0] + searchRes[1] // if exact match (which doesn't collide), go to next one
       lateralEnd = lateralStart
 
       while ( // loop through entries that horizontally intersect
         (entry = entries[lateralEnd]) && // but not past the whole entry list
-        entry.spanStart < newEntry.spanEnd
+        entry.span.start < newEntry.span.end
       ) {
         if (
           strictOrder ||
@@ -204,11 +199,11 @@ export class SegHierarchy {
 }
 
 export function getEntrySpanEnd(entry: SegEntry) {
-  return entry.spanEnd
+  return entry.span.end
 }
 
 export function buildEntryKey(entry: SegEntry) {
-  return entry.segInput.index + ':' + entry.spanStart
+  return entry.index + ':' + entry.span.start
 }
 
 // returns groups with entries sorted by input order
@@ -218,17 +213,15 @@ export function groupIntersectingEntries(entries: SegEntry[]): SegEntryGroup[] {
   for (let entry of entries) {
     let filteredMerges: SegEntryGroup[] = []
     let hungryMerge: SegEntryGroup = { // the merge that will eat what it collides with
-      spanStart: entry.spanStart,
-      spanEnd: entry.spanEnd,
+      span: entry.span,
       entries: [entry],
     }
 
     for (let merge of merges) {
-      if (merge.spanStart < hungryMerge.spanEnd && merge.spanEnd > hungryMerge.spanStart) { // collides?
+      if (intersectSpans(merge.span, hungryMerge.span)) {
         hungryMerge = {
-          spanStart: Math.min(merge.spanStart, hungryMerge.spanStart),
-          spanEnd: Math.max(merge.spanEnd, hungryMerge.spanEnd),
           entries: merge.entries.concat(hungryMerge.entries), // keep preexisting merge's items first. maintains order
+          span: joinSpans(merge.span, hungryMerge.span),
         }
       } else {
         filteredMerges.push(merge)
@@ -240,6 +233,24 @@ export function groupIntersectingEntries(entries: SegEntry[]): SegEntryGroup[] {
   }
 
   return merges
+}
+
+export function joinSpans(span0: SegSpan, span1: SegSpan): SegSpan {
+  return {
+    start: Math.min(span0.start, span1.start),
+    end: Math.max(span0.end, span1.end)
+  }
+}
+
+export function intersectSpans(span0: SegSpan, span1: SegSpan): SegSpan | null {
+  let start = Math.max(span0.start, span1.start)
+  let end = Math.min(span0.end, span1.end)
+
+  if (start < end) {
+    return { start, end }
+  }
+
+  return null
 }
 
 // general util
