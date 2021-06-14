@@ -231,7 +231,11 @@ export class CalendarDataManager {
     currentDate = reduceCurrentDate(currentDate, action)
     dateProfile = reduceDateProfile(dateProfile, action, currentDate, currentViewData.dateProfileGenerator)
 
-    if (!rangeContainsMarker(dateProfile.currentRange, currentDate)) {
+    if (
+      action.type === 'PREV' || // TODO: move this logic into DateProfileGenerator
+      action.type === 'NEXT' || // "
+      !rangeContainsMarker(dateProfile.currentRange, currentDate)
+    ) {
       currentDate = dateProfile.currentRange.start
     }
 

@@ -55,4 +55,25 @@ describe('prev', () => {
     currentCalendar.next()
     expectActiveRange('2019-03-31', '2019-05-12')
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/5319
+  it('can navigate back twice when duration greater than dateIncrement', () => {
+    let calendar = initCalendar({
+      firstDay: 1, // monday
+      initialDate: '2021-06-14',
+      initialView: 'dayGridFourWeeks',
+      views: {
+        dayGridFourWeeks: {
+          type: 'dayGrid',
+          duration: { weeks: 4 },
+          dateIncrement: { weeks: 1 },
+        },
+      },
+    })
+    expectActiveRange('2021-06-14', '2021-07-12')
+    calendar.prev() // back a week
+    expectActiveRange('2021-06-07', '2021-07-05')
+    calendar.prev() // back a week
+    expectActiveRange('2021-05-31', '2021-06-28')
+  })
 })
