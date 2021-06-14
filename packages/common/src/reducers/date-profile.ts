@@ -1,7 +1,6 @@
 import { DateProfile, DateProfileGenerator } from '../DateProfileGenerator'
 import { Action } from './Action'
 import { DateMarker } from '../datelib/marker'
-import { rangeContainsMarker } from '../datelib/date-range'
 
 export function reduceDateProfile(
   currentDateProfile: DateProfile | null,
@@ -16,13 +15,7 @@ export function reduceDateProfile(
       return dateProfileGenerator.build(action.dateMarker || currentDate)
 
     case 'CHANGE_DATE':
-      if (
-        !currentDateProfile.activeRange ||
-        !rangeContainsMarker(currentDateProfile.currentRange, action.dateMarker) // don't move if date already in view
-      ) {
-        return dateProfileGenerator.build(action.dateMarker)
-      }
-      break
+      return dateProfileGenerator.build(action.dateMarker)
 
     case 'PREV':
       dp = dateProfileGenerator.buildPrev(currentDateProfile, currentDate)

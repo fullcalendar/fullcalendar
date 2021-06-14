@@ -1,3 +1,5 @@
+import { expectActiveRange } from '../lib/ViewDateUtils'
+
 describe('gotoDate', () => {
   it('will update calendar\'s date even if no navigation', () => {
     initCalendar({
@@ -34,5 +36,22 @@ describe('gotoDate', () => {
       })
       currentCalendar.gotoDate('2017-03-01')
     })
+  })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/4929
+  it('moves view\'s date range when small dateAlignment', () => {
+    let calendar = initCalendar({
+      initialDate: '2019-04-09',
+      initialView: 'dayGridFourDays',
+      views: {
+        dayGridFourDays: {
+          type: 'dayGrid',
+          duration: { days: 4 },
+          dateAlignment: 'day',
+        },
+      },
+    })
+    calendar.gotoDate('2019-04-10')
+    expectActiveRange('2019-04-10', '2019-04-14')
   })
 })
