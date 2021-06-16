@@ -333,7 +333,7 @@ describe('dayGrid advanced event rendering', () => {
     let calendar = initCalendar({
       initialDate: '2020-08-23',
       initialView: 'dayGridWeek',
-      eventOrder: "title",
+      eventOrder: 'title',
       eventOrderStrict: true,
       dayMaxEventRows: 4,
       eventDidMount(arg) {
@@ -376,7 +376,7 @@ describe('dayGrid advanced event rendering', () => {
           start: '2020-08-24',
           end: '2020-08-29',
         },
-      ]
+      ],
     })
 
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
