@@ -299,7 +299,7 @@ describe('dayGrid advanced event rendering', () => {
   })
 
   it('can render events with strict ordering', () => {
-    initCalendar({
+    let calendar = initCalendar({
       initialView: 'dayGridMonth',
       eventOrder: 'id',
       eventOrderStrict: true,
@@ -309,9 +309,15 @@ describe('dayGrid advanced event rendering', () => {
         { id: '3', start: '2020-05-04' },
       ],
       eventDidMount(arg) {
-        arg.el.setAttribute('data-event-id', arg.event.id)
+        arg.el.setAttribute('data-event-id', arg.event.id) // TODO: more formal system for this
       },
     })
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEls = dayGridWrapper.getEventEls()
+    let visibleEventEls = filterVisibleEls(eventEls)
+    expect(anyElsIntersect(visibleEventEls)).toBe(false)
+
     let el1 = document.querySelector('[data-event-id="1"]')
     let el2 = document.querySelector('[data-event-id="2"]')
     let el3 = document.querySelector('[data-event-id="3"]')
@@ -320,5 +326,66 @@ describe('dayGrid advanced event rendering', () => {
     let top3 = el3.getBoundingClientRect().top
     expect(top1).toBeLessThan(top2)
     expect(top2).toBeLessThan(top3)
+  })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/5767
+  it('consumes empty gaps in space when strict ordering', () => {
+    let calendar = initCalendar({
+      initialDate: '2020-08-23',
+      initialView: 'dayGridWeek',
+      eventOrder: "title",
+      eventOrderStrict: true,
+      dayMaxEventRows: 4,
+      eventDidMount(arg) {
+        arg.el.setAttribute('data-event-id', arg.event.id) // TODO: more formal system for this
+      },
+      events: [
+        {
+          title: 'a',
+          id: 'a',
+          start: '2020-08-24',
+          end: '2020-08-27',
+        },
+        {
+          title: 'b',
+          id: 'b',
+          start: '2020-08-24',
+          end: '2020-08-27',
+        },
+        {
+          title: 'c',
+          id: 'c',
+          start: '2020-08-28',
+          end: '2020-08-29',
+        },
+        {
+          title: 'd',
+          id: 'd',
+          start: '2020-08-24',
+          end: '2020-08-29',
+        },
+        {
+          title: 'e',
+          id: 'e',
+          start: '2020-08-27',
+          end: '2020-08-29',
+        },
+        { // will cause 'e' to hide
+          title: 'f',
+          id: 'f',
+          start: '2020-08-24',
+          end: '2020-08-29',
+        },
+      ]
+    })
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEls = dayGridWrapper.getEventEls()
+    let visibleEventEls = filterVisibleEls(eventEls)
+    expect(anyElsIntersect(visibleEventEls)).toBe(false)
+
+    let rect0 = document.querySelector('[data-event-id="d"]').getBoundingClientRect()
+    let rect1 = document.querySelector('[data-event-id="f"]').getBoundingClientRect()
+    expect(rect1.top - rect0.bottom).toBeLessThan(2)
   })
 })

@@ -11,11 +11,12 @@ export interface SegEntry {
 
 // used internally. exposed for subclasses of SegHierarchy
 export interface SegInsertion {
+  level: number // will have an equal coord, or slightly before, entries in existing level
   levelCoord: number
-  nextLevel: number
   lateralStart: number // within the previous level
   lateralEnd: number // within the previous level
-  touchingEntry: SegEntry
+  touchingLevel: number // is -1 if no touching
+  touchingEntry: SegEntry // the last touching entry in the level
   stackCnt: number
 }
 
@@ -60,12 +61,13 @@ export class SegHierarchy {
     return this.handleInvalidInsertion(insertion, entry, hiddenEntries)
   }
 
-  isInsertionValid(insertion: SegInsertion, entry: SegEntry) {
+  isInsertionValid(insertion: SegInsertion, entry: SegEntry): boolean {
     return (this.maxCoord === -1 || insertion.levelCoord + entry.thickness <= this.maxCoord) &&
       (this.maxStackCnt === -1 || insertion.stackCnt < this.maxStackCnt)
   }
 
-  handleInvalidInsertion(insertion: SegInsertion, entry: SegEntry, hiddenEntries: SegEntry[]) {
+  // returns number of new entries inserted
+  handleInvalidInsertion(insertion: SegInsertion, entry: SegEntry, hiddenEntries: SegEntry[]): number {
     if (this.allowReslicing && insertion.touchingEntry) {
       return this.splitEntry(entry, insertion.touchingEntry, hiddenEntries)
     }
@@ -110,15 +112,19 @@ export class SegHierarchy {
   }
 
   insertEntryAt(entry: SegEntry, insertion: SegInsertion): void {
-    let { nextLevel } = insertion
+    let { entriesByLevel, levelCoords } = this
+    let destLevel = insertion.level
 
-    // create a new level
-    if (!nextLevel || this.levelCoords[nextLevel - 1] < insertion.levelCoord) {
-      insertAt(this.levelCoords, nextLevel, insertion.levelCoord)
-      insertAt(this.entriesByLevel, nextLevel, [entry])
-    // insert into existing level
+    if (
+      destLevel >= levelCoords.length || // level doesn't exist yet
+      levelCoords[destLevel] > insertion.levelCoord // destLevel needs to be pushed forward to make way
+    ) {
+      // create a new level
+      insertAt(levelCoords, destLevel, insertion.levelCoord)
+      insertAt(entriesByLevel, destLevel, [entry])
     } else {
-      insertAt(this.entriesByLevel[nextLevel - 1], insertion.lateralEnd, entry)
+      // insert into existing level
+      insertAt(entriesByLevel[destLevel], insertion.lateralEnd, entry)
     }
 
     this.stackCnts[buildEntryKey(entry)] = insertion.stackCnt
@@ -127,19 +133,19 @@ export class SegHierarchy {
   findInsertion(newEntry: SegEntry): SegInsertion {
     let { levelCoords, entriesByLevel, stackCnts, strictOrder } = this
     let levelCnt = levelCoords.length
-    let level // running value while iterating all segs
-    let levelCoord // "
-    let lateralStart = 0 // "
-    let lateralEnd = 0 // "
-    let resCoord = 0 // the levelCoord for newSeg
-    let touchingEntry: SegEntry = null
+    let resLevelCoord = 0
+    let resLevel = 0
+    let lateralStart = 0
+    let lateralEnd = 0
+    let touchingLevel = -1
+    let touchingEntry: SegEntry = null // last touch entry
 
-    for (level = 0; level < levelCnt; level += 1) {
-      levelCoord = levelCoords[level]
+    for (let level = 0; level < levelCnt; level += 1) {
+      let levelCoord = levelCoords[level]
 
-      // if the current level is past the placed entry, we have found a good
-      // empty space and can stop. only if not strict-ordering mode.
-      if (!strictOrder && levelCoord >= resCoord + newEntry.thickness) {
+      // if the current level is past the placed entry, we have found a good empty space and can stop.
+      // if strictOrder, keep finding more lateral intersections.
+      if (!strictOrder && levelCoord >= resLevelCoord + newEntry.thickness) {
         break
       }
 
@@ -147,32 +153,40 @@ export class SegHierarchy {
       let entry: SegEntry
       let searchRes = binarySearch(entries, newEntry.span.start, getEntrySpanEnd)
       lateralStart = searchRes[0] + searchRes[1] // if exact match (which doesn't collide), go to next one
-      lateralEnd = lateralStart
+      lateralEnd = lateralStart // also functions as a moving index
 
       while ( // loop through entries that horizontally intersect
         (entry = entries[lateralEnd]) && // but not past the whole entry list
-        entry.span.start < newEntry.span.end
+        entry.span.start < newEntry.span.end // and not entirely past newEntry
       ) {
         if (
-          strictOrder ||
+          strictOrder || // strict-mode doesn't care about vert intersection. record touch and keep pushing down
           ( // vertically intersects?
-            resCoord < levelCoord + entry.thickness &&
-            resCoord + newEntry.thickness > levelCoord
+            resLevelCoord < levelCoord + entry.thickness &&
+            resLevelCoord + newEntry.thickness > levelCoord
           )
         ) {
           // push down the potential destination
+          resLevelCoord = levelCoord + entry.thickness // move to bottom of colliding entry
+          touchingLevel = level
           touchingEntry = entry
-          resCoord = levelCoord + entry.thickness // move to bottom of colliding entry
         }
         lateralEnd += 1
+      }
+
+      // regardless of whether there were collisions in the current level,
+      // keep updating the final-destination level until it goes past the final-destination coord.
+      if (levelCoord < resLevelCoord) {
+        resLevel = level + 1
       }
     }
 
     return {
-      levelCoord: resCoord,
-      nextLevel: level,
+      level: resLevel,
+      levelCoord: resLevelCoord,
       lateralStart,
       lateralEnd,
+      touchingLevel,
       touchingEntry,
       stackCnt: touchingEntry ? stackCnts[buildEntryKey(touchingEntry)] + 1 : 0,
     }

@@ -3,6 +3,8 @@ v5.8.0
 ------
 - fix: events not rendering in Jest environment (#6377)
 - fix: prev button sometimes ineffective when dateIncrement < view's duration (#5319, #4678)
+- fix: changeDate ineffective when date already in view (#4929)
+- fix: eventOrderStrict positioning problems (#5767)
 
 
 v5.7.2 (2021-06-03)

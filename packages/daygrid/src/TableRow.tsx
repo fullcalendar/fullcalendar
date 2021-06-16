@@ -209,7 +209,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
     if (framePositions) {
       for (let placement of segPlacements) {
-        let seg = placement.seg
+        let { seg } = placement
         let { instanceId } = seg.eventRange.instance
         let key = instanceId + ':' + col
         let isVisible = placement.isVisible && !isForcedInvisible[instanceId]

@@ -99,16 +99,17 @@ export function computeFgSegPlacement(
   }
   for (let hiddenEntry of hiddenEntries) {
     let seg = segs[hiddenEntry.index]
+    let hiddenSpan = hiddenEntry.span
 
-    multiColPlacements[hiddenEntry.span.start].push({
-      seg,
+    multiColPlacements[hiddenSpan.start].push({
+      seg: resliceSeg(seg, hiddenSpan.start, hiddenSpan.end, cells),
       isVisible: false,
       isAbsolute: true,
       absoluteTop: 0,
       marginTop: 0,
     })
 
-    for (let col = hiddenEntry.span.start; col < hiddenEntry.span.end; col += 1) {
+    for (let col = hiddenSpan.start; col < hiddenSpan.end; col += 1) {
       moreCnts[col] += 1
       singleColPlacements[col].push({
         seg: resliceSeg(seg, col, col + 1, cells),
@@ -262,23 +263,23 @@ class DayGridSegHierarchy extends SegHierarchy {
 
   handleInvalidInsertion(insertion: SegInsertion, entry: SegEntry, hiddenEntries: SegEntry[]) {
     const { entriesByLevel, forceHidden } = this
-    const level = insertion.nextLevel - 1
+    const { touchingLevel } = insertion
 
-    if (this.hiddenConsumes && level >= 0) {
+    if (this.hiddenConsumes && touchingLevel >= 0) {
       for (let lateral = insertion.lateralStart; lateral < insertion.lateralEnd; lateral += 1) {
-        const leadingEntry = entriesByLevel[level][lateral]
+        const leadingEntry = entriesByLevel[touchingLevel][lateral]
 
         if (this.allowReslicing) {
-          const placeholderEntry: SegEntry = {
+          const placeholderEntry: SegEntry = { // placeholder of the "more" link
             ...leadingEntry,
             span: intersectSpans(leadingEntry.span, entry.span),
           }
           const placeholderEntryId = buildEntryKey(placeholderEntry)
 
-          if (!forceHidden[placeholderEntryId]) {
+          if (!forceHidden[placeholderEntryId]) { // if not already hidden
             forceHidden[placeholderEntryId] = true
-            entriesByLevel[level][lateral] = placeholderEntry
-            this.splitEntry(leadingEntry, entry, hiddenEntries) // split up the leadingEntry
+            entriesByLevel[touchingLevel][lateral] = placeholderEntry // replace leadingEntry with our placeholder
+            this.splitEntry(leadingEntry, entry, hiddenEntries) // split up the leadingEntry, reinsert it
           }
         } else {
           const placeholderEntryId = buildEntryKey(leadingEntry)
