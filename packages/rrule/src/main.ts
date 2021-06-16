@@ -154,6 +154,7 @@ function analyzeRRuleString(str) {
 
   str.replace(/\b(DTSTART:)([^\n]*)/, processMatch)
   str.replace(/\b(EXDATE:)([^\n]*)/, processMatch)
+  str.replace(/\b(RDATE:)([^\n]*)/, processMatch)
   str.replace(/\b(UNTIL=)([^;\n]*)/, processMatch)
 
   return { isTimeSpecified, isTimeZoneSpecified }
