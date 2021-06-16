@@ -7,7 +7,7 @@
   "docs": "https://fullcalendar.io/docs",
   "dependencies": {
     "preact": "^10.0.5",
-    "tslib": "^2.0.3"
+    "tslib": "^2.1.0"
   },
   "main": "tsc/vdom.js",
   "types": "tsc/vdom.d.ts",

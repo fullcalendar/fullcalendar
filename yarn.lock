@@ -3675,7 +3675,7 @@ __metadata:
     jasmine-spec-reporter: ~5.0.0
     rxjs: ~6.5.4
     ts-node: ~7.0.0
-    tslib: ^2.0.3
+    tslib: ^2.1.0
     tslint: ~6.1.0
     typescript: ~4.2.3
     zone.js: ~0.10.2
@@ -4208,7 +4208,7 @@ __metadata:
     "@fullcalendar/common": "workspace:~5.7.2"
     "@fullcalendar/core-preact": "workspace:*"
     "@fullcalendar/premium-common": "workspace:~5.7.2"
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4231,7 +4231,7 @@ __metadata:
   dependencies:
     "@fullcalendar/common": "workspace:~5.7.2"
     "@fullcalendar/core-preact": "workspace:*"
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4240,7 +4240,7 @@ __metadata:
   resolution: "@fullcalendar/common@workspace:packages/common"
   dependencies:
     "@fullcalendar/core-preact": "workspace:*"
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4249,7 +4249,7 @@ __metadata:
   resolution: "@fullcalendar/core-preact@workspace:packages/core-preact"
   dependencies:
     preact: ^10.0.5
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4260,7 +4260,7 @@ __metadata:
     "@fullcalendar/common": "workspace:~5.7.2"
     "@fullcalendar/core-preact": "workspace:*"
     preact: ^10.0.5
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4270,7 +4270,7 @@ __metadata:
   dependencies:
     "@fullcalendar/common": "workspace:~5.7.2"
     "@fullcalendar/core-preact": "workspace:*"
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4280,7 +4280,7 @@ __metadata:
   dependencies:
     "@fullcalendar/common": "workspace:~5.7.2"
     "@fullcalendar/core-preact": "workspace:*"
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4290,7 +4290,7 @@ __metadata:
   dependencies:
     "@fullcalendar/common": "workspace:~5.7.2"
     ical.js: ^1.4.0
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4300,7 +4300,7 @@ __metadata:
   dependencies:
     "@fullcalendar/common": "workspace:~5.7.2"
     "@fullcalendar/core-preact": "workspace:*"
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4310,7 +4310,7 @@ __metadata:
   dependencies:
     "@fullcalendar/common": "workspace:~5.7.2"
     "@fullcalendar/core-preact": "workspace:*"
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4321,7 +4321,7 @@ __metadata:
     "@fullcalendar/common": "workspace:~5.7.2"
     "@fullcalendar/core-preact": "workspace:*"
     luxon: ^1.12.1
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   peerDependencies:
     luxon: ^1.12.1
   languageName: unknown
@@ -4335,7 +4335,7 @@ __metadata:
     "@fullcalendar/core-preact": "workspace:*"
     moment: ^2.29.1
     moment-timezone: ^0.5.31
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   peerDependencies:
     moment: ^2.29.1
     moment-timezone: ^0.5.31
@@ -4349,7 +4349,7 @@ __metadata:
     "@fullcalendar/common": "workspace:~5.7.2"
     "@fullcalendar/core-preact": "workspace:*"
     moment: ^2.29.1
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   peerDependencies:
     moment: ^2.29.1
   languageName: unknown
@@ -4361,7 +4361,7 @@ __metadata:
   dependencies:
     "@fullcalendar/common": "workspace:~5.7.2"
     "@fullcalendar/core-preact": "workspace:*"
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4403,7 +4403,7 @@ __metadata:
     react-testing-library: ^6.0.2
     rollup: ^1.31.0
     rollup-plugin-postcss: ^2.0.3
-    tslib: ^2.0.3
+    tslib: ^2.1.0
     typescript: ^4.0.5
   peerDependencies:
     react: ^16.7.0 || ^17
@@ -4418,7 +4418,7 @@ __metadata:
     "@fullcalendar/common": "workspace:~5.7.2"
     "@fullcalendar/core-preact": "workspace:*"
     "@fullcalendar/premium-common": "workspace:~5.7.2"
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4431,7 +4431,7 @@ __metadata:
     "@fullcalendar/daygrid": "workspace:~5.7.2"
     "@fullcalendar/premium-common": "workspace:~5.7.2"
     "@fullcalendar/resource-common": "workspace:~5.7.2"
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4445,7 +4445,7 @@ __metadata:
     "@fullcalendar/resource-common": "workspace:~5.7.2"
     "@fullcalendar/resource-daygrid": "workspace:~5.7.2"
     "@fullcalendar/timegrid": "workspace:~5.7.2"
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4459,7 +4459,7 @@ __metadata:
     "@fullcalendar/resource-common": "workspace:~5.7.2"
     "@fullcalendar/scrollgrid": "workspace:~5.7.2"
     "@fullcalendar/timeline": "workspace:~5.7.2"
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4470,7 +4470,7 @@ __metadata:
     "@fullcalendar/common": "workspace:~5.7.2"
     "@fullcalendar/core-preact": "workspace:*"
     rrule: ^2.6.0
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   peerDependencies:
     rrule: ^2.6.0
   languageName: unknown
@@ -4483,7 +4483,7 @@ __metadata:
     "@fullcalendar/common": "workspace:~5.7.2"
     "@fullcalendar/core-preact": "workspace:*"
     "@fullcalendar/premium-common": "workspace:~5.7.2"
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4494,7 +4494,7 @@ __metadata:
     "@fullcalendar/common": "workspace:~5.7.2"
     "@fullcalendar/core-preact": "workspace:*"
     "@fullcalendar/daygrid": "workspace:~5.7.2"
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4506,7 +4506,7 @@ __metadata:
     "@fullcalendar/core-preact": "workspace:*"
     "@fullcalendar/premium-common": "workspace:~5.7.2"
     "@fullcalendar/scrollgrid": "workspace:~5.7.2"
-    tslib: ^2.0.3
+    tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -4537,7 +4537,7 @@ __metadata:
     rollup-plugin-vue: next
     source-map-loader: ^1.1.1
     terser: ^4.8.0
-    tslib: ^2.0.3
+    tslib: ^2.1.0
     typescript: ^4.0.5
     vue: ^3.0.11
     vue-i18n: next
@@ -4572,7 +4572,7 @@ __metadata:
     source-map-loader: ^1.1.1
     style-loader: ^2.0.0
     terser: ^4.8.0
-    tslib: ^2.0.3
+    tslib: ^2.1.0
     typescript: ^4.0.5
     vue: ^2.6.12
     vue-loader: ^15.9.5
@@ -16108,7 +16108,7 @@ fsevents@~2.1.2:
     "@types/jquery": ^3.3.29
     fullcalendar-tests: "*"
     jquery: ^3.4.0
-    tslib: ^2.0.3
+    tslib: ^2.1.0
     xhr-mock: ^2.5.1
   languageName: unknown
   linkType: soft
@@ -16160,7 +16160,7 @@ fsevents@~2.1.2:
     jquery-simulate: "github:jquery/jquery-simulate#main"
     moment: ^2.29.1
     moment-timezone: ^0.5.31
-    tslib: ^2.0.3
+    tslib: ^2.1.0
     xhr-mock: ^2.5.1
   languageName: unknown
   linkType: soft

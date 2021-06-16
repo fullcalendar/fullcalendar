@@ -22,7 +22,7 @@
     "jquery-simulate": "github:jquery/jquery-simulate#main",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.31",
-    "tslib": "^2.0.3",
+    "tslib": "^2.1.0",
     "xhr-mock": "^2.5.1"
   },
   "devDependencies": {

@@ -7,7 +7,7 @@
   "dependencies": {
     "@fullcalendar/common": "workspace:~5.7.2",
     "@fullcalendar/daygrid": "workspace:~5.7.2",
-    "tslib": "^2.0.3"
+    "tslib": "^2.1.0"
   },
   "main": "main.cjs.js",
   "module": "main.js",
