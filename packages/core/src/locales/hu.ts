@@ -13,7 +13,7 @@ export default {
     month: 'Hónap',
     week: 'Hét',
     day: 'Nap',
-    list: 'Napló',
+    list: 'Lista',
   },
   weekText: 'Hét',
   allDayText: 'Egész nap',
