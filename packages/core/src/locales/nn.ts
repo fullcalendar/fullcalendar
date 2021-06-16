@@ -15,8 +15,8 @@ export default {
     day: 'Dag',
     list: 'Agenda',
   },
-  weekText: 'Veke',
+  weekText: 'Veke ', // Needs a space because it's not abbreviated, otherwise the text ends up like "Veke2"
   allDayText: 'Heile dagen',
   moreLinkText: 'til',
-  noEventsText: 'Ingen hendelser å vise',
+  noEventsText: 'Ingen hendingar å syne',
 } as LocaleInput
