@@ -76,7 +76,7 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
   }
 
   & .fc-button-primary:hover {
-    color: var(--fc-button-text-color);
+    color: var(--fc-button-hover-text-color);
     background-color: var(--fc-button-hover-bg-color);
     border-color: var(--fc-button-hover-border-color);
   }
@@ -93,7 +93,7 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
 
   & .fc-button-primary:not(:disabled):active,
   & .fc-button-primary:not(:disabled).fc-button-active {
-    color: var(--fc-button-text-color);
+    color: var(--fc-button-active-text-color);
     background-color: var(--fc-button-active-bg-color);
     border-color: var(--fc-button-active-border-color);
   }
