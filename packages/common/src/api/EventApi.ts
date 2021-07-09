@@ -35,7 +35,7 @@ export class EventApi {
   /*
   TODO: make event struct more responsible for this
   */
-  setProp(name: string, val: string) {
+  setProp(name: string, val: string | boolean) {
     if (name in EVENT_DATE_REFINERS) {
       console.warn('Could not set date-related prop \'name\'. Use one of the date-related methods instead.')
     // TODO: make proper aliasing system?
