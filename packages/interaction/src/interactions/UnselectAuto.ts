@@ -14,7 +14,7 @@ export class UnselectAuto {
   matchesEvent = false
 
   constructor(private context: CalendarContext) {
-    let documentPointer = this.documentPointer = new PointerDragging(document)
+    let documentPointer = this.documentPointer = new PointerDragging(context.calendarApi.el.getRootNode())
     documentPointer.shouldIgnoreMove = true
     documentPointer.shouldWatchScroll = false
     documentPointer.emitter.on('pointerdown', this.onDocumentPointerDown)
