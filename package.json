@@ -60,7 +60,7 @@
     "jasmine-jquery": "^2.1.1",
     "jquery": "2 - 3",
     "jquery-mockjax": "^2.2.0",
-    "jquery-simulate": "github:jquery/jquery-simulate",
+    "jquery-simulate": "^1.0.2",
     "karma": "^0.13.22",
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.0",
