@@ -149,7 +149,7 @@ function placeRects(allRects: SegRect[], segs: TableSeg[], cells: DayTableCell[]
         seg: resliceSeg(seg, col, col + 1, cells),
         isVisible: true,
         isAbsolute: false,
-        absoluteTop: 0,
+        absoluteTop: rect.levelCoord,
         marginTop: rect.levelCoord - currentHeight,
       })
       currentHeight = rect.levelCoord + rect.thickness
@@ -183,7 +183,7 @@ function placeRects(allRects: SegRect[], segs: TableSeg[], cells: DayTableCell[]
           seg: resliceSeg(seg, rect.span.start, rect.span.end, cells),
           isVisible: true,
           isAbsolute: false,
-          absoluteTop: 0,
+          absoluteTop: rect.levelCoord,
           marginTop: currentMarginTop, // claim the margin
         })
         currentMarginTop = 0

@@ -233,7 +233,7 @@ export class DayGridWrapper {
     })
   }
 
-  resizeEvent(eventEl: HTMLElement, origEndDate, newEndDate, fromStart?) {
+  resizeEvent(eventEl: HTMLElement, origEndDate, newEndDate, fromStart?, onBeforeRelease?) {
     return new Promise<void>((resolve) => {
       let rect0 = this.getDayEl(origEndDate).getBoundingClientRect()
       let rect1 = this.getDayEl(newEndDate).getBoundingClientRect()
@@ -251,6 +251,7 @@ export class DayGridWrapper {
       $(resizerEl).simulate('drag', {
         point: resizerCenter,
         end: endPoint,
+        onBeforeRelease,
         onRelease: () => resolve(),
       })
     })

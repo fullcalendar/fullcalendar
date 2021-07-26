@@ -384,7 +384,7 @@ function buildMirrorPlacements(mirrorSegs: TableSeg[], colPlacements: TableSegPl
   }))
 }
 
-function buildAbsoluteTopHash(colPlacements: TableSegPlacement[][]) {
+function buildAbsoluteTopHash(colPlacements: TableSegPlacement[][]): { [instanceId: string]: number } {
   let topsByInstanceId: { [instanceId: string]: number } = {}
 
   for (let placements of colPlacements) {
@@ -393,5 +393,5 @@ function buildAbsoluteTopHash(colPlacements: TableSegPlacement[][]) {
     }
   }
 
-  return colPlacements
+  return topsByInstanceId
 }
