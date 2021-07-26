@@ -388,4 +388,45 @@ describe('dayGrid advanced event rendering', () => {
     let rect1 = document.querySelector('[data-event-id="f"]').getBoundingClientRect()
     expect(rect1.top - rect0.bottom).toBeLessThan(2)
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/6393
+  it('doesn\'t overlap with eventOrderStrict', () => {
+    let calendar = initCalendar({
+      initialDate: '2021-06-21',
+      initialView: 'dayGridWeek',
+      eventOrderStrict: true,
+      events: [
+        {
+          title: 'Busy1',
+          start: '2021-06-21T10:00:00Z',
+          end: '2021-06-21T11:00:00Z',
+        },
+        {
+          title: 'Busy2',
+          start: '2021-06-21T08:00:00Z',
+          end: '2021-06-21T10:00:00Z',
+        },
+        {
+          title: 'Busy3',
+          start: '2021-06-22T11:00:00Z',
+          end: '2021-06-22T12:00:00Z',
+        },
+        {
+          title: 'Busy4',
+          start: '2021-06-24T08:30:00Z',
+          end: '2021-06-24T11:00:00Z',
+        },
+        {
+          title: 'Busy5',
+          start: '2021-06-24T16:00:00Z',
+          end: '2021-06-24T16:30:00Z',
+        },
+      ],
+    })
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEls = dayGridWrapper.getEventEls()
+    let visibleEventEls = filterVisibleEls(eventEls)
+    expect(anyElsIntersect(visibleEventEls)).toBe(false)
+  })
 })

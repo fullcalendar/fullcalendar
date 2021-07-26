@@ -58,7 +58,7 @@ describe('timeGrid event rendering', () => {
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/2758
-  it('renders without intersecting when sorted by title', () => {
+  it('renders without intersecting for certain arrangement', () => {
     let calendar = initCalendar({
       initialDate: '2015-04-22',
       initialView: 'timeGridDay',
