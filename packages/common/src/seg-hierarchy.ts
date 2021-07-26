@@ -13,9 +13,9 @@ export interface SegEntry {
 export interface SegInsertion {
   level: number // will have an equal coord, or slightly before, entries in existing level
   levelCoord: number
-  lateralStart: number // within the previous level
-  lateralEnd: number // within the previous level
-  touchingLevel: number // is -1 if no touching
+  lateral: number // where to insert in the existing level. -1 if creating a new level
+  touchingLevel: number // -1 if no touching
+  touchingLateral: number // -1 if no touching
   touchingEntry: SegEntry // the last touching entry in the level
   stackCnt: number
 }
@@ -113,82 +113,86 @@ export class SegHierarchy {
 
   insertEntryAt(entry: SegEntry, insertion: SegInsertion): void {
     let { entriesByLevel, levelCoords } = this
-    let destLevel = insertion.level
 
-    if (
-      destLevel >= levelCoords.length || // level doesn't exist yet
-      levelCoords[destLevel] > insertion.levelCoord // destLevel needs to be pushed forward to make way
-    ) {
+    if (insertion.lateral === -1) {
       // create a new level
-      insertAt(levelCoords, destLevel, insertion.levelCoord)
-      insertAt(entriesByLevel, destLevel, [entry])
+      insertAt(levelCoords, insertion.level, insertion.levelCoord)
+      insertAt(entriesByLevel, insertion.level, [entry])
     } else {
       // insert into existing level
-      insertAt(entriesByLevel[destLevel], insertion.lateralEnd, entry)
+      insertAt(entriesByLevel[insertion.level], insertion.lateral, entry)
     }
 
     this.stackCnts[buildEntryKey(entry)] = insertion.stackCnt
   }
 
   findInsertion(newEntry: SegEntry): SegInsertion {
-    let { levelCoords, entriesByLevel, stackCnts, strictOrder } = this
+    let { levelCoords, entriesByLevel, strictOrder, stackCnts } = this
     let levelCnt = levelCoords.length
-    let resLevelCoord = 0
-    let resLevel = 0
-    let lateralStart = 0
-    let lateralEnd = 0
-    let touchingLevel = -1
-    let touchingEntry: SegEntry = null // last touch entry
+    let candidateCoord = 0
+    let touchingLevel: number = -1
+    let touchingLateral: number = -1
+    let touchingEntry: SegEntry = null
+    let stackCnt = 0
 
-    for (let level = 0; level < levelCnt; level += 1) {
-      let levelCoord = levelCoords[level]
+    for (let trackingLevel = 0; trackingLevel < levelCnt; trackingLevel += 1) {
+      let trackingCoord = levelCoords[trackingLevel]
 
       // if the current level is past the placed entry, we have found a good empty space and can stop.
       // if strictOrder, keep finding more lateral intersections.
-      if (!strictOrder && levelCoord >= resLevelCoord + newEntry.thickness) {
+      if (!strictOrder && trackingCoord >= candidateCoord + newEntry.thickness) {
         break
       }
 
-      let entries = entriesByLevel[level]
-      let entry: SegEntry
-      let searchRes = binarySearch(entries, newEntry.span.start, getEntrySpanEnd)
-      lateralStart = searchRes[0] + searchRes[1] // if exact match (which doesn't collide), go to next one
-      lateralEnd = lateralStart // also functions as a moving index
+      let trackingEntries = entriesByLevel[trackingLevel]
+      let trackingEntry: SegEntry
+      let searchRes = binarySearch(trackingEntries, newEntry.span.start, getEntrySpanEnd) // find first entry after newEntry's end
+      let lateralIndex = searchRes[0] + searchRes[1] // if exact match (which doesn't collide), go to next one
 
       while ( // loop through entries that horizontally intersect
-        (entry = entries[lateralEnd]) && // but not past the whole entry list
-        entry.span.start < newEntry.span.end // and not entirely past newEntry
+        (trackingEntry = trackingEntries[lateralIndex]) && // but not past the whole entry list
+        trackingEntry.span.start < newEntry.span.end // and not entirely past newEntry
       ) {
-        if (
-          strictOrder || // strict-mode doesn't care about vert intersection. record touch and keep pushing down
-          ( // vertically intersects?
-            resLevelCoord < levelCoord + entry.thickness &&
-            resLevelCoord + newEntry.thickness > levelCoord
-          )
-        ) {
-          // push down the potential destination
-          resLevelCoord = levelCoord + entry.thickness // move to bottom of colliding entry
-          touchingLevel = level
-          touchingEntry = entry
+        let trackingEntryBottom = trackingCoord + trackingEntry.thickness
+        // intersects into the top of the candidate?
+        if (trackingEntryBottom > candidateCoord) {
+          candidateCoord = trackingEntryBottom
+          touchingEntry = trackingEntry
+          touchingLevel = trackingLevel
+          touchingLateral = lateralIndex
         }
-        lateralEnd += 1
-      }
-
-      // regardless of whether there were collisions in the current level,
-      // keep updating the final-destination level until it goes past the final-destination coord.
-      if (levelCoord < resLevelCoord) {
-        resLevel = level + 1
+        // butts up against top of candidate? (will happen if just intersected as well)
+        if (trackingEntryBottom === candidateCoord) {
+          // accumulate the highest possible stackCnt of the trackingEntries that butt up
+          stackCnt = Math.max(stackCnt, stackCnts[buildEntryKey(trackingEntry)] + 1)
+        }
+        lateralIndex += 1
       }
     }
 
+    // the destination level will be after touchingEntry's level. find it
+    let destLevel = 0
+    if (touchingEntry) {
+      destLevel = touchingLevel + 1
+      while (destLevel < levelCnt && levelCoords[destLevel] < candidateCoord) {
+        destLevel += 1
+      }
+    }
+
+    // if adding to an existing level, find where to insert
+    let destLateral = -1
+    if (destLevel < levelCnt && levelCoords[destLevel] === candidateCoord) {
+      destLateral = binarySearch(entriesByLevel[destLevel], newEntry.span.end, getEntrySpanEnd)[0]
+    }
+
     return {
-      level: resLevel,
-      levelCoord: resLevelCoord,
-      lateralStart,
-      lateralEnd,
       touchingLevel,
+      touchingLateral,
       touchingEntry,
-      stackCnt: touchingEntry ? stackCnts[buildEntryKey(touchingEntry)] + 1 : 0,
+      stackCnt,
+      levelCoord: candidateCoord,
+      level: destLevel,
+      lateral: destLateral,
     }
   }
 

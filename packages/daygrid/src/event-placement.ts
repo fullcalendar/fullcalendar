@@ -263,31 +263,27 @@ class DayGridSegHierarchy extends SegHierarchy {
 
   handleInvalidInsertion(insertion: SegInsertion, entry: SegEntry, hiddenEntries: SegEntry[]) {
     const { entriesByLevel, forceHidden } = this
-    const { touchingLevel } = insertion
+    const { touchingEntry, touchingLevel, touchingLateral } = insertion
 
-    if (this.hiddenConsumes && touchingLevel >= 0) {
-      for (let lateral = insertion.lateralStart; lateral < insertion.lateralEnd; lateral += 1) {
-        const leadingEntry = entriesByLevel[touchingLevel][lateral]
+    if (this.hiddenConsumes && touchingEntry) {
+      if (this.allowReslicing) {
+        const placeholderEntry: SegEntry = { // placeholder of the "more" link
+          ...touchingEntry,
+          span: intersectSpans(touchingEntry.span, entry.span),
+        }
+        const placeholderEntryId = buildEntryKey(placeholderEntry)
 
-        if (this.allowReslicing) {
-          const placeholderEntry: SegEntry = { // placeholder of the "more" link
-            ...leadingEntry,
-            span: intersectSpans(leadingEntry.span, entry.span),
-          }
-          const placeholderEntryId = buildEntryKey(placeholderEntry)
+        if (!forceHidden[placeholderEntryId]) { // if not already hidden
+          forceHidden[placeholderEntryId] = true
+          entriesByLevel[touchingLevel][touchingLateral] = placeholderEntry // replace touchingEntry with our placeholder
+          this.splitEntry(touchingEntry, entry, hiddenEntries) // split up the touchingEntry, reinsert it
+        }
+      } else {
+        const placeholderEntryId = buildEntryKey(touchingEntry)
 
-          if (!forceHidden[placeholderEntryId]) { // if not already hidden
-            forceHidden[placeholderEntryId] = true
-            entriesByLevel[touchingLevel][lateral] = placeholderEntry // replace leadingEntry with our placeholder
-            this.splitEntry(leadingEntry, entry, hiddenEntries) // split up the leadingEntry, reinsert it
-          }
-        } else {
-          const placeholderEntryId = buildEntryKey(leadingEntry)
-
-          if (!forceHidden[placeholderEntryId]) {
-            forceHidden[placeholderEntryId] = true
-            hiddenEntries.push(leadingEntry)
-          }
+        if (!forceHidden[placeholderEntryId]) {
+          forceHidden[placeholderEntryId] = true
+          hiddenEntries.push(touchingEntry)
         }
       }
     }
