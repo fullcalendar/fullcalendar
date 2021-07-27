@@ -85,4 +85,26 @@ describe('eventContent', () => {
     expect($(eventEl).css('background-color')).toMatch(RED_REGEX)
     expectEventDataChanged('b')
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/6079
+  it('can handle view-specific custom content generators', () => {
+    let calendar = initCalendar({
+      initialView: 'dayGridWeek',
+      initialDate: '2021-01-07',
+      views: {
+        dayGridWeek: {
+          eventContent: function (info) {
+            var eventWrapper = document.createElement('div')
+            eventWrapper.innerText = 'test dayGridWeek'
+            var arrayOfDomNodes = [eventWrapper]
+            return { domNodes: arrayOfDomNodes }
+          }
+        },
+      },
+      events: [
+        { start: '2021-01-07' },
+      ],
+    })
+    calendar.changeView('dayGridMonth') // can do without error?
+  })
 })

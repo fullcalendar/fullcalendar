@@ -83,10 +83,10 @@ export type DefaultContentGenerator<HookProps> = (hookProps: HookProps) => Compo
 export const CustomContentRenderContext: Context<number> = createContext<number>(0)
 
 export interface ContentHookProps<HookProps> {
-  hookProps: HookProps
-  content: CustomContentGenerator<HookProps>
-  defaultContent?: DefaultContentGenerator<HookProps>
-  children: (
+  hookProps: HookProps // produced by FullCalendar internally, for rendering an entity/whatever
+  content: CustomContentGenerator<HookProps> // the value of a user-hook, like `eventContent`
+  defaultContent?: DefaultContentGenerator<HookProps> // if content not specified (TODO: just use content?)
+  children: ( // for producing a wrapper around the content
     innerElRef: Ref<any>,
     innerContent: ComponentChildren // if falsy, means it wasn't specified
   ) => ComponentChildren
@@ -136,46 +136,69 @@ class ContentHookInner<HookProps> extends BaseComponent<ContentHookInnerProps<Ho
   }
 
   private renderInnerContent() {
-    let { contentTypeHandlers } = this.context.pluginHooks
-    let { props, customContentInfo } = this
+    let { customContentInfo } = this // only populated if using non-[p]react node(s)
+    let innerContent = this.getInnerContent()
+    let meta = this.getContentMeta(innerContent)
+
+    // initial run, or content-type changing? (from vue -> react for example)
+    if (!customContentInfo || customContentInfo.contentKey !== meta.contentKey) {
+      // clearing old value
+      if (customContentInfo) {
+        if (customContentInfo.destroy) {
+          customContentInfo.destroy()
+        }
+        customContentInfo = this.customContentInfo = null
+      }
+      // assigning new value
+      if (meta.contentKey) {
+        customContentInfo = this.customContentInfo = { // for non-[p]react
+          contentKey: meta.contentKey,
+          contentVal: innerContent[meta.contentKey],
+          ...meta.buildLifecycleFuncs()
+        }
+      }
+    // updating
+    } else if (customContentInfo) {
+      customContentInfo.contentVal = innerContent[meta.contentKey]
+    }
+
+    return customContentInfo
+      ? [] // signal that something was specified
+      : innerContent // assume a [p]react vdom node. use it
+  }
+
+  private getInnerContent() {
+    let { props } = this
     let rawVal = props.content
     let innerContent = normalizeContent(rawVal, props.hookProps)
-    let innerContentVDom: ComponentChildren = null
 
     if (innerContent === undefined) { // use the default
       innerContent = normalizeContent(props.defaultContent, props.hookProps)
     }
 
-    if (innerContent !== undefined) { // we allow custom content handlers to return nothing
-      if (customContentInfo) {
-        customContentInfo.contentVal = innerContent[customContentInfo.contentKey]
-      } else if (typeof innerContent === 'object') {
-        // look for a prop that would indicate a custom content handler is needed
-        for (let contentKey in contentTypeHandlers) {
-          if (innerContent[contentKey] !== undefined) {
-            let stuff = contentTypeHandlers[contentKey]()
-            customContentInfo = this.customContentInfo = {
-              contentKey,
-              contentVal: innerContent[contentKey],
-              ...stuff,
-            }
-            break
-          }
-        }
-      }
+    return innerContent
+  }
 
-      if (customContentInfo) {
-        innerContentVDom = [] // signal that something was specified
-      } else {
-        innerContentVDom = innerContent // assume a [p]react vdom node. use it
+  private getContentMeta(innerContent: any) {
+    let { contentTypeHandlers } = this.context.pluginHooks
+    let contentKey = ''
+    let buildLifecycleFuncs = null
+
+    if (innerContent) { // allowed to be null, for convenience to caller
+      for (let searchKey in contentTypeHandlers) {
+        if (innerContent[searchKey] !== undefined) {
+          contentKey = searchKey
+          buildLifecycleFuncs = contentTypeHandlers[searchKey]
+          break
+        }
       }
     }
 
-    return innerContentVDom
+    return { contentKey, buildLifecycleFuncs }
   }
 
   private updateCustomContent() {
-    if (this.customContentInfo) {
+    if (this.customContentInfo) { // for non-[p]react
       this.customContentInfo.render(
         this.innerElRef.current || this.props.backupElRef.current, // the element to render into
         this.customContentInfo.contentVal,
