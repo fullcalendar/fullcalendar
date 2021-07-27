@@ -1,5 +1,6 @@
 import * as ICAL from 'ical.js'
-import { createPlugin, EventSourceDef, EventInput, addDays, DateRange, DateMarker } from '@fullcalendar/common'
+import { IcalExpander } from './ical-expander/IcalExpander'
+import { createPlugin, EventSourceDef, EventInput, DateRange } from '@fullcalendar/common'
 
 type Success = (rawFeed: string, xhr: XMLHttpRequest) => void
 type Failure = (error: string, xhr: XMLHttpRequest) => void
@@ -12,9 +13,9 @@ interface ICalFeedMeta {
 
 interface InternalState {
   completed: boolean
-  callbacks: ((errorMessage: string, iCalEvents: ICAL.Event, xhr: XMLHttpRequest) => void)[]
+  callbacks: ((errorMessage: string, iCalExpander: IcalExpander, xhr: XMLHttpRequest) => void)[]
   errorMessage: string
-  iCalEvents: ICAL.Event
+  iCalExpander: IcalExpander
   xhr: XMLHttpRequest | null
 }
 
@@ -34,11 +35,11 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
     let { meta } = arg.eventSource
     let { internalState } = meta
 
-    function handleICalEvents(errorMessage, iCalEvents, xhr) {
+    function handleICalEvents(errorMessage, iCalExpander: IcalExpander, xhr) {
       if (errorMessage) {
         onFailure({ message: errorMessage, xhr })
       } else {
-        onSuccess({ rawEvents: expandICalEvents(iCalEvents, arg.range), xhr })
+        onSuccess({ rawEvents: expandICalEvents(iCalExpander, arg.range), xhr })
       }
     }
 
@@ -51,27 +52,30 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
         completed: false,
         callbacks: [handleICalEvents],
         errorMessage: '',
-        iCalEvents: [],
+        iCalExpander: null,
         xhr: null,
       }
 
       requestICal(
         meta.url,
         (rawFeed, xhr) => {
-          const iCalEvents = parseICalFeed(rawFeed)
+          let iCalExpander = new IcalExpander({
+            ics: rawFeed,
+            skipInvalidDates: true,
+          })
 
           for (let callback of internalState.callbacks) {
-            callback('', iCalEvents, xhr)
+            callback('', iCalExpander, xhr)
           }
 
           internalState.completed = true
           internalState.callbacks = []
-          internalState.iCalEvents = iCalEvents
+          internalState.iCalExpander = iCalExpander
           internalState.xhr = xhr
         },
         (errorMessage, xhr) => {
           for (let callback of internalState.callbacks) {
-            callback(errorMessage, [], xhr)
+            callback(errorMessage, null, xhr)
           }
 
           internalState.completed = true
@@ -83,7 +87,7 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
     } else if (!internalState.completed) {
       internalState.callbacks.push(handleICalEvents)
     } else {
-      handleICalEvents(internalState.errorMessage, internalState.iCalEvents, internalState.xhr)
+      handleICalEvents(internalState.errorMessage, internalState.iCalExpander, internalState.xhr)
     }
   },
 }
@@ -102,100 +106,34 @@ function requestICal(url: string, successCallback: Success, failureCallback: Fai
   xhr.send(null)
 }
 
-function parseICalFeed(feedStr: string): ICAL.Event[] {
-  let components = null
+function expandICalEvents(iCalExpander: IcalExpander, range: DateRange): EventInput[] {
+  let iCalRes = iCalExpander.between(range.start, range.end) // end is *inclusive*, so might return extra results
+  let expanded: EventInput[] = []
 
-  try {
-    let feed = ICAL.parse(feedStr)
-    let rootComponent = new ICAL.Component(feed)
-    components = rootComponent.getAllSubcomponents('vevent')
-  } catch (error) {
-    console.warn(`Error parsing feed: ${error}`)
-    return []
+  // single events
+  for (let iCalEvent of iCalRes.events) {
+    expanded.push({
+      ...buildNonDateProps(iCalEvent),
+      start: iCalEvent.startDate.toString(),
+      end: (specifiesEnd(iCalEvent) && iCalEvent.endDate)
+        ? iCalEvent.endDate.toString()
+        : null,
+    })
   }
 
-  let iCalEvents: ICAL.Event[] = []
-
-  for (let component of components) {
-    try {
-      let iCalEvent = new ICAL.Event(component)
-
-      if (iCalEvent.startDate) { // is an accessor method. if throws an error, is a bad event
-        iCalEvents.push(iCalEvent)
-      }
-    } catch (error) {
-      console.warn(`Unable to process item in calendar: ${error}`)
-    }
+  // recurring event instances
+  for (let iCalOccurence of iCalRes.occurrences) {
+    let iCalEvent = iCalOccurence.item
+    expanded.push({
+      ...buildNonDateProps(iCalEvent),
+      start: iCalOccurence.startDate.toString(),
+      end: (specifiesEnd(iCalEvent) && iCalOccurence.endDate)
+        ? iCalOccurence.endDate.toString()
+        : null,
+    })
   }
 
-  return iCalEvents
-}
-
-function expandICalEvents(iCalEvents: ICAL.Event[], range: DateRange): EventInput[] {
-  let eventInputs: EventInput[] = []
-
-  for (let iCalEvent of iCalEvents) {
-    if (iCalEvent.isRecurring()) {
-      eventInputs.push(
-        ...expandRecurringEvent(iCalEvent, range),
-      )
-    } else {
-      eventInputs.push(
-        buildSingleEvent(iCalEvent),
-      )
-    }
-  }
-
-  return eventInputs
-}
-
-function buildSingleEvent(iCalEvent: ICAL.Event): EventInput {
-  return {
-    ...buildNonDateProps(iCalEvent),
-    start: iCalEvent.startDate.toString(),
-    end: (specifiesEnd(iCalEvent) && iCalEvent.endDate)
-      ? iCalEvent.endDate.toString()
-      : null,
-  }
-}
-
-/*
-This is suprisingly involved and not built-in to ical.js:
-https://github.com/mozilla-comm/ical.js/issues/285
-https://github.com/mifi/ical-expander/blob/master/index.js
-TODO: handle VEVENTs that are *exceptions*
-*/
-function expandRecurringEvent(iCalEvent: ICAL.Event, range: DateRange): EventInput[] {
-  let rangeStart = addDays(range.start, -1)
-  let rangeEnd = addDays(range.end, 1)
-  let expansion = iCalEvent.iterator()
-  let hasDuration = specifiesEnd(iCalEvent)
-  let eventInputs: EventInput[] = []
-  let startDateTime: ICAL.Time
-
-  while ((startDateTime = expansion.next())) { // will start expanding ALL occurences
-    let startDate = startDateTime.toJSDate()
-    let endDate: DateMarker | null = null
-    let endDateTime: ICAL.Time | null = null
-
-    if (hasDuration) {
-      endDateTime = startDateTime.clone()
-      endDateTime.addDuration(iCalEvent.duration)
-      endDate = endDateTime.toJSDate()
-    }
-
-    if (startDate >= rangeEnd.valueOf()) { // is event's start on-or-after the range's end?
-      break
-    } else if ((endDate || startDate) > rangeStart.valueOf()) { // is event's end after the range's start?
-      eventInputs.push({
-        ...buildNonDateProps(iCalEvent),
-        start: startDateTime.toString(),
-        end: endDateTime ? endDateTime.toString() : null,
-      })
-    }
-  }
-
-  return eventInputs
+  return expanded
 }
 
 function buildNonDateProps(iCalEvent: ICAL.Event): EventInput {

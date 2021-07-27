@@ -8,6 +8,7 @@
     "module": "es6",
     "moduleResolution": "node",
     "esModuleInterop": true,
+    "allowJs": true,
     "lib": [
       "dom",
       "es2015",
