@@ -154,7 +154,7 @@ class ContentHookInner<HookProps> extends BaseComponent<ContentHookInnerProps<Ho
         customContentInfo = this.customContentInfo = { // for non-[p]react
           contentKey: meta.contentKey,
           contentVal: innerContent[meta.contentKey],
-          ...meta.buildLifecycleFuncs()
+          ...meta.buildLifecycleFuncs(),
         }
       }
     // updating

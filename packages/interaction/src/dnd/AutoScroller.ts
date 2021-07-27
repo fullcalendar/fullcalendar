@@ -207,7 +207,7 @@ export class AutoScroller {
         els.push(query)
       } else {
         els.push(...Array.prototype.slice.call(
-          getElRoot(scrollStartEl).querySelectorAll(query)
+          getElRoot(scrollStartEl).querySelectorAll(query),
         ))
       }
     }

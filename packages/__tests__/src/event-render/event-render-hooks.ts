@@ -93,12 +93,12 @@ describe('eventContent', () => {
       initialDate: '2021-01-07',
       views: {
         dayGridWeek: {
-          eventContent: function (info) {
-            var eventWrapper = document.createElement('div')
+          eventContent() {
+            let eventWrapper = document.createElement('div')
             eventWrapper.innerText = 'test dayGridWeek'
-            var arrayOfDomNodes = [eventWrapper]
+            let arrayOfDomNodes = [eventWrapper]
             return { domNodes: arrayOfDomNodes }
-          }
+          },
         },
       },
       events: [
