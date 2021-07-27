@@ -9,7 +9,9 @@ import meetingWithMungedStart from './data/meetingWithMungedStart'
 import alldayEvent from './data/alldayEvent'
 import timedMeetingWithoutEnd from './data/timedMeetingWithoutEnd'
 import timedMeetingWithDuration from './data/timedMeetingWithDuration'
+import dataWithRecurrenceId from './data/recurrenceId'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('addICalEventSource with day view', () => {
   const ICAL_MIME_TYPE = 'text/calendar'
@@ -138,6 +140,27 @@ describe('addICalEventSource with day view', () => {
         initCalendar({
           forceEventDuration: true,
           defaultTimedEventDuration: '03:00',
+        }).addEventSource(source)
+      },
+    )
+  })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/6451
+  it('respects RECURRENCE-ID and does not render double events', (done) => {
+    loadICalendarWith(
+      dataWithRecurrenceId,
+      () => {
+        setTimeout(() => {
+          let timeGridWrapper = new TimeGridViewWrapper(currentCalendar).timeGrid
+          let eventEls = timeGridWrapper.getEventEls()
+          console.log('eventEls', eventEls)
+          expect(eventEls.length).toBe(1)
+          done()
+        }, 100)
+      },
+      (source) => {
+        initCalendar({
+          initialDate: '2021-07-08',
         }).addEventSource(source)
       },
     )
