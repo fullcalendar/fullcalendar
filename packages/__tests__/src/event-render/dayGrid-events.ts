@@ -429,4 +429,88 @@ describe('dayGrid advanced event rendering', () => {
     let visibleEventEls = filterVisibleEls(eventEls)
     expect(anyElsIntersect(visibleEventEls)).toBe(false)
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/6397
+  it('doesn\'t show duplicate events in popover when eventOrder by start date', (done) => {
+    let calendar = initCalendar({
+      initialView: 'dayGridMonth',
+      initialDate: '2021-07-07',
+      eventOrder: 'start',
+      dayMaxEventRows: 4,
+      events: [
+        {
+          title: 'Ariana Florescu',
+          start: '2021-07-02',
+          end: '2021-07-03',
+        },
+        {
+          title: 'Alan Leaclaire',
+          start: '2021-07-02',
+          end: '2021-07-10',
+        },
+        {
+          title: 'Divya Sundavaridevelu',
+          start: '2021-07-05',
+          end: '2021-07-06',
+        },
+        {
+          title: 'Phyllis Benoussan',
+          start: '2021-07-05',
+          end: '2021-07-06',
+        },
+        {
+          title: 'Allison Olsen',
+          start: '2021-07-05',
+          end: '2021-07-10',
+        },
+        {
+          title: 'Justin Sinnaeve',
+          start: '2021-07-05',
+          end: '2021-07-10',
+        },
+        {
+          title: 'Sylwia Pitel',
+          start: '2021-07-07',
+          end: '2021-07-08',
+        },
+        {
+          title: 'Derrick Leach',
+          start: '2021-07-07',
+          end: '2021-07-10',
+        },
+        {
+          title: 'Sebastien Pillon',
+          start: '2021-07-08',
+          end: '2021-07-13',
+        },
+        {
+          title: 'Nishat Ayub',
+          start: '2021-07-08',
+          end: '2021-07-10',
+        },
+        {
+          title: 'Ognjen Stoisavljevic',
+          start: '2021-07-09',
+          end: '2021-07-10',
+        },
+        {
+          title: 'Slobodan Stojanovic',
+          start: '2021-07-09',
+          end: '2021-07-10',
+        },
+        {
+          title: 'Phyllis Benoussan',
+          start: '2021-07-09',
+          end: '2021-07-10',
+        }
+      ]
+    })
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    dayGridWrapper.openMorePopover(4) // on July 9th
+    setTimeout(() => {
+      let eventEls = dayGridWrapper.getMorePopoverEventEls()
+      expect(eventEls.length).toBe(9)
+      done()
+    })
+  })
 })

@@ -266,23 +266,20 @@ class DayGridSegHierarchy extends SegHierarchy {
     const { touchingEntry, touchingLevel, touchingLateral } = insertion
 
     if (this.hiddenConsumes && touchingEntry) {
-      if (this.allowReslicing) {
-        const placeholderEntry: SegEntry = { // placeholder of the "more" link
-          ...touchingEntry,
-          span: intersectSpans(touchingEntry.span, entry.span),
-        }
-        const placeholderEntryId = buildEntryKey(placeholderEntry)
-
-        if (!forceHidden[placeholderEntryId]) { // if not already hidden
+      const touchingEntryId = buildEntryKey(touchingEntry)
+      // if not already hidden
+      if (!forceHidden[touchingEntryId]) {
+        if (this.allowReslicing) {
+          const placeholderEntry: SegEntry = { // placeholder of the "more" link
+            ...touchingEntry,
+            span: intersectSpans(touchingEntry.span, entry.span),
+          }
+          const placeholderEntryId = buildEntryKey(placeholderEntry)
           forceHidden[placeholderEntryId] = true
           entriesByLevel[touchingLevel][touchingLateral] = placeholderEntry // replace touchingEntry with our placeholder
           this.splitEntry(touchingEntry, entry, hiddenEntries) // split up the touchingEntry, reinsert it
-        }
-      } else {
-        const placeholderEntryId = buildEntryKey(touchingEntry)
-
-        if (!forceHidden[placeholderEntryId]) {
-          forceHidden[placeholderEntryId] = true
+        } else {
+          forceHidden[touchingEntryId] = true
           hiddenEntries.push(touchingEntry)
         }
       }

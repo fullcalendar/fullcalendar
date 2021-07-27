@@ -219,7 +219,7 @@ export function getEntrySpanEnd(entry: SegEntry) {
   return entry.span.end
 }
 
-export function buildEntryKey(entry: SegEntry) {
+export function buildEntryKey(entry: SegEntry) { // TODO: use Map instead?
   return entry.index + ':' + entry.span.start
 }
 
