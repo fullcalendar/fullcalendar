@@ -71,6 +71,7 @@ function externalizeRelative() {
 function injectReleaseDateAndVersion() {
   return replace({
     delimiters: [ '<%= ', ' %>' ],
+    preventAssignment: true,
     values: {
       releaseDate: new Date().toISOString().replace(/T.*/, ''), // just YYYY-MM-DD
       version: rootPkgMeta.version
