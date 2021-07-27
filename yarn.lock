@@ -2619,10 +2619,11 @@ __metadata:
     "@fullcalendar/interaction": ^5.8.0
     "@fullcalendar/list": ^5.8.0
     "@fullcalendar/timegrid": ^5.8.0
-    "@rollup/plugin-node-resolve": ^7.1.3
+    css-loader: ^4.3.0
     lit: ^2.0.0-rc.1
-    rollup: ^1.20.0||^2.0.0
-    rollup-plugin-postcss: ^2.8.2
+    mini-css-extract-plugin: ^1.2.0
+    webpack: ^5.3.0
+    webpack-cli: ^4.1.0
   languageName: unknown
   linkType: soft
 
