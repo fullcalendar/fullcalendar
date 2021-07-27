@@ -502,8 +502,8 @@ describe('dayGrid advanced event rendering', () => {
           title: 'Phyllis Benoussan',
           start: '2021-07-09',
           end: '2021-07-10',
-        }
-      ]
+        },
+      ],
     })
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     dayGridWrapper.openMorePopover(4) // on July 9th

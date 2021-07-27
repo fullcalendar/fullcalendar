@@ -27,9 +27,9 @@ describe('event mirror rendering', () => {
       () => { // onBeforeRelease
         let mirrorEls = dayGridWrapper.getMirrorEls()
         expect(mirrorEls[0].getBoundingClientRect().top).toBe(
-          eventEls[1].getBoundingClientRect().top
+          eventEls[1].getBoundingClientRect().top,
         )
-      }
+      },
     )
 
     waitEventResize(calendar, resizing).then(done)

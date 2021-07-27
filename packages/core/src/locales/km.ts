@@ -9,7 +9,7 @@ export default {
   buttonText: {
     prev: 'មុន',
     next: 'បន្ទាប់',
-    today: "ថ្ងៃនេះ",
+    today: 'ថ្ងៃនេះ',
     year: 'ឆ្នាំ',
     month: 'ខែ',
     week: 'សប្តាហ៍',
