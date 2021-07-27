@@ -153,7 +153,6 @@ describe('addICalEventSource with day view', () => {
         setTimeout(() => {
           let timeGridWrapper = new TimeGridViewWrapper(currentCalendar).timeGrid
           let eventEls = timeGridWrapper.getEventEls()
-          console.log('eventEls', eventEls)
           expect(eventEls.length).toBe(1)
           done()
         }, 100)
