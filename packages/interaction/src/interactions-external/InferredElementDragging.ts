@@ -63,9 +63,10 @@ export class InferredElementDragging extends ElementDragging {
         this.currentMirrorEl = null
       }
     } else {
-      let mirrorEl = this.mirrorSelector ?
-        document.querySelector(this.mirrorSelector) as HTMLElement :
-        null
+      let mirrorEl = this.mirrorSelector
+        // TODO: somehow query FullCalendars WITHIN shadow-roots
+        ? document.querySelector(this.mirrorSelector) as HTMLElement
+        : null
 
       if (mirrorEl) {
         this.currentMirrorEl = mirrorEl

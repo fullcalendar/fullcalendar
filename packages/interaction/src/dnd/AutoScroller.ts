@@ -1,3 +1,4 @@
+import { getElRoot } from '@fullcalendar/common'
 import { ScrollGeomCache } from '../ScrollGeomCache'
 import { ElementScrollGeomCache } from '../ElementScrollGeomCache'
 import { WindowScrollGeomCache } from '../WindowScrollGeomCache'
@@ -39,9 +40,9 @@ export class AutoScroller {
   everMovedLeft: boolean = false
   everMovedRight: boolean = false
 
-  start(pageX: number, pageY: number) {
+  start(pageX: number, pageY: number, scrollStartEl: HTMLElement) {
     if (this.isEnabled) {
-      this.scrollCaches = this.buildCaches()
+      this.scrollCaches = this.buildCaches(scrollStartEl)
       this.pointerScreenX = null
       this.pointerScreenY = null
       this.everMovedUp = false
@@ -189,8 +190,8 @@ export class AutoScroller {
     return bestSide
   }
 
-  private buildCaches() {
-    return this.queryScrollEls().map((el) => {
+  private buildCaches(scrollStartEl: HTMLElement) {
+    return this.queryScrollEls(scrollStartEl).map((el) => {
       if (el === window) {
         return new WindowScrollGeomCache(false) // false = don't listen to user-generated scrolls
       }
@@ -198,14 +199,16 @@ export class AutoScroller {
     })
   }
 
-  private queryScrollEls() {
+  private queryScrollEls(scrollStartEl: HTMLElement) {
     let els = []
 
     for (let query of this.scrollQuery) {
       if (typeof query === 'object') {
         els.push(query)
       } else {
-        els.push(...Array.prototype.slice.call(document.querySelectorAll(query)))
+        els.push(...Array.prototype.slice.call(
+          getElRoot(scrollStartEl).querySelectorAll(query)
+        ))
       }
     }
 

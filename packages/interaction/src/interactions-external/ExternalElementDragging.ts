@@ -103,6 +103,7 @@ export class ExternalElementDragging {
     // TODO: wish we could somehow wait for dispatch to guarantee render
     dragging.setMirrorIsVisible(
       isFinal || !droppableEvent || !document.querySelector('.fc-event-mirror'),
+      // TODO: somehow query FullCalendars WITHIN shadow-roots for existing event-mirror els
     )
 
     if (!isInvalid) {

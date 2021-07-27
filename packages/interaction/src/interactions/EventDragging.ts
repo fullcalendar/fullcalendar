@@ -19,6 +19,7 @@ import {
   EventAddArg,
   EventRemoveArg,
   isInteractionValid,
+  getElRoot,
 } from '@fullcalendar/common'
 import { __assign } from 'tslib'
 import { HitDragging, isHitsEqual } from './HitDragging'
@@ -217,7 +218,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
       // render the mirror if no already-rendered mirror
       // TODO: wish we could somehow wait for dispatch to guarantee render
       this.dragging.setMirrorIsVisible(
-        !hit || !document.querySelector('.fc-event-mirror'),
+        !hit || !getElRoot(this.subjectEl).querySelector('.fc-event-mirror'),
       )
 
       // assign states based on new hit

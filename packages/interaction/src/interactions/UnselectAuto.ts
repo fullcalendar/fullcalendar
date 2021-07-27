@@ -3,6 +3,7 @@ import {
   PointerDragEvent,
   elementClosest,
   CalendarContext,
+  getEventTargetViaRoot,
 } from '@fullcalendar/common'
 import { PointerDragging } from '../dnd/PointerDragging'
 import { EventDragging } from './EventDragging'
@@ -39,7 +40,7 @@ export class UnselectAuto {
 
   onDocumentPointerDown = (pev: PointerDragEvent) => {
     let unselectCancel = this.context.options.unselectCancel
-    let downEl = pev.origEvent.target as HTMLElement
+    let downEl = getEventTargetViaRoot(pev.origEvent) as HTMLElement
 
     this.matchesCancel = !!elementClosest(downEl, unselectCancel)
     this.matchesEvent = !!elementClosest(downEl, EventDragging.SELECTOR) // interaction started on an event?

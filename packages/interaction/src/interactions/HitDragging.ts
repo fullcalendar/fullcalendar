@@ -81,7 +81,7 @@ export class HitDragging {
     let subjectEl = ev.subjectEl
     let subjectRect
 
-    if (subjectEl !== document) {
+    if (subjectEl instanceof HTMLElement) { // i.e. not a Document/ShadowRoot
       subjectRect = computeRect(subjectEl)
       adjustedPoint = constrainPoint(adjustedPoint, subjectRect)
     }

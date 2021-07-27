@@ -70,6 +70,8 @@ export {
   applyStyleProp,
   elementMatches,
   elementClosest,
+  getElRoot,
+  getEventTargetViaRoot,
 } from './util/dom-manip'
 export { parseClassNames } from './util/html'
 
