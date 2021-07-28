@@ -169,14 +169,13 @@ class ContentHookInner<HookProps> extends BaseComponent<ContentHookInnerProps<Ho
 
   private getInnerContent() {
     let { props } = this
-    let rawVal = props.content
-    let innerContent = normalizeContent(rawVal, props.hookProps)
+    let innerContent = normalizeContent(props.content, props.hookProps)
 
     if (innerContent === undefined) { // use the default
       innerContent = normalizeContent(props.defaultContent, props.hookProps)
     }
 
-    return innerContent
+    return innerContent == null ? null : innerContent // convert undefined to null (better for React)
   }
 
   private getContentMeta(innerContent: any) {
