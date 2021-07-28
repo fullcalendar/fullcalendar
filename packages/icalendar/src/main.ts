@@ -1,4 +1,4 @@
-import { createPlugin, EventSourceDef, EventInput, DateRange } from '@fullcalendar/common'
+import { createPlugin, EventSourceDef, EventInput, DateRange, addDays } from '@fullcalendar/common'
 import * as ICAL from 'ical.js'
 import { IcalExpander } from './ical-expander/IcalExpander'
 
@@ -107,8 +107,16 @@ function requestICal(url: string, successCallback: Success, failureCallback: Fai
 }
 
 function expandICalEvents(iCalExpander: IcalExpander, range: DateRange): EventInput[] {
-  let iCalRes = iCalExpander.between(range.start, range.end) // end is *inclusive*, so might return extra results
+  // expand the range. because our `range` is timeZone-agnostic UTC
+  // or maybe because ical.js always produces dates in local time? i forget
+  let rangeStart = addDays(range.start, -1)
+  let rangeEnd = addDays(range.end, 1)
+
+  let iCalRes = iCalExpander.between(rangeStart, rangeEnd) // end inclusive. will give extra results
   let expanded: EventInput[] = []
+
+  // TODO: instead of using startDate/endDate.toString to communicate allDay,
+  // we can query startDate/endDate.isDate. More efficient to avoid formatting/reparsing.
 
   // single events
   for (let iCalEvent of iCalRes.events) {
