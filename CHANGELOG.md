@@ -1,4 +1,25 @@
 
+v5.9.0 (2021-07-28)
+-------------------
+- fix: dayGrid events sometimes overlap when eventOrderStrict:true (#6393)
+- fix: timeline events incorrectly positioned when uneven heights (#6395)
+- fix: dayGrid events snap to top of cell while resizing (#6308)
+- fix: duplicate events in dayGrid popover (#6397)
+- fix: sticky elements within header of timeline views not sticking
+- fix: resource-timeline views with sticky elements not working within shadow DOM (#5888)
+- fix: event dragging auto-scroll does not work within shadow DOM (#6428)
+- fix: cannot resize timeline events via touch within shadow DOM (#6429, #6449)
+- fix: error with eventContent, domNodes, and view-specific options (#6079)
+- fix: times events do not get printed in Firefox using adaptive plugin (#6438)
+- fix: icalendar events with RECURRENCE-ID are displayed twice (#6451)
+- fix: typing of Event::setProp does not allow boolean (#6445)
+- fix: typing fix rrule's freq property (#6235)
+- locale: added Samoan (#6368)
+- locale: added Central Kurdish (#6400)
+- locale: added Khmer (#6416)
+- locale: fixed Hungarian (#6229)
+
+
 v5.8.0 (2021-06-15)
 -------------------
 - fix: events not rendering in Jest environment (#6377)
