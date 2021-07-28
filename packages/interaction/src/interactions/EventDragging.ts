@@ -218,7 +218,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
       // render the mirror if no already-rendered mirror
       // TODO: wish we could somehow wait for dispatch to guarantee render
       this.dragging.setMirrorIsVisible(
-        !hit || !getElRoot(this.subjectEl).querySelector('.fc-event-mirror'),
+        !hit || !getElRoot(this.subjectEl).querySelector('.fc-event-mirror'), // TODO: turn className into constant
       )
 
       // assign states based on new hit

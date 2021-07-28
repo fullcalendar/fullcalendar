@@ -1,11 +1,12 @@
 
 // classes attached to <body>
-
+// TODO: make fc-event selector work when calender in shadow DOM
 .fc-not-allowed,
 .fc-not-allowed .fc-event { // override events' custom cursors
   cursor: not-allowed;
 }
 
+// TODO: not attached to body. attached to specific els. move
 .fc-unselectable {
   user-select: none;
   -webkit-touch-callout: none;
