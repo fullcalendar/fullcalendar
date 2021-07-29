@@ -89,8 +89,6 @@ function luxonToArray(datetime: LuxonDateTime): number[] {
 
 function arrayToLuxon(arr: number[], timeZone: string, locale?: string): LuxonDateTime {
   return LuxonDateTime.fromObject({
-    zone: timeZone,
-    locale,
     year: arr[0],
     month: arr[1] + 1, // convert 0-based to 1-based
     day: arr[2],
@@ -98,7 +96,7 @@ function arrayToLuxon(arr: number[], timeZone: string, locale?: string): LuxonDa
     minute: arr[4],
     second: arr[5],
     millisecond: arr[6],
-  })
+  }, {zone: timeZone, locale})
 }
 
 /* Range Formatting (duplicate code as other date plugins)
