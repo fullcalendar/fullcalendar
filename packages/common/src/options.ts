@@ -371,6 +371,7 @@ export const COMPLEX_OPTION_COMPARATORS: {
   headerToolbar: isBoolComplexEqual,
   footerToolbar: isBoolComplexEqual,
   buttonText: isBoolComplexEqual,
+  buttonTitles: isBoolComplexEqual,
   buttonIcons: isBoolComplexEqual,
 }
 

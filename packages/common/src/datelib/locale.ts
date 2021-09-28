@@ -43,6 +43,12 @@ const RAW_EN_LOCALE = {
     day: 'day',
     list: 'list',
   },
+  buttonTitles: { // TODO: add to locale files
+    prev: 'Previous $0',
+    next: 'Next $0',
+    today: 'Go to today',
+    view: '$0 view',
+  },
   weekText: 'W',
   allDayText: 'all-day',
   moreLinkText: 'more',

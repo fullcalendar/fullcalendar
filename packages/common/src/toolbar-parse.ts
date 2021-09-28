@@ -67,7 +67,7 @@ function parseSection(
   let calendarButtonTextOverrides = calendarOptionOverrides.buttonText || {}
   let calendarButtonText = calendarOptions.buttonText || {}
   let calendarButtonTitleOverrides = calendarOptionOverrides.buttonTitles || {}
-  let calendarButtonTitle = calendarOptions.buttonTitles || {}
+  let calendarButtonTitles = calendarOptions.buttonTitles || {}
   let sectionSubstrs = sectionStr ? sectionStr.split(' ') : []
 
   return sectionSubstrs.map(
@@ -113,9 +113,10 @@ function parseSection(
 
           buttonTitle = computeTitleText(
             viewSpec.buttonTitleOverride ||
-            viewSpec.buttonTitleDefault,
+            viewSpec.buttonTitleDefault, // TODO: use calendarButtonTitles.view string as default
             viewSpec.buttonTextOverride ||
             viewSpec.buttonTextDefault,
+            // TODO: pass in buttonText,buttonName to function
           )
 
         } else if (calendarApi[buttonName]) { // a calendarApi method
@@ -123,15 +124,18 @@ function parseSection(
             calendarApi[buttonName]()
           }
 
+          // TODO: special-case for previousYear/nextYear
+
           ;(buttonText = calendarButtonTextOverrides[buttonName]) ||
             (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
             (buttonText = calendarButtonText[buttonName]) // everything else is considered default
 
           buttonTitle = computeTitleText(
             calendarButtonTitleOverrides[buttonName] ||
-            calendarButtonTitle[buttonName],
+            calendarButtonTitles[buttonName],
             calendarButtonTextOverrides[buttonName] ||
             calendarButtonText[buttonName],
+            // TODO: pass translatedUnit/unit to function
           )
         }
 
