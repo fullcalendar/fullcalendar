@@ -42,6 +42,7 @@ import {
   MoreLinkMountArg,
   MoreLinkAction,
 } from './api-type-deps'
+import { ButtonTitleCompoundInput } from './toolbar-struct'
 
 // base options
 // ------------
@@ -340,6 +341,7 @@ export type CalendarListeners = Required<CalendarListenersLoose> // much more co
 
 export const CALENDAR_OPTION_REFINERS = { // does not include base nor calendar listeners
   buttonText: identity as Identity<ButtonTextCompoundInput>,
+  buttonTitles: identity as Identity<ButtonTitleCompoundInput>,
   views: identity as Identity<{ [viewId: string]: ViewOptions }>,
   plugins: identity as Identity<PluginDef[]>,
   initialEvents: identity as Identity<EventSourceInput>,

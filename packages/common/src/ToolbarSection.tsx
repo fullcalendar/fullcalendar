@@ -28,7 +28,7 @@ export class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
     let isOnlyButtons = true
 
     for (let widget of widgetGroup) {
-      let { buttonName, buttonClick, buttonText, buttonIcon } = widget
+      let { buttonName, buttonClick, buttonText, buttonIcon, buttonTitle } = widget
 
       if (buttonName === 'title') {
         isOnlyButtons = false
@@ -36,8 +36,6 @@ export class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
           <h2 className="fc-toolbar-title">{props.title}</h2>,
         )
       } else {
-        let ariaAttrs = buttonIcon ? { 'aria-label': buttonName } : {}
-
         let buttonClasses = [`fc-${buttonName}-button`, theme.getClass('button')]
         if (buttonName === props.activeButton) {
           buttonClasses.push(theme.getClass('buttonActive'))
@@ -50,11 +48,11 @@ export class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
 
         children.push(
           <button
+            type="button"
+            title={buttonTitle}
             disabled={isDisabled}
             className={buttonClasses.join(' ')}
             onClick={buttonClick}
-            type="button"
-            {...ariaAttrs}
           >
             {buttonText || (buttonIcon ? <span className={buttonIcon} /> : '')}
           </button>,

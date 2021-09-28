@@ -22,6 +22,8 @@ export interface ViewSpec {
   optionOverrides: ViewOptions
   buttonTextOverride: string
   buttonTextDefault: string
+  buttonTitleOverride: string
+  buttonTitleDefault: string
 }
 
 export type ViewSpecHash = { [viewType: string]: ViewSpec }
@@ -78,15 +80,28 @@ function buildViewSpec(
     if (buttonTextKey != null && buttonTextMap[buttonTextKey] != null) {
       return buttonTextMap[buttonTextKey]
     }
-
     if (buttonTextMap[viewDef.type] != null) {
       return buttonTextMap[viewDef.type]
     }
-
     if (buttonTextMap[singleUnit] != null) {
       return buttonTextMap[singleUnit]
     }
+    return null
+  }
 
+  let queryButtonTitle = (optionsSubset) => { // TODO: more DRY with queryButtonText
+    let buttonTitleMap = optionsSubset.buttonTitles || {}
+    let buttonTitleKey = viewDef.defaults.buttonTextKey as string // use same key as text
+
+    if (buttonTitleKey != null && buttonTitleMap[buttonTitleKey] != null) {
+      return buttonTitleMap[buttonTitleKey]
+    }
+    if (buttonTitleMap[viewDef.type] != null) {
+      return buttonTitleMap[viewDef.type]
+    }
+    if (buttonTitleMap[singleUnit] != null) {
+      return buttonTitleMap[singleUnit]
+    }
     return null
   }
 
@@ -103,12 +118,22 @@ function buildViewSpec(
       queryButtonText(dynamicOptionOverrides) ||
       queryButtonText(optionOverrides) || // constructor-specified buttonText lookup hash takes precedence
       viewDef.overrides.buttonText, // `buttonText` for view-specific options is a string
-
     buttonTextDefault:
       queryButtonText(localeDefaults) ||
       viewDef.defaults.buttonText ||
       queryButtonText(BASE_OPTION_DEFAULTS) ||
       viewDef.type, // fall back to given view name
+
+    // not DRY
+    buttonTitleOverride:
+      queryButtonTitle(dynamicOptionOverrides) ||
+      queryButtonTitle(optionOverrides) ||
+      viewDef.overrides.buttonTitle,
+    buttonTitleDefault:
+      queryButtonTitle(localeDefaults) ||
+      viewDef.defaults.buttonTitle ||
+      queryButtonTitle(BASE_OPTION_DEFAULTS)
+      // will eventually fall back to buttonText
   }
 }
 

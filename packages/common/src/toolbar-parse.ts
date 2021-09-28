@@ -55,8 +55,8 @@ BAD: querying icons and text here. should be done at render time
 */
 function parseSection(
   sectionStr: string,
-  calendarOptions: CalendarOptionsRefined,
-  calendarOptionOverrides: CalendarOptions,
+  calendarOptions: CalendarOptionsRefined, // defaults+overrides, then refined
+  calendarOptionOverrides: CalendarOptions, // overrides only!, unrefined :(
   theme: Theme,
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi,
@@ -66,6 +66,8 @@ function parseSection(
   let calendarCustomButtons = calendarOptions.customButtons || {}
   let calendarButtonTextOverrides = calendarOptionOverrides.buttonText || {}
   let calendarButtonText = calendarOptions.buttonText || {}
+  let calendarButtonTitleOverrides = calendarOptionOverrides.buttonTitles || {}
+  let calendarButtonTitle = calendarOptions.buttonTitles || {}
   let sectionSubstrs = sectionStr ? sectionStr.split(' ') : []
 
   return sectionSubstrs.map(
@@ -80,36 +82,57 @@ function parseSection(
         let buttonClick
         let buttonIcon // only one of these will be set
         let buttonText // "
+        let buttonTitle: string // for the title="" attribute, for accessibility
 
         if ((customButtonProps = calendarCustomButtons[buttonName])) {
           buttonClick = (ev: UIEvent) => {
             if (customButtonProps.click) {
               customButtonProps.click.call(ev.target, ev, ev.target) // TODO: use Calendar this context?
             }
-          };
-          (buttonIcon = theme.getCustomButtonIconClass(customButtonProps)) ||
+          }
+
+          ;(buttonIcon = theme.getCustomButtonIconClass(customButtonProps)) ||
             (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
             (buttonText = customButtonProps.text)
+
+          buttonTitle =
+            customButtonProps.title ||
+            customButtonProps.text
+
         } else if ((viewSpec = viewSpecs[buttonName])) {
           viewsWithButtons.push(buttonName)
 
           buttonClick = () => {
             calendarApi.changeView(buttonName)
-          };
-          (buttonText = viewSpec.buttonTextOverride) ||
-              (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
-              (buttonText = viewSpec.buttonTextDefault)
+          }
+
+          ;(buttonText = viewSpec.buttonTextOverride) ||
+            (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
+            (buttonText = viewSpec.buttonTextDefault)
+
+          buttonTitle =
+            viewSpec.buttonTitleOverride ||
+            viewSpec.buttonTitleDefault ||
+            viewSpec.buttonTextOverride ||
+            viewSpec.buttonTextDefault
+
         } else if (calendarApi[buttonName]) { // a calendarApi method
           buttonClick = () => {
             calendarApi[buttonName]()
-          };
-          (buttonText = calendarButtonTextOverrides[buttonName]) ||
+          }
+
+          ;(buttonText = calendarButtonTextOverrides[buttonName]) ||
             (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
-            (buttonText = calendarButtonText[buttonName])
-            //            ^ everything else is considered default
+            (buttonText = calendarButtonText[buttonName]) // everything else is considered default
+
+          buttonTitle =
+            calendarButtonTitleOverrides[buttonName] ||
+            calendarButtonTitle[buttonName] ||
+            calendarButtonTextOverrides[buttonName] ||
+            calendarButtonText[buttonName]
         }
 
-        return { buttonName, buttonClick, buttonIcon, buttonText }
+        return { buttonName, buttonClick, buttonIcon, buttonText, buttonTitle }
       })
     ),
   )

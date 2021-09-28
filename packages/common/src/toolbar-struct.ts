@@ -7,6 +7,7 @@ export interface ToolbarWidget {
   buttonClick?: any
   buttonIcon?: any
   buttonText?: any
+  buttonTitle?: string
 }
 
 export interface ToolbarInput {
@@ -19,6 +20,7 @@ export interface ToolbarInput {
 
 export interface CustomButtonInput {
   text?: string
+  title?: string
   icon?: string
   themeIcon?: string
   bootstrapFontAwesome?: string
@@ -35,6 +37,18 @@ export interface ButtonIconsInput {
 }
 
 export interface ButtonTextCompoundInput {
+  prev?: string
+  next?: string
+  prevYear?: string // derive these somehow?
+  nextYear?: string
+  today?: string
+  month?: string
+  week?: string
+  day?: string
+  [viewOrCustomButton: string]: string | undefined // needed b/c of other optional types
+}
+
+export interface ButtonTitleCompoundInput { // not DRY with ButtonTextCompoundInput
   prev?: string
   next?: string
   prevYear?: string // derive these somehow?
