@@ -22,8 +22,8 @@ export interface ViewSpec {
   optionOverrides: ViewOptions
   buttonTextOverride: string
   buttonTextDefault: string
-  buttonTitleOverride: string
-  buttonTitleDefault: string
+  buttonTitleOverride: string | ((...args: any[]) => string)
+  buttonTitleDefault: string | ((...args: any[]) => string)
 }
 
 export type ViewSpecHash = { [viewType: string]: ViewSpec }

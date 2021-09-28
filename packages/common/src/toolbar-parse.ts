@@ -95,9 +95,10 @@ function parseSection(
             (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
             (buttonText = customButtonProps.text)
 
-          buttonTitle =
-            customButtonProps.title ||
-            customButtonProps.text
+          buttonTitle = computeTitleText(
+            customButtonProps.title,
+            customButtonProps.text,
+          )
 
         } else if ((viewSpec = viewSpecs[buttonName])) {
           viewsWithButtons.push(buttonName)
@@ -110,11 +111,12 @@ function parseSection(
             (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
             (buttonText = viewSpec.buttonTextDefault)
 
-          buttonTitle =
+          buttonTitle = computeTitleText(
             viewSpec.buttonTitleOverride ||
-            viewSpec.buttonTitleDefault ||
+            viewSpec.buttonTitleDefault,
             viewSpec.buttonTextOverride ||
-            viewSpec.buttonTextDefault
+            viewSpec.buttonTextDefault,
+          )
 
         } else if (calendarApi[buttonName]) { // a calendarApi method
           buttonClick = () => {
@@ -125,15 +127,23 @@ function parseSection(
             (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
             (buttonText = calendarButtonText[buttonName]) // everything else is considered default
 
-          buttonTitle =
+          buttonTitle = computeTitleText(
             calendarButtonTitleOverrides[buttonName] ||
-            calendarButtonTitle[buttonName] ||
+            calendarButtonTitle[buttonName],
             calendarButtonTextOverrides[buttonName] ||
-            calendarButtonText[buttonName]
+            calendarButtonText[buttonName],
+          )
         }
 
         return { buttonName, buttonClick, buttonIcon, buttonText, buttonTitle }
       })
     ),
   )
+}
+
+function computeTitleText(titleArg: string | ((...args: any[]) => string), text: string): string {
+  if (typeof titleArg === 'function') {
+    return titleArg()
+  }
+  return titleArg || text
 }

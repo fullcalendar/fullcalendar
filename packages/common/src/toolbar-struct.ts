@@ -20,7 +20,7 @@ export interface ToolbarInput {
 
 export interface CustomButtonInput {
   text?: string
-  title?: string
+  title?: string | ((...args: any[]) => string)
   icon?: string
   themeIcon?: string
   bootstrapFontAwesome?: string
@@ -48,14 +48,15 @@ export interface ButtonTextCompoundInput {
   [viewOrCustomButton: string]: string | undefined // needed b/c of other optional types
 }
 
+
 export interface ButtonTitleCompoundInput { // not DRY with ButtonTextCompoundInput
-  prev?: string
-  next?: string
-  prevYear?: string // derive these somehow?
-  nextYear?: string
-  today?: string
-  month?: string
-  week?: string
-  day?: string
-  [viewOrCustomButton: string]: string | undefined // needed b/c of other optional types
+  prev?: string | ((...args: any[]) => string)
+  next?: string | ((...args: any[]) => string)
+  prevYear?: string | ((...args: any[]) => string)
+  nextYear?: string | ((...args: any[]) => string)
+  today?: string | ((...args: any[]) => string)
+  month?: string | ((...args: any[]) => string)
+  week?: string | ((...args: any[]) => string)
+  day?: string | ((...args: any[]) => string)
+  [viewOrCustomButton: string]: string | ((...args: any[]) => string) | undefined // needed b/c of other optional types
 }
