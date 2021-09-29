@@ -159,8 +159,8 @@ export class CalendarApi {
   private getUnitViewSpec(unit: string): ViewSpec | null {
     let { viewSpecs, toolbarConfig } = this.getCurrentData()
     let viewTypes = [].concat(
-      toolbarConfig.header.viewsWithButtons,
-      toolbarConfig.footer.viewsWithButtons,
+      toolbarConfig.header ? toolbarConfig.header.viewsWithButtons : [],
+      toolbarConfig.footer ? toolbarConfig.footer.viewsWithButtons : [],
     )
     let i
     let spec
