@@ -24,7 +24,7 @@ export interface RawLocaleInfo {
   defaultCode: string
 }
 
-const RAW_EN_LOCALE = {
+const MINIMAL_RAW_EN_LOCALE = {
   code: 'en',
   week: {
     dow: 0, // Sunday is the first day of the week
@@ -43,23 +43,28 @@ const RAW_EN_LOCALE = {
     day: 'day',
     list: 'list',
   },
-  buttonTitles: { // TODO: add to locale files
-    prev: 'Previous $0',
-    next: 'Next $0',
-    today: 'Go to today',
-    view: '$0 view',
-  },
   weekText: 'W',
   allDayText: 'all-day',
   moreLinkText: 'more',
   noEventsText: 'No events to display',
 }
 
+const RAW_EN_LOCALE = {
+  ...MINIMAL_RAW_EN_LOCALE,
+  // includes things we don't want other locales to inherit
+  buttonTitles: {
+    prev: 'Previous $0',
+    next: 'Next $0',
+    today: 'Go to today',
+    view: '$0 view',
+  },
+}
+
 export function organizeRawLocales(explicitRawLocales: LocaleInput[]): RawLocaleInfo {
   let defaultCode = explicitRawLocales.length > 0 ? explicitRawLocales[0].code : 'en'
   let allRawLocales = globalLocales.concat(explicitRawLocales)
   let rawLocaleMap: LocaleInputMap = {
-    en: RAW_EN_LOCALE, // necessary?
+    en: RAW_EN_LOCALE,
   }
 
   for (let rawLocale of allRawLocales) {
@@ -106,7 +111,7 @@ function queryRawLocale(codes: string[], available: LocaleInputMap): LocaleInput
 }
 
 function parseLocale(codeArg: LocaleCodeArg, codes: string[], raw: LocaleInput): Locale {
-  let merged = mergeProps([RAW_EN_LOCALE, raw], ['buttonText'])
+  let merged = mergeProps([MINIMAL_RAW_EN_LOCALE, raw], ['buttonText'])
 
   delete merged.code // don't want this part of the options
   let { week } = merged
