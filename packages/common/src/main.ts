@@ -72,6 +72,7 @@ export {
   elementClosest,
   getElRoot,
   getEventTargetViaRoot,
+  getUniqueDomId,
 } from './util/dom-manip'
 export { parseClassNames } from './util/html'
 

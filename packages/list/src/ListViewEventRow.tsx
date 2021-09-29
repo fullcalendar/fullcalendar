@@ -9,11 +9,16 @@ const DEFAULT_TIME_FORMAT = createFormatter({
   meridiem: 'short',
 })
 
-export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
+export interface ListViewEventRowProps extends MinimalEventProps {
+  timeHeaderId: string
+  eventHeaderId: string
+  dateHeaderId: string
+}
+
+export class ListViewEventRow extends BaseComponent<ListViewEventRowProps> {
   render() {
     let { props, context } = this
-    let { seg } = props
-
+    let { seg, timeHeaderId, eventHeaderId, dateHeaderId } = props
     let timeFormat = context.options.eventTimeFormat || DEFAULT_TIME_FORMAT
 
     return (
@@ -33,11 +38,11 @@ export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
       >
         {(rootElRef, classNames, innerElRef, innerContent, hookProps) => (
           <tr className={['fc-list-event', hookProps.event.url ? 'fc-event-forced-url' : ''].concat(classNames).join(' ')} ref={rootElRef}>
-            {buildTimeContent(seg, timeFormat, context)}
-            <td className="fc-list-event-graphic">
+            {buildTimeContent(seg, timeFormat, context, timeHeaderId, dateHeaderId)}
+            <td aria-hidden={true} className="fc-list-event-graphic">
               <span className="fc-list-event-dot" style={{ borderColor: hookProps.borderColor || hookProps.backgroundColor }} />
             </td>
-            <td className="fc-list-event-title" ref={innerElRef}>
+            <td ref={innerElRef} headers={`${eventHeaderId} ${dateHeaderId}`} className="fc-list-event-title">
               {innerContent}
             </td>
           </tr>
@@ -60,7 +65,7 @@ function renderEventInnerContent(props: EventContentArg) {
   )
 }
 
-function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewContext): ComponentChildren {
+function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewContext, timeHeaderId: string, dateHeaderId: string): ComponentChildren {
   let { options } = context
 
   if (options.displayEventTime !== false) {
@@ -119,7 +124,7 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewCont
           willUnmount={options.allDayWillUnmount}
         >
           {(rootElRef, classNames, innerElRef, innerContent) => (
-            <td className={['fc-list-event-time'].concat(classNames).join(' ')} ref={rootElRef}>
+            <td ref={rootElRef} headers={`${timeHeaderId} ${dateHeaderId}`} className={['fc-list-event-time'].concat(classNames).join(' ')}>
               {innerContent}
             </td>
           )}

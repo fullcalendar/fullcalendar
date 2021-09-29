@@ -23,6 +23,8 @@ import {
   DateComponent,
   ViewApi,
   MountArg,
+  getUniqueDomId,
+  formatDayString,
 } from '@fullcalendar/common'
 import { ListViewHeaderRow } from './ListViewHeaderRow'
 import { ListViewEventRow } from './ListViewEventRow'
@@ -40,6 +42,11 @@ Responsible for the scroller, and forwarding event-related actions into the "gri
 export class ListView extends DateComponent<ViewProps> {
   private computeDateVars = memoize(computeDateVars)
   private eventStoreToSegs = memoize(this._eventStoreToSegs)
+  state = {
+    timeHeaderId: getUniqueDomId(),
+    eventHeaderId: getUniqueDomId(),
+    dateHeaderIdRoot: getUniqueDomId(),
+  }
 
   render() {
     let { props, context } = this
@@ -111,6 +118,7 @@ export class ListView extends DateComponent<ViewProps> {
 
   renderSegList(allSegs: Seg[], dayDates: DateMarker[]) {
     let { theme, options } = this.context
+    let { timeHeaderId, eventHeaderId, dateHeaderIdRoot } = this.state
     let segsByDay = groupSegsByDay(allSegs) // sparse array
 
     return (
@@ -122,12 +130,14 @@ export class ListView extends DateComponent<ViewProps> {
             let daySegs = segsByDay[dayIndex]
 
             if (daySegs) { // sparse array, so might be undefined
-              let dayStr = dayDates[dayIndex].toISOString()
+              let dayStr = formatDayString(dayDates[dayIndex])
+              let dateHeaderId = dateHeaderIdRoot + '-' + dayStr
 
               // append a day header
               innerNodes.push(
                 <ListViewHeaderRow
                   key={dayStr}
+                  cellId={dateHeaderId}
                   dayDate={dayDates[dayIndex]}
                   todayRange={todayRange}
                 />,
@@ -144,6 +154,9 @@ export class ListView extends DateComponent<ViewProps> {
                     isResizing={false}
                     isDateSelecting={false}
                     isSelected={false}
+                    timeHeaderId={timeHeaderId}
+                    eventHeaderId={eventHeaderId}
+                    dateHeaderId={dateHeaderId}
                     {...getSegMeta(seg, todayRange, nowDate)}
                   />,
                 )
@@ -153,6 +166,13 @@ export class ListView extends DateComponent<ViewProps> {
 
           return (
             <table className={'fc-list-table ' + theme.getClass('table')}>
+              <thead>
+                <tr>
+                  <th scope="col" id={timeHeaderId}>Time</th>{/* TODO: translate */}
+                  <th scope="col" aria-hidden={true}></th>{/* color dots */}
+                  <th scope="col" id={eventHeaderId}>Event Title</th>{/* TODO: translate */}
+                </tr>
+              </thead>
               <tbody>{innerNodes}</tbody>
             </table>
           )
