@@ -195,6 +195,7 @@ export const BASE_OPTION_REFINERS = {
 
   slotMinWidth: Number, // move to timeline?
   navLinks: Boolean,
+  navLinkTitle: String,
   eventTimeFormat: createFormatter,
   rerenderDelay: Number, // TODO: move to @fullcalendar/core right? nah keep here
   moreLinkText: identity as Identity<string | ((this: CalendarApi, num: number) => string)>, // this not enforced :( check others too

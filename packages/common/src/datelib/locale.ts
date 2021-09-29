@@ -60,9 +60,10 @@ const RAW_EN_LOCALE = {
     today: 'Go to today',
     view: '$0 view',
   },
+  navLinkTitle: `Go to $0`,
   moreLinkTitle(eventCnt: number) {
     return `Show ${eventCnt} more event${eventCnt === 1 ? '' : 's'}`
-  }
+  },
 }
 
 export function organizeRawLocales(explicitRawLocales: LocaleInput[]): RawLocaleInfo {

@@ -1,15 +1,21 @@
 import { createFormatter } from '../datelib/formatting'
 import { formatDayString } from '../datelib/formatting-utils'
 import { DateMarker } from '../datelib/marker'
+import { formatWithOrdinals } from '../util/misc'
 import { ViewContext } from '../ViewContext'
 
 const DAY_FORMAT = createFormatter({ year: 'numeric', month: 'long', day: 'numeric' })
 const WEEK_FORMAT = createFormatter({ week: 'long' })
 
 export function buildNavLinkAttrs(context: ViewContext, date: DateMarker, type = 'day') {
-  if (context.options.navLinks) {
+  const { dateEnv, options } = context
+
+  if (options.navLinks) {
+    let dateStr = dateEnv.format(date, type === 'week' ? WEEK_FORMAT : DAY_FORMAT)
+    let zonedDate = dateEnv.toDate(date)
+
     return {
-      title: context.dateEnv.format(date, type === 'week' ? WEEK_FORMAT : DAY_FORMAT),
+      title: formatWithOrdinals(options.navLinkTitle, [dateStr, zonedDate], dateStr),
       'data-navlink': buildNavLinkData(date, type),
       tabIndex: 0,
     }
