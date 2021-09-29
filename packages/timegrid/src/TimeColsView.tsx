@@ -333,6 +333,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
           {(rootElRef, classNames, innerElRef, innerContent) => (
             <th
               ref={rootElRef}
+              role='rowheader'
               className={[
                 'fc-timegrid-axis',
                 'fc-scrollgrid-shrink',
@@ -357,7 +358,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     }
 
     return (
-      <th className="fc-timegrid-axis">
+      <th role='rowheader' className="fc-timegrid-axis">
         <div className="fc-timegrid-axis-frame" style={{ height: frameHeight }} />
       </th>
     )
@@ -388,6 +389,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
         {(rootElRef, classNames, innerElRef, innerContent) => (
           <td
             ref={rootElRef}
+            role='rowheader'
             className={[
               'fc-timegrid-axis',
               'fc-scrollgrid-shrink',

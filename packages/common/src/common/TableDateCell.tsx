@@ -61,6 +61,7 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
         {(rootElRef, customClassNames, innerElRef, innerContent) => (
           <th
             ref={rootElRef}
+            role='columnheader'
             className={classNames.concat(customClassNames).join(' ')}
             data-date={!dayMeta.isDisabled ? formatDayString(date) : undefined}
             colSpan={props.colSpan}

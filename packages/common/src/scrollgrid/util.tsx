@@ -84,6 +84,7 @@ export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: Ch
     chunkConfig.content(arg) :
     createElement('table',
       {
+        role: 'presentation',
         className: [
           chunkConfig.tableClassName,
           sectionConfig.syncRowHeights ? 'fc-scrollgrid-sync-table' : '',

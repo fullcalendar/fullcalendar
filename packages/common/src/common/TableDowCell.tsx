@@ -56,6 +56,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
         {(rootElRef, customClassNames, innerElRef, innerContent) => (
           <th
             ref={rootElRef}
+            role='columnheader'
             className={classNames.concat(customClassNames).join(' ')}
             colSpan={props.colSpan}
             {...props.extraDataAttrs}
