@@ -53,6 +53,7 @@ export class Toolbar extends BaseComponent<ToolbarProps> {
         key={key}
         widgetGroups={widgetGroups}
         title={props.title}
+        navUnit={props.navUnit}
         activeButton={props.activeButton}
         isTodayEnabled={props.isTodayEnabled}
         isPrevEnabled={props.isPrevEnabled}

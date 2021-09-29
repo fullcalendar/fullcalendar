@@ -82,7 +82,8 @@ function parseSection(
         let buttonClick
         let buttonIcon // only one of these will be set
         let buttonText // "
-        let buttonTitle: string // for the title="" attribute, for accessibility
+        let buttonTitle: string | ((navUnit: string) => string)
+        // ^ for the title="" attribute, for accessibility
 
         if ((customButtonProps = calendarCustomButtons[buttonName])) {
           buttonClick = (ev: UIEvent) => {
@@ -95,10 +96,7 @@ function parseSection(
             (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
             (buttonText = customButtonProps.text)
 
-          buttonTitle = computeTitleText(
-            customButtonProps.title,
-            customButtonProps.text,
-          )
+          buttonTitle = customButtonProps.title || customButtonProps.text
 
         } else if ((viewSpec = viewSpecs[buttonName])) {
           viewsWithButtons.push(buttonName)
@@ -111,12 +109,16 @@ function parseSection(
             (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
             (buttonText = viewSpec.buttonTextDefault)
 
-          buttonTitle = computeTitleText(
-            viewSpec.buttonTitleOverride ||
-            viewSpec.buttonTitleDefault, // TODO: use calendarButtonTitles.view string as default
+          let textFallback =
             viewSpec.buttonTextOverride ||
-            viewSpec.buttonTextDefault,
-            // TODO: pass in buttonText,buttonName to function
+            viewSpec.buttonTextDefault
+
+          buttonTitle = computeButtonTitleText(
+            viewSpec.buttonTitleOverride ||
+            viewSpec.buttonTitleDefault ||
+            calendarButtonTitles.view,
+            textFallback,
+            [textFallback, buttonName], // view-name = buttonName
           )
 
         } else if (calendarApi[buttonName]) { // a calendarApi method
@@ -124,19 +126,28 @@ function parseSection(
             calendarApi[buttonName]()
           }
 
-          // TODO: special-case for previousYear/nextYear
-
           ;(buttonText = calendarButtonTextOverrides[buttonName]) ||
             (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
             (buttonText = calendarButtonText[buttonName]) // everything else is considered default
 
-          buttonTitle = computeTitleText(
-            calendarButtonTitleOverrides[buttonName] ||
-            calendarButtonTitles[buttonName],
-            calendarButtonTextOverrides[buttonName] ||
-            calendarButtonText[buttonName],
-            // TODO: pass translatedUnit/unit to function
-          )
+          if (buttonName === 'prevYear' || buttonName === 'nextYear') {
+            let prevOrNext = buttonName === 'prevYear' ? 'prev' : 'next'
+            buttonTitle = computeButtonTitleText(
+              calendarButtonTitleOverrides[prevOrNext] ||
+              calendarButtonTitles[prevOrNext],
+              calendarButtonTextOverrides[buttonName] ||
+              calendarButtonText[buttonName],
+              ['year'],
+            )
+          } else {
+            buttonTitle = (navUnit: string) => computeButtonTitleText(
+              calendarButtonTitleOverrides[buttonName] ||
+              calendarButtonTitles[buttonName],
+              calendarButtonTextOverrides[buttonName] ||
+              calendarButtonText[buttonName],
+              [navUnit],
+            )
+          }
         }
 
         return { buttonName, buttonClick, buttonIcon, buttonText, buttonTitle }
@@ -145,9 +156,17 @@ function parseSection(
   )
 }
 
-function computeTitleText(titleArg: string | ((...args: any[]) => string), text: string): string {
+function computeButtonTitleText(
+  titleArg: string | ((...args: any[]) => string),
+  text: string,
+  funcArgs: any[],
+): string {
   if (typeof titleArg === 'function') {
-    return titleArg()
+    return titleArg(...funcArgs)
+  } else if (titleArg) { // non-blank string
+    return funcArgs.reduce((str, funcArg, index) => {
+      return str.replace('$' + index, funcArg || '')
+    }, titleArg).trim()
   }
-  return titleArg || text
+  return text
 }

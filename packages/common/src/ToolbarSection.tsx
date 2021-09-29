@@ -4,6 +4,7 @@ import { ToolbarWidget } from './toolbar-struct'
 
 export interface ToolbarContent {
   title: string
+  navUnit: string
   activeButton: string
   isTodayEnabled: boolean
   isPrevEnabled: boolean
@@ -49,7 +50,7 @@ export class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
         children.push(
           <button
             type="button"
-            title={buttonTitle}
+            title={typeof buttonTitle === 'function' ? buttonTitle(props.navUnit) : buttonTitle}
             disabled={isDisabled}
             className={buttonClasses.join(' ')}
             onClick={buttonClick}

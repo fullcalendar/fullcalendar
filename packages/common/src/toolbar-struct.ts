@@ -7,7 +7,8 @@ export interface ToolbarWidget {
   buttonClick?: any
   buttonIcon?: any
   buttonText?: any
-  buttonTitle?: string
+  buttonTitle?: string | ((navUnit: string) => string)
+  // ^ if depends on the unit which will move forward/backward, will be a function
 }
 
 export interface ToolbarInput {
@@ -20,7 +21,7 @@ export interface ToolbarInput {
 
 export interface CustomButtonInput {
   text?: string
-  title?: string | ((...args: any[]) => string)
+  title?: string
   icon?: string
   themeIcon?: string
   bootstrapFontAwesome?: string
