@@ -10,6 +10,7 @@ import { DayCellRoot } from './DayCellRoot'
 import { Popover } from './Popover'
 
 export interface MorePopoverProps {
+  id: string
   startDate: DateMarker
   endDate: DateMarker
   dateProfile: DateProfile
@@ -35,6 +36,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
         {(rootElRef, dayClassNames, dataAttrs) => (
           <Popover
             elRef={rootElRef}
+            id={props.id}
             title={title}
             extraClassNames={['fc-more-popover'].concat(dayClassNames)}
             extraAttrs={dataAttrs /* TODO: make these time-based when not whole-day? */}

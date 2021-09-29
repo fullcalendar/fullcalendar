@@ -4,7 +4,7 @@ import { DateRange } from '../datelib/date-range'
 import { addDays, DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
 import { Dictionary } from '../options'
-import { elementClosest } from '../util/dom-manip'
+import { elementClosest, getUniqueDomId } from '../util/dom-manip'
 import { ComponentChildren, createElement, createRef, Fragment, Ref, RefObject, VNode } from '../vdom'
 import { BaseComponent } from '../vdom-util'
 import { ViewApi } from '../ViewApi'
@@ -18,6 +18,8 @@ export type MoreLinkChildren = (
   innerElRef: Ref<any>,
   innerContent: ComponentChildren,
   handleClick: (ev: MouseEvent) => void,
+  isExpanded: boolean,
+  popoverId: string,
 ) => ComponentChildren
 
 export interface MoreLinkRootProps { // what the MoreLinkRoot component receives
@@ -47,6 +49,7 @@ export type MoreLinkMountArg = MountArg<MoreLinkContentArg>
 
 interface MoreLinkRootState {
   isPopoverOpen: boolean
+  popoverId: string
 }
 
 export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootState> {
@@ -55,10 +58,11 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
 
   state = {
     isPopoverOpen: false,
+    popoverId: getUniqueDomId('label'),
   }
 
   render() {
-    let { props } = this
+    let { props, state } = this
     return (
       <ViewContextType.Consumer>
         {(context: ViewContext) => {
@@ -89,12 +93,19 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
                   willUnmount={options.moreLinkWillUnmount}
                 >
                   {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
-                    rootElRef, ['fc-more-link'].concat(customClassNames), innerElRef, innerContent, this.handleClick,
+                    rootElRef,
+                    ['fc-more-link'].concat(customClassNames),
+                    innerElRef,
+                    innerContent,
+                    this.handleClick,
+                    state.isPopoverOpen,
+                    state.isPopoverOpen ? state.popoverId : '',
                   )}
                 </RenderHook>
               )}
-              {this.state.isPopoverOpen && (
+              {state.isPopoverOpen && (
                 <MorePopover
+                  id={state.popoverId}
                   startDate={range.start}
                   endDate={range.end}
                   dateProfile={props.dateProfile}

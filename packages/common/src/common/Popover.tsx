@@ -6,6 +6,7 @@ import { BaseComponent, setRef } from '../vdom-util'
 
 export interface PopoverProps {
   elRef?: Ref<HTMLElement>
+  id: string
   title: string
   extraClassNames?: string[]
   extraAttrs?: Dictionary
@@ -32,7 +33,7 @@ export class Popover extends BaseComponent<PopoverProps> {
     )
 
     return createPortal(
-      <div className={classNames.join(' ')} {...props.extraAttrs} ref={this.handleRootEl}>
+      <div id={props.id} className={classNames.join(' ')} {...props.extraAttrs} ref={this.handleRootEl}>
         <div className={'fc-popover-header ' + theme.getClass('popoverHeader')}>
           <span className="fc-popover-title">
             {props.title}

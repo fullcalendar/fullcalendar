@@ -93,11 +93,13 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
           )
         }}
       >
-        {(rootElRef, classNames, innerElRef, innerContent, handleClick) => (
+        {(rootElRef, classNames, innerElRef, innerContent, handleClick, isExpanded, popoverId) => (
           <a
             ref={rootElRef}
             className={['fc-daygrid-more-link'].concat(classNames).join(' ')}
             onClick={handleClick}
+            aria-expanded={isExpanded}
+            aria-controls={popoverId}
           >
             {innerContent}
           </a>

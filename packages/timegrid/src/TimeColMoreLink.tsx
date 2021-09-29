@@ -36,7 +36,7 @@ export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
         todayRange={props.todayRange}
         popoverContent={() => renderPlainFgSegs(props.hiddenSegs, props)}
       >
-        {(rootElRef, classNames, innerElRef, innerContent, handleClick) => (
+        {(rootElRef, classNames, innerElRef, innerContent, handleClick, isExpanded, popoverId) => (
           <a
             ref={(el: HTMLElement | null) => {
               setRef(rootElRef, el)
@@ -45,6 +45,8 @@ export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
             className={['fc-timegrid-more-link'].concat(classNames).join(' ')}
             style={{ top: props.top, bottom: props.bottom }}
             onClick={handleClick}
+            aria-expanded={isExpanded}
+            aria-controls={popoverId}
           >
             <div ref={innerElRef} className="fc-timegrid-more-link-inner fc-sticky">
               {innerContent}
