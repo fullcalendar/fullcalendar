@@ -1,6 +1,6 @@
 import { Dictionary } from '../options'
 import { computeClippedClientRect } from '../util/dom-geom'
-import { applyStyle, elementClosest, getEventTargetViaRoot } from '../util/dom-manip'
+import { applyStyle, elementClosest, getEventTargetViaRoot, getUniqueDomId } from '../util/dom-manip'
 import { createElement, ComponentChildren, Ref, createPortal } from '../vdom'
 import { BaseComponent, setRef } from '../vdom-util'
 
@@ -21,10 +21,13 @@ const PADDING_FROM_VIEWPORT = 10
 
 export class Popover extends BaseComponent<PopoverProps> {
   private rootEl: HTMLElement
+  state = {
+    titleId: getUniqueDomId(),
+  }
 
   render() {
     let { theme } = this.context
-    let { props } = this
+    let { props, state } = this
     let classNames = [
       'fc-popover',
       theme.getClass('popover'),
@@ -33,9 +36,15 @@ export class Popover extends BaseComponent<PopoverProps> {
     )
 
     return createPortal(
-      <div id={props.id} className={classNames.join(' ')} {...props.extraAttrs} ref={this.handleRootEl}>
+      <div
+        id={props.id}
+        className={classNames.join(' ')}
+        aria-labeledby={state.titleId}
+        {...props.extraAttrs}
+        ref={this.handleRootEl}
+      >
         <div className={'fc-popover-header ' + theme.getClass('popoverHeader')}>
-          <span className="fc-popover-title">
+          <span className="fc-popover-title" id={state.titleId}>
             {props.title}
           </span>
           <span className={'fc-popover-close ' + theme.getIconClass('close')} onClick={this.handleCloseClick} />
