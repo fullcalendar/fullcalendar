@@ -6,7 +6,7 @@ import { DateFormatter } from '../datelib/DateFormatter'
 import { formatDayString } from '../datelib/formatting-utils'
 import { BaseComponent } from '../vdom-util'
 import { RenderHook } from './render-hook'
-import { buildNavLinkData } from './nav-link'
+import { buildNavLinkAttrs } from './nav-link'
 import { DateProfile } from '../DateProfileGenerator'
 import { DayHeaderContentArg } from '../render-hook-misc'
 import { Dictionary } from '../options'
@@ -37,8 +37,8 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
     let text = dateEnv.format(date, props.dayHeaderFormat)
 
     // if colCnt is 1, we are already in a day-view and don't need a navlink
-    let navLinkAttrs = (options.navLinks && !dayMeta.isDisabled && props.colCnt > 1)
-      ? { 'data-navlink': buildNavLinkData(date), tabIndex: 0 }
+    let navLinkAttrs = (!dayMeta.isDisabled && props.colCnt > 1)
+      ? buildNavLinkAttrs(this.context, date)
       : {}
 
     let hookProps: DayHeaderContentArg = {

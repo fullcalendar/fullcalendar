@@ -1,6 +1,6 @@
 import {
   BaseComponent, DateMarker, createElement, DateRange, getDateMeta,
-  RenderHook, buildNavLinkData, DayHeaderContentArg, getDayClassNames, formatDayString, Fragment,
+  RenderHook, DayHeaderContentArg, getDayClassNames, formatDayString, Fragment, buildNavLinkAttrs
 } from '@fullcalendar/common'
 
 export interface ListViewHeaderRowProps {
@@ -25,16 +25,15 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
     // will ever be falsy? also, BAD NAME "alt"
     let sideText = options.listDaySideFormat ? dateEnv.format(dayDate, options.listDaySideFormat) : ''
 
-    let navLinkData = options.navLinks
-      ? buildNavLinkData(dayDate)
-      : null
+    let navLinkAttrs = buildNavLinkAttrs(this.context, dayDate)
 
     let hookProps: HookProps = {
       date: dateEnv.toDate(dayDate),
       view: viewApi,
       text,
       sideText,
-      navLinkData,
+      navLinkAttrs,
+      navLinkData: navLinkAttrs['data-navlink'], // TODO: for backwards-compat
       ...dayMeta,
     }
 
@@ -71,9 +70,7 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
 }
 
 function renderInnerContent(props: HookProps) {
-  let navLinkAttrs = props.navLinkData // is there a type for this?
-    ? { 'data-navlink': props.navLinkData, tabIndex: 0 }
-    : {}
+  let { navLinkAttrs } = props
 
   return (
     <Fragment>

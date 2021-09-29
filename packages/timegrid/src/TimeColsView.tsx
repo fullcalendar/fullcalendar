@@ -6,7 +6,7 @@ import {
   SimpleScrollGrid,
   ChunkContentCallbackArgs,
   ScrollGridSectionConfig,
-  buildNavLinkData,
+  buildNavLinkAttrs,
   ViewRoot,
   WeekNumberRoot,
   RenderHook,
@@ -323,8 +323,8 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     let range = dateProfile.renderRange
     let dayCnt = diffDays(range.start, range.end)
 
-    let navLinkAttrs = (options.navLinks && dayCnt === 1) // only do in day views (to avoid doing in week views that dont need it)
-      ? { 'data-navlink': buildNavLinkData(range.start, 'week'), tabIndex: 0 }
+    let navLinkAttrs = (dayCnt === 1) // only do in day views (to avoid doing in week views that dont need it)
+      ? buildNavLinkAttrs(this.context, range.start, 'week')
       : {}
 
     if (options.weekNumbers && rowKey === 'day') {

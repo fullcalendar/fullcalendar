@@ -88,7 +88,7 @@ export {
 export { EventUiHash, EventUi, combineEventUis, createEventUi } from './component/event-ui'
 export { Splitter, SplittableProps } from './component/event-splitting'
 export { getDayClassNames, getDateMeta, DateMeta, getSlotClassNames } from './component/date-rendering'
-export { buildNavLinkData } from './common/nav-link'
+export { buildNavLinkAttrs } from './common/nav-link'
 
 export {
   preventDefault,

@@ -5,7 +5,7 @@ import {
   DateMarker,
   DateComponent,
   DateRange,
-  buildNavLinkData,
+  buildNavLinkAttrs,
   WeekNumberRoot,
   DayCellRoot,
   DateProfile,
@@ -50,11 +50,8 @@ export class TableCell extends DateComponent<TableCellProps> {
 
   render() {
     let { props, context, rootElRef } = this
-    let { options } = context
     let { date, dateProfile } = props
-    let navLinkAttrs = options.navLinks
-      ? { 'data-navlink': buildNavLinkData(date, 'week'), tabIndex: 0 }
-      : {}
+    let navLinkAttrs = buildNavLinkAttrs(context, date, 'week')
 
     return (
       <DayCellRoot

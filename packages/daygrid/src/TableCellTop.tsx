@@ -2,13 +2,13 @@ import {
   createElement,
   DateMarker,
   DateRange,
-  buildNavLinkData,
   DayCellContentArg,
   DayCellContent,
   BaseComponent,
   DateProfile,
   Dictionary,
   Fragment,
+  buildNavLinkAttrs,
 } from '@fullcalendar/common'
 
 interface TableCellTopProps {
@@ -23,10 +23,7 @@ interface TableCellTopProps {
 export class TableCellTop extends BaseComponent<TableCellTopProps> {
   render() {
     let { props } = this
-
-    let navLinkAttrs = this.context.options.navLinks
-      ? { 'data-navlink': buildNavLinkData(props.date), tabIndex: 0 }
-      : {}
+    let navLinkAttrs = buildNavLinkAttrs(this.context, props.date)
 
     return (
       <DayCellContent
