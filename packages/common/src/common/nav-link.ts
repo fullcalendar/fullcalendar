@@ -4,7 +4,7 @@ import { DateMarker } from '../datelib/marker'
 import { ViewContext } from '../ViewContext'
 
 const DAY_FORMAT = createFormatter({ year: 'numeric', month: 'long', day: 'numeric' })
-const WEEK_FORMAT = createFormatter({ week: 'short' })
+const WEEK_FORMAT = createFormatter({ week: 'long' })
 
 export function buildNavLinkAttrs(context: ViewContext, date: DateMarker, type = 'day') {
   if (context.options.navLinks) {

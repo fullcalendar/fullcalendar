@@ -39,6 +39,7 @@ export interface DateFormattingContext {
   calendarSystem: CalendarSystem
   computeWeekNumber: (d: DateMarker) => number
   weekText: string
+  weekTextLong: string
   cmdFormatter?: CmdFormatterFunc
   defaultSeparator: string
 }

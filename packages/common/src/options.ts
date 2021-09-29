@@ -134,7 +134,8 @@ export const BASE_OPTION_REFINERS = {
   eventResizableFromStart: Boolean,
   displayEventTime: Boolean,
   displayEventEnd: Boolean,
-  weekText: String,
+  weekText: String, // the short version
+  weekTextLong: String, // falls back to weekText
   progressiveEventRendering: Boolean,
   businessHours: identity as Identity<BusinessHoursInput>,
   initialDate: identity as Identity<DateInput>,

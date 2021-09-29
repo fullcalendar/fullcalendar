@@ -1,4 +1,6 @@
 
+week formatting arg accepts 'long'
+
 v5.9.0 (2021-07-28)
 -------------------
 - fix: dayGrid events sometimes overlap when eventOrderStrict:true (#6393)

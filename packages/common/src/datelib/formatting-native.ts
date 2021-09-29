@@ -33,7 +33,7 @@ const LTR_RE = /\u200e/g // control character
 const UTC_RE = /UTC|GMT/
 
 export interface NativeFormatterOptions extends Intl.DateTimeFormatOptions {
-  week?: 'short' | 'narrow' | 'numeric'
+  week?: 'long' | 'short' | 'narrow' | 'numeric'
   meridiem?: 'lowercase' | 'short' | 'narrow' | boolean
   omitZeroMinute?: boolean
   omitCommas?: boolean
@@ -151,6 +151,7 @@ function buildFormattingFunc(
       formatWeekNumber(
         context.computeWeekNumber(date.marker),
         context.weekText,
+        context.weekTextLong,
         context.locale,
         extendedSettings.week,
       )
@@ -275,15 +276,18 @@ function injectTzoStr(s: string, tzoStr: string): string {
   return s
 }
 
-function formatWeekNumber(num: number, weekText: string, locale: Locale, display?: 'numeric' | 'narrow' | 'short'): string {
+function formatWeekNumber(num: number, weekText: string, weekTextLong: string, locale: Locale, display?: 'numeric' | 'narrow' | 'short' | 'long'): string {
   let parts = []
 
-  if (display === 'narrow') {
+  if (display === 'long') {
+    parts.push(weekTextLong)
+  } else if (display == 'short' || display === 'narrow') {
     parts.push(weekText)
-  } else if (display === 'short') {
-    parts.push(weekText, ' ')
   }
-  // otherwise, considered 'numeric'
+
+  if (display === 'long' || display === 'short') {
+    parts.push(' ')
+  }
 
   parts.push(locale.simpleNumberFormat.format(num))
 
