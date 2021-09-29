@@ -1,6 +1,5 @@
 import { ViewSpec, ViewSpecHash } from './structs/view-spec'
 import { Theme } from './theme/Theme'
-import { mapHash } from './util/object'
 import { CalendarApi } from './CalendarApi'
 import { CalendarOptionsRefined, CalendarOptions } from './options'
 import { ToolbarInput, ToolbarModel, ToolbarWidget, CustomButtonInput } from './toolbar-struct'
@@ -12,7 +11,6 @@ export function parseToolbars(
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi,
 ) {
-  let viewsWithButtons: string[] = []
   let headerToolbar = calendarOptions.headerToolbar ? parseToolbar(
     calendarOptions.headerToolbar,
     calendarOptions,
@@ -20,7 +18,6 @@ export function parseToolbars(
     theme,
     viewSpecs,
     calendarApi,
-    viewsWithButtons,
   ) : null
   let footerToolbar = calendarOptions.footerToolbar ? parseToolbar(
     calendarOptions.footerToolbar,
@@ -29,10 +26,9 @@ export function parseToolbars(
     theme,
     viewSpecs,
     calendarApi,
-    viewsWithButtons,
   ) : null
 
-  return { headerToolbar, footerToolbar, viewsWithButtons }
+  return { headerToolbar, footerToolbar }
 }
 
 function parseToolbar(
@@ -41,13 +37,21 @@ function parseToolbar(
   calendarOptionOverrides: CalendarOptions,
   theme: Theme,
   viewSpecs: ViewSpecHash,
-  calendarApi: CalendarApi,
-  viewsWithButtons: string[], // dump side effects
+  calendarApi: CalendarApi
 ) : ToolbarModel {
-  return mapHash(
-    sectionStrHash as { [section: string]: string },
-    (sectionStr) => parseSection(sectionStr, calendarOptions, calendarOptionOverrides, theme, viewSpecs, calendarApi, viewsWithButtons),
-  )
+  let sectionWidgets: { [sectionName: string]: ToolbarWidget[][] } = {}
+  let viewsWithButtons: string[] = []
+  let hasTitle = false
+
+  for (let sectionName in sectionStrHash) {
+    let sectionStr = sectionStrHash[sectionName]
+    let sectionRes = parseSection(sectionStr, calendarOptions, calendarOptionOverrides, theme, viewSpecs, calendarApi)
+    sectionWidgets[sectionName] = sectionRes.widgets
+    viewsWithButtons.push(...sectionRes.viewsWithButtons)
+    hasTitle = hasTitle || sectionRes.hasTitle
+  }
+
+  return { sectionWidgets, viewsWithButtons, hasTitle }
 }
 
 /*
@@ -60,8 +64,11 @@ function parseSection(
   theme: Theme,
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi,
-  viewsWithButtons: string[], // dump side effects
-): ToolbarWidget[][] {
+): {
+  widgets: ToolbarWidget[][],
+  viewsWithButtons: string[],
+  hasTitle: boolean,
+ } {
   let isRtl = calendarOptions.direction === 'rtl'
   let calendarCustomButtons = calendarOptions.customButtons || {}
   let calendarButtonTextOverrides = calendarOptionOverrides.buttonText || {}
@@ -69,11 +76,14 @@ function parseSection(
   let calendarButtonTitleOverrides = calendarOptionOverrides.buttonTitles || {}
   let calendarButtonTitles = calendarOptions.buttonTitles || {}
   let sectionSubstrs = sectionStr ? sectionStr.split(' ') : []
+  let viewsWithButtons: string[] = []
+  let hasTitle = false
 
-  return sectionSubstrs.map(
+  let widgets = sectionSubstrs.map(
     (buttonGroupStr): ToolbarWidget[] => (
       buttonGroupStr.split(',').map((buttonName): ToolbarWidget => {
         if (buttonName === 'title') {
+          hasTitle = true
           return { buttonName }
         }
 
@@ -154,6 +164,8 @@ function parseSection(
       })
     ),
   )
+
+  return { widgets, viewsWithButtons, hasTitle }
 }
 
 function computeButtonTitleText(

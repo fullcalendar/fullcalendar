@@ -3,6 +3,7 @@ import { ComponentChildren, Ref, createElement, VUIEvent } from './vdom'
 import { CssDimValue } from './scrollgrid/util'
 
 export interface ViewContainerProps {
+  labeledById: string
   liquid?: boolean
   height?: CssDimValue
   aspectRatio?: number
@@ -52,6 +53,7 @@ export class ViewContainer extends BaseComponent<ViewContainerProps, ViewContain
 
     return (
       <div
+        aria-labelledby={props.labeledById}
         ref={this.handleEl}
         onClick={props.onClick}
         className={classNames.join(' ')}

@@ -158,7 +158,10 @@ export class CalendarApi {
   // Preference is given to views that have corresponding buttons.
   private getUnitViewSpec(unit: string): ViewSpec | null {
     let { viewSpecs, toolbarConfig } = this.getCurrentData()
-    let viewTypes = [].concat(toolbarConfig.viewsWithButtons)
+    let viewTypes = [].concat(
+      toolbarConfig.header.viewsWithButtons,
+      toolbarConfig.footer.viewsWithButtons,
+    )
     let i
     let spec
 

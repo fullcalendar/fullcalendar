@@ -1,5 +1,7 @@
 export interface ToolbarModel {
-  [sectionName: string]: ToolbarWidget[][]
+  sectionWidgets: { [sectionName: string]: ToolbarWidget[][] }
+  viewsWithButtons: string[]
+  hasTitle: boolean
 }
 
 export interface ToolbarWidget {

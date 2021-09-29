@@ -6,6 +6,7 @@ import { ToolbarSection, ToolbarContent } from './ToolbarSection'
 export interface ToolbarProps extends ToolbarContent {
   extraClassName: string // wish this could be array, but easier for pureness
   model: ToolbarModel
+  titleId: string
 }
 
 export class Toolbar extends BaseComponent<ToolbarProps> {
@@ -14,20 +15,21 @@ export class Toolbar extends BaseComponent<ToolbarProps> {
     let forceLtr = false
     let startContent
     let endContent
-    let centerContent = model.center
+    let sectionWidgets = model.sectionWidgets
+    let centerContent = sectionWidgets.center
 
-    if (model.left) {
+    if (sectionWidgets.left) {
       forceLtr = true
-      startContent = model.left
+      startContent = sectionWidgets.left
     } else {
-      startContent = model.start
+      startContent = sectionWidgets.start
     }
 
-    if (model.right) {
+    if (sectionWidgets.right) {
       forceLtr = true
-      endContent = model.right
+      endContent = sectionWidgets.right
     } else {
-      endContent = model.end
+      endContent = sectionWidgets.end
     }
 
     let classNames = [
@@ -58,6 +60,7 @@ export class Toolbar extends BaseComponent<ToolbarProps> {
         isTodayEnabled={props.isTodayEnabled}
         isPrevEnabled={props.isPrevEnabled}
         isNextEnabled={props.isNextEnabled}
+        titleId={props.titleId}
       />
     )
   }

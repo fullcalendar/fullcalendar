@@ -26,6 +26,7 @@ import { getNow } from './reducers/current-date'
 import { CalendarInteraction } from './calendar-utils'
 import { DelayedRunner } from './util/DelayedRunner'
 import { PureComponent } from './vdom-util'
+import { getUniqueDomId } from './util/dom-manip'
 
 export interface CalendarContentProps extends CalendarData {
   forPrint: boolean
@@ -41,6 +42,10 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
   private footerRef = createRef<Toolbar>()
   private interactionsStore: { [componentUid: string]: Interaction[] } = {}
   private calendarInteractions: CalendarInteraction[]
+
+  state = {
+    viewLabelId: getUniqueDomId('label'),
+  }
 
   /*
   renders INSIDE of an outer div
@@ -88,6 +93,10 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
       this.unregisterInteractiveComponent,
     )
 
+    let viewLabelId = (toolbarConfig.headerToolbar && toolbarConfig.headerToolbar.hasTitle)
+      ? this.state.viewLabelId
+      : ''
+
     return (
       <ViewContextType.Provider value={viewContext}>
         {toolbarConfig.headerToolbar && (
@@ -95,6 +104,7 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
             ref={this.headerRef}
             extraClassName="fc-header-toolbar"
             model={toolbarConfig.headerToolbar}
+            titleId={viewLabelId}
             {...toolbarProps}
           />
         )}
@@ -103,6 +113,7 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
           height={viewHeight}
           aspectRatio={viewAspectRatio}
           onClick={this.handleNavLinkClick}
+          labeledById={viewLabelId}
         >
           {this.renderView(props)}
           {this.buildAppendContent()}
@@ -112,6 +123,7 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
             ref={this.footerRef}
             extraClassName="fc-footer-toolbar"
             model={toolbarConfig.footerToolbar}
+            titleId=''
             {...toolbarProps}
           />
         )}

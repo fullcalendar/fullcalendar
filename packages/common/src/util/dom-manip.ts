@@ -110,3 +110,11 @@ export function getEventTargetViaRoot(ev: Event) {
 export function getElRoot(el: HTMLElement): ShadowRoot | Document {
   return el.getRootNode ? el.getRootNode() as ShadowRoot : document
 }
+
+// Unique ID for DOM attribute
+
+let guid = 0
+
+export function getUniqueDomId(type: string) {
+  return 'fc-' + type + '-' + (++guid)
+}
