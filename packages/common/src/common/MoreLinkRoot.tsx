@@ -58,7 +58,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
 
   state = {
     isPopoverOpen: false,
-    popoverId: getUniqueDomId('label'),
+    popoverId: getUniqueDomId(),
   }
 
   render() {

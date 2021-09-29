@@ -44,7 +44,7 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
   private calendarInteractions: CalendarInteraction[]
 
   state = {
-    viewLabelId: getUniqueDomId('label'),
+    viewLabelId: getUniqueDomId(),
   }
 
   /*

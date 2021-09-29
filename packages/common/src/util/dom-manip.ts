@@ -115,6 +115,6 @@ export function getElRoot(el: HTMLElement): ShadowRoot | Document {
 
 let guid = 0
 
-export function getUniqueDomId(type: string) {
-  return 'fc-' + type + '-' + (++guid)
+export function getUniqueDomId() {
+  return 'fc-dom-' + (++guid)
 }
