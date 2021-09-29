@@ -37,21 +37,23 @@ export class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
           <h2 className="fc-toolbar-title">{props.title}</h2>,
         )
       } else {
-        let buttonClasses = [`fc-${buttonName}-button`, theme.getClass('button')]
-        if (buttonName === props.activeButton) {
-          buttonClasses.push(theme.getClass('buttonActive'))
-        }
-
+        let isPressed = buttonName === props.activeButton
         let isDisabled =
           (!props.isTodayEnabled && buttonName === 'today') ||
           (!props.isPrevEnabled && buttonName === 'prev') ||
           (!props.isNextEnabled && buttonName === 'next')
+
+        let buttonClasses = [`fc-${buttonName}-button`, theme.getClass('button')]
+        if (isPressed) {
+          buttonClasses.push(theme.getClass('buttonActive'))
+        }
 
         children.push(
           <button
             type="button"
             title={typeof buttonTitle === 'function' ? buttonTitle(props.navUnit) : buttonTitle}
             disabled={isDisabled}
+            aria-pressed={isPressed}
             className={buttonClasses.join(' ')}
             onClick={buttonClick}
           >
