@@ -26,7 +26,7 @@ export class Popover extends BaseComponent<PopoverProps> {
   }
 
   render() {
-    let { theme } = this.context
+    let { theme, options } = this.context
     let { props, state } = this
     let classNames = [
       'fc-popover',
@@ -47,7 +47,11 @@ export class Popover extends BaseComponent<PopoverProps> {
           <span className="fc-popover-title" id={state.titleId}>
             {props.title}
           </span>
-          <span className={'fc-popover-close ' + theme.getIconClass('close')} onClick={this.handleCloseClick} />
+          <span
+            className={'fc-popover-close ' + theme.getIconClass('close')}
+            title={options.closeTitle}
+            onClick={this.handleCloseClick}
+          />
         </div>
         <div className={'fc-popover-body ' + theme.getClass('popoverContent')}>
           {props.children}

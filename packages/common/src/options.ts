@@ -224,6 +224,8 @@ export const BASE_OPTION_REFINERS = {
   // only used by list-view, but languages define the value, so we need it in base options
   noEventsText: String,
 
+  closeTitle: String,
+
   moreLinkClick: identity as Identity<MoreLinkAction>,
   moreLinkClassNames: identity as Identity<ClassNamesGenerator<MoreLinkContentArg>>,
   moreLinkContent: identity as Identity<CustomContentGenerator<MoreLinkContentArg>>,
