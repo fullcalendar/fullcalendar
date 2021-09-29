@@ -136,6 +136,21 @@ export function padStart(val, len) { // doesn't work with total length more than
   return '000'.substr(0, len - s.length) + s
 }
 
+export function formatWithOrdinals<Args extends any[]>(
+  formatter: string | ((...args: Args) => string),
+  args: Args,
+  fallbackText: string,
+) {
+  if (typeof formatter === 'function') {
+    return formatter(...args)
+  } else if (typeof formatter === 'string') { // non-blank string
+    return args.reduce((str, arg, index) => {
+      return str.replace('$' + index, arg || '')
+    }, formatter)
+  }
+  return fallbackText
+}
+
 /* Number Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 

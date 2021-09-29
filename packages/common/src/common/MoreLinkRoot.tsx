@@ -5,6 +5,7 @@ import { addDays, DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
 import { Dictionary } from '../options'
 import { elementClosest, getUniqueDomId } from '../util/dom-manip'
+import { formatWithOrdinals } from '../util/misc'
 import { ComponentChildren, createElement, createRef, Fragment, Ref, RefObject, VNode } from '../vdom'
 import { BaseComponent } from '../vdom-util'
 import { ViewApi } from '../ViewApi'
@@ -18,6 +19,7 @@ export type MoreLinkChildren = (
   innerElRef: Ref<any>,
   innerContent: ComponentChildren,
   handleClick: (ev: MouseEvent) => void,
+  title: string, // for a11y
   isExpanded: boolean,
   popoverId: string,
 ) => ComponentChildren
@@ -71,12 +73,14 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
           let { moreCnt } = props
           let range = computeRange(props)
 
+          let text = typeof moreLinkText === 'function' // TODO: eventually use formatWithOrdinals
+            ? moreLinkText.call(calendarApi, moreCnt)
+            : `+${moreCnt} ${moreLinkText}`
+          let title = formatWithOrdinals(options.moreLinkTitle, [moreCnt], text)
           let hookProps: MoreLinkContentArg = {
             num: moreCnt,
             shortText: `+${moreCnt}`, // TODO: offer hook or i18n?
-            text: typeof moreLinkText === 'function'
-              ? moreLinkText.call(calendarApi, moreCnt)
-              : `+${moreCnt} ${moreLinkText}`,
+            text,
             view: viewApi,
           }
 
@@ -98,6 +102,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
                     innerElRef,
                     innerContent,
                     this.handleClick,
+                    title,
                     state.isPopoverOpen,
                     state.isPopoverOpen ? state.popoverId : '',
                   )}

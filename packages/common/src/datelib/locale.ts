@@ -58,6 +58,9 @@ const RAW_EN_LOCALE = {
     today: 'Go to today',
     view: '$0 view',
   },
+  moreLinkTitle(eventCnt: number) {
+    return `Show ${eventCnt} more event${eventCnt === 1 ? '' : 's'}`
+  }
 }
 
 export function organizeRawLocales(explicitRawLocales: LocaleInput[]): RawLocaleInfo {

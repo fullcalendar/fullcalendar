@@ -197,6 +197,7 @@ export const BASE_OPTION_REFINERS = {
   eventTimeFormat: createFormatter,
   rerenderDelay: Number, // TODO: move to @fullcalendar/core right? nah keep here
   moreLinkText: identity as Identity<string | ((this: CalendarApi, num: number) => string)>, // this not enforced :( check others too
+  moreLinkTitle: identity as Identity<string | ((this: CalendarApi, num: number) => string)>,
   selectMinDistance: Number,
   selectable: Boolean,
   selectLongPressDelay: Number,

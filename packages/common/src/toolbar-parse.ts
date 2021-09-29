@@ -3,6 +3,7 @@ import { Theme } from './theme/Theme'
 import { CalendarApi } from './CalendarApi'
 import { CalendarOptionsRefined, CalendarOptions } from './options'
 import { ToolbarInput, ToolbarModel, ToolbarWidget, CustomButtonInput } from './toolbar-struct'
+import { formatWithOrdinals } from './util/misc'
 
 export function parseToolbars(
   calendarOptions: CalendarOptionsRefined,
@@ -123,12 +124,12 @@ function parseSection(
             viewSpec.buttonTextOverride ||
             viewSpec.buttonTextDefault
 
-          buttonTitle = computeButtonTitleText(
+          buttonTitle = formatWithOrdinals(
             viewSpec.buttonTitleOverride ||
             viewSpec.buttonTitleDefault ||
             calendarButtonTitles.view,
-            textFallback,
             [textFallback, buttonName], // view-name = buttonName
+            textFallback,
           )
 
         } else if (calendarApi[buttonName]) { // a calendarApi method
@@ -142,20 +143,20 @@ function parseSection(
 
           if (buttonName === 'prevYear' || buttonName === 'nextYear') {
             let prevOrNext = buttonName === 'prevYear' ? 'prev' : 'next'
-            buttonTitle = computeButtonTitleText(
+            buttonTitle = formatWithOrdinals(
               calendarButtonTitleOverrides[prevOrNext] ||
               calendarButtonTitles[prevOrNext],
+              ['year'],
               calendarButtonTextOverrides[buttonName] ||
               calendarButtonText[buttonName],
-              ['year'],
             )
           } else {
-            buttonTitle = (navUnit: string) => computeButtonTitleText(
+            buttonTitle = (navUnit: string) => formatWithOrdinals(
               calendarButtonTitleOverrides[buttonName] ||
               calendarButtonTitles[buttonName],
+              [navUnit],
               calendarButtonTextOverrides[buttonName] ||
               calendarButtonText[buttonName],
-              [navUnit],
             )
           }
         }
@@ -166,19 +167,4 @@ function parseSection(
   )
 
   return { widgets, viewsWithButtons, hasTitle }
-}
-
-function computeButtonTitleText(
-  titleArg: string | ((...args: any[]) => string),
-  text: string,
-  funcArgs: any[],
-): string {
-  if (typeof titleArg === 'function') {
-    return titleArg(...funcArgs)
-  } else if (titleArg) { // non-blank string
-    return funcArgs.reduce((str, funcArg, index) => {
-      return str.replace('$' + index, funcArg || '')
-    }, titleArg).trim()
-  }
-  return text
 }
