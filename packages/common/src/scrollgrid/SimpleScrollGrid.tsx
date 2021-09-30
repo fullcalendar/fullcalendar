@@ -89,6 +89,8 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     // if so, use a simpler dom structure, jam everything into a lone tbody.
     let isBuggy = !getCanVGrowWithinCell()
 
+    const roleAttrs = { role: 'rowgroup' }
+
     return createElement(
       'table',
       {
@@ -96,10 +98,10 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
         className: classNames.join(' '),
         style: { height: props.height },
       },
-      Boolean(!isBuggy && headSectionNodes.length) && createElement('thead', {}, ...headSectionNodes),
-      Boolean(!isBuggy && bodySectionNodes.length) && createElement('tbody', {}, ...bodySectionNodes),
-      Boolean(!isBuggy && footSectionNodes.length) && createElement('tfoot', {}, ...footSectionNodes),
-      isBuggy && createElement('tbody', {}, ...headSectionNodes, ...bodySectionNodes, ...footSectionNodes),
+      Boolean(!isBuggy && headSectionNodes.length) && createElement('thead', roleAttrs, ...headSectionNodes),
+      Boolean(!isBuggy && bodySectionNodes.length) && createElement('tbody', roleAttrs, ...bodySectionNodes),
+      Boolean(!isBuggy && footSectionNodes.length) && createElement('tfoot', roleAttrs, ...footSectionNodes),
+      isBuggy && createElement('tbody', roleAttrs, ...headSectionNodes, ...bodySectionNodes, ...footSectionNodes),
     )
   }
 

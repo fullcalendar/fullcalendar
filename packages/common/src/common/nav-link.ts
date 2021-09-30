@@ -9,9 +9,9 @@ const WEEK_FORMAT = createFormatter({ week: 'long' })
 
 export function buildNavLinkAttrs(context: ViewContext, date: DateMarker, type = 'day') {
   const { dateEnv, options } = context
+  let dateStr = dateEnv.format(date, type === 'week' ? WEEK_FORMAT : DAY_FORMAT)
 
   if (options.navLinks) {
-    let dateStr = dateEnv.format(date, type === 'week' ? WEEK_FORMAT : DAY_FORMAT)
     let zonedDate = dateEnv.toDate(date)
 
     return {
@@ -20,7 +20,10 @@ export function buildNavLinkAttrs(context: ViewContext, date: DateMarker, type =
       tabIndex: 0,
     }
   }
-  return {}
+
+  return {
+    'aria-label': dateStr,
+  }
 }
 
 function buildNavLinkData(date: DateMarker, type: string) {

@@ -7,6 +7,7 @@ import { RenderHook } from './render-hook'
 import { Dictionary } from '../options'
 import { CLASS_NAME, renderInner } from './table-cell-util'
 import { DayHeaderContentArg } from '../render-hook-misc'
+import { createFormatter } from '../datelib/formatting'
 
 export interface TableDowCellProps {
   dow: number
@@ -17,6 +18,8 @@ export interface TableDowCellProps {
   extraDataAttrs?: Dictionary
   extraClassNames?: string[]
 }
+
+const WEEKDAY_FORMAT = createFormatter({ weekday: 'long' })
 
 export class TableDowCell extends BaseComponent<TableDowCellProps> {
   render() {
@@ -63,6 +66,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
           >
             <div className="fc-scrollgrid-sync-inner">
               <a
+                aria-label={dateEnv.format(date, WEEKDAY_FORMAT)}
                 className={[
                   'fc-col-header-cell-cushion',
                   props.isSticky ? 'fc-sticky' : '',
