@@ -9,8 +9,7 @@ import { memoize } from './util/memoize'
 import { DateMarker } from './datelib/marker'
 import { CalendarData } from './reducers/data-types'
 import { ViewPropsTransformerClass } from './plugin-system-struct'
-import { createElement, createRef, VUIEvent, Fragment, VNode } from './vdom'
-import { buildDelegationHandler } from './util/dom-event'
+import { createElement, createRef, Fragment, VNode } from './vdom'
 import { ViewContainer } from './ViewContainer'
 import {
   Interaction,
