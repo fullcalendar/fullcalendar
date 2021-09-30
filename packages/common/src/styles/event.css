@@ -98,6 +98,7 @@ a.fc-event:hover {
 
 // selecting (always TOUCH)
 // OR, focused by tab-index
+// (TODO: maybe not the best focus-styling for .fc-daygrid-dot-event)
 // ----------------------------------------------------------------------------------------------------
 
 .fc-event-selected,

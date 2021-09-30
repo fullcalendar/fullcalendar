@@ -1,6 +1,6 @@
 import { createFormatter } from '../datelib/formatting'
 import { DateMarker } from '../datelib/marker'
-import { createAriaClickHandlers } from '../util/dom-event'
+import { createAriaClickAttrs } from '../util/dom-event'
 import { formatWithOrdinals } from '../util/misc'
 import { ViewContext } from '../ViewContext'
 
@@ -16,7 +16,7 @@ export function buildNavLinkAttrs(context: ViewContext, dateMarker: DateMarker, 
     return {
       title: formatWithOrdinals(options.navLinkHint, [dateStr, zonedDate], dateStr),
       'data-navlink': '', // for legacy selectors. TODO: use className?
-      ...createAriaClickHandlers((ev: UIEvent) => {
+      ...createAriaClickAttrs((ev: UIEvent) => {
         let customAction =
           viewType === 'day' ? options.navLinkDayClick :
           viewType === 'week' ? options.navLinkWeekClick : null

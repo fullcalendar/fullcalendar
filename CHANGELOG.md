@@ -1,6 +1,7 @@
 
 FEATURE: week formatting arg accepts 'long'
 BREAKING: navLinkData no longer sent to navlink hooks. need to apply navLinkAttrs instead
+TODO: list-view event focusing
 
 v5.9.0 (2021-07-28)
 -------------------

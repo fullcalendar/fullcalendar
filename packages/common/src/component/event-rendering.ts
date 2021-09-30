@@ -14,7 +14,7 @@ import { DateFormatter } from '../datelib/DateFormatter'
 import { addMs, DateMarker, startOfDay } from '../datelib/marker'
 import { ViewApi } from '../ViewApi'
 import { MountArg } from '../common/render-hook'
-import { createAriaClickHandlers } from '../util/dom-event'
+import { createAriaClickAttrs, createAriaKeyboardAttrs } from '../util/dom-event'
 
 export interface EventRenderRange extends EventTuple {
   ui: EventUi
@@ -360,7 +360,8 @@ export function getSegAnchorAttrs(seg: Seg, context: ViewContext) {
 
   // mock what happens in EventClicking
   if (eventInteractive) {
-    return createAriaClickHandlers((ev: UIEvent) => {
+    // only attach keyboard-related handlers because click handler is already done in EventClicking
+    return createAriaKeyboardAttrs((ev: UIEvent) => {
       emitter.trigger('eventClick', {
         el: ev.target as HTMLElement,
         event: new EventApi(context, def, instance),

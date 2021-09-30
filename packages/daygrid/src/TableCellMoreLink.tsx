@@ -12,7 +12,7 @@ import {
   getSegMeta,
   Fragment,
 } from '@fullcalendar/common'
-import { createAriaClickHandlers } from '@fullcalendar/common/src/util/dom-event'
+import { createAriaClickAttrs } from '@fullcalendar/common/src/util/dom-event'
 import { TableSegPlacement } from './event-placement'
 import { hasListItemDisplay } from './event-rendering'
 import { TableBlockEvent } from './TableBlockEvent'
@@ -101,7 +101,7 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
             title={title}
             aria-expanded={isExpanded}
             aria-controls={popoverId}
-            {...createAriaClickHandlers(handleClick)}
+            {...createAriaClickAttrs(handleClick)}
           >
             {innerContent}
           </a>

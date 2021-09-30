@@ -90,10 +90,16 @@ export function whenTransitionDone(el: HTMLElement, callback: (ev: Event) => voi
 // ARIA workarounds
 // ----------------------------------------------------------------------------------------------------------------
 
-export function createAriaClickHandlers(handler: ((ev: UIEvent) => void)) {
+export function createAriaClickAttrs(handler: ((ev: UIEvent) => void)) {
+  return {
+    onClick: handler,
+    ...createAriaKeyboardAttrs(handler),
+  }
+}
+
+export function createAriaKeyboardAttrs(handler: ((ev: UIEvent) => void)) {
   return {
     tabIndex: 0,
-    onClick: handler,
     onKeyDown(ev: KeyboardEvent) {
       if (ev.key === 'Enter' || ev.key === ' ') {
         handler(ev)
