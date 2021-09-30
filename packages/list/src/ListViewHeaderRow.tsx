@@ -32,15 +32,14 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
     // will ever be falsy? also, BAD NAME "alt"
     let sideText = options.listDaySideFormat ? dateEnv.format(dayDate, options.listDaySideFormat) : ''
 
-    let navLinkAttrs = buildNavLinkAttrs(this.context, dayDate)
-
     let hookProps: HookProps = {
       date: dateEnv.toDate(dayDate),
       view: viewApi,
       textId,
       text,
       sideText,
-      navLinkAttrs,
+      navLinkAttrs: buildNavLinkAttrs(this.context, dayDate),
+      sideNavLinkAttrs: buildNavLinkAttrs(this.context, dayDate, 'day', false),
       ...dayMeta,
     }
 
@@ -77,17 +76,15 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
 }
 
 function renderInnerContent(props: HookProps) {
-  let { navLinkAttrs } = props
-
   return (
     <Fragment>
       {props.text && (
-        <a id={props.textId} className="fc-list-day-text" {...navLinkAttrs}>
+        <a id={props.textId} className="fc-list-day-text" {...props.navLinkAttrs}>
           {props.text}
         </a>
       )}
-      {props.sideText && (
-        <a aria-hidden={true} className="fc-list-day-side-text" {...navLinkAttrs}>
+      {props.sideText && ( /* not keyboard tabbable */
+        <a aria-hidden={true} className="fc-list-day-side-text" {...props.sideNavLinkAttrs}>
           {props.sideText}
         </a>
       )}
