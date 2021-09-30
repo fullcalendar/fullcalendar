@@ -1,8 +1,7 @@
 import { ComponentChildren, createElement, Fragment } from '../vdom'
 import { BaseComponent } from '../vdom-util'
-import { buildSegTimeText, EventContentArg } from '../component/event-rendering'
+import { buildSegTimeText, EventContentArg, getSegAnchorAttrs } from '../component/event-rendering'
 import { EventRoot, MinimalEventProps } from './EventRoot'
-import { Seg } from '../component/DateComponent'
 import { DateFormatter } from '../datelib/DateFormatter'
 
 export interface StandardEventProps extends MinimalEventProps {
@@ -81,9 +80,4 @@ function renderInnerContent(innerProps: EventContentArg) {
       </div>
     </div>
   )
-}
-
-function getSegAnchorAttrs(seg: Seg) {
-  let { url } = seg.eventRange.def
-  return url ? { href: url } : {}
 }

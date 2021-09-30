@@ -213,6 +213,7 @@ export {
   getEventClassNames, buildSegTimeText,
   buildSegCompareObj, sortEventSegs,
   getSegMeta, EventContentArg, buildEventRangeKey,
+  getSegAnchorAttrs,
 } from './component/event-rendering'
 
 export { DayTableModel, DayTableSeg, DayTableCell } from './common/DayTableModel'

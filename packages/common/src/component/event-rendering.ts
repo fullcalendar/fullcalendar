@@ -338,3 +338,8 @@ export function buildEventRangeKey(eventRange: EventRenderRange) {
     : `${eventRange.def.defId}:${eventRange.range.start.toISOString()}`
   // inverse-background events don't have specific instances. TODO: better solution
 }
+
+export function getSegAnchorAttrs(seg: Seg) {
+  let { url } = seg.eventRange.def
+  return url ? { href: url } : { tabindex: 0 }
+}

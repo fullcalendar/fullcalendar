@@ -1,4 +1,4 @@
-import { createElement, BaseComponent, Seg, EventRoot, buildSegTimeText, EventContentArg, Fragment } from '@fullcalendar/common'
+import { createElement, BaseComponent, Seg, EventRoot, buildSegTimeText, EventContentArg, Fragment, getSegAnchorAttrs } from '@fullcalendar/common'
 import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering'
 
 export interface DotTableEventProps {
@@ -65,9 +65,4 @@ function renderInnerContent(innerProps: EventContentArg) {
       </div>
     </Fragment>
   )
-}
-
-function getSegAnchorAttrs(seg: Seg) { // not dry. in StandardEvent too
-  let { url } = seg.eventRange.def
-  return url ? { href: url } : {}
 }
