@@ -115,6 +115,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     return (
       <tr
         key={sectionConfig.key}
+        role='presentation'
         className={getSectionClassNames(sectionConfig, this.props.liquid).join(' ')}
       >
         {this.renderChunkTd(sectionConfig, microColGroupNode, sectionConfig.chunk, isHeader)}
@@ -162,6 +163,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
       isHeader ? 'th' : 'td',
       {
         ref: chunkConfig.elRef as any,
+        role: 'presentation',
       },
       <div className={`fc-scroller-harness${isLiquid ? ' fc-scroller-harness-liquid' : ''}`}>
         <Scroller

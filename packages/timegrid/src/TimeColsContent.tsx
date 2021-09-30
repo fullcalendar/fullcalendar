@@ -68,13 +68,13 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
 
     return (
       <div className="fc-timegrid-cols" ref={this.rootElRef}>
-        <table style={{
+        <table role='presentation' style={{
           minWidth: props.tableMinWidth,
           width: props.clientWidth,
         }}
         >
           {props.tableColGroupNode}
-          <tbody>
+          <tbody role='presentation'>
             <tr role='row'>
               {props.axis && (
                 <td aria-hidden={true} className="fc-timegrid-col fc-timegrid-axis">

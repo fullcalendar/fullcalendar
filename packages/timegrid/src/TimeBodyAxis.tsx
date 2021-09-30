@@ -12,7 +12,7 @@ interface TimeBodyAxisProps {
 export class TimeBodyAxis extends BaseComponent<TimeBodyAxisProps> { // just <tr> content
   render() {
     return this.props.slatMetas.map((slatMeta: TimeSlatMeta) => (
-      <tr key={slatMeta.key}>
+      <tr role='presentation' key={slatMeta.key}>
         <TimeColsAxisCell {...slatMeta} />
       </tr>
     ))

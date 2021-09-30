@@ -90,6 +90,7 @@ export function renderChunkContent(
     createElement(
       'table',
       {
+        role: 'presentation',
         className: [
           chunkConfig.tableClassName,
           sectionConfig.syncRowHeights ? 'fc-scrollgrid-sync-table' : '',
@@ -103,7 +104,9 @@ export function renderChunkContent(
       arg.tableColGroupNode,
       createElement(
         isHeader ? 'thead' : 'tbody',
-        {},
+        {
+          role: 'presentation',
+        },
         typeof chunkConfig.rowContent === 'function' ? chunkConfig.rowContent(arg) : chunkConfig.rowContent
       )
     )

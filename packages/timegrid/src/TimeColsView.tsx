@@ -152,7 +152,9 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
           {
             key: 'axis',
             rowContent: (arg: ChunkContentCallbackArgs) => (
-              <tr>{this.renderHeadAxis('day', arg.rowSyncHeights[0])}</tr>
+              <tr role='presentation'>
+                {this.renderHeadAxis('day', arg.rowSyncHeights[0])}
+              </tr>
             ),
           },
           {
@@ -174,7 +176,9 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
           {
             key: 'axis',
             rowContent: (contentArg: ChunkContentCallbackArgs) => (
-              <tr>{this.renderTableRowAxis(contentArg.rowSyncHeights[0])}</tr>
+              <tr role='presentation'>
+                {this.renderTableRowAxis(contentArg.rowSyncHeights[0])}
+              </tr>
             ),
           },
           {
@@ -210,9 +214,9 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
           content: (arg) => (
             // TODO: make this now-indicator arrow more DRY with TimeColsContent
             <div className="fc-timegrid-axis-chunk">
-              <table style={{ height: arg.expandRows ? arg.clientHeight : '' }}>
+              <table role='presentation' style={{ height: arg.expandRows ? arg.clientHeight : '' }}>
                 {arg.tableColGroupNode}
-                <tbody>
+                <tbody role='presentation'>
                   <TimeBodyAxis slatMetas={slatMetas} />
                 </tbody>
               </table>
