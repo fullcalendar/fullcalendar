@@ -93,7 +93,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
       {}
 
     return (
-      <tr ref={this.rootElRef} role='row'>
+      <tr ref={this.rootElRef}>
         {props.renderIntro && props.renderIntro()}
         {props.cells.map((cell, col) => {
           let normalFgNodes = this.renderFgSegs(

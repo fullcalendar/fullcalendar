@@ -77,14 +77,19 @@ export function getAllowYScrolling(props: { liquid: boolean }, sectionConfig: Se
 }
 
 // TODO: ONLY use `arg`. force out internal function to use same API
-export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: ChunkConfig, arg: ChunkContentCallbackArgs) {
+export function renderChunkContent(
+  sectionConfig: SectionConfig,
+  chunkConfig: ChunkConfig,
+  arg: ChunkContentCallbackArgs,
+  isHeader: boolean,
+) {
   let { expandRows } = arg
 
   let content: VNode = typeof chunkConfig.content === 'function' ?
     chunkConfig.content(arg) :
-    createElement('table',
+    createElement(
+      'table',
       {
-        role: 'presentation',
         className: [
           chunkConfig.tableClassName,
           sectionConfig.syncRowHeights ? 'fc-scrollgrid-sync-table' : '',
@@ -96,7 +101,12 @@ export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: Ch
         },
       },
       arg.tableColGroupNode,
-      createElement('tbody', {}, typeof chunkConfig.rowContent === 'function' ? chunkConfig.rowContent(arg) : chunkConfig.rowContent))
+      createElement(
+        isHeader ? 'thead' : 'tbody',
+        {},
+        typeof chunkConfig.rowContent === 'function' ? chunkConfig.rowContent(arg) : chunkConfig.rowContent
+      )
+    )
 
   return content
 }

@@ -86,7 +86,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
         type: 'body',
         key: 'all-day-divider',
         outerContent: ( // TODO: rename to cellContent so don't need to define <tr>?
-          <tr className="fc-scrollgrid-section">
+          <tr role='presentation' className="fc-scrollgrid-section">
             <td
               className={'fc-timegrid-divider ' + context.theme.getClass('tableCellShaded')}
             />

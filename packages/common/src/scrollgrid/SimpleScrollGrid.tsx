@@ -69,17 +69,17 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     let footSectionNodes: VNode[] = []
 
     while (configI < configCnt && (currentConfig = sectionConfigs[configI]).type === 'header') {
-      headSectionNodes.push(this.renderSection(currentConfig, microColGroupNode, 'th'))
+      headSectionNodes.push(this.renderSection(currentConfig, microColGroupNode, true))
       configI += 1
     }
 
     while (configI < configCnt && (currentConfig = sectionConfigs[configI]).type === 'body') {
-      bodySectionNodes.push(this.renderSection(currentConfig, microColGroupNode, 'td'))
+      bodySectionNodes.push(this.renderSection(currentConfig, microColGroupNode, false))
       configI += 1
     }
 
     while (configI < configCnt && (currentConfig = sectionConfigs[configI]).type === 'footer') {
-      footSectionNodes.push(this.renderSection(currentConfig, microColGroupNode, 'th'))
+      footSectionNodes.push(this.renderSection(currentConfig, microColGroupNode, true))
       configI += 1
     }
 
@@ -89,8 +89,6 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     // if so, use a simpler dom structure, jam everything into a lone tbody.
     let isBuggy = !getCanVGrowWithinCell()
 
-    const roleAttrs = { role: 'presentation' }
-
     return createElement(
       'table',
       {
@@ -98,14 +96,14 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
         className: classNames.join(' '),
         style: { height: props.height },
       },
-      Boolean(!isBuggy && headSectionNodes.length) && createElement('thead', roleAttrs, ...headSectionNodes),
-      Boolean(!isBuggy && bodySectionNodes.length) && createElement('tbody', roleAttrs, ...bodySectionNodes),
-      Boolean(!isBuggy && footSectionNodes.length) && createElement('tfoot', roleAttrs, ...footSectionNodes),
-      isBuggy && createElement('tbody', roleAttrs, ...headSectionNodes, ...bodySectionNodes, ...footSectionNodes),
+      Boolean(!isBuggy && headSectionNodes.length) && createElement('thead', {}, ...headSectionNodes),
+      Boolean(!isBuggy && bodySectionNodes.length) && createElement('tbody', {}, ...bodySectionNodes),
+      Boolean(!isBuggy && footSectionNodes.length) && createElement('tfoot', {}, ...footSectionNodes),
+      isBuggy && createElement('tbody', {}, ...headSectionNodes, ...bodySectionNodes, ...footSectionNodes),
     )
   }
 
-  renderSection(sectionConfig: SimpleScrollGridSection, microColGroupNode: VNode, cellTagName: string) {
+  renderSection(sectionConfig: SimpleScrollGridSection, microColGroupNode: VNode, isHeader: boolean) {
     if ('outerContent' in sectionConfig) {
       return (
         <Fragment key={sectionConfig.key}>
@@ -117,10 +115,9 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     return (
       <tr
         key={sectionConfig.key}
-        role='presentation'
         className={getSectionClassNames(sectionConfig, this.props.liquid).join(' ')}
       >
-        {this.renderChunkTd(sectionConfig, microColGroupNode, sectionConfig.chunk, cellTagName)}
+        {this.renderChunkTd(sectionConfig, microColGroupNode, sectionConfig.chunk, isHeader)}
       </tr>
     )
   }
@@ -129,7 +126,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     sectionConfig: SimpleScrollGridSection,
     microColGroupNode: VNode,
     chunkConfig: ChunkConfig,
-    tagName: string,
+    isHeader: boolean,
   ): createElement.JSX.Element {
     if ('outerContent' in chunkConfig) {
       return chunkConfig.outerContent
@@ -159,13 +156,12 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
       syncRowHeights: false,
       rowSyncHeights: [],
       reportRowHeightChange: () => {},
-    })
+    }, isHeader)
 
     return createElement(
-      tagName,
+      isHeader ? 'th' : 'td',
       {
         ref: chunkConfig.elRef as any,
-        role: 'presentation',
       },
       <div className={`fc-scroller-harness${isLiquid ? ' fc-scroller-harness-liquid' : ''}`}>
         <Scroller
