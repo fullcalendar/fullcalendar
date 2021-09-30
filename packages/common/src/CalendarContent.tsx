@@ -37,7 +37,6 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
   private buildViewContext = memoize(buildViewContext)
   private buildViewPropTransformers = memoize(buildViewPropTransformers)
   private buildToolbarProps = memoize(buildToolbarProps)
-  private handleNavLinkClick = buildDelegationHandler('a[data-navlink]', this._handleNavLinkClick.bind(this))
   private headerRef = createRef<Toolbar>()
   private footerRef = createRef<Toolbar>()
   private interactionsStore: { [componentUid: string]: Interaction[] } = {}
@@ -112,7 +111,6 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
           liquid={viewVGrow}
           height={viewHeight}
           aspectRatio={viewAspectRatio}
-          onClick={this.handleNavLinkClick}
           labeledById={viewLabelId}
         >
           {this.renderView(props)}
@@ -165,30 +163,6 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
     }
 
     this.props.emitter.trigger('_unmount')
-  }
-
-  _handleNavLinkClick(ev: VUIEvent, anchorEl: HTMLElement) {
-    let { dateEnv, options, calendarApi } = this.props
-
-    let navLinkOptions: any = anchorEl.getAttribute('data-navlink')
-    navLinkOptions = navLinkOptions ? JSON.parse(navLinkOptions) : {}
-
-    let dateMarker = dateEnv.createMarker(navLinkOptions.date)
-    let viewType = navLinkOptions.type
-
-    let customAction =
-      viewType === 'day' ? options.navLinkDayClick :
-        viewType === 'week' ? options.navLinkWeekClick : null
-
-    if (typeof customAction === 'function') {
-      customAction.call(calendarApi, dateEnv.toDate(dateMarker), ev)
-    } else {
-      if (typeof customAction === 'string') {
-        viewType = customAction
-      }
-
-      calendarApi.zoomTo(dateMarker, viewType)
-    }
   }
 
   buildAppendContent(): VNode {

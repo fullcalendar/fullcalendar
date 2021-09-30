@@ -41,7 +41,6 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
       text,
       sideText,
       navLinkAttrs,
-      navLinkData: navLinkAttrs['data-navlink'], // TODO: for backwards-compat
       ...dayMeta,
     }
 

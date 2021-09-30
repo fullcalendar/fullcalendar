@@ -14,6 +14,7 @@ import { DateFormatter } from '../datelib/DateFormatter'
 import { addMs, DateMarker, startOfDay } from '../datelib/marker'
 import { ViewApi } from '../ViewApi'
 import { MountArg } from '../common/render-hook'
+import { createAriaClickHandlers } from '../util/dom-event'
 
 export interface EventRenderRange extends EventTuple {
   ui: EventUi
@@ -359,24 +360,14 @@ export function getSegAnchorAttrs(seg: Seg, context: ViewContext) {
 
   // mock what happens in EventClicking
   if (eventInteractive) {
-    const handleInteraction = (ev: UIEvent) => {
+    return createAriaClickHandlers((ev: UIEvent) => {
       emitter.trigger('eventClick', {
         el: ev.target as HTMLElement,
         event: new EventApi(context, def, instance),
         jsEvent: ev as MouseEvent,
         view: context.viewApi,
       })
-    }
-    return {
-      tabIndex: 0,
-      onClick: handleInteraction,
-      onKeyDown(ev: KeyboardEvent) {
-        if (ev.key === 'Enter' || ev.key === ' ') {
-          handleInteraction(ev)
-          ev.preventDefault() // if space, don't scroll down page
-        }
-      }
-    }
+    })
   }
 
   return {}

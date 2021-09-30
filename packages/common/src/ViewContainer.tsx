@@ -1,5 +1,5 @@
 import { BaseComponent, setRef } from './vdom-util'
-import { ComponentChildren, Ref, createElement, VUIEvent } from './vdom'
+import { ComponentChildren, Ref, createElement } from './vdom'
 import { CssDimValue } from './scrollgrid/util'
 
 export interface ViewContainerProps {
@@ -7,7 +7,6 @@ export interface ViewContainerProps {
   liquid?: boolean
   height?: CssDimValue
   aspectRatio?: number
-  onClick?: (ev: VUIEvent) => void
   elRef?: Ref<HTMLDivElement>
   children?: ComponentChildren
 }
@@ -55,7 +54,6 @@ export class ViewContainer extends BaseComponent<ViewContainerProps, ViewContain
       <div
         aria-labelledby={props.labeledById}
         ref={this.handleEl}
-        onClick={props.onClick}
         className={classNames.join(' ')}
         style={{ height, paddingBottom }}
       >

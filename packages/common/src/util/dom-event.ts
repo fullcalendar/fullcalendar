@@ -86,3 +86,19 @@ export function whenTransitionDone(el: HTMLElement, callback: (ev: Event) => voi
     el.addEventListener(eventName, realCallback) // cross-browser way to determine when the transition finishes
   })
 }
+
+// ARIA workarounds
+// ----------------------------------------------------------------------------------------------------------------
+
+export function createAriaClickHandlers(handler: ((ev: UIEvent) => void)) {
+  return {
+    tabIndex: 0,
+    onClick: handler,
+    onKeyDown(ev: KeyboardEvent) {
+      if (ev.key === 'Enter' || ev.key === ' ') {
+        handler(ev)
+        ev.preventDefault() // if space, don't scroll down page
+      }
+    }
+  }
+}
