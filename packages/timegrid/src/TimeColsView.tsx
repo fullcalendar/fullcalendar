@@ -187,7 +187,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
         key: 'all-day-divider',
         type: 'body',
         outerContent: ( // TODO: rename to cellContent so don't need to define <tr>?
-          <tr className="fc-scrollgrid-section">
+          <tr role='presentation' className="fc-scrollgrid-section">
             <td
               colSpan={2}
               className={'fc-timegrid-divider ' + context.theme.getClass('tableCellShaded')}
@@ -333,7 +333,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
           {(rootElRef, classNames, innerElRef, innerContent) => (
             <th
               ref={rootElRef}
-              role='rowheader'
+              aria-hidden={true}
               className={[
                 'fc-timegrid-axis',
                 'fc-scrollgrid-shrink',
@@ -358,7 +358,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     }
 
     return (
-      <th role='rowheader' className="fc-timegrid-axis">
+      <th aria-hidden={true} className="fc-timegrid-axis">
         <div className="fc-timegrid-axis-frame" style={{ height: frameHeight }} />
       </th>
     )
@@ -389,7 +389,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
         {(rootElRef, classNames, innerElRef, innerContent) => (
           <td
             ref={rootElRef}
-            role='rowheader'
+            aria-hidden={true}
             className={[
               'fc-timegrid-axis',
               'fc-scrollgrid-shrink',

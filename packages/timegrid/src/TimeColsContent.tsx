@@ -75,9 +75,9 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
         >
           {props.tableColGroupNode}
           <tbody>
-            <tr>
+            <tr role='row'>
               {props.axis && (
-                <td role='rowheader' className="fc-timegrid-col fc-timegrid-axis">
+                <td aria-hidden={true} className="fc-timegrid-col fc-timegrid-axis">
                   <div className="fc-timegrid-col-frame">
                     <div className="fc-timegrid-now-indicator-container">
                       {typeof nowIndicatorTop === 'number' && (

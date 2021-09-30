@@ -33,7 +33,7 @@ export class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: rename t
     return (
       <NowTimer unit="day">
         {(nowDate: DateMarker, todayRange: DateRange) => (
-          <tr>
+          <tr role='row'>
             {renderIntro && renderIntro('day')}
             {dates.map((date) => (
               datesRepDistinctDays ? (
