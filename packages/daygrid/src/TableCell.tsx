@@ -14,6 +14,7 @@ import {
   Dictionary,
   createRef,
   EventSegUiInteractionState,
+  getUniqueDomId,
 } from '@fullcalendar/common'
 import { TableCellTop } from './TableCellTop'
 import { TableCellMoreLink } from './TableCellMoreLink'
@@ -47,9 +48,12 @@ const DEFAULT_WEEK_NUM_FORMAT = createFormatter({ week: 'narrow' })
 
 export class TableCell extends DateComponent<TableCellProps> {
   private rootElRef = createRef<HTMLElement>()
+  state = {
+    dayNumberId: getUniqueDomId(),
+  }
 
   render() {
-    let { props, context, rootElRef } = this
+    let { context, props, state, rootElRef } = this
     let { date, dateProfile } = props
     let navLinkAttrs = buildNavLinkAttrs(context, date, 'week')
 
@@ -69,6 +73,7 @@ export class TableCell extends DateComponent<TableCellProps> {
             className={['fc-daygrid-day'].concat(dayClassNames, props.extraClassNames || []).join(' ')}
             {...rootDataAttrs}
             {...props.extraDataAttrs}
+            {...(props.showDayNumber ? { 'aria-labelledby': state.dayNumberId } : {})}
           >
             <div className="fc-daygrid-day-frame fc-scrollgrid-sync-inner" ref={props.innerElRef /* different from hook system! RENAME */}>
               {props.showWeekNumber && (
@@ -89,6 +94,7 @@ export class TableCell extends DateComponent<TableCellProps> {
                   date={date}
                   dateProfile={dateProfile}
                   showDayNumber={props.showDayNumber}
+                  dayNumberId={state.dayNumberId}
                   forceDayTop={props.forceDayTop}
                   todayRange={props.todayRange}
                   extraHookProps={props.extraHookProps}
