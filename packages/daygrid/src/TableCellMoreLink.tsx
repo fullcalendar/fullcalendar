@@ -12,6 +12,7 @@ import {
   getSegMeta,
   Fragment,
 } from '@fullcalendar/common'
+import { createAriaClickHandlers } from '@fullcalendar/common/src/util/dom-event'
 import { TableSegPlacement } from './event-placement'
 import { hasListItemDisplay } from './event-rendering'
 import { TableBlockEvent } from './TableBlockEvent'
@@ -97,10 +98,10 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
           <a
             ref={rootElRef}
             className={['fc-daygrid-more-link'].concat(classNames).join(' ')}
-            onClick={handleClick}
             title={title}
             aria-expanded={isExpanded}
             aria-controls={popoverId}
+            {...createAriaClickHandlers(handleClick)}
           >
             {innerContent}
           </a>
