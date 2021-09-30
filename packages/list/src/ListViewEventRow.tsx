@@ -1,6 +1,6 @@
 import {
   MinimalEventProps, BaseComponent, ViewContext, createElement, AllDayContentArg,
-  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventContentArg, EventRoot, ComponentChildren, RenderHook,
+  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventRoot, ComponentChildren, RenderHook, getSegAnchorAttrs,
 } from '@fullcalendar/common'
 
 const DEFAULT_TIME_FORMAT = createFormatter({
@@ -27,7 +27,7 @@ export class ListViewEventRow extends BaseComponent<ListViewEventRowProps> {
         timeText="" // BAD. because of all-day content
         disableDragging
         disableResizing
-        defaultContent={renderEventInnerContent}
+        defaultContent={() => renderEventInnerContent(seg, context) /* weird */}
         isPast={props.isPast}
         isFuture={props.isFuture}
         isToday={props.isToday}
@@ -52,15 +52,12 @@ export class ListViewEventRow extends BaseComponent<ListViewEventRowProps> {
   }
 }
 
-function renderEventInnerContent(props: EventContentArg) {
-  let { event } = props
-  let url = event.url
-  let anchorAttrs = url ? { href: url } : {}
-
+function renderEventInnerContent(seg: Seg, context: ViewContext) {
+  let interactiveAttrs = getSegAnchorAttrs(seg, context)
   return (
-    <a {...anchorAttrs}>
+    <a {...interactiveAttrs}>
       {/* TODO: document how whole row become clickable */}
-      {event.title}
+      {seg.eventRange.def.title}
     </a>
   )
 }

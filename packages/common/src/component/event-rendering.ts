@@ -14,7 +14,7 @@ import { DateFormatter } from '../datelib/DateFormatter'
 import { addMs, DateMarker, startOfDay } from '../datelib/marker'
 import { ViewApi } from '../ViewApi'
 import { MountArg } from '../common/render-hook'
-import { createAriaClickAttrs, createAriaKeyboardAttrs } from '../util/dom-event'
+import { createAriaKeyboardAttrs } from '../util/dom-event'
 
 export interface EventRenderRange extends EventTuple {
   ui: EventUi
