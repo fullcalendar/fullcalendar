@@ -339,7 +339,45 @@ export function buildEventRangeKey(eventRange: EventRenderRange) {
   // inverse-background events don't have specific instances. TODO: better solution
 }
 
-export function getSegAnchorAttrs(seg: Seg) {
-  let { url } = seg.eventRange.def
-  return url ? { href: url } : { tabindex: 0 }
+export function getSegAnchorAttrs(seg: Seg, context: ViewContext) {
+  let { def, instance } = seg.eventRange
+  let { url } = def
+
+  if (url) {
+    return { href: url }
+  }
+
+  let { emitter, options } = context
+  let { eventInteractive } = options
+
+  if (eventInteractive == null) {
+    eventInteractive = def.interactive
+    if (eventInteractive == null) {
+      eventInteractive = Boolean(emitter.hasHandlers('eventClick'))
+    }
+  }
+
+  // mock what happens in EventClicking
+  if (eventInteractive) {
+    const handleInteraction = (ev: UIEvent) => {
+      emitter.trigger('eventClick', {
+        el: ev.target as HTMLElement,
+        event: new EventApi(context, def, instance),
+        jsEvent: ev as MouseEvent,
+        view: context.viewApi,
+      })
+    }
+    return {
+      tabIndex: 0,
+      onClick: handleInteraction,
+      onKeyDown(ev: KeyboardEvent) {
+        if (ev.key === 'Enter' || ev.key === ' ') {
+          handleInteraction(ev)
+          ev.preventDefault() // if space, don't scroll down page
+        }
+      }
+    }
+  }
+
+  return {}
 }

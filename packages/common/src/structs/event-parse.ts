@@ -15,6 +15,7 @@ export const EVENT_NON_DATE_REFINERS = {
   groupId: String,
   title: String,
   url: String,
+  interactive: Boolean,
 }
 
 export const EVENT_DATE_REFINERS = {
@@ -130,6 +131,7 @@ export function parseEventDef(
     sourceId,
     allDay,
     hasEnd,
+    interactive: refined.interactive,
     ui: createEventUi(refined, context),
     extendedProps: {
       ...(refined.extendedProps || {}),

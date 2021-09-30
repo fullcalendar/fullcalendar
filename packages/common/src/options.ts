@@ -230,6 +230,8 @@ export const BASE_OPTION_REFINERS = {
   timeTitle: String,
   eventTitle: String,
 
+  eventInteractive: Boolean,
+
   moreLinkClick: identity as Identity<MoreLinkAction>,
   moreLinkClassNames: identity as Identity<ClassNamesGenerator<MoreLinkContentArg>>,
   moreLinkContent: identity as Identity<CustomContentGenerator<MoreLinkContentArg>>,

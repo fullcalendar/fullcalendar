@@ -40,7 +40,7 @@ export class TableListItemEvent extends BaseComponent<DotTableEventProps> {
           <a
             className={['fc-daygrid-event', 'fc-daygrid-dot-event'].concat(classNames).join(' ')}
             ref={rootElRef}
-            {...getSegAnchorAttrs(props.seg)}
+            {...getSegAnchorAttrs(props.seg, context)}
           >
             {innerContent}
           </a>

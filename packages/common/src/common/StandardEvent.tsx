@@ -51,7 +51,7 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
               backgroundColor: hookProps.backgroundColor,
             }}
             ref={rootElRef}
-            {...getSegAnchorAttrs(seg)}
+            {...getSegAnchorAttrs(seg, context)}
           >
             <div className="fc-event-main" ref={innerElRef} style={{ color: hookProps.textColor }}>
               {innerContent}

@@ -35,9 +35,11 @@ export class Emitter<HandlerFuncs extends HandlerFuncTypeHash> {
     }
   }
 
-  hasHandlers(type: keyof HandlerFuncs) {
-    return (this.handlers[type] && this.handlers[type].length) ||
+  hasHandlers(type: keyof HandlerFuncs): boolean {
+    return Boolean(
+      (this.handlers[type] && this.handlers[type].length) ||
       (this.options && this.options[type])
+    )
   }
 }
 

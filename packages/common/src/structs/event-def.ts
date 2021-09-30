@@ -13,6 +13,7 @@ export interface EventDef { // TODO: add recurring type here?
   title: string
   url: string
   ui: EventUi
+  interactive?: boolean
   extendedProps: Dictionary
 }
 
