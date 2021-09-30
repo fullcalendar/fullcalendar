@@ -227,6 +227,8 @@ export const BASE_OPTION_REFINERS = {
   noEventsText: String,
 
   closeTitle: String,
+  timeTitle: String,
+  eventTitle: String,
 
   moreLinkClick: identity as Identity<MoreLinkAction>,
   moreLinkClassNames: identity as Identity<ClassNamesGenerator<MoreLinkContentArg>>,

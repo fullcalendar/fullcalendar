@@ -168,9 +168,9 @@ export class ListView extends DateComponent<ViewProps> {
             <table className={'fc-list-table ' + theme.getClass('table')}>
               <thead>
                 <tr>
-                  <th scope="col" id={timeHeaderId}>Time</th>{/* TODO: translate */}
+                  <th scope="col" id={timeHeaderId}>{options.timeTitle}</th>
                   <th scope="col" aria-hidden={true}></th>{/* color dots */}
-                  <th scope="col" id={eventHeaderId}>Event Title</th>{/* TODO: translate */}
+                  <th scope="col" id={eventHeaderId}>{options.eventTitle}</th>
                 </tr>
               </thead>
               <tbody>{innerNodes}</tbody>
