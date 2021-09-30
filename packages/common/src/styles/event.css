@@ -97,9 +97,11 @@ a.fc-event:hover {
 
 
 // selecting (always TOUCH)
+// OR, focused by tab-index
 // ----------------------------------------------------------------------------------------------------
 
-.fc-event-selected {
+.fc-event-selected,
+.fc-event:focus {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 
   // expand hit area (subclasses should expand)
