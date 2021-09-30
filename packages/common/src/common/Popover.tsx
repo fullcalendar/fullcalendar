@@ -62,12 +62,14 @@ export class Popover extends BaseComponent<PopoverProps> {
   }
 
   componentDidMount() {
-    document.addEventListener('mousedown', this.handleDocumentMousedown)
+    document.addEventListener('mousedown', this.handleDocumentMouseDown)
+    document.addEventListener('keydown', this.handleDocumentKeyDown)
     this.updateSize()
   }
 
   componentWillUnmount() {
-    document.removeEventListener('mousedown', this.handleDocumentMousedown)
+    document.removeEventListener('mousedown', this.handleDocumentMouseDown)
+    document.removeEventListener('keydown', this.handleDocumentKeyDown)
   }
 
   handleRootEl = (el: HTMLElement | null) => {
@@ -79,10 +81,16 @@ export class Popover extends BaseComponent<PopoverProps> {
   }
 
   // Triggered when the user clicks *anywhere* in the document, for the autoHide feature
-  handleDocumentMousedown = (ev) => {
+  handleDocumentMouseDown = (ev) => {
     // only hide the popover if the click happened outside the popover
     const target = getEventTargetViaRoot(ev) as HTMLElement
     if (!this.rootEl.contains(target)) {
+      this.handleCloseClick()
+    }
+  }
+
+  handleDocumentKeyDown = (ev) => {
+    if (ev.key === 'Escape') {
       this.handleCloseClick()
     }
   }
