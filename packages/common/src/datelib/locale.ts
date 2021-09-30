@@ -61,8 +61,8 @@ const RAW_EN_LOCALE = {
     prev: 'Previous $0',
     next: 'Next $0',
     today: 'Go to today',
-    view: '$0 view',
   },
+  viewHint: '$0 view',
   navLinkHint: `Go to $0`,
   moreLinkHint(eventCnt: number) {
     return `Show ${eventCnt} more event${eventCnt === 1 ? '' : 's'}`

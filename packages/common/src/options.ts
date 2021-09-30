@@ -195,7 +195,6 @@ export const BASE_OPTION_REFINERS = {
 
   slotMinWidth: Number, // move to timeline?
   navLinks: Boolean,
-  navLinkHint: String,
   eventTimeFormat: createFormatter,
   rerenderDelay: Number, // TODO: move to @fullcalendar/core right? nah keep here
   moreLinkText: identity as Identity<string | ((this: CalendarApi, num: number) => string)>, // this not enforced :( check others too
@@ -223,14 +222,16 @@ export const BASE_OPTION_REFINERS = {
   visibleRange: identity as Identity<DateRangeInput | ((this: CalendarApi, currentDate: Date) => DateRangeInput)>, // `this` works?
   titleFormat: identity as Identity<FormatterInput>, // DONT parse just yet. we need to inject titleSeparator
 
+  eventInteractive: Boolean,
+
   // only used by list-view, but languages define the value, so we need it in base options
   noEventsText: String,
 
+  viewHint: String,
+  navLinkHint: String,
   closeTitle: String,
   timeTitle: String,
   eventTitle: String,
-
-  eventInteractive: Boolean,
 
   moreLinkClick: identity as Identity<MoreLinkAction>,
   moreLinkClassNames: identity as Identity<ClassNamesGenerator<MoreLinkContentArg>>,

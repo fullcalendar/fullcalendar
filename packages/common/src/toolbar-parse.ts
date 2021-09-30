@@ -127,7 +127,7 @@ function parseSection(
           buttonHint = formatWithOrdinals(
             viewSpec.buttonTitleOverride ||
             viewSpec.buttonTitleDefault ||
-            calendarButtonHints.view,
+            calendarOptions.viewHint,
             [textFallback, buttonName], // view-name = buttonName
             textFallback,
           )
