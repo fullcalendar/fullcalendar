@@ -49,7 +49,7 @@ export class Popover extends BaseComponent<PopoverProps> {
           </span>
           <span
             className={'fc-popover-close ' + theme.getIconClass('close')}
-            title={options.closeTitle}
+            title={options.closeHint}
             onClick={this.handleCloseClick}
           />
         </div>
