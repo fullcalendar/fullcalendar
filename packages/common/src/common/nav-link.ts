@@ -14,7 +14,7 @@ export function buildNavLinkAttrs(context: ViewContext, dateMarker: DateMarker, 
   if (options.navLinks) {
     let zonedDate = dateEnv.toDate(dateMarker)
     return {
-      title: formatWithOrdinals(options.navLinkTitle, [dateStr, zonedDate], dateStr),
+      title: formatWithOrdinals(options.navLinkHint, [dateStr, zonedDate], dateStr),
       'data-navlink': '', // for legacy selectors. TODO: use className?
       ...createAriaClickHandlers((ev: UIEvent) => {
         let customAction =

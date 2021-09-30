@@ -90,17 +90,17 @@ function buildViewSpec(
   }
 
   let queryButtonTitle = (optionsSubset) => { // TODO: more DRY with queryButtonText
-    let buttonTitleMap = optionsSubset.buttonTitles || {}
-    let buttonTitleKey = viewDef.defaults.buttonTextKey as string // use same key as text
+    let buttonHints = optionsSubset.buttonHints || {}
+    let buttonKey = viewDef.defaults.buttonTextKey as string // use same key as text
 
-    if (buttonTitleKey != null && buttonTitleMap[buttonTitleKey] != null) {
-      return buttonTitleMap[buttonTitleKey]
+    if (buttonKey != null && buttonHints[buttonKey] != null) {
+      return buttonHints[buttonKey]
     }
-    if (buttonTitleMap[viewDef.type] != null) {
-      return buttonTitleMap[viewDef.type]
+    if (buttonHints[viewDef.type] != null) {
+      return buttonHints[viewDef.type]
     }
-    if (buttonTitleMap[singleUnit] != null) {
-      return buttonTitleMap[singleUnit]
+    if (buttonHints[singleUnit] != null) {
+      return buttonHints[singleUnit]
     }
     return null
   }
@@ -128,10 +128,10 @@ function buildViewSpec(
     buttonTitleOverride:
       queryButtonTitle(dynamicOptionOverrides) ||
       queryButtonTitle(optionOverrides) ||
-      viewDef.overrides.buttonTitle,
+      viewDef.overrides.buttonHint,
     buttonTitleDefault:
       queryButtonTitle(localeDefaults) ||
-      viewDef.defaults.buttonTitle ||
+      viewDef.defaults.buttonHint ||
       queryButtonTitle(BASE_OPTION_DEFAULTS)
       // will eventually fall back to buttonText
   }

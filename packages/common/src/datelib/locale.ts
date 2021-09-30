@@ -55,15 +55,16 @@ const MINIMAL_RAW_EN_LOCALE = {
 
 const RAW_EN_LOCALE = {
   ...MINIMAL_RAW_EN_LOCALE,
-  // includes things we don't want other locales to inherit
-  buttonTitles: {
+  // Includes things we don't want other locales to inherit,
+  // things that derive from other translatable strings.
+  buttonHints: {
     prev: 'Previous $0',
     next: 'Next $0',
     today: 'Go to today',
     view: '$0 view',
   },
-  navLinkTitle: `Go to $0`,
-  moreLinkTitle(eventCnt: number) {
+  navLinkHint: `Go to $0`,
+  moreLinkHint(eventCnt: number) {
     return `Show ${eventCnt} more event${eventCnt === 1 ? '' : 's'}`
   },
 }

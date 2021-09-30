@@ -74,8 +74,8 @@ function parseSection(
   let calendarCustomButtons = calendarOptions.customButtons || {}
   let calendarButtonTextOverrides = calendarOptionOverrides.buttonText || {}
   let calendarButtonText = calendarOptions.buttonText || {}
-  let calendarButtonTitleOverrides = calendarOptionOverrides.buttonTitles || {}
-  let calendarButtonTitles = calendarOptions.buttonTitles || {}
+  let calendarButtonHintOverrides = calendarOptionOverrides.buttonHints || {}
+  let calendarButtonHints = calendarOptions.buttonHints || {}
   let sectionSubstrs = sectionStr ? sectionStr.split(' ') : []
   let viewsWithButtons: string[] = []
   let hasTitle = false
@@ -93,7 +93,7 @@ function parseSection(
         let buttonClick
         let buttonIcon // only one of these will be set
         let buttonText // "
-        let buttonTitle: string | ((navUnit: string) => string)
+        let buttonHint: string | ((navUnit: string) => string)
         // ^ for the title="" attribute, for accessibility
 
         if ((customButtonProps = calendarCustomButtons[buttonName])) {
@@ -107,7 +107,7 @@ function parseSection(
             (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
             (buttonText = customButtonProps.text)
 
-          buttonTitle = customButtonProps.title || customButtonProps.text
+          buttonHint = customButtonProps.title || customButtonProps.text
 
         } else if ((viewSpec = viewSpecs[buttonName])) {
           viewsWithButtons.push(buttonName)
@@ -124,10 +124,10 @@ function parseSection(
             viewSpec.buttonTextOverride ||
             viewSpec.buttonTextDefault
 
-          buttonTitle = formatWithOrdinals(
+          buttonHint = formatWithOrdinals(
             viewSpec.buttonTitleOverride ||
             viewSpec.buttonTitleDefault ||
-            calendarButtonTitles.view,
+            calendarButtonHints.view,
             [textFallback, buttonName], // view-name = buttonName
             textFallback,
           )
@@ -143,17 +143,17 @@ function parseSection(
 
           if (buttonName === 'prevYear' || buttonName === 'nextYear') {
             let prevOrNext = buttonName === 'prevYear' ? 'prev' : 'next'
-            buttonTitle = formatWithOrdinals(
-              calendarButtonTitleOverrides[prevOrNext] ||
-              calendarButtonTitles[prevOrNext],
+            buttonHint = formatWithOrdinals(
+              calendarButtonHintOverrides[prevOrNext] ||
+              calendarButtonHints[prevOrNext],
               ['year'],
               calendarButtonTextOverrides[buttonName] ||
               calendarButtonText[buttonName],
             )
           } else {
-            buttonTitle = (navUnit: string) => formatWithOrdinals(
-              calendarButtonTitleOverrides[buttonName] ||
-              calendarButtonTitles[buttonName],
+            buttonHint = (navUnit: string) => formatWithOrdinals(
+              calendarButtonHintOverrides[buttonName] ||
+              calendarButtonHints[buttonName],
               [navUnit],
               calendarButtonTextOverrides[buttonName] ||
               calendarButtonText[buttonName],
@@ -161,7 +161,7 @@ function parseSection(
           }
         }
 
-        return { buttonName, buttonClick, buttonIcon, buttonText, buttonTitle }
+        return { buttonName, buttonClick, buttonIcon, buttonText, buttonHint }
       })
     ),
   )

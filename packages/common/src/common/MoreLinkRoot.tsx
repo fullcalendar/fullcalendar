@@ -76,7 +76,7 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
           let text = typeof moreLinkText === 'function' // TODO: eventually use formatWithOrdinals
             ? moreLinkText.call(calendarApi, moreCnt)
             : `+${moreCnt} ${moreLinkText}`
-          let title = formatWithOrdinals(options.moreLinkTitle, [moreCnt], text)
+          let title = formatWithOrdinals(options.moreLinkHint, [moreCnt], text)
           let hookProps: MoreLinkContentArg = {
             num: moreCnt,
             shortText: `+${moreCnt}`, // TODO: offer hook or i18n?

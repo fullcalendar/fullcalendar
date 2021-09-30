@@ -30,7 +30,7 @@ export class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
     let isOnlyButtons = true
 
     for (let widget of widgetGroup) {
-      let { buttonName, buttonClick, buttonText, buttonIcon, buttonTitle } = widget
+      let { buttonName, buttonClick, buttonText, buttonIcon, buttonHint } = widget
 
       if (buttonName === 'title') {
         isOnlyButtons = false
@@ -52,7 +52,7 @@ export class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
         children.push(
           <button
             type="button"
-            title={typeof buttonTitle === 'function' ? buttonTitle(props.navUnit) : buttonTitle}
+            title={typeof buttonHint === 'function' ? buttonHint(props.navUnit) : buttonHint}
             disabled={isDisabled}
             aria-pressed={isPressed}
             className={buttonClasses.join(' ')}

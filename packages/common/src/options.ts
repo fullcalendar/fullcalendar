@@ -195,11 +195,11 @@ export const BASE_OPTION_REFINERS = {
 
   slotMinWidth: Number, // move to timeline?
   navLinks: Boolean,
-  navLinkTitle: String,
+  navLinkHint: String,
   eventTimeFormat: createFormatter,
   rerenderDelay: Number, // TODO: move to @fullcalendar/core right? nah keep here
   moreLinkText: identity as Identity<string | ((this: CalendarApi, num: number) => string)>, // this not enforced :( check others too
-  moreLinkTitle: identity as Identity<string | ((this: CalendarApi, num: number) => string)>,
+  moreLinkHint: identity as Identity<string | ((this: CalendarApi, num: number) => string)>,
   selectMinDistance: Number,
   selectable: Boolean,
   selectLongPressDelay: Number,
@@ -350,7 +350,7 @@ export type CalendarListeners = Required<CalendarListenersLoose> // much more co
 
 export const CALENDAR_OPTION_REFINERS = { // does not include base nor calendar listeners
   buttonText: identity as Identity<ButtonTextCompoundInput>,
-  buttonTitles: identity as Identity<ButtonTitleCompoundInput>,
+  buttonHints: identity as Identity<ButtonTitleCompoundInput>,
   views: identity as Identity<{ [viewId: string]: ViewOptions }>,
   plugins: identity as Identity<PluginDef[]>,
   initialEvents: identity as Identity<EventSourceInput>,
@@ -380,7 +380,7 @@ export const COMPLEX_OPTION_COMPARATORS: {
   headerToolbar: isBoolComplexEqual,
   footerToolbar: isBoolComplexEqual,
   buttonText: isBoolComplexEqual,
-  buttonTitles: isBoolComplexEqual,
+  buttonHints: isBoolComplexEqual,
   buttonIcons: isBoolComplexEqual,
 }
 
