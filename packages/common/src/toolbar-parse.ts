@@ -12,7 +12,7 @@ export function parseToolbars(
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi,
 ) {
-  let headerToolbar = calendarOptions.headerToolbar ? parseToolbar(
+  let header = calendarOptions.headerToolbar ? parseToolbar(
     calendarOptions.headerToolbar,
     calendarOptions,
     calendarOptionOverrides,
@@ -20,7 +20,7 @@ export function parseToolbars(
     viewSpecs,
     calendarApi,
   ) : null
-  let footerToolbar = calendarOptions.footerToolbar ? parseToolbar(
+  let footer = calendarOptions.footerToolbar ? parseToolbar(
     calendarOptions.footerToolbar,
     calendarOptions,
     calendarOptionOverrides,
@@ -29,7 +29,7 @@ export function parseToolbars(
     calendarApi,
   ) : null
 
-  return { headerToolbar, footerToolbar }
+  return { header, footer }
 }
 
 function parseToolbar(

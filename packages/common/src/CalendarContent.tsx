@@ -93,17 +93,17 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
       this.unregisterInteractiveComponent,
     )
 
-    let viewLabelId = (toolbarConfig.headerToolbar && toolbarConfig.headerToolbar.hasTitle)
+    let viewLabelId = (toolbarConfig.header && toolbarConfig.header.hasTitle)
       ? this.state.viewLabelId
       : ''
 
     return (
       <ViewContextType.Provider value={viewContext}>
-        {toolbarConfig.headerToolbar && (
+        {toolbarConfig.header && (
           <Toolbar
             ref={this.headerRef}
             extraClassName="fc-header-toolbar"
-            model={toolbarConfig.headerToolbar}
+            model={toolbarConfig.header}
             titleId={viewLabelId}
             {...toolbarProps}
           />
@@ -118,11 +118,11 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
           {this.renderView(props)}
           {this.buildAppendContent()}
         </ViewContainer>
-        {toolbarConfig.footerToolbar && (
+        {toolbarConfig.footer && (
           <Toolbar
             ref={this.footerRef}
             extraClassName="fc-footer-toolbar"
-            model={toolbarConfig.footerToolbar}
+            model={toolbarConfig.footer}
             titleId=''
             {...toolbarProps}
           />
