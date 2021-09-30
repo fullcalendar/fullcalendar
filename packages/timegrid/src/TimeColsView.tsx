@@ -214,9 +214,9 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
           content: (arg) => (
             // TODO: make this now-indicator arrow more DRY with TimeColsContent
             <div className="fc-timegrid-axis-chunk">
-              <table role='presentation' style={{ height: arg.expandRows ? arg.clientHeight : '' }}>
+              <table aria-hidden={true} style={{ height: arg.expandRows ? arg.clientHeight : '' }}>
                 {arg.tableColGroupNode}
-                <tbody role='presentation'>
+                <tbody>
                   <TimeBodyAxis slatMetas={slatMetas} />
                 </tbody>
               </table>
