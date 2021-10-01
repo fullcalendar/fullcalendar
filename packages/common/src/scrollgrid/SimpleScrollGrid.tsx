@@ -94,7 +94,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     return createElement(
       'table',
       {
-        role: 'table',
+        role: 'grid',
         className: classNames.join(' '),
         style: { height: props.height },
       },

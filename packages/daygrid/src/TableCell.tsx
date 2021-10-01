@@ -69,7 +69,7 @@ export class TableCell extends DateComponent<TableCellProps> {
         {(dayElRef, dayClassNames, rootDataAttrs, isDisabled) => (
           <td
             ref={dayElRef}
-            role="cell"
+            role="gridcell"
             className={['fc-daygrid-day'].concat(dayClassNames, props.extraClassNames || []).join(' ')}
             {...rootDataAttrs}
             {...props.extraDataAttrs}
