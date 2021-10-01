@@ -11,8 +11,8 @@ import {
   EventSegUiInteractionState,
   getSegMeta,
   Fragment,
+  createAriaClickAttrs,
 } from '@fullcalendar/common'
-import { createAriaClickAttrs } from '@fullcalendar/common/src/util/dom-event'
 import { TableSegPlacement } from './event-placement'
 import { hasListItemDisplay } from './event-rendering'
 import { TableBlockEvent } from './TableBlockEvent'

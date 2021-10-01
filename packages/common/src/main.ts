@@ -95,6 +95,7 @@ export {
   preventDefault,
   listenBySelector,
   whenTransitionDone,
+  createAriaClickAttrs,
 } from './util/dom-event'
 
 export {

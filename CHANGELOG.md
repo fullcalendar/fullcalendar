@@ -2,6 +2,7 @@
 FEATURE: week formatting arg accepts 'long'
 BREAKING: navLinkData no longer sent to navlink hooks. need to apply navLinkAttrs instead
 
+
 v5.9.0 (2021-07-28)
 -------------------
 - fix: dayGrid events sometimes overlap when eventOrderStrict:true (#6393)
