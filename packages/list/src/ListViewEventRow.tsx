@@ -39,7 +39,7 @@ export class ListViewEventRow extends BaseComponent<ListViewEventRowProps> {
         {(rootElRef, classNames, innerElRef, innerContent, hookProps) => (
           <tr className={['fc-list-event', hookProps.event.url ? 'fc-event-forced-url' : ''].concat(classNames).join(' ')} ref={rootElRef}>
             {buildTimeContent(seg, timeFormat, context, timeHeaderId, dateHeaderId)}
-            <td aria-hidden={true} className="fc-list-event-graphic">
+            <td aria-hidden className="fc-list-event-graphic">
               <span className="fc-list-event-dot" style={{ borderColor: hookProps.borderColor || hookProps.backgroundColor }} />
             </td>
             <td ref={innerElRef} headers={`${eventHeaderId} ${dateHeaderId}`} className="fc-list-event-title">
@@ -62,7 +62,13 @@ function renderEventInnerContent(seg: Seg, context: ViewContext) {
   )
 }
 
-function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewContext, timeHeaderId: string, dateHeaderId: string): ComponentChildren {
+function buildTimeContent(
+  seg: Seg,
+  timeFormat: DateFormatter,
+  context: ViewContext,
+  timeHeaderId: string,
+  dateHeaderId: string,
+): ComponentChildren {
   let { options } = context
 
   if (options.displayEventTime !== false) {

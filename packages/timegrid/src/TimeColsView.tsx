@@ -86,7 +86,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
         type: 'body',
         key: 'all-day-divider',
         outerContent: ( // TODO: rename to cellContent so don't need to define <tr>?
-          <tr role='presentation' className="fc-scrollgrid-section">
+          <tr role="presentation" className="fc-scrollgrid-section">
             <td
               className={'fc-timegrid-divider ' + context.theme.getClass('tableCellShaded')}
             />
@@ -152,7 +152,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
           {
             key: 'axis',
             rowContent: (arg: ChunkContentCallbackArgs) => (
-              <tr role='presentation'>
+              <tr role="presentation">
                 {this.renderHeadAxis('day', arg.rowSyncHeights[0])}
               </tr>
             ),
@@ -176,7 +176,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
           {
             key: 'axis',
             rowContent: (contentArg: ChunkContentCallbackArgs) => (
-              <tr role='presentation'>
+              <tr role="presentation">
                 {this.renderTableRowAxis(contentArg.rowSyncHeights[0])}
               </tr>
             ),
@@ -191,7 +191,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
         key: 'all-day-divider',
         type: 'body',
         outerContent: ( // TODO: rename to cellContent so don't need to define <tr>?
-          <tr role='presentation' className="fc-scrollgrid-section">
+          <tr role="presentation" className="fc-scrollgrid-section">
             <td
               colSpan={2}
               className={'fc-timegrid-divider ' + context.theme.getClass('tableCellShaded')}
@@ -214,7 +214,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
           content: (arg) => (
             // TODO: make this now-indicator arrow more DRY with TimeColsContent
             <div className="fc-timegrid-axis-chunk">
-              <table aria-hidden={true} style={{ height: arg.expandRows ? arg.clientHeight : '' }}>
+              <table aria-hidden style={{ height: arg.expandRows ? arg.clientHeight : '' }}>
                 {arg.tableColGroupNode}
                 <tbody>
                   <TimeBodyAxis slatMetas={slatMetas} />
@@ -337,7 +337,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
           {(rootElRef, classNames, innerElRef, innerContent) => (
             <th
               ref={rootElRef}
-              aria-hidden={true}
+              aria-hidden
               className={[
                 'fc-timegrid-axis',
                 'fc-scrollgrid-shrink',
@@ -362,7 +362,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     }
 
     return (
-      <th aria-hidden={true} className="fc-timegrid-axis">
+      <th aria-hidden className="fc-timegrid-axis">
         <div className="fc-timegrid-axis-frame" style={{ height: frameHeight }} />
       </th>
     )
@@ -393,7 +393,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
         {(rootElRef, classNames, innerElRef, innerContent) => (
           <td
             ref={rootElRef}
-            aria-hidden={true}
+            aria-hidden
             className={[
               'fc-timegrid-axis',
               'fc-scrollgrid-shrink',

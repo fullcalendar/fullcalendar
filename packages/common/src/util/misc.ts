@@ -137,16 +137,17 @@ export function padStart(val, len) { // doesn't work with total length more than
 }
 
 export function formatWithOrdinals<Args extends any[]>(
-  formatter: string | ((...args: Args) => string),
+  formatter: string | ((...formatterArgs: Args) => string),
   args: Args,
   fallbackText: string,
 ) {
   if (typeof formatter === 'function') {
     return formatter(...args)
-  } else if (typeof formatter === 'string') { // non-blank string
-    return args.reduce((str, arg, index) => {
-      return str.replace('$' + index, arg || '')
-    }, formatter)
+  }
+  if (typeof formatter === 'string') { // non-blank string
+    return args.reduce((str, arg, index) => (
+      str.replace('$' + index, arg || '')
+    ), formatter)
   }
   return fallbackText
 }

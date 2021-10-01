@@ -132,8 +132,8 @@ function buildViewSpec(
     buttonTitleDefault:
       queryButtonTitle(localeDefaults) ||
       viewDef.defaults.buttonHint ||
-      queryButtonTitle(BASE_OPTION_DEFAULTS)
-      // will eventually fall back to buttonText
+      queryButtonTitle(BASE_OPTION_DEFAULTS),
+    // will eventually fall back to buttonText
   }
 }
 

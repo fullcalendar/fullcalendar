@@ -1,6 +1,6 @@
 import {
   BaseComponent, DateMarker, createElement, DateRange, getDateMeta,
-  RenderHook, DayHeaderContentArg, getDayClassNames, formatDayString, Fragment, buildNavLinkAttrs, getUniqueDomId
+  RenderHook, DayHeaderContentArg, getDayClassNames, formatDayString, Fragment, buildNavLinkAttrs, getUniqueDomId,
 } from '@fullcalendar/common'
 
 export interface ListViewHeaderRowProps {
@@ -10,7 +10,7 @@ export interface ListViewHeaderRowProps {
 }
 
 interface HookProps extends DayHeaderContentArg { // doesn't enforce much since DayCellContentArg allow extra props
-  textId: string // for aria-labeledby
+  textId: string // for aria-labelledby
   text: string
   sideText: string
 }
@@ -63,7 +63,8 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
             className={classNames.concat(customClassNames).join(' ')}
             data-date={formatDayString(dayDate)}
           >
-            <th scope='colgroup' colSpan={3} id={cellId} aria-labeledby={textId}>{/* TODO: force-hide top border based on :first-child */}
+            {/* TODO: force-hide top border based on :first-child */}
+            <th scope="colgroup" colSpan={3} id={cellId} aria-labelledby={textId}>
               <div className={'fc-list-day-cushion ' + theme.getClass('tableCellShaded')} ref={innerElRef}>
                 {innerContent}
               </div>
@@ -83,8 +84,8 @@ function renderInnerContent(props: HookProps) {
           {props.text}
         </a>
       )}
-      {props.sideText && ( /* not keyboard tabbable */
-        <a aria-hidden={true} className="fc-list-day-side-text" {...props.sideNavLinkAttrs}>
+      {props.sideText && (/* not keyboard tabbable */
+        <a aria-hidden className="fc-list-day-side-text" {...props.sideNavLinkAttrs}>
           {props.sideText}
         </a>
       )}

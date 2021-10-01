@@ -40,7 +40,7 @@ export class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
     return (
       <div ref={this.rootElRef} className="fc-timegrid-slots">
         <table
-          aria-hidden={true}
+          aria-hidden
           className={context.theme.getClass('table')}
           style={{
             minWidth: props.tableMinWidth,

@@ -41,6 +41,7 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
   private interactionsStore: { [componentUid: string]: Interaction[] } = {}
   private calendarInteractions: CalendarInteraction[]
 
+  // eslint-disable-next-line
   state = {
     viewLabelId: getUniqueDomId(),
   }
@@ -120,7 +121,7 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
             ref={this.footerRef}
             extraClassName="fc-footer-toolbar"
             model={toolbarConfig.footer}
-            titleId=''
+            titleId=""
             {...toolbarProps}
           />
         )}

@@ -38,7 +38,7 @@ export class Emitter<HandlerFuncs extends HandlerFuncTypeHash> {
   hasHandlers(type: keyof HandlerFuncs): boolean {
     return Boolean(
       (this.handlers[type] && this.handlers[type].length) ||
-      (this.options && this.options[type])
+      (this.options && this.options[type]),
     )
   }
 }

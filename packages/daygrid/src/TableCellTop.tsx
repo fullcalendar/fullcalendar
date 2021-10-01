@@ -41,8 +41,8 @@ export class TableCellTop extends BaseComponent<TableCellTopProps> {
               <a
                 id={props.dayNumberId}
                 className="fc-daygrid-day-number"
-                {...navLinkAttrs
-              }>
+                {...navLinkAttrs}
+              >
                 {innerContent || <Fragment>&nbsp;</Fragment>}
               </a>
             </div>

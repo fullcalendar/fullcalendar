@@ -1,4 +1,13 @@
-import { createElement, BaseComponent, Seg, EventRoot, buildSegTimeText, EventContentArg, Fragment, getSegAnchorAttrs } from '@fullcalendar/common'
+import {
+  createElement,
+  BaseComponent,
+  Seg,
+  EventRoot,
+  buildSegTimeText,
+  EventContentArg,
+  Fragment,
+  getSegAnchorAttrs,
+} from '@fullcalendar/common'
 import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering'
 
 export interface DotTableEventProps {

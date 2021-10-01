@@ -107,8 +107,10 @@ export function renderChunkContent(
         {
           role: 'presentation',
         },
-        typeof chunkConfig.rowContent === 'function' ? chunkConfig.rowContent(arg) : chunkConfig.rowContent
-      )
+        typeof chunkConfig.rowContent === 'function'
+          ? chunkConfig.rowContent(arg)
+          : chunkConfig.rowContent,
+      ),
     )
 
   return content

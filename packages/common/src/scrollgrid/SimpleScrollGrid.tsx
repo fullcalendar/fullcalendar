@@ -117,7 +117,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
     return (
       <tr
         key={sectionConfig.key}
-        role='presentation'
+        role="presentation"
         className={getSectionClassNames(sectionConfig, this.props.liquid).join(' ')}
       >
         {this.renderChunkTd(sectionConfig, microColGroupNode, sectionConfig.chunk, isHeader)}
@@ -179,7 +179,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
         >
           {content}
         </Scroller>
-      </div>
+      </div>,
     )
   }
 

@@ -105,6 +105,6 @@ export function createAriaKeyboardAttrs(handler: ((ev: UIEvent) => void)) {
         handler(ev)
         ev.preventDefault() // if space, don't scroll down page
       }
-    }
+    },
   }
 }

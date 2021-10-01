@@ -169,7 +169,7 @@ export class ListView extends DateComponent<ViewProps> {
               <thead>
                 <tr>
                   <th scope="col" id={timeHeaderId}>{options.timeHint}</th>
-                  <th scope="col" aria-hidden={true}></th>{/* color dots */}
+                  <th scope="col" aria-hidden />
                   <th scope="col" id={eventHeaderId}>{options.eventHint}</th>
                 </tr>
               </thead>

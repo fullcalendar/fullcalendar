@@ -38,7 +38,7 @@ function parseToolbar(
   calendarOptionOverrides: CalendarOptions,
   theme: Theme,
   viewSpecs: ViewSpecHash,
-  calendarApi: CalendarApi
+  calendarApi: CalendarApi,
 ) : ToolbarModel {
   let sectionWidgets: { [sectionName: string]: ToolbarWidget[][] } = {}
   let viewsWithButtons: string[] = []
@@ -65,11 +65,7 @@ function parseSection(
   theme: Theme,
   viewSpecs: ViewSpecHash,
   calendarApi: CalendarApi,
-): {
-  widgets: ToolbarWidget[][],
-  viewsWithButtons: string[],
-  hasTitle: boolean,
- } {
+): { widgets: ToolbarWidget[][], viewsWithButtons: string[], hasTitle: boolean } {
   let isRtl = calendarOptions.direction === 'rtl'
   let calendarCustomButtons = calendarOptions.customButtons || {}
   let calendarButtonTextOverrides = calendarOptionOverrides.buttonText || {}
@@ -101,22 +97,21 @@ function parseSection(
             if (customButtonProps.click) {
               customButtonProps.click.call(ev.target, ev, ev.target) // TODO: use Calendar this context?
             }
-          }
+          };
 
-          ;(buttonIcon = theme.getCustomButtonIconClass(customButtonProps)) ||
+          (buttonIcon = theme.getCustomButtonIconClass(customButtonProps)) ||
             (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
             (buttonText = customButtonProps.text)
 
           buttonHint = customButtonProps.title || customButtonProps.text
-
         } else if ((viewSpec = viewSpecs[buttonName])) {
           viewsWithButtons.push(buttonName)
 
           buttonClick = () => {
             calendarApi.changeView(buttonName)
-          }
+          };
 
-          ;(buttonText = viewSpec.buttonTextOverride) ||
+          (buttonText = viewSpec.buttonTextOverride) ||
             (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
             (buttonText = viewSpec.buttonTextDefault)
 
@@ -131,13 +126,12 @@ function parseSection(
             [textFallback, buttonName], // view-name = buttonName
             textFallback,
           )
-
         } else if (calendarApi[buttonName]) { // a calendarApi method
           buttonClick = () => {
             calendarApi[buttonName]()
-          }
+          };
 
-          ;(buttonText = calendarButtonTextOverrides[buttonName]) ||
+          (buttonText = calendarButtonTextOverrides[buttonName]) ||
             (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
             (buttonText = calendarButtonText[buttonName]) // everything else is considered default
 

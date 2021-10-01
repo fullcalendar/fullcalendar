@@ -22,7 +22,7 @@ export function buildNavLinkAttrs(
     const handleInteraction = (ev: UIEvent) => {
       let customAction =
         viewType === 'day' ? options.navLinkDayClick :
-        viewType === 'week' ? options.navLinkWeekClick : null
+          viewType === 'week' ? options.navLinkWeekClick : null
 
       if (typeof customAction === 'function') {
         customAction.call(calendarApi, dateEnv.toDate(dateMarker), ev)
@@ -40,7 +40,7 @@ export function buildNavLinkAttrs(
       ...(isTabbable
         ? createAriaClickAttrs(handleInteraction)
         : { onClick: handleInteraction }
-      )
+      ),
     }
   }
 

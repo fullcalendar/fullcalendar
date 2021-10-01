@@ -63,7 +63,7 @@ const RAW_EN_LOCALE = {
     today: 'Go to today',
   },
   viewHint: '$0 view',
-  navLinkHint: `Go to $0`,
+  navLinkHint: 'Go to $0',
   moreLinkHint(eventCnt: number) {
     return `Show ${eventCnt} more event${eventCnt === 1 ? '' : 's'}`
   },

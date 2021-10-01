@@ -99,7 +99,7 @@ export class Table extends DateComponent<TableProps> {
           {(nowDate: DateMarker, todayRange: DateRange) => (
             <Fragment>
               <table
-                role='presentation'
+                role="presentation"
                 className="fc-scrollgrid-sync-table"
                 style={{
                   width: props.clientWidth,
@@ -108,7 +108,7 @@ export class Table extends DateComponent<TableProps> {
                 }}
               >
                 {props.colGroupNode}
-                <tbody role='presentation'>
+                <tbody role="presentation">
                   {props.cells.map((cells, row) => (
                     <TableRow
                       ref={this.rowRefs.createRef(row)}

@@ -39,7 +39,7 @@ export class Popover extends BaseComponent<PopoverProps> {
       <div
         id={props.id}
         className={classNames.join(' ')}
-        aria-labeledby={state.titleId}
+        aria-labelledby={state.titleId}
         {...props.extraAttrs}
         ref={this.handleRootEl}
       >

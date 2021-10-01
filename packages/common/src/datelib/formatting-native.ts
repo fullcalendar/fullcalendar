@@ -276,12 +276,18 @@ function injectTzoStr(s: string, tzoStr: string): string {
   return s
 }
 
-function formatWeekNumber(num: number, weekText: string, weekTextLong: string, locale: Locale, display?: 'numeric' | 'narrow' | 'short' | 'long'): string {
+function formatWeekNumber(
+  num: number,
+  weekText: string,
+  weekTextLong: string,
+  locale: Locale,
+  display?: 'numeric' | 'narrow' | 'short' | 'long',
+): string {
   let parts = []
 
   if (display === 'long') {
     parts.push(weekTextLong)
-  } else if (display == 'short' || display === 'narrow') {
+  } else if (display === 'short' || display === 'narrow') {
     parts.push(weekText)
   }
 

@@ -65,7 +65,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
         {(rootElRef, classNames, dataAttrs) => (
           <td
             ref={rootElRef}
-            role='cell'
+            role="cell"
             className={['fc-timegrid-col'].concat(classNames, props.extraClassNames || []).join(' ')}
             {...dataAttrs}
             {...props.extraDataAttrs}
