@@ -71,28 +71,28 @@ A HORIZONTAL event
 .fc-direction-ltr .fc-h-event:not(.fc-event-selected) .fc-event-resizer-start,
 .fc-direction-rtl .fc-h-event:not(.fc-event-selected) .fc-event-resizer-end {
   cursor: w-resize;
-  left: calc(var(--fc-event-resizer-thickness) / -2);
+  left: calc(-.5 * var(--fc-event-resizer-thickness));
 }
 
 .fc-direction-ltr .fc-h-event:not(.fc-event-selected) .fc-event-resizer-end,
 .fc-direction-rtl .fc-h-event:not(.fc-event-selected) .fc-event-resizer-start {
   cursor: e-resize;
-  right: calc(var(--fc-event-resizer-thickness) / -2);
+  right: calc(-.5 * var(--fc-event-resizer-thickness));
 }
 
 // resizers for TOUCH
 
 .fc-h-event.fc-event-selected .fc-event-resizer {
   top: 50%;
-  margin-top: calc(var(--fc-event-resizer-dot-total-width) / -2);
+  margin-top: calc(-.5 * var(--fc-event-resizer-dot-total-width));
 }
 
 .fc-direction-ltr .fc-h-event.fc-event-selected .fc-event-resizer-start,
 .fc-direction-rtl .fc-h-event.fc-event-selected .fc-event-resizer-end {
-  left: calc(var(--fc-event-resizer-dot-total-width) / -2);
+  left: calc(-.5 * var(--fc-event-resizer-dot-total-width));
 }
 
 .fc-direction-ltr .fc-h-event.fc-event-selected .fc-event-resizer-end,
 .fc-direction-rtl .fc-h-event.fc-event-selected .fc-event-resizer-start {
-  right: calc(var(--fc-event-resizer-dot-total-width) / -2);
+  right: calc(-.5 * var(--fc-event-resizer-dot-total-width));
 }
