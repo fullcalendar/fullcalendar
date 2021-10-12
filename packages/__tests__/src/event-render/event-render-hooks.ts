@@ -102,9 +102,18 @@ describe('eventContent', () => {
         },
       },
       events: [
-        { start: '2021-01-07' },
+        { start: '2021-01-07', title: 'default title' },
       ],
     })
-    calendar.changeView('dayGridMonth') // can do without error?
+
+    let dayGrid = new DayGridViewWrapper(calendar).dayGrid
+    let eventEl = dayGrid.getEventEls()[0]
+    expect(eventEl.innerText.trim()).toBe('test dayGridWeek')
+
+    calendar.changeView('dayGridMonth')
+
+    dayGrid = new DayGridViewWrapper(calendar).dayGrid
+    eventEl = dayGrid.getEventEls()[0]
+    expect(eventEl.innerText.trim()).toBe('default title')
   })
 })

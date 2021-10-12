@@ -27,8 +27,8 @@ export const globalPlugins: PluginDef[] = [ // TODO: make a const?
       (state: CalendarDataManagerState) => computeEventSourcesLoading(state.eventSources),
     ],
     contentTypeHandlers: {
-      html: () => ({ render: injectHtml }),
-      domNodes: () => ({ render: injectDomNodes }),
+      html: buildHtmlRenderer,
+      domNodes: buildDomNodeRenderer,
     },
     propSetHandlers: {
       dateProfile: handleDateProfile,
@@ -37,18 +37,51 @@ export const globalPlugins: PluginDef[] = [ // TODO: make a const?
   }),
 ]
 
-export function injectHtml(el: HTMLElement, html: string) {
-  el.innerHTML = html
+function buildHtmlRenderer() {
+  let currentEl: HTMLElement | null = null
+  let currentHtml: string = ''
+
+  function render(el: HTMLElement, html: string) {
+    if (el !== currentEl || html !== currentHtml) {
+      el.innerHTML = html
+    }
+    currentEl = el
+    currentHtml = html
+  }
+
+  function destroy() {
+    currentEl.innerHTML = ''
+    currentEl = null
+    currentHtml = ''
+  }
+
+  return { render, destroy }
 }
 
-export function injectDomNodes(el: HTMLElement, domNodes: Node[] | NodeList) {
-  let oldNodes = Array.prototype.slice.call(el.childNodes) // TODO: use array util
-  let newNodes = Array.prototype.slice.call(domNodes) // TODO: use array util
+function buildDomNodeRenderer() {
+  let currentEl: HTMLElement | null = null
+  let currentDomNodes: Node[] = []
 
-  if (!isArraysEqual(oldNodes, newNodes)) {
-    for (let newNode of newNodes) {
-      el.appendChild(newNode)
+  function render(el: HTMLElement, domNodes: Node[] | NodeList) {
+    let newDomNodes = Array.prototype.slice.call(domNodes)
+
+    if (el !== currentEl || !isArraysEqual(currentDomNodes, newDomNodes)) {
+      // append first, remove second (for scroll resetting)
+      for (let newNode of newDomNodes) {
+        el.appendChild(newNode)
+      }
+      destroy()
     }
-    oldNodes.forEach(removeElement)
+
+    currentEl = el
+    currentDomNodes = newDomNodes
   }
+
+  function destroy() {
+    currentDomNodes.forEach(removeElement)
+    currentDomNodes = []
+    currentEl = null
+  }
+
+  return { render, destroy }
 }
