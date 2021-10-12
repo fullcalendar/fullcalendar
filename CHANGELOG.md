@@ -1,9 +1,42 @@
 
 v5.10.0
 -------
+
+- feature: WAI-ARIA improvements:
+  - toolbar (#6521)
+    - human-readable `title` attributes on all buttons. new options:
+      - `buttonHints`
+      - `customButtons.hint`
+      - `viewHint` (ex: `$0 view` -> `"month view"`)
+    - `aria-labelledby` attribute connecting view-title with view-container
+  - event elements (#3365)
+    - previously, only events with an `event.url` property were tabbable by the end-user.
+      now, events *without* urls can be made tabbable by enabling `event.interactive` or by
+      enabling the calendar-wide `eventInteractive` option.
+    - when focused, pressing enter/spacebar will trigger an `eventClick`
+  - more-links and popover (#6523)
+    - human-readable `title` attributes on "+more" links
+    - when focused, pressing enter/spacebar will open popover
+    - `aria-controls`/`aria-expanded` attributes connecting link to popover
+    - `aria-labelledby` attribute connecting popover-title to popover
+    - `aria-label` attribute describing "X" close icon via new option `closeHint`
+    - pressing escape key closes popover
+  - nav-links (#6542)
+    - human-readable `title` attributes on all navLinks via new option `navLinkHint`
+    - when focused, pressing enter/spacebar will trigger `navLinkClick`
+  - table-based views (#6526)
+    - all cells within thead elements have been made into `<th>` tags
+    - retrofit the necessarily non-ARIA-friendly table markup with `role` tags. the root table is a
+      `grid`, children have been given `rowgroup`/`row`/`columnheader`/`rowheader`/`cell`, and
+      non-functional table elements have been given `presentation`.
+    - in timegrid views, the time-axis axis has been removed from the accessibility tree
+  - list-view (#6525)
+    - introduced a table-header specifically for screen readers. header cells label the time/event
+      columns using the following new options: `timeHint` and `eventHint`
+    - removed the "dot" column from the accessibility tree
 - feature: date formatting option `week` now accepts `'long'` if locale defines `weekTextLong`
 - bugfix: timeline-view events hidden by `eventMaxStack` sometimes appear over other events (#6543)
-- bugfix: daygrid event rendering with `dayMaxEventRows` and custome `eventOrder` can cause infinite loop (#6573)
+- bugfix: daygrid event rendering with `dayMaxEventRows` and custom `eventOrder` can cause infinite loop (#6573)
 - bugfix: content-injected html/domNodes as view-specific options don't clear when switching views (#6079, #6555)
 - locale: added si-lk (#6553)
 
