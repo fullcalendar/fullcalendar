@@ -1,7 +1,6 @@
 
 v5.10.0
 -------
-
 - feature: WAI-ARIA improvements:
   - toolbar (#6521)
     - human-readable `title` attributes on all buttons. new options:
