@@ -41,8 +41,8 @@ import {
   MoreLinkContentArg,
   MoreLinkMountArg,
   MoreLinkAction,
+  ButtonTitleCompoundInput,
 } from './api-type-deps'
-import { ButtonTitleCompoundInput } from './toolbar-struct'
 
 // base options
 // ------------
