@@ -103,7 +103,7 @@ function parseSection(
             (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
             (buttonText = customButtonProps.text)
 
-          buttonHint = customButtonProps.title || customButtonProps.text
+          buttonHint = customButtonProps.hint || customButtonProps.text
         } else if ((viewSpec = viewSpecs[buttonName])) {
           viewsWithButtons.push(buttonName)
 

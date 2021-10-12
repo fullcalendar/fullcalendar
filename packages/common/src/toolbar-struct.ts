@@ -23,7 +23,7 @@ export interface ToolbarInput {
 
 export interface CustomButtonInput {
   text?: string
-  title?: string
+  hint?: string
   icon?: string
   themeIcon?: string
   bootstrapFontAwesome?: string
