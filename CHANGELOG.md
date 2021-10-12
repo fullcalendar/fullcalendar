@@ -1,6 +1,11 @@
 
-FEATURE: week formatting arg accepts 'long'
-BREAKING: navLinkData no longer sent to navlink hooks. need to apply navLinkAttrs instead
+v5.10.0
+-------
+- feature: date formatting option `week` now accepts `'long'` if locale defines `weekTextLong`
+- bugfix: timeline-view events hidden by `eventMaxStack` sometimes appear over other events (#6543)
+- bugfix: daygrid event rendering with `dayMaxEventRows` and custome `eventOrder` can cause infinite loop (#6573)
+- bugfix: content-injected html/domNodes as view-specific options don't clear when switching views (#6079, #6555)
+- locale: added si-lk (#6553)
 
 
 v5.9.0 (2021-07-28)
