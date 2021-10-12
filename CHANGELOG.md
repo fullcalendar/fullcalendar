@@ -38,6 +38,7 @@ v5.10.0
 - bugfix: timeline-view events hidden by `eventMaxStack` sometimes appear over other events (#6543)
 - bugfix: daygrid event rendering with `dayMaxEventRows` and custom `eventOrder` can cause infinite loop (#6573)
 - bugfix: content-injected html/domNodes as view-specific options don't clear when switching views (#6079, #6555)
+- bugfix: more compliant CSS with Sass processors (#6564)
 - locale: added si-lk (#6553)
 
 
