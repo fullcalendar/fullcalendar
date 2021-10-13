@@ -40,6 +40,16 @@ v5.10.0
 - bugfix: more compliant CSS with Sass processors (#6564)
 - locale: added si-lk (#6553)
 
+HELP WANTED populating new options in locales (examples: [es](#), [en-GB](#))
+- `buttonHints`
+- `viewHint`
+- `weekTextLong`
+- `moreLinkHint`
+- `navLinkHint`
+- `closeHint`
+- `timeHint`
+- `eventHint`
+
 
 v5.9.0 (2021-07-28)
 -------------------
