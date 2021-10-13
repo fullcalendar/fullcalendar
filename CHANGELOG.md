@@ -1,6 +1,7 @@
 
 v5.10.0 (2021-10-13)
 --------------------
+
 - feature: WAI-ARIA improvements:
   - toolbar (#6521)
     - human-readable `title` attributes on all buttons. new options:
@@ -40,7 +41,7 @@ v5.10.0 (2021-10-13)
 - bugfix: more compliant CSS with Sass processors (#6564)
 - locale: added si-lk (#6553)
 
-HELP WANTED populating new options in locales (examples: [es](#), [en-GB](#))
+HELP WANTED populating new options in locales (examples: [es][es-aria-example], [en-GB][en-aria-example])
 - `buttonHints`
 - `viewHint`
 - `weekTextLong`
@@ -49,6 +50,9 @@ HELP WANTED populating new options in locales (examples: [es](#), [en-GB](#))
 - `closeHint`
 - `timeHint`
 - `eventHint`
+
+[es-aria-example]: https://github.com/fullcalendar/fullcalendar/commit/63cd61bd89ae56642e76e3ea8b3a44cbd3fe2555
+[en-aria-example]: https://github.com/fullcalendar/fullcalendar/commit/d8e33a04ecc9bd8dd54f1d2c39aaa7ed919f896c
 
 
 v5.9.0 (2021-07-28)
