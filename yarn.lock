@@ -11169,10 +11169,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"components-jqueryui@github:components/jqueryui":
+"components-jqueryui@npm:^1.12.1":
   version: 1.12.1
-  resolution: "components-jqueryui@https://github.com/components/jqueryui.git#commit=44ecf3794cc56b65954cc19737234a3119d036cc"
-  checksum: ae297bbccd63e3d77a3a5748322ee1d467ffd55e5dc9ee7a4a7e70e75b831c914120b72ceab0d1c66b75c64d44f3395e4992326d949c8f23923af4d33a72e853
+  resolution: "components-jqueryui@npm:1.12.1"
+  checksum: e8f25a9eb5ed723078d4ece93ac8f054ef15deed9f867fbbd5ba4ac571ae92c3e9a7ab8266fd868a9f654a68ade9d15c8fc7a3f5e7b4d3c4efba7cfe95c564f5
   languageName: node
   linkType: hard
 
@@ -15187,10 +15187,10 @@ fsevents@~2.1.2:
     "@types/jasmine": ^3.3.12
     "@types/jasmine-jquery": ^1.5.33
     "@types/jquery": ^3.3.29
-    components-jqueryui: "github:components/jqueryui"
+    components-jqueryui: ^1.12.1
     jasmine-jquery: ^2.1.1
     jquery: ^3.4.0
-    jquery-simulate: "github:jquery/jquery-simulate#main"
+    jquery-simulate: ^1.0.2
     moment: ^2.29.1
     moment-timezone: ^0.5.31
     tslib: ^2.1.0
@@ -18750,10 +18750,10 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"jquery-simulate@github:jquery/jquery-simulate#main":
-  version: 1.1.2-pre
-  resolution: "jquery-simulate@https://github.com/jquery/jquery-simulate.git#commit=2eafaa63a0cdc775a8a35f0aa91103b83ed6124c"
-  checksum: 66f492ec3adb3a71037616c15485040084a96e533b700c25ddfd920f95802dd7e1f0b3dbc2546d2b6bc40a1c6601225dbdf4db04cceab8fa7055906ad7692f52
+"jquery-simulate@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "jquery-simulate@npm:1.0.2"
+  checksum: 4e957b95f3b97aba53ee3b5bf064c0cd8778949effcc2e0169723f492384f2f3e1728662193e34d3646bcbed96eb2612fb63578458fcc89aa4ee07b13b1a0183
   languageName: node
   linkType: hard
 
