@@ -19,7 +19,7 @@ export default {
     prev: '$0 antes',
     next: '$0 siguiente',
     today(buttonText) {
-      return (buttonText === 'Día') ? 'Hoy':
+      return (buttonText === 'Día') ? 'Hoy' :
         ((buttonText === 'Semana') ? 'Esta' : 'Este') + ' ' + buttonText.toLocaleLowerCase()
     },
   },

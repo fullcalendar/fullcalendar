@@ -141,7 +141,7 @@ function parseSection(
               calendarButtonHintOverrides[prevOrNext] ||
               calendarButtonHints[prevOrNext],
               [
-                calendarButtonText['year'] || 'year', // localize unit
+                calendarButtonText.year || 'year', // localize unit
                 'year',
               ],
               calendarButtonText[buttonName],

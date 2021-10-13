@@ -64,7 +64,7 @@ const RAW_EN_LOCALE = {
       return (unit === 'day')
         ? 'Today'
         : `This ${buttonText}`
-    }
+    },
   },
   viewHint: '$0 view',
   navLinkHint: 'Go to $0',
