@@ -1,6 +1,6 @@
 
-v5.10.0
--------
+v5.10.0 (2021-10-13)
+--------------------
 - feature: WAI-ARIA improvements:
   - toolbar (#6521)
     - human-readable `title` attributes on all buttons. new options:
@@ -14,7 +14,7 @@ v5.10.0
       enabling the calendar-wide `eventInteractive` option.
     - when focused, pressing enter/spacebar will trigger an `eventClick`
   - more-links and popover (#6523)
-    - human-readable `title` attributes on "+more" links
+    - human-readable `title` attributes on "+more" links via new option `moreLinkHint`
     - when focused, pressing enter/spacebar will open popover
     - `aria-controls`/`aria-expanded` attributes connecting link to popover
     - `aria-labelledby` attribute connecting popover-title to popover
