@@ -31,7 +31,7 @@
     "@types/jquery": "2.0.47",
     "awesome-typescript-loader": "^3.5.0",
     "bootstrap": "^3.3.7",
-    "components-jqueryui": "github:components/jqueryui",
+    "components-jqueryui": "^1.12.1",
     "css-loader": "^0.28.10",
     "del": "^2.2.1",
     "dts-generator": "^2.1.0",
