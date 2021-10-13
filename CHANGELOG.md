@@ -1,4 +1,10 @@
 
+v3.10.3 (2021-10-13)
+--------------------
+fix: npm-shrinkwrap.json published causing bundling problem when using webpack (#6536)
+fix: error in npm install of v3 from jquery-simulate dependency with older npm (#6460)
+
+
 v3.10.2 (2020-05-13)
 --------------------
 
