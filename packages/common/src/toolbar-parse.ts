@@ -140,16 +140,20 @@ function parseSection(
             buttonHint = formatWithOrdinals(
               calendarButtonHintOverrides[prevOrNext] ||
               calendarButtonHints[prevOrNext],
-              ['year'],
-              calendarButtonTextOverrides[buttonName] ||
+              [
+                calendarButtonText['year'] || 'year', // localize unit
+                'year',
+              ],
               calendarButtonText[buttonName],
             )
           } else {
             buttonHint = (navUnit: string) => formatWithOrdinals(
               calendarButtonHintOverrides[buttonName] ||
               calendarButtonHints[buttonName],
-              [navUnit],
-              calendarButtonTextOverrides[buttonName] ||
+              [
+                calendarButtonText[navUnit] || navUnit, // localized unit
+                navUnit,
+              ],
               calendarButtonText[buttonName],
             )
           }

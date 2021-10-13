@@ -41,7 +41,7 @@ import {
   MoreLinkContentArg,
   MoreLinkMountArg,
   MoreLinkAction,
-  ButtonTitleCompoundInput,
+  ButtonHintCompoundInput,
 } from './api-type-deps'
 
 // base options
@@ -227,8 +227,8 @@ export const BASE_OPTION_REFINERS = {
   // only used by list-view, but languages define the value, so we need it in base options
   noEventsText: String,
 
-  viewHint: String,
-  navLinkHint: String,
+  viewHint: identity as Identity<string | ((...args: any[]) => string)>,
+  navLinkHint: identity as Identity<string | ((...args: any[]) => string)>,
   closeHint: String,
   timeHint: String,
   eventHint: String,
@@ -351,7 +351,7 @@ export type CalendarListeners = Required<CalendarListenersLoose> // much more co
 
 export const CALENDAR_OPTION_REFINERS = { // does not include base nor calendar listeners
   buttonText: identity as Identity<ButtonTextCompoundInput>,
-  buttonHints: identity as Identity<ButtonTitleCompoundInput>,
+  buttonHints: identity as Identity<ButtonHintCompoundInput>,
   views: identity as Identity<{ [viewId: string]: ViewOptions }>,
   plugins: identity as Identity<PluginDef[]>,
   initialEvents: identity as Identity<EventSourceInput>,

@@ -51,7 +51,7 @@ export interface ButtonTextCompoundInput {
   [viewOrCustomButton: string]: string | undefined // needed b/c of other optional types
 }
 
-export interface ButtonTitleCompoundInput { // not DRY with ButtonTextCompoundInput
+export interface ButtonHintCompoundInput { // not DRY with ButtonTextCompoundInput
   prev?: string | ((...args: any[]) => string)
   next?: string | ((...args: any[]) => string)
   prevYear?: string | ((...args: any[]) => string)

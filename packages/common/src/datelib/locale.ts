@@ -60,7 +60,11 @@ const RAW_EN_LOCALE = {
   buttonHints: {
     prev: 'Previous $0',
     next: 'Next $0',
-    today: 'This $0',
+    today(buttonText, unit) {
+      return (unit === 'day')
+        ? 'Today'
+        : `This ${buttonText}`
+    }
   },
   viewHint: '$0 view',
   navLinkHint: 'Go to $0',

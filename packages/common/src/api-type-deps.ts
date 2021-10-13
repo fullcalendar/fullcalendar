@@ -40,4 +40,4 @@ export { ToolbarInput, CustomButtonInput, ButtonIconsInput, ButtonTextCompoundIn
 export { EventContentArg, EventMountArg } from './component/event-rendering'
 export { DatesSetArg } from './dates-set'
 export { EventAddArg, EventChangeArg, EventDropArg, EventRemoveArg } from './event-crud'
-export { ButtonTitleCompoundInput } from './toolbar-struct'
+export { ButtonHintCompoundInput } from './toolbar-struct'
