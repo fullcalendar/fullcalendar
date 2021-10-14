@@ -386,6 +386,30 @@ describe('more-link popover', () => {
     })
   })
 
+  it('calls the defined morePopoverClose callback when closing', (done) => {
+    const options = {
+      morePopoverClose() {},
+    }
+
+    spyOn(options, 'morePopoverClose')
+
+    let calendar = initCalendar(options)
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+    dayGridWrapper.openMorePopover()
+    setTimeout(() => {
+      expect(options.morePopoverClose).not.toHaveBeenCalled()
+      expect(dayGridWrapper.getMorePopoverEl()).toBeVisible()
+
+      dayGridWrapper.closeMorePopover()
+      setTimeout(() => {
+        expect(options.morePopoverClose).toHaveBeenCalled()
+        expect(dayGridWrapper.getMorePopoverEl()).not.toBeVisible()
+        done()
+      })
+    })
+  })
+
   describe('when dragging events out', () => {
     pushOptions({
       editable: true,

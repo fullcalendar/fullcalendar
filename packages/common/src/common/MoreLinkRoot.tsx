@@ -180,6 +180,12 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
   }
 
   handlePopoverClose = () => {
+    let { morePopoverClose } = this.context.options
+
+    if (typeof morePopoverClose === 'function') {
+      morePopoverClose()
+    }
+
     this.setState({ isPopoverOpen: false })
   }
 }

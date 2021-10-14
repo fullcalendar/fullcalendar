@@ -238,6 +238,8 @@ export const BASE_OPTION_REFINERS = {
   moreLinkContent: identity as Identity<CustomContentGenerator<MoreLinkContentArg>>,
   moreLinkDidMount: identity as Identity<DidMountHandler<MoreLinkMountArg>>,
   moreLinkWillUnmount: identity as Identity<WillUnmountHandler<MoreLinkMountArg>>,
+
+  morePopoverClose: identity as Identity<() => void>,
 }
 
 type BuiltInBaseOptionRefiners = typeof BASE_OPTION_REFINERS
