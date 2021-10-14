@@ -21,7 +21,7 @@ v5.10.0 (2021-10-13)
     - `aria-labelledby` attribute connecting popover-title to popover
     - `aria-label` attribute describing "X" close icon via new option `closeHint`
     - pressing escape key closes popover
-  - nav-links (#6542)
+  - nav-links (#6524)
     - human-readable `title` attributes on all navLinks via new option `navLinkHint`
     - when focused, pressing enter/spacebar will trigger `navLinkClick`
   - table-based views (#6526)
