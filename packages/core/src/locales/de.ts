@@ -23,6 +23,7 @@ export default {
     list: 'Terminübersicht',
   },
   weekText: 'KW',
+  weekTextLong: 'Woche',
   allDayText: 'Ganztägig',
   moreLinkText(n) {
     return '+ weitere ' + n
@@ -54,4 +55,7 @@ export default {
         'ein weiteres Ereignis' :
         eventCnt + ' weitere Ereignisse')
   },
+  closeHint: 'Schließen',
+  timeHint: 'Uhrzeit',
+  eventHint: 'Ereignis',
 } as LocaleInput
