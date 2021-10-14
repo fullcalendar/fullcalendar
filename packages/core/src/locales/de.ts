@@ -2,8 +2,7 @@ import { LocaleInput } from '@fullcalendar/common'
 
 function affix(buttonText: 'Tag' | 'Woche' | 'Monat' | 'Jahr'): string {
   return (buttonText === 'Tag' || buttonText === 'Monat') ? 'r' :
-    buttonText === 'Jahr' ? 's' :
-    ''
+    buttonText === 'Jahr' ? 's' : ''
 }
 
 export default {
@@ -38,7 +37,7 @@ export default {
     },
     today(buttonText) {
       // → Heute, Diese Woche, Dieser Monat, Dieses Jahr
-      if(buttonText === 'Tag') {
+      if (buttonText === 'Tag') {
         return 'Heute'
       }
       return `Diese${affix(buttonText)} ${buttonText}`
@@ -46,14 +45,14 @@ export default {
   },
   viewHint(buttonText) {
     // → Tagesansicht, Wochenansicht, Monatsansicht, Jahresansicht
-    const affix = buttonText === 'Woche' ? 'n' : buttonText === 'Monat' ? 's' : 'es'
-    return buttonText + affix + 'ansicht'
+    const glue = buttonText === 'Woche' ? 'n' : buttonText === 'Monat' ? 's' : 'es'
+    return buttonText + glue + 'ansicht'
   },
   navLinkHint: 'Gehe zu $0',
   moreLinkHint(eventCnt: number) {
     return 'Zeige ' + (eventCnt === 1 ?
-        'ein weiteres Ereignis' :
-        eventCnt + ' weitere Ereignisse')
+      'ein weiteres Ereignis' :
+      eventCnt + ' weitere Ereignisse')
   },
   closeHint: 'Schließen',
   timeHint: 'Uhrzeit',
