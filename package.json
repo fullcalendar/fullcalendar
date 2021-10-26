@@ -97,5 +97,8 @@
     "dist": "gulp dist",
     "lint": "gulp lint-and-example-repos",
     "test": "gulp test:single"
+  },
+  "engines": {
+    "node": "^11.0.0"
   }
 }
