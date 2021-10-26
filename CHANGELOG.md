@@ -1,4 +1,9 @@
 
+v3.10.4 (2021-10-26)
+--------------------
+fix continued dist problems with Bower (#6601)
+
+
 v3.10.3 (2021-10-13)
 --------------------
 fix: npm-shrinkwrap.json published causing bundling problem when using webpack (#6536)
