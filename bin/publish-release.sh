@@ -26,7 +26,7 @@ current_branch=$(git symbolic-ref --quiet --short HEAD)
 
 # temporarily checkout the tag's commit, publish to NPM
 git checkout --quiet "v$version"
-if npm publish
+if npm publish --tag legacy
 then
   success=1
 fi
