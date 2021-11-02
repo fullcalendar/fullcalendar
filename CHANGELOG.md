@@ -1,4 +1,9 @@
 
+v3.10.5 (2021-11-02)
+--------------------
+fix overly strict engines entry in package.json requiring Node 11 (#6612)
+
+
 v3.10.4 (2021-10-26)
 --------------------
 fix continued dist problems with Bower (#6601)
