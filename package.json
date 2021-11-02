@@ -31,6 +31,7 @@
     "@types/jquery": "2.0.47",
     "awesome-typescript-loader": "^3.5.0",
     "bootstrap": "^3.3.7",
+    "check-node-version": "^4.1.0",
     "components-jqueryui": "^1.12.1",
     "css-loader": "^0.28.10",
     "del": "^2.2.1",
@@ -94,11 +95,9 @@
   ],
   "scripts": {
     "clean": "gulp clean",
-    "dist": "gulp dist",
+    "dist": "npm run check-env && gulp dist",
     "lint": "gulp lint-and-example-repos",
-    "test": "gulp test:single"
-  },
-  "engines": {
-    "node": "^11.0.0"
+    "test": "gulp test:single",
+    "check-env": "check-node-version --node 11"
   }
 }
