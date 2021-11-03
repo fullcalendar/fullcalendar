@@ -24,7 +24,7 @@ npm init --yes
 # restore stdout
 exec 1<&4
 
-npm install --save "fullcalendar"
+npm install --save 'jquery@3' 'moment@2' 'fullcalendar@3'
 
 # will print out tree
 npm ls
