@@ -9,7 +9,7 @@ v5.10.0 (2021-10-13)
       - `customButtons.hint`
       - `viewHint` (ex: `$0 view` -> `"month view"`)
     - `aria-labelledby` attribute connecting view-title with view-container
-  - event elements (#3365)
+  - event elements (#3364)
     - previously, only events with an `event.url` property were tabbable by the end-user.
       now, events *without* urls can be made tabbable by enabling `event.interactive` or by
       enabling the calendar-wide `eventInteractive` option.
