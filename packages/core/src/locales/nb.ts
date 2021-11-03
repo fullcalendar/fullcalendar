@@ -21,13 +21,13 @@ export default {
   moreLinkText: 'til',
   noEventsText: 'Ingen hendelser å vise',
   buttonHints: {
-     prev: 'Forrige $0',
-     next: 'Neste $0',
-     today: 'Nåværende $0',
-   },
-   viewHint: '$0 visning',
-   navLinkHint: 'Gå til $0',
-   moreLinkHint(eventCnt: number) {
-     return `Vis ${eventCnt} flere hendelse${eventCnt === 1 ? '' : 'r'}`
-   },
+    prev: 'Forrige $0',
+    next: 'Neste $0',
+    today: 'Nåværende $0',
+  },
+  viewHint: '$0 visning',
+  navLinkHint: 'Gå til $0',
+  moreLinkHint(eventCnt: number) {
+    return `Vis ${eventCnt} flere hendelse${eventCnt === 1 ? '' : 'r'}`
+  },
 } as LocaleInput
