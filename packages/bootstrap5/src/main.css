@@ -1,0 +1,53 @@
+.fc-theme-bootstrap5 {
+
+    & td,
+    & th {
+        border: 1px solid var(--fc-border-color);
+    }
+    & .fc-popover {
+        border: 1px solid var(--fc-border-color);
+        background: var(--fc-page-bg-color);
+    }
+
+    & .fc-popover-header {
+        background: var(--fc-neutral-bg-color);
+    }
+
+    & .fc-popover {
+        border: 1px solid var(--fc-border-color);
+        background: var(--fc-page-bg-color);
+    }
+
+    & .fc-popover-header {
+        background: var(--fc-neutral-bg-color);
+    }
+
+    & .table-bordered {
+        border: 1px solid var(--fc-border-color);
+    }
+
+    & .table-bordered.fc-scrollgrid {
+        border-right-width: 0!important;
+    }
+
+    & .fc-list-day-cushion {
+        background-color: var(--fc-neutral-bg-color);
+    }
+
+    & .fc-list {
+        border: 1px solid var(--fc-border-color);
+    }
+
+    & .table-active {
+        background-color: rgba(0, 0, 0, 0.1); // Bootstrap value for active class table (not accessible if don't use .table class)
+    }
+
+    & .fc-timegrid-divider.table-active{
+        height: 4px;
+    }
+
+    & .border-top-dotted {
+        border-top-style: dotted;
+    }
+
+}

@@ -1,128 +1,137 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset='utf-8' />
-<link href='../../dist/fullcalendar.css' rel='stylesheet' />
-<script src='../../node_modules/moment/moment.js'></script>
-<script src='../../node_modules/jquery/dist/jquery.js'></script>
-<script src='../../dist/fullcalendar.js'></script>
+  <meta charset='utf-8' />
+  <link href='../../bundle/main.min.css' rel='stylesheet' />
+  <script src='../../bundle/main.js'></script>
+  <script src='../../bundle/locales-all.min.js'></script>
 
-<!-- using CDN for Bootstrap4 as the project currently depends on Bootstrap 3 -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script>
+  <!-- using CDN for Bootstrap4 as the project currently depends on Bootstrap 3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+    integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
+    crossorigin="anonymous"></script>
+  <script>
 
-  $(document).ready(function() {
-
-    $('#calendar').fullCalendar({
-      customButtons: {
-        myCustomButton: {
-          text: 'custom!',
-          bootstrapFontAwesome: 'fa-bell',
-          click: function() {
+    document.addEventListener('DOMContentLoaded', function () {
+      var calendarEl = document.getElementById('calendar');
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        customButtons: {
+          myCustomButton: {
+            text: 'custom!',
+            bootstrapFontAwesome: 'fa-bell',
+            click: function () {
               alert('clicked the custom button!');
+            }
           }
-        }
-      },
-      headerToolbar: {
-        left: 'prevYear,prev,today,next,nextYear',
-        center: 'title',
-        right: 'myCustomButton dayGridMonth,week,day'
-      },
-      themeSystem: 'bootstrap',
-      bootstrapFontAwesome: {
-        close: 'fa-times-circle',
-        prev: 'fa-caret-left',
-        next: 'fa-caret-right',
-        prevYear: 'fa-arrow-left',
-        nextYear: 'fa-arrow-right',
-        month: 'fa-calendar'
-      },
-      // bootstrapFontAwesome: false,
-      initialDate: '2014-08-12',
-      editable: true,
-      dayMaxEvents: true, // allow "more" link when too many events
-      events: [
-        {
-          title: 'All Day Event',
-          start: '2014-08-01'
         },
-        {
-          title: 'Long Event',
-          start: '2014-08-07',
-          end: '2014-08-10'
+        headerToolbar: {
+          left: 'prevYear,prev,today,next,nextYear',
+          center: 'title',
+          right: 'myCustomButton,dayGridMonth,dayGridWeek,timeGridWeek,listWeek,timeGridDay'
         },
-        {
-          groupId: 999,
-          title: 'Repeating Event',
-          start: '2014-08-09T16:00:00'
+        themeSystem: 'bootstrap',
+        locale: 'fr',
+        bootstrapFontAwesome: {
+          close: 'fa-times-circle',
+          prev: 'fa-caret-left',
+          next: 'fa-caret-right',
+          prevYear: 'fa-arrow-left',
+          nextYear: 'fa-arrow-right',
+          month: 'fa-calendar'
         },
-        {
-          groupId: 999,
-          title: 'Repeating Event',
-          start: '2014-08-16T16:00:00'
-        },
-        {
-          title: 'Conference',
-          start: '2014-08-11',
-          end: '2014-08-13'
-        },
-        {
-          title: 'Meeting',
-          start: '2014-08-12T10:30:00',
-          end: '2014-08-12T12:30:00'
-        },
-        {
-          title: 'Lunch',
-          start: '2014-08-12T12:00:00'
-        },
-        {
-          title: 'Meeting',
-          start: '2014-08-12T14:30:00'
-        },
-        {
-          title: 'Happy Hour',
-          start: '2014-08-12T17:30:00'
-        },
-        {
-          title: 'Dinner',
-          start: '2014-08-12T20:00:00'
-        },
-        {
-          title: 'Birthday Party',
-          start: '2014-08-13T07:00:00'
-        },
-        {
-          title: 'Click for Google',
-          url: 'http://google.com/',
-          start: '2014-08-28'
-        }
-      ]
+        navLinks: true,
+        // bootstrapFontAwesome: false,
+        initialDate: '2014-08-12',
+        editable: true,
+        dayMaxEvents: true, // allow "more" link when too many events
+        events: [
+          {
+            title: 'All Day Event',
+            start: '2014-08-01'
+          },
+          {
+            title: 'Long Event',
+            start: '2014-08-07',
+            end: '2014-08-10'
+          },
+          {
+            groupId: 999,
+            title: 'Repeating Event',
+            start: '2014-08-09T16:00:00'
+          },
+          {
+            groupId: 999,
+            title: 'Repeating Event',
+            start: '2014-08-16T16:00:00'
+          },
+          {
+            title: 'Conference',
+            start: '2014-08-11',
+            end: '2014-08-13'
+          },
+          {
+            title: 'Meeting',
+            start: '2014-08-12T10:30:00',
+            end: '2014-08-12T12:30:00'
+          },
+          {
+            title: 'Lunch',
+            start: '2014-08-12T12:00:00'
+          },
+          {
+            title: 'Meeting',
+            start: '2014-08-12T14:30:00'
+          },
+          {
+            title: 'Happy Hour',
+            start: '2014-08-12T17:30:00'
+          },
+          {
+            title: 'Dinner',
+            start: '2014-08-12T20:00:00'
+          },
+          {
+            title: 'Birthday Party',
+            start: '2014-08-13T07:00:00'
+          },
+          {
+            title: 'Click for Google',
+            url: 'http://google.com/',
+            start: '2014-08-28'
+          }
+        ]
+      }).render();
+
     });
 
-  });
+  </script>
+  <style>
+    body {
+      margin: 40px 10px;
+      padding: 0;
+      font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
+      font-size: 14px;
+    }
 
-</script>
-<style>
-
-  body {
-    margin: 40px 10px;
-    padding: 0;
-    font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-    font-size: 14px;
-  }
-
-  #calendar {
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-</style>
+    #calendar {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+  </style>
 </head>
+
 <body>
 
   <div id='calendar'></div>
 
 </body>
+
 </html>
