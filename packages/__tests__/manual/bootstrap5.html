@@ -4,7 +4,7 @@
 <head>
     <meta charset='utf-8' />
     <link href='../../bundle/main.min.css' rel='stylesheet' />
-    <script src='../../bundle/main.js'></script>
+    <script src='../../bundle/main.min.js'></script>
     <script src='../../bundle/locales-all.min.js'></script>
 
     <!-- using CDN for Bootstrap4 as the project currently depends on Bootstrap 3 -->
@@ -30,20 +30,17 @@
                     }
                 },
                 headerToolbar: {
-                    left: 'prevYear,prev,today,next,nextYear',
+                    left: 'prev,today,next',
                     center: 'title',
                     right: 'myCustomButton,dayGridMonth,dayGridWeek,timeGridWeek,listWeek,timeGridDay'
                 },
                 themeSystem: 'bootstrap5',
-                locale: 'fr',
                 bootstrapFontAwesome: {
-                    close: 'fa-times-circle',
-                    prev: 'fa-caret-left',
-                    next: 'fa-caret-right',
-                    prevYear: 'fa-arrow-left',
-                    nextYear: 'fa-arrow-right',
-                    month: 'fa-calendar'
-                },
+					prev: ' fc-icon fc-icon-chevron-left',
+					next: ' fc-icon fc-icon-chevron-right'
+				},
+                locale: 'fr',
+               
                 navLinks: true,
                 // bootstrapFontAwesome: false,
                 initialView: 'timeGridWeek',
