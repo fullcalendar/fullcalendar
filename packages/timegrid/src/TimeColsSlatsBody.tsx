@@ -39,7 +39,7 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
 
           // In bootstrap 5, border apply to 'tr' instead of 'td', so we apply dot style to border here.
           if (this.context.options.themeSystem === 'bootstrap5') {
-            parentClassName = slatMeta.isLabeled ? 'border-bottom-0 border-top-dotted' : 'fc-timegrid-slot-minor border-bottom-0'
+            parentClassName = slatMeta.isLabeled ? 'border-bottom-0 border-top-dotted' : 'fc-timegrid-slot-minor'
           }
 
           return (
