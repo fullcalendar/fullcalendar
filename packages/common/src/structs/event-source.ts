@@ -32,6 +32,7 @@ export interface EventSource<Meta> {
   ui: EventUi
   success: EventSourceSuccessResponseHandler | null
   failure: EventSourceErrorResponseHandler | null
+  additionalHeaders: Headers | null
   extendedProps: Dictionary // undocumented
 }
 

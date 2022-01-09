@@ -32,7 +32,7 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
   },
 
   fetch(arg, onSuccess, onFailure) {
-    let { meta } = arg.eventSource
+    let { meta, additionalHeaders } = arg.eventSource
     let { internalState } = meta
 
     function handleICalEvents(errorMessage, iCalExpander: IcalExpander, xhr) {
@@ -83,6 +83,7 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
           internalState.errorMessage = errorMessage
           internalState.xhr = xhr
         },
+        additionalHeaders,
       )
     } else if (!internalState.completed) {
       internalState.callbacks.push(handleICalEvents)
@@ -92,9 +93,15 @@ let eventSourceDef: EventSourceDef<ICalFeedMeta> = {
   },
 }
 
-function requestICal(url: string, successCallback: Success, failureCallback: Failure) {
+function requestICal(url: string, successCallback: Success, failureCallback: Failure, additionalHeaders: Headers | null) {
   const xhr = new XMLHttpRequest()
   xhr.open('GET', url, true)
+  if (!!additionalHeaders) {
+    additionalHeaders.forEach((value: string, key: string) => {
+      xhr.setRequestHeader(key, value);
+    });
+  }
+
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 400) {
       successCallback(xhr.responseText, xhr)

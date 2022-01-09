@@ -18,6 +18,7 @@ const EVENT_SOURCE_REFINERS = { // does NOT include EVENT_UI_REFINERS
   // for any network-related sources
   success: identity as Identity<EventSourceSuccessResponseHandler>,
   failure: identity as Identity<EventSourceErrorResponseHandler>,
+  additionalHeaders: identity as Identity<Headers>,
 }
 
 type BuiltInEventSourceRefiners = typeof EVENT_SOURCE_REFINERS &
