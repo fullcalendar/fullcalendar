@@ -77,6 +77,7 @@ export function parseEventSource(
         meta: metaRes.meta,
         ui: createEventUi(refined, context),
         extendedProps: extra,
+        additionalHeaders: refined.additionalHeaders,
       }
     }
   }
