@@ -1,5 +1,5 @@
 {
-  "name": "@fullcalendar/luxon",
+  "name": "@fullcalendar/luxon2",
   "version": "5.10.1",
   "title": "FullCalendar Luxon Plugin",
   "description": "A connector to the Luxon date library",
@@ -9,11 +9,12 @@
     "tslib": "^2.1.0"
   },
   "peerDependencies": {
-    "luxon": "^1.12.1"
+    "luxon": "^2.0.0"
   },
   "devDependencies": {
     "@fullcalendar/core-preact": "workspace:*",
-    "luxon": "^1.12.1"
+    "@types/luxon": "^2.0.9",
+    "luxon": "^2.0.0"
   },
   "main": "main.cjs.js",
   "module": "main.js",

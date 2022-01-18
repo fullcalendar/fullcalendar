@@ -11,6 +11,8 @@ export function toLuxonDateTime(date: Date, calendar: CalendarApi): LuxonDateTim
   return LuxonDateTime.fromJSDate(date, {
     zone: dateEnv.timeZone,
     locale: dateEnv.locale.codes[0],
+  } as {
+    zone: string // HACK to allow locale property, which IS supported
   })
 }
 
@@ -21,8 +23,7 @@ export function toLuxonDuration(duration: Duration, calendar: CalendarApi): Luxo
 
   let { dateEnv } = calendar.getCurrentData()
 
-  return LuxonDuration.fromObject({
-    ...duration,
+  return LuxonDuration.fromObject(duration, {
     locale: dateEnv.locale.codes[0],
   })
 }
@@ -89,8 +90,6 @@ function luxonToArray(datetime: LuxonDateTime): number[] {
 
 function arrayToLuxon(arr: number[], timeZone: string, locale?: string): LuxonDateTime {
   return LuxonDateTime.fromObject({
-    zone: timeZone,
-    locale,
     year: arr[0],
     month: arr[1] + 1, // convert 0-based to 1-based
     day: arr[2],
@@ -98,6 +97,9 @@ function arrayToLuxon(arr: number[], timeZone: string, locale?: string): LuxonDa
     minute: arr[4],
     second: arr[5],
     millisecond: arr[6],
+  }, {
+    locale,
+    zone: timeZone,
   })
 }
 

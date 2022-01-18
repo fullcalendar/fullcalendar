@@ -2056,6 +2056,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@fullcalendar/luxon2@workspace:packages/luxon2":
+  version: 0.0.0-use.local
+  resolution: "@fullcalendar/luxon2@workspace:packages/luxon2"
+  dependencies:
+    "@fullcalendar/common": "workspace:~5.10.1"
+    "@fullcalendar/core-preact": "workspace:*"
+    "@types/luxon": ^2.0.9
+    luxon: ^2.0.0
+    tslib: ^2.1.0
+  peerDependencies:
+    luxon: ^2.0.0
+  languageName: unknown
+  linkType: soft
+
 "@fullcalendar/luxon@workspace:packages/luxon, @fullcalendar/luxon@workspace:~5.10.1":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/luxon@workspace:packages/luxon"
@@ -3781,6 +3795,13 @@ __metadata:
   version: 1.27.0
   resolution: "@types/luxon@npm:1.27.0"
   checksum: ebce0d4c671086c18517784abd5e49e836024d32eddcf189e03ecc1ef4547dadd194895461b53ea34c230e9eaf38f2d2c87183322e3dbcd5e0d658c6f9938995
+  languageName: node
+  linkType: hard
+
+"@types/luxon@npm:^2.0.9":
+  version: 2.0.9
+  resolution: "@types/luxon@npm:2.0.9"
+  checksum: 42416dfdb2765ad13f4d5b2d292b94a69c3709ebd6fb21bbefbd16076b5848862eb0f1121283e52209aa3e6bb57f0ddda4ac5460368af71474ee81c5cfc045aa
   languageName: node
   linkType: hard
 
@@ -15796,6 +15817,13 @@ fsevents@^1.2.7:
   version: 1.27.0
   resolution: "luxon@npm:1.27.0"
   checksum: c60f73b6b94bdd4e43c731133aa746388b907a26a5a426478c2520b263bec1dae4dc6e269a3410374789551309c65af5d245fae4cef61b72c3ad64a4c3e8b2b9
+  languageName: node
+  linkType: hard
+
+"luxon@npm:^2.0.0":
+  version: 2.3.0
+  resolution: "luxon@npm:2.3.0"
+  checksum: b2472be1d1d14a4012ba9e36c3f9e0839e6a9e0b976ae147ece4ad9fdf393a3da8298cf8976401b6478b19764d7483bb92b1c678cff64005b7dda78d86911c92
   languageName: node
   linkType: hard
 
