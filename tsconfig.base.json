@@ -11,7 +11,7 @@
     "allowJs": true,
     "lib": [
       "dom",
-      "es2015",
+      "es2020",
       "scripthost"
     ],
     "noUnusedLocals": true,
