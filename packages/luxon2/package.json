@@ -20,7 +20,7 @@
   "module": "main.js",
   "types": "main.d.ts",
   "jsdelivr": "main.global.min.js",
-  "browserGlobal": "FullCalendarLuxon",
+  "browserGlobal": "FullCalendarLuxon2",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {

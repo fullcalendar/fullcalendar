@@ -1,5 +1,5 @@
 
-.fc-theme-bootstrap {
+.fc-theme-bootstrap5 {
 
   & a:not([href]) {
     color: inherit; // natural color for navlinks

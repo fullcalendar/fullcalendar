@@ -1967,7 +1967,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/bootstrap5@workspace:packages/bootstrap5":
+"@fullcalendar/bootstrap5@workspace:packages/bootstrap5, @fullcalendar/bootstrap5@workspace:~5.10.1":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/bootstrap5@workspace:packages/bootstrap5"
   dependencies:
@@ -11564,6 +11564,7 @@ fsevents@^1.2.7:
   resolution: "fullcalendar@workspace:packages/bundle"
   dependencies:
     "@fullcalendar/bootstrap": "workspace:~5.10.1"
+    "@fullcalendar/bootstrap5": "workspace:~5.10.1"
     "@fullcalendar/core": "workspace:~5.10.1"
     "@fullcalendar/daygrid": "workspace:~5.10.1"
     "@fullcalendar/google-calendar": "workspace:~5.10.1"
