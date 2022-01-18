@@ -8,7 +8,7 @@ yarn run clean
 yarn run build
 yarn run lintBuilt
 yarn run archive
-yarn run contrib:run all ci
-yarn run example:run all build
+yarn run contrib:build
+yarn run example:build
 yarn run test:ci
 FULLCALENDAR_FORCE_REACT=1 yarn run test:ci
