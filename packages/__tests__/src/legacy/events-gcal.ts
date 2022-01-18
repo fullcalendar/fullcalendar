@@ -17,8 +17,8 @@ describe('Google Calendar plugin', () => {
   const HOLIDAY_CALENDAR_ID = 'en.usa#holiday@group.v.calendar.google.com'
 
   // Google sometimes stops returning old events. Will need to update this sometimes.
-  const DEFAULT_MONTH = '2020-05'
-  const NUM_EVENTS = 5 // number of holidays
+  const DEFAULT_MONTH = '2021-05'
+  const NUM_EVENTS = 6 // number of holidays
 
   let currentWarnArgs
   let oldConsoleWarn
