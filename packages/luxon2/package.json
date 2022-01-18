@@ -1,0 +1,36 @@
+{
+  "name": "@fullcalendar/luxon",
+  "version": "5.10.1",
+  "title": "FullCalendar Luxon Plugin",
+  "description": "A connector to the Luxon date library",
+  "docs": "https://fullcalendar.io/docs/luxon-plugin",
+  "dependencies": {
+    "@fullcalendar/common": "workspace:~5.10.1",
+    "tslib": "^2.1.0"
+  },
+  "peerDependencies": {
+    "luxon": "^1.12.1"
+  },
+  "devDependencies": {
+    "@fullcalendar/core-preact": "workspace:*",
+    "luxon": "^1.12.1"
+  },
+  "main": "main.cjs.js",
+  "module": "main.js",
+  "types": "main.d.ts",
+  "jsdelivr": "main.global.min.js",
+  "browserGlobal": "FullCalendarLuxon",
+  "homepage": "https://fullcalendar.io/",
+  "bugs": "https://fullcalendar.io/reporting-bugs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fullcalendar/fullcalendar.git",
+    "homepage": "https://github.com/fullcalendar/fullcalendar"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Adam Shaw",
+    "email": "arshaw@arshaw.com",
+    "url": "http://arshaw.com/"
+  }
+}
