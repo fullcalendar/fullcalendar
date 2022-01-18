@@ -34,6 +34,7 @@
     "preinstall": "node ./scripts/ensure-yarn.js",
     "build": "gulp build",
     "watch": "gulp watch",
+    "contrib:ci": "cd packages-contrib && yarn workspaces foreach run ci",
     "contrib:build": "cd packages-contrib && yarn workspaces foreach run build",
     "example:build": "cd example-projects && yarn workspaces foreach run build",
     "example:lint": "node ./scripts/example-lint.js",

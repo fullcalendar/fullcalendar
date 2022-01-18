@@ -80,7 +80,7 @@ jobs:
       - name: Build Project
         run: yarn run gulp build
       - name: Run Contrib CI
-        run: yarn run contrib:run all ci
+        run: yarn run contrib:ci
       - name: Run Tests
         run: FULLCALENDAR_FORCE_REACT=1 yarn run gulp testCi
   examples:
@@ -107,6 +107,6 @@ jobs:
       - name: Build Project
         run: yarn run gulp build
       - name: Run Contrib
-        run: yarn run contrib:run all build
+        run: yarn run contrib:build
       - name: Run Examples
-        run: yarn run example:run all build
+        run: yarn run example:build
