@@ -2,7 +2,13 @@
 <html>
 <head>
 <meta charset='utf-8' />
+
+<!-- for Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- for Bootstrap 4 -->
 <link href='https://use.fontawesome.com/releases/v5.0.6/css/all.css' rel='stylesheet'>
+
 <link href='../packages-premium/bundle/main.css' rel='stylesheet' />
 <script src='../packages-premium/bundle/main.js'></script>
 <script src='js/theme-chooser.js'></script>
@@ -139,16 +145,15 @@
 
       <div id='theme-system-selector' class='selector'>
         Theme System:
-
         <select>
-          <option value='bootstrap' selected>Bootstrap 4</option>
+          <option value='bootstrap5' selected>Bootstrap 5</option>
+          <option value='bootstrap'>Bootstrap 4</option>
           <option value='standard'>unthemed</option>
         </select>
       </div>
 
-      <div data-theme-system="bootstrap" class='selector' style='display:none'>
+      <div data-theme-system="bootstrap,bootstrap5" class='selector' style='display:none'>
         Theme Name:
-
         <select>
           <option value='' selected>Default</option>
           <option value='cerulean'>Cerulean</option>

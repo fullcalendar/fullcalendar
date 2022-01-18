@@ -34,8 +34,9 @@ function initThemeChooser(settings) {
 
     themeSelectWrapEls.forEach(function(themeSelectWrapEl) {
       var themeSelectEl = themeSelectWrapEl.querySelector('select');
+      var themeSystems = (themeSelectWrapEl.getAttribute('data-theme-system') || '').split(',')
 
-      if (themeSelectWrapEl.getAttribute('data-theme-system') === themeSystem) {
+      if (themeSystems.includes(themeSystem)) {
         selectedTheme = themeSelectEl.options[themeSelectEl.selectedIndex].value;
         themeSelectWrapEl.style.display = 'inline-block';
       } else {
@@ -96,6 +97,13 @@ function initThemeChooser(settings) {
       }
       else { // the default bootstrap theme
         return 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css';
+      }
+    } else if (themeSystem === 'bootstrap5') {
+      if (themeName) {
+        return 'https://bootswatch.com/5/' + themeName + '/bootstrap.min.css';
+      }
+      else { // the default bootstrap theme
+        return 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css';
       }
     }
   }

@@ -4,7 +4,8 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import listPlugin from '@fullcalendar/list'
 import bootstrapPlugin from '@fullcalendar/bootstrap'
-import bootstrapPlugin5 from '@fullcalendar/bootstrap5' // TODO: remove. also in package.json
+import bootstrapPlugin5 from '@fullcalendar/bootstrap5'
+// ^TODO: remove. also in package.json. also in packages-premium
 import googleCalendarPlugin from '@fullcalendar/google-calendar'
 
 globalPlugins.push(
