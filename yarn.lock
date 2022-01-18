@@ -7012,13 +7012,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bootstrap@npm:^3.4.1":
-  version: 3.4.1
-  resolution: "bootstrap@npm:3.4.1"
-  checksum: 5c1f8e5fc8971ee7eb88573777efea999c79cae98fadb521959d5996a678cabf9415d349c3739c3c8c8bbf965ae48aae8480b61719c70dd41c1335ea68a9af2e
-  languageName: node
-  linkType: hard
-
 "bootstrap@npm:^4.5.0":
   version: 4.6.0
   resolution: "bootstrap@npm:4.6.0"
@@ -11503,7 +11496,6 @@ fsevents@^1.2.7:
     "@typescript-eslint/parser": ^4.6.1
     "@yarnpkg/pnpify": ^2.4.0
     autoprefixer: ^9.8.4
-    bootstrap: ^3.4.1
     chokidar: ^2.1.5
     concurrently: ^4.1.1
     css-loader: ^4.3.0

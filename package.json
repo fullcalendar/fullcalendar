@@ -68,7 +68,6 @@
     "@typescript-eslint/parser": "^4.6.1",
     "@yarnpkg/pnpify": "^2.4.0",
     "autoprefixer": "^9.8.4",
-    "bootstrap": "^3.4.1",
     "chokidar": "^2.1.5",
     "concurrently": "^4.1.1",
     "css-loader": "^4.3.0",
