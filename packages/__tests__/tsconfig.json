@@ -20,6 +20,8 @@
     { "path": "../timegrid" },
     { "path": "../list" },
     { "path": "../bootstrap" },
+    { "path": "../bootstrap5" },
+    { "path": "../luxon2" },
     { "path": "../google-calendar" },
     { "path": "../luxon" },
     { "path": "../moment" },

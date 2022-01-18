@@ -1967,6 +1967,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@fullcalendar/bootstrap5@workspace:packages/bootstrap5":
+  version: 0.0.0-use.local
+  resolution: "@fullcalendar/bootstrap5@workspace:packages/bootstrap5"
+  dependencies:
+    "@fullcalendar/common": "workspace:~5.10.1"
+    "@fullcalendar/core-preact": "workspace:*"
+    tslib: ^2.1.0
+  languageName: unknown
+  linkType: soft
+
 "@fullcalendar/bootstrap@^5.10.1, @fullcalendar/bootstrap@workspace:packages/bootstrap, @fullcalendar/bootstrap@workspace:~5.10.1":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/bootstrap@workspace:packages/bootstrap"
