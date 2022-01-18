@@ -2,7 +2,17 @@
 .fc-theme-bootstrap5 {
 
   & a:not([href]) {
-    color: inherit; // natural color for navlinks
+    color: inherit;
+    text-decoration: inherit;
   }
 
+  & .fc-scrollgrid,
+  & td,
+  & th {
+    border: 1px solid var(--bs-gray-400);
+  }
+}
+
+.fc-theme-bootstrap5-shaded {
+  background-color: var(--bs-gray-200);
 }

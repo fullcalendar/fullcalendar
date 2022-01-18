@@ -13,6 +13,7 @@ TODO: revive this before launch
 THEN, remove bootstrap5 plugin from bundle
 -->
 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
@@ -24,8 +25,7 @@ THEN, remove bootstrap5 plugin from bundle
     var calendar = new FullCalendar.Calendar(calendarEl, {
       customButtons: {
         myCustomButton: {
-          text: 'custom!',
-          bootstrapFontAwesome: 'fa-bell',
+          icon: 'bell',
           click: function() {
             alert('clicked the custom button!');
           }
@@ -37,14 +37,13 @@ THEN, remove bootstrap5 plugin from bundle
         right: 'myCustomButton dayGridMonth,timeGridWeek,timeGridDay'
       },
       themeSystem: 'bootstrap5',
-      bootstrapFontAwesome: {
-        close: 'fa-times-circle',
-        prev: 'fa-caret-left',
-        next: 'fa-caret-right',
-        prevYear: 'fa-arrow-left',
-        nextYear: 'fa-arrow-right',
-        month: 'fa-calendar'
-      },
+      // buttonIcons: {
+      //   close: 'x-octagon',
+      //   prev: 'arrow-left-circle-fill',
+      //   next: 'arrow-right-circle-fill',
+      //   prevYear: 'arrow-return-left',
+      //   nextYear: 'arrow-return-right'
+      // },
       initialDate: '2014-08-12',
       editable: true,
       dayMaxEvents: true, // allow "more" link when too many events

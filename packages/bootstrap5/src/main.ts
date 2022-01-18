@@ -5,9 +5,8 @@ export class BootstrapTheme extends Theme {
 }
 
 BootstrapTheme.prototype.classes = {
-  root: 'fc-theme-bootstrap5', // TODO: compute this off of registered theme name
-  table: 'table-bordered', // don't attache the `table` class. we only want the borders, not any layout
-  tableCellShaded: 'table-active',
+  root: 'fc-theme-bootstrap5',
+  tableCellShaded: 'fc-theme-bootstrap5-shaded',
   buttonGroup: 'btn-group',
   button: 'btn btn-primary',
   buttonActive: 'active',
@@ -16,24 +15,25 @@ BootstrapTheme.prototype.classes = {
   popoverContent: 'popover-body',
 }
 
-BootstrapTheme.prototype.baseIconClass = 'fa'
+BootstrapTheme.prototype.baseIconClass = 'bi'
 BootstrapTheme.prototype.iconClasses = {
-  close: 'fa-times',
-  prev: 'fa-chevron-left',
-  next: 'fa-chevron-right',
-  prevYear: 'fa-angle-double-left',
-  nextYear: 'fa-angle-double-right',
+  close: 'bi-x-lg',
+  prev: 'bi-arrow-left',
+  next: 'bi-arrow-right',
+  prevYear: 'bi-arrow-bar-left',
+  nextYear: 'bi-arrow-bar-right',
 }
 BootstrapTheme.prototype.rtlIconClasses = {
-  prev: 'fa-chevron-right',
-  next: 'fa-chevron-left',
-  prevYear: 'fa-angle-double-right',
-  nextYear: 'fa-angle-double-left',
+  prev: 'bi-arrow-right',
+  next: 'bi-arrow-left',
+  prevYear: 'bi-arrow-bar-right',
+  nextYear: 'bi-arrow-bar-left',
 }
 
-BootstrapTheme.prototype.iconOverrideOption = 'bootstrapFontAwesome' // TODO: make TS-friendly. move the option-processing into this plugin
-BootstrapTheme.prototype.iconOverrideCustomButtonOption = 'bootstrapFontAwesome'
-BootstrapTheme.prototype.iconOverridePrefix = 'fa-'
+// wtf
+BootstrapTheme.prototype.iconOverrideOption = 'buttonIcons' // TODO: make TS-friendly
+BootstrapTheme.prototype.iconOverrideCustomButtonOption = 'icon'
+BootstrapTheme.prototype.iconOverridePrefix = 'bi-'
 
 const plugin = createPlugin({
   themeClasses: {
