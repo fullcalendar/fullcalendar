@@ -15,4 +15,4 @@
 	url = https://github.com/fullcalendar/fullcalendar-example-projects.git
 [submodule "packages-contrib/vue3"]
 	path = packages-contrib/vue3
-	url = git@github.com:fullcalendar/fullcalendar-vue.git
+	url = https://github.com/fullcalendar/fullcalendar-vue.git
