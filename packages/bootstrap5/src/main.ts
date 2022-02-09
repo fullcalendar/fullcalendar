@@ -18,16 +18,16 @@ BootstrapTheme.prototype.classes = {
 BootstrapTheme.prototype.baseIconClass = 'bi'
 BootstrapTheme.prototype.iconClasses = {
   close: 'bi-x-lg',
-  prev: 'bi-arrow-left',
-  next: 'bi-arrow-right',
-  prevYear: 'bi-arrow-bar-left',
-  nextYear: 'bi-arrow-bar-right',
+  prev: 'bi-chevron-left',
+  next: 'bi-chevron-right',
+  prevYear: 'bi-chevron-double-left',
+  nextYear: 'bi-chevron-double-right',
 }
 BootstrapTheme.prototype.rtlIconClasses = {
-  prev: 'bi-arrow-right',
-  next: 'bi-arrow-left',
-  prevYear: 'bi-arrow-bar-right',
-  nextYear: 'bi-arrow-bar-left',
+  prev: 'bi-chevron-right',
+  next: 'bi-chevron-left',
+  prevYear: 'bi-chevron-double-right',
+  nextYear: 'bi-chevron-double-left',
 }
 
 // wtf
