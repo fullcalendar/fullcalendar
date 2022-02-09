@@ -6,10 +6,17 @@
     text-decoration: inherit;
   }
 
+  & .fc-list,
   & .fc-scrollgrid,
   & td,
   & th {
     border: 1px solid var(--bs-gray-400);
+  }
+
+  // HACK: reapply core styles after highe-precedence border statement above
+  & .fc-scrollgrid {
+    border-right-width: 0;
+    border-bottom-width: 0;
   }
 }
 
