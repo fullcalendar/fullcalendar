@@ -1,9 +1,9 @@
 {
   "name": "@fullcalendar/luxon",
   "version": "5.10.1",
-  "title": "FullCalendar Luxon Plugin",
-  "description": "A connector to the Luxon date library",
-  "docs": "https://fullcalendar.io/docs/luxon-plugin",
+  "title": "FullCalendar Luxon 1 Plugin",
+  "description": "A connector to the Luxon 1 date library",
+  "docs": "https://fullcalendar.io/docs/luxon1",
   "dependencies": {
     "@fullcalendar/common": "workspace:~5.10.1",
     "tslib": "^2.1.0"

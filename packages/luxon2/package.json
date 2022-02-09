@@ -3,7 +3,7 @@
   "version": "5.10.2",
   "title": "FullCalendar Luxon 2 Plugin",
   "description": "A connector to the Luxon 2 date library",
-  "docs": "https://fullcalendar.io/docs/luxon-plugin",
+  "docs": "https://fullcalendar.io/docs/luxon2",
   "dependencies": {
     "@fullcalendar/common": "workspace:~5.10.1",
     "tslib": "^2.1.0"

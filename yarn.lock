@@ -1500,6 +1500,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fullcalendar-example-projects/bootstrap5@workspace:example-projects/bootstrap5":
+  version: 0.0.0-use.local
+  resolution: "@fullcalendar-example-projects/bootstrap5@workspace:example-projects/bootstrap5"
+  dependencies:
+    "@fullcalendar/bootstrap5": ^5.10.2
+    "@fullcalendar/core": ^5.10.1
+    "@fullcalendar/daygrid": ^5.10.1
+    "@fullcalendar/interaction": ^5.10.1
+    "@fullcalendar/list": ^5.10.1
+    "@fullcalendar/timegrid": ^5.10.1
+    bootstrap: ^5.1.3
+    bootstrap-icons: ^1.8.1
+    css-loader: ^4.3.0
+    file-loader: ^6.1.1
+    mini-css-extract-plugin: ^1.2.0
+    webpack: ^5.3.0
+    webpack-cli: ^4.1.0
+  languageName: unknown
+  linkType: soft
+
 "@fullcalendar-example-projects/bootstrap@workspace:example-projects/bootstrap":
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/bootstrap@workspace:example-projects/bootstrap"
@@ -1967,7 +1987,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/bootstrap5@workspace:packages/bootstrap5, @fullcalendar/bootstrap5@workspace:~5.10.2":
+"@fullcalendar/bootstrap5@^5.10.2, @fullcalendar/bootstrap5@workspace:packages/bootstrap5, @fullcalendar/bootstrap5@workspace:~5.10.2":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/bootstrap5@workspace:packages/bootstrap5"
   dependencies:
@@ -7022,6 +7042,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bootstrap-icons@npm:^1.8.1":
+  version: 1.8.1
+  resolution: "bootstrap-icons@npm:1.8.1"
+  checksum: 99844d84abb720e8f98c746ef97498f5a80591ff0be3c641ab4aef61aec6c4c5c0192d619af59028263e58b08f884186c381a92475dd1be8fb8d545f59c119f2
+  languageName: node
+  linkType: hard
+
 "bootstrap@npm:^4.5.0":
   version: 4.6.0
   resolution: "bootstrap@npm:4.6.0"
@@ -7029,6 +7056,15 @@ __metadata:
     jquery: 1.9.1 - 3
     popper.js: ^1.16.1
   checksum: 66019b6969b997eb3bcec7276010263df643b2607db00dbbd13f451d6f6d57fa5b563cd9712a4814024e5489faf5e2d73c553a1ebea1b61d0e1ab766e4805229
+  languageName: node
+  linkType: hard
+
+"bootstrap@npm:^5.1.3":
+  version: 5.1.3
+  resolution: "bootstrap@npm:5.1.3"
+  peerDependencies:
+    "@popperjs/core": ^2.10.2
+  checksum: 7d5d67897ccbcef1e282b75561b0d5e6bdc7ab1008e3680bff5979905949cd4414d08eb526c2b1437c2087f6b80f3543b029d1c5c55658029b648ef265aa1b32
   languageName: node
   linkType: hard
 

@@ -3,7 +3,7 @@
   "version": "5.10.2",
   "title": "FullCalendar Bootstrap 5 Plugin",
   "description": "Bootstrap 5 theming for your calendar",
-  "docs": "https://fullcalendar.io/docs/bootstrap-theme",
+  "docs": "https://fullcalendar.io/docs/bootstrap5",
   "dependencies": {
     "@fullcalendar/common": "workspace:~5.10.1",
     "tslib": "^2.1.0"
