@@ -1,12 +1,12 @@
 {
   "name": "fullcalendar",
-  "version": "5.10.1",
+  "version": "5.10.2",
   "title": "FullCalendar Standard Bundle",
   "description": "An easily consumable combination of standard plugins",
   "docs": "https://fullcalendar.io/docs/initialize-globals",
   "devDependencies": {
     "@fullcalendar/bootstrap": "workspace:~5.10.1",
-    "@fullcalendar/bootstrap5": "workspace:~5.10.1",
+    "@fullcalendar/bootstrap5": "workspace:~5.10.2",
     "@fullcalendar/core": "workspace:~5.10.1",
     "@fullcalendar/daygrid": "workspace:~5.10.1",
     "@fullcalendar/google-calendar": "workspace:~5.10.1",
