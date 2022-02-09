@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/luxon2",
-  "version": "5.10.1",
+  "version": "5.10.2",
   "title": "FullCalendar Luxon 2 Plugin",
   "description": "A connector to the Luxon 2 date library",
   "docs": "https://fullcalendar.io/docs/luxon-plugin",
