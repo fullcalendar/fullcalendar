@@ -1,4 +1,14 @@
 
+v5.10.2 (2022-02-09)
+--------------------
+
+- bootstrap 5 support, via `@fullcalendar/bootstrap5` package (#6299)
+- luxon 2 support, via `@fullcalendar/luxon2` package (#6502)
+- angular 13 support ([ang-387][ang-387])
+
+[ang-387]: https://github.com/fullcalendar/fullcalendar-angular/issues/387
+
+
 v5.10.1 (2021-11-02)
 --------------------
 
