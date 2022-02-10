@@ -6,7 +6,7 @@
   "docs": "https://fullcalendar.io/docs/icalendar",
   "dependencies": {
     "@fullcalendar/common": "workspace:~5.10.1",
-    "ical.js": "^1.4.0",
+    "ical.js": "^1.5.0",
     "tslib": "^2.1.0"
   },
   "main": "main.cjs.js",
