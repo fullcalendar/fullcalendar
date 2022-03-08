@@ -12,6 +12,7 @@
 
   & .fc-event-time {
     font-weight: bold;
+    flex: none;
   }
 
   & .fc-event-time,
@@ -33,6 +34,7 @@
     flex-shrink: 1;
     min-width: 0; // important for allowing to shrink all the way
     overflow: hidden;
+    text-overflow: ellipsis;
     font-weight: bold;
   }
 
