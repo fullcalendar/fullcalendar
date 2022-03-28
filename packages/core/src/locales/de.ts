@@ -29,27 +29,27 @@ export default {
   },
   noEventsText: 'Keine Ereignisse anzuzeigen',
   buttonHints: {
-    prev(buttonText) {
-      return `Vorherige${affix(buttonText)} ${buttonText}`
+    prev: function(buttonText) {
+      return 'Vorherige' + affix(buttonText) + ' ' + buttonText
     },
-    next(buttonText) {
-      return `Nächste${affix(buttonText)} ${buttonText}`
+    next: function(buttonText) {
+      return 'Nächste' + affix(buttonText) + ' ' + buttonText
     },
-    today(buttonText) {
+    today: function(buttonText) {
       // → Heute, Diese Woche, Dieser Monat, Dieses Jahr
       if (buttonText === 'Tag') {
         return 'Heute'
       }
-      return `Diese${affix(buttonText)} ${buttonText}`
+      return 'Diese' + affix(buttonText) + ' ' + buttonText
     },
   },
-  viewHint(buttonText) {
+  viewHint: function(buttonText) {
     // → Tagesansicht, Wochenansicht, Monatsansicht, Jahresansicht
     const glue = buttonText === 'Woche' ? 'n' : buttonText === 'Monat' ? 's' : 'es'
     return buttonText + glue + 'ansicht'
   },
   navLinkHint: 'Gehe zu $0',
-  moreLinkHint(eventCnt: number) {
+  moreLinkHint: function(eventCnt: number) {
     return 'Zeige ' + (eventCnt === 1 ?
       'ein weiteres Ereignis' :
       eventCnt + ' weitere Ereignisse')
