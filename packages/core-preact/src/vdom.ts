@@ -20,7 +20,7 @@ declare global {
     export import createContext = preact.createContext
     export import createPortal = preactCompat.createPortal
     export type VUIEvent = UIEvent
-    export function flushToDom(): void
+    export function flushSync(callback: () => void): void
     export function unmountComponentAtNode(node: HTMLElement): void
   }
 }
@@ -38,7 +38,7 @@ if (globalObj.FullCalendarVDom) {
     Fragment: preact.Fragment,
     createContext, // custom implementation
     createPortal: preactCompat.createPortal,
-    flushToDom,
+    flushSync,
     unmountComponentAtNode,
   }
 }
@@ -47,7 +47,9 @@ if (globalObj.FullCalendarVDom) {
 // TODO: lock version
 // TODO: link gh issues
 
-function flushToDom() {
+function flushSync(callback) {
+  callback()
+
   let oldDebounceRendering = preact.options.debounceRendering // orig
   let callbackQ = []
 

@@ -224,7 +224,7 @@ async function testsIndex() {
 
   // need 'contrib:ci' to have already been run
   if (process.env.FULLCALENDAR_FORCE_REACT) {
-    files = [ 'packages-contrib/react/dist/vdom.js' ].concat(files)
+    files = [ 'packages-contrib/react/dist/vdom-test-react18.js' ].concat(files)
   }
 
   let code =

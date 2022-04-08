@@ -227,11 +227,15 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
   }
 
   unregisterInteractiveComponent = (component: DateComponent<any>) => {
-    for (let listener of this.interactionsStore[component.uid]) {
-      listener.destroy()
+    let listeners = this.interactionsStore[component.uid]
+
+    if (listeners) {
+      for (let listener of listeners) {
+        listener.destroy()
+      }
+      delete this.interactionsStore[component.uid]
     }
 
-    delete this.interactionsStore[component.uid]
     delete interactionSettingsStore[component.uid]
   }
 

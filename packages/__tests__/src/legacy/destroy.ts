@@ -1,5 +1,5 @@
 import { ListenerCounter } from '../lib/ListenerCounter'
-import { primeVDomContainer } from '../lib/vdom-misc'
+import { prepareStandardListeners } from '../lib/vdom-misc'
 
 describe('destroy', () => {
   describe('when calendar is LTR', () => {
@@ -48,8 +48,8 @@ describe('destroy', () => {
     'when in month view': 'dayGridMonth',
   }, (viewName) => {
     it('leaves no handlers attached to DOM', () => {
+      const standardElListenerCount = prepareStandardListeners()
       let $el = $('<div>').appendTo('body')
-      primeVDomContainer($el[0])
 
       let elHandlerCounter = new ListenerCounter($el[0])
       let docHandlerCounter = new ListenerCounter(document)
@@ -61,7 +61,7 @@ describe('destroy', () => {
       currentCalendar.destroy()
 
       if (viewName !== 'timeGridDay') { // hack for skipping 3rd one
-        expect(elHandlerCounter.stopWatching()).toBe(0)
+        expect(elHandlerCounter.stopWatching()).toBe(standardElListenerCount)
         expect(docHandlerCounter.stopWatching()).toBe(0)
       }
 

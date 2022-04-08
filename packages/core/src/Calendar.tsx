@@ -1,7 +1,7 @@
 import {
   CalendarOptions, Action, CalendarContent, render, createElement, DelayedRunner, CssDimValue, applyStyleProp,
   CalendarApi, CalendarRoot, isArraysEqual, CalendarDataManager, CalendarData,
-  CustomContentRenderContext, flushToDom, unmountComponentAtNode,
+  CustomContentRenderContext, flushSync, unmountComponentAtNode,
 } from '@fullcalendar/common'
 
 export class Calendar extends CalendarApi {
@@ -48,33 +48,33 @@ export class Calendar extends CalendarApi {
       this.isRendered = true
       let { currentData } = this
 
-      render(
-        <CalendarRoot options={currentData.calendarOptions} theme={currentData.theme} emitter={currentData.emitter}>
-          {(classNames, height, isHeightAuto, forPrint) => {
-            this.setClassNames(classNames)
-            this.setHeight(height)
+      flushSync(() => {
+        render(
+          <CalendarRoot options={currentData.calendarOptions} theme={currentData.theme} emitter={currentData.emitter}>
+            {(classNames, height, isHeightAuto, forPrint) => {
+              this.setClassNames(classNames)
+              this.setHeight(height)
 
-            return (
-              <CustomContentRenderContext.Provider value={this.customContentRenderId}>
-                <CalendarContent
-                  isHeightAuto={isHeightAuto}
-                  forPrint={forPrint}
-                  {...currentData}
-                />
-              </CustomContentRenderContext.Provider>
-            )
-          }}
-        </CalendarRoot>,
-        this.el,
-      )
+              return (
+                <CustomContentRenderContext.Provider value={this.customContentRenderId}>
+                  <CalendarContent
+                    isHeightAuto={isHeightAuto}
+                    forPrint={forPrint}
+                    {...currentData}
+                  />
+                </CustomContentRenderContext.Provider>
+              )
+            }}
+          </CalendarRoot>,
+          this.el,
+        )
+      })
     } else if (this.isRendered) {
       this.isRendered = false
       unmountComponentAtNode(this.el)
       this.setClassNames([])
       this.setHeight('')
     }
-
-    flushToDom()
   }
 
   render() {
@@ -101,8 +101,9 @@ export class Calendar extends CalendarApi {
   }
 
   updateSize() {
-    super.updateSize()
-    flushToDom()
+    flushSync(() => {
+      super.updateSize()
+    })
   }
 
   batchRendering(func) {

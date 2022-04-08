@@ -1686,6 +1686,34 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@fullcalendar-example-projects/react-lazy@workspace:example-projects/react-lazy":
+  version: 0.0.0-use.local
+  resolution: "@fullcalendar-example-projects/react-lazy@workspace:example-projects/react-lazy"
+  dependencies:
+    "@babel/core": ^7.4.0
+    "@babel/plugin-proposal-class-properties": ^7.0.0
+    "@babel/plugin-proposal-export-namespace-from": ^7.0.0
+    "@babel/plugin-proposal-throw-expressions": ^7.0.0
+    "@babel/plugin-syntax-dynamic-import": ^7.0.0
+    "@babel/preset-env": ^7.0.0-beta.51
+    "@babel/preset-react": ^7.0.0-beta.51
+    "@fullcalendar/core": ^5.10.1
+    "@fullcalendar/daygrid": ^5.10.1
+    "@fullcalendar/interaction": ^5.10.1
+    "@fullcalendar/react": ^5.10.1
+    "@fullcalendar/timegrid": ^5.10.1
+    babel-loader: ^8.1.0
+    css-loader: ^4.3.0
+    html-webpack-plugin: ^4.5.0
+    react: ^18.0.0
+    react-dom: ^18.0.0
+    style-loader: ^2.0.0
+    webpack: ^5.3.0
+    webpack-cli: ^4.1.0
+    webpack-dev-server: ^3.11.0
+  languageName: unknown
+  linkType: soft
+
 "@fullcalendar-example-projects/react-mobx-typescript@workspace:example-projects/react-mobx-typescript":
   version: 0.0.0-use.local
   resolution: "@fullcalendar-example-projects/react-mobx-typescript@workspace:example-projects/react-mobx-typescript"
@@ -1785,8 +1813,8 @@ __metadata:
     babel-loader: ^8.1.0
     css-loader: ^4.3.0
     html-webpack-plugin: ^4.5.0
-    react: ^17.0.1
-    react-dom: ^17.0.1
+    react: ^18.0.0
+    react-dom: ^18.0.0
     style-loader: ^2.0.0
     webpack: ^5.3.0
     webpack-cli: ^4.1.0
@@ -2184,16 +2212,16 @@ __metadata:
     karma-jasmine: ^4.0.1
     karma-sourcemap-loader: ^0.3.8
     karma-spec-reporter: ^0.0.32
-    react: ^17.0.1
-    react-dom: ^17.0.1
+    react: ^18.0.0
+    react-dom: ^18.0.0
     react-testing-library: ^6.0.2
     rollup: ^1.31.0
     rollup-plugin-postcss: ^2.0.3
     tslib: ^2.1.0
     typescript: ^4.0.5
   peerDependencies:
-    react: ^16.7.0 || ^17
-    react-dom: ^16.7.0 || ^17
+    react: ^16.7.0 || ^18
+    react-dom: ^16.7.0 || ^18
   languageName: unknown
   linkType: soft
 
@@ -11580,7 +11608,7 @@ fsevents@^1.2.7:
     postcss-comment: ^2.0.0
     postcss-loader: ^3.0.0
     postcss-nesting: ^7.0.1
-    react: ^17.0.1
+    react: ^18.0.0
     rollup: ^2.49.0
     rollup-plugin-dts: ^3.0.2
     rollup-plugin-postcss: ^3.1.3
@@ -19767,6 +19795,18 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"react-dom@npm:^18.0.0":
+  version: 18.0.0
+  resolution: "react-dom@npm:18.0.0"
+  dependencies:
+    loose-envify: ^1.1.0
+    scheduler: ^0.21.0
+  peerDependencies:
+    react: ^18.0.0
+  checksum: 4bdb133817e5a59716d673cfa0d01b8970c18ed61ad3793143b2480ed96ddc095b5b4e68073088294984a21d1356f2c17f2e40553e5e3f4b571e7af6893e2876
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.1, react-is@npm:^16.7.0, react-is@npm:^16.8.1, react-is@npm:^16.8.4":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -19833,6 +19873,15 @@ fsevents@^1.2.7:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
   checksum: 7d0dfebafe1d297503157abb2e9acdb49852185deb8700c16f4a6faad87642f84903ab18cfc16f40b9a0dfe97540f99834982ee953e6d48b39c41608dc3e4b29
+  languageName: node
+  linkType: hard
+
+"react@npm:^18.0.0":
+  version: 18.0.0
+  resolution: "react@npm:18.0.0"
+  dependencies:
+    loose-envify: ^1.1.0
+  checksum: 83d69fad37b5919762b584140d65d3e21e8c45760f7dbce90e78afc59c38bf96a058691886e28f7c2d8bb595facf4dec1907b92d2c5264de194ed91d0e3eb8e1
   languageName: node
   linkType: hard
 
@@ -20848,6 +20897,15 @@ resolve@^2.0.0-next.3:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
   checksum: 2ba121e53e8a438394598612ec9a8f465b39157042f912d2dd5956af643e0d45ec6937ae4eeb0a807d1945b209515263aed12fc3bca95c7a027ec2a54e76b399
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.21.0":
+  version: 0.21.0
+  resolution: "scheduler@npm:0.21.0"
+  dependencies:
+    loose-envify: ^1.1.0
+  checksum: 9a6e6524c3e864291b88cebf3f3b5af3839dfedf9c6333efc9a126939ef8acbc4bf9179bcc4c77b8c3f41b49c1adf22f5bf70d40f70b8bfd1a569574fe2b94ca
   languageName: node
   linkType: hard
 

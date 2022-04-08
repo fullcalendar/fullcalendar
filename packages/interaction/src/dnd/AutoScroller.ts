@@ -147,8 +147,9 @@ export class AutoScroller {
   private computeBestEdge(left: number, top: number): Edge | null {
     let { edgeThreshold } = this
     let bestSide: Edge | null = null
+    let scrollCaches = this.scrollCaches || []
 
-    for (let scrollCache of this.scrollCaches!) {
+    for (let scrollCache of scrollCaches) {
       let rect = scrollCache.clientRect
       let leftDist = left - rect.left
       let rightDist = rect.right - left

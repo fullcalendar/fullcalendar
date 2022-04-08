@@ -1,8 +1,25 @@
-import { render, createElement, unmountComponentAtNode } from '@fullcalendar/common'
+import { render, createElement } from '@fullcalendar/common'
+import { ListenerCounter } from './ListenerCounter'
 
-// render then quickly unrender a vdom node in a real HTML element.
-// causes the given vdom's global handlers to attach.
-export function primeVDomContainer(rootEl) {
-  render(createElement('div', {}), rootEl)
-  unmountComponentAtNode(rootEl)
+let standardElListenerCount
+
+export function prepareStandardListeners() {
+  if (standardElListenerCount === undefined) {
+    standardElListenerCount = _prepareStandardListeners()
+  }
+  return standardElListenerCount
+}
+
+export function _prepareStandardListeners() {
+  let el = document.createElement('div')
+  document.body.appendChild(el)
+
+  const elListenerCounter = new ListenerCounter(el)
+  elListenerCounter.startWatching()
+
+  FullCalendarVDom.flushSync(() => {
+    render(createElement('div', {}), el)
+  })
+
+  return elListenerCounter.stopWatching()
 }
