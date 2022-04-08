@@ -47,8 +47,8 @@ if (globalObj.FullCalendarVDom) {
 // TODO: lock version
 // TODO: link gh issues
 
-function flushSync(callback) {
-  callback()
+function flushSync(runBeforeFlush) {
+  runBeforeFlush()
 
   let oldDebounceRendering = preact.options.debounceRendering // orig
   let callbackQ = []
