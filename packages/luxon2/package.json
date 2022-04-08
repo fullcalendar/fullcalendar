@@ -1,11 +1,11 @@
 {
   "name": "@fullcalendar/luxon2",
-  "version": "5.10.2",
+  "version": "5.11.0",
   "title": "FullCalendar Luxon 2 Plugin",
   "description": "A connector to the Luxon 2 date library",
   "docs": "https://fullcalendar.io/docs/luxon2",
   "dependencies": {
-    "@fullcalendar/common": "workspace:~5.10.1",
+    "@fullcalendar/common": "workspace:~5.11.0",
     "tslib": "^2.1.0"
   },
   "peerDependencies": {
