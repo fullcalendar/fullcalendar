@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "fullcalendar-workspace",
-  "version": "5.10.2",
+  "version": "5.11.0",
   "title": "FullCalendar",
   "description": "Full-sized drag & drop event calendar",
   "keywords": [
