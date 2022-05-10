@@ -1,4 +1,13 @@
 
+v5.11.1
+-------
+- react fix: restore accidentally-removed support for React 17 ([react-182])
+- vue3 fix: Cannot target calendar api with several instances ([vue-155])
+
+[react-182]: https://github.com/fullcalendar/fullcalendar-react/issues/182
+[vue-155]: https://github.com/fullcalendar/fullcalendar-vue/issues/155
+
+
 v5.11.0 (2022-04-08)
 --------------------
 
