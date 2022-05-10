@@ -18,4 +18,4 @@
 	url = git@github.com:fullcalendar/fullcalendar-vue.git
 [submodule "packages-contrib/angular-ivy"]
 	path = packages-contrib/angular-ivy
-	url = https://github.com/fullcalendar/fullcalendar-angular.git
+	url = git@github.com:/fullcalendar/fullcalendar-angular.git
