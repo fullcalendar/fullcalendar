@@ -195,7 +195,7 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
   handleSizing = () => {
     const nextShrinkWidth = this.computeShrinkWidth()
     const nextDims = this.computeScrollerDims()
-    
+
     if (
       this.state.shrinkWidth !== nextShrinkWidth ||
       this.state.forceYScrollbars !== nextDims.forceYScrollbars ||
