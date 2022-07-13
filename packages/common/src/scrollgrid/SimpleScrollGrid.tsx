@@ -193,10 +193,20 @@ export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, Simpl
 
   // TODO: can do a really simple print-view. dont need to join rows
   handleSizing = () => {
-    this.setState({
-      shrinkWidth: this.computeShrinkWidth(), // will create each chunk's <colgroup>. TODO: precompute hasShrinkWidth
-      ...this.computeScrollerDims(),
-    })
+    const nextShrinkWidth = this.computeShrinkWidth()
+    const nextDims = this.computeScrollerDims()
+    
+    if (
+      this.state.shrinkWidth !== nextShrinkWidth ||
+      this.state.forceYScrollbars !== nextDims.forceYScrollbars ||
+      JSON.stringify(this.state.scrollerClientHeights) !== JSON.stringify(nextDims.scrollerClientHeights) ||
+      JSON.stringify(this.state.scrollerClientWidths) !== JSON.stringify(nextDims.scrollerClientWidths)
+    ) {
+      this.setState({
+        shrinkWidth: nextShrinkWidth, // will create each chunk's <colgroup>. TODO: precompute hasShrinkWidth
+        ...nextDims,
+      })
+    }
   }
 
   componentDidMount() {
