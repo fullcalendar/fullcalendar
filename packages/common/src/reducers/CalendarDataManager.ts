@@ -527,10 +527,18 @@ export class CalendarDataManager {
     let extra = {}
 
     for (let optionName in raw) {
-      if (raw[optionName] === currentRaw[optionName]) {
+      if (
+        raw[optionName] === currentRaw[optionName] ||
+        (COMPLEX_OPTION_COMPARATORS[optionName] &&
+          COMPLEX_OPTION_COMPARATORS[optionName](raw[optionName], currentRaw[optionName]))
+      ) {
         refined[optionName] = currentRefined[optionName]
       } else {
-        if (raw[optionName] === this.currentCalendarOptionsInput[optionName]) {
+        if (
+          raw[optionName] === this.currentCalendarOptionsInput[optionName] ||
+          (COMPLEX_OPTION_COMPARATORS[optionName] &&
+            COMPLEX_OPTION_COMPARATORS[optionName](raw[optionName], this.currentCalendarOptionsInput[optionName]))
+        ) {
           if (optionName in this.currentCalendarOptionsRefined) { // might be an "extra" prop
             refined[optionName] = this.currentCalendarOptionsRefined[optionName]
           }

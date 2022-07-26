@@ -378,14 +378,15 @@ export type CalendarOptionsRefined =
 export const COMPLEX_OPTION_COMPARATORS: {
   [optionName in keyof CalendarOptions]: (a: CalendarOptions[optionName], b: CalendarOptions[optionName]) => boolean
 } = {
-  headerToolbar: isBoolComplexEqual,
-  footerToolbar: isBoolComplexEqual,
-  buttonText: isBoolComplexEqual,
-  buttonHints: isBoolComplexEqual,
-  buttonIcons: isBoolComplexEqual,
+  headerToolbar: isMaybeObjectsEqual,
+  footerToolbar: isMaybeObjectsEqual,
+  buttonText: isMaybeObjectsEqual,
+  buttonHints: isMaybeObjectsEqual,
+  buttonIcons: isMaybeObjectsEqual,
+  dateIncrement: isMaybeObjectsEqual,
 }
 
-function isBoolComplexEqual(a, b) {
+function isMaybeObjectsEqual(a, b) {
   if (typeof a === 'object' && typeof b === 'object' && a && b) { // both non-null objects
     return isPropsEqual(a, b)
   }
