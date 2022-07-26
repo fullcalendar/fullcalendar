@@ -4,9 +4,11 @@ v5.11.2
 
 - fixed: React Strict Mode, dateSet, and "Maximum update depth exceeded error" (#5935, [react-185])
 - fixed: React Strict Mode, timeline scrolling not synced ([react-192])
+- fixed: React, datesSet with object-like dateIncrement, "Maximum update depth..." ([react-131])
 
 [react-185]: https://github.com/fullcalendar/fullcalendar-react/issues/185
 [react-192]: https://github.com/fullcalendar/fullcalendar-react/issues/192
+[react-131]: https://github.com/fullcalendar/fullcalendar-react/issues/131
 
 
 v5.11.1
