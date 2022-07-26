@@ -19,7 +19,8 @@ describe('formatDate', () => {
       timeZone: 'America/New_York', // but with no named tz implementation
       omitCommas: true, // for cross-browser
     })
-    expect(str).toBe('September 4 2018 12:00 AM GMT-5')
+    expect(str.replace(' at ', ' '))
+      .toBe('September 4 2018 12:00 AM GMT-5')
   })
 })
 
@@ -52,6 +53,7 @@ describe('formatRange', () => {
       timeZone: 'America/New_York', // but with no named tz implementation
       omitCommas: true, // for cross-browser
     })
-    expect(str).toBe('September 4 - October 4 2018 12:00 AM GMT-5')
+    expect(str.replace(' at ', ' '))
+      .toBe('September 4 - October 4 2018 12:00 AM GMT-5')
   })
 })

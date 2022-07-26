@@ -196,7 +196,8 @@ describe('datelib', () => {
         omitCommas: true, // for cross-browser
       })
       let s = env.format(marker, formatter)
-      expect(s).toBe('Friday June 8 2018 12:00 AM UTC')
+      expect(s.replace(' at ', ' '))
+        .toBe('Friday June 8 2018 12:00 AM UTC')
     })
 
     describe('week number formatting', () => {
@@ -577,7 +578,8 @@ describe('datelib', () => {
         omitCommas: true, // for cross-browser
       })
       let s = env.format(marker, formatter)
-      expect(s).toBe('Friday June 8 2018 12:00 AM ' + formatPrettyTimeZoneOffset(new Date(2018, 5, 8)))
+      expect(s.replace(' at ', ' '))
+        .toBe('Friday June 8 2018 12:00 AM ' + formatPrettyTimeZoneOffset(new Date(2018, 5, 8)))
     })
 
     it('can output a timezone only', () => {
@@ -642,7 +644,8 @@ describe('datelib', () => {
         omitCommas: true, // for cross-browser
       })
       let s = env.format(marker, formatter)
-      expect(s).toBe('Friday June 8 2018 12:00 AM UTC')
+      expect(s.replace(' at ', ' '))
+        .toBe('Friday June 8 2018 12:00 AM UTC')
     })
 
     it('outputs UTC short timezone when no timezone specified, when requested as long', () => {
@@ -656,7 +659,8 @@ describe('datelib', () => {
         omitCommas: true, // for cross-browser
       })
       let s = env.format(marker, formatter)
-      expect(s).toBe('Friday June 8 2018 12:00 AM UTC')
+      expect(s.replace(' at ', ' '))
+        .toBe('Friday June 8 2018 12:00 AM UTC')
     })
 
     it('computes current date as local values', () => {

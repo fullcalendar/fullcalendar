@@ -26,7 +26,8 @@ describe('Event::formatRange', () => {
       initCalendar()
       let event = currentCalendar.getEvents()[0]
       let str = event.formatRange(FORMAT_SETTINGS)
-      expect(str).toBe('September 4 to 5 2018 12:00 PM GMT-5')
+      expect(str.replace(' at ', ' '))
+       .toBe('September 4 to 5 2018 12:00 PM GMT-5')
     })
   })
 
@@ -41,7 +42,8 @@ describe('Event::formatRange', () => {
       initCalendar()
       let event = currentCalendar.getEvents()[0]
       let str = event.formatRange(FORMAT_SETTINGS)
-      expect(str).toBe('September 4 2018 12:00 PM GMT-5')
+      expect(str.replace(' at ', ' '))
+        .toBe('September 4 2018 12:00 PM GMT-5')
     })
   })
 })
