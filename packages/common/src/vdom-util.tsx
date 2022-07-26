@@ -26,6 +26,13 @@ export abstract class PureComponent<Props=Dictionary, State=Dictionary> extends 
     return !compareObjs(this.props, nextProps, this.propEquality) ||
       !compareObjs(this.state, nextState, this.stateEquality)
   }
+
+  // HACK for freakin' React StrictMode
+  safeSetState(newState: Partial<State>): void {
+    if (!compareObjs(this.state, { ...this.state, ...newState }, this.stateEquality)) {
+      this.setState(newState)
+    }
+  }
 }
 
 PureComponent.prototype.propEquality = {}

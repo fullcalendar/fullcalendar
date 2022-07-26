@@ -332,7 +332,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
       const newInstanceHeights = this.queryEventInstanceHeights()
       const limitByContentHeight = props.dayMaxEvents === true || props.dayMaxEventRows === true
 
-      this.setState({
+      this.safeSetState({
         // HACK to prevent oscillations of events being shown/hidden from max-event-rows
         // Essentially, once you compute an element's height, never null-out.
         // TODO: always display all events, as visibility:hidden?

@@ -50,7 +50,7 @@ export {
   isArraysEqual,
 } from './util/array'
 
-export { memoize, memoizeObjArg, memoizeArraylike, memoizeHashlike } from './util/memoize'
+export { memoize, memoizeObjArg, memoizeArraylike, memoizeHashlike, MemoizeHashFunc, MemoiseArrayFunc } from './util/memoize'
 
 export {
   intersectRects,

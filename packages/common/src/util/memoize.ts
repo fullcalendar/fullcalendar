@@ -60,11 +60,14 @@ export function memoizeObjArg<Arg extends Dictionary, Res>(
   }
 }
 
+export type MemoiseArrayFunc<Args extends any[], Res> =
+  (argSets: Args[]) => Res[]
+
 export function memoizeArraylike<Args extends any[], Res>( // used at all?
   workerFunc: (...args: Args) => Res,
   resEquality?: (res0: Res, res1: Res) => boolean,
   teardownFunc?: (res: Res) => void,
-): (argSets: Args[]) => Res[] {
+): MemoiseArrayFunc<Args, Res> {
   let currentArgSets: Args[] = []
   let currentResults: Res[] = []
 
@@ -102,11 +105,14 @@ export function memoizeArraylike<Args extends any[], Res>( // used at all?
   }
 }
 
-export function memoizeHashlike<Args extends any[], Res>( // used?
+export type MemoizeHashFunc<Args extends any[], Res> =
+  (argHash: { [key: string]: Args }) => { [key: string]: Res }
+
+export function memoizeHashlike<Args extends any[], Res>(
   workerFunc: (...args: Args) => Res,
   resEquality?: (res0: Res, res1: Res) => boolean,
   teardownFunc?: (res: Res) => void, // TODO: change arg order
-): (argHash: { [key: string]: Args }) => { [key: string]: Res } {
+): MemoizeHashFunc<Args, Res> {
   let currentArgHash: { [key: string]: Args } = {}
   let currentResHash: { [key: string]: Res } = {}
 
