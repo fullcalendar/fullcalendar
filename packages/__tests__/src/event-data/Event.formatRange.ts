@@ -27,7 +27,7 @@ describe('Event::formatRange', () => {
       let event = currentCalendar.getEvents()[0]
       let str = event.formatRange(FORMAT_SETTINGS)
       expect(str.replace(' at ', ' '))
-       .toBe('September 4 to 5 2018 12:00 PM GMT-5')
+        .toBe('September 4 to 5 2018 12:00 PM GMT-5')
     })
   })
 
