@@ -3,8 +3,8 @@ import { LocaleInput } from '@fullcalendar/common'
 export default {
   code: 'kk',
   week: {
-    dow: 1, // Monday is the first day of the week.
-    doy: 7, // The week that contains Jan 1st is the first week of the year.
+    dow: 1,  // Monday is the first day of the week.
+    doy: 7,  // The week that contains Jan 1st is the first week of the year.
   },
   buttonText: {
     prev: 'Алдыңғы',
@@ -15,10 +15,10 @@ export default {
     day: 'Күн',
     list: 'Күн тәртібі',
   },
-  weekText: 'Не',
+  weekText: 'Апта',
   allDayText: 'Күні бойы',
   moreLinkText(n) {
     return '+ тағы ' + n
   },
-  noEventsText: 'Көрсету үшін оқиғалар жоқ',
+  noEventsText: 'Оқиғалар табылмады',
 } as LocaleInput
