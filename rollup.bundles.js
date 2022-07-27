@@ -1,8 +1,13 @@
 const path = require('path')
 const nodeResolve = require('@rollup/plugin-node-resolve').default
 const alias = require('@rollup/plugin-alias')
+const postcss = require('rollup-plugin-postcss')
 const { checkNoSymlinks, buildBanner } = require('./scripts/lib/new')
-const { removeStylesheetImports, buildAliasMap, injectReleaseDateAndVersion } = require('./scripts/lib/new-rollup')
+const {
+  buildAliasMap,
+  rerootStylesheets,
+  injectReleaseDateAndVersion,
+} = require('./scripts/lib/new-rollup')
 
 
 /*
@@ -25,11 +30,12 @@ module.exports = bundleStructs.map((struct) => {
       banner: buildBanner(struct.isPremium)
     },
     plugins: [
-      removeStylesheetImports(),
       alias({
         entries: buildAliasMap(publicPackageStructs) // TODO: do this outside loop
       }),
       nodeResolve(),
+      rerootStylesheets(),
+      postcss(), // will use postcss.config.js
       injectReleaseDateAndVersion()
     ]
   }

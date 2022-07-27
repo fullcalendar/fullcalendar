@@ -3,13 +3,28 @@ const replace = require('@rollup/plugin-replace')
 const rootPkgMeta = require('../../package.json')
 
 
+exports.rerootStylesheets = rerootStylesheets
 exports.externalizeStylesheets = externalizeStylesheets
 exports.externalizeNonRelative = externalizeNonRelative
 exports.externalizeRelative = externalizeRelative
 exports.buildAliasMap = buildAliasMap
 exports.injectReleaseDateAndVersion = injectReleaseDateAndVersion
-exports.removeStylesheetImports = removeStylesheetImports
-exports.removeEmptyImports = removeEmptyImports
+
+
+function rerootStylesheets(fileName) { // fileName w/o extension
+  let hasCss = false
+
+  return         {
+    resolveId(id, importer) {
+      if (/^\./.test(id) && /\.css$/.test(id)) { // relative stylesheet
+        hasCss = true
+        let filePath = path.join(importer, '..', id)
+        filePath = filePath.replace('/tsc/', '/src/')
+        return filePath
+      }
+    },
+  }
+}
 
 
 function externalizeStylesheets() {
@@ -17,17 +32,6 @@ function externalizeStylesheets() {
     resolveId(id) {
       if (id.match(/\.(css|scss|sass)$/)) {
         return { id, external: true }
-      }
-    }
-  }
-}
-
-
-function removeStylesheetImports() {
-  return {
-    resolveId(id) {
-      if (id.match(/\.(css|scss|sass)$/)) { // TODO: more DRY
-        return { id: '', external: true }
       }
     }
   }
@@ -49,7 +53,12 @@ function buildAliasMap(structs) {
 function externalizeNonRelative(except) {
   return {
     resolveId(id, importer) {
-      if (importer && !/^\./.test(id) && (!except || id !== except)) {
+      if (
+        importer &&
+        !/^\./.test(id) &&
+        !id.match('style-inject') &&
+        (!except || id !== except)
+      ) {
         return { id, external: true }
       }
     }
@@ -75,17 +84,6 @@ function injectReleaseDateAndVersion() {
     values: {
       releaseDate: new Date().toISOString().replace(/T.*/, ''), // just YYYY-MM-DD
       version: rootPkgMeta.version
-    }
-  })
-}
-
-
-function removeEmptyImports() {
-  return replace({
-    delimiters: ['', ''], // ignore word boundaries
-    values: {
-      'require(\'\')': '',
-      'require("")': ''
     }
   })
 }

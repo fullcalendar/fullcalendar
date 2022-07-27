@@ -7,7 +7,7 @@ const postcss = require('rollup-plugin-postcss')
 const { checkNoSymlinks, buildBanner } = require('./scripts/lib/new')
 const {
   externalizeStylesheets, externalizeNonRelative, injectReleaseDateAndVersion,
-  buildAliasMap, removeStylesheetImports, removeEmptyImports
+  buildAliasMap, rerootStylesheets,
 } = require('./scripts/lib/new-rollup')
 
 
@@ -63,10 +63,8 @@ module.exports = [
         externalizeVDom('.js'),
         externalizeNonRelative(),
         sourceMapLoader(), // load from transpiled-via-tsc JS files
-        postcss({ // will use postcss.config.js
-          extract: true
-        }),
-        transplantCss(struct.mainName),
+        rerootStylesheets(),
+        postcss(), // will use postcss.config.js
         injectReleaseDateAndVersion()
       ]
     }
@@ -85,9 +83,9 @@ module.exports = [
       plugins: [
         externalizeVDom('.cjs'),
         externalizeNonRelative(),
-        removeStylesheetImports(),
+        rerootStylesheets(),
+        postcss(), // will use postcss.config.js
         injectReleaseDateAndVersion(),
-        removeEmptyImports() // because of removeStylesheetImports and CJS
       ]
     }
   }),
@@ -144,11 +142,12 @@ module.exports = [
         globals: allGlobals
       },
       plugins: [ // same plugins that rollup.bundle.js uses
-        removeStylesheetImports(),
         alias({
           entries: aliasMap // TODO: for packages like @fullcalendar/common which will be inlined
         }),
         nodeResolve(), // for tslib
+        rerootStylesheets(),
+        postcss(), // will use postcss.config.js
         injectReleaseDateAndVersion()
       ]
     }
@@ -178,27 +177,6 @@ module.exports = [
 ]
 
 
-function transplantCss(fileName) { // fileName w/o extension
-  let hasCss = false
-
-  return         {
-    resolveId(id, importer) {
-      if (/^\./.test(id) && /\.css$/.test(id)) { // relative stylesheet
-        hasCss = true
-        let filePath = path.join(importer, '..', id)
-        filePath = filePath.replace('/tsc/', '/src/') // not very robust!!!
-        return filePath
-      }
-    },
-    intro() {
-      if (hasCss) {
-        return `import './${fileName}.css';`
-      } else {
-        return ''
-      }
-    }
-  }
-}
 
 
 function externalizeVDom(addExtension) {

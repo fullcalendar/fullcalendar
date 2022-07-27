@@ -78,7 +78,6 @@ exports.build = series(
   execTask('tsc -b --verbose'),
   localesDts,
   removeTscDevLinks,
-  execTask('webpack --config webpack.bundles.js --env NO_SOURCE_MAPS'), // always compile from SRC
   execTask('rollup -c rollup.locales.js'),
   execTask('rollup -c rollup.bundles.js'),
   execTask('rollup -c rollup.packages.js'),
@@ -96,7 +95,7 @@ exports.watch = series(
     localesAllSrcWatch,
     execParallel({
       tsc: 'tsc -b --watch --preserveWatchOutput --pretty', // wont do pretty bc of piping
-      bundles: 'webpack --config webpack.bundles.js --watch',
+      bundles: 'rollup -c rollup.bundles.js --watch',
       locales: 'rollup -c rollup.locales.js --watch' // operates on src files. fyi: tests will need this instantly, if compiled together
     })
   )
