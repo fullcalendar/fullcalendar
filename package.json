@@ -23,7 +23,7 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
-  "copyright": "2021 Adam Shaw",
+  "copyright": "2022 Adam Shaw",
   "workspaces": [
     "packages/*",
     "packages-premium/*",
