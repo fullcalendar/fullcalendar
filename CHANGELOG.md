@@ -1,6 +1,6 @@
 
-v5.11.2
--------
+v5.11.2 (2022-07-26)
+--------------------
 
 - fixed: React Strict Mode, dateSet, and "Maximum update depth exceeded error" (#5935, [react-185])
 - fixed: React Strict Mode, timeline scrolling not synced ([react-192])
@@ -11,8 +11,8 @@ v5.11.2
 [react-131]: https://github.com/fullcalendar/fullcalendar-react/issues/131
 
 
-v5.11.1
--------
+v5.11.1 (*see dates in tickets*)
+--------------------------------
 
 - react fix: restore accidentally-removed support for React 17 ([react-182])
 - vue3 fix: Cannot target calendar api with several instances ([vue-155])
