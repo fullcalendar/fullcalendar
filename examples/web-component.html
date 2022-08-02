@@ -5,6 +5,7 @@
 <script src='../packages/web-component/main.global.js'></script>
 <script src='../packages/daygrid/main.global.js'></script>
 <script src='../packages/timegrid/main.global.js'></script>
+<script src='../packages/list/main.global.js'></script>
 <style>
 
   body {
@@ -25,7 +26,13 @@
 <body>
 
   <div id='calendar-container'>
-    <full-calendar />
+    <full-calendar options='{
+      "headerToolbar": {
+        "left": "prev,next today",
+        "center": "title",
+        "right": "dayGridMonth,timeGridWeek,timeGridDay,listWeek"
+      }
+    }' />
   </div>
 
 </body>
