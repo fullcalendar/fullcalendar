@@ -2416,6 +2416,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@fullcalendar/web-component@workspace:packages/web-component":
+  version: 0.0.0-use.local
+  resolution: "@fullcalendar/web-component@workspace:packages/web-component"
+  dependencies:
+    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/core": "workspace:~5.11.2"
+    "@fullcalendar/core-preact": "workspace:*"
+    tslib: ^2.1.0
+  languageName: unknown
+  linkType: soft
+
 "@intlify/core-base@npm:9.1.6":
   version: 9.1.6
   resolution: "@intlify/core-base@npm:9.1.6"

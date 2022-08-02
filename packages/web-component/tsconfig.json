@@ -1,0 +1,14 @@
+{
+  "extends":  "../../tsconfig.base",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "tsc"
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "references": [
+    { "path": "../core" },
+    { "path": "../common" }
+  ]
+}

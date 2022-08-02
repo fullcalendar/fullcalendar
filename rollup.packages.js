@@ -7,7 +7,7 @@ const postcss = require('rollup-plugin-postcss')
 const { checkNoSymlinks, buildBanner } = require('./scripts/lib/new')
 const {
   externalizeStylesheets, externalizeNonRelative, injectReleaseDateAndVersion,
-  buildAliasMap, rerootStylesheets,
+  buildAliasMap, rerootStylesheets, externalizeRelative,
 } = require('./scripts/lib/new-rollup')
 
 
@@ -125,6 +125,25 @@ module.exports = [
     plugins: [
       externalizeNonRelative('@fullcalendar/core-preact'),
       nodeResolve()
+    ]
+  },
+
+  // web component
+  {
+    input: 'packages/web-component/tsc/install.js',
+    output: [
+      {
+        format: 'cjs',
+        exports: 'named',
+        file: 'packages/web-component/install.cjs.js'
+      },
+      {
+        format: 'esm',
+        file: 'packages/web-component/install.js'
+      }
+    ],
+    plugins: [
+      externalizeRelative(),
     ]
   },
 
