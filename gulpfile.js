@@ -373,7 +373,11 @@ exports.lintPackageMeta = function() {
       success = false
     }
 
-    if (meta.dependencies && meta.dependencies['@fullcalendar/core']) {
+    if (
+      struct.name !== '@fullcalendar/web-component' &&
+      meta.dependencies &&
+      meta.dependencies['@fullcalendar/core']
+    ) {
       console.warn(`${struct.name} should have @fullcalendar/common as a dep, NOT @fullcalendar/core`)
       success = false
     }
