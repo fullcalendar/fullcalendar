@@ -1,39 +1,20 @@
 import { Calendar, CalendarOptions } from '@fullcalendar/core'
 
 export class FullCalendarElement extends HTMLElement {
-  _calendar: Calendar | null = null // TODO: make truly private
-  _options: CalendarOptions | null = null // TODO: same
+  _calendar: Calendar | null = null
+  _options: CalendarOptions | null = null
 
   connectedCallback() {
-    const options = this._options || refineOptionsAttr(this.getAttribute('options')) || {}
-
-    this.innerHTML = '<div></div>'
-    let calendarEl = this.querySelector('div')
-
-    let calendar = new Calendar(calendarEl, options)
-    calendar.render()
-
-    this._calendar = calendar
-    this._options = options
+    this._handleOptionsStr(this.getAttribute('options'))
   }
 
   disconnectedCallback() {
-    this._calendar.destroy()
-
-    this._calendar = null
-    this._options = null
+    this._handleOptionsStr(null)
   }
 
   attributeChangedCallback(name: string, oldVal: string, newVal: string): void {
     if (name === 'options') {
-      const options = refineOptionsAttr(newVal)
-
-      if (options) {
-        if (this._calendar) {
-          this._calendar.resetOptions(options)
-        }
-        this._options = options
-      }
+      this._handleOptionsStr(newVal)
     }
   }
 
@@ -41,17 +22,32 @@ export class FullCalendarElement extends HTMLElement {
     return this._options
   }
 
-  set options(newVal: CalendarOptions) {
-    if (this._calendar) {
-      this._calendar.resetOptions(newVal)
-    }
-    this._options = newVal
+  set options(options: CalendarOptions | null) {
+    this._handleOptions(options)
   }
-}
 
-function refineOptionsAttr(optionsAttrStr: string | null): CalendarOptions | null {
-  if (optionsAttrStr) {
-    return JSON.parse(optionsAttrStr)
+  _handleOptionsStr(optionsStr: string | null) {
+    this._handleOptions(optionsStr ? JSON.parse(optionsStr) : null)
   }
-  return null
+
+  _handleOptions(options: CalendarOptions | null): void {
+    if (options) {
+      if (this._calendar) {
+        this._calendar.resetOptions(options)
+      } else {
+        this.innerHTML = '<div></div>'
+        let calendarEl = this.querySelector('div')
+        let calendar = new Calendar(calendarEl, options)
+        calendar.render()
+        this._calendar = calendar
+      }
+      this._options = options
+    } else {
+      if (this._calendar) {
+        this._calendar.destroy()
+        this._calendar = null
+      }
+      this._options = null
+    }
+  }
 }
