@@ -146,6 +146,18 @@ module.exports = [
       externalizeRelative(),
     ]
   },
+  {
+    input: 'packages/web-component/tsc/install.js',
+    output: [
+      {
+        format: 'iife',
+        file: 'packages/web-component/install.global.js'
+      }
+    ],
+    plugins: [
+      nodeResolve(),
+    ]
+  },
 
   // for global variable JS
   ...pkgsWithBrowserGlobal.map((struct) => {

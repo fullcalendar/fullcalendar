@@ -20,6 +20,7 @@
     { "path": "packages/moment" },
     { "path": "packages/moment-timezone" },
     { "path": "packages/rrule" },
+    { "path": "packages/web-component" },
     { "path": "packages-premium/__tests__" },
     { "path": "packages-premium/bundle" },
     { "path": "packages-premium/resource-common" },
