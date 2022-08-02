@@ -150,8 +150,10 @@ module.exports = [
     input: 'packages/web-component/tsc/install.js',
     output: [
       {
+        file: 'packages/web-component/install.global.js',
         format: 'iife',
-        file: 'packages/web-component/install.global.js'
+        exports: 'named',
+        name: 'FullCalendar'
       }
     ],
     plugins: [
