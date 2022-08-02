@@ -1,4 +1,4 @@
-import { Calendar, CalendarOptions } from '@fullcalendar/core'
+import { Calendar, CalendarApi, CalendarOptions } from '@fullcalendar/core'
 
 export class FullCalendarElement extends HTMLElement {
   _calendar: Calendar | null = null
@@ -24,6 +24,10 @@ export class FullCalendarElement extends HTMLElement {
 
   set options(options: CalendarOptions | null) {
     this._handleOptions(options)
+  }
+
+  getApi(): CalendarApi | null {
+    return this._calendar
   }
 
   _handleOptionsStr(optionsStr: string | null) {
