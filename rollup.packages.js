@@ -130,6 +130,22 @@ module.exports = [
 
   // web component
   {
+    // for use by browser
+    // bundle EVERYTHING
+    input: 'packages/web-component/tsc/main.global.js',
+    output: {
+      file: 'packages/web-component/main.global.js',
+      format: 'iife',
+      exports: 'named',
+      name: 'FullCalendar'
+    },
+    plugins: [
+      nodeResolve(),
+    ]
+  },
+  {
+    // for use by Node/bundlers
+    // don't bundle anything
     input: 'packages/web-component/tsc/install.js',
     output: [
       {
@@ -147,17 +163,18 @@ module.exports = [
     ]
   },
   {
-    input: 'packages/web-component/tsc/install.js',
-    output: [
-      {
-        file: 'packages/web-component/install.global.js',
-        format: 'iife',
-        exports: 'named',
-        name: 'FullCalendar'
-      }
-    ],
+    // bundled .d.ts
+    // (probably has nothing)
+    input: 'packages/web-component/tsc/install.d.ts',
+    output: {
+      format: 'es',
+      file: 'packages/web-component/install.d.ts',
+    },
     plugins: [
-      nodeResolve(),
+      fixDtsCodeIn(),
+      externalizeRelative(),
+      dts(),
+      fixDtsCodeOut()
     ]
   },
 
