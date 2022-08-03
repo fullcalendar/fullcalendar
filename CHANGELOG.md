@@ -1,4 +1,28 @@
 
+v6.0.0-beta.1
+-------------
+
+FullCalendar no longer attempts to import .css files. Instead, FullCalendar's JS is responsible for
+injecting its own CSS. This solves many issues with third party libraries:
+
+- *Webpack*: no longer necessary to use css-loader
+  (see [example project][webpack-css-hack])
+- *Rollup*: no longer necessary to use a css-processing plugin (like postcss)
+  (see [example project][rollup-css-hack])
+- *NextJS*: no longer necessary to ignore and manually import .css files
+  (see [example project][next-css-hack], #6674)
+- *Angular 14* is incompatible with FullCalendar v5 ([see ticket][angular-css-bug]). FullCalendar v6
+  restores support for Angular 14 and above, but does so via a completely different package. Please
+  use the new FullCalendar Web Component package (`@fullcalendar/web-component`), which can
+  integrate with Angular via the [method described here][angular-web-components].
+
+[webpack-css-hack]: https://github.com/fullcalendar/fullcalendar-example-projects/blob/10fe58abfc94457c7582af3948b3764cd17e7960/webpack/webpack.config.js
+[rollup-css-hack]: https://github.com/fullcalendar/fullcalendar-example-projects/blob/10fe58abfc94457c7582af3948b3764cd17e7960/rollup/rollup.config.js
+[next-css-hack]: https://github.com/fullcalendar/fullcalendar-example-projects/tree/10fe58abfc94457c7582af3948b3764cd17e7960/next
+[angular-css-bug]: https://github.com/fullcalendar/fullcalendar-angular/issues/403
+[angular-web-components]: https://coryrylan.com/blog/using-web-components-in-angular
+
+
 v5.11.2 (2022-07-26)
 --------------------
 
