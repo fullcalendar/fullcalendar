@@ -1,9 +1,9 @@
 {
   "name": "@fullcalendar/web-component",
-  "version": "5.11.2",
+  "version": "6.0.0-beta.1",
   "dependencies": {
-    "@fullcalendar/common": "workspace:~5.11.2",
-    "@fullcalendar/core": "workspace:~5.11.2",
+    "@fullcalendar/common": "workspace:*",
+    "@fullcalendar/core": "workspace:*",
     "tslib": "^2.1.0"
   },
   "main": "main.cjs.js",
