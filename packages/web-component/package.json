@@ -9,6 +9,8 @@
   "main": "main.cjs.js",
   "module": "main.js",
   "types": "main.d.ts",
+  "jsdelivr": "main.global.min.js",
+  "browserGlobal": "FullCalendar",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {

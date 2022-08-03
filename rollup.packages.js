@@ -128,61 +128,14 @@ module.exports = [
     ]
   },
 
-  // web component
-  {
-    // for use by browser
-    // bundle EVERYTHING
-    input: 'packages/web-component/tsc/main.global.js',
-    output: {
-      file: 'packages/web-component/main.global.js',
-      format: 'iife',
-      exports: 'named',
-      name: 'FullCalendar'
-    },
-    plugins: [
-      nodeResolve(),
-    ]
-  },
-  {
-    // for use by Node/bundlers
-    // don't bundle anything
-    input: 'packages/web-component/tsc/install.js',
-    output: [
-      {
-        format: 'cjs',
-        exports: 'named',
-        file: 'packages/web-component/install.cjs.js'
-      },
-      {
-        format: 'esm',
-        file: 'packages/web-component/install.js'
-      }
-    ],
-    plugins: [
-      externalizeRelative(),
-    ]
-  },
-  {
-    // bundled .d.ts
-    // (probably has nothing)
-    input: 'packages/web-component/tsc/install.d.ts',
-    output: {
-      format: 'es',
-      file: 'packages/web-component/install.d.ts',
-    },
-    plugins: [
-      fixDtsCodeIn(),
-      externalizeRelative(),
-      dts(),
-      fixDtsCodeOut()
-    ]
-  },
-
   // for global variable JS
   ...pkgsWithBrowserGlobal.map((struct) => {
     return {
       input: path.join(struct.dir, struct.mainGlobalTscJs),
-      external: struct.name === '@fullcalendar/core' ? externalListNoCommon : externalList, // if core, inline common
+      external:
+        struct.name === '@fullcalendar/web-component' ? {} : // inline everything
+          struct.name === '@fullcalendar/core' ? externalListNoCommon : // inline common
+            externalList,
       output: {
         format: 'iife',
         name: struct.meta.browserGlobal,
