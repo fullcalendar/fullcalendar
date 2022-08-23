@@ -1,4 +1,11 @@
 
+v5.11.3 (2022-08-23)
+--------------------
+
+- fixed: timeline view (without resources) problem with expanding height (#5792)
+- fixed: locales not working in IE11 (#6790)
+
+
 v5.11.2 (2022-07-26)
 --------------------
 
