@@ -1,11 +1,11 @@
 {
   "name": "@fullcalendar/rrule",
-  "version": "5.11.2",
+  "version": "5.11.3",
   "title": "FullCalendar RRule Plugin",
   "description": "A connector to the RRule library, for recurring events",
   "docs": "https://fullcalendar.io/docs/rrule-plugin",
   "dependencies": {
-    "@fullcalendar/common": "workspace:~5.11.2",
+    "@fullcalendar/common": "workspace:~5.11.3",
     "tslib": "^2.1.0"
   },
   "peerDependencies": {

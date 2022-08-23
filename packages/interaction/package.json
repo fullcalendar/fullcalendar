@@ -1,11 +1,11 @@
 {
   "name": "@fullcalendar/interaction",
-  "version": "5.11.2",
+  "version": "5.11.3",
   "title": "FullCalendar Interaction Plugin",
   "description": "Provides functionality for event drag-n-drop, resizing, dateClick, and selectable actions",
   "docs": "https://fullcalendar.io/docs/editable",
   "dependencies": {
-    "@fullcalendar/common": "workspace:~5.11.2",
+    "@fullcalendar/common": "workspace:~5.11.3",
     "tslib": "^2.1.0"
   },
   "main": "main.cjs.js",
