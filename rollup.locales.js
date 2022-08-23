@@ -1,6 +1,6 @@
 const path = require('path')
 const globby = require('globby')
-const sucrase = require('@rollup/plugin-sucrase')
+const esbuild = require('rollup-plugin-esbuild').default
 const { externalizeRelative } = require('./scripts/lib/new-rollup')
 
 /*
@@ -14,8 +14,8 @@ but the locale files are simple so it'll be fine.
 
 let srcLocaleFiles = globby.sync('packages/core/src/locales/*.ts')
 let bundleDirs = globby.sync('packages?(-premium)/bundle', { onlyDirectories: true })
-let sucraseInstance = sucrase({
-  transforms: ['typescript']
+let esbuildInstance = esbuild({
+  target: 'ie11',
 })
 
 module.exports = [
@@ -30,8 +30,8 @@ module.exports = [
     },
     plugins: [
       externalizeRelative(), // resulting bundle will import the individual locales
-      sucraseInstance,
-      dumbDownFuncs()
+      dumbDownInputForIE11(),
+      esbuildInstance
     ]
   },
 
@@ -48,8 +48,8 @@ module.exports = [
       file: path.join('packages/core/locales-all.global.js') // FOR CORE
     }),
     plugins: [
-      sucraseInstance,
-      dumbDownFuncs(),
+      dumbDownInputForIE11(),
+      esbuildInstance,
       bundleWrapLocalesAll()
     ]
   },
@@ -63,8 +63,8 @@ module.exports = [
       file: path.join('packages/core/locales', path.basename(srcLocaleFile, '.ts') + '.js')
     },
     plugins: [
-      sucraseInstance,
-      dumbDownFuncs()
+      dumbDownInputForIE11(),
+      esbuildInstance
     ]
   })),
 
@@ -81,8 +81,8 @@ module.exports = [
       file: path.join('packages/core/locales', path.basename(srcLocaleFile, '.ts') + '.global.js') // FOR CORE
     }),
     plugins: [
-      sucraseInstance,
-      dumbDownFuncs(),
+      dumbDownInputForIE11(),
+      esbuildInstance,
       bundleWrapLocalesEach()
     ]
   }))
@@ -108,11 +108,13 @@ function bundleWrapLocalesEach() {
 }
 
 
-// for IE11: https://github.com/fullcalendar/fullcalendar/issues/6014
-function dumbDownFuncs() {
+// needs to go before esbuild
+function dumbDownInputForIE11() {
   return {
-    renderChunk(code) {
-      return code.replace(/(\w+)(\([\w, ]\)\s*{)/g, '$1: function$2')
+    transform(code) {
+      code = code.replace(/\bconst\b/g, 'var')
+      code = code.replace(/(\w+)(\([\w:, ]*\)\s*{)/g, '$1: function$2')
+      return code
     }
   }
 }
