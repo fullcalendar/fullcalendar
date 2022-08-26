@@ -23,7 +23,7 @@ In the description of your [Pull Request][Using Pull Requests], please include r
 
 ## Contributing Locales
 
-Please edit the original files in the `packages/core/locales/` directory.
+Please edit the original files in the `packages/core/src/locales/` directory.
 
 
 ## Other Ways to Contribute
