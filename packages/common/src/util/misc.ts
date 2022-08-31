@@ -122,6 +122,9 @@ export function flexibleCompare(a, b) {
   if (a == null) {
     return 1
   }
+  if(!Number.isNaN(parseInt(a, 10)) && !Number.isNaN(parseInt(b, 10))) {
+    return a - b
+  }
   if (typeof a === 'string' || typeof b === 'string') {
     return String(a).localeCompare(String(b))
   }
