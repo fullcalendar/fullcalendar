@@ -1,6 +1,6 @@
 import { Dictionary } from '../options'
 
-export function requestJson(method: string, url: string, params: Dictionary, successCallback, failureCallback) {
+export function requestJson(method: string, url: string, params: Dictionary, successCallback, failureCallback, additionalHeaders: Headers | null) {
   method = method.toUpperCase()
 
   let body = null
@@ -16,6 +16,12 @@ export function requestJson(method: string, url: string, params: Dictionary, suc
 
   if (method !== 'GET') {
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+  }
+
+  if (!!additionalHeaders) {
+    additionalHeaders.forEach((value: string, key: string) => {
+      xhr.setRequestHeader(key, value);
+    });
   }
 
   xhr.onload = () => {

@@ -38,6 +38,7 @@ let eventSourceDef: EventSourceDef<GCalMeta> = {
   fetch(arg, onSuccess, onFailure) {
     let { dateEnv, options } = arg.context
     let meta: GCalMeta = arg.eventSource.meta
+    let { additionalHeaders } = arg.eventSource;
     let apiKey = meta.googleCalendarApiKey || options.googleCalendarApiKey
 
     if (!apiKey) {
@@ -76,8 +77,9 @@ let eventSourceDef: EventSourceDef<GCalMeta> = {
         }
       }, (message, xhr) => {
         onFailure({ message, xhr })
-      })
-    }
+      },
+      additionalHeaders,
+    )}
   },
 }
 

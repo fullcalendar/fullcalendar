@@ -34,7 +34,7 @@ let eventSourceDef: EventSourceDef<JsonFeedMeta> = {
   },
 
   fetch(arg, success, failure) {
-    let { meta } = arg.eventSource
+    let { meta, additionalHeaders } = arg.eventSource
     let requestParams = buildRequestParams(meta, arg.range, arg.context)
 
     requestJson(
@@ -45,6 +45,7 @@ let eventSourceDef: EventSourceDef<JsonFeedMeta> = {
       (errorMessage, xhr) => {
         failure({ message: errorMessage, xhr })
       },
+      additionalHeaders,
     )
   },
 
