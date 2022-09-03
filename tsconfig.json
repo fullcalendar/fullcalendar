@@ -1,8 +1,8 @@
-
 {
   "files": [],
   "references": [
-    { "path": "packages/__tests__" },
+    { "path": "scripts" },
+    { "path": "tests" },
     { "path": "packages/bundle" },
     { "path": "packages/core-preact" },
     { "path": "packages/core" },
@@ -20,15 +20,6 @@
     { "path": "packages/moment" },
     { "path": "packages/moment-timezone" },
     { "path": "packages/rrule" },
-    { "path": "packages/web-component" },
-    { "path": "packages-premium/__tests__" },
-    { "path": "packages-premium/bundle" },
-    { "path": "packages-premium/resource-common" },
-    { "path": "packages-premium/resource-daygrid" },
-    { "path": "packages-premium/resource-timegrid" },
-    { "path": "packages-premium/resource-timeline" },
-    { "path": "packages-premium/scrollgrid" },
-    { "path": "packages-premium/timeline" },
-    { "path": "packages-premium/adaptive" }
+    { "path": "packages/web-component" }
   ]
 }
