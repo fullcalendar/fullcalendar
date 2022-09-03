@@ -1,5 +1,5 @@
 {
-  "extends":  "../../tsconfig.base",
+  "extends":  "../tsconfig.base",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "tsc"
@@ -8,19 +8,19 @@
     "src/**/*"
   ],
   "references": [
-    { "path": "../core" },
-    { "path": "../interaction" },
-    { "path": "../icalendar" },
-    { "path": "../daygrid" },
-    { "path": "../timegrid" },
-    { "path": "../list" },
-    { "path": "../bootstrap" },
-    { "path": "../bootstrap5" },
-    { "path": "../luxon2" },
-    { "path": "../google-calendar" },
-    { "path": "../luxon" },
-    { "path": "../moment" },
-    { "path": "../moment-timezone" },
-    { "path": "../rrule" }
+    { "path": "../packages/core" },
+    { "path": "../packages/interaction" },
+    { "path": "../packages/icalendar" },
+    { "path": "../packages/daygrid" },
+    { "path": "../packages/timegrid" },
+    { "path": "../packages/list" },
+    { "path": "../packages/bootstrap" },
+    { "path": "../packages/bootstrap5" },
+    { "path": "../packages/luxon2" },
+    { "path": "../packages/google-calendar" },
+    { "path": "../packages/luxon" },
+    { "path": "../packages/moment" },
+    { "path": "../packages/moment-timezone" },
+    { "path": "../packages/rrule" }
   ]
 }

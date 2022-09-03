@@ -7,7 +7,7 @@
     "standard-script": "./bin/standard-script"
   },
   "scripts": {
-    "check": "tsc"
+    "types": "tsc"
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.3",
