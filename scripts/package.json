@@ -6,6 +6,9 @@
   "bin": {
     "standard-script": "./bin/standard-script"
   },
+  "exports": {
+    "./": "./src/"
+  },
   "devDependencies": {
     "cleye": "^1.2.1",
     "tsx": "^3.9.0"
