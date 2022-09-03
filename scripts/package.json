@@ -1,5 +1,13 @@
 {
   "private": true,
   "name": "@fullcalendar/standard-scripts",
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "type": "module",
+  "bin": {
+    "standard-script": "./bin/standard-script"
+  },
+  "devDependencies": {
+    "cleye": "^1.2.1",
+    "tsx": "^3.9.0"
+  }
 }

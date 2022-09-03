@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+dir=`dirname $0`
+src="$dir/../src/index.ts"
+
+# emulate what tsx run does:
+# https://github.com/esbuild-kit/tsx/blob/master/src/run.ts
+require="$dir/../node_modules/tsx/dist/suppress-warnings.cjs"
+loader="$dir/../node_modules/tsx/dist/loader.js"
+node --require "$require" --loader "$loader" "$src" "$@"
