@@ -17,13 +17,13 @@ export interface ToolbarSectionProps extends ToolbarContent {
 }
 
 export class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
-  render() {
+  render(): any {
     let children = this.props.widgetGroups.map((widgetGroup) => this.renderWidgetGroup(widgetGroup))
 
     return createElement('div', { className: 'fc-toolbar-chunk' }, ...children)
   }
 
-  renderWidgetGroup(widgetGroup: ToolbarWidget[]) {
+  renderWidgetGroup(widgetGroup: ToolbarWidget[]): any {
     let { props } = this
     let { theme } = this.context
     let children: VNode[] = []

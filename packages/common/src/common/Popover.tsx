@@ -25,7 +25,7 @@ export class Popover extends BaseComponent<PopoverProps> {
     titleId: getUniqueDomId(),
   }
 
-  render() {
+  render(): any {
     let { theme, options } = this.context
     let { props, state } = this
     let classNames = [
