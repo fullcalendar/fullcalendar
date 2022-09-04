@@ -5,7 +5,7 @@
     "outDir": "tsc"
   },
   "include": [
-    "src/**/*"
+    "./src/**/*"
   ],
   "references": [
     { "path": "../packages/core" },
