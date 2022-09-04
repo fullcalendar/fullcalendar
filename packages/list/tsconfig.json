@@ -1,11 +1,11 @@
 {
   "extends":  "../../tsconfig.base",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "tsc"
+    "rootDir": "./src",
+    "outDir": "./tsc"
   },
   "include": [
-    "src/**/*"
+    "./src/**/*"
   ],
   "references": [
     { "path": "../common" }
