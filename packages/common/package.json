@@ -7,9 +7,8 @@
   "dependencies": {
     "tslib": "^2.1.0"
   },
-  "main": "main.cjs.js",
-  "module": "main.js",
-  "types": "main.d.ts",
+  "main": "tsc/main.js",
+  "types": "tsc/main.d.ts",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {

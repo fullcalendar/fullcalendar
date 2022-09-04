@@ -9,10 +9,8 @@
     "@fullcalendar/daygrid": "workspace:*",
     "tslib": "^2.1.0"
   },
-  "main": "main.cjs.js",
-  "module": "main.js",
-  "types": "main.d.ts",
-  "jsdelivr": "main.global.min.js",
+  "main": "tsc/main.js",
+  "types": "tsc/main.d.ts",
   "browserGlobal": "FullCalendarTimeGrid",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",

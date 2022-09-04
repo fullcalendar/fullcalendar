@@ -15,10 +15,8 @@
     "@fullcalendar/core-preact": "workspace:*",
     "moment": "^2.29.1"
   },
-  "main": "main.cjs.js",
-  "module": "main.js",
-  "types": "main.d.ts",
-  "jsdelivr": "main.global.min.js",
+  "main": "tsc/main.js",
+  "types": "tsc/main.d.ts",
   "browserGlobal": "FullCalendarMoment",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",

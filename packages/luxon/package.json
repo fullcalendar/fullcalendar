@@ -15,10 +15,8 @@
     "@fullcalendar/core-preact": "workspace:*",
     "luxon": "^1.12.1"
   },
-  "main": "main.cjs.js",
-  "module": "main.js",
-  "types": "main.d.ts",
-  "jsdelivr": "main.global.min.js",
+  "main": "tsc/main.js",
+  "types": "tsc/main.d.ts",
   "browserGlobal": "FullCalendarLuxon",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",

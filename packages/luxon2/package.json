@@ -16,10 +16,8 @@
     "@types/luxon": "^2.0.9",
     "luxon": "^2.0.0"
   },
-  "main": "main.cjs.js",
-  "module": "main.js",
-  "types": "main.d.ts",
-  "jsdelivr": "main.global.min.js",
+  "main": "tsc/main.js",
+  "types": "tsc/main.d.ts",
   "browserGlobal": "FullCalendarLuxon2",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
