@@ -12,7 +12,8 @@
     "@fullcalendar/google-calendar": "workspace:*",
     "@fullcalendar/interaction": "workspace:*",
     "@fullcalendar/list": "workspace:*",
-    "@fullcalendar/timegrid": "workspace:*"
+    "@fullcalendar/timegrid": "workspace:*",
+    "tslib": "^2.1.0"
   },
   "main": "tsc/main.js",
   "types": "tsc/main.d.ts",

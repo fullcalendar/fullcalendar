@@ -6,7 +6,7 @@
     "sourceMap": true,
     "target": "es6",
     "module": "es6",
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "esModuleInterop": true,
     "allowJs": true,
     "lib": [

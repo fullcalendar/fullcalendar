@@ -11,6 +11,11 @@
   },
   "main": "tsc/main.js",
   "types": "tsc/main.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": "./tsc/main.js",
+    "./locales/*": "./tsc/locales/*.js"
+  },
   "browserGlobal": "FullCalendar",
   "sideEffects": true,
   "homepage": "https://fullcalendar.io/",
