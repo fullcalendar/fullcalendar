@@ -31,7 +31,7 @@
     "example-projects"
   ],
   "scripts": {
-    "preinstall": "node ./scripts/ensure-yarn.js",
+    "xxxpreinstall": "node ./scripts/ensure-yarn.js",
     "build": "gulp build",
     "watch": "gulp watch",
     "contrib:ci": "cd packages-contrib && yarn workspaces foreach run ci",
@@ -51,14 +51,14 @@
     "update-readmes": "node ./scripts/update-readmes.js",
     "update-licenses": "node ./scripts/update-licenses.js",
     "update-package-jsons": "node ./scripts/update-package-jsons.js",
-    "preversion": "./scripts/update-example-dates.sh && yarn run clean",
+    "xxxpreversion": "./scripts/update-example-dates.sh && yarn run clean",
     "xxxversion": "yarn run ci && yarn run archive",
     "xxxpostversion": "echo 'EXEC: git push --recurse-submodules=on-demand' && echo 'STILL NEED TO PUSH ALL TAGS'"
   },
   "devDependencies": {
     "@arshaw/postcss-calc": "^7.0.2",
     "@arshaw/postcss-custom-properties": "^9.1.1",
-    "@fullcalendar/standard-scripts": "*",
+    "@fullcalendar/standard-scripts": "workspace:*",
     "@rollup/plugin-alias": "^3.1.1",
     "@rollup/plugin-node-resolve": "^8.4.0",
     "@rollup/plugin-replace": "^2.3.3",
