@@ -3,10 +3,10 @@ const scriptName: string = process.argv[2]
 const otherArgs: string[] = process.argv.slice(3)
 
 if (typeof scriptName !== 'string') {
-  throw new Error('Must specify a script name.')
+  throw new Error('Must specify a script name')
 }
 if (!scriptName.match(/[a-zA-Z-:]/)) {
-  throw new Error(`Script ${scriptName} has invalid name.`)
+  throw new Error(`Script ${scriptName} has invalid name`)
 }
 
 const scriptPath = './' + scriptName.replaceAll(':', '/')
