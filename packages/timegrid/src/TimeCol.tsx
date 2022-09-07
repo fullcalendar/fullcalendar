@@ -1,8 +1,13 @@
 import {
-  Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta,
-  DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill, buildIsoString, computeEarliestSegStart,
+  DateMarker, BaseComponent, EventSegUiInteractionState, Seg, getSegMeta,
+  DateRange, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill, buildIsoString, computeEarliestSegStart,
   DateProfile, buildEventRangeKey, sortEventSegs, memoize, SegEntryGroup, SegEntry, Dictionary, SegSpan, CssDimValue,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import {
+  createElement,
+  Fragment,
+  Ref,
+} from '@fullcalendar/core/preact'
 import { TimeColMoreLink } from './TimeColMoreLink'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'

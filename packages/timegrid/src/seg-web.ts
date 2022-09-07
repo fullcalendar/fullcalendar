@@ -7,7 +7,7 @@ import {
   binarySearch,
   SegEntryGroup,
   groupIntersectingEntries,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
 
 interface SegNode extends SegEntry {
   nextLevelNodes: SegNode[] // with highest-pressure first

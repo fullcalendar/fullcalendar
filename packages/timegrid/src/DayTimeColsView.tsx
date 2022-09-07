@@ -1,12 +1,15 @@
 import {
-  createElement,
-  DateProfileGenerator, DateProfile,
+  DateProfileGenerator,
+  DateProfile,
   DayHeader,
   DaySeriesModel,
   DayTableModel,
   memoize,
   ChunkContentCallbackArgs,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import {
+  createElement,
+} from '@fullcalendar/core/preact'
 import { DayTable } from '@fullcalendar/daygrid'
 import { TimeColsView } from './TimeColsView'
 import { DayTimeCols } from './DayTimeCols'

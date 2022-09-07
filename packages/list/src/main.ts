@@ -1,4 +1,4 @@
-import { createPlugin } from '@fullcalendar/common'
+import { createPlugin } from '@fullcalendar/core'
 import { ListView } from './ListView'
 import { OPTION_REFINERS } from './options'
 import './options-declare'

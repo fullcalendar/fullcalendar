@@ -4,7 +4,7 @@ import {
   elementClosest,
   CalendarContext,
   getEventTargetViaRoot,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
 import { PointerDragging } from '../dnd/PointerDragging'
 import { EventDragging } from './EventDragging'
 

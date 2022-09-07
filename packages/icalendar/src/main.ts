@@ -1,4 +1,4 @@
-import { createPlugin, EventSourceDef, EventInput, DateRange, addDays } from '@fullcalendar/common'
+import { createPlugin, EventSourceDef, EventInput, DateRange, addDays } from '@fullcalendar/core'
 import * as ICAL from 'ical.js'
 import { IcalExpander } from './ical-expander/IcalExpander'
 

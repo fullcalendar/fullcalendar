@@ -4,7 +4,6 @@
   "version": "0.0.0",
   "dependencies": {
     "@fullcalendar/bootstrap": "workspace:*",
-    "@fullcalendar/common": "workspace:*",
     "@fullcalendar/core": "workspace:*",
     "@fullcalendar/daygrid": "workspace:*",
     "@fullcalendar/google-calendar": "workspace:*",

@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../main'
 
 function affix(buttonText: 'Tag' | 'Woche' | 'Monat' | 'Jahr'): string {
   return (buttonText === 'Tag' || buttonText === 'Monat') ? 'r' :

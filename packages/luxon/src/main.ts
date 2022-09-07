@@ -1,5 +1,5 @@
 import { DateTime as LuxonDateTime, Duration as LuxonDuration } from 'luxon'
-import { Duration, NamedTimeZoneImpl, VerboseFormattingArg, createPlugin, CalendarApi } from '@fullcalendar/common'
+import { Duration, NamedTimeZoneImpl, VerboseFormattingArg, createPlugin, CalendarApi } from '@fullcalendar/core'
 
 export function toLuxonDateTime(date: Date, calendar: CalendarApi): LuxonDateTime {
   if (!(calendar instanceof CalendarApi)) {

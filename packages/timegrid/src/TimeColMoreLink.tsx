@@ -1,7 +1,11 @@
 import {
-  createElement, MoreLinkContentArg, MoreLinkRoot, BaseComponent, createRef, setRef,
+  MoreLinkContentArg, MoreLinkRoot, BaseComponent, setRef,
   Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState, CssDimValue,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import {
+  createElement,
+  createRef,
+} from '@fullcalendar/core/preact'
 import { renderPlainFgSegs } from './TimeCol'
 import { TimeColsSeg } from './TimeColsSeg'
 

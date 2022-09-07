@@ -5,4 +5,4 @@ export function defineFullCalendarElement(tagName: string = 'full-calendar'): vo
 }
 
 export { FullCalendarElement }
-export * from '@fullcalendar/common'
+export * from '@fullcalendar/core'

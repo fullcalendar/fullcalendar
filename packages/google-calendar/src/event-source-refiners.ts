@@ -1,4 +1,4 @@
-import { identity, Identity, Dictionary } from '@fullcalendar/common'
+import { identity, Identity, Dictionary } from '@fullcalendar/core'
 
 export const EVENT_SOURCE_REFINERS = {
   googleCalendarApiKey: String, // TODO: rename with no prefix?

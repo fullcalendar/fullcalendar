@@ -1,18 +1,21 @@
 import {
-  createElement, VNode,
   BaseComponent,
   EventSegUiInteractionState,
   CssDimValue,
   DateMarker,
   RefMap,
-  createRef,
   PositionCache,
   memoize,
   DateRange,
   NowIndicatorRoot,
   DateProfile,
   DayTableCell,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import {
+  createElement,
+  createRef,
+  VNode,
+} from '@fullcalendar/core/preact'
 import { TimeColsSeg, splitSegsByCol, splitInteractionByCol } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { TimeCol } from './TimeCol'

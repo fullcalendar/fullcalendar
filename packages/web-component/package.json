@@ -2,7 +2,6 @@
   "name": "@fullcalendar/web-component",
   "version": "6.0.0-beta.1",
   "dependencies": {
-    "@fullcalendar/common": "workspace:*",
     "@fullcalendar/core": "workspace:*",
     "tslib": "^2.1.0"
   },
@@ -21,8 +20,5 @@
     "name": "Adam Shaw",
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
-  },
-  "devDependencies": {
-    "@fullcalendar/core-preact": "workspace:*"
   }
 }

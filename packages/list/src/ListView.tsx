@@ -1,5 +1,4 @@
 import {
-  createElement,
   ViewProps,
   Scroller,
   DateMarker,
@@ -14,7 +13,6 @@ import {
   EventStore,
   memoize,
   Seg,
-  VNode,
   sortEventSegs,
   getSegMeta,
   NowTimer,
@@ -25,7 +23,11 @@ import {
   MountArg,
   getUniqueDomId,
   formatDayString,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import {
+  createElement,
+  VNode,
+} from '@fullcalendar/core/preact'
 import { ListViewHeaderRow } from './ListViewHeaderRow'
 import { ListViewEventRow } from './ListViewEventRow'
 

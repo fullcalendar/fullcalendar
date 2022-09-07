@@ -1,13 +1,15 @@
 import {
-  createElement,
-  VNode,
   BaseComponent,
   RefMap,
   CssDimValue,
-  createRef,
   PositionCache,
   DateProfile,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import {
+  createElement,
+  VNode,
+  createRef,
+} from '@fullcalendar/core/preact'
 import { TimeSlatMeta } from './time-slat-meta'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { TimeColsSlatsBody } from './TimeColsSlatsBody'

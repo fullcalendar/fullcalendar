@@ -1,5 +1,4 @@
 import {
-  createElement, VNode,
   addDurations,
   multiplyDuration,
   wholeDivideDurations,
@@ -16,7 +15,11 @@ import {
   DayTableCell,
   Hit,
   DateComponent,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import {
+  createElement,
+  VNode,
+} from '@fullcalendar/core/preact'
 import { TimeColsSlats } from './TimeColsSlats'
 import { TimeSlatMeta } from './time-slat-meta'
 import { TimeColsContent } from './TimeColsContent'

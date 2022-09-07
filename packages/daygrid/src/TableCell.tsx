@@ -1,7 +1,4 @@
 import {
-  Ref,
-  ComponentChildren,
-  createElement,
   DateMarker,
   DateComponent,
   DateRange,
@@ -12,10 +9,15 @@ import {
   setRef,
   createFormatter,
   Dictionary,
-  createRef,
   EventSegUiInteractionState,
   getUniqueDomId,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import {
+  Ref,
+  ComponentChildren,
+  createElement,
+  createRef
+} from '@fullcalendar/core/preact'
 import { TableCellTop } from './TableCellTop'
 import { TableCellMoreLink } from './TableCellMoreLink'
 import { TableSegPlacement } from './event-placement'

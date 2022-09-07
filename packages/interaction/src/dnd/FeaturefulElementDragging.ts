@@ -5,7 +5,7 @@ import {
   preventContextMenu,
   allowContextMenu,
   ElementDragging,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
 import { PointerDragging } from './PointerDragging'
 import { ElementMirror } from './ElementMirror'
 import { AutoScroller } from './AutoScroller'

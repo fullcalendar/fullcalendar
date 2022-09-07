@@ -1,4 +1,4 @@
-import { render, createElement } from '@fullcalendar/common'
+import { render, createElement, flushSync } from '@fullcalendar/core/preact'
 import { ListenerCounter } from './ListenerCounter'
 
 let standardElListenerCount
@@ -17,7 +17,7 @@ export function _prepareStandardListeners() {
   const elListenerCounter = new ListenerCounter(el)
   elListenerCounter.startWatching()
 
-  FullCalendarVDom.flushSync(() => {
+  flushSync(() => {
     render(createElement('div', {}), el)
   })
 

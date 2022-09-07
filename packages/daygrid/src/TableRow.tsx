@@ -1,23 +1,25 @@
 import {
   EventSegUiInteractionState,
-  VNode,
   DateComponent,
-  createElement,
   PositionCache,
   RefMap,
   CssDimValue,
   DateRange,
   getSegMeta,
   DateProfile,
-  Fragment,
   BgEvent,
   renderFill,
   isPropsEqual,
-  createRef,
   buildEventRangeKey,
   sortEventSegs,
   DayTableCell,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import {
+  VNode,
+  createElement,
+  Fragment,
+  createRef,
+} from '@fullcalendar/core/preact'
 import { TableSeg, splitSegsByFirstCol } from './TableSeg'
 import { TableCell } from './TableCell'
 import { TableListItemEvent } from './TableListItemEvent'

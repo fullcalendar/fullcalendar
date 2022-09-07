@@ -1,8 +1,6 @@
 import {
-  createElement, createRef,
   diffDays,
   SimpleScrollGridSection,
-  VNode,
   SimpleScrollGrid,
   ChunkContentCallbackArgs,
   ScrollGridSectionConfig,
@@ -12,7 +10,6 @@ import {
   RenderHook,
   DateComponent,
   ViewProps,
-  RefObject,
   renderScrollShim,
   getStickyHeaderDates,
   getStickyFooterScrollbar,
@@ -22,7 +19,13 @@ import {
   NowTimer,
   DateMarker,
   NowIndicatorRoot,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import {
+  createElement,
+  createRef,
+  VNode,
+  RefObject,
+} from '@fullcalendar/core/preact'
 import { AllDaySplitter } from './AllDaySplitter'
 import { TimeSlatMeta } from './time-slat-meta'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'

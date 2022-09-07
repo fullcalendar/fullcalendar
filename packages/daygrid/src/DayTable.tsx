@@ -1,5 +1,4 @@
 import {
-  createElement, createRef, VNode,
   EventStore,
   EventUiHash,
   DateSpan,
@@ -8,10 +7,15 @@ import {
   Duration,
   DateComponent,
   ViewContext,
-  RefObject,
   CssDimValue,
   DateProfile,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import {
+  createElement,
+  createRef,
+  VNode,
+  RefObject,
+} from '@fullcalendar/core/preact'
 import { Table } from './Table'
 import { DayTableSlicer } from './DayTableSlicer'
 

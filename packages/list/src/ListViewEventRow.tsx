@@ -1,7 +1,11 @@
 import {
-  MinimalEventProps, BaseComponent, ViewContext, createElement, AllDayContentArg,
-  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventRoot, ComponentChildren, RenderHook, getSegAnchorAttrs,
-} from '@fullcalendar/common'
+  MinimalEventProps, BaseComponent, ViewContext, AllDayContentArg,
+  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventRoot, RenderHook, getSegAnchorAttrs,
+} from '@fullcalendar/core'
+import {
+  createElement,
+  ComponentChildren,
+} from '@fullcalendar/core/preact'
 
 const DEFAULT_TIME_FORMAT = createFormatter({
   hour: 'numeric',

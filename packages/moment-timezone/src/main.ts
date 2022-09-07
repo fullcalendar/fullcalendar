@@ -1,6 +1,6 @@
 import moment from 'moment'
 import 'moment-timezone'
-import { NamedTimeZoneImpl, createPlugin } from '@fullcalendar/common'
+import { NamedTimeZoneImpl, createPlugin } from '@fullcalendar/core'
 
 class MomentNamedTimeZone extends NamedTimeZoneImpl {
   offsetForArray(a: number[]): number {

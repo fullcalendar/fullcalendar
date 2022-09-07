@@ -1,8 +1,16 @@
-import {
-  CalendarOptions, Action, CalendarContent, render, createElement, DelayedRunner, CssDimValue, applyStyleProp,
-  CalendarApi, CalendarRoot, isArraysEqual, CalendarDataManager, CalendarData,
-  CustomContentRenderContext, flushSync, unmountComponentAtNode,
-} from '@fullcalendar/common'
+import { CalendarOptions } from './options'
+import { CalendarApi } from './CalendarApi'
+import { DelayedRunner } from './util/DelayedRunner'
+import { CalendarDataManager } from './reducers/CalendarDataManager'
+import { Action } from './reducers/Action'
+import { CalendarData } from './reducers/data-types'
+import { CalendarRoot } from './CalendarRoot'
+import { CustomContentRenderContext } from './common/render-hook'
+import { CalendarContent } from './CalendarContent'
+import { createElement, render, flushSync } from './preact'
+import { isArraysEqual } from './util/array'
+import { CssDimValue } from './scrollgrid/util'
+import { applyStyleProp } from './util/dom-manip'
 
 export class Calendar extends CalendarApi {
   currentData: CalendarData
@@ -71,7 +79,8 @@ export class Calendar extends CalendarApi {
       })
     } else if (this.isRendered) {
       this.isRendered = false
-      unmountComponentAtNode(this.el)
+      render(null, this.el)
+
       this.setClassNames([])
       this.setHeight('')
     }

@@ -1,20 +1,23 @@
 import {
-  VNode, createElement,
   SimpleScrollGrid,
   SimpleScrollGridSection,
   ChunkContentCallbackArgs,
-  createRef,
   ScrollGridSectionConfig,
   ViewRoot,
   DateComponent,
   ViewProps,
-  RefObject,
   renderScrollShim,
   getStickyHeaderDates,
   getStickyFooterScrollbar,
   ChunkConfigRowContent,
   Dictionary,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import {
+  VNode,
+  createElement,
+  createRef,
+  RefObject,
+} from '@fullcalendar/core/preact'
 
 /* An abstract class for the daygrid views, as well as month view. Renders one or more rows of day cells.
 ----------------------------------------------------------------------------------------------------------------------*/

@@ -1,11 +1,13 @@
 import {
-  createElement,
   ViewContext,
   createFormatter,
   ViewContextType,
   RenderHook,
   SlotLabelContentArg,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import {
+  createElement,
+} from '@fullcalendar/core/preact'
 import { TimeSlatMeta } from './time-slat-meta'
 
 const DEFAULT_SLAT_LABEL_FORMAT = createFormatter({

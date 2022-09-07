@@ -1,4 +1,4 @@
-import { Rect, WindowScrollController } from '@fullcalendar/common'
+import { Rect, WindowScrollController } from '@fullcalendar/core'
 import { ScrollGeomCache } from './ScrollGeomCache'
 
 export class WindowScrollGeomCache extends ScrollGeomCache {

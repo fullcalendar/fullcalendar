@@ -1,5 +1,4 @@
 import {
-  createElement, createRef,
   DayHeader,
   DateProfileGenerator,
   DateProfile,
@@ -7,7 +6,8 @@ import {
   DaySeriesModel,
   DayTableModel,
   ChunkContentCallbackArgs,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import { createElement, createRef } from '@fullcalendar/core/preact'
 import { TableView } from './TableView'
 import { DayTable } from './DayTable'
 

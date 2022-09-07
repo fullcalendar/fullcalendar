@@ -1,5 +1,4 @@
 import {
-  createElement,
   DateMarker,
   DateRange,
   DayCellContentArg,
@@ -7,9 +6,9 @@ import {
   BaseComponent,
   DateProfile,
   Dictionary,
-  Fragment,
   buildNavLinkAttrs,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import { createElement, Fragment } from '@fullcalendar/core/preact'
 
 interface TableCellTopProps {
   date: DateMarker

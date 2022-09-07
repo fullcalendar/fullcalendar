@@ -11,7 +11,7 @@ import {
   createDuration,
   EventInteractionState,
   Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration, EventChangeArg, buildEventApis, isInteractionValid,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
 import { __assign } from 'tslib'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'

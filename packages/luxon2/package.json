@@ -5,14 +5,13 @@
   "description": "A connector to the Luxon 2 date library",
   "docs": "https://fullcalendar.io/docs/luxon2",
   "dependencies": {
-    "@fullcalendar/common": "workspace:*",
+    "@fullcalendar/core": "workspace:*",
     "tslib": "^2.1.0"
   },
   "peerDependencies": {
     "luxon": "^2.0.0"
   },
   "devDependencies": {
-    "@fullcalendar/core-preact": "workspace:*",
     "@types/luxon": "^2.0.9",
     "luxon": "^2.0.0"
   },

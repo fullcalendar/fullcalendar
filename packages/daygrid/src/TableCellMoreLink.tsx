@@ -1,7 +1,5 @@
 import {
-  createElement,
   MoreLinkRoot,
-  RefObject,
   BaseComponent,
   memoize,
   DateMarker,
@@ -10,9 +8,9 @@ import {
   DateRange,
   EventSegUiInteractionState,
   getSegMeta,
-  Fragment,
   createAriaClickAttrs,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import { createElement, RefObject, Fragment } from '@fullcalendar/core/preact'
 import { TableSegPlacement } from './event-placement'
 import { hasListItemDisplay } from './event-rendering'
 import { TableBlockEvent } from './TableBlockEvent'

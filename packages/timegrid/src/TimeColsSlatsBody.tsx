@@ -1,10 +1,12 @@
 import {
-  createElement,
   BaseComponent,
   RefMap,
   RenderHook,
   SlotLaneContentArg,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
+import {
+  createElement,
+} from '@fullcalendar/core/preact'
 import { TimeColsAxisCell } from './TimeColsAxisCell'
 import { TimeSlatMeta } from './time-slat-meta'
 

@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { Duration, VerboseFormattingArg, createPlugin, CalendarApi } from '@fullcalendar/common'
+import { Duration, VerboseFormattingArg, createPlugin, CalendarApi } from '@fullcalendar/core'
 
 export function toMoment(date: Date, calendar: CalendarApi): moment.Moment {
   if (!(calendar instanceof CalendarApi)) {

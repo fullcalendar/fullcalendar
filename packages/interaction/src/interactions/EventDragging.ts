@@ -20,7 +20,7 @@ import {
   EventRemoveArg,
   isInteractionValid,
   getElRoot,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
 import { __assign } from 'tslib'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'

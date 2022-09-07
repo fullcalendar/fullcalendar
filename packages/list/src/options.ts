@@ -7,7 +7,7 @@ import {
   WillUnmountHandler,
   createFormatter,
   FormatterInput,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
 
 // public
 import {

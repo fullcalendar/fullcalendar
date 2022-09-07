@@ -1,8 +1,8 @@
 
-# FullCalendar Core Package
+# FullCalendar Common
 
-Provides core functionality, including the Calendar class
+internal package
 
-[View the docs &raquo;](https://fullcalendar.io/docs/initialize-es6)
+[View the docs &raquo;](https://fullcalendar.io/docs)
 
 This package was created from the [FullCalendar monorepo &raquo;](https://github.com/fullcalendar/fullcalendar)

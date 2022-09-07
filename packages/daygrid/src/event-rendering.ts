@@ -1,4 +1,4 @@
-import { createFormatter } from '@fullcalendar/common'
+import { createFormatter } from '@fullcalendar/core'
 import { TableSeg } from './TableSeg'
 
 export const DEFAULT_TABLE_EVENT_TIME_FORMAT = createFormatter({

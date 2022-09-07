@@ -1,4 +1,4 @@
-import { createPlugin } from '@fullcalendar/common'
+import { createPlugin } from '@fullcalendar/core'
 import { TimeColsView } from './TimeColsView'
 import { DayTimeColsView, buildTimeColsModel } from './DayTimeColsView'
 import { TimeColsSeg } from './TimeColsSeg'

@@ -1,4 +1,4 @@
-import { Theme, createPlugin } from '@fullcalendar/common'
+import { Theme, createPlugin } from '@fullcalendar/core'
 import './main.css'
 
 export class BootstrapTheme extends Theme {

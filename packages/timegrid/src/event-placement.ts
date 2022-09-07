@@ -3,7 +3,7 @@ import {
   SegEntry,
   SegEntryGroup,
   DateMarker,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { SegWebRect, buildPositioning } from './seg-web'

@@ -1,11 +1,10 @@
 {
   "name": "@fullcalendar/core",
   "version": "6.0.0-beta.1",
-  "title": "FullCalendar Core Package",
-  "description": "Provides core functionality, including the Calendar class",
-  "docs": "https://fullcalendar.io/docs/initialize-es6",
+  "title": "FullCalendar Core",
+  "description": "core package",
+  "docs": "https://fullcalendar.io/docs",
   "dependencies": {
-    "@fullcalendar/common": "workspace:*",
     "preact": "^10.0.5",
     "tslib": "^2.1.0"
   },
@@ -13,11 +12,19 @@
   "types": "tsc/main.d.ts",
   "exports": {
     "./package.json": "./package.json",
-    ".": "./tsc/main.js",
-    "./locales/*": "./tsc/locales/*.js"
+    ".": {
+      "types": "./tsc/main.d.ts",
+      "default": "./tsc/main.js"
+    },
+    "./preact": {
+      "types": "./tsc/preact/index.d.ts",
+      "default": "./tsc/preact/index.js"
+    },
+    "./*": {
+      "types": "./tsc/*.d.ts",
+      "default": "./tsc/*.js"
+    }
   },
-  "browserGlobal": "FullCalendar",
-  "sideEffects": true,
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {
@@ -30,8 +37,5 @@
     "name": "Adam Shaw",
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
-  },
-  "devDependencies": {
-    "@fullcalendar/core-preact": "workspace:*"
   }
 }

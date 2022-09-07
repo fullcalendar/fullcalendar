@@ -5,7 +5,7 @@
   "description": "Fetch events from a public iCalendar / .ics feed",
   "docs": "https://fullcalendar.io/docs/icalendar",
   "dependencies": {
-    "@fullcalendar/common": "workspace:*",
+    "@fullcalendar/core": "workspace:*",
     "ical.js": "^1.4.0",
     "tslib": "^2.1.0"
   },

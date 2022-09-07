@@ -6,9 +6,5 @@
   },
   "include": [
     "./src/**/*"
-  ],
-  "references": [
-    { "path": "../core-preact" },
-    { "path": "../common" }
   ]
 }

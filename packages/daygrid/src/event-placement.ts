@@ -9,7 +9,7 @@ import {
   addDays,
   DayTableCell,
   intersectSpans,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
 import { TableSeg } from './TableSeg'
 
 export interface TableSegPlacement {

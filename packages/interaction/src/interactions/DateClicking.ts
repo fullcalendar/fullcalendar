@@ -2,7 +2,7 @@ import {
   PointerDragEvent, Interaction, InteractionSettings, interactionSettingsToStore,
   DatePointApi,
   ViewApi,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { buildDatePointApiWithContext } from '../utils'

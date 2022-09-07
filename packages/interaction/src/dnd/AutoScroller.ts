@@ -1,4 +1,4 @@
-import { getElRoot } from '@fullcalendar/common'
+import { getElRoot } from '@fullcalendar/core'
 import { ScrollGeomCache } from '../ScrollGeomCache'
 import { ElementScrollGeomCache } from '../ElementScrollGeomCache'
 import { WindowScrollGeomCache } from '../WindowScrollGeomCache'

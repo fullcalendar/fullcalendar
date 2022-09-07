@@ -17,7 +17,7 @@ import {
   CalendarContext,
   getDefaultEventEnd,
   refineEventDef,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core'
 import { __assign } from 'tslib'
 import { HitDragging } from '../interactions/HitDragging'
 import { buildDatePointApiWithContext } from '../utils'
