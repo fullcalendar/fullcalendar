@@ -143,16 +143,14 @@ importers:
 
   packages/bootstrap:
     specifiers:
-      '@fullcalendar/common': workspace:*
-      '@fullcalendar/core-preact': workspace:*
+      '@fullcalendar/core': workspace:*
       tslib: ^2.1.0
     dependencies:
       tslib: 2.4.0
 
   packages/bootstrap5:
     specifiers:
-      '@fullcalendar/common': workspace:*
-      '@fullcalendar/core-preact': workspace:*
+      '@fullcalendar/core': workspace:*
       tslib: ^2.1.0
     dependencies:
       tslib: 2.4.0
@@ -171,24 +169,7 @@ importers:
     devDependencies:
       tslib: 2.4.0
 
-  packages/common:
-    specifiers:
-      '@fullcalendar/core-preact': workspace:*
-      tslib: ^2.1.0
-    dependencies:
-      tslib: 2.4.0
-
   packages/core:
-    specifiers:
-      '@fullcalendar/common': workspace:*
-      '@fullcalendar/core-preact': workspace:*
-      preact: ^10.0.5
-      tslib: ^2.1.0
-    dependencies:
-      preact: 10.10.6
-      tslib: 2.4.0
-
-  packages/core-preact:
     specifiers:
       preact: ^10.0.5
       tslib: ^2.1.0
@@ -198,23 +179,21 @@ importers:
 
   packages/daygrid:
     specifiers:
-      '@fullcalendar/common': workspace:*
-      '@fullcalendar/core-preact': workspace:*
+      '@fullcalendar/core': workspace:*
       tslib: ^2.1.0
     dependencies:
       tslib: 2.4.0
 
   packages/google-calendar:
     specifiers:
-      '@fullcalendar/common': workspace:*
-      '@fullcalendar/core-preact': workspace:*
+      '@fullcalendar/core': workspace:*
       tslib: ^2.1.0
     dependencies:
       tslib: 2.4.0
 
   packages/icalendar:
     specifiers:
-      '@fullcalendar/common': workspace:*
+      '@fullcalendar/core': workspace:*
       ical.js: ^1.4.0
       tslib: ^2.1.0
     dependencies:
@@ -223,24 +202,21 @@ importers:
 
   packages/interaction:
     specifiers:
-      '@fullcalendar/common': workspace:*
-      '@fullcalendar/core-preact': workspace:*
+      '@fullcalendar/core': workspace:*
       tslib: ^2.1.0
     dependencies:
       tslib: 2.4.0
 
   packages/list:
     specifiers:
-      '@fullcalendar/common': workspace:*
-      '@fullcalendar/core-preact': workspace:*
+      '@fullcalendar/core': workspace:*
       tslib: ^2.1.0
     dependencies:
       tslib: 2.4.0
 
   packages/luxon:
     specifiers:
-      '@fullcalendar/common': workspace:*
-      '@fullcalendar/core-preact': workspace:*
+      '@fullcalendar/core': workspace:*
       luxon: ^1.12.1
       tslib: ^2.1.0
     dependencies:
@@ -250,8 +226,7 @@ importers:
 
   packages/luxon2:
     specifiers:
-      '@fullcalendar/common': workspace:*
-      '@fullcalendar/core-preact': workspace:*
+      '@fullcalendar/core': workspace:*
       '@types/luxon': ^2.0.9
       luxon: ^2.0.0
       tslib: ^2.1.0
@@ -263,8 +238,7 @@ importers:
 
   packages/moment:
     specifiers:
-      '@fullcalendar/common': workspace:*
-      '@fullcalendar/core-preact': workspace:*
+      '@fullcalendar/core': workspace:*
       moment: ^2.29.1
       tslib: ^2.1.0
     dependencies:
@@ -274,8 +248,7 @@ importers:
 
   packages/moment-timezone:
     specifiers:
-      '@fullcalendar/common': workspace:*
-      '@fullcalendar/core-preact': workspace:*
+      '@fullcalendar/core': workspace:*
       moment: ^2.29.1
       moment-timezone: ^0.5.31
       tslib: ^2.1.0
@@ -287,8 +260,7 @@ importers:
 
   packages/rrule:
     specifiers:
-      '@fullcalendar/common': workspace:*
-      '@fullcalendar/core-preact': workspace:*
+      '@fullcalendar/core': workspace:*
       rrule: ^2.6.0
       tslib: ^2.1.0
     dependencies:
@@ -298,8 +270,7 @@ importers:
 
   packages/timegrid:
     specifiers:
-      '@fullcalendar/common': workspace:*
-      '@fullcalendar/core-preact': workspace:*
+      '@fullcalendar/core': workspace:*
       '@fullcalendar/daygrid': workspace:*
       tslib: ^2.1.0
     dependencies:
@@ -307,9 +278,7 @@ importers:
 
   packages/web-component:
     specifiers:
-      '@fullcalendar/common': workspace:*
       '@fullcalendar/core': workspace:*
-      '@fullcalendar/core-preact': workspace:*
       tslib: ^2.1.0
     dependencies:
       tslib: 2.4.0
@@ -331,7 +300,6 @@ importers:
   tests:
     specifiers:
       '@fullcalendar/bootstrap': workspace:*
-      '@fullcalendar/common': workspace:*
       '@fullcalendar/core': workspace:*
       '@fullcalendar/daygrid': workspace:*
       '@fullcalendar/google-calendar': workspace:*
