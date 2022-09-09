@@ -11,7 +11,7 @@
   "main": "tsc/main.js",
   "types": "tsc/main.d.ts",
   "fileExports": {
-    "./": "./src/main.ts",
+    ".": "./src/main.ts",
     "./preact": "./src/preact/index.ts",
     "./preact/compat": "./src/preact/compat.ts",
     "./locales/*": "./src/locales/*.ts"

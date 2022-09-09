@@ -1,4 +1,7 @@
 
 export default function() {
-  return 'generate-locales-each-test'
+  return {
+    ab: 'generate-locales-each-test',
+    cd: 'yoyoyo',
+  }
 }
