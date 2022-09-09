@@ -17,8 +17,7 @@
     "./locales/*": "./src/locales/*.ts"
   },
   "generatedExports": {
-    "./locales-all": "./scripts/generate-locales-all.ts",
-    "./locales-whatever/*": "./scripts/generate-locales-each.ts"
+    "./locales-all": "./scripts/locales-all.ts"
   },
   "exports": {
     "./package.json": "./package.json",
