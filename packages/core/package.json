@@ -10,6 +10,16 @@
   },
   "main": "tsc/main.js",
   "types": "tsc/main.d.ts",
+  "fileExports": {
+    "./": "./src/main.ts",
+    "./preact": "./src/preact/index.ts",
+    "./preact/compat": "./src/preact/compat.ts",
+    "./locales/*": "./src/locales/*.ts"
+  },
+  "generatedExports": {
+    "./locales-all": "./scripts/generate-locales-all.ts",
+    "./locales-whatever/*": "./scripts/generate-locales-each.ts"
+  },
   "exports": {
     "./package.json": "./package.json",
     ".": {
