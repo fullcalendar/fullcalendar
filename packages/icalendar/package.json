@@ -9,8 +9,8 @@
     "ical.js": "^1.4.0",
     "tslib": "^2.1.0"
   },
-  "main": "tsc/main.js",
-  "types": "tsc/main.d.ts",
+  "main": "dist/.tsc/main.js",
+  "types": "dist/.tsc/main.d.ts",
   "browserGlobal": "FullCalendarICalendar",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",

@@ -8,8 +8,8 @@
     "preact": "^10.0.5",
     "tslib": "^2.1.0"
   },
-  "main": "tsc/main.js",
-  "types": "tsc/main.d.ts",
+  "main": "dist/.tsc/main.js",
+  "types": "dist/.tsc/main.d.ts",
   "fileExports": {
     ".": "./src/main.ts",
     "./preact": "./src/preact/index.ts",
@@ -22,16 +22,16 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./tsc/main.d.ts",
-      "default": "./tsc/main.js"
+      "types": "./dist/.tsc/main.d.ts",
+      "default": "./dist/.tsc/main.js"
     },
     "./preact": {
-      "types": "./tsc/preact/index.d.ts",
-      "default": "./tsc/preact/index.js"
+      "types": "./dist/.tsc/preact/index.d.ts",
+      "default": "./dist/.tsc/preact/index.js"
     },
     "./*": {
-      "types": "./tsc/*.d.ts",
-      "default": "./tsc/*.js"
+      "types": "./dist/.tsc/*.d.ts",
+      "default": "./dist/.tsc/*.js"
     }
   },
   "homepage": "https://fullcalendar.io/",

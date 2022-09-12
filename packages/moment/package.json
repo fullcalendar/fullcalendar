@@ -14,8 +14,8 @@
   "devDependencies": {
     "moment": "^2.29.1"
   },
-  "main": "tsc/main.js",
-  "types": "tsc/main.d.ts",
+  "main": "dist/.tsc/main.js",
+  "types": "dist/.tsc/main.d.ts",
   "browserGlobal": "FullCalendarMoment",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
