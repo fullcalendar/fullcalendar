@@ -1,10 +1,5 @@
 
 node_modules
 
-/packages/*/tsconfig.tsbuildinfo
-/packages/*/tsc
 /packages/*/dist
-
-/tests/tsconfig.tsbuildinfo
-/tests/tsc
 /tests/dist
