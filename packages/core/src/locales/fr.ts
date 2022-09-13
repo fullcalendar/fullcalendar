@@ -1,4 +1,4 @@
-import { LocaleInput } from '../main'
+import { LocaleInput } from '..'
 
 export default {
   code: 'fr',

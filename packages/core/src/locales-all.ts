@@ -1,5 +1,5 @@
-import { Locale } from './datelib/locale'
+import { LocaleInput } from '.'
 
-type LocalesAll = Locale[]
+type LocalesAll = LocaleInput[]
 
 export { LocalesAll as default }
