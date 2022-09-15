@@ -1,0 +1,9 @@
+{
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "compilerOptions": {
+    "module": "es2022",
+    "types": ["node"],
+    "composite": true,
+    "noEmit": true
+  }
+}

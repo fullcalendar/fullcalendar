@@ -20,6 +20,7 @@
     "resolveJsonModule": true,
     "jsx": "react",
     "jsxFactory": "createElement",
-    "strictBindCallApply": true
+    "strictBindCallApply": true,
+    "types": []
   }
 }

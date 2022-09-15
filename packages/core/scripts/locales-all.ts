@@ -3,8 +3,6 @@ import { fileURLToPath } from 'url'
 import { readFile, readdir } from 'fs/promises'
 import handlebars from 'handlebars'
 
-// TODO: ts import errors
-
 const thisDir = dirname(fileURLToPath(import.meta.url))
 const templatePath = joinPaths(thisDir, './locales-all.tpl')
 const localesDir = joinPaths(thisDir, '../src/locales')
