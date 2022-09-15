@@ -17,9 +17,6 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
-  "scripts": {
-    "preflight": "workspace-scripts pkg:preflight"
-  },
   "dependencies": {
     "preact": "^10.0.5",
     "tslib": "^2.1.0"
@@ -28,6 +25,9 @@
     "@fullcalendar/workspace-scripts": "*",
     "@types/node": "^16.11.7",
     "handlebars": "^4.1.2"
+  },
+  "scripts": {
+    "preflight": "workspace-scripts pkg:preflight"
   },
   "fileExports": {
     ".": "./src/index.ts",

@@ -14,12 +14,17 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
+  "dependencies": {
+    "@fullcalendar/core": "workspace:*",
+    "tslib": "^2.1.0"
+  },
+  "devDependencies": {
+    "@fullcalendar/workspace-scripts": "workspace:*"
+  },
   "scripts": {
     "preflight": "workspace-scripts pkg:preflight"
   },
-  "dependencies": {
-    "@fullcalendar/core": "workspace:*",
-    "@fullcalendar/workspace-scripts": "workspace:*",
-    "tslib": "^2.1.0"
+  "fileExports": {
+    ".": "./src/index.ts"
   }
 }

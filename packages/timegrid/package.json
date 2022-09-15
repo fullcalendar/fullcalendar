@@ -17,13 +17,18 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
-  "scripts": {
-    "preflight": "workspace-scripts pkg:preflight"
-  },
   "dependencies": {
     "@fullcalendar/core": "workspace:*",
     "@fullcalendar/daygrid": "workspace:*",
-    "@fullcalendar/workspace-scripts": "workspace:*",
     "tslib": "^2.1.0"
+  },
+  "devDependencies": {
+    "@fullcalendar/workspace-scripts": "workspace:*"
+  },
+  "scripts": {
+    "preflight": "workspace-scripts pkg:preflight"
+  },
+  "fileExports": {
+    ".": "./src/index.ts"
   }
 }

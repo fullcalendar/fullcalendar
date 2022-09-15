@@ -20,9 +20,6 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
-  "scripts": {
-    "preflight": "workspace-scripts pkg:preflight"
-  },
   "dependencies": {
     "@fullcalendar/core": "workspace:*",
     "tslib": "^2.1.0"
@@ -33,5 +30,11 @@
   "devDependencies": {
     "@fullcalendar/workspace-scripts": "workspace:*",
     "luxon": "^1.12.1"
+  },
+  "scripts": {
+    "preflight": "workspace-scripts pkg:preflight"
+  },
+  "fileExports": {
+    ".": "./src/index.ts"
   }
 }

@@ -17,9 +17,6 @@
     "email": "n.pearman@gmail.com",
     "url": "https://github.com/njpearman/"
   },
-  "scripts": {
-    "preflight": "workspace-scripts pkg:preflight"
-  },
   "dependencies": {
     "@fullcalendar/core": "workspace:*",
     "ical.js": "^1.4.0",
@@ -27,5 +24,11 @@
   },
   "devDependencies": {
     "@fullcalendar/workspace-scripts": "workspace:*"
+  },
+  "scripts": {
+    "preflight": "workspace-scripts pkg:preflight"
+  },
+  "fileExports": {
+    ".": "./src/index.ts"
   }
 }

@@ -21,10 +21,13 @@
     "@fullcalendar/core": "workspace:*",
     "tslib": "^2.1.0"
   },
+  "devDependencies": {
+    "@fullcalendar/workspace-scripts": "workspace:*"
+  },
   "scripts": {
     "preflight": "workspace-scripts pkg:preflight"
   },
-  "devDependencies": {
-    "@fullcalendar/workspace-scripts": "workspace:*"
+  "fileExports": {
+    ".": "./src/index.ts"
   }
 }

@@ -2,7 +2,7 @@ import { createPlugin } from '@fullcalendar/core'
 import { ListView } from './ListView'
 import { OPTION_REFINERS } from './options'
 import './options-declare'
-import './main.css'
+import './index.css'
 
 export { ListView }
 export * from './api-type-deps'
