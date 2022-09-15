@@ -32,5 +32,9 @@
   },
   "generatedExports": {
     "./locales-all": "./scripts/locales-all.ts"
+  },
+  "iife": {
+    ".": "FullCalendar",
+    "./locales-all": "FullCalendarLocales"
   }
 }
