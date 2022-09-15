@@ -34,5 +34,9 @@
   },
   "fileExports": {
     ".": "./src/index.ts"
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
   }
 }

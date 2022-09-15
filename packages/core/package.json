@@ -41,5 +41,9 @@
   "iife": {
     ".": "FullCalendar",
     "./locales-all": "FullCalendarLocales"
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
   }
 }
