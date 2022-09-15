@@ -1,5 +1,3 @@
-// automatically generated
-
 {{#each localeCodes}}
 import l{{@index}} from './locales/{{this}}'
 {{/each}}
