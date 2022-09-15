@@ -1,7 +1,7 @@
 import { join as joinPaths, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { readFile, readdir } from 'fs/promises'
-import handlebars from 'handlebars' // this should not work
+import handlebars from 'handlebars'
 
 // TODO: ts import errors
 
