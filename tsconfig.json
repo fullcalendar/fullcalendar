@@ -1,7 +1,6 @@
 {
   "files": [],
   "references": [
-    { "path": "./scripts" },
     { "path": "./tests" },
     { "path": "./packages/bundle" },
     { "path": "./packages/core" },

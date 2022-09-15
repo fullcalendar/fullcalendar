@@ -22,9 +22,9 @@
     "tslib": "^2.1.0"
   },
   "devDependencies": {
+    "@fullcalendar/workspace-scripts": "*",
     "@types/node": "^16.11.7",
-    "handlebars": "^4.1.2",
-    "typescript": "^4.8.3"
+    "handlebars": "^4.1.2"
   },
   "fileExports": {
     ".": "./src/index.ts",
