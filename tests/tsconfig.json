@@ -1,6 +1,7 @@
 {
   "extends":  "../tsconfig.base",
   "compilerOptions": {
+    "types": ["jasmine", "jasmine-jquery", "jquery"],
     "rootDir": "./src",
     "outDir": "./dist/.tsc"
   },
