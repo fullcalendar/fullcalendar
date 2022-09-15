@@ -4,13 +4,6 @@
   "title": "FullCalendar Bootstrap 4 Plugin",
   "description": "Bootstrap 4 theming for your calendar",
   "docs": "https://fullcalendar.io/docs/bootstrap4",
-  "dependencies": {
-    "@fullcalendar/core": "workspace:*",
-    "tslib": "^2.1.0"
-  },
-  "main": "dist/.tsc/main.js",
-  "types": "dist/.tsc/main.d.ts",
-  "browserGlobal": "FullCalendarBootstrap",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {
@@ -23,5 +16,15 @@
     "name": "Adam Shaw",
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
+  },
+  "scripts": {
+    "preflight": "workspace-scripts pkg:preflight"
+  },
+  "dependencies": {
+    "@fullcalendar/core": "workspace:*",
+    "tslib": "^2.1.0"
+  },
+  "devDependencies": {
+    "@fullcalendar/workspace-scripts": "workspace:*"
   }
 }

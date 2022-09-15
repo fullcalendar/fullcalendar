@@ -4,14 +4,6 @@
   "title": "FullCalendar iCalendar Plugin",
   "description": "Fetch events from a public iCalendar / .ics feed",
   "docs": "https://fullcalendar.io/docs/icalendar",
-  "dependencies": {
-    "@fullcalendar/core": "workspace:*",
-    "ical.js": "^1.4.0",
-    "tslib": "^2.1.0"
-  },
-  "main": "dist/.tsc/main.js",
-  "types": "dist/.tsc/main.d.ts",
-  "browserGlobal": "FullCalendarICalendar",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {
@@ -24,5 +16,16 @@
     "name": "NJ Pearman",
     "email": "n.pearman@gmail.com",
     "url": "https://github.com/njpearman/"
+  },
+  "scripts": {
+    "preflight": "workspace-scripts pkg:preflight"
+  },
+  "dependencies": {
+    "@fullcalendar/core": "workspace:*",
+    "ical.js": "^1.4.0",
+    "tslib": "^2.1.0"
+  },
+  "devDependencies": {
+    "@fullcalendar/workspace-scripts": "workspace:*"
   }
 }

@@ -4,19 +4,6 @@
   "title": "FullCalendar RRule Plugin",
   "description": "A connector to the RRule library, for recurring events",
   "docs": "https://fullcalendar.io/docs/rrule-plugin",
-  "dependencies": {
-    "@fullcalendar/core": "workspace:*",
-    "tslib": "^2.1.0"
-  },
-  "peerDependencies": {
-    "rrule": "^2.6.0"
-  },
-  "devDependencies": {
-    "rrule": "^2.6.0"
-  },
-  "main": "dist/.tsc/main.js",
-  "types": "dist/.tsc/main.d.ts",
-  "browserGlobal": "FullCalendarRRule",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {
@@ -29,5 +16,19 @@
     "name": "Adam Shaw",
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
+  },
+  "scripts": {
+    "preflight": "workspace-scripts pkg:preflight"
+  },
+  "dependencies": {
+    "@fullcalendar/core": "workspace:*",
+    "tslib": "^2.1.0"
+  },
+  "peerDependencies": {
+    "rrule": "^2.6.0"
+  },
+  "devDependencies": {
+    "@fullcalendar/workspace-scripts": "workspace:*",
+    "rrule": "^2.6.0"
   }
 }

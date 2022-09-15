@@ -17,6 +17,9 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
+  "scripts": {
+    "preflight": "workspace-scripts pkg:preflight"
+  },
   "dependencies": {
     "preact": "^10.0.5",
     "tslib": "^2.1.0"

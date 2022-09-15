@@ -4,20 +4,6 @@
   "title": "FullCalendar Standard Bundle",
   "description": "An easily consumable combination of standard plugins",
   "docs": "https://fullcalendar.io/docs/initialize-globals",
-  "devDependencies": {
-    "@fullcalendar/bootstrap": "workspace:*",
-    "@fullcalendar/bootstrap5": "workspace:*",
-    "@fullcalendar/core": "workspace:*",
-    "@fullcalendar/daygrid": "workspace:*",
-    "@fullcalendar/google-calendar": "workspace:*",
-    "@fullcalendar/interaction": "workspace:*",
-    "@fullcalendar/list": "workspace:*",
-    "@fullcalendar/timegrid": "workspace:*",
-    "tslib": "^2.1.0"
-  },
-  "main": "dist/.tsc/main.js",
-  "types": "dist/.tsc/main.d.ts",
-  "browserGlobal": "FullCalendar",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {
@@ -30,5 +16,20 @@
     "name": "Adam Shaw",
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
+  },
+  "scripts": {
+    "preflight": "workspace-scripts pkg:preflight"
+  },
+  "devDependencies": {
+    "@fullcalendar/bootstrap": "workspace:*",
+    "@fullcalendar/bootstrap5": "workspace:*",
+    "@fullcalendar/core": "workspace:*",
+    "@fullcalendar/daygrid": "workspace:*",
+    "@fullcalendar/google-calendar": "workspace:*",
+    "@fullcalendar/interaction": "workspace:*",
+    "@fullcalendar/list": "workspace:*",
+    "@fullcalendar/timegrid": "workspace:*",
+    "@fullcalendar/workspace-scripts": "workspace:*",
+    "tslib": "^2.1.0"
   }
 }
