@@ -29,7 +29,10 @@
     "rrule": "^2.6.0"
   },
   "scripts": {
-    "preflight": "workspace-scripts pkg:preflight"
+    "preflight": "workspace-scripts pkg:preflight",
+    "tsc": "workspace-scripts-tsc -b",
+    "build": "workspace-scripts pkg:build",
+    "clean": "workspace-scripts pkg:clean"
   },
   "fileExports": {
     ".": "./src/index.ts"
