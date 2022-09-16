@@ -1,5 +1,5 @@
 
-@import '../../common/core/styles/mixins';
+@import '../../core/src/styles/mixins';
 
 @import './styles/vars';
 @import './styles/list';
