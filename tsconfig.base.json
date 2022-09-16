@@ -21,6 +21,7 @@
     "jsx": "react",
     "jsxFactory": "createElement",
     "strictBindCallApply": true,
+    "skipLibCheck": true,
     "types": []
   }
 }
