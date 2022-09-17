@@ -40,7 +40,7 @@
     "./locales/*": "./src/locales/*.ts"
   },
   "generatedExports": {
-    "./locales-all": "./scripts/locales-all.ts"
+    "./locales-all": "./scripts/generate-locales-all.ts"
   },
   "iife": {
     ".": "FullCalendar",

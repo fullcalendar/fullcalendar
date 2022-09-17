@@ -4,7 +4,7 @@ import { readFile, readdir } from 'fs/promises'
 import handlebars from 'handlebars'
 
 const thisDir = dirname(fileURLToPath(import.meta.url))
-const templatePath = joinPaths(thisDir, './locales-all.tpl')
+const templatePath = joinPaths(thisDir, '../src/locales-all.ts.tpl')
 const localesDir = joinPaths(thisDir, '../src/locales')
 
 export default async function() {
