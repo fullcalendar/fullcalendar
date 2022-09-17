@@ -43,5 +43,6 @@ export default async function main() {
 }
 
 function strToLines(s) {
-  return s ? s.trim().split('\n') : []
+  s = s.trim()
+  return s ? s.split('\n') : []
 }
