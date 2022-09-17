@@ -31,10 +31,8 @@
     "moment-timezone": "^0.5.31"
   },
   "scripts": {
-    "preflight": "workspace-scripts pkg:preflight",
-    "tsc": "workspace-scripts-tsc -b",
     "build": "workspace-scripts pkg:build",
-    "dev": "workspace-scripts pkg:build --dev",
+    "dev": "workspace-scripts pkg:dev",
     "clean": "workspace-scripts pkg:clean"
   },
   "fileExports": {

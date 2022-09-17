@@ -35,7 +35,6 @@
   },
   "scripts": {
     "clean": "workspace-scripts pkg:clean",
-    "tsc": "workspace-scripts-tsc -b",
     "build": "workspace-scripts pkg:build --iife-only"
   },
   "generatedExports": {
