@@ -17,13 +17,13 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
+  "type": "module",
   "dependencies": {
     "preact": "^10.0.5",
     "tslib": "^2.1.0"
   },
   "devDependencies": {
     "@fullcalendar/workspace-scripts": "workspace:*",
-    "@types/node": "^16.11.7",
     "handlebars": "^4.1.2"
   },
   "scripts": {
@@ -40,7 +40,7 @@
     "./locales/*": "./src/locales/*.ts"
   },
   "generatedExports": {
-    "./locales-all": "./scripts/generate-locales-all.ts"
+    "./locales-all": "./scripts/generate-locales-all.js"
   },
   "iife": {
     ".": "FullCalendar",

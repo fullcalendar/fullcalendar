@@ -23,11 +23,11 @@ export default async function() {
 TODO: more DRY
 */
 
-function isFilenameHidden(filename: string): boolean {
+function isFilenameHidden(filename) {
   return Boolean(filename.match(/^\./))
 }
 
-function removeExtension(path: string): string {
+function removeExtension(path) {
   const match = path.match(/^(.*)\.([^\/]*)$/)
   return match ? match[1] : path
 }

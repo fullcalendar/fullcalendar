@@ -1,8 +1,8 @@
 import { resolve as resolvePath } from 'path'
 import { readFile } from 'fs/promises'
 import handlebars from 'handlebars'
-import { capture } from '@fullcalendar/workspace-scripts/src/utils/exec'
-import { removeExt } from '@fullcalendar/workspace-scripts/src/utils/path'
+import { capture } from '@fullcalendar/workspace-scripts/utils/exec'
+import { removeExt } from '@fullcalendar/workspace-scripts/utils/path'
 
 export default async function main() {
   const templatePath = resolvePath('./src/index.ts')
@@ -42,6 +42,6 @@ export default async function main() {
   return code
 }
 
-function strToLines(s: string): string[] {
+function strToLines(s) {
   return s ? s.trim().split('\n') : []
 }
