@@ -26,8 +26,18 @@
     "xhr-mock": "^2.5.1"
   },
   "devDependencies": {
+    "@fullcalendar/workspace-scripts": "workspace:*",
     "@types/jasmine": "^3.3.12",
     "@types/jasmine-jquery": "^1.5.33",
-    "@types/jquery": "^3.3.29"
+    "@types/jquery": "^3.3.29",
+    "handlebars": "^4.1.2"
+  },
+  "scripts": {
+    "clean": "workspace-scripts pkg:clean",
+    "tsc": "workspace-scripts-tsc -b",
+    "build": "workspace-scripts pkg:build --iife-only"
+  },
+  "generatedExports": {
+    ".": "./scripts/generate-index.ts"
   }
 }
