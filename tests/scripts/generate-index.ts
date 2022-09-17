@@ -5,7 +5,7 @@ import { capture } from '@fullcalendar/workspace-scripts/src/utils/exec'
 import { removeExt } from '@fullcalendar/workspace-scripts/src/utils/path'
 
 export default async function main() {
-  const templatePath = resolvePath('./src/index.ts.tpl')
+  const templatePath = resolvePath('./src/index.ts')
   const srcPathAbs = resolvePath('./src')
 
   let testPaths = await capture(
@@ -32,9 +32,11 @@ export default async function main() {
   }
 
   const templateText = await readFile(templatePath, 'utf8')
-  const template = handlebars.compile(templateText)
-  const code = template({
-    testPaths: testPaths.map((testPath) => removeExt(testPath)),
+  const code = templateText.replace(/\/\* generate-index(.*)\*\//s, (allStr, mainStr) => {
+    const template = handlebars.compile(mainStr)
+    return template({
+      testPaths: testPaths.map((testPath) => removeExt(testPath)),
+    })
   })
 
   return code

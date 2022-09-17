@@ -39,5 +39,16 @@
   },
   "generatedExports": {
     ".": "./scripts/generate-index.ts"
+  },
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/.tsc/index.d.ts"
+    },
+    "./src/*": {
+      "default": "./dist/.tsc/*.js",
+      "types": "./dist/.tsc/*.d.ts"
+    },
+    "./scripts/*": "./scripts/*.ts"
   }
 }
