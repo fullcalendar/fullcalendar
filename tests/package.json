@@ -17,8 +17,6 @@
     "@fullcalendar/rrule": "workspace:*",
     "@fullcalendar/timegrid": "workspace:*",
     "components-jqueryui": "^1.12.1",
-    "jasmine-jquery": "^2.1.1",
-    "jquery": "^3.4.0",
     "jquery-simulate": "^1.0.2",
     "luxon": "^2.0.0",
     "moment": "^2.29.1",
