@@ -3,15 +3,15 @@ import { default as dayGridPlugin } from '@fullcalendar/daygrid'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
-// HACK: in our CI setup, requests to the google-calendar api were failing for some reason
+// In our CI setup, requests to the google-calendar api were failing for some reason
 // (requests to other services were working however)
-const SKIP_GCAL = true // window.karmaConfig.isCi // TODO: revive
-if (SKIP_GCAL) {
+const noGCal = (window as any).__karma__.config.args.indexOf('--no-gcal') !== -1
+if (noGCal) {
   console.log('skipping google-calendar') // eslint-disable-line no-console
 }
 
 // eslint-disable-next-line
-SKIP_GCAL ||
+noGCal ||
 describe('Google Calendar plugin', () => {
   const API_KEY = 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE'
   const HOLIDAY_CALENDAR_ID = 'en.usa#holiday@group.v.calendar.google.com'
