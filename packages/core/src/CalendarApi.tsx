@@ -14,6 +14,7 @@ import { CalendarDataManager } from './reducers/CalendarDataManager.js'
 import { Action } from './reducers/Action.js'
 import { EventSource } from './structs/event-source.js'
 import { eventApiToStore, buildEventApis } from './api/EventApi.js'
+import { CalendarData } from './reducers/data-types.js'
 
 // public
 import {
@@ -33,7 +34,7 @@ import {
 export class CalendarApi {
   currentDataManager?: CalendarDataManager // will be set by CalendarDataManager
 
-  getCurrentData() {
+  getCurrentData(): CalendarData {
     return this.currentDataManager!.getCurrentData()
   }
 

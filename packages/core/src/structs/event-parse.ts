@@ -7,7 +7,7 @@ import { CalendarContext } from '../CalendarContext.js'
 import { EventDef } from './event-def.js'
 import { createEventInstance, EventInstance } from './event-instance.js'
 import { EventSource } from './event-source.js'
-import { RefinedOptionsFromRefiners, RawOptionsFromRefiners, identity, Identity, Dictionary, refineProps } from '../options.js'
+import { RefinedOptionsFromRefiners, RawOptionsFromRefiners, identity, Identity, Dictionary, refineProps, GenericRefiners } from '../options.js'
 import { EVENT_UI_REFINERS, createEventUi, EventUiInput, EventUiRefined } from '../component/event-ui.js'
 
 export const EVENT_NON_DATE_REFINERS = {
@@ -101,11 +101,14 @@ export function parseEvent(
   return null
 }
 
-export function refineEventDef(raw: EventInput, context: CalendarContext, refiners = buildEventRefiners(context)) {
+export function refineEventDef(raw: EventInput, context: CalendarContext, refiners = buildEventRefiners(context)): {
+  refined: RefinedOptionsFromRefiners<GenericRefiners>,
+  extra: Dictionary,
+} {
   return refineProps(raw, refiners)
 }
 
-export function buildEventRefiners(context: CalendarContext) {
+export function buildEventRefiners(context: CalendarContext): GenericRefiners {
   return { ...EVENT_UI_REFINERS, ...EVENT_REFINERS, ...context.pluginHooks.eventRefiners }
 }
 
