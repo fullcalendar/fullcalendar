@@ -40,10 +40,6 @@
   "generatedExports": {
     "./locales-all": "./scripts/generate-locales-all.js"
   },
-  "iife": {
-    ".": "FullCalendar",
-    "./locales-all": "FullCalendarLocales"
-  },
   "publishConfig": {
     "directory": "./dist",
     "linkDirectory": true

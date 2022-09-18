@@ -12,9 +12,16 @@
     { "path": "../interaction" },
     { "path": "../daygrid" },
     { "path": "../timegrid" },
+    { "path": "../icalendar" },
     { "path": "../list" },
+    { "path": "../luxon" },
+    { "path": "../luxon2" },
+    { "path": "../moment" },
+    { "path": "../moment-timezone" },
+    { "path": "../rrule" },
     { "path": "../bootstrap" },
     { "path": "../bootstrap5" },
-    { "path": "../google-calendar" }
+    { "path": "../google-calendar" },
+    { "path": "../web-component" }
   ]
 }

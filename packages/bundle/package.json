@@ -24,9 +24,16 @@
     "@fullcalendar/core": "workspace:*",
     "@fullcalendar/daygrid": "workspace:*",
     "@fullcalendar/google-calendar": "workspace:*",
+    "@fullcalendar/icalendar": "workspace:*",
     "@fullcalendar/interaction": "workspace:*",
     "@fullcalendar/list": "workspace:*",
+    "@fullcalendar/luxon": "workspace:*",
+    "@fullcalendar/luxon2": "workspace:*",
+    "@fullcalendar/moment": "workspace:*",
+    "@fullcalendar/moment-timezone": "workspace:*",
+    "@fullcalendar/rrule": "workspace:*",
     "@fullcalendar/timegrid": "workspace:*",
+    "@fullcalendar/web-component": "workspace:*",
     "@fullcalendar/workspace-scripts": "workspace:*",
     "tslib": "^2.1.0"
   },
@@ -36,7 +43,34 @@
     "clean": "workspace-scripts pkg:clean"
   },
   "fileExports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./bootstrap": "./src/bootstrap.ts",
+    "./bootstrap5": "./src/bootstrap5.ts",
+    "./google-calendar": "./src/google-calendar.ts",
+    "./icalendar": "./src/icalendar.ts",
+    "./luxon": "./src/luxon.ts",
+    "./luxon2": "./src/luxon2.ts",
+    "./moment-timezone": "./src/moment-timezone.ts",
+    "./moment": "./src/moment.ts",
+    "./rrule": "./src/rrule.ts",
+    "./web-component": "./src/web-component.ts",
+    "./locales-all": "./src/locales-all.ts"
+  },
+  "generatedExports": {
+    "./locales/*": "./scripts/generate-locales-each.js"
+  },
+  "iife": {
+    ".": "FullCalendar",
+    "./bootstrap": "FullCalendarBootstrap",
+    "./bootstrap5": "FullCalendarBootstrap5",
+    "./google-calendar": "FullCalendarGoogleCalendar",
+    "./icalendar": "FullCalendarICalendar",
+    "./luxon": "FullCalendarLuxon",
+    "./luxon2": "FullCalendarLuxon2",
+    "./moment-timezone": "FullCalendarMomentTimezone",
+    "./moment": "FullCalendarMoment",
+    "./rrule": "FullCalendarRRule",
+    "./web-component": ""
   },
   "publishConfig": {
     "directory": "./dist",
