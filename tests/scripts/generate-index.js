@@ -4,7 +4,7 @@ import { default as handlebars } from 'handlebars'
 import { capture } from '@fullcalendar/workspace-scripts/utils/exec'
 
 export default async function main() {
-  const templatePath = resolvePath('./src/index.ts')
+  const templatePath = resolvePath('./src/index.js')
   const srcPathAbs = resolvePath('./src')
 
   let testPaths = await capture(

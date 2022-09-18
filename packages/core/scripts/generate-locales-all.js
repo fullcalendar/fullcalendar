@@ -1,10 +1,10 @@
 import { join as joinPaths, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { readFile, readdir } from 'fs/promises'
-import handlebars from 'handlebars'
+import { default as handlebars } from 'handlebars'
 
 const thisDir = dirname(fileURLToPath(import.meta.url))
-const templatePath = joinPaths(thisDir, '../src/locales-all.ts.tpl')
+const templatePath = joinPaths(thisDir, '../src/locales-all.js.tpl')
 const localesDir = joinPaths(thisDir, '../src/locales')
 
 export default async function() {
