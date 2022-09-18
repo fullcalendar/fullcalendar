@@ -1,4 +1,4 @@
-import { LocaleInput } from './index.js'
+import { LocaleInput } from '../index.js'
 
 declare const singleLocale: LocaleInput
 
