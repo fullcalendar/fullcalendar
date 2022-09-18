@@ -35,7 +35,8 @@
   },
   "scripts": {
     "clean": "workspace-scripts pkg:clean",
-    "build": "workspace-scripts pkg:build --iife-only"
+    "build": "workspace-scripts pkg:build --iife-only",
+    "test": "workspace-scripts test"
   },
   "generatedExports": {
     ".": "./scripts/generate-index.js"
