@@ -2,7 +2,6 @@ import { resolve as resolvePath } from 'path'
 import { readFile } from 'fs/promises'
 import { default as handlebars } from 'handlebars'
 import { capture } from '@fullcalendar/workspace-scripts/utils/exec'
-import { removeExt } from '@fullcalendar/workspace-scripts/utils/path'
 
 export default async function main() {
   const templatePath = resolvePath('./src/index.ts')
@@ -35,7 +34,7 @@ export default async function main() {
   const code = templateText.replace(/\/\* generate-index(.*)\*\//s, (allStr, mainStr) => {
     const template = handlebars.compile(mainStr)
     return template({
-      testPaths: testPaths.map((testPath) => removeExt(testPath)),
+      testPaths: testPaths.map((testPath) => testPath.replace(/\.tsx?$/, '.js')),
     })
   })
 

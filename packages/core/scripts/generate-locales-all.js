@@ -8,15 +8,17 @@ const templatePath = joinPaths(thisDir, '../src/locales-all.ts.tpl')
 const localesDir = joinPaths(thisDir, '../src/locales')
 
 export default async function() {
-  let templateText = await readFile(templatePath, 'utf8')
-  let template = handlebars.compile(templateText)
-  let localeCodes = (await readdir(localesDir))
+  const templateText = await readFile(templatePath, 'utf8')
+  const template = handlebars.compile(templateText)
+  const localeCodes = (await readdir(localesDir))
     .filter((filename) => !isFilenameHidden(filename))
     .map((filename) => removeExtension(filename))
 
-  return template({
+  const code = template({
     localeCodes,
   })
+
+  return code
 }
 
 /*
