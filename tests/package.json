@@ -16,8 +16,6 @@
     "@fullcalendar/moment-timezone": "workspace:*",
     "@fullcalendar/rrule": "workspace:*",
     "@fullcalendar/timegrid": "workspace:*",
-    "components-jqueryui": "^1.12.1",
-    "jquery-simulate": "^1.0.2",
     "luxon": "^2.0.0",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.31",

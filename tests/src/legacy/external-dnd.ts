@@ -3,7 +3,6 @@ import { default as interactionPlugin, ThirdPartyDraggable } from '@fullcalendar
 import { default as dayGridPlugin } from '@fullcalendar/daygrid'
 import { default as timeGridPlugin } from '@fullcalendar/timegrid'
 import { ListenerCounter } from '../lib/ListenerCounter.js'
-import 'components-jqueryui' // for .sortable and .draggable
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
