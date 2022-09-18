@@ -1,8 +1,8 @@
 import { createPlugin, EventSourceDef, addDays, DateEnv, requestJson, Dictionary } from '@fullcalendar/core'
 import { OPTION_REFINERS } from './options-refiners.js'
-import './options-declare'
+import './options-declare.js'
 import { EVENT_SOURCE_REFINERS } from './event-source-refiners.js'
-import './event-source-declare'
+import './event-source-declare.js'
 
 // TODO: expose somehow
 const API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'

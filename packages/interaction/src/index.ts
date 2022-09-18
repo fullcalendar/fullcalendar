@@ -6,7 +6,7 @@ import { EventResizing } from './interactions/EventResizing.js'
 import { UnselectAuto } from './interactions/UnselectAuto.js'
 import { FeaturefulElementDragging } from './dnd/FeaturefulElementDragging.js'
 import { OPTION_REFINERS, LISTENER_REFINERS } from './options.js'
-import './options-declare'
+import './options-declare.js'
 
 export default createPlugin({
   componentInteractions: [DateClicking, DateSelecting, EventDragging, EventResizing],

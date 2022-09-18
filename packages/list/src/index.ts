@@ -1,7 +1,7 @@
 import { createPlugin } from '@fullcalendar/core'
 import { ListView } from './ListView.js'
 import { OPTION_REFINERS } from './options.js'
-import './options-declare'
+import './options-declare.js'
 import './index.css'
 
 export { ListView }

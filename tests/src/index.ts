@@ -1,8 +1,8 @@
 import 'jquery-simulate'
 import 'jasmine-jquery'
 
-import './lib/globals'
-import './lib/install-plugins'
+import './lib/globals.js'
+import './lib/install-plugins.js'
 import './index.css'
 
 // temporary

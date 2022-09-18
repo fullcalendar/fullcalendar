@@ -10,7 +10,7 @@ import {
   DateInput,
 } from '@fullcalendar/core'
 import { RRULE_EVENT_REFINERS, RRuleInputObject } from './event-refiners.js'
-import './event-declare'
+import './event-declare.js'
 
 interface EventRRuleData {
   rruleSet: RRuleSet

@@ -5,9 +5,9 @@ import { parseLocalDate, parseUtcDate } from './date-parsing.js'
 // Other Important Global Stuff
 // ---------------------------------------------------------------------------------------------------------------------
 
-import './hacks'
-import './simulate'
-import './date-matchers'
+import './hacks.js'
+import './simulate.js'
+import './date-matchers.js'
 
 // Setup / Teardown
 // ---------------------------------------------------------------------------------------------------------------------

@@ -5,7 +5,7 @@ import { TimeColsSeg } from './TimeColsSeg.js'
 import { DayTimeCols, buildDayRanges } from './DayTimeCols.js'
 import { DayTimeColsSlicer } from './DayTimeColsSlicer.js'
 import { OPTION_REFINERS } from './options.js'
-import './options-declare'
+import './options-declare.js'
 import './index.css'
 
 export { DayTimeCols, DayTimeColsView, TimeColsView, buildTimeColsModel, buildDayRanges, DayTimeColsSlicer, TimeColsSeg }
