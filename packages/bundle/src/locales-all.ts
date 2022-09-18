@@ -1,2 +1,4 @@
+import { globalLocales } from '@fullcalendar/core'
+import allLocales from '@fullcalendar/core/locales-all'
 
-export { default } from '@fullcalendar/core/locales-all'
+globalLocales.push(...allLocales)
