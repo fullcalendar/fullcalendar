@@ -1,12 +1,12 @@
-import { EventSource, EventSourceHash } from '../structs/event-source'
-import { parseEventSource, buildEventSourceRefiners } from '../structs/event-source-parse'
-import { arrayToHash, filterHash } from '../util/object'
-import { DateRange } from '../datelib/date-range'
-import { DateProfile } from '../DateProfileGenerator'
-import { Action } from './Action'
-import { guid } from '../util/misc'
-import { CalendarContext } from '../CalendarContext'
-import { CalendarOptions } from '../options'
+import { EventSource, EventSourceHash } from '../structs/event-source.js'
+import { parseEventSource, buildEventSourceRefiners } from '../structs/event-source-parse.js'
+import { arrayToHash, filterHash } from '../util/object.js'
+import { DateRange } from '../datelib/date-range.js'
+import { DateProfile } from '../DateProfileGenerator.js'
+import { Action } from './Action.js'
+import { guid } from '../util/misc.js'
+import { CalendarContext } from '../CalendarContext.js'
+import { CalendarOptions } from '../options.js'
 
 export function initEventSources(calendarOptions, dateProfile: DateProfile, context: CalendarContext) {
   let activeRange = dateProfile ? dateProfile.activeRange : null

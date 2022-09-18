@@ -1,9 +1,9 @@
-import { listenBySelector } from '../util/dom-event'
-import { EventApi } from '../api/EventApi'
-import { elementClosest } from '../util/dom-manip'
-import { getElSeg } from '../component/event-rendering'
-import { Interaction, InteractionSettings } from './interaction'
-import { ViewApi } from '../ViewApi'
+import { listenBySelector } from '../util/dom-event.js'
+import { EventApi } from '../api/EventApi.js'
+import { elementClosest } from '../util/dom-manip.js'
+import { getElSeg } from '../component/event-rendering.js'
+import { Interaction, InteractionSettings } from './interaction.js'
+import { ViewApi } from '../ViewApi.js'
 
 export interface EventClickArg {
   el: HTMLElement

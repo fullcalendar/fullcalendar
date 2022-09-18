@@ -1,5 +1,5 @@
-import { EventSourceFetcher } from './event-source'
-import { EventSourceRefined } from './event-source-parse'
+import { EventSourceFetcher } from './event-source.js'
+import { EventSourceRefined } from './event-source-parse.js'
 
 export interface EventSourceDef<Meta> {
   ignoreRange?: boolean

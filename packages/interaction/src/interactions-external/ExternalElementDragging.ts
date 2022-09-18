@@ -19,8 +19,8 @@ import {
   refineEventDef,
 } from '@fullcalendar/core'
 import { __assign } from 'tslib'
-import { HitDragging } from '../interactions/HitDragging'
-import { buildDatePointApiWithContext } from '../utils'
+import { HitDragging } from '../interactions/HitDragging.js'
+import { buildDatePointApiWithContext } from '../utils.js'
 
 export type DragMetaGenerator = DragMetaInput | ((el: HTMLElement) => DragMetaInput)
 

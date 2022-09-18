@@ -1,6 +1,6 @@
-import { Duration } from '../datelib/duration'
-import { EventUi } from '../component/event-ui'
-import { Dictionary } from '../options'
+import { Duration } from '../datelib/duration.js'
+import { EventUi } from '../component/event-ui.js'
+import { Dictionary } from '../options.js'
 
 export interface EventDef { // TODO: add recurring type here?
   defId: string

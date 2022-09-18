@@ -1,8 +1,8 @@
-import { ViewContext, ViewContextType } from '../ViewContext'
-import { DateMarker } from '../datelib/marker'
-import { RenderHook, RenderHookPropsChildren, MountArg } from './render-hook'
-import { createElement } from '../preact'
-import { DateFormatter } from '../datelib/DateFormatter'
+import { ViewContext, ViewContextType } from '../ViewContext.js'
+import { DateMarker } from '../datelib/marker.js'
+import { RenderHook, RenderHookPropsChildren, MountArg } from './render-hook.js'
+import { createElement } from '../preact/index.js'
+import { DateFormatter } from '../datelib/DateFormatter.js'
 
 export interface WeekNumberRootProps {
   date: DateMarker

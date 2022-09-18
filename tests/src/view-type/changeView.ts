@@ -1,6 +1,6 @@
-import { expectActiveRange } from '../lib/ViewDateUtils'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { expectActiveRange } from '../lib/ViewDateUtils.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 describe('changeView', () => {
   pushOptions({

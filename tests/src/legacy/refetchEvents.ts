@@ -1,4 +1,4 @@
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 
 describe('refetchEvents', () => {
   // there IS a similar test in automated-better, but does month view

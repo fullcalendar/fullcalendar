@@ -1,10 +1,10 @@
 import { Calendar } from '@fullcalendar/core'
-import momentPlugin, { toMoment, toMomentDuration } from '@fullcalendar/moment'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
+import { default as momentPlugin, toMoment, toMomentDuration } from '@fullcalendar/moment'
+import { default as dayGridPlugin } from '@fullcalendar/daygrid'
+import { default as timeGridPlugin } from '@fullcalendar/timegrid'
 import 'moment/locale/es' // only test spanish
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 
 describe('moment plugin', () => {
   const PLUGINS = [dayGridPlugin, timeGridPlugin, momentPlugin]

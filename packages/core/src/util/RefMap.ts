@@ -1,4 +1,4 @@
-import { hashValuesToArray, collectFromHash } from './object'
+import { hashValuesToArray, collectFromHash } from './object.js'
 
 /*
 TODO: somehow infer OtherArgs from masterCallback?

@@ -1,6 +1,6 @@
-import { mergeProps } from '../util/object'
-import { globalLocales } from '../global-locales' // weird to be importing this
-import { CalendarOptions, CalendarOptionsRefined } from '../options'
+import { mergeProps } from '../util/object.js'
+import { globalLocales } from '../global-locales.js' // weird to be importing this
+import { CalendarOptions, CalendarOptionsRefined } from '../options.js'
 
 export type LocaleCodeArg = string | string[]
 export type LocaleSingularArg = LocaleCodeArg | LocaleInput

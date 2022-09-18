@@ -1,4 +1,4 @@
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 describe('print preview', () => {
   pushOptions({

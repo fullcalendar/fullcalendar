@@ -1,6 +1,6 @@
 import { StandardEvent, BaseComponent, MinimalEventProps } from '@fullcalendar/core'
 import { createElement } from '@fullcalendar/core/preact'
-import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering'
+import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering.js'
 
 export interface TableBlockEventProps extends MinimalEventProps {
   defaultDisplayEventEnd: boolean

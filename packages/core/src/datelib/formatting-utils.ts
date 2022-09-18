@@ -1,5 +1,5 @@
-import { DateMarker } from './marker'
-import { padStart } from '../util/misc'
+import { DateMarker } from './marker.js'
+import { padStart } from '../util/misc.js'
 
 // timeZoneOffset is in minutes
 export function buildIsoString(marker: DateMarker, timeZoneOffset?: number, stripZeroTime: boolean = false) {

@@ -1,7 +1,7 @@
-import { DateMeta } from './component/date-rendering'
-import { Duration } from './datelib/duration'
-import { ViewApi } from './ViewApi'
-import { MountArg } from './common/render-hook'
+import { DateMeta } from './component/date-rendering.js'
+import { Duration } from './datelib/duration.js'
+import { ViewApi } from './ViewApi.js'
+import { MountArg } from './common/render-hook.js'
 
 export interface SlotLaneContentArg extends Partial<DateMeta> { // TODO: move?
   time?: Duration

@@ -1,10 +1,10 @@
 /* eslint max-classes-per-file: off */
 
 import { __assign } from 'tslib'
-import { Component, Ref } from './preact'
-import { ViewContextType, ViewContext } from './ViewContext'
-import { compareObjs, EqualityFuncs, getUnequalProps } from './util/object'
-import { Dictionary } from './options'
+import { Component, Ref } from './preact/index.js'
+import { ViewContextType, ViewContext } from './ViewContext.js'
+import { compareObjs, EqualityFuncs, getUnequalProps } from './util/object.js'
+import { Dictionary } from './options.js'
 
 export abstract class PureComponent<Props=Dictionary, State=Dictionary> extends Component<Props, State> {
   static addPropsEquality = addPropsEquality

@@ -1,5 +1,5 @@
-import { DateFormatter, DateFormattingContext, createVerboseFormattingArg } from './DateFormatter'
-import { ZonedMarker } from './zoned-marker'
+import { DateFormatter, DateFormattingContext, createVerboseFormattingArg } from './DateFormatter.js'
+import { ZonedMarker } from './zoned-marker.js'
 
 /*
 TODO: fix the terminology of "formatter" vs "formatting func"

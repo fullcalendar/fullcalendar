@@ -1,4 +1,4 @@
-import { removeElement, applyStyle } from './dom-manip'
+import { removeElement, applyStyle } from './dom-manip.js'
 
 let _isRtlScrollbarOnLeft: boolean | null = null
 

@@ -1,9 +1,9 @@
 import { __assign } from 'tslib'
-import { PointerDragEvent } from './interactions/pointer'
-import { buildDateSpanApi, DateSpanApi, DatePointApi, DateSpan } from './structs/date-span'
-import { CalendarContext } from './CalendarContext'
-import { ViewApi } from './ViewApi'
-import { DateMarker, startOfDay } from './datelib/marker'
+import { PointerDragEvent } from './interactions/pointer.js'
+import { buildDateSpanApi, DateSpanApi, DatePointApi, DateSpan } from './structs/date-span.js'
+import { CalendarContext } from './CalendarContext.js'
+import { ViewApi } from './ViewApi.js'
+import { DateMarker, startOfDay } from './datelib/marker.js'
 
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement

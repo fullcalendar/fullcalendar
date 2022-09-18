@@ -1,6 +1,6 @@
-import { BaseComponent, setRef } from './vdom-util'
-import { ComponentChildren, Ref, createElement } from './preact'
-import { CssDimValue } from './scrollgrid/util'
+import { BaseComponent, setRef } from './vdom-util.js'
+import { ComponentChildren, Ref, createElement } from './preact/index.js'
+import { CssDimValue } from './scrollgrid/util.js'
 
 export interface ViewContainerProps {
   labeledById: string

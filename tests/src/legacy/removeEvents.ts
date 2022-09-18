@@ -1,5 +1,5 @@
 import { EventInput } from '@fullcalendar/core'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 describe('removeEvents', () => {
   pushOptions({

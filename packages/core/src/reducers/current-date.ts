@@ -1,7 +1,7 @@
-import { DateEnv, DateInput } from '../datelib/env'
-import { DateMarker } from '../datelib/marker'
-import { Action } from './Action'
-import { BaseOptionsRefined } from '../options'
+import { DateEnv, DateInput } from '../datelib/env.js'
+import { DateMarker } from '../datelib/marker.js'
+import { Action } from './Action.js'
+import { BaseOptionsRefined } from '../options.js'
 
 export function reduceCurrentDate(currentDate: DateMarker, action: Action) {
   switch (action.type) {

@@ -1,7 +1,7 @@
-import { filterHash, mapHash } from '../util/object'
-import { EventDef } from '../structs/event-def'
-import { EventInstance, EventInstanceHash } from '../structs/event-instance'
-import { EventInput } from '../structs/event-parse'
+import { filterHash, mapHash } from '../util/object.js'
+import { EventDef } from '../structs/event-def.js'
+import { EventInstance, EventInstanceHash } from '../structs/event-instance.js'
+import { EventInput } from '../structs/event-parse.js'
 import {
   EventStore,
   mergeEventStores,
@@ -9,14 +9,14 @@ import {
   filterEventStoreDefs,
   excludeSubEventStore,
   parseEvents,
-} from '../structs/event-store'
-import { Action } from './Action'
-import { EventSourceHash, EventSource } from '../structs/event-source'
-import { DateRange } from '../datelib/date-range'
-import { DateProfile } from '../DateProfileGenerator'
-import { DateEnv } from '../datelib/env'
-import { CalendarContext } from '../CalendarContext'
-import { expandRecurring } from '../structs/recurring-event'
+} from '../structs/event-store.js'
+import { Action } from './Action.js'
+import { EventSourceHash, EventSource } from '../structs/event-source.js'
+import { DateRange } from '../datelib/date-range.js'
+import { DateProfile } from '../DateProfileGenerator.js'
+import { DateEnv } from '../datelib/env.js'
+import { CalendarContext } from '../CalendarContext.js'
+import { expandRecurring } from '../structs/recurring-event.js'
 
 export function reduceEventStore(
   eventStore: EventStore,

@@ -1,7 +1,7 @@
-import { createElement } from '../preact'
-import { EventRoot } from './EventRoot'
-import { Seg } from '../component/DateComponent'
-import { EventContentArg } from '../component/event-rendering'
+import { createElement } from '../preact/index.js'
+import { EventRoot } from './EventRoot.js'
+import { Seg } from '../component/DateComponent.js'
+import { EventContentArg } from '../component/event-rendering.js'
 
 export function renderFill(fillType: string) {
   return (

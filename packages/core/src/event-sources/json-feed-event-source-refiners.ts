@@ -1,4 +1,4 @@
-import { identity, Identity, Dictionary } from '../options'
+import { identity, Identity, Dictionary } from '../options.js'
 
 export const JSON_FEED_EVENT_SOURCE_REFINERS = {
   method: String,

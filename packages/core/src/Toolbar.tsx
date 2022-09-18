@@ -1,7 +1,7 @@
-import { createElement } from './preact'
-import { BaseComponent } from './vdom-util'
-import { ToolbarModel, ToolbarWidget } from './toolbar-struct'
-import { ToolbarSection, ToolbarContent } from './ToolbarSection'
+import { createElement } from './preact/index.js'
+import { BaseComponent } from './vdom-util.js'
+import { ToolbarModel, ToolbarWidget } from './toolbar-struct.js'
+import { ToolbarSection, ToolbarContent } from './ToolbarSection.js'
 
 export interface ToolbarProps extends ToolbarContent {
   extraClassName: string // wish this could be array, but easier for pureness

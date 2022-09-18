@@ -1,10 +1,10 @@
-import { EventInput } from '../structs/event-parse'
-import { DateRange } from '../datelib/date-range'
-import { EventStore } from '../structs/event-store'
-import { EventSource, EventSourceError } from '../structs/event-source'
-import { EventInteractionState } from '../interactions/event-interaction-state'
-import { DateSpan } from '../structs/date-span'
-import { DateMarker } from '../datelib/marker'
+import { EventInput } from '../structs/event-parse.js'
+import { DateRange } from '../datelib/date-range.js'
+import { EventStore } from '../structs/event-store.js'
+import { EventSource, EventSourceError } from '../structs/event-source.js'
+import { EventInteractionState } from '../interactions/event-interaction-state.js'
+import { DateSpan } from '../structs/date-span.js'
+import { DateMarker } from '../datelib/marker.js'
 
 export type Action =
   { type: 'NOTHING' } | // hack

@@ -16,9 +16,9 @@ import {
   createRef,
   VNode,
 } from '@fullcalendar/core/preact'
-import { TimeColsSeg, splitSegsByCol, splitInteractionByCol } from './TimeColsSeg'
-import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { TimeCol } from './TimeCol'
+import { TimeColsSeg, splitSegsByCol, splitInteractionByCol } from './TimeColsSeg.js'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
+import { TimeCol } from './TimeCol.js'
 
 export interface TimeColsContentProps {
   axis: boolean

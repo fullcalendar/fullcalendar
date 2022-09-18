@@ -1,5 +1,5 @@
 import { createFormatter } from '@fullcalendar/core'
-import { TableSeg } from './TableSeg'
+import { TableSeg } from './TableSeg.js'
 
 export const DEFAULT_TABLE_EVENT_TIME_FORMAT = createFormatter({
   hour: 'numeric',

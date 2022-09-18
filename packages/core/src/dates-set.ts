@@ -1,7 +1,7 @@
-import { DateProfile } from './DateProfileGenerator'
-import { CalendarData } from './reducers/data-types'
-import { RangeApiWithTimeZone, buildRangeApiWithTimeZone } from './structs/date-span'
-import { ViewApi } from './ViewApi'
+import { DateProfile } from './DateProfileGenerator.js'
+import { CalendarData } from './reducers/data-types.js'
+import { RangeApiWithTimeZone, buildRangeApiWithTimeZone } from './structs/date-span.js'
+import { ViewApi } from './ViewApi.js'
 
 export type DatesSetArg = RangeApiWithTimeZone & { view: ViewApi }
 

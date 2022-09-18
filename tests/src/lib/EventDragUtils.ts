@@ -1,5 +1,5 @@
-import { getRectCenter, intersectRects } from './geom'
-import { CalendarWrapper } from './wrappers/CalendarWrapper'
+import { getRectCenter, intersectRects } from './geom.js'
+import { CalendarWrapper } from './wrappers/CalendarWrapper.js'
 
 /*
 TODO: Don't rely on legacy simulateDrag

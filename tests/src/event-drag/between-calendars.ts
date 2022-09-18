@@ -1,11 +1,11 @@
 import { Calendar } from '@fullcalendar/core'
-import interactionPlugin from '@fullcalendar/interaction'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import { getRectCenter } from '../lib/geom'
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { default as interactionPlugin } from '@fullcalendar/interaction'
+import { default as dayGridPlugin } from '@fullcalendar/daygrid'
+import { default as timeGridPlugin } from '@fullcalendar/timegrid'
+import { getRectCenter } from '../lib/geom.js'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 
 describe('dragging events between calendars', () => {
   let DEFAULT_DATE = '2019-01-01'

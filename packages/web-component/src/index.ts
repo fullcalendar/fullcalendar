@@ -1,4 +1,4 @@
-import { FullCalendarElement } from './FullCalendarElement'
+import { FullCalendarElement } from './FullCalendarElement.js'
 
 export function defineFullCalendarElement(tagName: string = 'full-calendar'): void {
   customElements.define(tagName, FullCalendarElement)

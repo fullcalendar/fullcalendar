@@ -1,9 +1,9 @@
-import { EventInput, EventInputTransformer } from './event-parse'
-import { DateRange } from '../datelib/date-range'
-import { EventUi } from '../component/event-ui'
-import { CalendarContext } from '../CalendarContext'
-import { CalendarApi } from '../CalendarApi'
-import { Dictionary } from '../options'
+import { EventInput, EventInputTransformer } from './event-parse.js'
+import { DateRange } from '../datelib/date-range.js'
+import { EventUi } from '../component/event-ui.js'
+import { CalendarContext } from '../CalendarContext.js'
+import { CalendarApi } from '../CalendarApi.js'
+import { Dictionary } from '../options.js'
 
 /*
 TODO: "EventSource" is the same name as a built-in type in TypeScript. Rethink.

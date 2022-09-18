@@ -1,4 +1,4 @@
-import { testEventDrag, testEventResize, testSelection } from '../lib/dnd-resize-utils'
+import { testEventDrag, testEventResize, testSelection } from '../lib/dnd-resize-utils.js'
 
 describe('event overlap', () => {
   let options

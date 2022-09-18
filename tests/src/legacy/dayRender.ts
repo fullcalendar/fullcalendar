@@ -1,5 +1,5 @@
-import { formatIsoDay } from '../lib/datelib-utils'
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { formatIsoDay } from '../lib/datelib-utils.js'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 
 describe('dayCellDidMount', () => { // TODO: rename file
   it('is triggered upon initialization of a view, with correct parameters', () => {

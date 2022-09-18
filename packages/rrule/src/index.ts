@@ -9,7 +9,7 @@ import {
   parseMarker,
   DateInput,
 } from '@fullcalendar/core'
-import { RRULE_EVENT_REFINERS, RRuleInputObject } from './event-refiners'
+import { RRULE_EVENT_REFINERS, RRuleInputObject } from './event-refiners.js'
 import './event-declare'
 
 interface EventRRuleData {

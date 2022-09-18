@@ -1,6 +1,6 @@
 import { FormatterInput } from '@fullcalendar/core'
-import { parseLocalDate } from '../lib/date-parsing'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { parseLocalDate } from '../lib/date-parsing.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 
 describe('the time text on events', () => {
   describe('in week', () => {

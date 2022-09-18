@@ -19,8 +19,8 @@ import {
   createElement,
   Fragment,
 } from '@fullcalendar/core/preact'
-import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg'
-import { TableRow } from './TableRow'
+import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg.js'
+import { TableRow } from './TableRow.js'
 
 export interface TableProps {
   dateProfile: DateProfile

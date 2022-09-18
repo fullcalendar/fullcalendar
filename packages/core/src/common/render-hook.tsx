@@ -1,9 +1,9 @@
 /* eslint max-classes-per-file: off */
 
-import { Ref, createRef, ComponentChildren, createElement, RefObject, createContext, Context } from '../preact'
-import { setRef, BaseComponent } from '../vdom-util'
-import { isPropsEqual } from '../util/object'
-import { parseClassNames, ClassNamesInput } from '../util/html'
+import { Ref, createRef, ComponentChildren, createElement, RefObject, createContext, Context } from '../preact/index.js'
+import { setRef, BaseComponent } from '../vdom-util.js'
+import { isPropsEqual } from '../util/object.js'
+import { parseClassNames, ClassNamesInput } from '../util/html.js'
 
 export type MountArg<ContentArg> = ContentArg & { el: HTMLElement }
 export type DidMountHandler<TheMountArg extends { el: HTMLElement }> = (mountArg: TheMountArg) => void

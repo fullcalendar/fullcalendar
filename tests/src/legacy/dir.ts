@@ -1,5 +1,5 @@
-import arLocale from '@fullcalendar/core/locales/ar'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { default as arLocale } from '@fullcalendar/core/locales/ar'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 describe('direction', () => {
   it('has it\'s default value computed differently based off of the locale', () => {

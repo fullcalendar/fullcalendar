@@ -6,7 +6,7 @@ SEE ALSO:
 - other range intersection tests handled by next-button
 */
 
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 describe('today button', () => {
   pushOptions({

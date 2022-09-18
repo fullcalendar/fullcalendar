@@ -1,3 +1,3 @@
-import { LocaleInput } from './datelib/locale'
+import { LocaleInput } from './datelib/locale.js'
 
 export const globalLocales: LocaleInput[] = []

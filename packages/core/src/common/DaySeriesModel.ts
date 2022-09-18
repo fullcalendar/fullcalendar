@@ -1,6 +1,6 @@
-import { DateProfileGenerator } from '../DateProfileGenerator'
-import { DateMarker, addDays, diffDays } from '../datelib/marker'
-import { DateRange } from '../datelib/date-range'
+import { DateProfileGenerator } from '../DateProfileGenerator.js'
+import { DateMarker, addDays, diffDays } from '../datelib/marker.js'
+import { DateRange } from '../datelib/date-range.js'
 
 export interface DaySeriesSeg {
   firstIndex: number

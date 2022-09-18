@@ -1,5 +1,5 @@
-import { ViewConfigHash, ViewComponentType } from './view-config'
-import { ViewOptions } from '../options'
+import { ViewConfigHash, ViewComponentType } from './view-config.js'
+import { ViewOptions } from '../options.js'
 
 /*
 Represents information for an instantiatable View class along with settings

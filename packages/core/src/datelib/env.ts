@@ -3,15 +3,15 @@ import {
   diffHours, diffMinutes, diffSeconds, diffWholeWeeks, diffWholeDays,
   startOfDay, startOfHour, startOfMinute, startOfSecond,
   weekOfYear, arrayToUtcDate, dateToUtcArray, dateToLocalArray, arrayToLocalDate, timeAsMs, isValidDate,
-} from './marker'
-import { CalendarSystem, createCalendarSystem } from './calendar-system'
-import { Locale } from './locale'
-import { NamedTimeZoneImpl, NamedTimeZoneImplClass } from './timezone'
-import { Duration, asRoughYears, asRoughMonths, asRoughDays, asRoughMs } from './duration'
-import { DateFormatter, CmdFormatterFunc } from './DateFormatter'
-import { buildIsoString } from './formatting-utils'
-import { parse } from './parsing'
-import { isInt } from '../util/misc'
+} from './marker.js'
+import { CalendarSystem, createCalendarSystem } from './calendar-system.js'
+import { Locale } from './locale.js'
+import { NamedTimeZoneImpl, NamedTimeZoneImplClass } from './timezone.js'
+import { Duration, asRoughYears, asRoughMonths, asRoughDays, asRoughMs } from './duration.js'
+import { DateFormatter, CmdFormatterFunc } from './DateFormatter.js'
+import { buildIsoString } from './formatting-utils.js'
+import { parse } from './parsing.js'
+import { isInt } from '../util/misc.js'
 
 export type WeekNumberCalculation = 'local' | 'ISO' | ((m: Date) => number)
 

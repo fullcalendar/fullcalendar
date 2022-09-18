@@ -1,4 +1,4 @@
-import { DelayedRunner } from './DelayedRunner'
+import { DelayedRunner } from './DelayedRunner.js'
 
 export class TaskRunner<Task> { // this class USES the DelayedRunner
   private queue: Task[] = []

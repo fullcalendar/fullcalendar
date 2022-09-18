@@ -1,16 +1,16 @@
-import { VNode, createElement, Fragment } from '../preact'
-import { BaseComponent, setRef } from '../vdom-util'
-import { Scroller, OverflowValue } from './Scroller'
-import { RefMap } from '../util/RefMap'
+import { VNode, createElement, Fragment } from '../preact/index.js'
+import { BaseComponent, setRef } from '../vdom-util.js'
+import { Scroller, OverflowValue } from './Scroller.js'
+import { RefMap } from '../util/RefMap.js'
 import {
   ColProps, SectionConfig, renderMicroColGroup, computeShrinkWidth, getScrollGridClassNames, getSectionClassNames, getAllowYScrolling,
   renderChunkContent, getSectionHasLiquidHeight, ChunkConfig, hasShrinkWidth, CssDimValue,
   isColPropsEqual,
-} from './util'
-import { getCanVGrowWithinCell } from '../util/table-styling'
-import { memoize } from '../util/memoize'
-import { isPropsEqual } from '../util/object'
-import { getScrollbarWidths } from '../util/scrollbar-width'
+} from './util.js'
+import { getCanVGrowWithinCell } from '../util/table-styling.js'
+import { memoize } from '../util/memoize.js'
+import { isPropsEqual } from '../util/object.js'
+import { getScrollbarWidths } from '../util/scrollbar-width.js'
 
 export interface SimpleScrollGridProps {
   cols: ColProps[]

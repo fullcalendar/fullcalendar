@@ -8,9 +8,9 @@ import {
   diffDayAndTime,
   Calendar,
 } from '@fullcalendar/core'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import { getDSTDeadZone } from '../lib/dst-dead-zone'
-import { formatPrettyTimeZoneOffset, formatIsoTimeZoneOffset, formatIsoWithoutTz } from '../lib/datelib-utils'
+import { default as dayGridPlugin } from '@fullcalendar/daygrid'
+import { getDSTDeadZone } from '../lib/dst-dead-zone.js'
+import { formatPrettyTimeZoneOffset, formatIsoTimeZoneOffset, formatIsoWithoutTz } from '../lib/datelib-utils.js'
 
 describe('datelib', () => {
   let enLocale

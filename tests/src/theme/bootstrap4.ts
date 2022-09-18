@@ -1,6 +1,6 @@
-import bootstrapPlugin from '@fullcalendar/bootstrap'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { default as bootstrapPlugin } from '@fullcalendar/bootstrap'
+import { default as dayGridPlugin } from '@fullcalendar/daygrid'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 describe('bootstrap theme', () => {
   pushOptions({

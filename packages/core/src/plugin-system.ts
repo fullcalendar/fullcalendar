@@ -1,6 +1,6 @@
-import { guid } from './util/misc'
-import { PluginDefInput, PluginDef, PluginHooks } from './plugin-system-struct'
-import { isArraysEqual } from './util/array'
+import { guid } from './util/misc.js'
+import { PluginDefInput, PluginDef, PluginHooks } from './plugin-system-struct.js'
+import { isArraysEqual } from './util/array.js'
 
 // TODO: easier way to add new hooks? need to update a million things
 

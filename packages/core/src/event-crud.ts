@@ -1,8 +1,8 @@
-import { EventStore } from './structs/event-store'
-import { CalendarData } from './reducers/data-types'
-import { EventApi, buildEventApis } from './api/EventApi'
-import { Duration } from './datelib/duration'
-import { ViewApi } from './ViewApi'
+import { EventStore } from './structs/event-store.js'
+import { CalendarData } from './reducers/data-types.js'
+import { EventApi, buildEventApis } from './api/EventApi.js'
+import { Duration } from './datelib/duration.js'
+import { ViewApi } from './ViewApi.js'
 
 export interface EventAddArg {
   event: EventApi

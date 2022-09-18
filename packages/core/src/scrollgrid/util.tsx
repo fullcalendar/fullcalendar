@@ -1,10 +1,10 @@
-import { VNode, createElement, Ref } from '../preact'
-import { findElements } from '../util/dom-manip'
-import { ViewContext } from '../ViewContext'
-import { computeSmallestCellWidth } from '../util/misc'
-import { isPropsEqual } from '../util/object'
-import { isArraysEqual } from '../util/array'
-import { BaseOptionsRefined } from '../options'
+import { VNode, createElement, Ref } from '../preact/index.js'
+import { findElements } from '../util/dom-manip.js'
+import { ViewContext } from '../ViewContext.js'
+import { computeSmallestCellWidth } from '../util/misc.js'
+import { isPropsEqual } from '../util/object.js'
+import { isArraysEqual } from '../util/array.js'
+import { BaseOptionsRefined } from '../options.js'
 
 export type CssDimValue = string | number // TODO: move to more general file
 

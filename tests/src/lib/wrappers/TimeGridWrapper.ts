@@ -1,9 +1,9 @@
 import { findElements, startOfDay, createDuration, parseMarker, addDays, addMs, getRectCenter, asRoughMs } from '@fullcalendar/core'
-import { formatIsoDay, formatIsoTime, ensureDate } from '../datelib-utils'
-import { parseUtcDate } from '../date-parsing'
-import { getBoundingRect } from '../dom-geom'
-import { addPoints } from '../geom'
-import { CalendarWrapper } from './CalendarWrapper'
+import { formatIsoDay, formatIsoTime, ensureDate } from '../datelib-utils.js'
+import { parseUtcDate } from '../date-parsing.js'
+import { getBoundingRect } from '../dom-geom.js'
+import { addPoints } from '../geom.js'
+import { CalendarWrapper } from './CalendarWrapper.js'
 
 export class TimeGridWrapper {
   constructor(public el: HTMLElement) {

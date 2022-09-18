@@ -1,6 +1,6 @@
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
-import { waitEventDrag } from '../lib/wrappers/interaction-util'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
+import { waitEventDrag } from '../lib/wrappers/interaction-util.js'
 
 describe('eventAllow', () => {
   pushOptions({

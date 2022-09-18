@@ -17,6 +17,7 @@
     "email": "n.pearman@gmail.com",
     "url": "https://github.com/njpearman/"
   },
+  "type": "module",
   "dependencies": {
     "@fullcalendar/core": "workspace:*",
     "ical.js": "^1.4.0",

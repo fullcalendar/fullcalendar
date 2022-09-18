@@ -1,6 +1,6 @@
-import { createPlugin } from '../plugin-system'
-import { EventSourceDef } from '../structs/event-source-def'
-import { EventInput } from '../structs/event-parse'
+import { createPlugin } from '../plugin-system.js'
+import { EventSourceDef } from '../structs/event-source-def.js'
+import { EventInput } from '../structs/event-parse.js'
 
 let eventSourceDef: EventSourceDef<EventInput[]> = {
   ignoreRange: true,

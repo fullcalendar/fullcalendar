@@ -1,8 +1,8 @@
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
-import { waitEventDrag } from '../lib/wrappers/interaction-util'
-import { filterVisibleEls } from '../lib/dom-misc'
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
+import { waitEventDrag } from '../lib/wrappers/interaction-util.js'
+import { filterVisibleEls } from '../lib/dom-misc.js'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 
 describe('event dragging on repeating events', () => {
   pushOptions({

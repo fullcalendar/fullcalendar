@@ -8,7 +8,7 @@ import {
 import {
   createElement,
 } from '@fullcalendar/core/preact'
-import { TimeSlatMeta } from './time-slat-meta'
+import { TimeSlatMeta } from './time-slat-meta.js'
 
 const DEFAULT_SLAT_LABEL_FORMAT = createFormatter({
   hour: 'numeric',

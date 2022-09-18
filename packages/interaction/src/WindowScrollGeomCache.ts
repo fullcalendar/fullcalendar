@@ -1,5 +1,5 @@
 import { Rect, WindowScrollController } from '@fullcalendar/core'
-import { ScrollGeomCache } from './ScrollGeomCache'
+import { ScrollGeomCache } from './ScrollGeomCache.js'
 
 export class WindowScrollGeomCache extends ScrollGeomCache {
   constructor(doesListening: boolean) {

@@ -1,6 +1,6 @@
-import { intersectRects, Rect } from './geom'
-import { getIsRtlScrollbarOnLeft } from './scrollbar-side'
-import { computeScrollbarWidthsForEl } from './scrollbar-width'
+import { intersectRects, Rect } from './geom.js'
+import { getIsRtlScrollbarOnLeft } from './scrollbar-side.js'
+import { computeScrollbarWidthsForEl } from './scrollbar-width.js'
 
 export interface EdgeInfo {
   borderLeft: number

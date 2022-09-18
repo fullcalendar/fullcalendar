@@ -1,5 +1,5 @@
 import { render, createElement, flushSync } from '@fullcalendar/core/preact'
-import { ListenerCounter } from './ListenerCounter'
+import { ListenerCounter } from './ListenerCounter.js'
 
 let standardElListenerCount
 

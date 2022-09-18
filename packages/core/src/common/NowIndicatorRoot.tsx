@@ -1,8 +1,8 @@
-import { RenderHook, RenderHookPropsChildren, MountArg } from './render-hook'
-import { DateMarker } from '../datelib/marker'
-import { ViewContext, ViewContextType } from '../ViewContext'
-import { createElement } from '../preact'
-import { ViewApi } from '../ViewApi'
+import { RenderHook, RenderHookPropsChildren, MountArg } from './render-hook.js'
+import { DateMarker } from '../datelib/marker.js'
+import { ViewContext, ViewContextType } from '../ViewContext.js'
+import { createElement } from '../preact/index.js'
+import { ViewApi } from '../ViewApi.js'
 
 export interface NowIndicatorRootProps {
   isAxis: boolean

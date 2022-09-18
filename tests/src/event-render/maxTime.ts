@@ -1,5 +1,5 @@
-import { directionallyTestSeg } from '../lib/DayGridEventRenderUtils'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { directionallyTestSeg } from '../lib/DayGridEventRenderUtils.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 
 describe('event rendering with slotMaxTime', () => { // TODO: rename file
   pushOptions({

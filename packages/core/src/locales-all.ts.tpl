@@ -1,5 +1,5 @@
 {{#each localeCodes}}
-import l{{@index}} from './locales/{{this}}'
+import l{{@index}} from './locales/{{this}}.js'
 {{/each}}
 
 export default [

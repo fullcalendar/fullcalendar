@@ -1,10 +1,10 @@
-import { BaseComponent } from '../vdom-util'
-import { EventRenderRange } from './event-rendering'
-import { EventInstanceHash } from '../structs/event-instance'
-import { Hit } from '../interactions/hit'
-import { elementClosest } from '../util/dom-manip'
-import { guid } from '../util/misc'
-import { Dictionary } from '../options'
+import { BaseComponent } from '../vdom-util.js'
+import { EventRenderRange } from './event-rendering.js'
+import { EventInstanceHash } from '../structs/event-instance.js'
+import { Hit } from '../interactions/hit.js'
+import { elementClosest } from '../util/dom-manip.js'
+import { guid } from '../util/misc.js'
+import { Dictionary } from '../options.js'
 
 export type DateComponentHash = { [uid: string]: DateComponent<any, any> }
 

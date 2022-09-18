@@ -1,10 +1,10 @@
 import { __assign } from 'tslib'
-import { requestJson } from '../util/requestJson'
-import { CalendarContext } from '../CalendarContext'
-import { EventSourceDef } from '../structs/event-source-def'
-import { DateRange } from '../datelib/date-range'
-import { createPlugin } from '../plugin-system'
-import { JSON_FEED_EVENT_SOURCE_REFINERS } from './json-feed-event-source-refiners'
+import { requestJson } from '../util/requestJson.js'
+import { CalendarContext } from '../CalendarContext.js'
+import { EventSourceDef } from '../structs/event-source-def.js'
+import { DateRange } from '../datelib/date-range.js'
+import { createPlugin } from '../plugin-system.js'
+import { JSON_FEED_EVENT_SOURCE_REFINERS } from './json-feed-event-source-refiners.js'
 
 interface JsonFeedMeta {
   url: string

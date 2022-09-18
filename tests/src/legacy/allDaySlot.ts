@@ -1,4 +1,4 @@
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 
 describe('allDaySlots', () => {
   describe('when allDaySlots is not set', () => {

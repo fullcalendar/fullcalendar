@@ -1,5 +1,5 @@
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
-import { TimeGridWrapper } from '../lib/wrappers/TimeGridWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
+import { TimeGridWrapper } from '../lib/wrappers/TimeGridWrapper.js'
 
 describe('eventMaxStack', () => {
   pushOptions({

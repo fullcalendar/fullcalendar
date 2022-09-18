@@ -1,7 +1,7 @@
-import googleCalendarPlugin from '@fullcalendar/google-calendar'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { default as googleCalendarPlugin } from '@fullcalendar/google-calendar'
+import { default as dayGridPlugin } from '@fullcalendar/daygrid'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 // HACK: in our CI setup, requests to the google-calendar api were failing for some reason
 // (requests to other services were working however)

@@ -1,10 +1,10 @@
-import { DateMarker, timeAsMs } from './marker'
-import { CalendarSystem } from './calendar-system'
-import { Locale } from './locale'
-import { DateFormatter, DateFormattingContext } from './DateFormatter'
-import { ZonedMarker } from './zoned-marker'
-import { formatTimeZoneOffset } from './formatting-utils'
-import { memoize } from '../util/memoize'
+import { DateMarker, timeAsMs } from './marker.js'
+import { CalendarSystem } from './calendar-system.js'
+import { Locale } from './locale.js'
+import { DateFormatter, DateFormattingContext } from './DateFormatter.js'
+import { ZonedMarker } from './zoned-marker.js'
+import { formatTimeZoneOffset } from './formatting-utils.js'
+import { memoize } from '../util/memoize.js'
 
 const EXTENDED_SETTINGS_AND_SEVERITIES = {
   week: 3,

@@ -1,5 +1,5 @@
-import { getBoundingRect } from '../lib/dom-geom'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { getBoundingRect } from '../lib/dom-geom.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 
 describe('now indicator', () => {
   pushOptions({

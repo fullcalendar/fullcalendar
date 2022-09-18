@@ -1,6 +1,6 @@
-import { EventInput } from './event-parse'
-import { EventStore, parseEvents } from './event-store'
-import { CalendarContext } from '../CalendarContext'
+import { EventInput } from './event-parse.js'
+import { EventStore, parseEvents } from './event-store.js'
+import { CalendarContext } from '../CalendarContext.js'
 
 /*
 Utils for converting raw business hour input into an EventStore,

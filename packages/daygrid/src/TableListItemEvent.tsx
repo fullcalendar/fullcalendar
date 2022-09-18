@@ -7,7 +7,7 @@ import {
   getSegAnchorAttrs,
 } from '@fullcalendar/core'
 import { createElement, Fragment } from '@fullcalendar/core/preact'
-import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering'
+import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering.js'
 
 export interface DotTableEventProps {
   seg: Seg

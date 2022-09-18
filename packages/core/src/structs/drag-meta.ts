@@ -1,5 +1,5 @@
-import { createDuration, Duration } from '../datelib/duration'
-import { refineProps, RawOptionsFromRefiners, Dictionary } from '../options'
+import { createDuration, Duration } from '../datelib/duration.js'
+import { refineProps, RawOptionsFromRefiners, Dictionary } from '../options.js'
 
 /*
 Information about what will happen when an external element is dragged-and-dropped

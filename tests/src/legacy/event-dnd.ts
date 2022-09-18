@@ -1,9 +1,9 @@
 import { createDuration } from '@fullcalendar/core'
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { waitEventDrag2 } from '../lib/wrappers/interaction-util'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
-import { queryEventElInfo } from '../lib/wrappers/TimeGridWrapper'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
+import { waitEventDrag2 } from '../lib/wrappers/interaction-util.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
+import { queryEventElInfo } from '../lib/wrappers/TimeGridWrapper.js'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 describe('eventDrop', () => {
   pushOptions({

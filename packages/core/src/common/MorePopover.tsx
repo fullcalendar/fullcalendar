@@ -1,13 +1,13 @@
-import { DateComponent } from '../component/DateComponent'
-import { DateRange } from '../datelib/date-range'
-import { DateMarker } from '../datelib/marker'
-import { DateProfile } from '../DateProfileGenerator'
-import { Hit } from '../interactions/hit'
-import { Dictionary } from '../options'
-import { createElement, ComponentChildren } from '../preact'
-import { DayCellContent } from './DayCellContent'
-import { DayCellRoot } from './DayCellRoot'
-import { Popover } from './Popover'
+import { DateComponent } from '../component/DateComponent.js'
+import { DateRange } from '../datelib/date-range.js'
+import { DateMarker } from '../datelib/marker.js'
+import { DateProfile } from '../DateProfileGenerator.js'
+import { Hit } from '../interactions/hit.js'
+import { Dictionary } from '../options.js'
+import { createElement, ComponentChildren } from '../preact/index.js'
+import { DayCellContent } from './DayCellContent.js'
+import { DayCellRoot } from './DayCellRoot.js'
+import { Popover } from './Popover.js'
 
 export interface MorePopoverProps {
   id: string

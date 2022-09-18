@@ -1,10 +1,10 @@
-import { DateEnv } from './datelib/env'
-import { BaseOptionsRefined, CalendarListeners } from './options'
-import { PluginHooks } from './plugin-system-struct'
-import { Emitter } from './common/Emitter'
-import { Action } from './reducers/Action'
-import { CalendarApi } from './CalendarApi'
-import { CalendarData } from './reducers/data-types'
+import { DateEnv } from './datelib/env.js'
+import { BaseOptionsRefined, CalendarListeners } from './options.js'
+import { PluginHooks } from './plugin-system-struct.js'
+import { Emitter } from './common/Emitter.js'
+import { Action } from './reducers/Action.js'
+import { CalendarApi } from './CalendarApi.js'
+import { CalendarData } from './reducers/data-types.js'
 
 export interface CalendarContext {
   dateEnv: DateEnv

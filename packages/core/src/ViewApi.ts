@@ -1,8 +1,8 @@
-import { DateEnv } from './datelib/env'
-import { CalendarData } from './reducers/data-types'
+import { DateEnv } from './datelib/env.js'
+import { CalendarData } from './reducers/data-types.js'
 
 // no public types yet. when there are, export from:
-// import {} from './api-type-deps'
+// import {} from './api-type-deps.js'
 
 export class ViewApi { // always represents the current view. otherwise, it'd need to change value every time date changes
   constructor(

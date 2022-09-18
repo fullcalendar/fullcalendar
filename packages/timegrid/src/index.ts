@@ -1,17 +1,17 @@
 import { createPlugin } from '@fullcalendar/core'
-import { TimeColsView } from './TimeColsView'
-import { DayTimeColsView, buildTimeColsModel } from './DayTimeColsView'
-import { TimeColsSeg } from './TimeColsSeg'
-import { DayTimeCols, buildDayRanges } from './DayTimeCols'
-import { DayTimeColsSlicer } from './DayTimeColsSlicer'
-import { OPTION_REFINERS } from './options'
+import { TimeColsView } from './TimeColsView.js'
+import { DayTimeColsView, buildTimeColsModel } from './DayTimeColsView.js'
+import { TimeColsSeg } from './TimeColsSeg.js'
+import { DayTimeCols, buildDayRanges } from './DayTimeCols.js'
+import { DayTimeColsSlicer } from './DayTimeColsSlicer.js'
+import { OPTION_REFINERS } from './options.js'
 import './options-declare'
 import './index.css'
 
 export { DayTimeCols, DayTimeColsView, TimeColsView, buildTimeColsModel, buildDayRanges, DayTimeColsSlicer, TimeColsSeg }
-export { TimeCols } from './TimeCols'
-export { TimeSlatMeta, buildSlatMetas } from './time-slat-meta'
-export { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
+export { TimeCols } from './TimeCols.js'
+export { TimeSlatMeta, buildSlatMetas } from './time-slat-meta.js'
+export { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
 
 export default createPlugin({
   initialView: 'timeGridWeek',

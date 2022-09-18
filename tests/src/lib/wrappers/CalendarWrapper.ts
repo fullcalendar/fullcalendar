@@ -1,6 +1,6 @@
 import { findElements, Calendar } from '@fullcalendar/core'
 
-import { ToolbarWrapper } from './ToolbarWrapper'
+import { ToolbarWrapper } from './ToolbarWrapper.js'
 
 export class CalendarWrapper {
   static EVENT_CLASSNAME = 'fc-event' // TODO: put this everywhere?

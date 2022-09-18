@@ -1,6 +1,6 @@
-import { createElement, VNode } from './preact'
-import { BaseComponent } from './vdom-util'
-import { ToolbarWidget } from './toolbar-struct'
+import { createElement, VNode } from './preact/index.js'
+import { BaseComponent } from './vdom-util.js'
+import { ToolbarWidget } from './toolbar-struct.js'
 
 export interface ToolbarContent {
   title: string

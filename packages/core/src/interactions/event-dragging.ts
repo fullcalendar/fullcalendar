@@ -1,9 +1,9 @@
-import { EventMutation } from '../structs/event-mutation'
-import { Hit } from './hit'
-import { EventDef } from '../structs/event-def'
-import { EventUi } from '../component/event-ui'
-import { CalendarContext } from '../CalendarContext'
-import { Dictionary } from '../options'
+import { EventMutation } from '../structs/event-mutation.js'
+import { Hit } from './hit.js'
+import { EventDef } from '../structs/event-def.js'
+import { EventUi } from '../component/event-ui.js'
+import { CalendarContext } from '../CalendarContext.js'
+import { Dictionary } from '../options.js'
 
 export type eventDragMutationMassager = (mutation: EventMutation, hit0: Hit, hit1: Hit) => void
 export type EventDropTransformers = (mutation: EventMutation, context: CalendarContext) => Dictionary

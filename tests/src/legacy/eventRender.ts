@@ -1,5 +1,5 @@
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 
 describe('eventDidMount+eventContent', () => { // TODO: rename file
   pushOptions({

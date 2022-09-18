@@ -26,10 +26,10 @@ import {
   VNode,
   RefObject,
 } from '@fullcalendar/core/preact'
-import { AllDaySplitter } from './AllDaySplitter'
-import { TimeSlatMeta } from './time-slat-meta'
-import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { TimeBodyAxis } from './TimeBodyAxis'
+import { AllDaySplitter } from './AllDaySplitter.js'
+import { TimeSlatMeta } from './time-slat-meta.js'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
+import { TimeBodyAxis } from './TimeBodyAxis.js'
 
 const DEFAULT_WEEK_NUM_FORMAT = createFormatter({ week: 'short' })
 const AUTO_ALL_DAY_MAX_EVENT_ROWS = 5

@@ -1,6 +1,6 @@
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { anyElsIntersect } from '../lib/dom-geom'
-import { filterVisibleEls } from '../lib/dom-misc'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
+import { anyElsIntersect } from '../lib/dom-geom.js'
+import { filterVisibleEls } from '../lib/dom-misc.js'
 
 describe('dayGrid advanced event rendering', () => {
   pushOptions({

@@ -1,11 +1,11 @@
 import { __assign } from 'tslib'
-import { EventStore, createEmptyEventStore } from '../structs/event-store'
-import { EventDef } from '../structs/event-def'
-import { EventInteractionState } from '../interactions/event-interaction-state'
-import { mapHash } from '../util/object'
-import { memoize } from '../util/memoize'
-import { EventUiHash, EventUi, combineEventUis } from './event-ui'
-import { DateSpan } from '../structs/date-span'
+import { EventStore, createEmptyEventStore } from '../structs/event-store.js'
+import { EventDef } from '../structs/event-def.js'
+import { EventInteractionState } from '../interactions/event-interaction-state.js'
+import { mapHash } from '../util/object.js'
+import { memoize } from '../util/memoize.js'
+import { EventUiHash, EventUi, combineEventUis } from './event-ui.js'
+import { DateSpan } from '../structs/date-span.js'
 
 export interface SplittableProps {
   businessHours: EventStore | null // is this really allowed to be null?

@@ -1,4 +1,4 @@
-import { LocaleInput } from '..'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'fi',

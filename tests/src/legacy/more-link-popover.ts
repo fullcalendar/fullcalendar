@@ -1,8 +1,8 @@
 import { EventInput } from '@fullcalendar/core'
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
-import { DayGridWrapper } from '../lib/wrappers/DayGridWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
+import { DayGridWrapper } from '../lib/wrappers/DayGridWrapper.js'
 
 describe('more-link popover', () => {
   let testEvents: EventInput[] = [

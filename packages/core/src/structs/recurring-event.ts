@@ -1,13 +1,13 @@
-import { EventDef } from './event-def'
-import { EventInstance, createEventInstance } from './event-instance'
-import { DateRange } from '../datelib/date-range'
-import { DateEnv } from '../datelib/env'
-import { Duration } from '../datelib/duration'
-import { DateMarker, startOfDay } from '../datelib/marker'
-import { EventStore } from './event-store'
-import { CalendarContext } from '../CalendarContext'
-import { filterHash } from '../util/object'
-import { EventRefined } from './event-parse'
+import { EventDef } from './event-def.js'
+import { EventInstance, createEventInstance } from './event-instance.js'
+import { DateRange } from '../datelib/date-range.js'
+import { DateEnv } from '../datelib/env.js'
+import { Duration } from '../datelib/duration.js'
+import { DateMarker, startOfDay } from '../datelib/marker.js'
+import { EventStore } from './event-store.js'
+import { CalendarContext } from '../CalendarContext.js'
+import { filterHash } from '../util/object.js'
+import { EventRefined } from './event-parse.js'
 
 /*
 The plugin system for defining how a recurring event is expanded into individual instances.

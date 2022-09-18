@@ -13,7 +13,7 @@ import {
 import {
   NoEventsContentArg,
   NoEventsMountArg,
-} from './api-type-deps'
+} from './api-type-deps.js'
 
 export const OPTION_REFINERS = {
   listDayFormat: createFalsableFormatter, // defaults specified in list plugins

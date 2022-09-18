@@ -1,11 +1,11 @@
 import { createPlugin } from '@fullcalendar/core'
-import { DateClicking } from './interactions/DateClicking'
-import { DateSelecting } from './interactions/DateSelecting'
-import { EventDragging } from './interactions/EventDragging'
-import { EventResizing } from './interactions/EventResizing'
-import { UnselectAuto } from './interactions/UnselectAuto'
-import { FeaturefulElementDragging } from './dnd/FeaturefulElementDragging'
-import { OPTION_REFINERS, LISTENER_REFINERS } from './options'
+import { DateClicking } from './interactions/DateClicking.js'
+import { DateSelecting } from './interactions/DateSelecting.js'
+import { EventDragging } from './interactions/EventDragging.js'
+import { EventResizing } from './interactions/EventResizing.js'
+import { UnselectAuto } from './interactions/UnselectAuto.js'
+import { FeaturefulElementDragging } from './dnd/FeaturefulElementDragging.js'
+import { OPTION_REFINERS, LISTENER_REFINERS } from './options.js'
 import './options-declare'
 
 export default createPlugin({
@@ -16,8 +16,8 @@ export default createPlugin({
   listenerRefiners: LISTENER_REFINERS,
 })
 
-export * from './api-type-deps'
+export * from './api-type-deps.js'
 export { FeaturefulElementDragging }
-export { PointerDragging } from './dnd/PointerDragging'
-export { ExternalDraggable as Draggable } from './interactions-external/ExternalDraggable'
-export { ThirdPartyDraggable } from './interactions-external/ThirdPartyDraggable'
+export { PointerDragging } from './dnd/PointerDragging.js'
+export { ExternalDraggable as Draggable } from './interactions-external/ExternalDraggable.js'
+export { ThirdPartyDraggable } from './interactions-external/ThirdPartyDraggable.js'

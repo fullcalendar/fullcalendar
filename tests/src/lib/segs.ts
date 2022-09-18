@@ -1,5 +1,5 @@
-import { isRectsSimilar } from './geom'
-import { getBoundingRects } from './dom-geom'
+import { isRectsSimilar } from './geom.js'
+import { getBoundingRects } from './dom-geom.js'
 
 export function doElsMatchSegs(els, segs, segToRectFunc) {
   let elRect

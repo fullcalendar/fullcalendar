@@ -19,10 +19,10 @@ import {
   createRef,
   VNode,
 } from '@fullcalendar/core/preact'
-import { TimeCols } from './TimeCols'
-import { TimeSlatMeta } from './time-slat-meta'
-import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { DayTimeColsSlicer } from './DayTimeColsSlicer'
+import { TimeCols } from './TimeCols.js'
+import { TimeSlatMeta } from './time-slat-meta.js'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
+import { DayTimeColsSlicer } from './DayTimeColsSlicer.js'
 
 export interface DayTimeColsProps {
   dateProfile: DateProfile

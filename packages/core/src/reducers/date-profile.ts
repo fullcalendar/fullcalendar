@@ -1,6 +1,6 @@
-import { DateProfile, DateProfileGenerator } from '../DateProfileGenerator'
-import { Action } from './Action'
-import { DateMarker } from '../datelib/marker'
+import { DateProfile, DateProfileGenerator } from '../DateProfileGenerator.js'
+import { Action } from './Action.js'
+import { DateMarker } from '../datelib/marker.js'
 
 export function reduceDateProfile(
   currentDateProfile: DateProfile | null,

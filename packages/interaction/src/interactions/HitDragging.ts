@@ -9,7 +9,7 @@ import {
   mapHash,
   ElementDragging,
 } from '@fullcalendar/core'
-import { OffsetTracker } from '../OffsetTracker'
+import { OffsetTracker } from '../OffsetTracker.js'
 
 /*
 Tracks movement over multiple droppable areas (aka "hits")

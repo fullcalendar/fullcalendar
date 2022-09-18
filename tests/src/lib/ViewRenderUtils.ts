@@ -1,6 +1,6 @@
 import { addDays } from '@fullcalendar/core'
-import { formatIsoDay } from './datelib-utils'
-import { CalendarWrapper } from './wrappers/CalendarWrapper'
+import { formatIsoDay } from './datelib-utils.js'
+import { CalendarWrapper } from './wrappers/CalendarWrapper.js'
 
 export function expectDayRange(start, end) {
   if (typeof start === 'string') {

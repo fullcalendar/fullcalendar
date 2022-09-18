@@ -1,7 +1,7 @@
-import bootstrapPlugin from '@fullcalendar/bootstrap'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { default as bootstrapPlugin } from '@fullcalendar/bootstrap'
+import { default as timeGridPlugin } from '@fullcalendar/timegrid'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 
 describe('themeSystem', () => {
   pushOptions({

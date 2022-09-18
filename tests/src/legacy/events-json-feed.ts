@@ -1,5 +1,5 @@
-import XHRMock from 'xhr-mock'
-import { formatIsoTimeZoneOffset } from '../lib/datelib-utils'
+import { default as XHRMock } from 'xhr-mock'
+import { formatIsoTimeZoneOffset } from '../lib/datelib-utils.js'
 
 describe('events as a json feed', () => {
   pushOptions({

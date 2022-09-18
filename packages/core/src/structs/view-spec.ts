@@ -1,8 +1,8 @@
-import { ViewDef, compileViewDefs } from './view-def'
-import { Duration, createDuration, greatestDurationDenominator, DurationInput } from '../datelib/duration'
-import { mapHash } from '../util/object'
-import { ViewOptions, CalendarOptions, BASE_OPTION_DEFAULTS } from '../options'
-import { ViewConfigInputHash, parseViewConfigs, ViewConfigHash, ViewComponentType } from './view-config'
+import { ViewDef, compileViewDefs } from './view-def.js'
+import { Duration, createDuration, greatestDurationDenominator, DurationInput } from '../datelib/duration.js'
+import { mapHash } from '../util/object.js'
+import { ViewOptions, CalendarOptions, BASE_OPTION_DEFAULTS } from '../options.js'
+import { ViewConfigInputHash, parseViewConfigs, ViewConfigHash, ViewComponentType } from './view-config.js'
 
 /*
 Represents everything needed to instantiate a new view instance,

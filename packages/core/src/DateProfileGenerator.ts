@@ -1,5 +1,5 @@
-import { DateMarker, startOfDay, addDays } from './datelib/marker'
-import { Duration, createDuration, asRoughDays, asRoughMs, greatestDurationDenominator } from './datelib/duration'
+import { DateMarker, startOfDay, addDays } from './datelib/marker.js'
+import { Duration, createDuration, asRoughDays, asRoughMs, greatestDurationDenominator } from './datelib/duration.js'
 import {
   DateRange,
   OpenDateRange,
@@ -8,11 +8,11 @@ import {
   rangesIntersect,
   parseRange,
   DateRangeInput,
-} from './datelib/date-range'
-import { DateEnv, DateInput } from './datelib/env'
-import { computeVisibleDayRange } from './util/date'
-import { getNow } from './reducers/current-date'
-import { CalendarApi } from './CalendarApi'
+} from './datelib/date-range.js'
+import { DateEnv, DateInput } from './datelib/env.js'
+import { computeVisibleDayRange } from './util/date.js'
+import { getNow } from './reducers/current-date.js'
+import { CalendarApi } from './CalendarApi.js'
 
 export interface DateProfile {
   currentRange: DateRange // TODO: does this include slotMinTime/slotMaxTime?

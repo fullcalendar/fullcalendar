@@ -1,7 +1,7 @@
-import { NativeFormatter, NativeFormatterOptions } from './formatting-native'
-import { CmdFormatter } from './formatting-cmd'
-import { FuncFormatter, FuncFormatterFunc } from './formatting-func'
-import { DateFormatter } from './DateFormatter'
+import { NativeFormatter, NativeFormatterOptions } from './formatting-native.js'
+import { CmdFormatter } from './formatting-cmd.js'
+import { FuncFormatter, FuncFormatterFunc } from './formatting-func.js'
+import { DateFormatter } from './DateFormatter.js'
 
 export type FormatterInput = NativeFormatterOptions | string | FuncFormatterFunc
 

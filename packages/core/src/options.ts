@@ -1,8 +1,8 @@
-import { createDuration } from './datelib/duration'
-import { mergeProps, isPropsEqual } from './util/object'
-import { createFormatter } from './datelib/formatting'
-import { parseFieldSpecs } from './util/misc'
-import { DateProfileGeneratorClass } from './DateProfileGenerator'
+import { createDuration } from './datelib/duration.js'
+import { mergeProps, isPropsEqual } from './util/object.js'
+import { createFormatter } from './datelib/formatting.js'
+import { parseFieldSpecs } from './util/misc.js'
+import { DateProfileGeneratorClass } from './DateProfileGenerator.js'
 
 // public
 import {
@@ -41,7 +41,7 @@ import {
   MoreLinkMountArg,
   MoreLinkAction,
   ButtonHintCompoundInput,
-} from './api-type-deps'
+} from './api-type-deps.js'
 
 // base options
 // ------------

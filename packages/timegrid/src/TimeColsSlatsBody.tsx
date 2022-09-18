@@ -7,8 +7,8 @@ import {
 import {
   createElement,
 } from '@fullcalendar/core/preact'
-import { TimeColsAxisCell } from './TimeColsAxisCell'
-import { TimeSlatMeta } from './time-slat-meta'
+import { TimeColsAxisCell } from './TimeColsAxisCell.js'
+import { TimeSlatMeta } from './time-slat-meta.js'
 
 export interface TimeColsSlatsBodyProps {
   axis: boolean

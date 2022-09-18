@@ -28,8 +28,8 @@ import {
   createElement,
   VNode,
 } from '@fullcalendar/core/preact'
-import { ListViewHeaderRow } from './ListViewHeaderRow'
-import { ListViewEventRow } from './ListViewEventRow'
+import { ListViewHeaderRow } from './ListViewHeaderRow.js'
+import { ListViewEventRow } from './ListViewEventRow.js'
 
 export interface NoEventsContentArg {
   text: string

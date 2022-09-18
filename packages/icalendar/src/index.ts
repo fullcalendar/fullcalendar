@@ -1,6 +1,6 @@
 import { createPlugin, EventSourceDef, EventInput, DateRange, addDays } from '@fullcalendar/core'
 import * as ICAL from 'ical.js'
-import { IcalExpander } from './ical-expander/IcalExpander'
+import { IcalExpander } from './ical-expander/IcalExpander.js'
 
 type Success = (rawFeed: string, xhr: XMLHttpRequest) => void
 type Failure = (error: string, xhr: XMLHttpRequest) => void

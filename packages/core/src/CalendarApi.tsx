@@ -1,19 +1,19 @@
-import { DateMarker } from './datelib/marker'
-import { createFormatter } from './datelib/formatting'
-import { createDuration } from './datelib/duration'
-import { parseDateSpan } from './structs/date-span'
-import { parseEventSource } from './structs/event-source-parse'
-import { parseEvent } from './structs/event-parse'
-import { eventTupleToStore } from './structs/event-store'
-import { ViewSpec } from './structs/view-spec'
-import { PointerDragEvent } from './interactions/pointer'
-import { getNow } from './reducers/current-date'
-import { triggerDateSelect, triggerDateUnselect } from './calendar-utils'
-import { hashValuesToArray } from './util/object'
-import { CalendarDataManager } from './reducers/CalendarDataManager'
-import { Action } from './reducers/Action'
-import { EventSource } from './structs/event-source'
-import { eventApiToStore, buildEventApis } from './api/EventApi'
+import { DateMarker } from './datelib/marker.js'
+import { createFormatter } from './datelib/formatting.js'
+import { createDuration } from './datelib/duration.js'
+import { parseDateSpan } from './structs/date-span.js'
+import { parseEventSource } from './structs/event-source-parse.js'
+import { parseEvent } from './structs/event-parse.js'
+import { eventTupleToStore } from './structs/event-store.js'
+import { ViewSpec } from './structs/view-spec.js'
+import { PointerDragEvent } from './interactions/pointer.js'
+import { getNow } from './reducers/current-date.js'
+import { triggerDateSelect, triggerDateUnselect } from './calendar-utils.js'
+import { hashValuesToArray } from './util/object.js'
+import { CalendarDataManager } from './reducers/CalendarDataManager.js'
+import { Action } from './reducers/Action.js'
+import { EventSource } from './structs/event-source.js'
+import { eventApiToStore, buildEventApis } from './api/EventApi.js'
 
 // public
 import {
@@ -28,7 +28,7 @@ import {
   EventSourceApi,
   EventApi,
   ViewApi,
-} from './api-type-deps'
+} from './api-type-deps.js'
 
 export class CalendarApi {
   currentDataManager?: CalendarDataManager // will be set by CalendarDataManager

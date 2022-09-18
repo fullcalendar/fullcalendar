@@ -10,7 +10,7 @@ import {
   DayTableCell,
   intersectSpans,
 } from '@fullcalendar/core'
-import { TableSeg } from './TableSeg'
+import { TableSeg } from './TableSeg.js'
 
 export interface TableSegPlacement {
   seg: TableSeg

@@ -1,13 +1,13 @@
-import { Duration } from '../datelib/duration'
-import { EventStore, createEmptyEventStore } from './event-store'
-import { EventDef } from './event-def'
-import { EventInstance } from './event-instance'
-import { computeAlignedDayRange } from '../util/date'
-import { startOfDay } from '../datelib/marker'
-import { EventUiHash, EventUi } from '../component/event-ui'
-import { compileEventUis } from '../component/event-rendering'
-import { CalendarContext } from '../CalendarContext'
-import { getDefaultEventEnd } from '../calendar-utils'
+import { Duration } from '../datelib/duration.js'
+import { EventStore, createEmptyEventStore } from './event-store.js'
+import { EventDef } from './event-def.js'
+import { EventInstance } from './event-instance.js'
+import { computeAlignedDayRange } from '../util/date.js'
+import { startOfDay } from '../datelib/marker.js'
+import { EventUiHash, EventUi } from '../component/event-ui.js'
+import { compileEventUis } from '../component/event-rendering.js'
+import { CalendarContext } from '../CalendarContext.js'
+import { getDefaultEventEnd } from '../calendar-utils.js'
 
 /*
 A data structure for how to modify an EventDef/EventInstance within an EventStore

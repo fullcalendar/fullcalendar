@@ -1,4 +1,4 @@
-import { createFormatter } from '../datelib/formatting'
+import { createFormatter } from '../datelib/formatting.js'
 
 // Computes a default column header formatting string if `colFormat` is not explicitly defined
 export function computeFallbackHeaderFormat(datesRepDistinctDays: boolean, dayCnt: number) {

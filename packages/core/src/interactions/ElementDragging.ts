@@ -1,4 +1,4 @@
-import { Emitter } from '../common/Emitter'
+import { Emitter } from '../common/Emitter.js'
 
 /*
 An abstraction for a dragging interaction originating on an event.

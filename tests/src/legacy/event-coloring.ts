@@ -1,6 +1,6 @@
 import { EventInput } from '@fullcalendar/core'
-import { RED_REGEX } from '../lib/dom-misc'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { RED_REGEX } from '../lib/dom-misc.js'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 describe('event coloring', () => {
   pushOptions({

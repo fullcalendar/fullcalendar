@@ -1,5 +1,5 @@
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 
 describe('dateClick', () => {
   pushOptions({

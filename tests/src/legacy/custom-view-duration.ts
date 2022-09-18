@@ -1,8 +1,8 @@
-import frLocale from '@fullcalendar/core/locales/fr'
+import { default as frLocale } from '@fullcalendar/core/locales/fr'
 import { createPlugin } from '@fullcalendar/core' // View
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 
 describe('custom view', () => {
   it('renders a 4 day dayGrid view', () => {

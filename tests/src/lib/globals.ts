@@ -1,6 +1,6 @@
 import { Calendar, CalendarOptions, createPlugin } from '@fullcalendar/core'
 import { __assign } from 'tslib'
-import { parseLocalDate, parseUtcDate } from './date-parsing'
+import { parseLocalDate, parseUtcDate } from './date-parsing.js'
 
 // Other Important Global Stuff
 // ---------------------------------------------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 import { Calendar } from '@fullcalendar/core'
-import { ViewWrapper } from './ViewWrapper'
-import { DayGridWrapper } from './DayGridWrapper'
-import { DayHeaderWrapper } from './DayHeaderWrapper'
+import { ViewWrapper } from './ViewWrapper.js'
+import { DayGridWrapper } from './DayGridWrapper.js'
+import { DayHeaderWrapper } from './DayHeaderWrapper.js'
 
 export class DayGridViewWrapper extends ViewWrapper {
   constructor(calendar: Calendar) {

@@ -1,5 +1,5 @@
-import { DayGridViewWrapper } from './wrappers/DayGridViewWrapper'
-import { DayGridWrapper } from './wrappers/DayGridWrapper'
+import { DayGridViewWrapper } from './wrappers/DayGridViewWrapper.js'
+import { DayGridWrapper } from './wrappers/DayGridWrapper.js'
 
 /*
 opts:

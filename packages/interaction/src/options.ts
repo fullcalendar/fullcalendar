@@ -6,7 +6,7 @@ import {
   EventDragStartArg, EventDragStopArg,
   EventResizeStartArg, EventResizeStopArg, EventResizeDoneArg,
   DropArg, EventReceiveArg, EventLeaveArg,
-} from './api-type-deps'
+} from './api-type-deps.js'
 
 export const OPTION_REFINERS = {
   fixedMirrorParent: identity as Identity<HTMLElement>,

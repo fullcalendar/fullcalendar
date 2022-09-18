@@ -1,6 +1,6 @@
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 import '../lib/dom-misc'
 
 ['height', 'contentHeight'].forEach((heightProp) => {

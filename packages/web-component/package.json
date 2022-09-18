@@ -14,6 +14,7 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
+  "type": "module",
   "dependencies": {
     "@fullcalendar/core": "workspace:*",
     "tslib": "^2.1.0"

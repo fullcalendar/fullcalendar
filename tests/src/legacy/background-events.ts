@@ -1,6 +1,6 @@
-import { RED_REGEX } from '../lib/dom-misc'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { RED_REGEX } from '../lib/dom-misc.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 
 // SEE ALSO: event-color.js
 

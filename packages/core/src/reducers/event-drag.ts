@@ -1,5 +1,5 @@
-import { Action } from './Action'
-import { EventInteractionState } from '../interactions/event-interaction-state'
+import { Action } from './Action.js'
+import { EventInteractionState } from '../interactions/event-interaction-state.js'
 
 export function reduceEventDrag(currentDrag: EventInteractionState | null, action: Action): EventInteractionState | null {
   let newDrag: EventInteractionState

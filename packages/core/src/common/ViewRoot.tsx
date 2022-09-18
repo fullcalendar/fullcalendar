@@ -1,8 +1,8 @@
-import { ViewSpec } from '../structs/view-spec'
-import { MountHook, buildClassNameNormalizer, MountArg } from './render-hook'
-import { ComponentChildren, createElement, Ref } from '../preact'
-import { BaseComponent } from '../vdom-util'
-import { ViewApi } from '../ViewApi'
+import { ViewSpec } from '../structs/view-spec.js'
+import { MountHook, buildClassNameNormalizer, MountArg } from './render-hook.js'
+import { ComponentChildren, createElement, Ref } from '../preact/index.js'
+import { BaseComponent } from '../vdom-util.js'
+import { ViewApi } from '../ViewApi.js'
 
 export interface ViewRootProps {
   viewSpec: ViewSpec

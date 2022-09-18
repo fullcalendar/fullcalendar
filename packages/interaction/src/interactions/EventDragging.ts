@@ -22,9 +22,9 @@ import {
   getElRoot,
 } from '@fullcalendar/core'
 import { __assign } from 'tslib'
-import { HitDragging, isHitsEqual } from './HitDragging'
-import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
-import { buildDatePointApiWithContext } from '../utils'
+import { HitDragging, isHitsEqual } from './HitDragging.js'
+import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'
+import { buildDatePointApiWithContext } from '../utils.js'
 
 export type EventDragStopArg = EventDragArg
 export type EventDragStartArg = EventDragArg

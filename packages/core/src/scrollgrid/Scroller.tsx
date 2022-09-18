@@ -1,6 +1,6 @@
-import { createElement, ComponentChildren, Ref } from '../preact'
-import { BaseComponent, setRef } from '../vdom-util'
-import { CssDimValue, ScrollerLike } from './util'
+import { createElement, ComponentChildren, Ref } from '../preact/index.js'
+import { BaseComponent, setRef } from '../vdom-util.js'
+import { CssDimValue, ScrollerLike } from './util.js'
 
 export type OverflowValue = 'auto' | 'hidden' | 'scroll' | 'visible'
 

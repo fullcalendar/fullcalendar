@@ -16,8 +16,8 @@ import {
   VNode,
   RefObject,
 } from '@fullcalendar/core/preact'
-import { Table } from './Table'
-import { DayTableSlicer } from './DayTableSlicer'
+import { Table } from './Table.js'
+import { DayTableSlicer } from './DayTableSlicer.js'
 
 export interface DayTableProps {
   dateProfile: DateProfile,

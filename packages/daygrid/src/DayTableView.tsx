@@ -8,8 +8,8 @@ import {
   ChunkContentCallbackArgs,
 } from '@fullcalendar/core'
 import { createElement, createRef } from '@fullcalendar/core/preact'
-import { TableView } from './TableView'
-import { DayTable } from './DayTable'
+import { TableView } from './TableView.js'
+import { DayTable } from './DayTable.js'
 
 export class DayTableView extends TableView {
   private buildDayTableModel = memoize(buildDayTableModel)

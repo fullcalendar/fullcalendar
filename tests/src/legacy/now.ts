@@ -1,5 +1,5 @@
-import { parseUtcDate } from '../lib/date-parsing'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { parseUtcDate } from '../lib/date-parsing.js'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 describe('now', () => {
   pushOptions({

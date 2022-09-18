@@ -18,9 +18,9 @@ import {
   createElement,
   createRef
 } from '@fullcalendar/core/preact'
-import { TableCellTop } from './TableCellTop'
-import { TableCellMoreLink } from './TableCellMoreLink'
-import { TableSegPlacement } from './event-placement'
+import { TableCellTop } from './TableCellTop.js'
+import { TableCellMoreLink } from './TableCellMoreLink.js'
+import { TableSegPlacement } from './event-placement.js'
 
 export interface TableCellProps {
   date: DateMarker

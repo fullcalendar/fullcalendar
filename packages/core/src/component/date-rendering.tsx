@@ -1,7 +1,7 @@
-import { DateMarker, DAY_IDS } from '../datelib/marker'
-import { rangeContainsMarker, DateRange } from '../datelib/date-range'
-import { DateProfile } from '../DateProfileGenerator'
-import { Theme } from '../theme/Theme'
+import { DateMarker, DAY_IDS } from '../datelib/marker.js'
+import { rangeContainsMarker, DateRange } from '../datelib/date-range.js'
+import { DateProfile } from '../DateProfileGenerator.js'
+import { Theme } from '../theme/Theme.js'
 
 export interface DateMeta {
   dow: number

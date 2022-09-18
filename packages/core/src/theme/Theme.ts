@@ -1,4 +1,4 @@
-import { CalendarOptionsRefined } from '../options'
+import { CalendarOptionsRefined } from '../options.js'
 
 export class Theme {
   // settings. default values are set after the class

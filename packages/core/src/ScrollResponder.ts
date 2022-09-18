@@ -1,7 +1,7 @@
 import { __assign } from 'tslib'
-import { Duration } from './datelib/duration'
-import { Emitter } from './common/Emitter'
-import { CalendarListeners } from './options'
+import { Duration } from './datelib/duration.js'
+import { Emitter } from './common/Emitter.js'
+import { CalendarListeners } from './options.js'
 
 export interface ScrollRequest {
   time?: Duration

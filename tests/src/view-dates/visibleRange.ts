@@ -1,6 +1,6 @@
-import { addLocalDays, startOfLocalDay, startOfUtcDay, addUtcDays } from '../lib/date-math'
-import { expectActiveRange } from '../lib/ViewDateUtils'
-import { parseUtcDate, parseLocalDate } from '../lib/date-parsing'
+import { addLocalDays, startOfLocalDay, startOfUtcDay, addUtcDays } from '../lib/date-math.js'
+import { expectActiveRange } from '../lib/ViewDateUtils.js'
+import { parseUtcDate, parseLocalDate } from '../lib/date-parsing.js'
 
 describe('visibleRange', () => {
   describe('when custom view with a flexible range', () => {

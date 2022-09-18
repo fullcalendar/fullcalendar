@@ -1,4 +1,4 @@
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 
 describe('slotMaxTime', () => { // TODO: rename file
   describe('when using the default settings', () => {

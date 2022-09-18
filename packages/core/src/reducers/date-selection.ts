@@ -1,5 +1,5 @@
-import { DateSpan } from '../structs/date-span'
-import { Action } from './Action'
+import { DateSpan } from '../structs/date-span.js'
+import { Action } from './Action.js'
 
 export function reduceDateSelection(currentSelection: DateSpan | null, action: Action) {
   switch (action.type) {

@@ -1,8 +1,8 @@
-import { DaySeriesModel } from './DaySeriesModel'
-import { DateRange } from '../datelib/date-range'
-import { DateMarker } from '../datelib/marker'
-import { Seg } from '../component/DateComponent'
-import { Dictionary } from '../options'
+import { DaySeriesModel } from './DaySeriesModel.js'
+import { DateRange } from '../datelib/date-range.js'
+import { DateMarker } from '../datelib/marker.js'
+import { Seg } from '../component/DateComponent.js'
+import { Dictionary } from '../options.js'
 
 export interface DayTableSeg extends Seg {
   row: number

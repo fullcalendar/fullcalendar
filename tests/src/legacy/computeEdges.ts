@@ -1,5 +1,5 @@
 import { computeEdges } from '@fullcalendar/core'
-import { getStockScrollbarWidths } from '../lib/dom-misc'
+import { getStockScrollbarWidths } from '../lib/dom-misc.js'
 
 describe('computeEdges', () => {
   defineTests(

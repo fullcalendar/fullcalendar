@@ -1,11 +1,11 @@
-import { DateEnv } from './datelib/env'
-import { createFormatter } from './datelib/formatting'
-import { NativeFormatterOptions } from './datelib/formatting-native'
-import { organizeRawLocales, buildLocale } from './datelib/locale'
-import { BASE_OPTION_DEFAULTS } from './options'
+import { DateEnv } from './datelib/env.js'
+import { createFormatter } from './datelib/formatting.js'
+import { NativeFormatterOptions } from './datelib/formatting-native.js'
+import { organizeRawLocales, buildLocale } from './datelib/locale.js'
+import { BASE_OPTION_DEFAULTS } from './options.js'
 
 // public
-import { DateInput } from './api-type-deps'
+import { DateInput } from './api-type-deps.js'
 
 export interface FormatDateOptions extends NativeFormatterOptions {
   locale?: string

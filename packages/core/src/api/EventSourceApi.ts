@@ -1,8 +1,8 @@
-import { EventSource } from '../structs/event-source'
-import { CalendarContext } from '../CalendarContext'
+import { EventSource } from '../structs/event-source.js'
+import { CalendarContext } from '../CalendarContext.js'
 
 // no public types yet. when there are, export from:
-// import {} from './api-type-deps'
+// import {} from './api-type-deps.js'
 
 export class EventSourceApi {
   constructor(

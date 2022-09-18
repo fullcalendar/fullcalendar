@@ -13,8 +13,8 @@ import {
   Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration, EventChangeArg, buildEventApis, isInteractionValid,
 } from '@fullcalendar/core'
 import { __assign } from 'tslib'
-import { HitDragging, isHitsEqual } from './HitDragging'
-import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
+import { HitDragging, isHitsEqual } from './HitDragging.js'
+import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'
 
 export type EventResizeStartArg = EventResizeStartStopArg
 export type EventResizeStopArg = EventResizeStartStopArg

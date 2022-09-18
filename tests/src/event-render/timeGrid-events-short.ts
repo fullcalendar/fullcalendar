@@ -1,5 +1,5 @@
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
-import { queryEventElInfo } from '../lib/wrappers/TimeGridWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
+import { queryEventElInfo } from '../lib/wrappers/TimeGridWrapper.js'
 
 describe('short timegrid events', () => {
   it('gets corrected className when short, by default', () => {

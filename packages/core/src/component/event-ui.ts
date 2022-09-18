@@ -1,7 +1,7 @@
-import { Constraint, AllowFunc, normalizeConstraint } from '../structs/constraint'
-import { parseClassNames } from '../util/html'
-import { CalendarContext } from '../CalendarContext'
-import { RawOptionsFromRefiners, RefinedOptionsFromRefiners, identity, Identity } from '../options'
+import { Constraint, AllowFunc, normalizeConstraint } from '../structs/constraint.js'
+import { parseClassNames } from '../util/html.js'
+import { CalendarContext } from '../CalendarContext.js'
+import { RawOptionsFromRefiners, RefinedOptionsFromRefiners, identity, Identity } from '../options.js'
 
 // TODO: better called "EventSettings" or "EventConfig"
 // TODO: move this file into structs

@@ -1,12 +1,12 @@
-import { DateRange, rangesEqual, OpenDateRange } from '../datelib/date-range'
-import { DateInput, DateEnv } from '../datelib/env'
-import { Duration } from '../datelib/duration'
-import { createEventInstance } from './event-instance'
-import { parseEventDef, refineEventDef } from './event-parse'
-import { EventRenderRange, compileEventUi } from '../component/event-rendering'
-import { EventUiHash } from '../component/event-ui'
-import { CalendarContext } from '../CalendarContext'
-import { refineProps, identity, Identity } from '../options'
+import { DateRange, rangesEqual, OpenDateRange } from '../datelib/date-range.js'
+import { DateInput, DateEnv } from '../datelib/env.js'
+import { Duration } from '../datelib/duration.js'
+import { createEventInstance } from './event-instance.js'
+import { parseEventDef, refineEventDef } from './event-parse.js'
+import { EventRenderRange, compileEventUi } from '../component/event-rendering.js'
+import { EventUiHash } from '../component/event-ui.js'
+import { CalendarContext } from '../CalendarContext.js'
+import { refineProps, identity, Identity } from '../options.js'
 
 /*
 A data-structure for a date-range that will be visually displayed.

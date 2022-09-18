@@ -1,4 +1,4 @@
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 
 describe('more-link popover', () => {
   pushOptions({

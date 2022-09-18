@@ -1,4 +1,4 @@
-import { preventDefault } from './dom-event'
+import { preventDefault } from './dom-event.js'
 
 export type GenericHash = { [key: string]: any } // already did this somewhere
 

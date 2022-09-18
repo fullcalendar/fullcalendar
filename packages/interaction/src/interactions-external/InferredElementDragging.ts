@@ -1,5 +1,5 @@
 import { PointerDragEvent, ElementDragging } from '@fullcalendar/core'
-import { PointerDragging } from '../dnd/PointerDragging'
+import { PointerDragging } from '../dnd/PointerDragging.js'
 
 /*
 Detects when a *THIRD-PARTY* drag-n-drop system interacts with elements.

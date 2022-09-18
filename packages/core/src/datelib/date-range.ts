@@ -1,5 +1,5 @@
-import { DateMarker } from './marker'
-import { DateEnv, DateInput } from './env'
+import { DateMarker } from './marker.js'
+import { DateEnv, DateInput } from './env.js'
 
 export interface DateRangeInput {
   start?: DateInput

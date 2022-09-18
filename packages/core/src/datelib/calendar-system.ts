@@ -1,4 +1,4 @@
-import { DateMarker, arrayToUtcDate, dateToUtcArray } from './marker'
+import { DateMarker, arrayToUtcDate, dateToUtcArray } from './marker.js'
 
 export interface CalendarSystem {
   getMarkerYear(d: DateMarker): number

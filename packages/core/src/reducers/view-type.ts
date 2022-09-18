@@ -1,4 +1,4 @@
-import { Action } from './Action'
+import { Action } from './Action.js'
 
 export function reduceViewType(viewType: string, action: Action): string {
   switch (action.type) {

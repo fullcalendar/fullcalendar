@@ -1,4 +1,4 @@
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 
 describe('when weekends option is set', () => {
   it('should show sat and sun if true', () => {

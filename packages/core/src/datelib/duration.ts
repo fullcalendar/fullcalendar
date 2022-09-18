@@ -1,4 +1,4 @@
-import { isInt } from '../util/misc'
+import { isInt } from '../util/misc.js'
 
 export type DurationInput = DurationObjectInput | string | number
 

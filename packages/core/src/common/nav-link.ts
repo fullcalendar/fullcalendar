@@ -1,8 +1,8 @@
-import { createFormatter } from '../datelib/formatting'
-import { DateMarker } from '../datelib/marker'
-import { createAriaClickAttrs } from '../util/dom-event'
-import { formatWithOrdinals } from '../util/misc'
-import { ViewContext } from '../ViewContext'
+import { createFormatter } from '../datelib/formatting.js'
+import { DateMarker } from '../datelib/marker.js'
+import { createAriaClickAttrs } from '../util/dom-event.js'
+import { formatWithOrdinals } from '../util/misc.js'
+import { ViewContext } from '../ViewContext.js'
 
 const DAY_FORMAT = createFormatter({ year: 'numeric', month: 'long', day: 'numeric' })
 const WEEK_FORMAT = createFormatter({ week: 'long' })

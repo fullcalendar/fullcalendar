@@ -17,6 +17,7 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
+  "type": "module",
   "dependencies": {
     "@fullcalendar/core": "workspace:*",
     "@fullcalendar/daygrid": "workspace:*",

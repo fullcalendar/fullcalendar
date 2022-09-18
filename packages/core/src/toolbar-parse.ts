@@ -1,9 +1,9 @@
-import { ViewSpec, ViewSpecHash } from './structs/view-spec'
-import { Theme } from './theme/Theme'
-import { CalendarApi } from './CalendarApi'
-import { CalendarOptionsRefined, CalendarOptions } from './options'
-import { ToolbarInput, ToolbarModel, ToolbarWidget, CustomButtonInput } from './toolbar-struct'
-import { formatWithOrdinals } from './util/misc'
+import { ViewSpec, ViewSpecHash } from './structs/view-spec.js'
+import { Theme } from './theme/Theme.js'
+import { CalendarApi } from './CalendarApi.js'
+import { CalendarOptionsRefined, CalendarOptions } from './options.js'
+import { ToolbarInput, ToolbarModel, ToolbarWidget, CustomButtonInput } from './toolbar-struct.js'
+import { formatWithOrdinals } from './util/misc.js'
 
 export function parseToolbars(
   calendarOptions: CalendarOptionsRefined,

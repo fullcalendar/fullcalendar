@@ -1,7 +1,7 @@
 import { createPlugin, EventSourceDef, addDays, DateEnv, requestJson, Dictionary } from '@fullcalendar/core'
-import { OPTION_REFINERS } from './options-refiners'
+import { OPTION_REFINERS } from './options-refiners.js'
 import './options-declare'
-import { EVENT_SOURCE_REFINERS } from './event-source-refiners'
+import { EVENT_SOURCE_REFINERS } from './event-source-refiners.js'
 import './event-source-declare'
 
 // TODO: expose somehow

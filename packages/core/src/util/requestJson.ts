@@ -1,4 +1,4 @@
-import { Dictionary } from '../options'
+import { Dictionary } from '../options.js'
 
 export function requestJson(method: string, url: string, params: Dictionary, successCallback, failureCallback) {
   method = method.toUpperCase()

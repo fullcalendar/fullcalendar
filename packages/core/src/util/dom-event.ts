@@ -1,4 +1,4 @@
-import { elementClosest } from './dom-manip'
+import { elementClosest } from './dom-manip.js'
 
 // Stops a mouse/touch event from doing it's native browser action
 export function preventDefault(ev) {

@@ -1,6 +1,6 @@
-import { Seg } from '../component/DateComponent'
-import { ComponentChildren, createElement, Ref, createRef, RefObject } from '../preact'
-import { EventApi } from '../api/EventApi'
+import { Seg } from '../component/DateComponent.js'
+import { ComponentChildren, createElement, Ref, createRef, RefObject } from '../preact/index.js'
+import { EventApi } from '../api/EventApi.js'
 import {
   computeSegDraggable,
   computeSegStartResizable,
@@ -8,9 +8,9 @@ import {
   setElSeg,
   EventContentArg,
   getEventClassNames,
-} from '../component/event-rendering'
-import { RenderHook } from './render-hook'
-import { BaseComponent } from '../vdom-util'
+} from '../component/event-rendering.js'
+import { RenderHook } from './render-hook.js'
+import { BaseComponent } from '../vdom-util.js'
 
 export interface MinimalEventProps {
   seg: Seg

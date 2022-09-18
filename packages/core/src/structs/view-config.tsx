@@ -1,11 +1,11 @@
-import { ViewProps } from '../View'
-import { mapHash } from '../util/object'
-import { ComponentType, Component, createElement } from '../preact'
-import { ViewRoot } from '../common/ViewRoot'
-import { RenderHook, MountArg } from '../common/render-hook'
-import { ViewContext, ViewContextType } from '../ViewContext'
-import { ViewOptions } from '../options'
-import { Duration } from '../datelib/duration'
+import { ViewProps } from '../View.js'
+import { mapHash } from '../util/object.js'
+import { ComponentType, Component, createElement } from '../preact/index.js'
+import { ViewRoot } from '../common/ViewRoot.js'
+import { RenderHook, MountArg } from '../common/render-hook.js'
+import { ViewContext, ViewContextType } from '../ViewContext.js'
+import { ViewOptions } from '../options.js'
+import { Duration } from '../datelib/duration.js'
 
 /*
 A view-config represents information for either:

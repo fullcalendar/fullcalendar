@@ -1,8 +1,8 @@
 import { addDays } from '@fullcalendar/core'
-import { removeLtrCharCodes } from '../lib/string'
-import { parseUtcDate } from '../lib/date-parsing'
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { removeLtrCharCodes } from '../lib/string.js'
+import { parseUtcDate } from '../lib/date-parsing.js'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 describe('day names', () => {
   let sundayDate = parseUtcDate('2019-03-17')

@@ -5,8 +5,8 @@ import {
   triggerDateSelect, isDateSelectionValid,
 } from '@fullcalendar/core'
 import { __assign } from 'tslib'
-import { HitDragging } from './HitDragging'
-import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
+import { HitDragging } from './HitDragging.js'
+import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'
 
 /*
 Tracks when the user selects a portion of time of a component,

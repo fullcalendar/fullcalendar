@@ -1,11 +1,11 @@
 import { createPlugin } from '@fullcalendar/core'
-import { ListView } from './ListView'
-import { OPTION_REFINERS } from './options'
+import { ListView } from './ListView.js'
+import { OPTION_REFINERS } from './options.js'
 import './options-declare'
 import './index.css'
 
 export { ListView }
-export * from './api-type-deps'
+export * from './api-type-deps.js'
 
 export default createPlugin({
   optionRefiners: OPTION_REFINERS,

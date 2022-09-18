@@ -1,6 +1,6 @@
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
-import { RED_REGEX } from '../lib/dom-misc'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
+import { RED_REGEX } from '../lib/dom-misc.js'
 
 describe('eventContent', () => {
   pushOptions({

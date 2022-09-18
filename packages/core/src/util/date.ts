@@ -1,7 +1,7 @@
-import { DateMarker, startOfDay, addDays, diffDays, diffDayAndTime } from '../datelib/marker'
-import { Duration, asRoughMs, createDuration } from '../datelib/duration'
-import { DateEnv } from '../datelib/env'
-import { DateRange, OpenDateRange } from '../datelib/date-range'
+import { DateMarker, startOfDay, addDays, diffDays, diffDayAndTime } from '../datelib/marker.js'
+import { Duration, asRoughMs, createDuration } from '../datelib/duration.js'
+import { DateEnv } from '../datelib/env.js'
+import { DateRange, OpenDateRange } from '../datelib/date-range.js'
 
 /* Date stuff that doesn't belong in datelib core
 ----------------------------------------------------------------------------------------------------------------------*/

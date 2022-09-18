@@ -1,6 +1,6 @@
 import { addDays, FormatRangeOptions } from '@fullcalendar/core'
-import { parseUtcDate } from '../lib/date-parsing'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { parseUtcDate } from '../lib/date-parsing.js'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 describe('current date', () => {
   const TITLE_FORMAT: FormatRangeOptions = {

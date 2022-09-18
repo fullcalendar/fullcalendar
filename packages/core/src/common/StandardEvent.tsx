@@ -1,8 +1,8 @@
-import { ComponentChildren, createElement, Fragment } from '../preact'
-import { BaseComponent } from '../vdom-util'
-import { buildSegTimeText, EventContentArg, getSegAnchorAttrs } from '../component/event-rendering'
-import { EventRoot, MinimalEventProps } from './EventRoot'
-import { DateFormatter } from '../datelib/DateFormatter'
+import { ComponentChildren, createElement, Fragment } from '../preact/index.js'
+import { BaseComponent } from '../vdom-util.js'
+import { buildSegTimeText, EventContentArg, getSegAnchorAttrs } from '../component/event-rendering.js'
+import { EventRoot, MinimalEventProps } from './EventRoot.js'
+import { DateFormatter } from '../datelib/DateFormatter.js'
 
 export interface StandardEventProps extends MinimalEventProps {
   extraClassNames: string[]

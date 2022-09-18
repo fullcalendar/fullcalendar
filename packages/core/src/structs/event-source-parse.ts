@@ -1,11 +1,11 @@
-import { EventInput, EventInputTransformer } from './event-parse'
-import { EventSourceFunc } from '../event-sources/func-event-source'
-import { EventSource, EventSourceSuccessResponseHandler, EventSourceErrorResponseHandler } from './event-source'
-import { JSON_FEED_EVENT_SOURCE_REFINERS } from '../event-sources/json-feed-event-source-refiners'
-import { CalendarContext } from '../CalendarContext'
-import { guid } from '../util/misc'
-import { EVENT_UI_REFINERS, createEventUi, EventUiInput, EventUiRefined } from '../component/event-ui'
-import { identity, Identity, RawOptionsFromRefiners, refineProps, RefinedOptionsFromRefiners } from '../options'
+import { EventInput, EventInputTransformer } from './event-parse.js'
+import { EventSourceFunc } from '../event-sources/func-event-source.js'
+import { EventSource, EventSourceSuccessResponseHandler, EventSourceErrorResponseHandler } from './event-source.js'
+import { JSON_FEED_EVENT_SOURCE_REFINERS } from '../event-sources/json-feed-event-source-refiners.js'
+import { CalendarContext } from '../CalendarContext.js'
+import { guid } from '../util/misc.js'
+import { EVENT_UI_REFINERS, createEventUi, EventUiInput, EventUiRefined } from '../component/event-ui.js'
+import { identity, Identity, RawOptionsFromRefiners, refineProps, RefinedOptionsFromRefiners } from '../options.js'
 
 const EVENT_SOURCE_REFINERS = { // does NOT include EVENT_UI_REFINERS
   id: String,

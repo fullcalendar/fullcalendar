@@ -1,13 +1,13 @@
-import { getDayClassNames, DateMeta } from '../component/date-rendering'
-import { addDays } from '../datelib/marker'
-import { createElement } from '../preact'
-import { DateFormatter } from '../datelib/DateFormatter'
-import { BaseComponent } from '../vdom-util'
-import { RenderHook } from './render-hook'
-import { Dictionary } from '../options'
-import { CLASS_NAME, renderInner } from './table-cell-util'
-import { DayHeaderContentArg } from '../render-hook-misc'
-import { createFormatter } from '../datelib/formatting'
+import { getDayClassNames, DateMeta } from '../component/date-rendering.js'
+import { addDays } from '../datelib/marker.js'
+import { createElement } from '../preact/index.js'
+import { DateFormatter } from '../datelib/DateFormatter.js'
+import { BaseComponent } from '../vdom-util.js'
+import { RenderHook } from './render-hook.js'
+import { Dictionary } from '../options.js'
+import { CLASS_NAME, renderInner } from './table-cell-util.js'
+import { DayHeaderContentArg } from '../render-hook-misc.js'
+import { createFormatter } from '../datelib/formatting.js'
 
 export interface TableDowCellProps {
   dow: number

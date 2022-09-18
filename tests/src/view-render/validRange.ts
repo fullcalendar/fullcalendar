@@ -1,4 +1,4 @@
-import { expectDayRange } from '../lib/ViewRenderUtils'
+import { expectDayRange } from '../lib/ViewRenderUtils.js'
 
 describe('validRange rendering', () => {
   describe('with hardcoded start constraint', () => {

@@ -1,9 +1,9 @@
-import { DateMarker, addMs, startOfDay, addDays } from './datelib/marker'
-import { createDuration } from './datelib/duration'
-import { ViewContext, ViewContextType } from './ViewContext'
-import { ComponentChildren, Component } from './preact'
-import { DateRange } from './datelib/date-range'
-import { getNow } from './reducers/current-date'
+import { DateMarker, addMs, startOfDay, addDays } from './datelib/marker.js'
+import { createDuration } from './datelib/duration.js'
+import { ViewContext, ViewContextType } from './ViewContext.js'
+import { ComponentChildren, Component } from './preact/index.js'
+import { DateRange } from './datelib/date-range.js'
+import { getNow } from './reducers/current-date.js'
 
 export interface NowTimerProps {
   unit: string // TODO: add type of unit

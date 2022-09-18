@@ -1,7 +1,7 @@
-import { DateProfile } from '../DateProfileGenerator'
-import { DateSpan } from '../structs/date-span'
-import { Rect } from '../util/geom'
-import { ViewContext } from '../ViewContext'
+import { DateProfile } from '../DateProfileGenerator.js'
+import { DateSpan } from '../structs/date-span.js'
+import { Rect } from '../util/geom.js'
+import { ViewContext } from '../ViewContext.js'
 
 export interface Hit {
   componentId?: string // will be set by HitDragging

@@ -1,6 +1,6 @@
-import { SectionConfig, ChunkConfig, ColProps, CssDimValue } from './util'
-import { Component, Ref } from '../preact'
-import { ViewContext } from '../ViewContext'
+import { SectionConfig, ChunkConfig, ColProps, CssDimValue } from './util.js'
+import { Component, Ref } from '../preact/index.js'
+import { ViewContext } from '../ViewContext.js'
 
 export interface ScrollGridProps {
   colGroups?: ColGroupConfig[]

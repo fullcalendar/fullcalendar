@@ -1,5 +1,5 @@
-import { DateRange } from '../datelib/date-range'
-import { guid } from '../util/misc'
+import { DateRange } from '../datelib/date-range.js'
+import { guid } from '../util/misc.js'
 
 export interface EventInstance {
   instanceId: string

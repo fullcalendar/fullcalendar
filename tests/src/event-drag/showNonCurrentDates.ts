@@ -1,6 +1,6 @@
-import * as EventDragUtils from '../lib/EventDragUtils'
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { waitEventDrag } from '../lib/wrappers/interaction-util'
+import * as EventDragUtils from '../lib/EventDragUtils.js'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
+import { waitEventDrag } from '../lib/wrappers/interaction-util.js'
 
 describe('showNonCurrentDates event dragging', () => {
   pushOptions({

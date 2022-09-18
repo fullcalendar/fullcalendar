@@ -1,6 +1,6 @@
 import { resolve as resolvePath } from 'path'
 import { readFile } from 'fs/promises'
-import handlebars from 'handlebars'
+import { default as handlebars } from 'handlebars'
 import { capture } from '@fullcalendar/workspace-scripts/utils/exec'
 import { removeExt } from '@fullcalendar/workspace-scripts/utils/path'
 

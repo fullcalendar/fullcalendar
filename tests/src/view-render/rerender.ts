@@ -1,4 +1,4 @@
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 
 describe('rerendering a calendar', () => {
   it('keeps sizing', () => {

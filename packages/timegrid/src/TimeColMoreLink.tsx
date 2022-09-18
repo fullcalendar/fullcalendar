@@ -6,8 +6,8 @@ import {
   createElement,
   createRef,
 } from '@fullcalendar/core/preact'
-import { renderPlainFgSegs } from './TimeCol'
-import { TimeColsSeg } from './TimeColsSeg'
+import { renderPlainFgSegs } from './TimeCol.js'
+import { TimeColsSeg } from './TimeColsSeg.js'
 
 export interface TimeColMoreLinkProps {
   hiddenSegs: TimeColsSeg[]

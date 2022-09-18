@@ -20,12 +20,12 @@ import {
   Fragment,
   createRef,
 } from '@fullcalendar/core/preact'
-import { TableSeg, splitSegsByFirstCol } from './TableSeg'
-import { TableCell } from './TableCell'
-import { TableListItemEvent } from './TableListItemEvent'
-import { TableBlockEvent } from './TableBlockEvent'
-import { computeFgSegPlacement, TableSegPlacement } from './event-placement'
-import { hasListItemDisplay } from './event-rendering'
+import { TableSeg, splitSegsByFirstCol } from './TableSeg.js'
+import { TableCell } from './TableCell.js'
+import { TableListItemEvent } from './TableListItemEvent.js'
+import { TableBlockEvent } from './TableBlockEvent.js'
+import { computeFgSegPlacement, TableSegPlacement } from './event-placement.js'
+import { hasListItemDisplay } from './event-rendering.js'
 
 // TODO: attach to window resize?
 

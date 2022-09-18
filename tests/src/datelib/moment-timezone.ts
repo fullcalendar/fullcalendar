@@ -1,5 +1,5 @@
-import momentTimeZonePlugin from '@fullcalendar/moment-timezone'
-import { testTimeZoneImpl } from '../lib/timeZoneImpl'
+import { default as momentTimeZonePlugin } from '@fullcalendar/moment-timezone'
+import { testTimeZoneImpl } from '../lib/timeZoneImpl.js'
 
 describe('moment-timezone', () => {
   testTimeZoneImpl(momentTimeZonePlugin)

@@ -1,4 +1,4 @@
-import XHRMock from 'xhr-mock'
+import { default as XHRMock } from 'xhr-mock'
 
 describe('event feed params', () => {
   pushOptions({

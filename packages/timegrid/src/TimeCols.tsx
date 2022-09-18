@@ -20,11 +20,11 @@ import {
   createElement,
   VNode,
 } from '@fullcalendar/core/preact'
-import { TimeColsSlats } from './TimeColsSlats'
-import { TimeSlatMeta } from './time-slat-meta'
-import { TimeColsContent } from './TimeColsContent'
-import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { TimeColsSeg } from './TimeColsSeg'
+import { TimeColsSlats } from './TimeColsSlats.js'
+import { TimeSlatMeta } from './time-slat-meta.js'
+import { TimeColsContent } from './TimeColsContent.js'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
+import { TimeColsSeg } from './TimeColsSeg.js'
 
 export interface TimeColsProps {
   cells: DayTableCell[]

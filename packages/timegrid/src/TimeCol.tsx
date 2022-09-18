@@ -8,13 +8,13 @@ import {
   Fragment,
   Ref,
 } from '@fullcalendar/core/preact'
-import { TimeColMoreLink } from './TimeColMoreLink'
-import { TimeColsSeg } from './TimeColsSeg'
-import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { SegWebRect } from './seg-web'
-import { computeFgSegPlacements, computeSegVCoords } from './event-placement'
-import { TimeColEvent } from './TimeColEvent'
-import { TimeColMisc } from './TimeColMisc'
+import { TimeColMoreLink } from './TimeColMoreLink.js'
+import { TimeColsSeg } from './TimeColsSeg.js'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
+import { SegWebRect } from './seg-web.js'
+import { computeFgSegPlacements, computeSegVCoords } from './event-placement.js'
+import { TimeColEvent } from './TimeColEvent.js'
+import { TimeColMisc } from './TimeColMisc.js'
 
 export interface TimeColProps {
   elRef?: Ref<HTMLTableCellElement>

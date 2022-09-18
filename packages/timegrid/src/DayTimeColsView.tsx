@@ -11,9 +11,9 @@ import {
   createElement,
 } from '@fullcalendar/core/preact'
 import { DayTable } from '@fullcalendar/daygrid'
-import { TimeColsView } from './TimeColsView'
-import { DayTimeCols } from './DayTimeCols'
-import { buildSlatMetas } from './time-slat-meta'
+import { TimeColsView } from './TimeColsView.js'
+import { DayTimeCols } from './DayTimeCols.js'
+import { buildSlatMetas } from './time-slat-meta.js'
 
 export class DayTimeColsView extends TimeColsView {
   private buildTimeColsModel = memoize(buildTimeColsModel)

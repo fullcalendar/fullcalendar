@@ -1,8 +1,8 @@
 import { Calendar } from '@fullcalendar/core'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import interactionPlugin from '@fullcalendar/interaction'
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { default as dayGridPlugin } from '@fullcalendar/daygrid'
+import { default as interactionPlugin } from '@fullcalendar/interaction'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 
 // UNFORTUNATELY, these tests are affected by the window height b/c of autoscrolling
 

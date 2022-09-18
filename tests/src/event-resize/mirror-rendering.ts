@@ -1,5 +1,5 @@
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { waitEventResize } from '../lib/wrappers/interaction-util'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
+import { waitEventResize } from '../lib/wrappers/interaction-util.js'
 
 describe('event mirror rendering', () => {
   pushOptions({
