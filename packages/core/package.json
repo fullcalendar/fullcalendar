@@ -28,17 +28,15 @@
   },
   "scripts": {
     "build": "workspace-scripts pkg:build",
-    "dev": "workspace-scripts pkg:dev",
     "clean": "workspace-scripts pkg:clean"
   },
-  "fileExports": {
-    ".": "./src/index.ts",
-    "./preact": "./src/preact/index.ts",
-    "./preact/compat": "./src/preact/compat.ts",
-    "./locales/*": "./src/locales/*.ts"
-  },
-  "generatedExports": {
-    "./locales-all": "./scripts/generate-locales-all.js"
+  "buildConfig": {
+    "exports": {
+      ".": {},
+      "./preact": {},
+      "./locales/*": {},
+      "./locales-all": { "generator": "./scripts/generate-locales-all.js" }
+    }
   },
   "publishConfig": {
     "directory": "./dist",
