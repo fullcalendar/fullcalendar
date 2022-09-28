@@ -10,12 +10,12 @@
   },
   "peerDependencies": {
     "moment": "^2.29.1",
-    "moment-timezone": "^0.5.31"
+    "moment-timezone": "^0.5.37"
   },
   "devDependencies": {
     "@fullcalendar/core-preact": "workspace:*",
     "moment": "^2.29.1",
-    "moment-timezone": "0.5.37"
+    "moment-timezone": "^0.5.37"
   },
   "main": "main.cjs.js",
   "module": "main.js",
