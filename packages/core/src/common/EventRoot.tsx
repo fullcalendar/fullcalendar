@@ -1,5 +1,5 @@
 import { Seg } from '../component/DateComponent.js'
-import { ComponentChildren, createElement, Ref, createRef, RefObject } from '../preact/index.js'
+import { ComponentChildren, createElement, Ref, createRef, RefObject } from '../preact.js'
 import { EventApi } from '../api/EventApi.js'
 import {
   computeSegDraggable,

@@ -1,5 +1,5 @@
 import { BaseComponent, setRef } from './vdom-util.js'
-import { ComponentChildren, Ref, createElement } from './preact/index.js'
+import { ComponentChildren, Ref, createElement } from './preact.js'
 import { CssDimValue } from './scrollgrid/util.js'
 
 export interface ViewContainerProps {

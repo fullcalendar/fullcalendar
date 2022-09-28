@@ -1,5 +1,6 @@
 import * as preact from 'preact'
 export * from 'preact'
+export { createPortal } from 'preact/compat'
 
 export function flushSync(runBeforeFlush) {
   runBeforeFlush()

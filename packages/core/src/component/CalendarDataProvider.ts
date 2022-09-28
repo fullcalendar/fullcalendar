@@ -1,4 +1,4 @@
-import { Component, ComponentChildren } from '../preact/index.js'
+import { Component, ComponentChildren } from '../preact.js'
 import { CalendarDataManager } from '../reducers/CalendarDataManager.js'
 import { CalendarApi } from '../CalendarApi.js'
 import { CalendarData } from '../reducers/data-types.js'

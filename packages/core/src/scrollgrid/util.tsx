@@ -1,4 +1,4 @@
-import { VNode, createElement, Ref } from '../preact/index.js'
+import { VNode, createElement, Ref } from '../preact.js'
 import { findElements } from '../util/dom-manip.js'
 import { ViewContext } from '../ViewContext.js'
 import { computeSmallestCellWidth } from '../util/misc.js'

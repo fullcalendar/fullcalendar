@@ -1,4 +1,4 @@
-import { VNode, createElement, Fragment } from '../preact/index.js'
+import { VNode, createElement, Fragment } from '../preact.js'
 import { BaseComponent, setRef } from '../vdom-util.js'
 import { Scroller, OverflowValue } from './Scroller.js'
 import { RefMap } from '../util/RefMap.js'

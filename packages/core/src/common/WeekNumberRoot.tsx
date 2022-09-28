@@ -1,7 +1,7 @@
 import { ViewContext, ViewContextType } from '../ViewContext.js'
 import { DateMarker } from '../datelib/marker.js'
 import { RenderHook, RenderHookPropsChildren, MountArg } from './render-hook.js'
-import { createElement } from '../preact/index.js'
+import { createElement } from '../preact.js'
 import { DateFormatter } from '../datelib/DateFormatter.js'
 
 export interface WeekNumberRootProps {

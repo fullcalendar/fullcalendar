@@ -1,7 +1,7 @@
 import { BaseComponent } from '../vdom-util.js'
 import { DateMarker } from '../datelib/marker.js'
 import { computeFallbackHeaderFormat } from './table-utils.js'
-import { VNode, createElement } from '../preact/index.js'
+import { VNode, createElement } from '../preact.js'
 import { TableDateCell } from './TableDateCell.js'
 import { TableDowCell } from './TableDowCell.js'
 import { NowTimer } from '../NowTimer.js'

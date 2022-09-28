@@ -1,4 +1,4 @@
-import { createElement, ComponentChildren, Ref } from '../preact/index.js'
+import { createElement, ComponentChildren, Ref } from '../preact.js'
 import { BaseComponent, setRef } from '../vdom-util.js'
 import { CssDimValue, ScrollerLike } from './util.js'
 

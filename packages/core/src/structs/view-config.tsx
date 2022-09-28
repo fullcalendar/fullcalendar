@@ -1,6 +1,6 @@
 import { ViewProps } from '../View.js'
 import { mapHash } from '../util/object.js'
-import { ComponentType, Component, createElement } from '../preact/index.js'
+import { ComponentType, Component, createElement } from '../preact.js'
 import { ViewRoot } from '../common/ViewRoot.js'
 import { RenderHook, MountArg } from '../common/render-hook.js'
 import { ViewContext, ViewContextType } from '../ViewContext.js'

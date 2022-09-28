@@ -1,4 +1,4 @@
-import { ComponentChildren } from './preact/index.js'
+import { ComponentChildren } from './preact.js'
 import { BaseComponent } from './vdom-util.js'
 import { CssDimValue } from './scrollgrid/util.js'
 import { CalendarOptions, CalendarListeners } from './options.js'

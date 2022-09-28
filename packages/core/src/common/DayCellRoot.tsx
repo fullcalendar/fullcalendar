@@ -1,4 +1,4 @@
-import { Ref, ComponentChildren, createElement } from '../preact/index.js'
+import { Ref, ComponentChildren, createElement } from '../preact.js'
 import { DateMarker } from '../datelib/marker.js'
 import { DateRange } from '../datelib/date-range.js'
 import { getDayClassNames, DateMeta } from '../component/date-rendering.js'

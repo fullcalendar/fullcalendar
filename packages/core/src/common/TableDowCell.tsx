@@ -1,6 +1,6 @@
 import { getDayClassNames, DateMeta } from '../component/date-rendering.js'
 import { addDays } from '../datelib/marker.js'
-import { createElement } from '../preact/index.js'
+import { createElement } from '../preact.js'
 import { DateFormatter } from '../datelib/DateFormatter.js'
 import { BaseComponent } from '../vdom-util.js'
 import { RenderHook } from './render-hook.js'

@@ -1,4 +1,4 @@
-import { createElement, VNode } from './preact/index.js'
+import { createElement, VNode } from './preact.js'
 import { BaseComponent } from './vdom-util.js'
 import { ToolbarWidget } from './toolbar-struct.js'
 

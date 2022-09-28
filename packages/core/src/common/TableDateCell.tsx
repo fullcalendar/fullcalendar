@@ -1,7 +1,7 @@
 import { DateRange } from '../datelib/date-range.js'
 import { getDayClassNames, getDateMeta } from '../component/date-rendering.js'
 import { DateMarker } from '../datelib/marker.js'
-import { createElement } from '../preact/index.js'
+import { createElement } from '../preact.js'
 import { DateFormatter } from '../datelib/DateFormatter.js'
 import { formatDayString } from '../datelib/formatting-utils.js'
 import { BaseComponent } from '../vdom-util.js'

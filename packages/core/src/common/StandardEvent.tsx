@@ -1,4 +1,4 @@
-import { ComponentChildren, createElement, Fragment } from '../preact/index.js'
+import { ComponentChildren, createElement, Fragment } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
 import { buildSegTimeText, EventContentArg, getSegAnchorAttrs } from '../component/event-rendering.js'
 import { EventRoot, MinimalEventProps } from './EventRoot.js'

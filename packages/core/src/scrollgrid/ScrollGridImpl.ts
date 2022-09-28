@@ -1,5 +1,5 @@
 import { SectionConfig, ChunkConfig, ColProps, CssDimValue } from './util.js'
-import { Component, Ref } from '../preact/index.js'
+import { Component, Ref } from '../preact.js'
 import { ViewContext } from '../ViewContext.js'
 
 export interface ScrollGridProps {

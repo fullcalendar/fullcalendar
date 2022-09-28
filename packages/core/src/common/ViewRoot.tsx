@@ -1,6 +1,6 @@
 import { ViewSpec } from '../structs/view-spec.js'
 import { MountHook, buildClassNameNormalizer, MountArg } from './render-hook.js'
-import { ComponentChildren, createElement, Ref } from '../preact/index.js'
+import { ComponentChildren, createElement, Ref } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
 import { ViewApi } from '../ViewApi.js'
 

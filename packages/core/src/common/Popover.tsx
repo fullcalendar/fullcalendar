@@ -1,8 +1,7 @@
 import { Dictionary } from '../options.js'
 import { computeClippedClientRect } from '../util/dom-geom.js'
 import { applyStyle, elementClosest, getEventTargetViaRoot, getUniqueDomId } from '../util/dom-manip.js'
-import { createElement, ComponentChildren, Ref } from '../preact/index.js'
-import { createPortal } from '../preact/compat.js'
+import { createElement, ComponentChildren, Ref, createPortal } from '../preact.js'
 import { BaseComponent, setRef } from '../vdom-util.js'
 
 export interface PopoverProps {

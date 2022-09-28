@@ -1,4 +1,4 @@
-import { createElement } from '../preact/index.js'
+import { createElement } from '../preact.js'
 import { EventRoot } from './EventRoot.js'
 import { Seg } from '../component/DateComponent.js'
 import { EventContentArg } from '../component/event-rendering.js'

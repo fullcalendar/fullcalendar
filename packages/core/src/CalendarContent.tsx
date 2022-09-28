@@ -9,7 +9,7 @@ import { memoize } from './util/memoize.js'
 import { DateMarker } from './datelib/marker.js'
 import { CalendarData } from './reducers/data-types.js'
 import { ViewPropsTransformerClass } from './plugin-system-struct.js'
-import { createElement, createRef, Fragment, VNode } from './preact/index.js'
+import { createElement, createRef, Fragment, VNode } from './preact.js'
 import { ViewContainer } from './ViewContainer.js'
 import {
   Interaction,

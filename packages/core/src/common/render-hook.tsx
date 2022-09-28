@@ -1,6 +1,6 @@
 /* eslint max-classes-per-file: off */
 
-import { Ref, createRef, ComponentChildren, createElement, RefObject, createContext, Context } from '../preact/index.js'
+import { Ref, createRef, ComponentChildren, createElement, RefObject, createContext, Context } from '../preact.js'
 import { setRef, BaseComponent } from '../vdom-util.js'
 import { isPropsEqual } from '../util/object.js'
 import { parseClassNames, ClassNamesInput } from '../util/html.js'

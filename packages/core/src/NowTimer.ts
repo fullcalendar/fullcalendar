@@ -1,7 +1,7 @@
 import { DateMarker, addMs, startOfDay, addDays } from './datelib/marker.js'
 import { createDuration } from './datelib/duration.js'
 import { ViewContext, ViewContextType } from './ViewContext.js'
-import { ComponentChildren, Component } from './preact/index.js'
+import { ComponentChildren, Component } from './preact.js'
 import { DateRange } from './datelib/date-range.js'
 import { getNow } from './reducers/current-date.js'
 

@@ -1,7 +1,7 @@
 /* eslint max-classes-per-file: off */
 
 import { __assign } from 'tslib'
-import { Component, Ref } from './preact/index.js'
+import { Component, Ref } from './preact.js'
 import { ViewContextType, ViewContext } from './ViewContext.js'
 import { compareObjs, EqualityFuncs, getUnequalProps } from './util/object.js'
 import { Dictionary } from './options.js'

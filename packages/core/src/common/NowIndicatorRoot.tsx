@@ -1,7 +1,7 @@
 import { RenderHook, RenderHookPropsChildren, MountArg } from './render-hook.js'
 import { DateMarker } from '../datelib/marker.js'
 import { ViewContext, ViewContextType } from '../ViewContext.js'
-import { createElement } from '../preact/index.js'
+import { createElement } from '../preact.js'
 import { ViewApi } from '../ViewApi.js'
 
 export interface NowIndicatorRootProps {
