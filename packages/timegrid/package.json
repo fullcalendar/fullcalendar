@@ -28,11 +28,12 @@
   },
   "scripts": {
     "build": "workspace-scripts pkg:build",
-    "dev": "workspace-scripts pkg:dev",
     "clean": "workspace-scripts pkg:clean"
   },
-  "fileExports": {
-    ".": "./src/index.ts"
+  "buildConfig": {
+    "exports": {
+      ".": {}
+    }
   },
   "publishConfig": {
     "directory": "./dist",

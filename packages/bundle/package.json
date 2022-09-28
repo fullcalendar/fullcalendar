@@ -39,38 +39,27 @@
   },
   "scripts": {
     "build": "workspace-scripts pkg:build",
-    "dev": "workspace-scripts pkg:dev",
     "clean": "workspace-scripts pkg:clean"
   },
-  "fileExports": {
-    ".": "./src/index.ts",
-    "./bootstrap": "./src/bootstrap.ts",
-    "./bootstrap5": "./src/bootstrap5.ts",
-    "./google-calendar": "./src/google-calendar.ts",
-    "./icalendar": "./src/icalendar.ts",
-    "./luxon": "./src/luxon.ts",
-    "./luxon2": "./src/luxon2.ts",
-    "./moment-timezone": "./src/moment-timezone.ts",
-    "./moment": "./src/moment.ts",
-    "./rrule": "./src/rrule.ts",
-    "./web-component": "./src/web-component.ts",
-    "./locales-all": "./src/locales-all.ts"
-  },
-  "generatedExports": {
-    "./locales/*": "./scripts/generate-locales-each.js"
-  },
-  "iife": {
-    ".": "FullCalendar",
-    "./bootstrap": "FullCalendarBootstrap",
-    "./bootstrap5": "FullCalendarBootstrap5",
-    "./google-calendar": "FullCalendarGoogleCalendar",
-    "./icalendar": "FullCalendarICalendar",
-    "./luxon": "FullCalendarLuxon",
-    "./luxon2": "FullCalendarLuxon2",
-    "./moment-timezone": "FullCalendarMomentTimezone",
-    "./moment": "FullCalendarMoment",
-    "./rrule": "FullCalendarRRule",
-    "./web-component": ""
+  "buildConfig": {
+    "esm": false,
+    "cjs": false,
+    "types": false,
+    "exports": {
+      ".": { "iife": "FullCalendar" },
+      "./bootstrap": { "iife": "FullCalendarBootstrap" },
+      "./bootstrap5": { "iife": "FullCalendarBootstrap5" },
+      "./google-calendar": { "iife": "FullCalendarGoogleCalendar" },
+      "./icalendar": { "iife": "FullCalendarICalendar" },
+      "./luxon": { "iife": "FullCalendarLuxon" },
+      "./luxon2": { "iife": "FullCalendarLuxon2" },
+      "./moment-timezone": { "iife": "FullCalendarMomentTimezone" },
+      "./moment": { "iife": "FullCalendarMoment" },
+      "./rrule": { "iife": "FullCalendarRRule" },
+      "./web-component": { "iife": true },
+      "./locales-all": { "iife": "FullCalendarLocalesAll" },
+      "./locales/*": { "generator": "./scripts/generate-locales-each.js" }
+    }
   },
   "publishConfig": {
     "directory": "./dist",
