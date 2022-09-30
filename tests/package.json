@@ -31,11 +31,16 @@
   },
   "scripts": {
     "clean": "workspace-scripts pkg:clean",
-    "build": "workspace-scripts pkg:build --iife-only",
-    "test": "workspace-scripts test"
+    "build": "workspace-scripts pkg:build",
+    "test": "workspace-scripts pkg:test"
   },
-  "generatedExports": {
-    ".": "./scripts/generate-index.js"
+  "buildConfig": {
+    "esm": false,
+    "cjs": false,
+    "types": false,
+    "exports": {
+      ".": { "generator": "./scripts/generate-index.js", "iife": true }
+    }
   },
   "exports": {
     ".": {
