@@ -1,4 +1,4 @@
-import { globalPlugins } from '@fullcalendar/core'
+import { globalPlugins } from './index.js'
 import { default as momentPlugin } from '@fullcalendar/moment'
 
 globalPlugins.push(

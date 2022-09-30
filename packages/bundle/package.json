@@ -59,6 +59,9 @@
       "./web-component": { "iife": true },
       "./locales-all": { "iife": "FullCalendarLocalesAll" },
       "./locales/*": { "generator": "./scripts/generate-locales-each.js" }
+    },
+    "externalGlobals": {
+      "moment": "moment"
     }
   },
   "publishConfig": {
