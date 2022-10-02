@@ -1,4 +1,4 @@
-import { globalPlugins } from './index.js'
+import { globalPlugins } from '@fullcalendar/core'
 import { default as googleCalendarPlugin } from '@fullcalendar/google-calendar'
 
 globalPlugins.push(

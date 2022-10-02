@@ -1,4 +1,4 @@
-import { globalPlugins } from './index.js'
+import { globalPlugins } from '@fullcalendar/core'
 import { default as rrulePlugin } from '@fullcalendar/rrule'
 
 globalPlugins.push(
