@@ -1,5 +1,5 @@
 import { globalPlugins } from '@fullcalendar/core'
-import bootstrapPlugin from './index.js'
+import plugin from './index.js'
 export * from './index.js'
 
-globalPlugins.push(bootstrapPlugin)
+globalPlugins.push(plugin)

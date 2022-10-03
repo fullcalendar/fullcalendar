@@ -1,5 +1,5 @@
 import { globalPlugins } from '@fullcalendar/core'
-import { default as googleCalendarPlugin } from './index.js'
+import plugin from './index.js'
 export * from './index.js'
 
-globalPlugins.push(googleCalendarPlugin)
+globalPlugins.push(plugin)

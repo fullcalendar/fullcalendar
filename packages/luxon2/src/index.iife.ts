@@ -1,6 +1,6 @@
 import { globalPlugins } from '@fullcalendar/core'
-import { default as luxonPlugin2 } from './index.js'
+import plugin from './index.js'
 export * from './index.js'
 
-globalPlugins.push(luxonPlugin2)
+globalPlugins.push(plugin)
 
