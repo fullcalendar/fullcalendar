@@ -35,7 +35,16 @@
   },
   "buildConfig": {
     "exports": {
-      ".": {}
+      ".": {
+        "iife": {
+          "name": "FullCalendarRRule",
+          "globals": {
+            "@fullcalendar/core": "FullCalendar",
+            "@fullcalendar/core/preact": "FullCalendar",
+            "rrule": "rrule"
+          }
+        }
+      }
     }
   },
   "publishConfig": {

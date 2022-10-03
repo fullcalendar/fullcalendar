@@ -35,7 +35,16 @@
   },
   "buildConfig": {
     "exports": {
-      ".": {}
+      ".": {
+        "iife": {
+          "name": "FullCalendarMoment",
+          "globals": {
+            "@fullcalendar/core": "FullCalendar",
+            "@fullcalendar/core/preact": "FullCalendar",
+            "moment": "moment"
+          }
+        }
+      }
     }
   },
   "publishConfig": {

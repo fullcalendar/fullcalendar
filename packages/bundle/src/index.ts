@@ -12,7 +12,3 @@ globalPlugins.push(
 )
 
 export * from '@fullcalendar/core'
-export * from '@fullcalendar/interaction'
-export * from '@fullcalendar/daygrid'
-export * from '@fullcalendar/timegrid'
-export * from '@fullcalendar/list'

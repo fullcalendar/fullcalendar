@@ -38,7 +38,16 @@
   },
   "buildConfig": {
     "exports": {
-      ".": {}
+      ".": {
+        "iife": {
+          "name": "FullCalendarLuxon",
+          "globals": {
+            "@fullcalendar/core": "FullCalendar",
+            "@fullcalendar/core/preact": "FullCalendar",
+            "luxon": "luxon"
+          }
+        }
+      }
     }
   },
   "publishConfig": {

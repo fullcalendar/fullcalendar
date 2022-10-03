@@ -32,10 +32,28 @@
   },
   "buildConfig": {
     "exports": {
-      ".": {},
+      ".": {
+        "iife": {
+          "name": "FullCalendar"
+        }
+      },
       "./preact": {},
-      "./locales/*": {},
-      "./locales-all": { "generator": "./scripts/generate-locales-all.js" }
+      "./locales/*": {
+        "iife": {
+          "generator": "./scripts/generate-locales-each-iife.js",
+          "globals": {
+            "../index.js": "FullCalendar"
+          }
+        }
+      },
+      "./locales-all": {
+        "generator": "./scripts/generate-locales-all.js",
+        "iife": {
+          "globals": {
+            "./index.js": "FullCalendar"
+          }
+        }
+      }
     }
   },
   "publishConfig": {

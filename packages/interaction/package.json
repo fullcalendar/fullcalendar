@@ -31,7 +31,15 @@
   },
   "buildConfig": {
     "exports": {
-      ".": {}
+      ".": {
+        "iife": {
+          "name": "FullCalendarInteraction",
+          "globals": {
+            "@fullcalendar/core": "FullCalendar",
+            "@fullcalendar/core/preact": "FullCalendar"
+          }
+        }
+      }
     }
   },
   "publishConfig": {

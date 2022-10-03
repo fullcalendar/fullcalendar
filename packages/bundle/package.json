@@ -18,139 +18,26 @@
     "url": "http://arshaw.com/"
   },
   "type": "module",
-  "devDependencies": {
-    "@fullcalendar/bootstrap": "workspace:*",
-    "@fullcalendar/bootstrap5": "workspace:*",
+  "dependencies": {
     "@fullcalendar/core": "workspace:*",
     "@fullcalendar/daygrid": "workspace:*",
-    "@fullcalendar/google-calendar": "workspace:*",
-    "@fullcalendar/icalendar": "workspace:*",
     "@fullcalendar/interaction": "workspace:*",
     "@fullcalendar/list": "workspace:*",
-    "@fullcalendar/luxon": "workspace:*",
-    "@fullcalendar/luxon2": "workspace:*",
-    "@fullcalendar/moment": "workspace:*",
-    "@fullcalendar/moment-timezone": "workspace:*",
-    "@fullcalendar/rrule": "workspace:*",
     "@fullcalendar/timegrid": "workspace:*",
-    "@fullcalendar/web-component": "workspace:*",
-    "@fullcalendar/workspace-scripts": "workspace:*",
     "tslib": "^2.1.0"
+  },
+  "devDependencies": {
+    "@fullcalendar/workspace-scripts": "workspace:*"
   },
   "scripts": {
     "build": "workspace-scripts pkg:build",
     "clean": "workspace-scripts pkg:clean"
   },
   "buildConfig": {
-    "esm": false,
-    "cjs": false,
-    "types": false,
     "exports": {
       ".": {
         "iife": {
           "name": "FullCalendar"
-        }
-      },
-      "./bootstrap": {
-        "iife": {
-          "name": "FullCalendarBootstrap",
-          "globals": {
-            "@fullcalendar/core": "FullCalendar"
-          }
-        }
-      },
-      "./bootstrap5": {
-        "iife": {
-          "name": "FullCalendarBootstrap5",
-          "globals": {
-            "@fullcalendar/core": "FullCalendar"
-          }
-        }
-      },
-      "./google-calendar": {
-        "iife": {
-          "name": "FullCalendarGoogleCalendar",
-          "globals": {
-            "@fullcalendar/core": "FullCalendar"
-          }
-        }
-      },
-      "./icalendar": {
-        "iife": {
-          "name": "FullCalendarICalendar",
-          "globals": {
-            "@fullcalendar/core": "FullCalendar",
-            "ical.js": "ICAL"
-          }
-        }
-      },
-      "./luxon": {
-        "iife": {
-          "name": "FullCalendarLuxon",
-          "globals": {
-            "@fullcalendar/core": "FullCalendar",
-            "luxon": "luxon"
-          }
-        }
-      },
-      "./luxon2": {
-        "iife": {
-          "name": "FullCalendarLuxon2",
-          "globals": {
-            "@fullcalendar/core": "FullCalendar",
-            "luxon": "luxon"
-          }
-        }
-      },
-      "./moment-timezone": {
-        "iife": {
-          "name": "FullCalendarMomentTimezone",
-          "globals": {
-            "@fullcalendar/core": "FullCalendar",
-            "moment": "moment",
-            "moment-timezone": "moment-timezone"
-          }
-        }
-      },
-      "./moment": {
-        "iife": {
-          "name": "FullCalendarMoment",
-          "globals": {
-            "@fullcalendar/core": "FullCalendar",
-            "moment": "moment"
-          }
-        }
-      },
-      "./rrule": {
-        "iife": {
-          "name": "FullCalendarRRule",
-          "globals": {
-            "@fullcalendar/core": "FullCalendar",
-            "rrule": "rrule"
-          }
-        }
-      },
-      "./web-component": {
-        "iife": {
-          "globals": {
-            "@fullcalendar/core": "FullCalendar"
-          }
-        }
-      },
-      "./locales-all": {
-        "iife": {
-          "name": "FullCalendarLocalesAll",
-          "globals": {
-            "@fullcalendar/core": "FullCalendar"
-          }
-        }
-      },
-      "./locales/*": {
-        "generator": "./scripts/generate-locales-each.js",
-        "iife": {
-          "globals": {
-            "@fullcalendar/core": "FullCalendar"
-          }
         }
       }
     }

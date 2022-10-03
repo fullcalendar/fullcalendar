@@ -28,7 +28,14 @@
   },
   "buildConfig": {
     "exports": {
-      ".": {}
+      ".": {
+        "iife": {
+          "globals": {
+            "@fullcalendar/core": "FullCalendar",
+            "@fullcalendar/core/preact": "FullCalendar"
+          }
+        }
+      }
     }
   },
   "publishConfig": {
