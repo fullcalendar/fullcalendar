@@ -2,5 +2,6 @@
 node_modules
 .turbo
 
-/packages/*/dist
 /tests/dist
+/bundle/dist
+/packages/*/dist

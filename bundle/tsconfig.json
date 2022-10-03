@@ -1,0 +1,17 @@
+{
+  "extends":  "../tsconfig.base",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist/.tsc"
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "references": [
+    { "path": "../packages/core" },
+    { "path": "../packages/interaction" },
+    { "path": "../packages/daygrid" },
+    { "path": "../packages/timegrid" },
+    { "path": "../packages/list" }
+  ]
+}

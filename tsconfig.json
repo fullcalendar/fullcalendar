@@ -2,7 +2,7 @@
   "files": [],
   "references": [
     { "path": "./tests" },
-    { "path": "./packages/bundle" },
+    { "path": "./bundle" },
     { "path": "./packages/core" },
     { "path": "./packages/daygrid" },
     { "path": "./packages/timegrid" },
