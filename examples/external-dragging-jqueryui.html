@@ -2,45 +2,36 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<link href='../node_modules/dragula/dist/dragula.css' rel='stylesheet' />
-<script src='../node_modules/dragula/dist/dragula.js'></script>
-<script src='../packages/bundle/main.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/jquery@3.6.1/dist/jquery.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/components-jqueryui@1.12.1/jquery-ui.js'></script>
+<script src='../bundle/dist/index.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
 
+    new FullCalendar.ThirdPartyDraggable({
+      mirrorSelector: '.ui-draggable-dragging'
+    })
+
     /* initialize the external events
     -----------------------------------------------------------------*/
 
-    var containerEl = document.getElementById('external-events-list');
+    $('#external-events .fc-event').each(function() {
 
-    var drake = dragula({
-      containers: [ containerEl ],
-      copy: true
+      // store data so the calendar knows to render an event upon drop
+      $(this).attr('data-event', JSON.stringify({
+        title: $.trim($(this).text()), // use the element's text as the event title
+        stick: true // maintain when user navigates (see docs on the renderEvent method)
+      }));
+
+      // make the event draggable using jQuery UI
+      $(this).draggable({
+        zIndex: 999,
+        revert: true,      // will cause the event to go back to its
+        revertDuration: 0  //  original position after the drag
+      });
+
     });
-
-    new FullCalendar.ThirdPartyDraggable(containerEl, {
-      itemSelector: '.fc-event',
-      mirrorSelector: '.gu-mirror',
-      eventData: function(eventEl) {
-        return {
-          title: eventEl.innerText.trim()
-        }
-      }
-    })
-
-    //// the individual way to do it
-    // var eventEls = Array.prototype.slice.call(
-    //   containerEl.querySelectorAll('.fc-event')
-    // );
-    // eventEls.forEach(function(eventEl) {
-    //   eventEl.setAttribute('data-event', JSON.stringify({
-    //     title: eventEl.innerText.trim()
-    //   }));
-    // });
-    // new FullCalendar.ThirdPartyDraggable({
-    //   mirrorSelector: '.gu-mirror'
-    // })
 
     /* initialize the calendar
     -----------------------------------------------------------------*/
@@ -56,9 +47,9 @@
       droppable: true, // this allows things to be dropped onto the calendar
       drop: function(arg) {
         // is the "remove after drop" checkbox checked?
-        if (document.getElementById('drop-remove').checked) {
+        if ($('#drop-remove').is(':checked')) {
           // if so, remove the element from the "Draggable Events" list
-          arg.draggedEl.parentNode.removeChild(arg.draggedEl);
+          $(arg.draggedEl).remove();
         }
       }
     });
@@ -123,15 +114,11 @@
 
     <div id='external-events'>
       <h4>Draggable Events</h4>
-
-      <div id='external-events-list'>
-        <div class='fc-event'>My Event 1</div>
-        <div class='fc-event'>My Event 2</div>
-        <div class='fc-event'>My Event 3</div>
-        <div class='fc-event'>My Event 4</div>
-        <div class='fc-event'>My Event 5</div>
-      </div>
-
+      <div class='fc-event'>My Event 1</div>
+      <div class='fc-event'>My Event 2</div>
+      <div class='fc-event'>My Event 3</div>
+      <div class='fc-event'>My Event 4</div>
+      <div class='fc-event'>My Event 5</div>
       <p>
         <input type='checkbox' id='drop-remove' />
         <label for='drop-remove'>remove after drop</label>

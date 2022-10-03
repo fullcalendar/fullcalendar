@@ -2,9 +2,7 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<script src='../packages/core/main.global.js'></script>
-<script src='../packages/daygrid/main.global.js'></script>
-<script src='../packages/timegrid/main.global.js'></script>
+<script src='../dist/index.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -17,7 +15,7 @@
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
       },
       navLinks: true, // can click day/week names to navigate views
       editable: true,
