@@ -12,9 +12,3 @@ Caller packages are still responsible for types.
 import './lib/globals.js'
 import './lib/install-plugins.js'
 import './index.css'
-
-/* generate-index
-{{#each testPaths}}
-import '{{this}}'
-{{/each}}
-*/

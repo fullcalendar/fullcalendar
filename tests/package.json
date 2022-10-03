@@ -37,9 +37,14 @@
   "buildConfig": {
     "esm": false,
     "cjs": false,
+    "min": false,
     "types": false,
     "exports": {
-      ".": { "generator": "./scripts/generate-index.js", "iife": true }
+      ".": {
+        "iife": {
+          "generator": "./scripts/generate-index-iife.js"
+        }
+      }
     }
   },
   "exports": {
