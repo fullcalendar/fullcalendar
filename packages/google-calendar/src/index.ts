@@ -42,7 +42,7 @@ let eventSourceDef: EventSourceDef<GCalMeta> = {
 
     if (!apiKey) {
       onFailure({
-        message: 'Specify a googleCalendarApiKey. See http://fullcalendar.io/docs/google_calendar/',
+        message: 'Specify a googleCalendarApiKey. See https://fullcalendar.io/docs/google-calendar',
       })
     } else {
       let url = buildUrl(meta)
