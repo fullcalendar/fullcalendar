@@ -30,9 +30,9 @@
     "handlebars": "^4.1.2"
   },
   "scripts": {
-    "clean": "workspace-scripts pkg:clean",
     "build": "workspace-scripts pkg:build",
-    "test": "workspace-scripts pkg:test"
+    "test": "workspace-scripts pkg:test",
+    "clean": "workspace-scripts pkg:clean"
   },
   "buildConfig": {
     "esm": false,
