@@ -1,19 +1,8 @@
 {
   "name": "@fullcalendar/web-component",
   "version": "6.0.0-beta.1",
-  "homepage": "https://fullcalendar.io/",
-  "bugs": "https://fullcalendar.io/reporting-bugs",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fullcalendar/fullcalendar.git",
-    "homepage": "https://github.com/fullcalendar/fullcalendar"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Adam Shaw",
-    "email": "arshaw@arshaw.com",
-    "url": "http://arshaw.com/"
-  },
+  "title": "FullCalendar Web Component",
+  "description": "FullCalendar implemented as a Custom Element",
   "type": "module",
   "dependencies": {
     "@fullcalendar/core": "workspace:*",

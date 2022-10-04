@@ -4,19 +4,6 @@
   "title": "FullCalendar RRule Plugin",
   "description": "A connector to the RRule library, for recurring events",
   "docs": "https://fullcalendar.io/docs/rrule-plugin",
-  "homepage": "https://fullcalendar.io/",
-  "bugs": "https://fullcalendar.io/reporting-bugs",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fullcalendar/fullcalendar.git",
-    "homepage": "https://github.com/fullcalendar/fullcalendar"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Adam Shaw",
-    "email": "arshaw@arshaw.com",
-    "url": "http://arshaw.com/"
-  },
   "type": "module",
   "dependencies": {
     "@fullcalendar/core": "workspace:*",

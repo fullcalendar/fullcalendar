@@ -4,19 +4,6 @@
   "title": "FullCalendar iCalendar Plugin",
   "description": "Fetch events from a public iCalendar / .ics feed",
   "docs": "https://fullcalendar.io/docs/icalendar",
-  "homepage": "https://fullcalendar.io/",
-  "bugs": "https://fullcalendar.io/reporting-bugs",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fullcalendar/fullcalendar.git",
-    "homepage": "https://github.com/fullcalendar/fullcalendar"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "NJ Pearman",
-    "email": "n.pearman@gmail.com",
-    "url": "https://github.com/njpearman/"
-  },
   "type": "module",
   "dependencies": {
     "@fullcalendar/core": "workspace:*",
