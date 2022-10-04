@@ -21,5 +21,8 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
-  "copyright": "2022 Adam Shaw"
+  "copyright": "2022 Adam Shaw",
+  "devDependencies": {
+    "@tsconfig/node16": "^1.0.3"
+  }
 }
