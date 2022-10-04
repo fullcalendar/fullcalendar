@@ -23,10 +23,5 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
-  "copyright": "2022 Adam Shaw",
-  "devDependencies": {
-    "@arshaw/postcss-calc": "^7.0.2",
-    "@arshaw/postcss-custom-properties": "^9.1.1",
-    "@tsconfig/node16": "^1.0.3"
-  }
+  "copyright": "2022 Adam Shaw"
 }
