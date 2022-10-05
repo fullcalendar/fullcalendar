@@ -27,7 +27,7 @@
       "./preact": {},
       "./locales/*": {
         "iife": {
-          "generator": "./scripts/generate-locales-each-iife.js",
+          "generator": "./scripts/generate-locale-iife.js",
           "globals": {
             "../index.js": "FullCalendar"
           }

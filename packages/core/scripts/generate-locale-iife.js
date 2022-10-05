@@ -3,8 +3,6 @@ import { fileURLToPath } from 'url'
 import { readFile } from 'fs/promises'
 import handlebars from 'handlebars'
 
-// TODO rename to 'generate-locale-iife.js'
-
 const pkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
 const templatePath = joinPaths(pkgDir, 'src/locales/iife.js.tpl')
 
