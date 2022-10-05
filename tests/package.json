@@ -39,12 +39,9 @@
     "cjs": false,
     "min": false,
     "types": false,
+    "iifeExternals": false,
     "exports": {
-      ".": {
-        "iife": {
-          "generator": "./scripts/generate-index-iife.js"
-        }
-      }
+      ".": { "iife": true, "iifeGenerator": "./scripts/generate-index-iife.js" }
     }
   },
   "exports": {

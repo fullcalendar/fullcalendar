@@ -18,29 +18,12 @@
     "clean": "workspace-scripts pkg:clean"
   },
   "buildConfig": {
+    "iifeExternals": false,
     "exports": {
-      ".": {
-        "iife": {
-          "name": "FullCalendar"
-        }
-      },
+      ".": { "iife": "FullCalendar" },
       "./preact": {},
-      "./locales/*": {
-        "iife": {
-          "generator": "./scripts/generate-locale-iife.js",
-          "globals": {
-            "../index.js": "FullCalendar"
-          }
-        }
-      },
-      "./locales-all": {
-        "generator": "./scripts/generate-locales-all.js",
-        "iife": {
-          "globals": {
-            "./index.js": "FullCalendar"
-          }
-        }
-      }
+      "./locales-all": { "iife": true, "generator": "./scripts/generate-locales-all.js" },
+      "./locales/*": { "iife": true, "iifeGenerator": "./scripts/generate-locale-iife.js" }
     }
   },
   "publishConfig": {

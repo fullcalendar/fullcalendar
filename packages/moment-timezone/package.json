@@ -23,18 +23,14 @@
     "clean": "workspace-scripts pkg:clean"
   },
   "buildConfig": {
+    "iifeExternals": {
+      "@fullcalendar/core": "FullCalendar",
+      "@fullcalendar/core/preact": "FullCalendar",
+      "moment": "moment",
+      "tslib": false
+    },
     "exports": {
-      ".": {
-        "iife": {
-          "name": "FullCalendarMomentTimezone",
-          "globals": {
-            "@fullcalendar/core": "FullCalendar",
-            "@fullcalendar/core/preact": "FullCalendar",
-            "moment": "moment",
-            "moment-timezone": "moment-timezone"
-          }
-        }
-      }
+      ".": { "iife": "FullCalendarMomentTimezone" }
     }
   },
   "publishConfig": {

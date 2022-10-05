@@ -21,12 +21,9 @@
     "clean": "workspace-scripts pkg:clean"
   },
   "buildConfig": {
+    "iifeExternals": false,
     "exports": {
-      ".": {
-        "iife": {
-          "name": "FullCalendar"
-        }
-      }
+      ".": { "iife": "FullCalendar" }
     }
   },
   "publishConfig": {

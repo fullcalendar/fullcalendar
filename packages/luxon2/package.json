@@ -22,17 +22,14 @@
     "clean": "workspace-scripts pkg:clean"
   },
   "buildConfig": {
+    "iifeExternals": {
+      "@fullcalendar/core": "FullCalendar",
+      "@fullcalendar/core/preact": "FullCalendar",
+      "luxon": "luxon",
+      "tslib": false
+    },
     "exports": {
-      ".": {
-        "iife": {
-          "name": "FullCalendarLuxon2",
-          "globals": {
-            "@fullcalendar/core": "FullCalendar",
-            "@fullcalendar/core/preact": "FullCalendar",
-            "luxon": "luxon"
-          }
-        }
-      }
+      ".": { "iife": "FullCalendarLuxon2" }
     }
   },
   "publishConfig": {

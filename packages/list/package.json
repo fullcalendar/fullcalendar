@@ -17,16 +17,13 @@
     "clean": "workspace-scripts pkg:clean"
   },
   "buildConfig": {
+    "iifeExternals": {
+      "@fullcalendar/core": "FullCalendar",
+      "@fullcalendar/core/preact": "FullCalendar",
+      "tslib": false
+    },
     "exports": {
-      ".": {
-        "iife": {
-          "name": "FullCalendarList",
-          "globals": {
-            "@fullcalendar/core": "FullCalendar",
-            "@fullcalendar/core/preact": "FullCalendar"
-          }
-        }
-      }
+      ".": { "iife": "FullCalendarList" }
     }
   },
   "publishConfig": {
