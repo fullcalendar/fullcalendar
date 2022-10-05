@@ -9,11 +9,11 @@ const templatePath = joinPaths(pkgDir, 'src/locales-all.js.tpl')
 const localesDir = joinPaths(pkgDir, 'src/locales')
 
 export default async function() {
-  const templateText = await readFile(templatePath, 'utf8')
-  const template = handlebars.compile(templateText)
-
   const localeFilenames = await globby('*.ts', { cwd: localesDir })
   const localeCodes = localeFilenames.map((filename) => filename.replace(/\.ts$/, ''))
+
+  const templateText = await readFile(templatePath, 'utf8')
+  const template = handlebars.compile(templateText)
   const code = template({ localeCodes })
 
   return code
