@@ -277,3 +277,5 @@ export { MoreLinkRoot, MoreLinkRootProps, MoreLinkContentArg, MoreLinkMountArg, 
 
 export { ViewRoot, ViewRootProps } from './common/ViewRoot.js'
 export { triggerDateSelect, DatePointTransform, DateSpanTransform, DateSelectionApi, getDefaultEventEnd } from './calendar-utils.js'
+
+export { injectStyles } from './styleUtils.js'
