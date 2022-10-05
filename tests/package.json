@@ -27,7 +27,7 @@
     "@types/jasmine": "^3.3.12",
     "@types/jasmine-jquery": "^1.5.33",
     "@types/jquery": "^3.3.29",
-    "handlebars": "^4.1.2"
+    "handlebars": "^4.7.7"
   },
   "scripts": {
     "build": "workspace-scripts pkg:build",

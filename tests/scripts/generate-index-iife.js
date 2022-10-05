@@ -1,13 +1,19 @@
-import { resolve as resolvePath } from 'path'
+import { join as joinPaths, resolve as resolvePath } from 'path'
+import { fileURLToPath } from 'url'
+import { readFile } from 'fs/promises'
+import handlebars from 'handlebars'
 import { capture } from '@fullcalendar/workspace-scripts/utils/exec'
 
+const pkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
+const templatePath = joinPaths(pkgDir, 'src/index.iife.js.tpl')
+
 export default async function main() {
-  const srcPathAbs = resolvePath('./src')
+  const srcDir = resolvePath('./src') // HACK: works when called from other test dirs
 
   let testPaths = await capture(
     "find . -mindepth 2 -type f \\( -name '*.ts' -or -name '*.tsx' \\) -print0 | " +
     'xargs -0 grep -E "(fdescribe|fit)\\("',
-    { cwd: srcPathAbs }
+    { cwd: srcDir }
   ).then(
     (res) => strToLines(res.stdout).map((line) => line.trim().split(':')[0]),
     () => [], // TODO: somehow look at stderr string. if empty, simply no testPaths. if populated, real error
@@ -21,19 +27,19 @@ export default async function main() {
   } else {
     testPaths = strToLines((await capture(
       "find . -mindepth 2 -type f \\( -name '*.ts' -or -name '*.tsx' \\)",
-      { cwd: srcPathAbs }
+      { cwd: srcDir }
     )).stdout)
 
     console.log(`Using all ${testPaths.length} test files.`)
   }
 
-  return `
-    import './index.js';
+  const extensionlessTestPaths = testPaths.map((testPath) => testPath.replace(/\.tsx?$/, ''))
 
-    ${testPaths.map((testPath) => testPath.replace(/\.tsx?$/, '.js')).map((p) => {
-      return `import '${p}';\n`
-    }).join('\n')}
-  `
+  const templateText = await readFile(templatePath, 'utf8')
+  const template = handlebars.compile(templateText)
+  const code = template({ extensionlessTestPaths })
+
+  return code
 }
 
 function strToLines(s) {
