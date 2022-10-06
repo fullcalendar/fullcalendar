@@ -5,7 +5,7 @@ export default {
   buttonText: {
     prev: 'Précédent',
     next: 'Suivant',
-    today: "Aujourd'hui",
+    today: 'Aujourd\'hui',
     year: 'Année',
     month: 'Mois',
     week: 'Semaine',
