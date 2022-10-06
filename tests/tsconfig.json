@@ -1,5 +1,5 @@
 {
-  "extends":  "@fullcalendar/workspace-scripts/tsconfig.browser",
+  "extends":  "@fullcalendar/workspace-scripts/config/tsconfig.browser.json",
   "compilerOptions": {
     "types": ["jasmine", "jasmine-jquery", "jquery"],
     "rootDir": "./src",

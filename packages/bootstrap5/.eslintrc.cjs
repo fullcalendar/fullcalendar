@@ -1,4 +1,4 @@
 module.exports = {
   root: true,
-  extends: require.resolve('@fullcalendar/workspace-scripts/eslint.config.pkg.browser.cjs'),
+  extends: require.resolve('@fullcalendar/workspace-scripts/config/eslint.pkg.browser.cjs'),
 }
