@@ -16,7 +16,7 @@ import {
   Ref,
   ComponentChildren,
   createElement,
-  createRef
+  createRef,
 } from '@fullcalendar/core/preact'
 import { TableCellTop } from './TableCellTop.js'
 import { TableCellMoreLink } from './TableCellMoreLink.js'

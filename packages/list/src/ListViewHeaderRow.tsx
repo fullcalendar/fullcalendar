@@ -2,9 +2,7 @@ import {
   BaseComponent, DateMarker, DateRange, getDateMeta,
   RenderHook, DayHeaderContentArg, getDayClassNames, formatDayString, buildNavLinkAttrs, getUniqueDomId,
 } from '@fullcalendar/core'
-import {
-  createElement, Fragment
-} from '@fullcalendar/core/preact'
+import { createElement, Fragment } from '@fullcalendar/core/preact'
 
 export interface ListViewHeaderRowProps {
   cellId: string
