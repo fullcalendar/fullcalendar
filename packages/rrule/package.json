@@ -18,7 +18,8 @@
   },
   "scripts": {
     "build": "workspace-scripts pkg:build",
-    "clean": "workspace-scripts pkg:clean"
+    "clean": "workspace-scripts pkg:clean",
+    "lint": "eslint ."
   },
   "buildConfig": {
     "iifeExternals": {
