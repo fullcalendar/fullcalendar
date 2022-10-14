@@ -34,6 +34,17 @@
     "test": "workspace-scripts pkg:test",
     "clean": "workspace-scripts pkg:clean"
   },
+  "tsConfig": {
+    "extends":  "@fullcalendar/workspace-scripts/config/tsconfig.browser.json",
+    "compilerOptions": {
+      "types": ["jasmine", "jasmine-jquery", "jquery"],
+      "rootDir": "./src",
+      "outDir": "./dist/.tsc"
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  },
   "buildConfig": {
     "esm": false,
     "cjs": false,

@@ -20,6 +20,16 @@
     "build": "workspace-scripts pkg:build",
     "clean": "workspace-scripts pkg:clean"
   },
+  "tsConfig": {
+    "extends":  "@fullcalendar/workspace-scripts/config/tsconfig.browser.json",
+    "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist/.tsc"
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  },
   "buildConfig": {
     "iifeExternals": false,
     "exports": {

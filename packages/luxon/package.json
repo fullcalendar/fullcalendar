@@ -21,6 +21,16 @@
     "clean": "workspace-scripts pkg:clean",
     "lint": "eslint ."
   },
+  "tsConfig": {
+    "extends":  "@fullcalendar/workspace-scripts/config/tsconfig.browser.json",
+    "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist/.tsc"
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  },
   "buildConfig": {
     "iifeExternals": {
       "@fullcalendar/core": "FullCalendar",

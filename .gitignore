@@ -2,7 +2,7 @@
 node_modules
 .turbo
 
-/dist
-/tests/dist
-/bundle/dist
-/packages/*/dist
+dist
+tsconfig.json
+.tsout
+.tsbuildinfo
