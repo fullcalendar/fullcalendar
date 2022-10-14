@@ -54,14 +54,14 @@
   },
   "exports": {
     "./package.json": "./package.json",
-    ".": {
-      "default": "./dist/index.js",
-      "types": "./dist/.tsout/index.d.ts"
-    },
+    "./scripts/*": "./scripts/*.js",
     "./lib/*": {
       "default": "./dist/.tsout/lib/*.js",
       "types": "./dist/.tsout/lib/*.d.ts"
     },
-    "./scripts/*": "./scripts/*.js"
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/.tsout/index.d.ts"
+    }
   }
 }
