@@ -18,23 +18,20 @@
   },
   "scripts": {
     "build": "workspace-scripts pkg:build",
-    "clean": "workspace-scripts pkg:clean"
+    "clean": "workspace-scripts pkg:clean",
+    "lint": "eslint ."
   },
   "tsConfig": {
     "extends":  "@fullcalendar/workspace-scripts/config/tsconfig.browser.json",
     "compilerOptions": {
-      "rootDir": "./src",
-      "outDir": "./dist/.tsc"
-    },
-    "include": [
-      "./src/**/*"
-    ]
+      "outDir": "./dist/.tsout"
+    }
   },
   "buildConfig": {
-    "iifeExternals": false,
     "exports": {
       ".": { "iife": "FullCalendar" }
-    }
+    },
+    "iifeExternals": false
   },
   "publishConfig": {
     "directory": "./dist",

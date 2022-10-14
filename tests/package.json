@@ -32,18 +32,15 @@
   "scripts": {
     "build": "workspace-scripts pkg:build",
     "test": "workspace-scripts pkg:test",
-    "clean": "workspace-scripts pkg:clean"
+    "clean": "workspace-scripts pkg:clean",
+    "lint": "eslint ."
   },
   "tsConfig": {
     "extends":  "@fullcalendar/workspace-scripts/config/tsconfig.browser.json",
     "compilerOptions": {
       "types": ["jasmine", "jasmine-jquery", "jquery"],
-      "rootDir": "./src",
-      "outDir": "./dist/.tsc"
-    },
-    "include": [
-      "./src/**/*"
-    ]
+      "outDir": "./dist/.tsout"
+    }
   },
   "buildConfig": {
     "esm": false,
@@ -58,11 +55,11 @@
   "exports": {
     ".": {
       "default": "./dist/index.js",
-      "types": "./dist/.tsc/index.d.ts"
+      "types": "./dist/.tsout/index.d.ts"
     },
     "./src/*": {
-      "default": "./dist/.tsc/*.js",
-      "types": "./dist/.tsc/*.d.ts"
+      "default": "./dist/.tsout/*.js",
+      "types": "./dist/.tsout/*.d.ts"
     },
     "./scripts/*": "./scripts/*.js"
   }

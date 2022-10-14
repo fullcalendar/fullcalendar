@@ -21,21 +21,17 @@
   "tsConfig": {
     "extends":  "@fullcalendar/workspace-scripts/config/tsconfig.browser.json",
     "compilerOptions": {
-      "rootDir": "./src",
-      "outDir": "./dist/.tsc"
-    },
-    "include": [
-      "./src/**/*"
-    ]
+      "outDir": "./dist/.tsout"
+    }
   },
   "buildConfig": {
-    "iifeExternals": false,
     "exports": {
       ".": { "iife": "FullCalendar" },
       "./preact": {},
       "./locales-all": { "iife": true, "generator": "./scripts/generate-locales-all.js" },
       "./locales/*": { "iife": true, "iifeGenerator": "./scripts/generate-locale-iife.js" }
-    }
+    },
+    "iifeExternals": false
   },
   "publishConfig": {
     "directory": "./dist",

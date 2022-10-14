@@ -26,22 +26,18 @@
   "tsConfig": {
     "extends":  "@fullcalendar/workspace-scripts/config/tsconfig.browser.json",
     "compilerOptions": {
-      "rootDir": "./src",
-      "outDir": "./dist/.tsc"
-    },
-    "include": [
-      "./src/**/*"
-    ]
+      "outDir": "./dist/.tsout"
+    }
   },
   "buildConfig": {
+    "exports": {
+      ".": { "iife": "FullCalendarMomentTimezone" }
+    },
     "iifeExternals": {
       "@fullcalendar/core": "FullCalendar",
       "@fullcalendar/core/preact": "FullCalendar",
       "moment": "moment",
       "tslib": false
-    },
-    "exports": {
-      ".": { "iife": "FullCalendarMomentTimezone" }
     }
   },
   "publishConfig": {
