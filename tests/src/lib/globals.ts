@@ -275,6 +275,7 @@ declare global {
     sortable: any
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace jasmine {
     interface Matchers<T> {
       toEqualDate: any

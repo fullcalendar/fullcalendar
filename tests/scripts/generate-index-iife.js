@@ -11,9 +11,9 @@ export default async function main() {
   const srcDir = resolvePath('./src') // HACK: works when called from other test dirs
 
   let testPaths = await capture(
-    "find . -mindepth 2 -type f \\( -name '*.ts' -or -name '*.tsx' \\) -print0 | " +
+    'find . -mindepth 2 -type f \\( -name \'*.ts\' -or -name \'*.tsx\' \\) -print0 | ' +
     'xargs -0 grep -E "(fdescribe|fit)\\("',
-    { cwd: srcDir }
+    { cwd: srcDir },
   ).then(
     (res) => strToLines(res.stdout).map((line) => line.trim().split(':')[0]),
     () => [], // TODO: somehow look at stderr string. if empty, simply no testPaths. if populated, real error
@@ -22,12 +22,12 @@ export default async function main() {
   if (testPaths.length) {
     console.log(
       'Only test files that have fdescribe/fit:\n' +
-      testPaths.map((path) => ` - ${path}`).join('\n')
+      testPaths.map((path) => ` - ${path}`).join('\n'),
     )
   } else {
     testPaths = strToLines((await capture(
-      "find . -mindepth 2 -type f \\( -name '*.ts' -or -name '*.tsx' \\)",
-      { cwd: srcDir }
+      'find . -mindepth 2 -type f \\( -name \'*.ts\' -or -name \'*.tsx\' \\)',
+      { cwd: srcDir },
     )).stdout)
 
     console.log(`Using all ${testPaths.length} test files.`)

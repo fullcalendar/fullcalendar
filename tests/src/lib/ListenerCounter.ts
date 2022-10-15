@@ -12,6 +12,7 @@ export class ListenerCounter {
   }
 
   startWatching() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let t = this
     let el = t.el
     let origAddEventListened = el.addEventListener
