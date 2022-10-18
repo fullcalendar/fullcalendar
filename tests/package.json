@@ -39,8 +39,12 @@
     "extends":  "@fullcalendar/workspace-scripts/config/tsconfig.browser.json",
     "compilerOptions": {
       "types": ["jasmine", "jasmine-jquery", "jquery"],
+      "rootDir": "./src",
       "outDir": "./dist/.tsout"
-    }
+    },
+    "include": [
+      "./src/**/*"
+    ]
   },
   "buildConfig": {
     "esm": false,

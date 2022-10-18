@@ -19,8 +19,12 @@
   "tsConfig": {
     "extends":  "@fullcalendar/workspace-scripts/config/tsconfig.browser.json",
     "compilerOptions": {
+      "rootDir": "./src",
       "outDir": "./dist/.tsout"
-    }
+    },
+    "include": [
+      "./src/**/*"
+    ]
   },
   "buildConfig": {
     "exports": {
