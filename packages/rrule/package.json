@@ -39,7 +39,7 @@
       "@fullcalendar/core": "FullCalendar",
       "@fullcalendar/core/preact": "FullCalendar",
       "rrule": "rrule",
-      "tslib": false
+      "tslib": ""
     }
   },
   "publishConfig": {

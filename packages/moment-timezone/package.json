@@ -41,7 +41,7 @@
       "@fullcalendar/core": "FullCalendar",
       "@fullcalendar/core/preact": "FullCalendar",
       "moment": "moment",
-      "tslib": false
+      "tslib": ""
     }
   },
   "publishConfig": {

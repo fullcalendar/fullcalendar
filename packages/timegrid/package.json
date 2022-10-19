@@ -36,7 +36,7 @@
       "@fullcalendar/core": "FullCalendar",
       "@fullcalendar/core/preact": "FullCalendar",
       "@fullcalendar/daygrid": "FullCalendarDayGrid",
-      "tslib": false
+      "tslib": ""
     }
   },
   "publishConfig": {

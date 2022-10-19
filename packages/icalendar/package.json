@@ -35,7 +35,7 @@
     "iifeExternals": {
       "@fullcalendar/core": "FullCalendar",
       "@fullcalendar/core/preact": "FullCalendar",
-      "tslib": false,
+      "tslib": "",
       "ical.js": "ICAL"
     }
   },

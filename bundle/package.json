@@ -33,9 +33,12 @@
   },
   "buildConfig": {
     "exports": {
-      ".": { "iife": "FullCalendar" }
+      ".": { "iife": true }
     },
-    "iifeExternals": false
+    "iifeGlobals": {
+      ".": "FullCalendar",
+      "*": ""
+    }
   },
   "publishConfig": {
     "directory": "./dist",

@@ -30,12 +30,16 @@
   },
   "buildConfig": {
     "exports": {
-      ".": { "iife": "FullCalendar" },
+      ".": { "iife": true },
       "./preact": {},
       "./locales-all": { "iife": true, "generator": "./scripts/generate-locales-all.js" },
       "./locales/*": { "iife": true, "iifeGenerator": "./scripts/generate-locale-iife.js" }
     },
-    "iifeExternals": false
+    "iifeGlobals": {
+      ".": "FullCalendar",
+      "./preact": "FullCalendar",
+      "tslib": ""
+    }
   },
   "publishConfig": {
     "directory": "./dist",

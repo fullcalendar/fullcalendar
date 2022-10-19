@@ -40,7 +40,7 @@
       "@fullcalendar/core": "FullCalendar",
       "@fullcalendar/core/preact": "FullCalendar",
       "luxon": "luxon",
-      "tslib": false
+      "tslib": ""
     }
   },
   "publishConfig": {
