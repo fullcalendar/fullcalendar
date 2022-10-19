@@ -6,8 +6,8 @@ import handlebars from 'handlebars'
 const pkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
 const templatePath = joinPaths(pkgDir, 'src/locales/iife.js.tpl')
 
-export default async function(entryId) {
-  const localeCode = basename(entryId)
+export default async function(entryAlias) {
+  const localeCode = basename(entryAlias)
 
   const templateText = await readFile(templatePath, 'utf8')
   const template = handlebars.compile(templateText)
