@@ -8,6 +8,8 @@ const pkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
 const templatePath = joinPaths(pkgDir, 'src/locales-all.js.tpl')
 const localesDir = joinPaths(pkgDir, 'src/locales')
 
+export const watchPaths = [localesDir]
+
 export default async function() {
   const localeFilenames = await globby('*.ts', { cwd: localesDir })
 
