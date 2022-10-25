@@ -4,16 +4,19 @@ import { readFile } from 'fs/promises'
 import { globby } from 'globby'
 import { default as handlebars } from 'handlebars'
 
-const pkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
-const templatePath = joinPaths(pkgDir, 'src/locales-all.js.tpl')
-const localesDir = joinPaths(pkgDir, 'src/locales')
+const thisPkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
+const templatePath = joinPaths(thisPkgDir, 'src/locales-all.js.tpl')
+const localesDir = joinPaths(thisPkgDir, 'src/locales')
 
-export const watchPaths = [localesDir]
+export function getWatchPaths() {
+  return [
+    templatePath,
+    localesDir,
+  ]
+}
 
 export default async function() {
   const localeFilenames = await globby('*.ts', { cwd: localesDir })
-
-  // TODO: use basename to remove extension
   const localeCodes = localeFilenames.map((filename) => filename.replace(/\.ts$/, ''))
 
   const templateText = await readFile(templatePath, 'utf8')

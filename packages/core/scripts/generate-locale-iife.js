@@ -3,10 +3,14 @@ import { fileURLToPath } from 'url'
 import { readFile } from 'fs/promises'
 import handlebars from 'handlebars'
 
-const pkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
-const templatePath = joinPaths(pkgDir, 'src/locales/iife.js.tpl')
+const thisPkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
+const templatePath = joinPaths(thisPkgDir, 'src/locales/iife.js.tpl')
 
-export default async function(entryAlias) {
+export function getWatchPaths(pkgDir) {
+  return [templatePath]
+}
+
+export default async function(pkgDir, entryAlias) {
   const localeCode = basename(entryAlias)
 
   const templateText = await readFile(templatePath, 'utf8')
