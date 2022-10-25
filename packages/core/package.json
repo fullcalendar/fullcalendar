@@ -38,6 +38,8 @@
     "iifeGlobals": {
       ".": "FullCalendar",
       "./preact": "FullCalendar",
+      "preact": "",
+      "preact/compat": "",
       "tslib": ""
     }
   },
