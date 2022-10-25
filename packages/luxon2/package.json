@@ -34,11 +34,10 @@
   },
   "buildConfig": {
     "exports": {
-      ".": { "iife": "FullCalendarLuxon2" }
+      ".": { "iife": true }
     },
-    "iifeExternals": {
-      "@fullcalendar/core": "FullCalendar",
-      "@fullcalendar/core/preact": "FullCalendar",
+    "iifeGlobals": {
+      ".": "FullCalendarLuxon2",
       "luxon": "luxon",
       "tslib": ""
     }

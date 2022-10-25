@@ -29,11 +29,10 @@
   },
   "buildConfig": {
     "exports": {
-      ".": { "iife": "FullCalendarList" }
+      ".": { "iife": true }
     },
-    "iifeExternals": {
-      "@fullcalendar/core": "FullCalendar",
-      "@fullcalendar/core/preact": "FullCalendar",
+    "iifeGlobals": {
+      ".": "FullCalendarList",
       "tslib": ""
     }
   },

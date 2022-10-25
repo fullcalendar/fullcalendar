@@ -47,25 +47,23 @@
     ]
   },
   "buildConfig": {
-    "esm": false,
-    "cjs": false,
-    "min": false,
-    "types": false,
-    "iifeExternals": false,
     "exports": {
       ".": { "iife": true, "iifeGenerator": "./scripts/generate-index-iife.js" }
+    },
+    "iifeGlobals": {
+      "*": ""
     }
   },
   "exports": {
     "./package.json": "./package.json",
     "./scripts/*": "./scripts/*.js",
     "./lib/*": {
-      "default": "./dist/.tsout/lib/*.js",
-      "types": "./dist/.tsout/lib/*.d.ts"
+      "types": "./dist/.tsout/lib/*.d.ts",
+      "default": "./dist/.tsout/lib/*.js"
     },
     ".": {
-      "default": "./dist/index.js",
-      "types": "./dist/.tsout/index.d.ts"
+      "types": "./dist/.tsout/index.d.ts",
+      "default": "./dist/index.js"
     }
   }
 }

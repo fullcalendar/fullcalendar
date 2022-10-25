@@ -30,12 +30,10 @@
   },
   "buildConfig": {
     "exports": {
-      ".": { "iife": "FullCalendarTimeGrid" }
+      ".": { "iife": true }
     },
-    "iifeExternals": {
-      "@fullcalendar/core": "FullCalendar",
-      "@fullcalendar/core/preact": "FullCalendar",
-      "@fullcalendar/daygrid": "FullCalendarDayGrid",
+    "iifeGlobals": {
+      ".": "FullCalendarTimeGrid",
       "tslib": ""
     }
   },

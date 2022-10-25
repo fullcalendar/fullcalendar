@@ -30,13 +30,12 @@
   },
   "buildConfig": {
     "exports": {
-      ".": { "iife": "FullCalendarICalendar" }
+      ".": { "iife": true }
     },
-    "iifeExternals": {
-      "@fullcalendar/core": "FullCalendar",
-      "@fullcalendar/core/preact": "FullCalendar",
-      "tslib": "",
-      "ical.js": "ICAL"
+    "iifeGlobals": {
+      ".": "FullCalendarICalendar",
+      "ical.js": "ICAL",
+      "tslib": ""
     }
   },
   "publishConfig": {

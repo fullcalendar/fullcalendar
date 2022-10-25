@@ -2,7 +2,7 @@ import { join as joinPaths, resolve as resolvePath } from 'path'
 import { fileURLToPath } from 'url'
 import { readFile } from 'fs/promises'
 import handlebars from 'handlebars'
-import { capture } from '@fullcalendar/workspace-scripts/utils/exec'
+import { execCapture } from '@fullcalendar/workspace-scripts/utils/exec'
 
 const pkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
 const templatePath = joinPaths(pkgDir, 'src/index.iife.js.tpl')
@@ -10,12 +10,12 @@ const templatePath = joinPaths(pkgDir, 'src/index.iife.js.tpl')
 export default async function main() {
   const srcDir = resolvePath('./src') // HACK: works when called from other test dirs
 
-  let testPaths = await capture(
+  let testPaths = await execCapture(
     'find . -mindepth 2 -type f \\( -name \'*.ts\' -or -name \'*.tsx\' \\) -print0 | ' +
     'xargs -0 grep -E "(fdescribe|fit)\\("',
     { cwd: srcDir },
   ).then(
-    (res) => strToLines(res.stdout).map((line) => line.trim().split(':')[0]),
+    (stdout) => strToLines(stdout).map((line) => line.trim().split(':')[0]),
     () => [], // TODO: somehow look at stderr string. if empty, simply no testPaths. if populated, real error
   )
 
@@ -25,10 +25,10 @@ export default async function main() {
       testPaths.map((path) => ` - ${path}`).join('\n'),
     )
   } else {
-    testPaths = strToLines((await capture(
+    testPaths = strToLines((await execCapture(
       'find . -mindepth 2 -type f \\( -name \'*.ts\' -or -name \'*.tsx\' \\)',
       { cwd: srcDir },
-    )).stdout)
+    )))
 
     console.log(`Using all ${testPaths.length} test files.`)
   }
