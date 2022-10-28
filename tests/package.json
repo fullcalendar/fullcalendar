@@ -31,7 +31,7 @@
   },
   "scripts": {
     "build": "workspace-scripts pkg:build",
-    "test": "workspace-scripts pkg:karma",
+    "test": "workspace-scripts pkg:test",
     "clean": "workspace-scripts pkg:clean",
     "lint": "eslint ."
   },
