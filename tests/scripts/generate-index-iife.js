@@ -8,21 +8,25 @@ const thisPkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
 const templatePath = joinPaths(thisPkgDir, 'src/index.iife.js.tpl')
 
 export function getWatchPaths(config) {
-  const srcDir = joinPaths(config.pkgDir, 'src')
+  const transpileDir = joinPaths(config.pkgDir, 'dist/.tsout')
 
-  return [srcDir, templatePath]
+  return [transpileDir, templatePath]
 }
 
 export default async function(config) {
-  const srcDir = joinPaths(config.pkgDir, 'src')
+  // NOTE: when changing this to the src/ directory,
+  // make sure to update getWatchPaths and all .js/.jsx extensions below
+  const transpileDir = joinPaths(config.pkgDir, 'dist/.tsout')
 
   let testPaths = await execCapture(
-    'find . -mindepth 2 -type f \\( -name \'*.ts\' -or -name \'*.tsx\' \\) -print0 | ' +
+    'find . -mindepth 2 -type f \\( -name \'*.js\' -or -name \'*.jsx\' \\) -print0 | ' +
     'xargs -0 grep -E "(fdescribe|fit)\\("',
-    { cwd: srcDir },
+    { cwd: transpileDir },
   ).then(
     (stdout) => strToLines(stdout).map((line) => line.trim().split(':')[0]),
-    () => [], // TODO: somehow look at stderr string. if empty, simply no testPaths. if populated, real error
+    () => {
+      return [] // TODO: somehow look at stderr string. if empty, simply no testPaths. if populated, real error
+    },
   )
 
   if (testPaths.length) {
@@ -32,14 +36,14 @@ export default async function(config) {
     )
   } else {
     testPaths = strToLines((await execCapture(
-      'find . -mindepth 2 -type f \\( -name \'*.ts\' -or -name \'*.tsx\' \\)',
-      { cwd: srcDir },
+      'find . -mindepth 2 -type f \\( -name \'*.js\' -or -name \'*.jsx\' \\)',
+      { cwd: transpileDir },
     )))
 
     config.log(`Using all ${testPaths.length} test files`)
   }
 
-  const extensionlessTestPaths = testPaths.map((testPath) => testPath.replace(/\.tsx?$/, ''))
+  const extensionlessTestPaths = testPaths.map((testPath) => testPath.replace(/\.[jt]sx?$/, ''))
 
   const templateText = await readFile(templatePath, 'utf8')
   const template = handlebars.compile(templateText)

@@ -31,7 +31,7 @@
   },
   "scripts": {
     "build": "workspace-scripts pkg:build",
-    "test": "workspace-scripts pkg:test",
+    "test": "workspace-scripts pkg:karma",
     "clean": "workspace-scripts pkg:clean",
     "lint": "eslint ."
   },
@@ -53,6 +53,11 @@
     "iifeGlobals": {
       "*": ""
     }
+  },
+  "karmaConfig": {
+    "files": [
+      "./dist/index.js"
+    ]
   },
   "exports": {
     "./package.json": "./package.json",
