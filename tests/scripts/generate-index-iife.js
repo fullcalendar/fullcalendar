@@ -7,14 +7,14 @@ import { execCapture } from '@fullcalendar/workspace-scripts/utils/exec'
 const thisPkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
 const templatePath = joinPaths(thisPkgDir, 'src/index.iife.js.tpl')
 
-export function getWatchPaths(pkgDir) {
-  const srcDir = joinPaths(pkgDir, 'src')
+export function getWatchPaths(config) {
+  const srcDir = joinPaths(config.pkgDir, 'src')
 
   return [srcDir]
 }
 
-export default async function(pkgDir) {
-  const srcDir = joinPaths(pkgDir, 'src')
+export default async function(config) {
+  const srcDir = joinPaths(config.pkgDir, 'src')
 
   let testPaths = await execCapture(
     'find . -mindepth 2 -type f \\( -name \'*.ts\' -or -name \'*.tsx\' \\) -print0 | ' +
@@ -26,9 +26,9 @@ export default async function(pkgDir) {
   )
 
   if (testPaths.length) {
-    console.log(
+    config.log(
       'Only test files that have fdescribe/fit:\n' +
-      testPaths.map((path) => ` - ${path}`).join('\n'),
+      testPaths.map((path) => `  ${path}`).join('\n'),
     )
   } else {
     testPaths = strToLines((await execCapture(
@@ -36,7 +36,7 @@ export default async function(pkgDir) {
       { cwd: srcDir },
     )))
 
-    console.log(`Using all ${testPaths.length} test files.`)
+    config.log(`Using all ${testPaths.length} test files`)
   }
 
   const extensionlessTestPaths = testPaths.map((testPath) => testPath.replace(/\.tsx?$/, ''))
