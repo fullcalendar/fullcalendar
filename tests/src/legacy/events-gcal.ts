@@ -5,7 +5,7 @@ import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 // In our CI setup, requests to the google-calendar api were failing for some reason
 // (requests to other services were working however)
-const noGCal = (window as any).__karma__.config.args.indexOf('--no-gcal') !== -1
+const noGCal = (window as any).__karma__.config.cliArgs.includes('--no-gcal')
 if (noGCal) {
   console.log('skipping google-calendar') // eslint-disable-line no-console
 }
