@@ -1,4 +1,4 @@
-import { join as joinPaths, resolve as resolvePath } from 'path'
+import { join as joinPaths } from 'path'
 import { fileURLToPath } from 'url'
 import { readFile } from 'fs/promises'
 import handlebars from 'handlebars'
@@ -10,7 +10,7 @@ const templatePath = joinPaths(thisPkgDir, 'src/index.iife.js.tpl')
 export function getWatchPaths(config) {
   const srcDir = joinPaths(config.pkgDir, 'src')
 
-  return [srcDir]
+  return [srcDir, templatePath]
 }
 
 export default async function(config) {

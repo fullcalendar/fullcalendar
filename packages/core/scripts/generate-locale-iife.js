@@ -7,7 +7,7 @@ const thisPkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
 const templatePath = joinPaths(thisPkgDir, 'src/locales/iife.js.tpl')
 
 export function getWatchPaths() {
-  return [templatePath]
+  return [templatePath, templatePath]
 }
 
 export default async function(config) {
