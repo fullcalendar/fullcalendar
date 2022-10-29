@@ -33,7 +33,9 @@ afterEach(() => {
 // ---------------------------------------------------------------------------------------------------------------------
 
 function pushOptions(options: CalendarOptions) {
-  beforeEach(() => optionsStack.push(options))
+  beforeEach(() => {
+    optionsStack.push(options)
+  })
 }
 
 // called within an `it`

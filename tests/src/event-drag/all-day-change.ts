@@ -46,7 +46,7 @@ describe('allDay change', () => {
         let event = currentCalendar.getEventById('1')
         expect(event.start).toEqualDate('2018-09-03T02:00:00Z')
         expect(event.end).toBe(null)
-      }).then(done)
+      }).then(() => done())
     })
 
     it('keeps duration when allDayMaintainDuration:true', (done) => {
@@ -57,7 +57,7 @@ describe('allDay change', () => {
         let event = currentCalendar.getEventById('1')
         expect(event.start).toEqualDate('2018-09-03T02:00:00Z')
         expect(event.end).toEqualDate('2018-09-05T02:00:00Z')
-      }).then(done)
+      }).then(() => done())
     })
 
     it('sets a default duration when forceEventDuration:true', (done) => {
@@ -69,7 +69,7 @@ describe('allDay change', () => {
         let event = currentCalendar.getEventById('1')
         expect(event.start).toEqualDate('2018-09-03T02:00:00Z')
         expect(event.end).toEqualDate('2018-09-03T06:00:00Z')
-      }).then(done)
+      }).then(() => done())
     })
   })
 
@@ -100,7 +100,7 @@ describe('allDay change', () => {
         let event = currentCalendar.getEventById('1')
         expect(event.start).toEqualDate('2018-09-03T00:00:00Z')
         expect(event.end).toEqualDate('2018-09-05T00:00:00Z')
-      }).then(done)
+      }).then(() => done())
     })
   })
 })

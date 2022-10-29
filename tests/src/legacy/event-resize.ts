@@ -9,6 +9,7 @@ describe('eventResize', () => {
     initialDate: '2014-06-11',
     editable: true,
     longPressDelay: 100,
+    scrollTime: 0,
   })
 
   describe('when in month view', () => {

@@ -32,6 +32,6 @@ describe('event mirror rendering', () => {
       },
     )
 
-    waitEventResize(calendar, resizing).then(done)
+    waitEventResize(calendar, resizing).then(() => done())
   })
 })

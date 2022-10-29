@@ -25,7 +25,7 @@ describe('showNonCurrentDates event dragging', () => {
         .then((res) => {
           expect(res).toBe(false)
         })
-        .then(done)
+        .then(() => done())
     })
   })
 

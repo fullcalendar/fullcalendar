@@ -22,7 +22,7 @@ describe('validRange event resizing', () => {
         dayGridWrapper.getDisabledDayEls()[0].getBoundingClientRect(), // where Jun 9th would be
       ).then((res) => {
         expect(res).toBe(false)
-      }).then(done)
+      }).then(() => done())
     })
   })
 })
