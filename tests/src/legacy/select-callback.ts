@@ -220,10 +220,12 @@ describe('select callback', () => {
           let calendar = initCalendar(options)
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
-          timeGridWrapper.selectDatesTouch('2014-05-28T09:00:00', '2014-05-28T10:30:00').then(() => {
-            expect(options.select).toHaveBeenCalled()
-            done()
-          })
+          setTimeout(() => { // HACK: sometimes touch dragging wouldn't grab onto anything
+            timeGridWrapper.selectDatesTouch('2014-05-28T09:00:00', '2014-05-28T10:30:00').then(() => {
+              expect(options.select).toHaveBeenCalled()
+              done()
+            })
+          }, 100)
         })
 
         it('gets fired correctly when the user selects slots in a different day', (done) => {
