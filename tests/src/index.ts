@@ -1,14 +1,6 @@
 
-/*
-The following packages were poorly-compatible with esm/cjs and have been included
-at the top-level by karma:
-  - jquery
-  - jasmine-jquery
-  - jquery-simulate
-  - components-jqueryui
-Caller packages are still responsible for types.
-*/
+// NOTE: there are many jquery-related libs that our karma config implicitly includes
+// They were being difficult with CJS/ESM
 
-import './lib/globals.js'
-import './lib/install-plugins.js'
-import './index.css'
+import './lib/global.css'
+import './lib/global.js'
