@@ -4,6 +4,11 @@ import { readFile } from 'fs/promises'
 import handlebars from 'handlebars'
 import { execCapture } from '@fullcalendar/workspace-scripts/utils/exec'
 
+/*
+TODO: don't always display prefix when doing config.log()
+TODO: don't reinit rollup watcher on ANY change. Slow when not using fdescribe technique.
+*/
+
 const thisPkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
 const templatePath = joinPaths(thisPkgDir, 'src/index.iife.js.tpl')
 
