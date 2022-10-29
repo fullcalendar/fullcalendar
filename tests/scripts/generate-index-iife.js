@@ -7,6 +7,9 @@ import { execCapture } from '@fullcalendar/workspace-scripts/utils/exec'
 const thisPkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
 const templatePath = joinPaths(thisPkgDir, 'src/index.iife.js.tpl')
 
+/*
+HACK: watch the transpiled directory, so bundling waits until tsc completes
+*/
 export function getWatchPaths(config) {
   const transpileDir = joinPaths(config.pkgDir, 'dist/.tsout')
 
@@ -14,14 +17,12 @@ export function getWatchPaths(config) {
 }
 
 export default async function(config) {
-  // NOTE: when changing this to the src/ directory,
-  // make sure to update getWatchPaths and all .js/.jsx extensions below
-  const transpileDir = joinPaths(config.pkgDir, 'dist/.tsout')
+  const srcDir = joinPaths(config.pkgDir, 'src')
 
   let testPaths = await execCapture(
-    'find . -mindepth 2 -type f \\( -name \'*.js\' -or -name \'*.jsx\' \\) -print0 | ' +
+    'find . -mindepth 2 -type f \\( -name \'*.ts\' -or -name \'*.tsx\' \\) -print0 | ' +
     'xargs -0 grep -E "(fdescribe|fit)\\("',
-    { cwd: transpileDir },
+    { cwd: srcDir },
   ).then(
     (stdout) => strToLines(stdout).map((line) => line.trim().split(':')[0]),
     () => {
@@ -32,18 +33,18 @@ export default async function(config) {
   if (testPaths.length) {
     config.log(
       'Only test files that have fdescribe/fit:\n' +
-      testPaths.map((path) => `  ${path}`).join('\n'),
+      testPaths.join('\n'),
     )
   } else {
     testPaths = strToLines((await execCapture(
-      'find . -mindepth 2 -type f \\( -name \'*.js\' -or -name \'*.jsx\' \\)',
-      { cwd: transpileDir },
+      'find . -mindepth 2 -type f \\( -name \'*.ts\' -or -name \'*.tsx\' \\)',
+      { cwd: srcDir },
     )))
 
     config.log(`Using all ${testPaths.length} test files`)
   }
 
-  const extensionlessTestPaths = testPaths.map((testPath) => testPath.replace(/\.[jt]sx?$/, ''))
+  const extensionlessTestPaths = testPaths.map((testPath) => testPath.replace(/\.tsx?$/, ''))
 
   const templateText = await readFile(templatePath, 'utf8')
   const template = handlebars.compile(templateText)
