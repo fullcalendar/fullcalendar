@@ -35,6 +35,9 @@ export default async function(config) {
     },
   )
 
+  // the `find` command reports multiple matches per file. consolidate duplicates
+  testPaths = uniqueStrs(testPaths)
+
   if (testPaths.length) {
     config.log(
       'Only test files that have fdescribe/fit:\n' +
@@ -58,7 +61,17 @@ export default async function(config) {
   return code
 }
 
-function strToLines(s) {
-  s = s.trim()
-  return s ? s.split('\n') : []
+function uniqueStrs(strs) {
+  const map = {}
+
+  for (const str of strs) {
+    map[str] = true
+  }
+
+  return Object.keys(map)
+}
+
+function strToLines(str) {
+  str = str.trim()
+  return str ? str.split('\n') : []
 }
