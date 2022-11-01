@@ -2,6 +2,11 @@ import * as preact from 'preact'
 export * from 'preact'
 export { createPortal } from 'preact/compat'
 
+/*
+NOTE: this can be a public API, especially createElement for hooks.
+See examples/typescript-scheduler/src/index.ts
+*/
+
 export function flushSync(runBeforeFlush) {
   runBeforeFlush()
 
