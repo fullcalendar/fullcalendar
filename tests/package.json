@@ -56,7 +56,7 @@
   },
   "karmaConfig": {
     "files": [
-      "./dist/index.js"
+      "./dist/index.global.js"
     ]
   },
   "exports": {
