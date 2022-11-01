@@ -8,7 +8,7 @@ import { buildDtsOptions, buildIifeOptions, buildModuleOptions } from './utils/r
 import { arrayify, continuousAsync } from '../utils/lang.js'
 import { ScriptContext } from '../utils/script-runner.js'
 import { untilSigInt } from '../utils/process.js'
-import { pkgLog } from './utils/log.js'
+import { pkgLog } from '../utils/log.js'
 
 export default async function(this: ScriptContext, ...args: string[]) {
   const { monorepoStruct } = this

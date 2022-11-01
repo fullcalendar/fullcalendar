@@ -1,8 +1,8 @@
-import { isAbsolute, join as joinPaths } from 'path'
+import { join as joinPaths } from 'path'
 import { globby } from 'globby'
 import { MonorepoStruct, computeLocalDepDirs } from '../../utils/monorepo-struct.js'
 import { filterProps } from '../../utils/lang.js'
-import { pkgLog } from './log.js'
+import { pkgLog } from '../../utils/log.js'
 
 export interface PkgBundleStruct {
   pkgDir: string,

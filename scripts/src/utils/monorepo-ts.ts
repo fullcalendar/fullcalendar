@@ -3,6 +3,7 @@ import { execLive, spawnLive } from './exec.js'
 import { stringifyJson, writeIfDifferent } from './fs.js'
 import { MonorepoStruct, PkgStruct, traverseMonorepoGreedy } from './monorepo-struct.js'
 import { standardScriptsDir } from './script-runner.js'
+import { log } from './log.js'
 
 export async function compileTs(dir: string, tscArgs: string[] = []): Promise<void> {
   await execLive([
@@ -15,8 +16,9 @@ export async function compileTs(dir: string, tscArgs: string[] = []): Promise<vo
 }
 
 export async function watchTs(dir: string, tscArgs: string[] = []): Promise<() => void> {
-  // initial compile for resolving result
+  log('Pre-watch tsc compiling...')
   await compileTs(dir, tscArgs)
+
   // for watching, will compile again but will be quick
   return spawnLive([
     joinPaths(standardScriptsDir, 'node_modules/.bin/tsc'),
