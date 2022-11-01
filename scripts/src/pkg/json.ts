@@ -67,6 +67,8 @@ export async function writeDistPkgJson(
   delete finalPkgJson.buildConfig
   delete finalPkgJson.publishConfig
   delete finalPkgJson.private
+  delete finalPkgJson.pnpm
+  delete finalPkgJson.engines
 
   finalPkgJson.repository.directory = relativizePath(pkgAnalysis.metaRootDir, pkgDir)
 
