@@ -21,5 +21,32 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
-  "copyright": "2022 Adam Shaw"
+  "copyright": "2022 Adam Shaw",
+  "type": "module",
+  "devDependencies": {
+    "@fullcalendar/standard-scripts": "workspace:*"
+  },
+  "scripts": {
+    "postinstall": "standard-scripts postinstall",
+    "lint": "standard-scripts lint",
+    "build": "standard-scripts build",
+    "dev": "standard-scripts dev",
+    "test": "standard-scripts test",
+    "test:dev": "standard-scripts test --dev",
+    "clean": "standard-scripts clean",
+    "ci": "pnpm run lint && pnpm run build && pnpm run test"
+  },
+  "engines": {
+    "pnpm": ">=7.9.5"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowAny": [
+        "postcss"
+      ]
+    },
+    "patchedDependencies": {
+      "jasmine-jquery@2.1.1": "scripts/patches/jasmine-jquery@2.1.1.patch"
+    }
+  }
 }
