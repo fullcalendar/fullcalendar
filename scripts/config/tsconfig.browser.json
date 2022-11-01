@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "es6",
+    "moduleResolution": "node16",
+    "allowJs": true,
+    "lib": [
+      "dom",
+      "es2020",
+      "scripthost"
+    ],
+    "noUnusedLocals": true,
+    "noImplicitUseStrict": true,
+    "importHelpers": true,
+    "resolveJsonModule": true,
+    "jsx": "react",
+    "jsxFactory": "createElement",
+    "strictBindCallApply": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "types": [],
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "allowSyntheticDefaultImports": true
+  }
+}
