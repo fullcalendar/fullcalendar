@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "@fullcalendar/workspace-scripts",
+  "name": "@fullcalendar/standard-scripts",
   "version": "0.0.0",
   "type": "module",
   "devDependencies": {
@@ -55,8 +55,8 @@
     "typescript": "^4.8.2"
   },
   "bin": {
-    "workspace-scripts": "./bin/workspace-scripts.js",
-    "ws": "./bin/workspace-scripts.js",
+    "standard-scripts": "./bin/standard-scripts.js",
+    "ws": "./bin/standard-scripts.js",
     "eslint": "./node_modules/eslint/bin/eslint.js"
   },
   "scripts": {

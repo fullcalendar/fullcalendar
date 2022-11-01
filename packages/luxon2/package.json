@@ -13,17 +13,17 @@
     "luxon": "^2.0.0"
   },
   "devDependencies": {
-    "@fullcalendar/workspace-scripts": "workspace:*",
+    "@fullcalendar/standard-scripts": "workspace:*",
     "@types/luxon": "^2.0.9",
     "luxon": "^2.0.0"
   },
   "scripts": {
-    "build": "workspace-scripts pkg:build",
-    "clean": "workspace-scripts pkg:clean",
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
     "lint": "eslint ."
   },
   "tsConfig": {
-    "extends":  "@fullcalendar/workspace-scripts/config/tsconfig.browser.json",
+    "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
     "compilerOptions": {
       "rootDir": "./src",
       "outDir": "./dist/.tsout"

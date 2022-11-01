@@ -23,20 +23,20 @@
     "xhr-mock": "^2.5.1"
   },
   "devDependencies": {
-    "@fullcalendar/workspace-scripts": "workspace:*",
+    "@fullcalendar/standard-scripts": "workspace:*",
     "@types/jasmine": "^3.3.12",
     "@types/jasmine-jquery": "^1.5.33",
     "@types/jquery": "^3.3.29",
     "handlebars": "^4.7.7"
   },
   "scripts": {
-    "build": "workspace-scripts pkg:build",
-    "test": "workspace-scripts pkg:test",
-    "clean": "workspace-scripts pkg:clean",
+    "build": "standard-scripts pkg:build",
+    "test": "standard-scripts pkg:test",
+    "clean": "standard-scripts pkg:clean",
     "lint": "eslint ."
   },
   "tsConfig": {
-    "extends":  "@fullcalendar/workspace-scripts/config/tsconfig.browser.json",
+    "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
     "compilerOptions": {
       "types": ["jasmine", "jasmine-jquery", "jquery"],
       "rootDir": "./src",

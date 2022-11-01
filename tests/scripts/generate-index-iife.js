@@ -2,7 +2,7 @@ import { join as joinPaths } from 'path'
 import { fileURLToPath } from 'url'
 import { readFile } from 'fs/promises'
 import handlebars from 'handlebars'
-import { execCapture } from '@fullcalendar/workspace-scripts/utils/exec'
+import { execCapture } from '@fullcalendar/standard-scripts/utils/exec'
 
 /*
 TODO: don't always display prefix when doing config.log()
