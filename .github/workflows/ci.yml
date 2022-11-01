@@ -35,7 +35,7 @@ jobs:
             turbo-${{ github.job }}-${{ github.ref_name }}-
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Lint
         run: pnpm run lint
