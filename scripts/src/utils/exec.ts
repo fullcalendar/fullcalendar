@@ -40,6 +40,7 @@ export function execSilent(
   return execWithStdio(command, options, 'ignore')
 }
 
+// TODO: just return the childProcess
 export function spawnLive(
   command: string | string[],
   options: ExecOptions = {},
@@ -50,6 +51,7 @@ export function spawnLive(
   }
 }
 
+// TODO: just return the childProcess
 export function spawnSilent(
   command: string | string[],
   options: ExecOptions = {},
@@ -72,7 +74,7 @@ function execWithStdio(
       if (exitCode === 0) {
         resolve()
       } else {
-        reject(new SpawnError(exitCode))
+        reject(new SpawnError(command, exitCode))
       }
     })
   })
@@ -108,8 +110,9 @@ function spawnWithStdio(
 
 export class SpawnError extends Error {
   constructor(
+    public command: string | string[],
     public exitCode: number | null,
   ) {
-    super(`Exited with error code ${exitCode}`)
+    super(`Exited ${JSON.stringify(command)} with error code ${exitCode}`)
   }
 }
