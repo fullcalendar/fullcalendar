@@ -212,7 +212,6 @@ function buildIifePlugins(
     ),
     externalizePathsPlugin({
       paths: computeOwnIifeExternalPaths(currentEntryStruct, pkgBundleStruct),
-      absolutize: true, // because external browser-globals must match against absolute path
     }),
     generatedContentPlugin({
       ...entryStructsToContentMap(entryStructMap),
@@ -230,6 +229,7 @@ function buildDtsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
     externalizePkgsPlugin(
       computeExternalPkgs(pkgBundleStruct),
     ),
+    // rollup-plugin-dts normally gets confused with code splitting. this helps a lot.
     externalizePathsPlugin({
       paths: computeOwnExternalPaths(pkgBundleStruct),
       extensions: { '.js': '.mjs' }, // tsout references .js, but we need .mjs for dist

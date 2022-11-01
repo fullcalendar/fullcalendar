@@ -36,7 +36,6 @@ export function generatedContentPlugin(contentMap: { [path: string]: string }): 
 export interface ExteralizePathsOptions {
   paths: string[]
   extensions?: ExtensionInput
-  absolutize?: boolean
 }
 
 export function externalizePathsPlugin(options: ExteralizePathsOptions): Plugin {
@@ -46,17 +45,19 @@ export function externalizePathsPlugin(options: ExteralizePathsOptions): Plugin 
   return {
     name: 'externalize-paths',
     resolveId(importId, importerPath) {
-      const importPath = computeImportPath(importId, importerPath)
+      let importPath = computeImportPath(importId, importerPath)
 
       if (importPath && pathMap[importPath]) {
-        let finalImportId: string | undefined = options.absolutize ? importPath : importId
-
         if (extensionMap) {
-          finalImportId = findAndReplaceExtensions(finalImportId, extensionMap)
+          importPath = findAndReplaceExtensions(importPath, extensionMap)
         }
 
-        if (finalImportId) {
-          return { id: finalImportId, external: true }
+        if (importPath) {
+          // always return the absolute path. a stable reference to the external file allows for:
+          // - iife globals
+          // - outputting multiple modules with code-splitting
+          // (rollup will ultimately relativize the path)
+          return { id: importPath, external: true }
         }
       }
     },
