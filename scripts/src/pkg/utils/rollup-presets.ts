@@ -12,7 +12,7 @@ import { mapProps } from '../../utils/lang.js'
 import { MonorepoStruct } from '../../utils/monorepo-struct.js'
 import { analyzePkg } from '../../utils/pkg-analysis.js'
 import { readPkgJson } from '../../utils/pkg-json.js'
-import { monorepoScriptsDir } from '../../utils/script-runner.js'
+import { standardScriptsDir } from '../../utils/script-runner.js'
 import {
   computeExternalPkgs,
   computeIifeExternalPkgs,
@@ -290,7 +290,7 @@ function cssPlugin(options?: { inject?: CssInjector | boolean }): Plugin {
 
   return postcssPlugin({
     config: {
-      path: joinPaths(monorepoScriptsDir, 'config/postcss.config.cjs'),
+      path: joinPaths(standardScriptsDir, 'config/postcss.config.cjs'),
       ctx: {}, // arguments given to config file
     },
     inject: typeof inject === 'object' ?
@@ -325,7 +325,7 @@ async function buildBanner(pkgBundleStruct: PkgBundleStruct): Promise<string> {
   const fullPkgJson = { ...basePkgJson, ...pkgJson }
 
   // TODO: cache the template
-  const templatePath = joinPaths(monorepoScriptsDir, 'config/banner.tpl')
+  const templatePath = joinPaths(standardScriptsDir, 'config/banner.tpl')
   const templateText = await readFile(templatePath, 'utf8')
   const template = handlebars.compile(templateText)
 

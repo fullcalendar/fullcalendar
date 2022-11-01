@@ -8,7 +8,7 @@ import {
 import { Plugin } from 'rollup'
 import { execLive } from '../../utils/exec.js'
 import { strsToProps } from '../../utils/lang.js'
-import { monorepoScriptsDir } from '../../utils/script-runner.js'
+import { standardScriptsDir } from '../../utils/script-runner.js'
 
 // Generated Content
 // -------------------------------------------------------------------------------------------------
@@ -154,12 +154,12 @@ async function minifySeparately(path: string): Promise<void> {
   }
 
   return execLive([
-    joinPaths(monorepoScriptsDir, 'node_modules/.bin/terser'),
+    joinPaths(standardScriptsDir, 'node_modules/.bin/terser'),
     '--config-file', 'config/terser.json',
     '--output', pathMatch[1] + '.min' + pathMatch[2],
     '--', path,
   ], {
-    cwd: monorepoScriptsDir,
+    cwd: standardScriptsDir,
   })
 }
 

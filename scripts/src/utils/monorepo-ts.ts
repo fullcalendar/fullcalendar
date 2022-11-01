@@ -2,11 +2,11 @@ import { join as joinPaths, relative as relativizePath } from 'path'
 import { execLive, spawnLive } from './exec.js'
 import { stringifyJson, writeIfDifferent } from './fs.js'
 import { MonorepoStruct, PkgStruct, traverseMonorepoGreedy } from './monorepo-struct.js'
-import { monorepoScriptsDir } from './script-runner.js'
+import { standardScriptsDir } from './script-runner.js'
 
 export async function compileTs(dir: string, tscArgs: string[] = []): Promise<void> {
   await execLive([
-    joinPaths(monorepoScriptsDir, 'node_modules/.bin/tsc'),
+    joinPaths(standardScriptsDir, 'node_modules/.bin/tsc'),
     '-b',
     ...tscArgs,
   ], {
@@ -19,7 +19,7 @@ export async function watchTs(dir: string, tscArgs: string[] = []): Promise<() =
   await compileTs(dir, tscArgs)
   // for watching, will compile again but will be quick
   return spawnLive([
-    joinPaths(monorepoScriptsDir, 'node_modules/.bin/tsc'),
+    joinPaths(standardScriptsDir, 'node_modules/.bin/tsc'),
     '-b', '--watch',
     ...tscArgs,
   ], {
@@ -27,21 +27,35 @@ export async function watchTs(dir: string, tscArgs: string[] = []): Promise<() =
   })
 }
 
-export function writeTsconfigs(
+export async function writeTsconfigs(
   monorepoStruct: MonorepoStruct,
   startPkgDir = '',
 ): Promise<void> {
-  return traverseMonorepoGreedy(
+  const refDirs: string[] = []
+
+  await traverseMonorepoGreedy(
     monorepoStruct,
-    (pkgStruct) => writePkgTsconfig(pkgStruct, monorepoStruct),
+    async (pkgStruct) => {
+      if (await writePkgTsconfig(pkgStruct, monorepoStruct)) {
+        refDirs.push(pkgStruct.pkgDir)
+      }
+    },
     startPkgDir,
   )
+
+  if (!startPkgDir) {
+    await writePkgTsconfigWithRefs(
+      monorepoStruct.monorepoDir,
+      refDirs,
+      { files: [] },
+    )
+  }
 }
 
 async function writePkgTsconfig(
   pkgStruct: PkgStruct,
   monorepoStruct: MonorepoStruct,
-): Promise<void> {
+): Promise<boolean> {
   const { pkgDir, pkgJson, localDepDirs } = pkgStruct
   const { tsConfig } = pkgJson
 
@@ -56,21 +70,32 @@ async function writePkgTsconfig(
       }
     }
 
-    refDirs.sort() // deterministic order
-
-    const finalTsConfig = {
-      ...tsConfig,
-      references: [
-        ...(tsConfig.references || []),
-        ...refDirs.map((refDir) => ({
-          path: relativizePath(pkgDir, refDir),
-        })),
-      ],
-    }
-
-    await writeIfDifferent(
-      joinPaths(pkgDir, 'tsconfig.json'),
-      stringifyJson(finalTsConfig),
-    )
+    await writePkgTsconfigWithRefs(pkgDir, refDirs, tsConfig)
+    return true
   }
+
+  return false
+}
+
+async function writePkgTsconfigWithRefs(
+  pkgDir: string,
+  refDirs: string[], // gets modified in-place
+  tsConfigBase: any,
+): Promise<void> {
+  refDirs.sort() // deterministic order
+
+  const finalTsConfig = {
+    ...tsConfigBase,
+    references: [
+      ...(tsConfigBase.references || []),
+      ...refDirs.map((refDir) => ({
+        path: relativizePath(pkgDir, refDir),
+      })),
+    ],
+  }
+
+  await writeIfDifferent(
+    joinPaths(pkgDir, 'tsconfig.json'),
+    stringifyJson(finalTsConfig),
+  )
 }

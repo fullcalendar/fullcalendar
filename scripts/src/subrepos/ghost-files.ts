@@ -1,6 +1,6 @@
 import { join as joinPaths } from 'path'
 import { readFile, writeFile, copyFile, rm } from 'fs/promises'
-import { monorepoDir } from '../utils/script-runner.js'
+import { ScriptContext } from '../utils/script-runner.js'
 import {
   addFile,
   assumeUnchanged,
@@ -14,7 +14,9 @@ import { querySubrepoSubdirs } from '../utils/git-subrepo.js'
 // config
 import ghostFileConfigMap, { GhostFileConfig } from '../../config/ghost-files.js'
 
-export default async function(...args: string[]) {
+export default async function(this: ScriptContext, ...args: string[]) {
+  const { monorepoDir } = this.monorepoStruct
+
   await updateGhostFiles(
     monorepoDir,
     await querySubrepoSubdirs(monorepoDir),

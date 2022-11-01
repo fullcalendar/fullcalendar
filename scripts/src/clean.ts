@@ -12,12 +12,29 @@ export default async function(this: ScriptContext, ...args: string[]) {
   const isAll = args.includes('--all')
 
   await Promise.all([
+    deleteRootDist(monorepoDir),
+    deleteRootTsconfig(monorepoDir),
     deleteGlobalTurboCache(monorepoDir),
     deleteMonorepoArchives(monorepoStruct),
     isAll ?
       runTurboTasks(monorepoDir, ['clean']) :
       cleanPkgsDirectly(monorepoStruct),
   ])
+}
+
+// for deleting archives (only applies to 'standard')
+function deleteRootDist(monorepoDir: string): Promise<void> {
+  return rm(
+    joinPaths(monorepoDir, 'dist'),
+    { force: true },
+  )
+}
+
+function deleteRootTsconfig(monorepoDir: string): Promise<void> {
+  return rm(
+    joinPaths(monorepoDir, 'tsconfig.json'),
+    { force: true },
+  )
 }
 
 function deleteGlobalTurboCache(monorepoDir: string): Promise<void> {
