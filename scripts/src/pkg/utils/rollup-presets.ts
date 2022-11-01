@@ -126,7 +126,7 @@ function buildEsmOutputOptions(
   return {
     format: 'esm',
     dir: joinPaths(pkgBundleStruct.pkgDir, 'dist'),
-    entryFileNames: '[name].mjs',
+    entryFileNames: '[name].js',
     sourcemap,
   }
 }
@@ -158,7 +158,7 @@ function buildIifeOutputOptions(
   return {
     format: 'iife',
     banner,
-    file: joinPaths(pkgDir, 'dist', entryAlias) + '.js',
+    file: joinPaths(pkgDir, 'dist', entryAlias) + '.global.js',
     globals: computeIifeGlobals(pkgBundleStruct, monorepoStruct),
     ...(
       globalName

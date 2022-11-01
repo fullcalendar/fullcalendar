@@ -40,10 +40,10 @@ export async function writeDistPkgJson(
     ...basePkgJson,
     ...pkgJson,
     main: './index.cjs',
-    module: './index.mjs',
+    module: './index.js',
     types: `${typesRoot}/index.d.ts`,
     ...cdnFields.reduce(
-      (props, cdnField) => Object.assign(props, { [cdnField]: './index.min.js' }),
+      (props, cdnField) => Object.assign(props, { [cdnField]: './index.global.min.js' }),
       {},
     ),
     exports: {
@@ -53,9 +53,9 @@ export async function writeDistPkgJson(
 
         return {
           require: entrySubpath + '.cjs',
-          import: entrySubpath + '.mjs',
+          import: entrySubpath + '.js',
           types: entrySubpath.replace(/^\./, typesRoot) + '.d.ts',
-          default: entrySubpath + '.js',
+          default: entrySubpath + '.global.js',
         }
       }),
     },
