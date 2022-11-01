@@ -232,7 +232,6 @@ function buildDtsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
     // rollup-plugin-dts normally gets confused with code splitting. this helps a lot.
     externalizePathsPlugin({
       paths: computeOwnExternalPaths(pkgBundleStruct),
-      extensions: { '.js': '.mjs' }, // tsout references .js, but we need .mjs for dist
     }),
     dtsPlugin(),
     nodeResolvePlugin(),
