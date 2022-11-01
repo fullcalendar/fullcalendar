@@ -56,7 +56,7 @@
   },
   "bin": {
     "standard-scripts": "./bin/standard-scripts.js",
-    "ws": "./bin/standard-scripts.js",
+    "ss": "./bin/standard-scripts.js",
     "eslint": "./node_modules/eslint/bin/eslint.js"
   },
   "scripts": {
