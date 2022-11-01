@@ -8,5 +8,3 @@ export default async function(this: ScriptContext) {
     writeDistPkgJsons(this.monorepoStruct, true), // isDev=true
   ])
 }
-
-// TODO: hide subrepo meta files
