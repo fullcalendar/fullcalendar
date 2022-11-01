@@ -2,6 +2,7 @@
   "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
     "module": "es2022",
+    "moduleResolution": "node16",
     "types": ["node"],
     "sourceMap": true,
     "composite": true,
