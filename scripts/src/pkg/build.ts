@@ -71,7 +71,7 @@ export async function writeDistLicense(pkgAnalysis: PkgAnalysis): Promise<void> 
   )
 }
 
-async function deleteBuiltFiles(pkgDir: string): Promise<void> {
+export async function deleteBuiltFiles(pkgDir: string): Promise<void> {
   const relPaths = await globby(pathsToDelete, { cwd: pkgDir, onlyFiles: false })
 
   await Promise.all(
