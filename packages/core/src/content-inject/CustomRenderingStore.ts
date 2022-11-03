@@ -8,8 +8,8 @@ export interface CustomRendering<RenderProps> {
   isActive: boolean
   containerEl: HTMLElement
   className: string
-  optionName: string
-  optionValue: CustomRenderingGenerator<RenderProps>
+  generatorName: string
+  generator: CustomRenderingGenerator<RenderProps>
   renderProps: RenderProps
 }
 

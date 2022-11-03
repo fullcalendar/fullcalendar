@@ -74,7 +74,7 @@ export interface ObjCustomContent {
 }
 
 export type CustomContent = ComponentChildren | ObjCustomContent
-export type CustomContentGenerator<HookProps> = CustomContent | ((hookProps: HookProps) => CustomContent)
+export type CustomContentGenerator<HookProps> = CustomContent | ((hookProps: HookProps, createElement: any) => CustomContent)
 
 export type DefaultContentGenerator<HookProps> = (hookProps: HookProps) => ComponentChildren
 // TODO: rename to be about function, not default. use in above type
