@@ -41,6 +41,8 @@ import {
   MoreLinkMountArg,
   MoreLinkAction,
   ButtonHintCompoundInput,
+  CustomRenderingGenerator,
+  CustomRenderingHandler,
 } from './api-type-deps.js'
 
 // base options
@@ -237,6 +239,10 @@ export const BASE_OPTION_REFINERS = {
   moreLinkContent: identity as Identity<CustomContentGenerator<MoreLinkContentArg>>,
   moreLinkDidMount: identity as Identity<DidMountHandler<MoreLinkMountArg>>,
   moreLinkWillUnmount: identity as Identity<WillUnmountHandler<MoreLinkMountArg>>,
+
+  // for connectors
+  handleCustomRendering: identity as Identity<CustomRenderingHandler<any>>,
+  customRenderingGenerators: identity as Identity<{ [optionName: string]: CustomRenderingGenerator<any> }>,
 }
 
 type BuiltInBaseOptionRefiners = typeof BASE_OPTION_REFINERS

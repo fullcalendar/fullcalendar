@@ -40,3 +40,4 @@ export type { EventContentArg, EventMountArg } from './component/event-rendering
 export type { DatesSetArg } from './dates-set.js'
 export type { EventAddArg, EventChangeArg, EventDropArg, EventRemoveArg } from './event-crud.js'
 export type { ButtonHintCompoundInput } from './toolbar-struct.js'
+export type { CustomRenderingGenerator, CustomRenderingHandler, CustomRenderingStore } from './content-inject/CustomRenderingStore.js'
