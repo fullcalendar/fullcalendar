@@ -1,7 +1,10 @@
 import { createElement } from '../preact.js'
-import { EventRoot } from './EventRoot.js'
 import { Seg } from '../component/DateComponent.js'
-import { EventContentArg } from '../component/event-rendering.js'
+import { EventContentArg, getEventClassNames } from '../component/event-rendering.js'
+import { LifecycleMonitor } from '../content-inject/LifecycleMonitor.js'
+import { BaseComponent } from '../vdom-util.js'
+import { buildEventContentArg } from './EventRoot.js'
+import { ContentInjector } from '../content-inject/ContentInjector.js'
 
 export function renderFill(fillType: string) {
   return (
@@ -16,34 +19,44 @@ export interface BgEventProps {
   isToday: boolean
 }
 
-export const BgEvent = (props: BgEventProps) => (
-  <EventRoot
-    defaultContent={renderInnerContent}
-    seg={props.seg /* uselesss i think */}
-    timeText=""
-    disableDragging
-    disableResizing
-    isDragging={false}
-    isResizing={false}
-    isDateSelecting={false}
-    isSelected={false}
-    isPast={props.isPast}
-    isFuture={props.isFuture}
-    isToday={props.isToday}
-  >
-    {(rootElRef, classNames, innerElRef, innerContent, hookProps) => (
-      <div
-        ref={rootElRef}
-        className={['fc-bg-event'].concat(classNames).join(' ')}
-        style={{
-          backgroundColor: hookProps.backgroundColor,
-        }}
+export class BgEvent extends BaseComponent<BgEventProps> {
+  render() {
+    let { props, context } = this
+    let { options } = context
+    let { seg } = props
+    let eventContentArg = buildEventContentArg({
+      ...props,
+      timeText: '',
+      isDragging: false,
+      isResizing: false,
+      isDateSelecting: false,
+      isSelected: false,
+      disableDragging: true,
+      disableResizing: true,
+    }, context)
+    let className = getEventClassNames(eventContentArg)
+      .concat(seg.eventRange.ui.classNames)
+      .concat(['fc-bg-event'])
+      .join(' ')
+
+    return (
+      <LifecycleMonitor
+        didMount={options.eventDidMount}
+        willUnmount={options.eventWillUnmount}
+        renderProps={eventContentArg}
       >
-        {innerContent}
-      </div>
-    )}
-  </EventRoot>
-)
+        <ContentInjector
+          className={className}
+          style={{ backgroundColor: eventContentArg.backgroundColor }}
+          optionName="eventContent"
+          renderProps={eventContentArg}
+        >
+          {renderInnerContent}
+        </ContentInjector>
+      </LifecycleMonitor>
+    )
+  }
+}
 
 function renderInnerContent(props: EventContentArg) {
   let { title } = props.event

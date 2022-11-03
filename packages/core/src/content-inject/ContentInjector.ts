@@ -9,6 +9,8 @@ import { ViewOptionsRefined } from '../options.js'
 export interface ContentInjectorProps<RenderProps> {
   tagName?: string
   className?: string
+  style?: any // TODO: better type
+  extraAttrs?: any // TODO: better type
   optionName: keyof ViewOptionsRefined // TODO: discriminate for CustomContentGenerator
   renderProps: RenderProps
   children?: (renderProps: RenderProps) => VNode // the default
@@ -20,7 +22,7 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
 
   render() {
     const { props, context } = this
-    const attrs = { className: props.className }
+    const attrs = { className: props.className, style: props.style, ...props.extraAttrs }
     let innerContent: ComponentChildren | undefined
     let needsDefault = false
 

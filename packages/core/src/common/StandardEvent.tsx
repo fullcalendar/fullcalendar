@@ -1,8 +1,10 @@
-import { ComponentChildren, createElement, Fragment } from '../preact.js'
+import { createElement, Fragment } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
-import { buildSegTimeText, EventContentArg, getSegAnchorAttrs } from '../component/event-rendering.js'
-import { EventRoot, MinimalEventProps } from './EventRoot.js'
+import { buildSegTimeText, EventContentArg, getEventClassNames, getSegAnchorAttrs } from '../component/event-rendering.js'
 import { DateFormatter } from '../datelib/DateFormatter.js'
+import { buildEventContentArg, MinimalEventProps } from './EventRoot.js'
+import { LifecycleMonitor } from '../content-inject/LifecycleMonitor.js'
+import { ContentInjector } from '../content-inject/ContentInjector.js'
 
 export interface StandardEventProps extends MinimalEventProps {
   extraClassNames: string[]
@@ -11,13 +13,13 @@ export interface StandardEventProps extends MinimalEventProps {
   defaultDisplayEventEnd?: boolean // default true
   disableDragging?: boolean // default false
   disableResizing?: boolean // default false
-  defaultContent?: (hookProps: EventContentArg) => ComponentChildren // not used by anyone yet
 }
 
 // should not be a purecomponent
 export class StandardEvent extends BaseComponent<StandardEventProps> {
   render() {
     let { props, context } = this
+    let { options } = context
     let { seg } = props
     let timeFormat = context.options.eventTimeFormat || props.defaultTimeFormat
     let timeText = buildSegTimeText(
@@ -27,42 +29,40 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
       props.defaultDisplayEventTime,
       props.defaultDisplayEventEnd,
     )
+    let eventContentArg = buildEventContentArg({ ...props, timeText }, context)
+    let className = getEventClassNames(eventContentArg)
+      .concat(seg.eventRange.ui.classNames)
+      .concat(props.extraClassNames || [])
+      .join(' ')
 
     return (
-      <EventRoot
-        seg={seg}
-        timeText={timeText}
-        disableDragging={props.disableDragging}
-        disableResizing={props.disableResizing}
-        defaultContent={props.defaultContent || renderInnerContent}
-        isDragging={props.isDragging}
-        isResizing={props.isResizing}
-        isDateSelecting={props.isDateSelecting}
-        isSelected={props.isSelected}
-        isPast={props.isPast}
-        isFuture={props.isFuture}
-        isToday={props.isToday}
+      <LifecycleMonitor
+        didMount={options.eventDidMount}
+        willUnmount={options.eventWillUnmount}
+        renderProps={eventContentArg}
       >
-        {(rootElRef, classNames, innerElRef, innerContent, hookProps) => (
-          <a
-            className={props.extraClassNames.concat(classNames).join(' ')}
-            style={{
-              borderColor: hookProps.borderColor,
-              backgroundColor: hookProps.backgroundColor,
-            }}
-            ref={rootElRef}
-            {...getSegAnchorAttrs(seg, context)}
+        <a
+          className={className}
+          style={{
+            borderColor: eventContentArg.borderColor,
+            backgroundColor: eventContentArg.backgroundColor,
+          }}
+          {...getSegAnchorAttrs(seg, context)}
+        >
+          <ContentInjector
+            className="fc-event-main"
+            optionName="eventContent"
+            style={{ color: eventContentArg.textColor }}
+            renderProps={eventContentArg}
           >
-            <div className="fc-event-main" ref={innerElRef} style={{ color: hookProps.textColor }}>
-              {innerContent}
-            </div>
-            {hookProps.isStartResizable &&
-              <div className="fc-event-resizer fc-event-resizer-start" />}
-            {hookProps.isEndResizable &&
-              <div className="fc-event-resizer fc-event-resizer-end" />}
-          </a>
-        )}
-      </EventRoot>
+            {renderInnerContent}
+          </ContentInjector>
+          {eventContentArg.isStartResizable &&
+            <div className="fc-event-resizer fc-event-resizer-start" />}
+          {eventContentArg.isEndResizable &&
+            <div className="fc-event-resizer fc-event-resizer-end" />}
+        </a>
+      </LifecycleMonitor>
     )
   }
 }

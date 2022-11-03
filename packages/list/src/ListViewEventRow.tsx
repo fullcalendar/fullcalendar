@@ -1,6 +1,6 @@
 import {
   MinimalEventProps, BaseComponent, ViewContext, AllDayContentArg,
-  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventRoot, RenderHook, getSegAnchorAttrs,
+  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, RenderHook, getSegAnchorAttrs, buildEventContentArg, getEventClassNames, LifecycleMonitor, ContentInjector,
 } from '@fullcalendar/core'
 import {
   createElement,
@@ -22,36 +22,45 @@ export interface ListViewEventRowProps extends MinimalEventProps {
 export class ListViewEventRow extends BaseComponent<ListViewEventRowProps> {
   render() {
     let { props, context } = this
+    let { options } = context
     let { seg, timeHeaderId, eventHeaderId, dateHeaderId } = props
-    let timeFormat = context.options.eventTimeFormat || DEFAULT_TIME_FORMAT
+    let timeFormat = options.eventTimeFormat || DEFAULT_TIME_FORMAT
+    let eventContentArg = buildEventContentArg({
+      ...props,
+      timeText: '',
+      disableDragging: true,
+      disableResizing: true,
+    }, context)
+    let className = getEventClassNames(eventContentArg)
+      .concat(seg.eventRange.ui.classNames)
+      .concat(['fc-list-event', eventContentArg.event.url ? 'fc-event-forced-url' : ''])
+      .join(' ')
 
     return (
-      <EventRoot
-        seg={seg}
-        timeText="" // BAD. because of all-day content
-        disableDragging
-        disableResizing
-        defaultContent={() => renderEventInnerContent(seg, context) /* weird */}
-        isPast={props.isPast}
-        isFuture={props.isFuture}
-        isToday={props.isToday}
-        isSelected={props.isSelected}
-        isDragging={props.isDragging}
-        isResizing={props.isResizing}
-        isDateSelecting={props.isDateSelecting}
+      <LifecycleMonitor
+        didMount={options.eventDidMount}
+        willUnmount={options.eventWillUnmount}
+        renderProps={eventContentArg}
       >
-        {(rootElRef, classNames, innerElRef, innerContent, hookProps) => (
-          <tr className={['fc-list-event', hookProps.event.url ? 'fc-event-forced-url' : ''].concat(classNames).join(' ')} ref={rootElRef}>
-            {buildTimeContent(seg, timeFormat, context, timeHeaderId, dateHeaderId)}
-            <td aria-hidden className="fc-list-event-graphic">
-              <span className="fc-list-event-dot" style={{ borderColor: hookProps.borderColor || hookProps.backgroundColor }} />
-            </td>
-            <td ref={innerElRef} headers={`${eventHeaderId} ${dateHeaderId}`} className="fc-list-event-title">
-              {innerContent}
-            </td>
-          </tr>
-        )}
-      </EventRoot>
+        <tr className={className}>
+          {buildTimeContent(seg, timeFormat, context, timeHeaderId, dateHeaderId)}
+          <td aria-hidden className="fc-list-event-graphic">
+            <span
+              className="fc-list-event-dot"
+              style={{ borderColor: eventContentArg.borderColor || eventContentArg.backgroundColor }}
+            />
+          </td>
+          <ContentInjector
+            tagName="td"
+            className="fc-list-event-title"
+            extraAttrs={{ headers: `${eventHeaderId} ${dateHeaderId}` }}
+            optionName="eventContent"
+            renderProps={eventContentArg}
+          >
+            {() => renderEventInnerContent(seg, context) /* weird */}
+          </ContentInjector>
+        </tr>
+      </LifecycleMonitor>
     )
   }
 }

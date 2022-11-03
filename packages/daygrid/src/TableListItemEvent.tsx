@@ -1,10 +1,13 @@
 import {
   BaseComponent,
   Seg,
-  EventRoot,
   buildSegTimeText,
   EventContentArg,
   getSegAnchorAttrs,
+  buildEventContentArg,
+  getEventClassNames,
+  LifecycleMonitor,
+  ContentInjector,
 } from '@fullcalendar/core'
 import { createElement, Fragment } from '@fullcalendar/core/preact'
 import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering.js'
@@ -22,38 +25,43 @@ export interface DotTableEventProps {
 export class TableListItemEvent extends BaseComponent<DotTableEventProps> {
   render() {
     let { props, context } = this
-    let timeFormat = context.options.eventTimeFormat || DEFAULT_TABLE_EVENT_TIME_FORMAT
+    let { options } = context
+    let { seg } = props
+    let timeFormat = options.eventTimeFormat || DEFAULT_TABLE_EVENT_TIME_FORMAT
     let timeText = buildSegTimeText(
-      props.seg,
+      seg,
       timeFormat,
       context,
       true,
       props.defaultDisplayEventEnd,
     )
+    let eventContentArg = buildEventContentArg({
+      ...props,
+      timeText,
+      isResizing: false,
+      isDateSelecting: false,
+    }, context)
+    let className = getEventClassNames(eventContentArg)
+      .concat(seg.eventRange.ui.classNames)
+      .concat(['fc-daygrid-event', 'fc-daygrid-dot-event'])
+      .join(' ')
 
     return (
-      <EventRoot
-        seg={props.seg}
-        timeText={timeText}
-        defaultContent={renderInnerContent}
-        isDragging={props.isDragging}
-        isResizing={false}
-        isDateSelecting={false}
-        isSelected={props.isSelected}
-        isPast={props.isPast}
-        isFuture={props.isFuture}
-        isToday={props.isToday}
+      <LifecycleMonitor
+        didMount={options.eventDidMount}
+        willUnmount={options.eventWillUnmount}
+        renderProps={eventContentArg}
       >
-        {(rootElRef, classNames, innerElRef, innerContent) => ( // we don't use styles!
-          <a
-            className={['fc-daygrid-event', 'fc-daygrid-dot-event'].concat(classNames).join(' ')}
-            ref={rootElRef}
-            {...getSegAnchorAttrs(props.seg, context)}
-          >
-            {innerContent}
-          </a>
-        )}
-      </EventRoot>
+        <ContentInjector
+          tagName="a"
+          className={className}
+          extraAttrs={getSegAnchorAttrs(props.seg, context)}
+          optionName="eventContent"
+          renderProps={eventContentArg}
+        >
+          {renderInnerContent}
+        </ContentInjector>
+      </LifecycleMonitor>
     )
   }
 }

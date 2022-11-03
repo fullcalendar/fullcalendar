@@ -304,7 +304,7 @@ export { DayCellRoot } from './common/DayCellRoot.js'
 export type { DayCellContentProps } from './common/DayCellContent.js'
 export { DayCellContent } from './common/DayCellContent.js'
 export type {  MinimalEventProps } from './common/EventRoot.js'
-export { EventRoot } from './common/EventRoot.js'
+export { buildEventContentArg } from './common/EventRoot.js'
 export type { BgEventProps } from './common/bg-fill.js'
 export { renderFill, BgEvent } from './common/bg-fill.js'
 export type { WeekNumberRootProps } from './common/WeekNumberRoot.js'
@@ -318,3 +318,8 @@ export type { DatePointTransform, DateSpanTransform, DateSelectionApi } from './
 export { triggerDateSelect, getDefaultEventEnd } from './calendar-utils.js'
 
 export { injectStyles } from './styleUtils.js'
+
+export type { LifecycleMonitorProps } from './content-inject/LifecycleMonitor.js'
+export { LifecycleMonitor } from './content-inject/LifecycleMonitor.js'
+export type { ContentInjectorProps } from './content-inject/ContentInjector.js'
+export { ContentInjector } from './content-inject/ContentInjector.js'

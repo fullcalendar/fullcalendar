@@ -1,14 +1,14 @@
 import { ComponentChildren } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
 
-export interface LifecyleMonitorProps<RenderProps> {
+export interface LifecycleMonitorProps<RenderProps> {
   didMount: (renderProps: RenderProps & { el: HTMLElement }) => void
   willUnmount: (renderProps: RenderProps & { el: HTMLElement }) => void
   renderProps: RenderProps
   children: ComponentChildren
 }
 
-export class LifecycleMonitor<RenderProps> extends BaseComponent<LifecyleMonitorProps<RenderProps>> {
+export class LifecycleMonitor<RenderProps> extends BaseComponent<LifecycleMonitorProps<RenderProps>> {
   render() {
     return this.props.children
   }
