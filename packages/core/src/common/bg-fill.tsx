@@ -1,16 +1,8 @@
 import { createElement } from '../preact.js'
-import { Seg } from '../component/DateComponent.js'
-import { EventContentArg, getEventClassNames } from '../component/event-rendering.js'
-import { LifecycleMonitor } from '../content-inject/LifecycleMonitor.js'
 import { BaseComponent } from '../vdom-util.js'
-import { buildEventContentArg } from './EventRoot.js'
-import { ContentInjector } from '../content-inject/ContentInjector.js'
-
-export function renderFill(fillType: string) {
-  return (
-    <div className={`fc-${fillType}`} />
-  )
-}
+import { Seg } from '../component/DateComponent.js'
+import { EventContentArg } from '../component/event-rendering.js'
+import { EventContainer } from './EventRoot.js'
 
 export interface BgEventProps {
   seg: Seg
@@ -21,39 +13,26 @@ export interface BgEventProps {
 
 export class BgEvent extends BaseComponent<BgEventProps> {
   render() {
-    let { props, context } = this
-    let { options } = context
+    let { props } = this
     let { seg } = props
-    let eventContentArg = buildEventContentArg({
-      ...props,
-      timeText: '',
-      isDragging: false,
-      isResizing: false,
-      isDateSelecting: false,
-      isSelected: false,
-      disableDragging: true,
-      disableResizing: true,
-    }, context)
-    let className = getEventClassNames(eventContentArg)
-      .concat(seg.eventRange.ui.classNames)
-      .concat(['fc-bg-event'])
-      .join(' ')
 
     return (
-      <LifecycleMonitor
-        didMount={options.eventDidMount}
-        willUnmount={options.eventWillUnmount}
-        renderProps={eventContentArg}
-      >
-        <ContentInjector
-          className={className}
-          style={{ backgroundColor: eventContentArg.backgroundColor }}
-          optionName="eventContent"
-          renderProps={eventContentArg}
-        >
-          {renderInnerContent}
-        </ContentInjector>
-      </LifecycleMonitor>
+      <EventContainer
+        classNames={['fc-bg-event']}
+        style={{ backgroundColor: seg.ui.backgroundColor }}
+        defaultGenerator={renderInnerContent}
+        seg={seg}
+        timeText=""
+        isDragging={false}
+        isResizing={false}
+        isDateSelecting={false}
+        isSelected={false}
+        isPast={props.isPast}
+        isFuture={props.isFuture}
+        isToday={props.isToday}
+        disableDragging={true}
+        disableResizing={true}
+      />
     )
   }
 }
@@ -63,5 +42,11 @@ function renderInnerContent(props: EventContentArg) {
 
   return title && (
     <div className="fc-event-title">{props.event.title}</div>
+  )
+}
+
+export function renderFill(fillType: string) {
+  return (
+    <div className={`fc-${fillType}`} />
   )
 }

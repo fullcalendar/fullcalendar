@@ -1,20 +1,19 @@
-import { createElement, VNode, ComponentChildren, isValidElement, PreactDOMAttributes } from '../preact.js'
+import { createElement, ComponentChildren, isValidElement, JSX, Ref} from '../preact.js'
 import { CustomContent, CustomContentGenerator, ObjCustomContent } from '../common/render-hook.js'
 import { BaseComponent } from '../vdom-util.js'
 import { guid } from '../util/misc.js'
 import { isArraysEqual } from '../util/array.js'
 import { removeElement } from '../util/dom-manip.js'
-import { ViewOptionsRefined } from '../options.js'
 
-export interface ContentInjectorProps<RenderProps> {
+export interface ContentInjectorProps<RenderProps> extends JSX.HTMLAttributes {
   tagName?: string
-  className?: string
-  style?: any // TODO: better type
-  extraAttrs?: any // TODO: better type
-  optionName: keyof ViewOptionsRefined // TODO: discriminate for CustomContentGenerator
+  elRef?: Ref<HTMLElement>
   renderProps: RenderProps
-  children?: (renderProps: RenderProps) => VNode // the default
+  generatorName: string
+  generator: CustomContentGenerator<RenderProps> | undefined
 }
+
+export const defaultTagName = 'div'
 
 export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorProps<RenderProps>> {
   private id = guid()
@@ -22,17 +21,19 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
 
   render() {
     const { props, context } = this
-    const attrs = { className: props.className, style: props.style, ...props.extraAttrs }
-    let innerContent: ComponentChildren | undefined
-    let needsDefault = false
+    const { options } = context
 
-    if (context.options.handleCustomRendering) {
-      needsDefault = !context.options.customRenderingGenerators?.[props.optionName]
-    } else {
-      const customContentGenerator = context.options[props.optionName] as CustomContentGenerator<RenderProps> | undefined
-      const customContent: CustomContent = typeof customContentGenerator === 'function' ?
-        customContentGenerator(props.renderProps, createElement) :
-        customContentGenerator
+    const { tagName, generator, renderProps } = props
+    const attrs: JSX.HTMLAttributes = { ...props, ref: props.elRef, children: undefined }
+    let innerContent: ComponentChildren | undefined
+
+    if (
+      !options.handleCustomRendering ||
+      !options.customRenderingGenerators?.[props.generatorName]
+    ) {
+      const customContent: CustomContent = typeof generator === 'function' ?
+        generator(renderProps, createElement) :
+        generator
 
       if (
         typeof customContent === 'string' ||
@@ -42,20 +43,14 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
         innerContent = customContent
       } else if (typeof customContent === 'object') {
         if ('html' in customContent) {
-          (attrs as PreactDOMAttributes).dangerouslySetInnerHTML = { __html: customContent.html }
+          attrs.dangerouslySetInnerHTML = { __html: customContent.html }
         } else if ('domNodes' in customContent) {
           this.queuedDomNodes = (customContent as ObjCustomContent).domNodes
         }
-      } else {
-        needsDefault = true
       }
     }
 
-    if (needsDefault && props.children) {
-      innerContent = props.children(props.renderProps)
-    }
-
-    return createElement(props.tagName || 'div', attrs, innerContent)
+    return createElement((tagName || defaultTagName) as any, attrs, innerContent)
   }
 
   componentDidMount(): void {
@@ -77,15 +72,14 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
     const { handleCustomRendering, customRenderingGenerators } = context.options
 
     if (handleCustomRendering) {
-      const customRenderingGenerator = customRenderingGenerators?.[props.optionName]
+      const customRenderingGenerator = customRenderingGenerators?.[props.generatorName]
 
       if (customRenderingGenerator) {
         handleCustomRendering({
           id: this.id,
           isActive,
           containerEl: this.base as HTMLElement,
-          className: props.className || '',
-          generatorName: props.optionName as string,
+          generatorName: props.generatorName,
           generator: customRenderingGenerator,
           renderProps: props.renderProps,
         })

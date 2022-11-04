@@ -7,7 +7,6 @@ export interface CustomRendering<RenderProps> {
   id: string
   isActive: boolean
   containerEl: HTMLElement
-  className: string
   generatorName: string
   generator: CustomRenderingGenerator<RenderProps>
   renderProps: RenderProps

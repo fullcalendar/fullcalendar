@@ -1,10 +1,12 @@
 import {
   MinimalEventProps, BaseComponent, ViewContext, AllDayContentArg,
-  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, RenderHook, getSegAnchorAttrs, buildEventContentArg, getEventClassNames, LifecycleMonitor, ContentInjector,
+  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter,
+  RenderHook, getSegAnchorAttrs, EventContainer,
 } from '@fullcalendar/core'
 import {
   createElement,
   ComponentChildren,
+  Fragment,
 } from '@fullcalendar/core/preact'
 
 const DEFAULT_TIME_FORMAT = createFormatter({
@@ -25,42 +27,37 @@ export class ListViewEventRow extends BaseComponent<ListViewEventRowProps> {
     let { options } = context
     let { seg, timeHeaderId, eventHeaderId, dateHeaderId } = props
     let timeFormat = options.eventTimeFormat || DEFAULT_TIME_FORMAT
-    let eventContentArg = buildEventContentArg({
-      ...props,
-      timeText: '',
-      disableDragging: true,
-      disableResizing: true,
-    }, context)
-    let className = getEventClassNames(eventContentArg)
-      .concat(seg.eventRange.ui.classNames)
-      .concat(['fc-list-event', eventContentArg.event.url ? 'fc-event-forced-url' : ''])
-      .join(' ')
 
     return (
-      <LifecycleMonitor
-        didMount={options.eventDidMount}
-        willUnmount={options.eventWillUnmount}
-        renderProps={eventContentArg}
+      <EventContainer
+        {...props}
+        tagName="tr"
+        classNames={['fc-list-event', seg.event.url ? 'fc-event-forced-url' : '']}
+        defaultGenerator={() => renderEventInnerContent(seg, context) /* weird */}
+        seg={seg}
+        timeText=""
+        disableDragging={true}
+        disableResizing={true}
       >
-        <tr className={className}>
-          {buildTimeContent(seg, timeFormat, context, timeHeaderId, dateHeaderId)}
-          <td aria-hidden className="fc-list-event-graphic">
-            <span
-              className="fc-list-event-dot"
-              style={{ borderColor: eventContentArg.borderColor || eventContentArg.backgroundColor }}
+        {(InnerContent, eventContentArg) => (
+          <Fragment>
+            {buildTimeContent(seg, timeFormat, context, timeHeaderId, dateHeaderId)}
+            <td aria-hidden className="fc-list-event-graphic">
+              <span
+                className="fc-list-event-dot"
+                style={{
+                  borderColor: eventContentArg.borderColor || eventContentArg.backgroundColor,
+                }}
+              />
+            </td>
+            <InnerContent
+              tagName="td"
+              className="fc-list-event-title"
+              headers={`${eventHeaderId} ${dateHeaderId}`}
             />
-          </td>
-          <ContentInjector
-            tagName="td"
-            className="fc-list-event-title"
-            extraAttrs={{ headers: `${eventHeaderId} ${dateHeaderId}` }}
-            optionName="eventContent"
-            renderProps={eventContentArg}
-          >
-            {() => renderEventInnerContent(seg, context) /* weird */}
-          </ContentInjector>
-        </tr>
-      </LifecycleMonitor>
+          </Fragment>
+        )}
+      </EventContainer>
     )
   }
 }

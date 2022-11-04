@@ -1,18 +1,26 @@
-import { createElement, Fragment } from '../preact.js'
+import { createElement, Fragment, Ref } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
-import { buildSegTimeText, EventContentArg, getEventClassNames, getSegAnchorAttrs } from '../component/event-rendering.js'
+import { buildSegTimeText, EventContentArg, getSegAnchorAttrs } from '../component/event-rendering.js'
 import { DateFormatter } from '../datelib/DateFormatter.js'
-import { buildEventContentArg, MinimalEventProps } from './EventRoot.js'
-import { LifecycleMonitor } from '../content-inject/LifecycleMonitor.js'
-import { ContentInjector } from '../content-inject/ContentInjector.js'
+import { EventContainer } from './EventRoot.js'
+import { Seg } from '../component/DateComponent.js'
 
-export interface StandardEventProps extends MinimalEventProps {
-  extraClassNames: string[]
+export interface StandardEventProps {
+  elRef?: Ref<HTMLElement>
+  classNames?: string[]
+  seg: Seg
+  isDragging: boolean // rename to isMirrorDragging? make optional?
+  isResizing: boolean // rename to isMirrorResizing? make optional?
+  isDateSelecting: boolean // rename to isMirrorDateSelecting? make optional?
+  isSelected: boolean
+  isPast: boolean
+  isFuture: boolean
+  isToday: boolean
+  disableDragging?: boolean // defaults false
+  disableResizing?: boolean // defaults false
   defaultTimeFormat: DateFormatter
   defaultDisplayEventTime?: boolean // default true
   defaultDisplayEventEnd?: boolean // default true
-  disableDragging?: boolean // default false
-  disableResizing?: boolean // default false
 }
 
 // should not be a purecomponent
@@ -21,7 +29,7 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
     let { props, context } = this
     let { options } = context
     let { seg } = props
-    let timeFormat = context.options.eventTimeFormat || props.defaultTimeFormat
+    let timeFormat = options.eventTimeFormat || props.defaultTimeFormat
     let timeText = buildSegTimeText(
       seg,
       timeFormat,
@@ -29,40 +37,34 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
       props.defaultDisplayEventTime,
       props.defaultDisplayEventEnd,
     )
-    let eventContentArg = buildEventContentArg({ ...props, timeText }, context)
-    let className = getEventClassNames(eventContentArg)
-      .concat(seg.eventRange.ui.classNames)
-      .concat(props.extraClassNames || [])
-      .join(' ')
 
     return (
-      <LifecycleMonitor
-        didMount={options.eventDidMount}
-        willUnmount={options.eventWillUnmount}
-        renderProps={eventContentArg}
+      <EventContainer
+        {...props /* includes children */}
+        {...getSegAnchorAttrs(seg, context)}
+        tagName="a"
+        style={{
+          borderColor: seg.ui.borderColor,
+          backgroundColor: seg.ui.backgroundColor,
+        }}
+        defaultGenerator={renderInnerContent}
+        timeText={timeText}
       >
-        <a
-          className={className}
-          style={{
-            borderColor: eventContentArg.borderColor,
-            backgroundColor: eventContentArg.backgroundColor,
-          }}
-          {...getSegAnchorAttrs(seg, context)}
-        >
-          <ContentInjector
-            className="fc-event-main"
-            optionName="eventContent"
-            style={{ color: eventContentArg.textColor }}
-            renderProps={eventContentArg}
-          >
-            {renderInnerContent}
-          </ContentInjector>
-          {eventContentArg.isStartResizable &&
-            <div className="fc-event-resizer fc-event-resizer-start" />}
-          {eventContentArg.isEndResizable &&
-            <div className="fc-event-resizer fc-event-resizer-end" />}
-        </a>
-      </LifecycleMonitor>
+        {(InnerContent, eventContentArg) => (
+          <Fragment>
+            <InnerContent
+              className="fc-event-main"
+              style={{ color: eventContentArg.textColor }}
+            />
+            {Boolean(eventContentArg.isStartResizable) && (
+              <div className="fc-event-resizer fc-event-resizer-start" />
+            )}
+            {Boolean(eventContentArg.isEndResizable) && (
+              <div className="fc-event-resizer fc-event-resizer-end" />
+            )}
+          </Fragment>
+        )}
+      </EventContainer>
     )
   }
 }

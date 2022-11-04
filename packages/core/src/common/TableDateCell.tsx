@@ -5,12 +5,12 @@ import { createElement } from '../preact.js'
 import { DateFormatter } from '../datelib/DateFormatter.js'
 import { formatDayString } from '../datelib/formatting-utils.js'
 import { BaseComponent } from '../vdom-util.js'
-import { RenderHook } from './render-hook.js'
 import { buildNavLinkAttrs } from './nav-link.js'
 import { DateProfile } from '../DateProfileGenerator.js'
 import { DayHeaderContentArg } from '../render-hook-misc.js'
 import { Dictionary } from '../options.js'
 import { CLASS_NAME, renderInner } from './table-cell-util.js'
+import { ContentContainer } from '../content-inject/ContentContainer.js'
 
 export interface TableDateCellProps {
   date: DateMarker
@@ -50,40 +50,35 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
     }
 
     return (
-      <RenderHook
-        hookProps={hookProps}
-        classNames={options.dayHeaderClassNames}
-        content={options.dayHeaderContent}
-        defaultContent={renderInner}
+      <ContentContainer
+        {...props.extraDataAttrs}
+        tagName="th"
+        role="columnheader"
+        classNames={classNames}
+        colSpan={props.colSpan}
+        data-date={!dayMeta.isDisabled ? formatDayString(date) : undefined}
+        renderProps={hookProps}
+        generatorName="dayHeaderContent"
+        generator={options.dayHeaderContent || renderInner}
+        classNameGenerator={options.dayHeaderClassNames}
         didMount={options.dayHeaderDidMount}
         willUnmount={options.dayHeaderWillUnmount}
       >
-        {(rootElRef, customClassNames, innerElRef, innerContent) => (
-          <th
-            ref={rootElRef}
-            role="columnheader"
-            className={classNames.concat(customClassNames).join(' ')}
-            data-date={!dayMeta.isDisabled ? formatDayString(date) : undefined}
-            colSpan={props.colSpan}
-            {...props.extraDataAttrs}
-          >
-            <div className="fc-scrollgrid-sync-inner">
-              {!dayMeta.isDisabled && (
-                <a
-                  ref={innerElRef}
-                  className={[
-                    'fc-col-header-cell-cushion',
-                    props.isSticky ? 'fc-sticky' : '',
-                  ].join(' ')}
-                  {...navLinkAttrs}
-                >
-                  {innerContent}
-                </a>
-              )}
-            </div>
-          </th>
+        {(InnerContainer) => (
+          <div className="fc-scrollgrid-sync-inner">
+            {!dayMeta.isDisabled && (
+              <InnerContainer
+                {...navLinkAttrs}
+                tagName="a"
+                classNames={[
+                  'fc-col-header-cell-cushion',
+                  props.isSticky ? 'fc-sticky' : '',
+                ]}
+              />
+            )}
+          </div>
         )}
-      </RenderHook>
+      </ContentContainer>
     )
   }
 }

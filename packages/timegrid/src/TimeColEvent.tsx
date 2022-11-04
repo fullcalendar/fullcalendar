@@ -13,20 +13,15 @@ export interface TimeColEventProps extends MinimalEventProps {
 
 export class TimeColEvent extends BaseComponent<TimeColEventProps> {
   render() {
-    let classNames = [
-      'fc-timegrid-event',
-      'fc-v-event',
-    ]
-
-    if (this.props.isShort) {
-      classNames.push('fc-timegrid-event-short')
-    }
-
     return (
       <StandardEvent
         {...this.props}
+        classNames={[
+          'fc-timegrid-event',
+          'fc-v-event',
+          this.props.isShort ? 'fc-timegrid-event-short' : '',
+        ]}
         defaultTimeFormat={DEFAULT_TIME_FORMAT}
-        extraClassNames={classNames}
       />
     )
   }
