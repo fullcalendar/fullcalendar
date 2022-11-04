@@ -1,19 +1,27 @@
-import { createElement, ComponentChildren, isValidElement, JSX, Ref} from '../preact.js'
+import { createElement, ComponentChild, isValidElement, JSX, Ref } from '../preact.js'
 import { CustomContent, CustomContentGenerator, ObjCustomContent } from '../common/render-hook.js'
 import { BaseComponent } from '../vdom-util.js'
 import { guid } from '../util/misc.js'
 import { isArraysEqual } from '../util/array.js'
 import { removeElement } from '../util/dom-manip.js'
 
-export interface ContentInjectorProps<RenderProps> extends JSX.HTMLAttributes {
-  tagName?: string
-  elRef?: Ref<HTMLElement>
+export type ElRef = Ref<HTMLElement & SVGElement>
+export type ElAttrs = JSX.HTMLAttributes & JSX.SVGAttributes & Record<string, any>
+
+export interface ElProps {
+  elTag?: string
+  elRef?: ElRef
+  elClasses?: string[]
+  elAttrs?: ElAttrs
+}
+
+export interface ContentInjectorProps<RenderProps> extends ElProps {
   renderProps: RenderProps
   generatorName: string
   generator: CustomContentGenerator<RenderProps> | undefined
 }
 
-export const defaultTagName = 'div'
+export const defaultTag = 'div'
 
 export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorProps<RenderProps>> {
   private id = guid()
@@ -22,10 +30,9 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
   render() {
     const { props, context } = this
     const { options } = context
-
-    const { tagName, generator, renderProps } = props
-    const attrs: JSX.HTMLAttributes = { ...props, ref: props.elRef, children: undefined }
-    let innerContent: ComponentChildren | undefined
+    const { generator, renderProps } = props
+    const attrs = buildElAttrs(props)
+    let innerContent: ComponentChild
 
     if (
       !options.handleCustomRendering ||
@@ -50,7 +57,7 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
       }
     }
 
-    return createElement((tagName || defaultTagName) as any, attrs, innerContent)
+    return createElement(props.elTag || defaultTag, attrs, innerContent)
   }
 
   componentDidMount(): void {
@@ -105,4 +112,22 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
       this.queuedDomNodes = undefined
     }
   }
+}
+
+// Util
+
+export function buildElAttrs(
+  props: ContentInjectorProps<any>,
+  extraClassNames?: string[],
+): ElAttrs {
+  const attrs: ElAttrs = { ...props.elAttrs, ref: props.elRef }
+
+  if (props.elClasses || extraClassNames) {
+    attrs.className = (props.elClasses || [])
+      .concat(extraClassNames || [])
+      .concat(attrs.className || [])
+      .join(' ')
+  }
+
+  return attrs
 }

@@ -1,37 +1,31 @@
-import { createElement, JSX, Ref, VNode, FunctionalComponent } from '../preact.js'
-import { ClassNamesGenerator, CustomContentGenerator } from '../common/render-hook.js'
+import { createElement, FunctionalComponent, ComponentChildren } from '../preact.js'
+import { ClassNamesGenerator } from '../common/render-hook.js'
 import { BaseComponent } from '../vdom-util.js'
-import { ContentInjector, ContentInjectorProps, defaultTagName } from './ContentInjector.js'
-
-export type InnerContainerComponent = FunctionalComponent<NestedContentInjectorProps>
+import { ContentInjector, ContentInjectorProps, defaultTag, buildElAttrs, ElProps } from './ContentInjector.js'
 
 export interface ContentContainerProps<RenderProps> extends ContentInjectorProps<RenderProps> {
-  classNames?: string[]
   classNameGenerator: ClassNamesGenerator<RenderProps> | undefined
   didMount: ((renderProps: RenderProps & { el: HTMLElement }) => void) | undefined
   willUnmount: ((renderProps: RenderProps & { el: HTMLElement }) => void) | undefined
-  children?: (InnerContainer: InnerContainerComponent, renderProps: RenderProps) => VNode
+  children?: (InnerContainer: InnerContainerComponent, renderProps: RenderProps) => ComponentChildren
 }
 
 export class ContentContainer<RenderProps> extends BaseComponent<ContentContainerProps<RenderProps>> {
   render() {
     const { props } = this
-    const classNames = resolveClassNames(props.classNameGenerator, props.renderProps)
-      .concat(props.classNames || [])
-      .concat(props.className ? [props.className] : [])
-    const className = classNames.join(' ')
+    const generatedClassNames = generateClassNames(props.classNameGenerator, props.renderProps)
 
     if (props.children) {
       return createElement(
-        (props.tagName || defaultTagName) as any,
-        { ...props, className, ref: props.elRef },
-        props.children(NestedContentInjector.bind(undefined, props), props.renderProps),
+        props.elTag || defaultTag,
+        buildElAttrs(props, generatedClassNames),
+        props.children(InnerContentInjector.bind(undefined, props), props.renderProps),
       )
     } else {
-      return createElement(
-        ContentInjector<RenderProps>,
-        { ...props, className }, // send elRef as-is
-      )
+      return createElement(ContentInjector<RenderProps>, {
+        ...props,
+        elClasses: (props.elClasses || []).concat(generatedClassNames),
+      })
     }
   }
 
@@ -50,41 +44,30 @@ export class ContentContainer<RenderProps> extends BaseComponent<ContentContaine
   }
 }
 
-// Nested
+// Inner
 
-interface NestedContentInjectorProps extends JSX.HTMLAttributes {
-  tagName?: string
-  elRef?: Ref<HTMLElement>
-  classNames?: string[]
-}
+export type InnerContainerComponent = FunctionalComponent<ElProps>
+export type InnerContainerFunc<RenderProps> = (
+  InnerContainer: InnerContainerComponent,
+  renderProps: RenderProps
+) => ComponentChildren
 
-function NestedContentInjector<RenderProps>(
+function InnerContentInjector<RenderProps>(
   parentProps: ContentContainerProps<RenderProps>,
-  props: NestedContentInjectorProps,
+  props: ElProps,
 ) {
   return createElement(ContentInjector<RenderProps>, {
     ...parentProps,
-    tagName: props.tagName,
+    elTag: props.elTag,
     elRef: props.elRef,
-    className: (props.classNames || [])
-      .concat(props.className ? [props.className] : [])
-      .join(' '),
+    elClasses: props.elClasses,
+    elAttrs: props.elAttrs,
   })
-}
-
-// For specific usecases of a ContentContainer
-
-export interface SpecificContentContainerProps<RenderProps> extends JSX.HTMLAttributes {
-  tagName?: string
-  elRef?: Ref<HTMLElement>
-  classNames?: string[]
-  defaultGenerator: CustomContentGenerator<RenderProps> | undefined
-  children?: (InnerContainer: InnerContainerComponent, renderProps: RenderProps) => VNode
 }
 
 // Utils
 
-function resolveClassNames<RenderProps>(
+function generateClassNames<RenderProps>(
   classNameGenerator: ClassNamesGenerator<RenderProps> | undefined,
   renderProps: RenderProps,
 ): string[] {

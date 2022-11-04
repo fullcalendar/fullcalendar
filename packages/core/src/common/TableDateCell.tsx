@@ -51,12 +51,14 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
 
     return (
       <ContentContainer
-        {...props.extraDataAttrs}
-        tagName="th"
-        role="columnheader"
-        classNames={classNames}
-        colSpan={props.colSpan}
-        data-date={!dayMeta.isDisabled ? formatDayString(date) : undefined}
+        elTag="th"
+        elClasses={classNames}
+        elAttrs={{
+          role: 'columnheader',
+          colSpan: props.colSpan,
+          'data-date': !dayMeta.isDisabled ? formatDayString(date) : undefined,
+          ...props.extraDataAttrs,
+        }}
         renderProps={hookProps}
         generatorName="dayHeaderContent"
         generator={options.dayHeaderContent || renderInner}
@@ -68,9 +70,9 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
           <div className="fc-scrollgrid-sync-inner">
             {!dayMeta.isDisabled && (
               <InnerContainer
-                {...navLinkAttrs}
-                tagName="a"
-                classNames={[
+                elTag="a"
+                elAttrs={navLinkAttrs}
+                elClasses={[
                   'fc-col-header-cell-cushion',
                   props.isSticky ? 'fc-sticky' : '',
                 ]}

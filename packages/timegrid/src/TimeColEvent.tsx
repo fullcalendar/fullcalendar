@@ -16,7 +16,7 @@ export class TimeColEvent extends BaseComponent<TimeColEventProps> {
     return (
       <StandardEvent
         {...this.props}
-        classNames={[
+        elClasses={[
           'fc-timegrid-event',
           'fc-v-event',
           this.props.isShort ? 'fc-timegrid-event-short' : '',

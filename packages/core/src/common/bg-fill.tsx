@@ -18,8 +18,8 @@ export class BgEvent extends BaseComponent<BgEventProps> {
 
     return (
       <EventContainer
-        classNames={['fc-bg-event']}
-        style={{ backgroundColor: seg.ui.backgroundColor }}
+        elAttrs={{ style: { backgroundColor: seg.ui.backgroundColor }}}
+        elClasses={['fc-bg-event']}
         defaultGenerator={renderInnerContent}
         seg={seg}
         timeText=""

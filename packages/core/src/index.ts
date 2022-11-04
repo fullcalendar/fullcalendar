@@ -319,7 +319,7 @@ export { triggerDateSelect, getDefaultEventEnd } from './calendar-utils.js'
 
 export { injectStyles } from './styleUtils.js'
 
-export type { ContentInjectorProps } from './content-inject/ContentInjector.js'
+export type { ContentInjectorProps, ElProps } from './content-inject/ContentInjector.js'
 export { ContentInjector } from './content-inject/ContentInjector.js'
-export type { ContentContainerProps } from './content-inject/ContentContainer.js'
+export type { ContentContainerProps, InnerContainerFunc } from './content-inject/ContentContainer.js'
 export { ContentContainer } from './content-inject/ContentContainer.js'

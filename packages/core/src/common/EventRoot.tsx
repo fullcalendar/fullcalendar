@@ -9,10 +9,9 @@ import {
   EventContentArg,
   getEventClassNames,
 } from '../component/event-rendering.js'
-import {
-  ContentContainer,
-  SpecificContentContainerProps,
-} from '../content-inject/ContentContainer.js'
+import { ContentContainer, InnerContainerFunc } from '../content-inject/ContentContainer.js'
+import { ElProps } from '../content-inject/ContentInjector.js'
+import { CustomContentGenerator } from './render-hook.js'
 
 export interface MinimalEventProps {
   seg: Seg
@@ -25,13 +24,13 @@ export interface MinimalEventProps {
   isToday: boolean
 }
 
-export type EventContainerProps =
-  SpecificContentContainerProps<EventContentArg> &
-  MinimalEventProps & {
-    disableDragging?: boolean
-    disableResizing?: boolean
-    timeText: string
-  }
+export type EventContainerProps = ElProps & MinimalEventProps & {
+  defaultGenerator: CustomContentGenerator<EventContentArg>
+  disableDragging?: boolean
+  disableResizing?: boolean
+  timeText: string
+  children?: InnerContainerFunc<EventContentArg>
+}
 
 export class EventContainer extends BaseComponent<EventContainerProps> {
   render() {
@@ -62,14 +61,14 @@ export class EventContainer extends BaseComponent<EventContainerProps> {
       isResizing: Boolean(props.isResizing),
     }
 
-    const classNames = getEventClassNames(renderProps)
+    const elClasses = getEventClassNames(renderProps)
       .concat(seg.eventRange.ui.classNames)
-      .concat(props.classNames || [])
+      .concat(props.elClasses || [])
 
     return (
       <ContentContainer
-        {...props /* includes children */}
-        classNames={classNames}
+        {...props}
+        elClasses={elClasses}
         renderProps={renderProps}
         generatorName="eventContent"
         generator={options.eventContent || props.defaultGenerator}

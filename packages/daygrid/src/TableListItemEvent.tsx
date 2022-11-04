@@ -17,7 +17,7 @@ export interface DotTableEventProps {
   isFuture: boolean
   isToday: boolean
   defaultDisplayEventEnd: boolean
-  children: never
+  children?: never
 }
 
 export class TableListItemEvent extends BaseComponent<DotTableEventProps> {
@@ -37,9 +37,9 @@ export class TableListItemEvent extends BaseComponent<DotTableEventProps> {
     return (
       <EventContainer
         {...props}
-        {...getSegAnchorAttrs(props.seg, context)}
-        tagName="a"
-        classNames={['fc-daygrid-event', 'fc-daygrid-dot-event']}
+        elTag="a"
+        elClasses={['fc-daygrid-event', 'fc-daygrid-dot-event']}
+        elAttrs={getSegAnchorAttrs(props.seg, context)}
         defaultGenerator={renderInnerContent}
         timeText={timeText}
         isResizing={false}

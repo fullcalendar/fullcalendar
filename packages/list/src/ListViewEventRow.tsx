@@ -31,8 +31,8 @@ export class ListViewEventRow extends BaseComponent<ListViewEventRowProps> {
     return (
       <EventContainer
         {...props}
-        tagName="tr"
-        classNames={['fc-list-event', seg.event.url ? 'fc-event-forced-url' : '']}
+        elTag="tr"
+        elClasses={['fc-list-event', seg.event.url ? 'fc-event-forced-url' : '']}
         defaultGenerator={() => renderEventInnerContent(seg, context) /* weird */}
         seg={seg}
         timeText=""
@@ -51,9 +51,9 @@ export class ListViewEventRow extends BaseComponent<ListViewEventRowProps> {
               />
             </td>
             <InnerContent
-              tagName="td"
-              className="fc-list-event-title"
-              headers={`${eventHeaderId} ${dateHeaderId}`}
+              elTag="td"
+              elClasses={['fc-list-event-title']}
+              elAttrs={{ headers: `${eventHeaderId} ${dateHeaderId}` }}
             />
           </Fragment>
         )}

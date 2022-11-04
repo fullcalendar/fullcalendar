@@ -1,13 +1,14 @@
-import { createElement, Fragment, Ref } from '../preact.js'
+import { createElement, Fragment } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
 import { buildSegTimeText, EventContentArg, getSegAnchorAttrs } from '../component/event-rendering.js'
 import { DateFormatter } from '../datelib/DateFormatter.js'
 import { EventContainer } from './EventRoot.js'
 import { Seg } from '../component/DateComponent.js'
+import { ElRef } from '../content-inject/ContentInjector.js'
 
 export interface StandardEventProps {
-  elRef?: Ref<HTMLElement>
-  classNames?: string[]
+  elRef?: ElRef
+  elClasses?: string[]
   seg: Seg
   isDragging: boolean // rename to isMirrorDragging? make optional?
   isResizing: boolean // rename to isMirrorResizing? make optional?
@@ -40,12 +41,14 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
 
     return (
       <EventContainer
-        {...props /* includes children */}
-        {...getSegAnchorAttrs(seg, context)}
-        tagName="a"
-        style={{
-          borderColor: seg.ui.borderColor,
-          backgroundColor: seg.ui.backgroundColor,
+        {...props}
+        elTag="a"
+        elAttrs={{
+          ...getSegAnchorAttrs(seg, context),
+          style: {
+            borderColor: seg.ui.borderColor,
+            backgroundColor: seg.ui.backgroundColor,
+          },
         }}
         defaultGenerator={renderInnerContent}
         timeText={timeText}
@@ -53,8 +56,8 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
         {(InnerContent, eventContentArg) => (
           <Fragment>
             <InnerContent
-              className="fc-event-main"
-              style={{ color: eventContentArg.textColor }}
+              elClasses={['fc-event-main']}
+              elAttrs={{ style: { color: eventContentArg.textColor } }}
             />
             {Boolean(eventContentArg.isStartResizable) && (
               <div className="fc-event-resizer fc-event-resizer-start" />
