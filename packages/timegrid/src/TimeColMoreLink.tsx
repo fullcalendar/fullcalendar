@@ -1,5 +1,5 @@
 import {
-  MoreLinkContentArg, MoreLinkRoot, BaseComponent, setRef,
+  MoreLinkContentArg, MoreLinkRoot, BaseComponent,
   Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState, CssDimValue,
 } from '@fullcalendar/core'
 import {
@@ -23,40 +23,34 @@ export interface TimeColMoreLinkProps {
 }
 
 export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
-  rootElRef = createRef<HTMLElement>()
+  elRef = createRef<HTMLElement & SVGElement>()
 
   render() {
     let { props } = this
+
     return (
       <MoreLinkRoot
+        elRef={this.elRef}
+        elClasses={['fc-timegrid-more-link']}
+        elAttrs={{
+          style: {
+            top: props.top,
+            bottom: props.bottom,
+          },
+        }}
         allDayDate={null}
         moreCnt={props.hiddenSegs.length}
         allSegs={props.hiddenSegs}
         hiddenSegs={props.hiddenSegs}
-        alignmentElRef={this.rootElRef}
-        defaultContent={renderMoreLinkInner}
+        alignmentElRef={this.elRef}
         extraDateSpan={props.extraDateSpan}
         dateProfile={props.dateProfile}
         todayRange={props.todayRange}
         popoverContent={() => renderPlainFgSegs(props.hiddenSegs, props)}
+        defaultGenerator={renderMoreLinkInner}
       >
-        {(rootElRef, classNames, innerElRef, innerContent, handleClick, title, isExpanded, popoverId) => (
-          <a
-            ref={(el: HTMLElement | null) => {
-              setRef(rootElRef, el)
-              setRef(this.rootElRef, el)
-            }}
-            className={['fc-timegrid-more-link'].concat(classNames).join(' ')}
-            style={{ top: props.top, bottom: props.bottom }}
-            onClick={handleClick}
-            title={title}
-            aria-expanded={isExpanded}
-            aria-controls={popoverId}
-          >
-            <div ref={innerElRef} className="fc-timegrid-more-link-inner fc-sticky">
-              {innerContent}
-            </div>
-          </a>
+        {(InnerContent) => (
+          <InnerContent elClasses={['fc-timegrid-more-link-inner', 'fc-sticky']} />
         )}
       </MoreLinkRoot>
     )

@@ -1,13 +1,15 @@
 import { ViewContext, ViewContextType } from '../ViewContext.js'
 import { DateMarker } from '../datelib/marker.js'
-import { RenderHook, RenderHookPropsChildren, MountArg } from './render-hook.js'
+import { MountArg } from './render-hook.js'
 import { createElement } from '../preact.js'
 import { DateFormatter } from '../datelib/DateFormatter.js'
+import { ElProps } from '../content-inject/ContentInjector.js'
+import { ContentContainer, InnerContainerFunc } from '../content-inject/ContentContainer.js'
 
-export interface WeekNumberRootProps {
+export interface WeekNumberRootProps extends ElProps {
   date: DateMarker
   defaultFormat: DateFormatter
-  children: RenderHookPropsChildren
+  children?: InnerContainerFunc<WeekNumberContentArg>
 }
 
 export interface WeekNumberContentArg {
@@ -15,6 +17,7 @@ export interface WeekNumberContentArg {
   text: string
   date: Date
 }
+
 export type WeekNumberMountArg = MountArg<WeekNumberContentArg>
 
 export const WeekNumberRoot = (props: WeekNumberRootProps) => (
@@ -25,19 +28,18 @@ export const WeekNumberRoot = (props: WeekNumberRootProps) => (
       let format = options.weekNumberFormat || props.defaultFormat
       let num = dateEnv.computeWeekNumber(date) // TODO: somehow use for formatting as well?
       let text = dateEnv.format(date, format)
-      let hookProps: WeekNumberContentArg = { num, text, date }
+      let renderProps: WeekNumberContentArg = { num, text, date }
 
       return (
-        <RenderHook<WeekNumberContentArg> // why isn't WeekNumberContentArg being auto-detected?
-          hookProps={hookProps}
-          classNames={options.weekNumberClassNames}
-          content={options.weekNumberContent}
-          defaultContent={renderInner}
+        <ContentContainer // why isn't WeekNumberContentArg being auto-detected?
+          {...props /* includes children */}
+          renderProps={renderProps}
+          generatorName="weekNumberContent"
+          generator={options.weekNumberContent || renderInner}
+          classNameGenerator={options.weekNumberClassNames}
           didMount={options.weekNumberDidMount}
           willUnmount={options.weekNumberWillUnmount}
-        >
-          {props.children}
-        </RenderHook>
+        />
       )
     }}
   </ViewContextType.Consumer>

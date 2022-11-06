@@ -86,17 +86,14 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
                   <div className="fc-timegrid-col-frame">
                     <div className="fc-timegrid-now-indicator-container">
                       {typeof nowIndicatorTop === 'number' && (
-                        <NowIndicatorRoot isAxis date={props.nowDate}>
-                          {(rootElRef, classNames, innerElRef, innerContent) => (
-                            <div
-                              ref={rootElRef}
-                              className={['fc-timegrid-now-indicator-arrow'].concat(classNames).join(' ')}
-                              style={{ top: nowIndicatorTop }}
-                            >
-                              {innerContent}
-                            </div>
-                          )}
-                        </NowIndicatorRoot>
+                        <NowIndicatorRoot
+                          elClasses={['fc-timegrid-now-indicator-arrow']}
+                          elAttrs={{
+                            style: { top: nowIndicatorTop },
+                          }}
+                          isAxis
+                          date={props.nowDate}
+                        />
                       )}
                     </div>
                   </div>
@@ -110,7 +107,7 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
                   date={cell.date}
                   nowDate={props.nowDate}
                   todayRange={props.todayRange}
-                  extraHookProps={cell.extraHookProps}
+                  extraRenderProps={cell.extraRenderProps}
                   extraDataAttrs={cell.extraDataAttrs}
                   extraClassNames={cell.extraClassNames}
                   extraDateSpan={cell.extraDateSpan}

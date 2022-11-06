@@ -3,18 +3,18 @@ import { addDays } from '../datelib/marker.js'
 import { createElement } from '../preact.js'
 import { DateFormatter } from '../datelib/DateFormatter.js'
 import { BaseComponent } from '../vdom-util.js'
-import { RenderHook } from './render-hook.js'
 import { Dictionary } from '../options.js'
 import { CLASS_NAME, renderInner } from './table-cell-util.js'
 import { DayHeaderContentArg } from '../render-hook-misc.js'
 import { createFormatter } from '../datelib/formatting.js'
+import { ContentContainer } from '../content-inject/ContentContainer.js'
 
 export interface TableDowCellProps {
   dow: number
   dayHeaderFormat: DateFormatter
   colSpan?: number
   isSticky?: boolean // TODO: get this outta here somehow
-  extraHookProps?: Dictionary
+  extraRenderProps?: Dictionary
   extraDataAttrs?: Dictionary
   extraClassNames?: string[]
 }
@@ -34,51 +34,50 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
       isToday: false,
       isOther: false,
     }
-    let classNames = [CLASS_NAME].concat(
-      getDayClassNames(dateMeta, theme),
-      props.extraClassNames || [],
-    )
     let text = dateEnv.format(date, props.dayHeaderFormat)
-    let hookProps: DayHeaderContentArg = { // TODO: make this public?
+    let renderProps: DayHeaderContentArg = { // TODO: make this public?
       date,
       ...dateMeta,
       view: viewApi,
-      ...props.extraHookProps,
+      ...props.extraRenderProps,
       text,
     }
 
     return (
-      <RenderHook
-        hookProps={hookProps}
-        classNames={options.dayHeaderClassNames}
-        content={options.dayHeaderContent}
-        defaultContent={renderInner}
+      <ContentContainer
+        elTag="th"
+        elClasses={[
+          CLASS_NAME,
+          ...getDayClassNames(dateMeta, theme),
+          ...(props.extraClassNames || []),
+        ]}
+        elAttrs={{
+          role: 'columnheader',
+          colSpan: props.colSpan,
+          ...props.extraDataAttrs,
+        }}
+        renderProps={renderProps}
+        generatorName="dayHeaderContent"
+        generator={options.dayHeaderContent || renderInner}
+        classNameGenerator={options.dayHeaderClassNames}
         didMount={options.dayHeaderDidMount}
         willUnmount={options.dayHeaderWillUnmount}
       >
-        {(rootElRef, customClassNames, innerElRef, innerContent) => (
-          <th
-            ref={rootElRef}
-            role="columnheader"
-            className={classNames.concat(customClassNames).join(' ')}
-            colSpan={props.colSpan}
-            {...props.extraDataAttrs}
-          >
-            <div className="fc-scrollgrid-sync-inner">
-              <a
-                aria-label={dateEnv.format(date, WEEKDAY_FORMAT)}
-                className={[
-                  'fc-col-header-cell-cushion',
-                  props.isSticky ? 'fc-sticky' : '',
-                ].join(' ')}
-                ref={innerElRef}
-              >
-                {innerContent}
-              </a>
-            </div>
-          </th>
+        {(InnerContent) => (
+          <div className="fc-scrollgrid-sync-inner">
+            <InnerContent
+              elTag="a"
+              elClasses={[
+                'fc-col-header-cell-cushion',
+                props.isSticky ? 'fc-sticky' : '',
+              ]}
+              elAttrs={{
+                'aria-label': dateEnv.format(date, WEEKDAY_FORMAT),
+              }}
+            />
+          </div>
         )}
-      </RenderHook>
+      </ContentContainer>
     )
   }
 }

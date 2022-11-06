@@ -1,6 +1,5 @@
 import { Store } from './Store.js'
 
-export type CustomRenderingGenerator<RenderProps> = (renderProps: RenderProps) => any
 export type CustomRenderingHandler<RenderProps> = (customRender: CustomRendering<RenderProps>) => void
 
 export interface CustomRendering<RenderProps> {
@@ -8,7 +7,7 @@ export interface CustomRendering<RenderProps> {
   isActive: boolean
   containerEl: HTMLElement
   generatorName: string
-  generator: CustomRenderingGenerator<RenderProps>
+  generatorMeta: any // could be as simple as boolean
   renderProps: RenderProps
 }
 

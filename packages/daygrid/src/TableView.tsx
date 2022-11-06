@@ -56,17 +56,13 @@ export abstract class TableView<State=Dictionary> extends DateComponent<ViewProp
     })
 
     return (
-      <ViewRoot viewSpec={context.viewSpec}>
-        {(rootElRef, classNames) => (
-          <div ref={rootElRef} className={['fc-daygrid'].concat(classNames).join(' ')}>
-            <SimpleScrollGrid
-              liquid={!props.isHeightAuto && !props.forPrint}
-              collapsibleWidth={props.forPrint}
-              cols={[] /* TODO: make optional? */}
-              sections={sections}
-            />
-          </div>
-        )}
+      <ViewRoot elClasses={['fc-daygrid']} viewSpec={context.viewSpec}>
+        <SimpleScrollGrid
+          liquid={!props.isHeightAuto && !props.forPrint}
+          collapsibleWidth={props.forPrint}
+          cols={[] /* TODO: make optional? */}
+          sections={sections}
+        />
       </ViewRoot>
     )
   }
@@ -125,17 +121,13 @@ export abstract class TableView<State=Dictionary> extends DateComponent<ViewProp
     }
 
     return (
-      <ViewRoot viewSpec={context.viewSpec}>
-        {(rootElRef, classNames) => (
-          <div ref={rootElRef} className={['fc-daygrid'].concat(classNames).join(' ')}>
-            <ScrollGrid
-              liquid={!props.isHeightAuto && !props.forPrint}
-              collapsibleWidth={props.forPrint}
-              colGroups={[{ cols: [{ span: colCnt, minWidth: dayMinWidth }] }]}
-              sections={sections}
-            />
-          </div>
-        )}
+      <ViewRoot elClasses={['fc-daygrid']} viewSpec={context.viewSpec}>
+        <ScrollGrid
+          liquid={!props.isHeightAuto && !props.forPrint}
+          collapsibleWidth={props.forPrint}
+          colGroups={[{ cols: [{ span: colCnt, minWidth: dayMinWidth }] }]}
+          sections={sections}
+        />
       </ViewRoot>
     )
   }

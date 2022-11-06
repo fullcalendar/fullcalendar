@@ -19,7 +19,6 @@ import { NamedTimeZoneImplClass } from './datelib/timezone.js'
 import { ElementDraggingClass } from './interactions/ElementDragging.js'
 import { ComponentChildren } from './preact.js'
 import { ScrollGridImpl } from './scrollgrid/ScrollGridImpl.js'
-import { ContentTypeHandlers } from './common/render-hook.js'
 import { GenericRefiners, GenericListenerRefiners, Dictionary } from './options.js'
 import { CalendarData } from './reducers/data-types.js'
 
@@ -56,7 +55,6 @@ export interface PluginDefInput {
   elementDraggingImpl?: ElementDraggingClass
   optionChangeHandlers?: OptionChangeHandlerMap
   scrollGridImpl?: ScrollGridImpl
-  contentTypeHandlers?: ContentTypeHandlers
   listenerRefiners?: GenericListenerRefiners
   optionRefiners?: GenericRefiners
   propSetHandlers?: { [propName: string]: (val: any, context: CalendarData) => void } // TODO: make better types
@@ -92,7 +90,6 @@ export interface PluginHooks {
   elementDraggingImpl?: ElementDraggingClass
   optionChangeHandlers: OptionChangeHandlerMap
   scrollGridImpl: ScrollGridImpl | null
-  contentTypeHandlers: ContentTypeHandlers
   listenerRefiners: GenericListenerRefiners
   optionRefiners: GenericRefiners
   propSetHandlers: { [propName: string]: (val: any, context: CalendarData) => void }

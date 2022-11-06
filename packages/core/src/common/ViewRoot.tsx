@@ -1,13 +1,14 @@
 import { ViewSpec } from '../structs/view-spec.js'
-import { MountHook, buildClassNameNormalizer, MountArg } from './render-hook.js'
-import { ComponentChildren, createElement, Ref } from '../preact.js'
+import { MountArg } from './render-hook.js'
+import { ComponentChildren, createElement } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
 import { ViewApi } from '../ViewApi.js'
+import { ContentContainer } from '../content-inject/ContentContainer.js'
+import { ElProps } from '../content-inject/ContentInjector.js'
 
-export interface ViewRootProps {
+export interface ViewRootProps extends ElProps {
   viewSpec: ViewSpec
-  children: (rootElRef: Ref<any>, classNames: string[]) => ComponentChildren
-  elRef?: Ref<any>
+  children: ComponentChildren
 }
 
 export interface ViewContentArg {
@@ -17,26 +18,34 @@ export interface ViewContentArg {
 export type ViewMountArg = MountArg<ViewContentArg>
 
 export class ViewRoot extends BaseComponent<ViewRootProps> {
-  normalizeClassNames = buildClassNameNormalizer<ViewContentArg>()
-
   render() {
     let { props, context } = this
     let { options } = context
-    let hookProps: ViewContentArg = { view: context.viewApi }
-    let customClassNames = this.normalizeClassNames(options.viewClassNames, hookProps)
+    let renderProps: ViewContentArg = { view: context.viewApi }
 
     return (
-      <MountHook
-        hookProps={hookProps}
+      <ContentContainer
+        {...props}
+        elClasses={[
+          ...buildViewClassNames(props.viewSpec),
+          ...(props.elClasses || []),
+        ]}
+        renderProps={renderProps}
+        classNameGenerator={options.viewClassNames}
+        generatorName={undefined}
+        generator={undefined}
         didMount={options.viewDidMount}
         willUnmount={options.viewWillUnmount}
-        elRef={props.elRef}
       >
-        {(rootElRef) => props.children(
-          rootElRef,
-          [`fc-${props.viewSpec.type}-view`, 'fc-view'].concat(customClassNames),
-        )}
-      </MountHook>
+        {() => props.children}
+      </ContentContainer>
     )
   }
+}
+
+export function buildViewClassNames(viewSpec: ViewSpec): string[] {
+  return [
+    `fc-${viewSpec.type}-view`,
+    'fc-view',
+  ]
 }

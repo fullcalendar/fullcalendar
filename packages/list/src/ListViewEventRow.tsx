@@ -1,12 +1,13 @@
 import {
   MinimalEventProps, BaseComponent, ViewContext, AllDayContentArg,
   Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter,
-  RenderHook, getSegAnchorAttrs, EventContainer,
+  getSegAnchorAttrs, EventContainer, ContentContainer,
 } from '@fullcalendar/core'
 import {
   createElement,
   ComponentChildren,
   Fragment,
+  ComponentChild,
 } from '@fullcalendar/core/preact'
 
 const DEFAULT_TIME_FORMAT = createFormatter({
@@ -122,26 +123,25 @@ function buildTimeContent(
     }
 
     if (doAllDay) {
-      let hookProps: AllDayContentArg = {
+      let renderProps: AllDayContentArg = {
         text: context.options.allDayText,
         view: context.viewApi,
       }
 
       return (
-        <RenderHook<AllDayContentArg> // needed?
-          hookProps={hookProps}
-          classNames={options.allDayClassNames}
-          content={options.allDayContent}
-          defaultContent={renderAllDayInner}
+        <ContentContainer
+          elTag="td"
+          elClasses={['fc-list-event-time']}
+          elAttrs={{
+            headers: `${timeHeaderId} ${dateHeaderId}`,
+          }}
+          renderProps={renderProps}
+          generatorName="allDayContent"
+          generator={options.allDayContent || renderAllDayInner}
+          classNameGenerator={options.allDayClassNames}
           didMount={options.allDayDidMount}
           willUnmount={options.allDayWillUnmount}
-        >
-          {(rootElRef, classNames, innerElRef, innerContent) => (
-            <td ref={rootElRef} headers={`${timeHeaderId} ${dateHeaderId}`} className={['fc-list-event-time'].concat(classNames).join(' ')}>
-              {innerContent}
-            </td>
-          )}
-        </RenderHook>
+        />
       )
     }
 
@@ -155,6 +155,6 @@ function buildTimeContent(
   return null
 }
 
-function renderAllDayInner(hookProps) {
-  return hookProps.text
+function renderAllDayInner(renderProps: AllDayContentArg): ComponentChild {
+  return renderProps.text
 }

@@ -2,8 +2,8 @@ import {
   ViewContext,
   createFormatter,
   ViewContextType,
-  RenderHook,
   SlotLabelContentArg,
+  ContentContainer,
 } from '@fullcalendar/core'
 import {
   createElement,
@@ -39,7 +39,7 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
             Array.isArray(options.slotLabelFormat) ? createFormatter(options.slotLabelFormat[0]) :
               createFormatter(options.slotLabelFormat)
 
-        let hookProps: SlotLabelContentArg = {
+        let renderProps: SlotLabelContentArg = {
           level: 0,
           time: props.time,
           date: dateEnv.toDate(props.date),
@@ -48,24 +48,30 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
         }
 
         return (
-          <RenderHook<SlotLabelContentArg> // needed?
-            hookProps={hookProps}
-            classNames={options.slotLabelClassNames}
-            content={options.slotLabelContent}
-            defaultContent={renderInnerContent}
+          <ContentContainer
+            elTag="td"
+            elClasses={classNames}
+            elAttrs={{
+              'data-time': props.isoTimeStr,
+            }}
+            renderProps={renderProps}
+            generatorName="slotLabelContent"
+            generator={options.slotLabelContent || renderInnerContent}
+            classNameGenerator={options.slotLabelClassNames}
             didMount={options.slotLabelDidMount}
             willUnmount={options.slotLabelWillUnmount}
           >
-            {(rootElRef, customClassNames, innerElRef, innerContent) => (
-              <td ref={rootElRef} className={classNames.concat(customClassNames).join(' ')} data-time={props.isoTimeStr}>
-                <div className="fc-timegrid-slot-label-frame fc-scrollgrid-shrink-frame">
-                  <div className="fc-timegrid-slot-label-cushion fc-scrollgrid-shrink-cushion" ref={innerElRef}>
-                    {innerContent}
-                  </div>
-                </div>
-              </td>
+            {(InnerContent) => (
+              <div className="fc-timegrid-slot-label-frame fc-scrollgrid-shrink-frame">
+                <InnerContent
+                  elClasses={[
+                    'fc-timegrid-slot-label-cushion',
+                    'fc-scrollgrid-shrink-cushion',
+                  ]}
+                />
+              </div>
             )}
-          </RenderHook>
+          </ContentContainer>
         )
       }}
     </ViewContextType.Consumer>

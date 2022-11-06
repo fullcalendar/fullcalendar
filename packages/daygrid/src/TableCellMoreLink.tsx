@@ -8,7 +8,6 @@ import {
   DateRange,
   EventSegUiInteractionState,
   getSegMeta,
-  createAriaClickAttrs,
 } from '@fullcalendar/core'
 import { createElement, RefObject, Fragment } from '@fullcalendar/core/preact'
 import { TableSegPlacement } from './event-placement.js'
@@ -40,6 +39,7 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
 
     return (
       <MoreLinkRoot
+        elClasses={['fc-daygrid-more-link']}
         dateProfile={props.dateProfile}
         todayRange={props.todayRange}
         allDayDate={props.allDayDate}
@@ -91,20 +91,7 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
             </Fragment>
           )
         }}
-      >
-        {(rootElRef, classNames, innerElRef, innerContent, handleClick, title, isExpanded, popoverId) => (
-          <a
-            ref={rootElRef}
-            className={['fc-daygrid-more-link'].concat(classNames).join(' ')}
-            title={title}
-            aria-expanded={isExpanded}
-            aria-controls={popoverId}
-            {...createAriaClickAttrs(handleClick)}
-          >
-            {innerContent}
-          </a>
-        )}
-      </MoreLinkRoot>
+      />
     )
   }
 }

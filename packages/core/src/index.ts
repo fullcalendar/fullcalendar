@@ -287,12 +287,7 @@ export type { ScrollRequest } from './ScrollResponder.js'
 export { ScrollResponder } from './ScrollResponder.js'
 export { globalPlugins } from './global-plugins.js'
 export type {
-  RenderHookProps, RenderHookPropsChildren, MountHookProps, ClassNamesGenerator,
   CustomContentGenerator, DidMountHandler, WillUnmountHandler, MountArg,
-} from './common/render-hook.js'
-export {
-  RenderHook, buildClassNameNormalizer, ContentHook, MountHook,
-  CustomContentRenderContext,
 } from './common/render-hook.js'
 export type { StandardEventProps } from './common/StandardEvent.js'
 export { StandardEvent } from './common/StandardEvent.js'
@@ -300,9 +295,7 @@ export type { NowIndicatorRootProps } from './common/NowIndicatorRoot.js'
 export { NowIndicatorRoot } from './common/NowIndicatorRoot.js'
 
 export type { DayCellRootProps, DayCellContentArg } from './common/DayCellRoot.js'
-export { DayCellRoot } from './common/DayCellRoot.js'
-export type { DayCellContentProps } from './common/DayCellContent.js'
-export { DayCellContent } from './common/DayCellContent.js'
+export { DayCellRoot, hasCustomDayCellContent } from './common/DayCellRoot.js'
 export type {  MinimalEventProps, EventContainerProps } from './common/EventRoot.js'
 export { EventContainer } from './common/EventRoot.js'
 export type { BgEventProps } from './common/bg-fill.js'

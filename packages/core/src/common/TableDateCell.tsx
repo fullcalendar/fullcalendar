@@ -21,7 +21,7 @@ export interface TableDateCellProps {
   colSpan?: number
   isSticky?: boolean // TODO: get this outta here somehow
   extraDataAttrs?: Dictionary
-  extraHookProps?: Dictionary
+  extraRenderProps?: Dictionary
 }
 
 export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD name for this class now. used in the Header
@@ -41,10 +41,10 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
       ? buildNavLinkAttrs(this.context, date)
       : {}
 
-    let hookProps: DayHeaderContentArg = {
+    let renderProps: DayHeaderContentArg = {
       date: dateEnv.toDate(date),
       view: viewApi,
-      ...props.extraHookProps,
+      ...props.extraRenderProps,
       text,
       ...dayMeta,
     }
@@ -59,7 +59,7 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
           'data-date': !dayMeta.isDisabled ? formatDayString(date) : undefined,
           ...props.extraDataAttrs,
         }}
-        renderProps={hookProps}
+        renderProps={renderProps}
         generatorName="dayHeaderContent"
         generator={options.dayHeaderContent || renderInner}
         classNameGenerator={options.dayHeaderClassNames}

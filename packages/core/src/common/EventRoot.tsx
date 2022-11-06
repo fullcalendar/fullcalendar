@@ -61,14 +61,14 @@ export class EventContainer extends BaseComponent<EventContainerProps> {
       isResizing: Boolean(props.isResizing),
     }
 
-    const elClasses = getEventClassNames(renderProps)
-      .concat(seg.eventRange.ui.classNames)
-      .concat(props.elClasses || [])
-
     return (
       <ContentContainer
-        {...props}
-        elClasses={elClasses}
+        {...props /* contains children */}
+        elClasses={[
+          ...getEventClassNames(renderProps),
+          ...seg.eventRange.ui.classNames,
+          ...(props.elClasses || []),
+        ]}
         renderProps={renderProps}
         generatorName="eventContent"
         generator={options.eventContent || props.defaultGenerator}

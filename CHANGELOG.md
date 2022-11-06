@@ -1,4 +1,7 @@
 
+Calendar::render(), called for rerender, does not rerender custom content areas. does it?
+
+
 v6.0.0-beta.1
 -------------
 

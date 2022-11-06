@@ -13,7 +13,7 @@ export interface DayTableSeg extends Seg {
 export interface DayTableCell {
   key: string // probably just the serialized date, but could be other metadata if this col is specific to another entity
   date: DateMarker
-  extraHookProps?: Dictionary
+  extraRenderProps?: Dictionary
   extraDataAttrs?: Dictionary
   extraClassNames?: string[]
   extraDateSpan?: Dictionary

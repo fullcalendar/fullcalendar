@@ -6,25 +6,17 @@ import { DateProfile } from '../DateProfileGenerator.js'
 import { Dictionary } from '../options.js'
 import { elementClosest, getUniqueDomId } from '../util/dom-manip.js'
 import { formatWithOrdinals } from '../util/misc.js'
-import { ComponentChildren, createElement, createRef, Fragment, Ref, RefObject, VNode } from '../preact.js'
+import { createElement, createRef, Fragment, RefObject, ComponentChild } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
 import { ViewApi } from '../ViewApi.js'
 import { ViewContext, ViewContextType } from '../ViewContext.js'
 import { MorePopover } from './MorePopover.js'
-import { MountArg, RenderHook } from './render-hook.js'
+import { CustomContentGenerator, MountArg } from './render-hook.js'
+import { ContentContainer, InnerContainerFunc } from '../content-inject/ContentContainer.js'
+import { ElProps } from '../content-inject/ContentInjector.js'
+import { createAriaClickAttrs } from '../util/dom-event.js'
 
-export type MoreLinkChildren = (
-  rootElRef: Ref<any>,
-  classNames: string[],
-  innerElRef: Ref<any>,
-  innerContent: ComponentChildren,
-  handleClick: (ev: MouseEvent) => void,
-  title: string, // for a11y
-  isExpanded: boolean,
-  popoverId: string,
-) => ComponentChildren
-
-export interface MoreLinkRootProps { // what the MoreLinkRoot component receives
+export interface MoreLinkRootProps extends ElProps {
   dateProfile: DateProfile
   todayRange: DateRange
   allDayDate: DateMarker | null
@@ -35,12 +27,12 @@ export interface MoreLinkRootProps { // what the MoreLinkRoot component receives
   alignmentElRef: RefObject<HTMLElement> // for popover
   alignGridTop?: boolean // for popover
   topAlignmentElRef?: RefObject<HTMLElement>
-  defaultContent?: (hookProps: MoreLinkContentArg) => ComponentChildren
-  popoverContent: () => VNode
-  children: MoreLinkChildren
+  popoverContent: () => ComponentChild
+  defaultGenerator?: CustomContentGenerator<MoreLinkContentArg>
+  children?: InnerContainerFunc<MoreLinkContentArg>
 }
 
-export interface MoreLinkContentArg { // what the render-hooks receive
+export interface MoreLinkContentArg {
   num: number
   text: string
   shortText: string
@@ -55,7 +47,7 @@ interface MoreLinkRootState {
 }
 
 export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootState> {
-  private linkElRef = createRef<HTMLElement>()
+  private linkElRef = createRef<HTMLElement & SVGElement>()
   private parentEl: HTMLElement
 
   state = {
@@ -76,8 +68,9 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
           let text = typeof moreLinkText === 'function' // TODO: eventually use formatWithOrdinals
             ? moreLinkText.call(calendarApi, moreCnt)
             : `+${moreCnt} ${moreLinkText}`
-          let title = formatWithOrdinals(options.moreLinkHint, [moreCnt], text)
-          let hookProps: MoreLinkContentArg = {
+          let hint = formatWithOrdinals(options.moreLinkHint, [moreCnt], text)
+
+          let renderProps: MoreLinkContentArg = {
             num: moreCnt,
             shortText: `+${moreCnt}`, // TODO: offer hook or i18n?
             text,
@@ -87,26 +80,27 @@ export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootS
           return (
             <Fragment>
               {Boolean(props.moreCnt) && (
-                <RenderHook<MoreLinkContentArg>
+                <ContentContainer
+                  elTag={props.elTag || 'a'}
                   elRef={this.linkElRef}
-                  hookProps={hookProps}
-                  classNames={options.moreLinkClassNames}
-                  content={options.moreLinkContent}
-                  defaultContent={props.defaultContent || renderMoreLinkInner}
+                  elClasses={[
+                    ...(props.elClasses || []),
+                    'fc-more-link',
+                  ]}
+                  elAttrs={{
+                    ...props.elAttrs,
+                    ...createAriaClickAttrs(this.handleClick),
+                    title: hint,
+                    'aria-expanded': state.isPopoverOpen,
+                    'aria-controls': state.isPopoverOpen ? state.popoverId : '',
+                  }}
+                  renderProps={renderProps}
+                  generatorName="moreLinkContent"
+                  generator={options.moreLinkContent || props.defaultGenerator || renderMoreLinkInner}
+                  classNameGenerator={options.moreLinkClassNames}
                   didMount={options.moreLinkDidMount}
                   willUnmount={options.moreLinkWillUnmount}
-                >
-                  {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
-                    rootElRef,
-                    ['fc-more-link'].concat(customClassNames),
-                    innerElRef,
-                    innerContent,
-                    this.handleClick,
-                    title,
-                    state.isPopoverOpen,
-                    state.isPopoverOpen ? state.popoverId : '',
-                  )}
-                </RenderHook>
+                >{props.children}</ContentContainer>
               )}
               {state.isPopoverOpen && (
                 <MorePopover

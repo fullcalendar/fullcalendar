@@ -5,8 +5,7 @@ import { DateProfile } from '../DateProfileGenerator.js'
 import { Hit } from '../interactions/hit.js'
 import { Dictionary } from '../options.js'
 import { createElement, ComponentChildren } from '../preact.js'
-import { DayCellContent } from './DayCellContent.js'
-import { DayCellRoot } from './DayCellRoot.js'
+import { DayCellRoot, hasCustomDayCellContent } from './DayCellRoot.js'
 import { Popover } from './Popover.js'
 
 export interface MorePopoverProps {
@@ -31,26 +30,30 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
     let { props } = this
     let { startDate, todayRange, dateProfile } = props
     let title = dateEnv.format(startDate, options.dayPopoverFormat)
+
     return (
-      <DayCellRoot date={startDate} dateProfile={dateProfile} todayRange={todayRange} elRef={this.handleRootEl}>
-        {(rootElRef, dayClassNames, dataAttrs) => (
+      <DayCellRoot
+        elTag="" // causes NO root element!
+        elRef={this.handleRootEl}
+        date={startDate}
+        dateProfile={dateProfile}
+        todayRange={todayRange}
+      >
+        {(InnerContent, renderProps, elAttrs) => (
           <Popover
-            elRef={rootElRef}
+            elRef={elAttrs.ref as any}
             id={props.id}
             title={title}
-            extraClassNames={['fc-more-popover'].concat(dayClassNames)}
-            extraAttrs={dataAttrs /* TODO: make these time-based when not whole-day? */}
+            extraClassNames={['fc-more-popover'].concat(elAttrs.className || [])}
+            extraAttrs={elAttrs /* TODO: make these time-based when not whole-day? */}
             parentEl={props.parentEl}
             alignmentEl={props.alignmentEl}
             alignGridTop={props.alignGridTop}
             onClose={props.onClose}
           >
-            <DayCellContent date={startDate} dateProfile={dateProfile} todayRange={todayRange}>
-              {(innerElRef, innerContent) => (
-                innerContent &&
-                  <div className="fc-more-popover-misc" ref={innerElRef}>{innerContent}</div>
-              )}
-            </DayCellContent>
+            {hasCustomDayCellContent(options) && (
+              <InnerContent elClasses={['fc-more-popover-misc']} />
+            )}
             {props.children}
           </Popover>
         )}
@@ -58,8 +61,9 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
     )
   }
 
-  handleRootEl = (rootEl: HTMLDivElement | null) => {
+  handleRootEl = (rootEl: HTMLElement | null) => {
     this.rootEl = rootEl
+
     if (rootEl) {
       this.context.registerInteractiveComponent(this, {
         el: rootEl,

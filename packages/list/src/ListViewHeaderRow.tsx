@@ -1,6 +1,6 @@
 import {
   BaseComponent, DateMarker, DateRange, getDateMeta,
-  RenderHook, DayHeaderContentArg, getDayClassNames, formatDayString, buildNavLinkAttrs, getUniqueDomId,
+  DayHeaderContentArg, getDayClassNames, formatDayString, buildNavLinkAttrs, getUniqueDomId, ContentContainer,
 } from '@fullcalendar/core'
 import { createElement, Fragment } from '@fullcalendar/core/preact'
 
@@ -8,12 +8,6 @@ export interface ListViewHeaderRowProps {
   cellId: string
   dayDate: DateMarker
   todayRange: DateRange
-}
-
-interface HookProps extends DayHeaderContentArg { // doesn't enforce much since DayCellContentArg allow extra props
-  textId: string // for aria-labelledby
-  text: string
-  sideText: string
 }
 
 export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
@@ -33,7 +27,7 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
     // will ever be falsy? also, BAD NAME "alt"
     let sideText = options.listDaySideFormat ? dateEnv.format(dayDate, options.listDaySideFormat) : ''
 
-    let hookProps: HookProps = {
+    let renderProps: RenderProps = {
       date: dateEnv.toDate(dayDate),
       view: viewApi,
       textId,
@@ -44,40 +38,47 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
       ...dayMeta,
     }
 
-    let classNames = ['fc-list-day'].concat(
-      getDayClassNames(dayMeta, theme),
-    )
-
     // TODO: make a reusable HOC for dayHeader (used in daygrid/timegrid too)
     return (
-      <RenderHook<HookProps>
-        hookProps={hookProps}
-        classNames={options.dayHeaderClassNames}
-        content={options.dayHeaderContent}
-        defaultContent={renderInnerContent}
+      <ContentContainer
+        elTag="tr"
+        elClasses={[
+          'fc-list-day',
+          ...getDayClassNames(dayMeta, theme),
+        ]}
+        elAttrs={{
+          'data-date': formatDayString(dayDate),
+        }}
+        renderProps={renderProps}
+        generatorName="dayHeaderContent"
+        generator={options.dayHeaderContent || renderInnerContent}
+        classNameGenerator={options.dayHeaderClassNames}
         didMount={options.dayHeaderDidMount}
         willUnmount={options.dayHeaderWillUnmount}
       >
-        {(rootElRef, customClassNames, innerElRef, innerContent) => (
-          <tr
-            ref={rootElRef}
-            className={classNames.concat(customClassNames).join(' ')}
-            data-date={formatDayString(dayDate)}
-          >
-            {/* TODO: force-hide top border based on :first-child */}
-            <th scope="colgroup" colSpan={3} id={cellId} aria-labelledby={textId}>
-              <div className={'fc-list-day-cushion ' + theme.getClass('tableCellShaded')} ref={innerElRef}>
-                {innerContent}
-              </div>
-            </th>
-          </tr>
+        {(InnerContent) => ( // TODO: force-hide top border based on :first-child
+          <th scope="colgroup" colSpan={3} id={cellId} aria-labelledby={textId}>
+            <InnerContent
+              elClasses={[
+                'fc-list-day-cushion',
+                theme.getClass('tableCellShaded'),
+              ]}
+            />
+          </th>
         )}
-      </RenderHook>
+      </ContentContainer>
     )
   }
 }
 
-function renderInnerContent(props: HookProps) {
+// doesn't enforce much since DayCellContentArg allow extra props
+interface RenderProps extends DayHeaderContentArg {
+  textId: string // for aria-labelledby
+  text: string
+  sideText: string
+}
+
+function renderInnerContent(props: RenderProps) {
   return (
     <Fragment>
       {props.text && (

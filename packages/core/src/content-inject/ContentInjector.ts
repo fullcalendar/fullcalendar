@@ -4,8 +4,9 @@ import { BaseComponent } from '../vdom-util.js'
 import { guid } from '../util/misc.js'
 import { isArraysEqual } from '../util/array.js'
 import { removeElement } from '../util/dom-manip.js'
+import { ViewOptions } from '../options.js'
 
-export type ElRef = Ref<HTMLElement & SVGElement>
+export type ElRef = Ref<HTMLElement & SVGElement> // TODO: figure out??? `elAttrs.ref as an`
 export type ElAttrs = JSX.HTMLAttributes & JSX.SVGAttributes & Record<string, any>
 
 export interface ElProps {
@@ -13,11 +14,12 @@ export interface ElProps {
   elRef?: ElRef
   elClasses?: string[]
   elAttrs?: ElAttrs
+  // TODO: add elStyles
 }
 
 export interface ContentInjectorProps<RenderProps> extends ElProps {
   renderProps: RenderProps
-  generatorName: string
+  generatorName: string | undefined
   generator: CustomContentGenerator<RenderProps> | undefined
 }
 
@@ -32,12 +34,9 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
     const { options } = context
     const { generator, renderProps } = props
     const attrs = buildElAttrs(props)
-    let innerContent: ComponentChild
+    let innerContent: ComponentChild | undefined
 
-    if (
-      !options.handleCustomRendering ||
-      !options.customRenderingGenerators?.[props.generatorName]
-    ) {
+    if (!hasCustomRenderingHandler(props.generatorName, options)) {
       const customContent: CustomContent = typeof generator === 'function' ?
         generator(renderProps, createElement) :
         generator
@@ -76,18 +75,18 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
 
   private triggerCustomRendering(isActive: boolean) {
     const { props, context } = this
-    const { handleCustomRendering, customRenderingGenerators } = context.options
+    const { handleCustomRendering, customRenderingMetaMap } = context.options
 
     if (handleCustomRendering) {
-      const customRenderingGenerator = customRenderingGenerators?.[props.generatorName]
+      const customRenderingMeta = customRenderingMetaMap?.[props.generatorName]
 
-      if (customRenderingGenerator) {
+      if (customRenderingMeta) {
         handleCustomRendering({
           id: this.id,
           isActive,
           containerEl: this.base as HTMLElement,
           generatorName: props.generatorName,
-          generator: customRenderingGenerator,
+          generatorMeta: customRenderingMeta,
           renderProps: props.renderProps,
         })
       }
@@ -115,6 +114,17 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
 }
 
 // Util
+
+export function hasCustomRenderingHandler(
+  generatorName: string | undefined,
+  options: ViewOptions,
+): boolean {
+  return Boolean(
+    options.handleCustomRendering &&
+    generatorName &&
+    options.customRenderingMetaMap?.[generatorName],
+  )
+}
 
 export function buildElAttrs(
   props: ContentInjectorProps<any>,

@@ -1,11 +1,12 @@
 import { ViewProps } from '../View.js'
 import { mapHash } from '../util/object.js'
 import { ComponentType, Component, createElement } from '../preact.js'
-import { ViewRoot } from '../common/ViewRoot.js'
-import { RenderHook, MountArg } from '../common/render-hook.js'
+import { buildViewClassNames } from '../common/ViewRoot.js'
+import { MountArg } from '../common/render-hook.js'
 import { ViewContext, ViewContextType } from '../ViewContext.js'
 import { ViewOptions } from '../options.js'
 import { Duration } from '../datelib/duration.js'
+import { ContentContainer } from '../content-inject/ContentContainer.js'
 
 /*
 A view-config represents information for either:
@@ -59,30 +60,18 @@ function createViewHookComponent(options: ViewOptions) {
   return (viewProps: ViewProps) => (
     <ViewContextType.Consumer>
       {(context: ViewContext) => (
-        <ViewRoot viewSpec={context.viewSpec}>
-          {(viewElRef, viewClassNames) => {
-            let hookProps: SpecificViewContentArg = {
-              ...viewProps,
-              nextDayThreshold: context.options.nextDayThreshold,
-            }
-            return (
-              <RenderHook
-                hookProps={hookProps}
-                classNames={options.classNames as any}
-                content={options.content as any}
-                didMount={options.didMount as any}
-                willUnmount={options.willUnmount as any}
-                elRef={viewElRef}
-              >
-                {(rootElRef, customClassNames, innerElRef, innerContent) => (
-                  <div className={viewClassNames.concat(customClassNames).join(' ')} ref={rootElRef}>
-                    {innerContent}
-                  </div>
-                )}
-              </RenderHook>
-            )
+        <ContentContainer
+          elClasses={buildViewClassNames(context.viewSpec)}
+          renderProps={{
+            ...viewProps,
+            nextDayThreshold: context.options.nextDayThreshold,
           }}
-        </ViewRoot>
+          generatorName={undefined}
+          generator={options.content as any}
+          classNameGenerator={options.classNames as any}
+          didMount={options.didMount as any}
+          willUnmount={options.willUnmount as any}
+        />
       )}
     </ViewContextType.Consumer>
   )

@@ -5,7 +5,6 @@ import { CalendarDataManager } from './reducers/CalendarDataManager.js'
 import { Action } from './reducers/Action.js'
 import { CalendarData } from './reducers/data-types.js'
 import { CalendarRoot } from './CalendarRoot.js'
-import { CustomContentRenderContext } from './common/render-hook.js'
 import { CalendarContent } from './CalendarContent.js'
 import { createElement, render, flushSync } from './preact.js'
 import { isArraysEqual } from './util/array.js'
@@ -19,7 +18,6 @@ export class Calendar extends CalendarApi {
   isRendering = false
   isRendered = false
   currentClassNames: string[] = []
-  customContentRenderId = 0 // will affect custom generated classNames?
 
   get view() { return this.currentData.viewApi } // for public API
 
@@ -64,13 +62,11 @@ export class Calendar extends CalendarApi {
               this.setHeight(height)
 
               return (
-                <CustomContentRenderContext.Provider value={this.customContentRenderId}>
-                  <CalendarContent
-                    isHeightAuto={isHeightAuto}
-                    forPrint={forPrint}
-                    {...currentData}
-                  />
-                </CustomContentRenderContext.Provider>
+                <CalendarContent
+                  isHeightAuto={isHeightAuto}
+                  forPrint={forPrint}
+                  {...currentData}
+                />
               )
             }}
           </CalendarRoot>,
@@ -91,8 +87,6 @@ export class Calendar extends CalendarApi {
 
     if (!wasRendering) {
       this.isRendering = true
-    } else {
-      this.customContentRenderId += 1
     }
 
     this.renderRunner.request()

@@ -1,13 +1,13 @@
 import { createElement, FunctionalComponent, ComponentChildren } from '../preact.js'
 import { ClassNamesGenerator } from '../common/render-hook.js'
 import { BaseComponent } from '../vdom-util.js'
-import { ContentInjector, ContentInjectorProps, defaultTag, buildElAttrs, ElProps } from './ContentInjector.js'
+import { ContentInjector, ContentInjectorProps, defaultTag, buildElAttrs, ElProps, ElAttrs } from './ContentInjector.js'
 
 export interface ContentContainerProps<RenderProps> extends ContentInjectorProps<RenderProps> {
   classNameGenerator: ClassNamesGenerator<RenderProps> | undefined
   didMount: ((renderProps: RenderProps & { el: HTMLElement }) => void) | undefined
   willUnmount: ((renderProps: RenderProps & { el: HTMLElement }) => void) | undefined
-  children?: (InnerContainer: InnerContainerComponent, renderProps: RenderProps) => ComponentChildren
+  children?: InnerContainerFunc<RenderProps>
 }
 
 export class ContentContainer<RenderProps> extends BaseComponent<ContentContainerProps<RenderProps>> {
@@ -16,11 +16,18 @@ export class ContentContainer<RenderProps> extends BaseComponent<ContentContaine
     const generatedClassNames = generateClassNames(props.classNameGenerator, props.renderProps)
 
     if (props.children) {
-      return createElement(
-        props.elTag || defaultTag,
-        buildElAttrs(props, generatedClassNames),
-        props.children(InnerContentInjector.bind(undefined, props), props.renderProps),
+      const elAttrs = buildElAttrs(props, generatedClassNames)
+      const children = props.children(
+        InnerContentInjector.bind(undefined, props),
+        props.renderProps,
+        elAttrs,
       )
+
+      if (props.elTag === '') { // TODO: do if elTag undefined? no more defaultTag!
+        return children
+      } else {
+        return createElement(props.elTag || defaultTag, elAttrs, children)
+      }
     } else {
       return createElement(ContentInjector<RenderProps>, {
         ...props,
@@ -49,7 +56,8 @@ export class ContentContainer<RenderProps> extends BaseComponent<ContentContaine
 export type InnerContainerComponent = FunctionalComponent<ElProps>
 export type InnerContainerFunc<RenderProps> = (
   InnerContainer: InnerContainerComponent,
-  renderProps: RenderProps
+  renderProps: RenderProps,
+  elAttrs: ElAttrs,
 ) => ComponentChildren
 
 function InnerContentInjector<RenderProps>(
@@ -57,11 +65,10 @@ function InnerContentInjector<RenderProps>(
   props: ElProps,
 ) {
   return createElement(ContentInjector<RenderProps>, {
-    ...parentProps,
-    elTag: props.elTag,
-    elRef: props.elRef,
-    elClasses: props.elClasses,
-    elAttrs: props.elAttrs,
+    renderProps: parentProps.renderProps,
+    generatorName: parentProps.generatorName,
+    generator: parentProps.generator,
+    ...props,
   })
 }
 

@@ -129,7 +129,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               eventSelection={props.eventSelection}
               eventDrag={props.eventDrag}
               eventResize={props.eventResize}
-              extraHookProps={cell.extraHookProps}
+              extraRenderProps={cell.extraRenderProps}
               extraDataAttrs={cell.extraDataAttrs}
               extraClassNames={cell.extraClassNames}
               extraDateSpan={cell.extraDateSpan}
