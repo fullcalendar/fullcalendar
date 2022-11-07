@@ -100,6 +100,7 @@ export class ListView extends DateComponent<ViewProps> {
 
     return (
       <ContentContainer
+        elTag="div"
         elClasses={['fc-list-empty']}
         renderProps={renderProps}
         generatorName="noEventsContent"
@@ -109,7 +110,10 @@ export class ListView extends DateComponent<ViewProps> {
         willUnmount={options.noEventsWillUnmount}
       >
         {(InnerContent) => (
-          <InnerContent elClasses={['fc-list-empty-cushion']} />
+          <InnerContent
+            elTag="div"
+            elClasses={['fc-list-empty-cushion']}
+          />
         )}
       </ContentContainer>
     )

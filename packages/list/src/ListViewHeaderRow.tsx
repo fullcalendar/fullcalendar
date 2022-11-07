@@ -59,6 +59,7 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
         {(InnerContent) => ( // TODO: force-hide top border based on :first-child
           <th scope="colgroup" colSpan={3} id={cellId} aria-labelledby={textId}>
             <InnerContent
+              elTag="div"
               elClasses={[
                 'fc-list-day-cushion',
                 theme.getClass('tableCellShaded'),

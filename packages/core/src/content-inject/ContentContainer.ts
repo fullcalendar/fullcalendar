@@ -1,14 +1,24 @@
 import { createElement, FunctionalComponent, ComponentChildren } from '../preact.js'
 import { ClassNamesGenerator } from '../common/render-hook.js'
 import { BaseComponent } from '../vdom-util.js'
-import { ContentInjector, ContentInjectorProps, defaultTag, buildElAttrs, ElProps, ElAttrs } from './ContentInjector.js'
+import {
+  ContentInjector,
+  ContentGeneratorProps,
+  ElAttrsProps,
+  buildElAttrs,
+  ElProps,
+  ElAttrs,
+} from './ContentInjector.js'
 
-export interface ContentContainerProps<RenderProps> extends ContentInjectorProps<RenderProps> {
-  classNameGenerator: ClassNamesGenerator<RenderProps> | undefined
-  didMount: ((renderProps: RenderProps & { el: HTMLElement }) => void) | undefined
-  willUnmount: ((renderProps: RenderProps & { el: HTMLElement }) => void) | undefined
-  children?: InnerContainerFunc<RenderProps>
-}
+export type ContentContainerProps<RenderProps> =
+  ElAttrsProps &
+  ContentGeneratorProps<RenderProps> & {
+    elTag?: string
+    classNameGenerator: ClassNamesGenerator<RenderProps> | undefined
+    didMount: ((renderProps: RenderProps & { el: HTMLElement }) => void) | undefined
+    willUnmount: ((renderProps: RenderProps & { el: HTMLElement }) => void) | undefined
+    children?: InnerContainerFunc<RenderProps>
+  }
 
 export class ContentContainer<RenderProps> extends BaseComponent<ContentContainerProps<RenderProps>> {
   render() {
@@ -23,14 +33,15 @@ export class ContentContainer<RenderProps> extends BaseComponent<ContentContaine
         elAttrs,
       )
 
-      if (props.elTag === '') { // TODO: do if elTag undefined? no more defaultTag!
-        return children
+      if (props.elTag) {
+        return createElement(props.elTag, elAttrs, children)
       } else {
-        return createElement(props.elTag || defaultTag, elAttrs, children)
+        return children
       }
     } else {
       return createElement(ContentInjector<RenderProps>, {
         ...props,
+        elTag: props.elTag || 'div',
         elClasses: (props.elClasses || []).concat(generatedClassNames),
       })
     }

@@ -62,7 +62,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     return (
       <DayCellRoot
         elTag="td"
-        elRef={props.elRef as any}
+        elRef={props.elRef}
         elClasses={[
           'fc-timegrid-col',
           ...(props.extraClassNames || []),
@@ -105,7 +105,10 @@ export class TimeCol extends BaseComponent<TimeColProps> {
               {this.renderNowIndicator(props.nowIndicatorSegs)}
             </div>
             {hasCustomDayCellContent(options) && (
-              <InnerContent elClasses={['fc-timegrid-col-misc']} />
+              <InnerContent
+                elTag="div"
+                elClasses={['fc-timegrid-col-misc']}
+              />
             )}
           </div>
         )}

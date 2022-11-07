@@ -6,24 +6,29 @@ import { isArraysEqual } from '../util/array.js'
 import { removeElement } from '../util/dom-manip.js'
 import { ViewOptions } from '../options.js'
 
-export type ElRef = Ref<HTMLElement & SVGElement> // TODO: figure out??? `elAttrs.ref as an`
-export type ElAttrs = JSX.HTMLAttributes & JSX.SVGAttributes & Record<string, any>
+export type ElRef = Ref<HTMLElement>
+export type ElAttrs = JSX.HTMLAttributes & JSX.SVGAttributes & { ref?: ElRef } & Record<string, any>
 
-export interface ElProps {
-  elTag?: string
+export interface ElAttrsProps {
   elRef?: ElRef
   elClasses?: string[]
   elStyle?: JSX.CSSProperties
   elAttrs?: ElAttrs
 }
 
-export interface ContentInjectorProps<RenderProps> extends ElProps {
+export interface ElProps extends ElAttrsProps {
+  elTag: string
+}
+
+export interface ContentGeneratorProps<RenderProps> {
   renderProps: RenderProps
   generatorName: string | undefined
   generator: CustomContentGenerator<RenderProps> | undefined
 }
 
-export const defaultTag = 'div'
+export type ContentInjectorProps<RenderProps> =
+  ElProps &
+  ContentGeneratorProps<RenderProps>
 
 export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorProps<RenderProps>> {
   private id = guid()
@@ -56,7 +61,7 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
       }
     }
 
-    return createElement(props.elTag || defaultTag, attrs, innerContent)
+    return createElement(props.elTag, attrs, innerContent)
   }
 
   componentDidMount(): void {
@@ -127,10 +132,13 @@ export function hasCustomRenderingHandler(
 }
 
 export function buildElAttrs(
-  props: ContentInjectorProps<any>,
+  props: ElAttrsProps,
   extraClassNames?: string[],
 ): ElAttrs {
-  const attrs: ElAttrs = { ...props.elAttrs, ref: props.elRef }
+  const attrs: ElAttrs = {
+    ...props.elAttrs,
+    ref: props.elRef as any,
+  }
 
   if (props.elClasses || extraClassNames) {
     attrs.className = (props.elClasses || [])

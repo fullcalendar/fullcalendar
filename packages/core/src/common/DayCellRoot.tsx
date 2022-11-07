@@ -23,7 +23,7 @@ export interface DayCellContentArg extends DateMeta {
 
 export type DayCellMountArg = MountArg<DayCellContentArg>
 
-export interface DayCellRootProps extends ElProps {
+export interface DayCellRootProps extends Partial<ElProps> {
   date: DateMarker
   dateProfile: DateProfile
   todayRange: DateRange

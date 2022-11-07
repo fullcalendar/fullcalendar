@@ -33,7 +33,6 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
 
     return (
       <DayCellRoot
-        elTag="" // causes NO root element!
         elRef={this.handleRootEl}
         date={startDate}
         dateProfile={dateProfile}
@@ -41,7 +40,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
       >
         {(InnerContent, renderProps, elAttrs) => (
           <Popover
-            elRef={elAttrs.ref as any}
+            elRef={elAttrs.ref}
             id={props.id}
             title={title}
             extraClassNames={['fc-more-popover'].concat(elAttrs.className || [])}
@@ -52,7 +51,10 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
             onClose={props.onClose}
           >
             {hasCustomDayCellContent(options) && (
-              <InnerContent elClasses={['fc-more-popover-misc']} />
+              <InnerContent
+                elTag="div"
+                elClasses={['fc-more-popover-misc']}
+              />
             )}
             {props.children}
           </Popover>

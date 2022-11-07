@@ -54,6 +54,7 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
         {(InnerContent, eventContentArg) => (
           <Fragment>
             <InnerContent
+              elTag="div"
               elClasses={['fc-event-main']}
               elStyle={{ color: eventContentArg.textColor }}
             />

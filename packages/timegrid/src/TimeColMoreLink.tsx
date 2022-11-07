@@ -48,7 +48,10 @@ export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
         defaultGenerator={renderMoreLinkInner}
       >
         {(InnerContent) => (
-          <InnerContent elClasses={['fc-timegrid-more-link-inner', 'fc-sticky']} />
+          <InnerContent
+            elTag="div"
+            elClasses={['fc-timegrid-more-link-inner', 'fc-sticky']}
+          />
         )}
       </MoreLinkRoot>
     )

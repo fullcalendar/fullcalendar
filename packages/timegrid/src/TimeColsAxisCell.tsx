@@ -64,6 +64,7 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
             {(InnerContent) => (
               <div className="fc-timegrid-slot-label-frame fc-scrollgrid-shrink-frame">
                 <InnerContent
+                  elTag="div"
                   elClasses={[
                     'fc-timegrid-slot-label-cushion',
                     'fc-scrollgrid-shrink-cushion',

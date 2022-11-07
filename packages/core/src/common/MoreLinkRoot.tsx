@@ -16,7 +16,7 @@ import { ContentContainer, InnerContainerFunc } from '../content-inject/ContentC
 import { ElProps } from '../content-inject/ContentInjector.js'
 import { createAriaClickAttrs } from '../util/dom-event.js'
 
-export interface MoreLinkRootProps extends ElProps {
+export interface MoreLinkRootProps extends Partial<ElProps> {
   dateProfile: DateProfile
   todayRange: DateRange
   allDayDate: DateMarker | null

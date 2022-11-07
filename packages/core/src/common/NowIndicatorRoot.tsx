@@ -6,7 +6,7 @@ import { ViewApi } from '../ViewApi.js'
 import { ElProps } from '../content-inject/ContentInjector.js'
 import { InnerContainerFunc, ContentContainer } from '../content-inject/ContentContainer.js'
 
-export interface NowIndicatorRootProps extends ElProps {
+export interface NowIndicatorRootProps extends Partial<ElProps> {
   isAxis: boolean
   date: DateMarker
   children?: InnerContainerFunc<NowIndicatorContentArg>
@@ -33,6 +33,7 @@ export const NowIndicatorRoot = (props: NowIndicatorRootProps) => (
       return (
         <ContentContainer
           {...props /* includes children */}
+          elTag={props.elTag || 'div'}
           renderProps={renderProps}
           generatorName="nowIndicatorContent"
           generator={options.nowIndicatorContent}

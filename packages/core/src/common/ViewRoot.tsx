@@ -6,7 +6,7 @@ import { ViewApi } from '../ViewApi.js'
 import { ContentContainer } from '../content-inject/ContentContainer.js'
 import { ElProps } from '../content-inject/ContentInjector.js'
 
-export interface ViewRootProps extends ElProps {
+export interface ViewRootProps extends Partial<ElProps> {
   viewSpec: ViewSpec
   children: ComponentChildren
 }
@@ -26,6 +26,7 @@ export class ViewRoot extends BaseComponent<ViewRootProps> {
     return (
       <ContentContainer
         {...props}
+        elTag={props.elTag || 'div'}
         elClasses={[
           ...buildViewClassNames(props.viewSpec),
           ...(props.elClasses || []),
