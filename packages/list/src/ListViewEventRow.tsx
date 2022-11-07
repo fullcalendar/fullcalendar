@@ -33,7 +33,10 @@ export class ListViewEventRow extends BaseComponent<ListViewEventRowProps> {
       <EventContainer
         {...props}
         elTag="tr"
-        elClasses={['fc-list-event', seg.event.url ? 'fc-event-forced-url' : '']}
+        elClasses={[
+          'fc-list-event',
+          seg.eventRange.def.url && 'fc-event-forced-url',
+        ]}
         defaultGenerator={() => renderEventInnerContent(seg, context) /* weird */}
         seg={seg}
         timeText=""

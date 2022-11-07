@@ -3,11 +3,11 @@ import { Component, Ref } from '../preact.js'
 import { ViewContext } from '../ViewContext.js'
 
 export interface ScrollGridProps {
+  elRef?: Ref<any>
   colGroups?: ColGroupConfig[]
   sections: ScrollGridSectionConfig[]
   liquid: boolean // liquid *height*
   collapsibleWidth: boolean // can ALL sections be fully collapsed in width?
-  elRef?: Ref<any>
 }
 
 export interface ScrollGridSectionConfig extends SectionConfig {

@@ -29,11 +29,11 @@ export type ChunkConfigContent = (contentProps: ChunkContentCallbackArgs) => VNo
 export type ChunkConfigRowContent = VNode | ChunkConfigContent
 
 export interface ChunkConfig {
+  elRef?: Ref<HTMLTableCellElement>
   outerContent?: VNode
   content?: ChunkConfigContent
   rowContent?: ChunkConfigRowContent
   scrollerElRef?: Ref<HTMLDivElement>
-  elRef?: Ref<HTMLTableCellElement>
   tableClassName?: string
 }
 

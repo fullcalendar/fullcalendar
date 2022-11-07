@@ -1,4 +1,4 @@
-import { createElement } from '../preact.js'
+import { createElement, createRef } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
 import { Seg } from '../component/DateComponent.js'
 import { EventApi } from '../api/EventApi.js'
@@ -8,6 +8,7 @@ import {
   computeSegEndResizable,
   EventContentArg,
   getEventClassNames,
+  setElSeg,
 } from '../component/event-rendering.js'
 import { ContentContainer, InnerContainerFunc } from '../content-inject/ContentContainer.js'
 import { ElProps } from '../content-inject/ContentInjector.js'
@@ -33,6 +34,8 @@ export type EventContainerProps = ElProps & MinimalEventProps & {
 }
 
 export class EventContainer extends BaseComponent<EventContainerProps> {
+  elRef = createRef<HTMLElement>()
+
   render() {
     const { props, context } = this
     const { options } = context
@@ -64,6 +67,7 @@ export class EventContainer extends BaseComponent<EventContainerProps> {
     return (
       <ContentContainer
         {...props /* contains children */}
+        elRef={this.elRef}
         elClasses={[
           ...getEventClassNames(renderProps),
           ...seg.eventRange.ui.classNames,
@@ -77,5 +81,9 @@ export class EventContainer extends BaseComponent<EventContainerProps> {
         willUnmount={options.eventWillUnmount}
       />
     )
+  }
+
+  componentDidMount() {
+    setElSeg(this.elRef.current, this.props.seg)
   }
 }

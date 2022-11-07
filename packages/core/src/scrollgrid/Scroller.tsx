@@ -5,6 +5,7 @@ import { CssDimValue, ScrollerLike } from './util.js'
 export type OverflowValue = 'auto' | 'hidden' | 'scroll' | 'visible'
 
 export interface ScrollerProps {
+  elRef?: Ref<HTMLElement>
   overflowX: OverflowValue
   overflowY: OverflowValue
   overcomeLeft?: number
@@ -14,7 +15,6 @@ export interface ScrollerProps {
   liquid?: boolean
   liquidIsAbsolute?: boolean
   children?: ComponentChildren
-  elRef?: Ref<HTMLElement>
 }
 
 const VISIBLE_HIDDEN_RE = /^(visible|hidden)$/

@@ -3,11 +3,11 @@ import { ComponentChildren, Ref, createElement } from './preact.js'
 import { CssDimValue } from './scrollgrid/util.js'
 
 export interface ViewContainerProps {
+  elRef?: Ref<HTMLDivElement>
   labeledById: string
   liquid?: boolean
   height?: CssDimValue
   aspectRatio?: number
-  elRef?: Ref<HTMLDivElement>
   children?: ComponentChildren
 }
 

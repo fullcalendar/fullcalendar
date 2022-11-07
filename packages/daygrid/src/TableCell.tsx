@@ -26,13 +26,13 @@ import { TableCellMoreLink } from './TableCellMoreLink.js'
 import { TableSegPlacement } from './event-placement.js'
 
 export interface TableCellProps {
+  elRef?: Ref<HTMLTableCellElement>
   date: DateMarker
   dateProfile: DateProfile
   extraRenderProps?: Dictionary
   extraDataAttrs?: Dictionary
   extraClassNames?: string[]
   extraDateSpan?: Dictionary
-  elRef?: Ref<HTMLTableCellElement>
   innerElRef?: Ref<HTMLDivElement>
   bgContent: ComponentChildren
   fgContentElRef?: Ref<HTMLDivElement> // TODO: rename!!! classname confusion. is the "event" div
@@ -66,16 +66,16 @@ export class TableCell extends DateComponent<TableCellProps> {
     return (
       <DayCellContainer
         elTag="td"
+        elRef={this.handleRootEl}
         elClasses={[
           'fc-daygrid-day',
           ...(props.extraClassNames || []),
         ]}
         elAttrs={{
-          role: 'gridcell',
           ...props.extraDataAttrs,
           ...(props.showDayNumber ? { 'aria-labelledby': state.dayNumberId } : {}),
+          role: 'gridcell',
         }}
-        elRef={this.handleRootEl}
         defaultGenerator={renderTopInner}
         date={date}
         dateProfile={dateProfile}
@@ -96,13 +96,16 @@ export class TableCell extends DateComponent<TableCellProps> {
             )}
             {Boolean(
               !renderProps.isDisabled &&
-              (hasCustomDayCellContent(options) || props.forceDayTop),
+              (props.showDayNumber || hasCustomDayCellContent(options) || props.forceDayTop),
             ) && (
               <div className="fc-daygrid-day-top">
                 <InnerContent
                   elTag="a"
                   elClasses={['fc-daygrid-day-number']}
-                  elAttrs={navLinkAttrs}
+                  elAttrs={{
+                    ...navLinkAttrs,
+                    id: state.dayNumberId,
+                  }}
                 />
               </div>
             )}

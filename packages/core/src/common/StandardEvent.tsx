@@ -30,6 +30,7 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
     let { props, context } = this
     let { options } = context
     let { seg } = props
+    let { ui } = seg.eventRange
     let timeFormat = options.eventTimeFormat || props.defaultTimeFormat
     let timeText = buildSegTimeText(
       seg,
@@ -41,11 +42,11 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
 
     return (
       <EventContainer
-        {...props}
+        {...props /* includes elRef */}
         elTag="a"
         elStyle={{
-          borderColor: seg.ui.borderColor,
-          backgroundColor: seg.ui.backgroundColor,
+          borderColor: ui.borderColor,
+          backgroundColor: ui.backgroundColor,
         }}
         elAttrs={getSegAnchorAttrs(seg, context)}
         defaultGenerator={renderInnerContent}

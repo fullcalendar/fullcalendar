@@ -1,5 +1,6 @@
 
 Calendar::render(), called for rerender, does not rerender custom content areas. does it?
+Specifying *Content renderer that returns nothing/undefined will render blank
 
 
 v6.0.0-beta.1

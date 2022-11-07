@@ -37,10 +37,10 @@ export class Popover extends BaseComponent<PopoverProps> {
 
     return createPortal(
       <div
+        {...props.extraAttrs}
         id={props.id}
         className={classNames.join(' ')}
         aria-labelledby={state.titleId}
-        {...props.extraAttrs}
         ref={this.handleRootEl}
       >
         <div className={'fc-popover-header ' + theme.getClass('popoverHeader')}>

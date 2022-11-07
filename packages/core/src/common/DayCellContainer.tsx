@@ -1,7 +1,7 @@
 import { ComponentChild, createElement } from '../preact.js'
 import { DateMarker } from '../datelib/marker.js'
 import { DateRange } from '../datelib/date-range.js'
-import { getDateMeta, DateMeta } from '../component/date-rendering.js'
+import { getDateMeta, DateMeta, getDayClassNames } from '../component/date-rendering.js'
 import { createFormatter } from '../datelib/formatting.js'
 import { formatDayString } from '../datelib/formatting-utils.js'
 import { MountArg } from './render-hook.js'
@@ -54,6 +54,10 @@ export class DayCellContainer extends BaseComponent<DayCellContainerProps> {
     return (
       <ContentContainer
         {...props /* includes children */}
+        elClasses={[
+          ...getDayClassNames(renderProps, context.theme),
+          ...(props.elClasses || []),
+        ]}
         elAttrs={{
           ...props.elAttrs,
           ...(renderProps.isDisabled ? {} : { 'data-date': formatDayString(props.date) }),
