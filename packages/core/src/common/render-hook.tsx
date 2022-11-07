@@ -10,7 +10,6 @@ export type WillUnmountHandler<TheMountArg extends { el: HTMLElement }> = (mount
 export interface ObjCustomContent {
   html: string
   domNodes: any[]
-  [custom: string]: any // TODO: expose hook for plugins to add!
 }
 
 export type CustomContent = ComponentChildren | ObjCustomContent

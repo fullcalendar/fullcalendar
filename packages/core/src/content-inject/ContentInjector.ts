@@ -5,6 +5,7 @@ import { guid } from '../util/misc.js'
 import { isArraysEqual } from '../util/array.js'
 import { removeElement } from '../util/dom-manip.js'
 import { ViewOptions } from '../options.js'
+import { isPropsEqual } from '../util/object.js'
 
 export type ElRef = Ref<HTMLElement>
 export type ElAttrs = JSX.HTMLAttributes & JSX.SVGAttributes & { ref?: ElRef } & Record<string, any>
@@ -65,13 +66,19 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
   }
 
   componentDidMount(): void {
-    this.triggerCustomRendering(true)
     this.applyQueueudDomNodes()
+    this.triggerCustomRendering(true)
   }
 
-  componentDidUpdate(): void {
-    this.triggerCustomRendering(true)
+  componentDidUpdate(prevProps: ContentInjectorProps<RenderProps>): void {
     this.applyQueueudDomNodes()
+
+    if (
+      this.props.elTag !== prevProps.elTag ||
+      !isPropsEqual(this.props.renderProps, prevProps.renderProps)
+    ) {
+      this.triggerCustomRendering(true)
+    }
   }
 
   componentWillUnmount(): void {
@@ -118,6 +125,13 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
   }
 }
 
+ContentInjector.addPropsEquality({
+  elClasses: isArraysEqual,
+  elStyle: isPropsEqual,
+  elAttrs: isPropsEqual,
+  renderProps: isPropsEqual,
+})
+
 // Util
 
 export function hasCustomRenderingHandler(
@@ -131,10 +145,7 @@ export function hasCustomRenderingHandler(
   )
 }
 
-export function buildElAttrs(
-  props: ElAttrsProps,
-  extraClassNames?: string[],
-): ElAttrs {
+export function buildElAttrs(props: ElAttrsProps, extraClassNames?: string[]): ElAttrs {
   const attrs: ElAttrs = {
     ...props.elAttrs,
     ref: props.elRef as any,
