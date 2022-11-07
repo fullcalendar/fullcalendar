@@ -6,7 +6,7 @@ import { ViewApi } from '../ViewApi.js'
 import { ContentContainer } from '../content-inject/ContentContainer.js'
 import { ElProps } from '../content-inject/ContentInjector.js'
 
-export interface ViewRootProps extends Partial<ElProps> {
+export interface ViewContainerProps extends Partial<ElProps> {
   viewSpec: ViewSpec
   children: ComponentChildren
 }
@@ -17,7 +17,7 @@ export interface ViewContentArg {
 
 export type ViewMountArg = MountArg<ViewContentArg>
 
-export class ViewRoot extends BaseComponent<ViewRootProps> {
+export class ViewContainer extends BaseComponent<ViewContainerProps> {
   render() {
     let { props, context } = this
     let { options } = context

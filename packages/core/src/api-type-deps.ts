@@ -17,9 +17,9 @@ export type { OverlapFunc, ConstraintInput, AllowFunc } from './structs/constrai
 export type { PluginDef } from './plugin-system-struct.js'
 export type { ViewComponentType, SpecificViewContentArg, SpecificViewMountArg } from './structs/view-config.js'
 export type { ClassNamesGenerator, CustomContentGenerator, DidMountHandler, WillUnmountHandler } from './common/render-hook.js'
-export type { NowIndicatorContentArg, NowIndicatorMountArg } from './common/NowIndicatorRoot.js'
-export type { WeekNumberContentArg, WeekNumberMountArg } from './common/WeekNumberRoot.js'
-export type { MoreLinkContentArg, MoreLinkMountArg } from './common/MoreLinkRoot.js'
+export type { NowIndicatorContentArg, NowIndicatorMountArg } from './common/NowIndicatorContainer.js'
+export type { WeekNumberContentArg, WeekNumberMountArg } from './common/WeekNumberContainer.js'
+export type { MoreLinkContentArg, MoreLinkMountArg } from './common/MoreLinkContainer.js'
 export * from './common/more-link.js'
 export type {
   SlotLaneContentArg, SlotLaneMountArg,
@@ -28,8 +28,8 @@ export type {
   DayHeaderContentArg,
   DayHeaderMountArg,
 } from './render-hook-misc.js'
-export type { DayCellContentArg, DayCellMountArg } from './common/DayCellRoot.js'
-export type { ViewContentArg, ViewMountArg } from './common/ViewRoot.js'
+export type { DayCellContentArg, DayCellMountArg } from './common/DayCellContainer.js'
+export type { ViewContentArg, ViewMountArg } from './common/ViewContainer.js'
 export type { EventClickArg } from './interactions/EventClicking.js'
 export type { EventHoveringArg } from './interactions/EventHovering.js'
 export type { DateSelectArg, DateUnselectArg } from './calendar-utils.js'

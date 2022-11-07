@@ -1,7 +1,7 @@
 import { ViewProps } from '../View.js'
 import { mapHash } from '../util/object.js'
 import { ComponentType, Component, createElement } from '../preact.js'
-import { buildViewClassNames } from '../common/ViewRoot.js'
+import { buildViewClassNames } from '../common/ViewContainer.js'
 import { MountArg } from '../common/render-hook.js'
 import { ViewContext, ViewContextType } from '../ViewContext.js'
 import { ViewOptions } from '../options.js'

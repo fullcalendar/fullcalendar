@@ -1,6 +1,6 @@
 import {
   DateMarker, BaseComponent, EventSegUiInteractionState, Seg, getSegMeta,
-  DateRange, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill, buildIsoString, computeEarliestSegStart,
+  DateRange, DayCellContainer, NowIndicatorContainer, BgEvent, renderFill, buildIsoString, computeEarliestSegStart,
   DateProfile, buildEventRangeKey, sortEventSegs, memoize, SegEntryGroup, SegEntry, Dictionary, SegSpan, CssDimValue, hasCustomDayCellContent,
 } from '@fullcalendar/core'
 import {
@@ -60,7 +60,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     let sortedFgSegs = this.sortEventSegs(props.fgEventSegs, options.eventOrder) as TimeColsSeg[]
 
     return (
-      <DayCellRoot
+      <DayCellContainer
         elTag="td"
         elRef={props.elRef}
         elClasses={[
@@ -112,7 +112,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
             )}
           </div>
         )}
-      </DayCellRoot>
+      </DayCellContainer>
     )
   }
 
@@ -240,7 +240,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     if (!slatCoords) { return null }
 
     return segs.map((seg, i) => (
-      <NowIndicatorRoot
+      <NowIndicatorContainer
         // key doesn't matter. will only ever be one
         key={i} // eslint-disable-line react/no-array-index-key
         elClasses={['fc-timegrid-now-indicator-line']}

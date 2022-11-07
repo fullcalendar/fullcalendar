@@ -23,7 +23,7 @@ export interface DayCellContentArg extends DateMeta {
 
 export type DayCellMountArg = MountArg<DayCellContentArg>
 
-export interface DayCellRootProps extends Partial<ElProps> {
+export interface DayCellContainerProps extends Partial<ElProps> {
   date: DateMarker
   dateProfile: DateProfile
   todayRange: DateRange
@@ -35,7 +35,7 @@ export interface DayCellRootProps extends Partial<ElProps> {
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 
-export class DayCellRoot extends BaseComponent<DayCellRootProps> {
+export class DayCellContainer extends BaseComponent<DayCellContainerProps> {
   refineRenderProps = memoizeObjArg(refineRenderProps)
 
   render() {

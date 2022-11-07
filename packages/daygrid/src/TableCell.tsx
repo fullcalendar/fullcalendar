@@ -3,8 +3,8 @@ import {
   DateComponent,
   DateRange,
   buildNavLinkAttrs,
-  WeekNumberRoot,
-  DayCellRoot,
+  WeekNumberContainer,
+  DayCellContainer,
   DateProfile,
   setRef,
   createFormatter,
@@ -64,7 +64,7 @@ export class TableCell extends DateComponent<TableCellProps> {
     let navLinkAttrs = buildNavLinkAttrs(context, date, 'week')
 
     return (
-      <DayCellRoot
+      <DayCellContainer
         elTag="td"
         elClasses={[
           'fc-daygrid-day',
@@ -86,7 +86,7 @@ export class TableCell extends DateComponent<TableCellProps> {
         {(InnerContent, renderProps) => (
           <div className="fc-daygrid-day-frame fc-scrollgrid-sync-inner" ref={props.innerElRef}>
             {props.showWeekNumber && (
-              <WeekNumberRoot
+              <WeekNumberContainer
                 elTag="a"
                 elClasses={['fc-daygrid-week-number']}
                 elAttrs={navLinkAttrs}
@@ -132,7 +132,7 @@ export class TableCell extends DateComponent<TableCellProps> {
             </div>
           </div>
         )}
-      </DayCellRoot>
+      </DayCellContainer>
     )
   }
 

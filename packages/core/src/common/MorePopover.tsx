@@ -5,7 +5,7 @@ import { DateProfile } from '../DateProfileGenerator.js'
 import { Hit } from '../interactions/hit.js'
 import { Dictionary } from '../options.js'
 import { createElement, ComponentChildren } from '../preact.js'
-import { DayCellRoot, hasCustomDayCellContent } from './DayCellRoot.js'
+import { DayCellContainer, hasCustomDayCellContent } from './DayCellContainer.js'
 import { Popover } from './Popover.js'
 
 export interface MorePopoverProps {
@@ -32,7 +32,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
     let title = dateEnv.format(startDate, options.dayPopoverFormat)
 
     return (
-      <DayCellRoot
+      <DayCellContainer
         elRef={this.handleRootEl}
         date={startDate}
         dateProfile={dateProfile}
@@ -59,7 +59,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
             {props.children}
           </Popover>
         )}
-      </DayCellRoot>
+      </DayCellContainer>
     )
   }
 

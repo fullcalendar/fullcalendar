@@ -16,7 +16,7 @@ import {
   sortEventSegs,
   getSegMeta,
   NowTimer,
-  ViewRoot,
+  ViewContainer,
   DateComponent,
   ViewApi,
   MountArg,
@@ -57,7 +57,7 @@ export class ListView extends DateComponent<ViewProps> {
     let eventSegs = this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges)
 
     return (
-      <ViewRoot
+      <ViewContainer
         elRef={this.setRootEl}
         elClasses={[
           'fc-list',
@@ -77,7 +77,7 @@ export class ListView extends DateComponent<ViewProps> {
             this.renderSegList(eventSegs, dayDates) :
             this.renderEmptyMessage()}
         </Scroller>
-      </ViewRoot>
+      </ViewContainer>
     )
   }
 

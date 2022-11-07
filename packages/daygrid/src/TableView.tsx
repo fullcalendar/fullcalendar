@@ -3,7 +3,7 @@ import {
   SimpleScrollGridSection,
   ChunkContentCallbackArgs,
   ScrollGridSectionConfig,
-  ViewRoot,
+  ViewContainer,
   DateComponent,
   ViewProps,
   renderScrollShim,
@@ -56,14 +56,14 @@ export abstract class TableView<State=Dictionary> extends DateComponent<ViewProp
     })
 
     return (
-      <ViewRoot elClasses={['fc-daygrid']} viewSpec={context.viewSpec}>
+      <ViewContainer elClasses={['fc-daygrid']} viewSpec={context.viewSpec}>
         <SimpleScrollGrid
           liquid={!props.isHeightAuto && !props.forPrint}
           collapsibleWidth={props.forPrint}
           cols={[] /* TODO: make optional? */}
           sections={sections}
         />
-      </ViewRoot>
+      </ViewContainer>
     )
   }
 
@@ -121,14 +121,14 @@ export abstract class TableView<State=Dictionary> extends DateComponent<ViewProp
     }
 
     return (
-      <ViewRoot elClasses={['fc-daygrid']} viewSpec={context.viewSpec}>
+      <ViewContainer elClasses={['fc-daygrid']} viewSpec={context.viewSpec}>
         <ScrollGrid
           liquid={!props.isHeightAuto && !props.forPrint}
           collapsibleWidth={props.forPrint}
           colGroups={[{ cols: [{ span: colCnt, minWidth: dayMinWidth }] }]}
           sections={sections}
         />
-      </ViewRoot>
+      </ViewContainer>
     )
   }
 }

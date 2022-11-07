@@ -5,8 +5,8 @@ import {
   ChunkContentCallbackArgs,
   ScrollGridSectionConfig,
   buildNavLinkAttrs,
-  ViewRoot,
-  WeekNumberRoot,
+  ViewContainer,
+  WeekNumberContainer,
   DateComponent,
   ViewProps,
   renderScrollShim,
@@ -17,7 +17,7 @@ import {
   CssDimValue,
   NowTimer,
   DateMarker,
-  NowIndicatorRoot,
+  NowIndicatorContainer,
   ContentContainer,
 } from '@fullcalendar/core'
 import {
@@ -111,14 +111,14 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     })
 
     return (
-      <ViewRoot elRef={this.rootElRef} elClasses={['fc-timegrid']} viewSpec={context.viewSpec}>
+      <ViewContainer elRef={this.rootElRef} elClasses={['fc-timegrid']} viewSpec={context.viewSpec}>
         <SimpleScrollGrid
           liquid={!props.isHeightAuto && !props.forPrint}
           collapsibleWidth={props.forPrint}
           cols={[{ width: 'shrink' }]}
           sections={sections}
         />
-      </ViewRoot>
+      </ViewContainer>
     )
   }
 
@@ -230,7 +230,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
 
                     if (typeof nowIndicatorTop === 'number') {
                       return (
-                        <NowIndicatorRoot
+                        <NowIndicatorContainer
                           elClasses={['fc-timegrid-now-indicator-arrow']}
                           elStyle={{ top: nowIndicatorTop }}
                           isAxis
@@ -273,7 +273,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     }
 
     return (
-      <ViewRoot elRef={this.rootElRef} elClasses={['fc-timegrid']} viewSpec={context.viewSpec}>
+      <ViewContainer elRef={this.rootElRef} elClasses={['fc-timegrid']} viewSpec={context.viewSpec}>
         <ScrollGrid
           liquid={!props.isHeightAuto && !props.forPrint}
           collapsibleWidth={false}
@@ -283,7 +283,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
           ]}
           sections={sections}
         />
-      </ViewRoot>
+      </ViewContainer>
     )
   }
 
@@ -325,7 +325,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
 
     if (options.weekNumbers && rowKey === 'day') {
       return (
-        <WeekNumberRoot
+        <WeekNumberContainer
           elTag="th"
           elClasses={[
             'fc-timegrid-axis',
@@ -357,7 +357,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
               />
             </div>
           )}
-        </WeekNumberRoot>
+        </WeekNumberContainer>
       )
     }
 

@@ -1,5 +1,5 @@
 import {
-  MoreLinkRoot,
+  MoreLinkContainer,
   BaseComponent,
   memoize,
   DateMarker,
@@ -38,7 +38,7 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
     let { allSegs, invisibleSegs } = this.compileSegs(props.singlePlacements)
 
     return (
-      <MoreLinkRoot
+      <MoreLinkContainer
         elClasses={['fc-daygrid-more-link']}
         dateProfile={props.dateProfile}
         todayRange={props.todayRange}

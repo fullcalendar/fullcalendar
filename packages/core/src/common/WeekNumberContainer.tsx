@@ -6,7 +6,7 @@ import { DateFormatter } from '../datelib/DateFormatter.js'
 import { ElProps } from '../content-inject/ContentInjector.js'
 import { ContentContainer, InnerContainerFunc } from '../content-inject/ContentContainer.js'
 
-export interface WeekNumberRootProps extends ElProps {
+export interface WeekNumberContainerProps extends ElProps {
   date: DateMarker
   defaultFormat: DateFormatter
   children?: InnerContainerFunc<WeekNumberContentArg>
@@ -20,7 +20,7 @@ export interface WeekNumberContentArg {
 
 export type WeekNumberMountArg = MountArg<WeekNumberContentArg>
 
-export const WeekNumberRoot = (props: WeekNumberRootProps) => (
+export const WeekNumberContainer = (props: WeekNumberContainerProps) => (
   <ViewContextType.Consumer>
     {(context: ViewContext) => {
       let { dateEnv, options } = context

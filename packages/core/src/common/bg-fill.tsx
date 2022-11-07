@@ -2,7 +2,7 @@ import { createElement } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
 import { Seg } from '../component/DateComponent.js'
 import { EventContentArg } from '../component/event-rendering.js'
-import { EventContainer } from './EventRoot.js'
+import { EventContainer } from './EventContainer.js'
 
 export interface BgEventProps {
   seg: Seg

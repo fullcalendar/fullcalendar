@@ -1,5 +1,5 @@
 import {
-  MoreLinkContentArg, MoreLinkRoot, BaseComponent,
+  MoreLinkContentArg, MoreLinkContainer, BaseComponent,
   Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState, CssDimValue,
 } from '@fullcalendar/core'
 import {
@@ -29,7 +29,7 @@ export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
     let { props } = this
 
     return (
-      <MoreLinkRoot
+      <MoreLinkContainer
         elRef={this.elRef}
         elClasses={['fc-timegrid-more-link']}
         elStyle={{
@@ -53,7 +53,7 @@ export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
             elClasses={['fc-timegrid-more-link-inner', 'fc-sticky']}
           />
         )}
-      </MoreLinkRoot>
+      </MoreLinkContainer>
     )
   }
 }

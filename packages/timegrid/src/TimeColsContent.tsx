@@ -7,7 +7,7 @@ import {
   PositionCache,
   memoize,
   DateRange,
-  NowIndicatorRoot,
+  NowIndicatorContainer,
   DateProfile,
   DayTableCell,
 } from '@fullcalendar/core'
@@ -86,7 +86,7 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
                   <div className="fc-timegrid-col-frame">
                     <div className="fc-timegrid-now-indicator-container">
                       {typeof nowIndicatorTop === 'number' && (
-                        <NowIndicatorRoot
+                        <NowIndicatorContainer
                           elClasses={['fc-timegrid-now-indicator-arrow']}
                           elStyle={{ top: nowIndicatorTop }}
                           isAxis

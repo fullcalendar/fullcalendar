@@ -16,7 +16,7 @@ import { ContentContainer, InnerContainerFunc } from '../content-inject/ContentC
 import { ElProps } from '../content-inject/ContentInjector.js'
 import { createAriaClickAttrs } from '../util/dom-event.js'
 
-export interface MoreLinkRootProps extends Partial<ElProps> {
+export interface MoreLinkContainerProps extends Partial<ElProps> {
   dateProfile: DateProfile
   todayRange: DateRange
   allDayDate: DateMarker | null
@@ -41,12 +41,12 @@ export interface MoreLinkContentArg {
 
 export type MoreLinkMountArg = MountArg<MoreLinkContentArg>
 
-interface MoreLinkRootState {
+interface MoreLinkContainerState {
   isPopoverOpen: boolean
   popoverId: string
 }
 
-export class MoreLinkRoot extends BaseComponent<MoreLinkRootProps, MoreLinkRootState> {
+export class MoreLinkContainer extends BaseComponent<MoreLinkContainerProps, MoreLinkContainerState> {
   private linkElRef = createRef<HTMLElement & SVGElement>()
   private parentEl: HTMLElement
 
@@ -182,7 +182,7 @@ function renderMoreLinkInner(props: MoreLinkContentArg) {
   return props.text
 }
 
-function computeRange(props: MoreLinkRootProps): DateRange {
+function computeRange(props: MoreLinkContainerProps): DateRange {
   if (props.allDayDate) {
     return {
       start: props.allDayDate,
