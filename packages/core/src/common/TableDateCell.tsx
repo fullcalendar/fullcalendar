@@ -24,7 +24,8 @@ export interface TableDateCellProps {
   extraRenderProps?: Dictionary
 }
 
-export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD name for this class now. used in the Header
+// BAD name for this class now. used in the Header
+export class TableDateCell extends BaseComponent<TableDateCellProps> {
   render() {
     let { dateEnv, options, theme, viewApi } = this.context
     let { props } = this
