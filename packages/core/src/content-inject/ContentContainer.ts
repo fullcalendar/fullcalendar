@@ -21,17 +21,15 @@ export type ContentContainerProps<RenderProps> =
   }
 
 export class ContentContainer<RenderProps> extends BaseComponent<ContentContainerProps<RenderProps>> {
+  InnerContent = InnerContentInjector.bind(undefined, this)
+
   render() {
     const { props } = this
     const generatedClassNames = generateClassNames(props.classNameGenerator, props.renderProps)
 
     if (props.children) {
       const elAttrs = buildElAttrs(props, generatedClassNames)
-      const children = props.children(
-        InnerContentInjector.bind(undefined, props),
-        props.renderProps,
-        elAttrs,
-      )
+      const children = props.children(this.InnerContent, props.renderProps, elAttrs)
 
       if (props.elTag) {
         return createElement(props.elTag, elAttrs, children)
@@ -72,9 +70,11 @@ export type InnerContainerFunc<RenderProps> = (
 ) => ComponentChildren
 
 function InnerContentInjector<RenderProps>(
-  parentProps: ContentContainerProps<RenderProps>,
+  containerComponent: ContentContainer<RenderProps>,
   props: ElProps,
 ) {
+  const parentProps = containerComponent.props
+
   return createElement(ContentInjector<RenderProps>, {
     renderProps: parentProps.renderProps,
     generatorName: parentProps.generatorName,
