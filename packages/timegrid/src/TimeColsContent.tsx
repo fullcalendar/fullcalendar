@@ -88,9 +88,7 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
                       {typeof nowIndicatorTop === 'number' && (
                         <NowIndicatorRoot
                           elClasses={['fc-timegrid-now-indicator-arrow']}
-                          elAttrs={{
-                            style: { top: nowIndicatorTop },
-                          }}
+                          elStyle={{ top: nowIndicatorTop }}
                           isAxis
                           date={props.nowDate}
                         />

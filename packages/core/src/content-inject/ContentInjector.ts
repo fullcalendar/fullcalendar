@@ -13,8 +13,8 @@ export interface ElProps {
   elTag?: string
   elRef?: ElRef
   elClasses?: string[]
+  elStyle?: JSX.CSSProperties
   elAttrs?: ElAttrs
-  // TODO: add elStyles
 }
 
 export interface ContentInjectorProps<RenderProps> extends ElProps {
@@ -137,6 +137,10 @@ export function buildElAttrs(
       .concat(extraClassNames || [])
       .concat(attrs.className || [])
       .join(' ')
+  }
+
+  if (props.elStyle) {
+    attrs.style = props.elStyle
   }
 
   return attrs

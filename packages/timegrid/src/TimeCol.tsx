@@ -241,10 +241,8 @@ export class TimeCol extends BaseComponent<TimeColProps> {
         // key doesn't matter. will only ever be one
         key={i} // eslint-disable-line react/no-array-index-key
         elClasses={['fc-timegrid-now-indicator-line']}
-        elAttrs={{
-          style: {
-            top: slatCoords.computeDateTop(seg.start, date),
-          },
+        elStyle={{
+          top: slatCoords.computeDateTop(seg.start, date),
         }}
         isAxis={false}
         date={date}

@@ -232,11 +232,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
                       return (
                         <NowIndicatorRoot
                           elClasses={['fc-timegrid-now-indicator-arrow']}
-                          elAttrs={{
-                            style: {
-                              top: nowIndicatorTop,
-                            },
-                          }}
+                          elStyle={{ top: nowIndicatorTop }}
                           isAxis
                           date={nowDate}
                         />

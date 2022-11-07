@@ -32,11 +32,9 @@ export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
       <MoreLinkRoot
         elRef={this.elRef}
         elClasses={['fc-timegrid-more-link']}
-        elAttrs={{
-          style: {
-            top: props.top,
-            bottom: props.bottom,
-          },
+        elStyle={{
+          top: props.top,
+          bottom: props.bottom,
         }}
         allDayDate={null}
         moreCnt={props.hiddenSegs.length}

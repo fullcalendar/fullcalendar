@@ -43,13 +43,11 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
       <EventContainer
         {...props}
         elTag="a"
-        elAttrs={{
-          ...getSegAnchorAttrs(seg, context),
-          style: {
-            borderColor: seg.ui.borderColor,
-            backgroundColor: seg.ui.backgroundColor,
-          },
+        elStyle={{
+          borderColor: seg.ui.borderColor,
+          backgroundColor: seg.ui.backgroundColor,
         }}
+        elAttrs={getSegAnchorAttrs(seg, context)}
         defaultGenerator={renderInnerContent}
         timeText={timeText}
       >
@@ -57,7 +55,7 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
           <Fragment>
             <InnerContent
               elClasses={['fc-event-main']}
-              elAttrs={{ style: { color: eventContentArg.textColor } }}
+              elStyle={{ color: eventContentArg.textColor }}
             />
             {Boolean(eventContentArg.isStartResizable) && (
               <div className="fc-event-resizer fc-event-resizer-start" />
