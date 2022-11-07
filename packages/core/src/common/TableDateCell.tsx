@@ -74,7 +74,7 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
                 elAttrs={navLinkAttrs}
                 elClasses={[
                   'fc-col-header-cell-cushion',
-                  props.isSticky ? 'fc-sticky' : '',
+                  props.isSticky && 'fc-sticky',
                 ]}
               />
             )}

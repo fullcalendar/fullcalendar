@@ -69,7 +69,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
               elTag="a"
               elClasses={[
                 'fc-col-header-cell-cushion',
-                props.isSticky ? 'fc-sticky' : '',
+                props.isSticky && 'fc-sticky',
               ]}
               elAttrs={{
                 'aria-label': dateEnv.format(date, WEEKDAY_FORMAT),

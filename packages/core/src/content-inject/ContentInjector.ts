@@ -136,6 +136,7 @@ export function buildElAttrs(
     attrs.className = (props.elClasses || [])
       .concat(extraClassNames || [])
       .concat(attrs.className || [])
+      .filter(Boolean)
       .join(' ')
   }
 

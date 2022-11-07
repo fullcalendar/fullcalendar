@@ -19,7 +19,7 @@ export class TimeColEvent extends BaseComponent<TimeColEventProps> {
         elClasses={[
           'fc-timegrid-event',
           'fc-v-event',
-          this.props.isShort ? 'fc-timegrid-event-short' : '',
+          this.props.isShort && 'fc-timegrid-event-short',
         ]}
         defaultTimeFormat={DEFAULT_TIME_FORMAT}
       />

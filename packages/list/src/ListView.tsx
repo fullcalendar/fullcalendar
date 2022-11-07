@@ -62,7 +62,9 @@ export class ListView extends DateComponent<ViewProps> {
         elClasses={[
           'fc-list',
           context.theme.getClass('table'), // just for the outer border. will be on div
-          context.options.stickyHeaderDates !== false ? 'fc-list-sticky' : '',
+          context.options.stickyHeaderDates !== false ?
+            'fc-list-sticky' :
+            '',
         ]}
         viewSpec={context.viewSpec}
       >

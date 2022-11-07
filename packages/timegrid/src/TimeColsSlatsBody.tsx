@@ -44,7 +44,7 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
                 elClasses={[
                   'fc-timegrid-slot',
                   'fc-timegrid-slot-lane',
-                  slatMeta.isLabeled ? '' : 'fc-timegrid-slot-minor',
+                  !slatMeta.isLabeled && 'fc-timegrid-slot-minor',
                 ]}
                 elAttrs={{
                   'data-time': slatMeta.isoTimeStr,
