@@ -34,7 +34,8 @@ export type ContentInjectorProps<RenderProps> =
 
 export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorProps<RenderProps>> {
   private id = guid()
-  private queuedDomNodes: Node[] | NodeList | undefined
+  private currentDomNodes: Node[] = []
+  private queuedDomNodes: Node[] = []
 
   render() {
     const { props, context } = this
@@ -42,6 +43,7 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
     const { generator, renderProps } = props
     const attrs = buildElAttrs(props)
     let innerContent: ComponentChild | undefined
+    let queuedDomNodes: Node[] = []
 
     if (!hasCustomRenderingHandler(props.generatorName, options)) {
       const customContent: CustomContent = typeof generator === 'function' ?
@@ -58,10 +60,14 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
         if ('html' in customContent) {
           attrs.dangerouslySetInnerHTML = { __html: customContent.html }
         } else if ('domNodes' in customContent) {
-          this.queuedDomNodes = (customContent as ObjCustomContent).domNodes
+          queuedDomNodes = Array.prototype.slice.call(
+            (customContent as ObjCustomContent).domNodes,
+          )
         }
       }
     }
+
+    this.queuedDomNodes = queuedDomNodes
 
     return createElement(props.elTag, attrs, innerContent)
   }
@@ -110,21 +116,17 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
   }
 
   private applyQueueudDomNodes() {
-    if (this.queuedDomNodes) {
-      const el = this.base
-      const currentNodes: Node[] = Array.prototype.slice.call(el.childNodes)
-      const newNodes: Node[] = Array.prototype.slice.call(this.queuedDomNodes)
+    const { queuedDomNodes, currentDomNodes } = this
+    const el = this.base
 
-      if (!isArraysEqual(currentNodes, newNodes)) {
-        for (let newNode of newNodes) {
-          el.appendChild(newNode)
-        }
+    if (!isArraysEqual(queuedDomNodes, currentDomNodes)) {
+      currentDomNodes.forEach(removeElement)
 
-        // TODO: won't this potentially remove elements that were readded?
-        currentNodes.forEach(removeElement)
+      for (let newNode of queuedDomNodes) {
+        el.appendChild(newNode)
       }
 
-      this.queuedDomNodes = undefined
+      this.currentDomNodes = queuedDomNodes
     }
   }
 }
