@@ -36,14 +36,14 @@ describe('eventContent', () => {
     expect(eventEl.innerHTML).toBe('1a - my event')
   })
 
-  it('will render default if nothing returned', () => {
+  it('will render blank content if nothing returned', () => {
     let calendar = initCalendar({
       eventContent() {
       },
     })
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     let eventEl = dayGridWrapper.getEventEls()[0]
-    expect($(eventEl).text()).toBe('1amy event')
+    expect($(eventEl).text()).toBe('')
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/5916

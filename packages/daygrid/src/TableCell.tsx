@@ -61,7 +61,6 @@ export class TableCell extends DateComponent<TableCellProps> {
     let { context, props, state, rootElRef } = this
     let { options } = context
     let { date, dateProfile } = props
-    let navLinkAttrs = buildNavLinkAttrs(context, date, 'week')
 
     return (
       <DayCellContainer
@@ -89,7 +88,7 @@ export class TableCell extends DateComponent<TableCellProps> {
               <WeekNumberContainer
                 elTag="a"
                 elClasses={['fc-daygrid-week-number']}
-                elAttrs={navLinkAttrs}
+                elAttrs={buildNavLinkAttrs(context, date, 'week')}
                 date={date}
                 defaultFormat={DEFAULT_WEEK_NUM_FORMAT}
               />
@@ -103,7 +102,7 @@ export class TableCell extends DateComponent<TableCellProps> {
                   elTag="a"
                   elClasses={['fc-daygrid-day-number']}
                   elAttrs={{
-                    ...navLinkAttrs,
+                    ...buildNavLinkAttrs(context, date),
                     id: state.dayNumberId,
                   }}
                 />

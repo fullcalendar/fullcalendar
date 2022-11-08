@@ -20,7 +20,7 @@ export class BgEvent extends BaseComponent<BgEventProps> {
       <EventContainer
         elTag="div"
         elClasses={['fc-bg-event']}
-        elStyle={{ backgroundColor: seg.ui.backgroundColor }}
+        elStyle={{ backgroundColor: seg.eventRange.ui.backgroundColor }}
         defaultGenerator={renderInnerContent}
         seg={seg}
         timeText=""

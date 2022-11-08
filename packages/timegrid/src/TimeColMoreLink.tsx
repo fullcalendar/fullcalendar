@@ -2,10 +2,7 @@ import {
   MoreLinkContentArg, MoreLinkContainer, BaseComponent,
   Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState, CssDimValue,
 } from '@fullcalendar/core'
-import {
-  createElement,
-  createRef,
-} from '@fullcalendar/core/preact'
+import { createElement } from '@fullcalendar/core/preact'
 import { renderPlainFgSegs } from './TimeCol.js'
 import { TimeColsSeg } from './TimeColsSeg.js'
 
@@ -23,14 +20,11 @@ export interface TimeColMoreLinkProps {
 }
 
 export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
-  elRef = createRef<HTMLElement & SVGElement>()
-
   render() {
     let { props } = this
 
     return (
       <MoreLinkContainer
-        elRef={this.elRef}
         elClasses={['fc-timegrid-more-link']}
         elStyle={{
           top: props.top,
@@ -40,7 +34,6 @@ export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
         moreCnt={props.hiddenSegs.length}
         allSegs={props.hiddenSegs}
         hiddenSegs={props.hiddenSegs}
-        alignmentElRef={this.elRef}
         extraDateSpan={props.extraDateSpan}
         dateProfile={props.dateProfile}
         todayRange={props.todayRange}

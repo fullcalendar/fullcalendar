@@ -6,7 +6,7 @@ import { DateProfile } from '../DateProfileGenerator.js'
 import { Dictionary } from '../options.js'
 import { elementClosest, getUniqueDomId } from '../util/dom-manip.js'
 import { formatWithOrdinals } from '../util/misc.js'
-import { createElement, createRef, Fragment, RefObject, ComponentChild } from '../preact.js'
+import { createElement, createRef, Fragment, ComponentChild, RefObject } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
 import { ViewApi } from '../ViewApi.js'
 import { ViewContext, ViewContextType } from '../ViewContext.js'
@@ -24,9 +24,8 @@ export interface MoreLinkContainerProps extends Partial<ElProps> {
   allSegs: Seg[]
   hiddenSegs: Seg[]
   extraDateSpan?: Dictionary
-  alignmentElRef: RefObject<HTMLElement> // for popover
+  alignmentElRef?: RefObject<HTMLElement> // will use internal <a> if unspecified
   alignGridTop?: boolean // for popover
-  topAlignmentElRef?: RefObject<HTMLElement>
   popoverContent: () => ComponentChild
   defaultGenerator?: CustomContentGenerator<MoreLinkContentArg>
   children?: InnerContainerFunc<MoreLinkContentArg>
@@ -47,7 +46,7 @@ interface MoreLinkContainerState {
 }
 
 export class MoreLinkContainer extends BaseComponent<MoreLinkContainerProps, MoreLinkContainerState> {
-  private linkElRef = createRef<HTMLElement & SVGElement>()
+  private linkElRef = createRef<HTMLElement>()
   private parentEl: HTMLElement
 
   state = {
@@ -111,7 +110,11 @@ export class MoreLinkContainer extends BaseComponent<MoreLinkContainerProps, Mor
                   todayRange={props.todayRange}
                   extraDateSpan={props.extraDateSpan}
                   parentEl={this.parentEl}
-                  alignmentEl={props.alignmentElRef.current}
+                  alignmentEl={
+                    props.alignmentElRef ?
+                      props.alignmentElRef.current :
+                      this.linkElRef.current
+                  }
                   alignGridTop={props.alignGridTop}
                   onClose={this.handlePopoverClose}
                 >

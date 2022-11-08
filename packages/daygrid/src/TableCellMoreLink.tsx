@@ -20,7 +20,7 @@ export interface TableCellMoreLinkProps {
   allDayDate: DateMarker
   singlePlacements: TableSegPlacement[]
   moreCnt: number
-  alignmentElRef: RefObject<HTMLElement> // for popover
+  alignmentElRef: RefObject<HTMLElement>
   alignGridTop: boolean // for popover
   extraDateSpan?: Dictionary
   dateProfile: DateProfile

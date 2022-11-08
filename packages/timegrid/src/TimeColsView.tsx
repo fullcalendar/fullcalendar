@@ -48,7 +48,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
   protected allDaySplitter = new AllDaySplitter() // for use by subclasses
 
   protected headerElRef: RefObject<HTMLTableCellElement> = createRef<HTMLTableCellElement>()
-  private rootElRef: RefObject<HTMLElement & SVGElement> = createRef<HTMLElement & SVGElement>()
+  private rootElRef: RefObject<HTMLElement> = createRef<HTMLElement>()
   private scrollerElRef: RefObject<HTMLDivElement> = createRef<HTMLDivElement>()
 
   state = {
