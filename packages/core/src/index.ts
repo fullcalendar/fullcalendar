@@ -316,3 +316,5 @@ export type { ContentInjectorProps, ElProps } from './content-inject/ContentInje
 export { ContentInjector } from './content-inject/ContentInjector.js'
 export type { ContentContainerProps, InnerContainerFunc } from './content-inject/ContentContainer.js'
 export { ContentContainer } from './content-inject/ContentContainer.js'
+export type { CustomRendering } from './content-inject/CustomRenderingStore.js'
+export { CustomRenderingStore } from './content-inject/CustomRenderingStore.js'
