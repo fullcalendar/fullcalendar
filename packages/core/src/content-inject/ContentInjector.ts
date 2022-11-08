@@ -29,7 +29,8 @@ export interface ContentGeneratorProps<RenderProps> {
 
 export type ContentInjectorProps<RenderProps> =
   ElProps &
-  ContentGeneratorProps<RenderProps>
+  ContentGeneratorProps<RenderProps> &
+  { renderId: number }
 
 export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorProps<RenderProps>> {
   private id = guid()
@@ -70,12 +71,15 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
     this.triggerCustomRendering(true)
   }
 
-  componentDidUpdate(prevProps: ContentInjectorProps<RenderProps>): void {
+  componentDidUpdate(oldProps: ContentInjectorProps<RenderProps>): void {
     this.applyQueueudDomNodes()
 
+    const newProps = this.props
+
     if (
-      this.props.elTag !== prevProps.elTag ||
-      !isPropsEqual(this.props.renderProps, prevProps.renderProps)
+      newProps.renderId !== oldProps.renderId ||
+      newProps.elTag !== oldProps.elTag ||
+      !isPropsEqual(newProps.renderProps, oldProps.renderProps)
     ) {
       this.triggerCustomRendering(true)
     }

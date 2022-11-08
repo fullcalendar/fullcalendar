@@ -1,6 +1,5 @@
-import { createElement, FunctionalComponent, ComponentChildren } from '../preact.js'
+import { createElement, Component, FunctionalComponent, ComponentChildren } from '../preact.js'
 import { ClassNamesGenerator } from '../common/render-hook.js'
-import { BaseComponent } from '../vdom-util.js'
 import {
   ContentInjector,
   ContentGeneratorProps,
@@ -9,6 +8,7 @@ import {
   ElProps,
   ElAttrs,
 } from './ContentInjector.js'
+import { RenderId } from './RenderId.js'
 
 export type ContentContainerProps<RenderProps> =
   ElAttrsProps &
@@ -20,7 +20,10 @@ export type ContentContainerProps<RenderProps> =
     children?: InnerContainerFunc<RenderProps>
   }
 
-export class ContentContainer<RenderProps> extends BaseComponent<ContentContainerProps<RenderProps>> {
+export class ContentContainer<RenderProps> extends Component<ContentContainerProps<RenderProps>> {
+  static contextType = RenderId
+  context: number
+
   InnerContent = InnerContentInjector.bind(undefined, this)
 
   render() {
@@ -41,6 +44,7 @@ export class ContentContainer<RenderProps> extends BaseComponent<ContentContaine
         ...props,
         elTag: props.elTag || 'div',
         elClasses: (props.elClasses || []).concat(generatedClassNames),
+        renderId: this.context,
       })
     }
   }
@@ -79,6 +83,7 @@ function InnerContentInjector<RenderProps>(
     renderProps: parentProps.renderProps,
     generatorName: parentProps.generatorName,
     generator: parentProps.generator,
+    renderId: containerComponent.context,
     ...props,
   })
 }

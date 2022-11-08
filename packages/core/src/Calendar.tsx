@@ -10,6 +10,7 @@ import { createElement, render, flushSync } from './preact.js'
 import { isArraysEqual } from './util/array.js'
 import { CssDimValue } from './scrollgrid/util.js'
 import { applyStyleProp } from './util/dom-manip.js'
+import { RenderId } from './content-inject/RenderId.js'
 
 export class Calendar extends CalendarApi {
   currentData: CalendarData
@@ -18,6 +19,7 @@ export class Calendar extends CalendarApi {
   isRendering = false
   isRendered = false
   currentClassNames: string[] = []
+  customContentRenderId = 0
 
   get view() { return this.currentData.viewApi } // for public API
 
@@ -62,11 +64,13 @@ export class Calendar extends CalendarApi {
               this.setHeight(height)
 
               return (
-                <CalendarContent
-                  isHeightAuto={isHeightAuto}
-                  forPrint={forPrint}
-                  {...currentData}
-                />
+                <RenderId.Provider value={this.customContentRenderId}>
+                  <CalendarContent
+                    isHeightAuto={isHeightAuto}
+                    forPrint={forPrint}
+                    {...currentData}
+                  />
+                </RenderId.Provider>
               )
             }}
           </CalendarRoot>,
@@ -87,6 +91,8 @@ export class Calendar extends CalendarApi {
 
     if (!wasRendering) {
       this.isRendering = true
+    } else {
+      this.customContentRenderId += 1
     }
 
     this.renderRunner.request()
