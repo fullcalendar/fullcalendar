@@ -6,10 +6,13 @@
   "docs": "https://fullcalendar.io/docs/list-view",
   "type": "module",
   "dependencies": {
-    "@fullcalendar/core": "workspace:*",
     "tslib": "^2.1.0"
   },
+  "peerDependencies": {
+    "@fullcalendar/core": "workspace:*"
+  },
   "devDependencies": {
+    "@fullcalendar/core": "workspace:*",
     "@fullcalendar/standard-scripts": "workspace:*"
   },
   "scripts": {

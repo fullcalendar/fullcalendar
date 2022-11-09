@@ -6,11 +6,14 @@
   "docs": "https://fullcalendar.io/docs/icalendar",
   "type": "module",
   "dependencies": {
-    "@fullcalendar/core": "workspace:*",
     "ical.js": "^1.4.0",
     "tslib": "^2.1.0"
   },
+  "peerDependencies": {
+    "@fullcalendar/core": "workspace:*"
+  },
   "devDependencies": {
+    "@fullcalendar/core": "workspace:*",
     "@fullcalendar/standard-scripts": "workspace:*"
   },
   "scripts": {

@@ -6,13 +6,14 @@
   "docs": "https://fullcalendar.io/docs/rrule-plugin",
   "type": "module",
   "dependencies": {
-    "@fullcalendar/core": "workspace:*",
     "tslib": "^2.1.0"
   },
   "peerDependencies": {
+    "@fullcalendar/core": "workspace:*",
     "rrule": "^2.6.0"
   },
   "devDependencies": {
+    "@fullcalendar/core": "workspace:*",
     "@fullcalendar/standard-scripts": "workspace:*",
     "rrule": "^2.6.0"
   },
