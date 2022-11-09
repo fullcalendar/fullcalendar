@@ -133,6 +133,7 @@ function buildEsmOutputOptions(
     format: 'esm',
     dir: joinPaths(pkgBundleStruct.pkgDir, 'dist'),
     entryFileNames: '[name].js',
+    chunkFileNames: 'internal-[hash].js',
     sourcemap,
   }
 }
@@ -146,6 +147,7 @@ function buildCjsOutputOptions(
     exports: 'named',
     dir: joinPaths(pkgBundleStruct.pkgDir, 'dist'),
     entryFileNames: '[name].cjs',
+    chunkFileNames: 'internal-[hash].cjs',
     sourcemap,
   }
 }
