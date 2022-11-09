@@ -275,6 +275,7 @@ function buildNormalJsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
       values: {
         releaseDate: new Date().toISOString().replace(/T.*/, ''), // just YYYY-MM-DD
         pkgName: pkgJson.name,
+        pkgVersion: pkgJson.version,
       }
     })
   ]

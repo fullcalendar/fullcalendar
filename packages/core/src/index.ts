@@ -3,7 +3,7 @@ import './index.css'
 // exports
 // --------------------------------------------------------------------------------------------------
 
-export const version: string = '<%= version %>' // important to type it, so .d.ts has generic string
+export const version: string = '<%= pkgVersion %>' // important to type it, so .d.ts has generic string
 
 export { Calendar } from './Calendar.js'
 
