@@ -33,10 +33,12 @@
   },
   "buildConfig": {
     "exports": {
-      ".": { "iife": true }
+      ".": { "iife": true },
+      "./internal": {}
     },
     "iifeGlobals": {
       ".": "FullCalendarTimeGrid",
+      "./internal": "FullCalendarTimeGrid.Internal",
       "tslib": ""
     }
   },

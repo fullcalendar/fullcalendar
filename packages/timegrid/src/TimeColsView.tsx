@@ -1,4 +1,7 @@
 import {
+  AllDayContentArg,
+} from '@fullcalendar/core'
+import {
   diffDays,
   SimpleScrollGridSection,
   SimpleScrollGrid,
@@ -13,13 +16,12 @@ import {
   getStickyHeaderDates,
   getStickyFooterScrollbar,
   createFormatter,
-  AllDayContentArg,
   CssDimValue,
   NowTimer,
   DateMarker,
   NowIndicatorContainer,
   ContentContainer,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   createElement,
   createRef,

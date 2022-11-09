@@ -1,9 +1,11 @@
 import {
+  SlotLaneContentArg,
+} from '@fullcalendar/core'
+import {
   BaseComponent,
   ContentContainer,
   RefMap,
-  SlotLaneContentArg,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   createElement,
 } from '@fullcalendar/core/preact'

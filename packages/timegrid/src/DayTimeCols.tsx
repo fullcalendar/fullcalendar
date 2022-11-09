@@ -13,7 +13,7 @@ import {
   NowTimer,
   CssDimValue,
   Duration,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   createElement,
   createRef,

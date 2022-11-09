@@ -1,4 +1,4 @@
-import { StandardEvent, BaseComponent, MinimalEventProps, createFormatter } from '@fullcalendar/core'
+import { StandardEvent, BaseComponent, MinimalEventProps, createFormatter } from '@fullcalendar/core/internal'
 import { createElement } from '@fullcalendar/core/preact'
 
 const DEFAULT_TIME_FORMAT = createFormatter({

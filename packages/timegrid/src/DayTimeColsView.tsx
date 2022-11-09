@@ -6,11 +6,11 @@ import {
   DayTableModel,
   memoize,
   ChunkContentCallbackArgs,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   createElement,
 } from '@fullcalendar/core/preact'
-import { DayTable } from '@fullcalendar/daygrid'
+import { DayTable } from '@fullcalendar/daygrid/internal'
 import { TimeColsView } from './TimeColsView.js'
 import { DayTimeCols } from './DayTimeCols.js'
 import { buildSlatMetas } from './time-slat-meta.js'

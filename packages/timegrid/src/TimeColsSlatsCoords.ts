@@ -7,7 +7,7 @@ import {
   DateProfile,
   Duration,
   rangeContainsMarker,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 
 export class TimeColsSlatsCoords {
   constructor(

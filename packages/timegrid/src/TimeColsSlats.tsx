@@ -4,7 +4,7 @@ import {
   CssDimValue,
   PositionCache,
   DateProfile,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   createElement,
   VNode,

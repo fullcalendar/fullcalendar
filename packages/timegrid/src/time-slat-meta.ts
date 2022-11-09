@@ -7,7 +7,7 @@ import {
   Duration,
   DateMarker,
   DateEnv,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 
 export interface TimeSlatMeta {
   date: DateMarker

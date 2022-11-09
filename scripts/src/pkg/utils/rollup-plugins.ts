@@ -174,7 +174,10 @@ export function massageDtsPlugin(): Plugin {
       // force all import statements (especially auto-generated chunks) to have a .js extension
       // TODO: file a bug. code splitting w/ es2016 modules
       code = code.replace(/(} from ['"])([^'"]*)(['"])/g, (whole, start, importId, end) => {
-        if (!importId.endsWith('.js')) {
+        if (
+          importId.startsWith('./') && // relative ID
+          !importId.endsWith('.js')
+        ) {
           return start + importId + '.js' + end
         }
         return whole

@@ -15,7 +15,7 @@ import {
   DayTableCell,
   Hit,
   DateComponent,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   createElement,
   VNode,

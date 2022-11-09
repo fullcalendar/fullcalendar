@@ -1,17 +1,8 @@
-import { createPlugin } from '@fullcalendar/core'
-import { TimeColsView } from './TimeColsView.js'
-import { DayTimeColsView, buildTimeColsModel } from './DayTimeColsView.js'
-import { TimeColsSeg } from './TimeColsSeg.js'
-import { DayTimeCols, buildDayRanges } from './DayTimeCols.js'
-import { DayTimeColsSlicer } from './DayTimeColsSlicer.js'
+import { createPlugin, PluginDef } from '@fullcalendar/core/internal'
+import { DayTimeColsView } from './DayTimeColsView.js'
 import { OPTION_REFINERS } from './options.js'
 import './options-declare.js'
 import './index.css'
-
-export { DayTimeCols, DayTimeColsView, TimeColsView, buildTimeColsModel, buildDayRanges, DayTimeColsSlicer, TimeColsSeg }
-export { TimeCols } from './TimeCols.js'
-export { TimeSlatMeta, buildSlatMetas } from './time-slat-meta.js'
-export { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
 
 export default createPlugin({
   name: '<%= pkgName %>',
@@ -34,4 +25,4 @@ export default createPlugin({
       duration: { weeks: 1 },
     },
   },
-})
+}) as PluginDef

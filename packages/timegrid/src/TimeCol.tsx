@@ -2,7 +2,7 @@ import {
   DateMarker, BaseComponent, EventSegUiInteractionState, Seg, getSegMeta,
   DateRange, DayCellContainer, NowIndicatorContainer, BgEvent, renderFill, buildIsoString, computeEarliestSegStart,
   DateProfile, buildEventRangeKey, sortEventSegs, memoize, SegEntryGroup, SegEntry, Dictionary, SegSpan, CssDimValue, hasCustomDayCellContent,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   createElement,
   Fragment,
@@ -38,7 +38,7 @@ export interface TimeColProps {
 }
 
 export class TimeCol extends BaseComponent<TimeColProps> {
-  sortEventSegs = memoize(sortEventSegs)
+  sortEventSegs = memoize(sortEventSegs) as (typeof sortEventSegs)
   // TODO: memoize event-placement?
 
   render() {

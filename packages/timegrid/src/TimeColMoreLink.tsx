@@ -1,7 +1,7 @@
 import {
   MoreLinkContentArg, MoreLinkContainer, BaseComponent,
   Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState, CssDimValue,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import { createElement } from '@fullcalendar/core/preact'
 import { renderPlainFgSegs } from './TimeCol.js'
 import { TimeColsSeg } from './TimeColsSeg.js'

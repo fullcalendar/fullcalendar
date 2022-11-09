@@ -10,7 +10,7 @@ import {
   NowIndicatorContainer,
   DateProfile,
   DayTableCell,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   createElement,
   createRef,

@@ -1,4 +1,4 @@
-import { BaseComponent } from '@fullcalendar/core'
+import { BaseComponent } from '@fullcalendar/core/internal'
 import { createElement } from '@fullcalendar/core/preact'
 import { TimeColsAxisCell } from './TimeColsAxisCell.js'
 import { TimeSlatMeta } from './time-slat-meta.js'

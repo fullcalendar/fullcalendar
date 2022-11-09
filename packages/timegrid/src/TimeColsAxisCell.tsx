@@ -1,10 +1,12 @@
 import {
+  SlotLabelContentArg,
+} from '@fullcalendar/core'
+import {
   ViewContext,
   createFormatter,
   ViewContextType,
-  SlotLabelContentArg,
   ContentContainer,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   createElement,
 } from '@fullcalendar/core/preact'
