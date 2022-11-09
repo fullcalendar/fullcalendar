@@ -265,7 +265,7 @@ function buildNormalJsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
       inject: {
         importId: pkgJson.name === '@fullcalendar/core' ?
           joinPaths(pkgDir, transpiledSubdir, 'styleUtils' + transpiledExtension) :
-          '@fullcalendar/core',
+          '@fullcalendar/core/internal',
         importProp: 'injectStyles',
       },
     }),

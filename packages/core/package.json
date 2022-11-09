@@ -32,12 +32,14 @@
     "exports": {
       ".": { "iife": true },
       "./preact": {},
+      "./internal": {},
       "./locales-all": { "iife": true, "generator": "./scripts/generate-locales-all.js" },
       "./locales/*": { "iife": true, "iifeGenerator": "./scripts/generate-locale-iife.js" }
     },
     "iifeGlobals": {
       ".": "FullCalendar",
-      "./preact": "FullCalendar",
+      "./preact": "FullCalendar.Preact",
+      "./internal": "FullCalendar.Internal",
       "preact": "",
       "preact/compat": "",
       "tslib": ""
