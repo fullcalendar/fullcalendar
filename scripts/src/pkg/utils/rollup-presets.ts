@@ -8,6 +8,7 @@ import sourcemapsPlugin from 'rollup-plugin-sourcemaps'
 import commonjsPluginLib from '@rollup/plugin-commonjs'
 import jsonPluginLib from '@rollup/plugin-json'
 import postcssPluginLib from 'rollup-plugin-postcss'
+import replacePluginLib from '@rollup/plugin-replace'
 import { mapProps } from '../../utils/lang.js'
 import { MonorepoStruct } from '../../utils/monorepo-struct.js'
 import { analyzePkg } from '../../utils/pkg-analysis.js'
@@ -38,6 +39,7 @@ import {
 const commonjsPlugin = cjsInterop(commonjsPluginLib)
 const jsonPlugin = cjsInterop(jsonPluginLib)
 const postcssPlugin = cjsInterop(postcssPluginLib)
+const replacePlugin = cjsInterop(replacePluginLib)
 
 const assetExtensions = ['.css']
 
@@ -265,6 +267,14 @@ function buildNormalJsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
         importProp: 'injectStyles',
       },
     }),
+    replacePlugin({
+      delimiters: ['<%= ', ' %>'],
+      preventAssignment: true,
+      values: {
+        releaseDate: new Date().toISOString().replace(/T.*/, ''), // just YYYY-MM-DD
+        pkgName: pkgJson.name,
+      }
+    })
   ]
 }
 
