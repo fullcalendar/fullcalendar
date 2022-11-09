@@ -5,9 +5,9 @@ import handlebars from 'handlebars'
 import nodeResolvePlugin from '@rollup/plugin-node-resolve'
 import dtsPlugin from 'rollup-plugin-dts'
 import sourcemapsPlugin from 'rollup-plugin-sourcemaps'
-import { default as commonjsPlugin } from '@rollup/plugin-commonjs'
-import { default as jsonPlugin } from '@rollup/plugin-json'
-import { default as postcssPlugin } from 'rollup-plugin-postcss'
+import commonjsPluginLib from '@rollup/plugin-commonjs'
+import jsonPluginLib from '@rollup/plugin-json'
+import postcssPluginLib from 'rollup-plugin-postcss'
 import { mapProps } from '../../utils/lang.js'
 import { MonorepoStruct } from '../../utils/monorepo-struct.js'
 import { analyzePkg } from '../../utils/pkg-analysis.js'
@@ -34,6 +34,10 @@ import {
   minifySeparatelyPlugin,
   rerootPlugin,
 } from './rollup-plugins.js'
+
+const commonjsPlugin = cjsInterop(commonjsPluginLib)
+const jsonPlugin = cjsInterop(jsonPluginLib)
+const postcssPlugin = cjsInterop(postcssPluginLib)
 
 const assetExtensions = ['.css']
 
@@ -335,4 +339,8 @@ function onwarn(warning: RollupWarning) {
   if (warning.code !== 'CIRCULAR_DEPENDENCY') {
     console.error(warning)
   }
+}
+
+function cjsInterop<DefaultExport>(namespace: { default: DefaultExport }): DefaultExport {
+  return namespace.default || (namespace as DefaultExport)
 }

@@ -1,4 +1,4 @@
-import { default as XHRMock, once } from 'xhr-mock'
+import XHRMockLib, { once } from 'xhr-mock'
 import { default as timeGridPlugin } from '@fullcalendar/timegrid'
 import { EventSourceInput } from '@fullcalendar/core'
 import { default as iCalendarPlugin } from '@fullcalendar/icalendar'
@@ -12,6 +12,9 @@ import { default as timedMeetingWithDuration } from './data/timedMeetingWithDura
 import { default as dataWithRecurrenceId } from './data/recurrenceId.js'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
+import { cjsInterop } from '../lib/cjs.js'
+
+const XHRMock = cjsInterop(XHRMockLib)
 
 describe('addICalEventSource with day view', () => {
   const ICAL_MIME_TYPE = 'text/calendar'

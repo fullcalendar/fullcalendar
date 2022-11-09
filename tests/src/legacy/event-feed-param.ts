@@ -1,4 +1,7 @@
-import { default as XHRMock } from 'xhr-mock'
+import XHRMockLib from 'xhr-mock'
+import { cjsInterop } from '../lib/cjs.js'
+
+const XHRMock = cjsInterop(XHRMockLib)
 
 describe('event feed params', () => {
   pushOptions({

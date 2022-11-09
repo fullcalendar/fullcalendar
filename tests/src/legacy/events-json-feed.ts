@@ -1,5 +1,8 @@
-import { default as XHRMock } from 'xhr-mock'
+import XHRMockLib from 'xhr-mock'
+import { cjsInterop } from '../lib/cjs.js'
 import { formatIsoTimeZoneOffset } from '../lib/datelib-utils.js'
+
+const XHRMock = cjsInterop(XHRMockLib)
 
 describe('events as a json feed', () => {
   pushOptions({

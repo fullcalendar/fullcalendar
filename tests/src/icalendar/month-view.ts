@@ -1,4 +1,4 @@
-import { default as XHRMock } from 'xhr-mock'
+import XHRMockLib from 'xhr-mock'
 import { default as dayGridMonth } from '@fullcalendar/daygrid'
 import { EventSourceInput } from '@fullcalendar/core'
 import { default as iCalendarPlugin } from '@fullcalendar/icalendar'
@@ -12,6 +12,9 @@ import { default as recurringWeekly } from './data/recurringWeekly.js'
 import { default as recurringWeeklyWithoutEnd } from './data/recurringWeeklyWithoutEnd.js'
 import { default as recurringWeeklyWithCount } from './data/recurringWeeklyWithCount.js'
 import { default as mungedOneHourMeeting } from './data/mungedOneHourMeeting.js'
+import { cjsInterop } from '../lib/cjs.js'
+
+const XHRMock = cjsInterop(XHRMockLib)
 
 describe('addICalEventSource with month view', () => {
   const ICAL_MIME_TYPE = 'text/calendar'
