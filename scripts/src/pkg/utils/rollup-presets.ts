@@ -331,7 +331,6 @@ async function buildBanner(pkgBundleStruct: PkgBundleStruct): Promise<string> {
   return template(fullPkgJson)
 }
 
-
 function onwarn(warning: RollupWarning) {
   if (warning.code !== 'CIRCULAR_DEPENDENCY') {
     console.error(warning)
