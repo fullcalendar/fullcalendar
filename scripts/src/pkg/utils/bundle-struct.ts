@@ -273,12 +273,11 @@ export function computeOwnIifeExternalPaths(
 ): string[] {
   const { entryConfigMap, entryStructMap, iifeGlobalsMap } = pkgBundleStruct
 
-  // filter for entries that have iife (and iife global)
+  // filter for entries that have an iife global (even if a dedicated iife file is not generated)
   // and don't externalize current
   const iifeEntryStructMap = filterProps(entryStructMap, (entryStruct) => {
     return Boolean(
       entryStruct.entryGlob !== currentEntryStruct.entryGlob &&
-      entryConfigMap[entryStruct.entryGlob].iife &&
       iifeGlobalsMap[entryStruct.entryGlob],
     )
   })

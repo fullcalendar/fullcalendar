@@ -182,6 +182,7 @@ function buildDtsOutputOptions(pkgBundleStruct: PkgBundleStruct): OutputOptions 
     format: 'esm',
     dir: joinPaths(pkgBundleStruct.pkgDir, 'dist'),
     entryFileNames: '[name].d.ts',
+    chunkFileNames: 'internal-[hash].d.ts',
   }
 }
 
