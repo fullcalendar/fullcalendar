@@ -9,6 +9,7 @@ import { OPTION_REFINERS, LISTENER_REFINERS } from './options.js'
 import './options-declare.js'
 
 export default createPlugin({
+  name: '<%= pkgName %>',
   componentInteractions: [DateClicking, DateSelecting, EventDragging, EventResizing],
   calendarInteractions: [UnselectAuto],
   elementDraggingImpl: FeaturefulElementDragging,

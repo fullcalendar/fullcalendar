@@ -42,5 +42,6 @@ let eventSourceDef: EventSourceDef<EventSourceFunc> = {
 }
 
 export const funcEventSourcePlugin = createPlugin({
+  name: 'func-event-source',
   eventSourceDefs: [eventSourceDef],
 })

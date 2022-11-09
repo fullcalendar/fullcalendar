@@ -167,5 +167,6 @@ function specifiesEnd(iCalEvent: ICAL.Event) {
 }
 
 export default createPlugin({
+  name: '<%= pkgName %>',
   eventSourceDefs: [eventSourceDef],
 })

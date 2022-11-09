@@ -20,7 +20,8 @@ export const globalPlugins: PluginDef[] = [ // TODO: make a const?
   jsonFeedEventSourcePlugin,
   simpleRecurringEventsPlugin,
   changeHandlerPlugin,
-  createPlugin({ // misc...
+  createPlugin({
+    name: 'misc',
     isLoadingFuncs: [
       (state: CalendarDataManagerState) => computeEventSourcesLoading(state.eventSources),
     ],

@@ -36,6 +36,7 @@ BootstrapTheme.prototype.iconOverrideCustomButtonOption = 'bootstrapFontAwesome'
 BootstrapTheme.prototype.iconOverridePrefix = 'fa-'
 
 const plugin = createPlugin({
+  name: '<%= pkgName %>',
   themeClasses: {
     bootstrap: BootstrapTheme,
   },

@@ -177,6 +177,7 @@ function injectQsComponent(url, component) {
 }
 
 export default createPlugin({
+  name: '<%= pkgName %>',
   eventSourceDefs: [eventSourceDef],
   optionRefiners: OPTION_REFINERS,
   eventSourceRefiners: EVENT_SOURCE_REFINERS,

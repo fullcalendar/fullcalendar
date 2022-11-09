@@ -412,6 +412,7 @@ describe('custom view', () => {
       let calendar = initCalendar({
         plugins: [
           createPlugin({
+            name: 'test-plugin',
             views: {
               crazy: {
                 content: 'hello world',

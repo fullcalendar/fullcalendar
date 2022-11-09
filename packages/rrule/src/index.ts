@@ -56,6 +56,7 @@ let recurring: RecurringType<EventRRuleData> = {
 }
 
 export default createPlugin({
+  name: '<%= pkgName %>',
   recurringTypes: [recurring],
   eventRefiners: RRULE_EVENT_REFINERS,
 })

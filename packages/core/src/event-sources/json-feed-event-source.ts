@@ -51,6 +51,7 @@ let eventSourceDef: EventSourceDef<JsonFeedMeta> = {
 }
 
 export const jsonFeedEventSourcePlugin = createPlugin({
+  name: 'json-event-source',
   eventSourceRefiners: JSON_FEED_EVENT_SOURCE_REFINERS,
   eventSourceDefs: [eventSourceDef],
 })

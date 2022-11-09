@@ -127,6 +127,7 @@ describe('view-specific options', () => {
       plugins: [
         dayGridPlugin,
         createPlugin({
+          name: 'test-plugin',
           views: {
             superBasic: {
               type: 'dayGrid', // explicitly extend

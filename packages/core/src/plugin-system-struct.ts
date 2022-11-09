@@ -25,6 +25,8 @@ import { CalendarData } from './reducers/data-types.js'
 // TODO: easier way to add new hooks? need to update a million things
 
 export interface PluginDefInput {
+  name: string
+  premiumReleaseDate?: string
   deps?: PluginDef[]
   reducers?: ReducerFunc[]
   isLoadingFuncs?: ((state: Dictionary) => boolean)[]
@@ -61,6 +63,7 @@ export interface PluginDefInput {
 }
 
 export interface PluginHooks {
+  premiumReleaseDate: Date | undefined
   reducers: ReducerFunc[]
   isLoadingFuncs: ((state: Dictionary) => boolean)[]
   contextInit: ((context: CalendarContext) => void)[]
@@ -97,6 +100,7 @@ export interface PluginHooks {
 
 export interface PluginDef extends PluginHooks {
   id: string
+  name: string
   deps: PluginDef[]
 }
 

@@ -7,6 +7,8 @@ import { isArraysEqual } from './util/array.js'
 export function createPlugin(input: PluginDefInput): PluginDef {
   return {
     id: guid(),
+    name: input.name,
+    premiumReleaseDate: input.premiumReleaseDate ? new Date(input.premiumReleaseDate): undefined,
     deps: input.deps || [],
     reducers: input.reducers || [],
     isLoadingFuncs: input.isLoadingFuncs || [],
@@ -44,8 +46,9 @@ export function createPlugin(input: PluginDefInput): PluginDef {
 }
 
 function buildPluginHooks(pluginDefs: PluginDef[], globalDefs: PluginDef[]): PluginHooks {
-  let isAdded: { [pluginId: string]: boolean } = {}
+  let currentPluginIds: { [pluginName: string]: string } = {}
   let hooks: PluginHooks = {
+    premiumReleaseDate: undefined,
     reducers: [],
     isLoadingFuncs: [],
     contextInit: [],
@@ -82,10 +85,16 @@ function buildPluginHooks(pluginDefs: PluginDef[], globalDefs: PluginDef[]): Plu
 
   function addDefs(defs: PluginDef[]) {
     for (let def of defs) {
-      if (!isAdded[def.id]) {
-        isAdded[def.id] = true
+      const pluginName = def.name
+      const currentId = currentPluginIds[pluginName]
+
+      if (currentId === undefined) {
+        currentPluginIds[pluginName] = def.id
         addDefs(def.deps)
         hooks = combineHooks(hooks, def)
+      } else if (currentId !== def.id) {
+        // different ID than the one already added
+        console.warn(`Duplicate plugin '${pluginName}'`)
       }
     }
   }
@@ -116,6 +125,7 @@ export function buildBuildPluginHooks() { // memoizes
 
 function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
   return {
+    premiumReleaseDate: compareOptionalDates(hooks0.premiumReleaseDate, hooks1.premiumReleaseDate),
     reducers: hooks0.reducers.concat(hooks1.reducers),
     isLoadingFuncs: hooks0.isLoadingFuncs.concat(hooks1.isLoadingFuncs),
     contextInit: hooks0.contextInit.concat(hooks1.contextInit),
@@ -149,4 +159,17 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     optionRefiners: { ...hooks0.optionRefiners, ...hooks1.optionRefiners },
     propSetHandlers: { ...hooks0.propSetHandlers, ...hooks1.propSetHandlers },
   }
+}
+
+function compareOptionalDates(
+  date0: Date | undefined,
+  date1: Date | undefined,
+): Date | undefined {
+  if (date0 === undefined) {
+    return date1
+  }
+  if (date1 === undefined) {
+    return date0
+  }
+  return new Date(Math.max(date0.valueOf(), date1.valueOf()))
 }

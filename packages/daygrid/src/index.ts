@@ -12,30 +12,26 @@ export { buildDayTableModel } from './DayTableView.js'
 export { DayTableView as DayGridView } // export as old name!
 
 export default createPlugin({
+  name: '<%= pkgName %>',
   initialView: 'dayGridMonth',
   views: {
-
     dayGrid: {
       component: DayTableView,
       dateProfileGeneratorClass: TableDateProfileGenerator,
     },
-
     dayGridDay: {
       type: 'dayGrid',
       duration: { days: 1 },
     },
-
     dayGridWeek: {
       type: 'dayGrid',
       duration: { weeks: 1 },
     },
-
     dayGridMonth: {
       type: 'dayGrid',
       duration: { months: 1 },
       monthMode: true,
       fixedWeekCount: true,
     },
-
   },
 })

@@ -4,6 +4,7 @@ import { EventSource } from './structs/event-source.js'
 import { CalendarContext } from './CalendarContext.js'
 
 export const changeHandlerPlugin = createPlugin({
+  name: 'change-handler',
   optionChangeHandlers: {
     events(events, context) {
       handleEventSources([events], context)

@@ -13,5 +13,6 @@ class MomentNamedTimeZone extends NamedTimeZoneImpl {
 }
 
 export default createPlugin({
+  name: '<%= pkgName %>',
   namedTimeZonedImpl: MomentNamedTimeZone,
 })

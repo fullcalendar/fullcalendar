@@ -36,6 +36,7 @@ BootstrapTheme.prototype.iconOverrideCustomButtonOption = 'icon'
 BootstrapTheme.prototype.iconOverridePrefix = 'bi-'
 
 const plugin = createPlugin({
+  name: '<%= pkgName %>',
   themeClasses: {
     bootstrap5: BootstrapTheme,
   },

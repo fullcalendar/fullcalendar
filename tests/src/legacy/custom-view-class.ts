@@ -50,6 +50,7 @@ describe('custom view class', () => { // TODO: rename file
     let calendar = initCalendar({
       plugins: [
         createPlugin({
+          name: 'test-plugin',
           views: {
             custom: CustomViewConfig,
           },

@@ -72,6 +72,7 @@ function formatWithCmdStr(cmdStr: string, arg: VerboseFormattingArg) {
 }
 
 export default createPlugin({
+  name: '<%= pkgName %>',
   cmdFormatter: formatWithCmdStr,
   namedTimeZonedImpl: LuxonNamedTimeZone,
 })

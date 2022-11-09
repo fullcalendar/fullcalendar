@@ -20,5 +20,6 @@ let eventSourceDef: EventSourceDef<EventInput[]> = {
 }
 
 export const arrayEventSourcePlugin = createPlugin({
+  name: 'array-event-source',
   eventSourceDefs: [eventSourceDef],
 })

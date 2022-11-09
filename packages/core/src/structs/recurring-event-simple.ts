@@ -72,6 +72,7 @@ let recurring: RecurringType<SimpleRecurringData> = {
 }
 
 export const simpleRecurringEventsPlugin = createPlugin({
+  name: 'simple-recurring-event',
   recurringTypes: [recurring],
   eventRefiners: SIMPLE_RECURRING_REFINERS,
 })
