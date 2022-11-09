@@ -43,7 +43,11 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
             elRef={elAttrs.ref}
             id={props.id}
             title={title}
-            extraClassNames={['fc-more-popover'].concat(elAttrs.className || [])}
+            extraClassNames={
+              ['fc-more-popover'].concat(
+                (elAttrs.className as (string | undefined)) || [],
+              )
+            }
             extraAttrs={elAttrs /* TODO: make these time-based when not whole-day? */}
             parentEl={props.parentEl}
             alignmentEl={props.alignmentEl}

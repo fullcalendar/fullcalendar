@@ -160,7 +160,7 @@ export function buildElAttrs(props: ElAttrsProps, extraClassNames?: string[]): E
   if (props.elClasses || extraClassNames) {
     attrs.className = (props.elClasses || [])
       .concat(extraClassNames || [])
-      .concat(attrs.className || [])
+      .concat((attrs.className as (string | undefined)) || [])
       .filter(Boolean)
       .join(' ')
   }
