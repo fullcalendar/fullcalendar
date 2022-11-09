@@ -33,6 +33,7 @@ import {
   externalizePkgsPlugin,
   generatedContentPlugin,
   minifySeparatelyPlugin,
+  massageDtsPlugin,
   rerootPlugin,
 } from './rollup-plugins.js'
 
@@ -243,6 +244,7 @@ function buildDtsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
       paths: computeOwnExternalPaths(pkgBundleStruct),
     }),
     dtsPlugin(),
+    massageDtsPlugin(),
     nodeResolvePlugin(),
   ]
 }
@@ -277,8 +279,8 @@ function buildNormalJsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
         releaseDate: new Date().toISOString().replace(/T.*/, ''), // just YYYY-MM-DD
         pkgName: pkgJson.name,
         pkgVersion: pkgJson.version,
-      }
-    })
+      },
+    }),
   ]
 }
 

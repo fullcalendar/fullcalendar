@@ -53,10 +53,7 @@ export function externalizePathsPlugin(options: ExteralizePathsOptions): Plugin 
         }
 
         if (importPath) {
-          // always return the absolute path. a stable reference to the external file allows for:
-          // - iife globals
-          // - outputting multiple modules with code-splitting
-          // (rollup will ultimately relativize the path)
+          // return absolute is possible via makeAbsoluteExternalsRelative
           return { id: importPath, external: true }
         }
       }
@@ -162,6 +159,30 @@ async function minifySeparately(path: string): Promise<void> {
   ], {
     cwd: standardScriptsDir,
   })
+}
+
+// .d.ts
+// -------------------------------------------------------------------------------------------------
+
+/*
+Workarounds rollup-plugin-dts
+*/
+export function massageDtsPlugin(): Plugin {
+  return {
+    name: 'massage-dts',
+    renderChunk(code) {
+      // force all import statements (especially auto-generated chunks) to have a .js extension
+      // TODO: file a bug. code splitting w/ es2016 modules
+      code = code.replace(/(} from ['"])([^'"]*)(['"])/g, (whole, start, importId, end) => {
+        if (!importId.endsWith('.js')) {
+          return start + importId + '.js' + end
+        }
+        return whole
+      })
+
+      return code
+    },
+  }
 }
 
 // Extensions Find & Replace Utils
