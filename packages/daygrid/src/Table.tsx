@@ -12,7 +12,7 @@ import {
   DateProfile,
   Hit,
   DayTableCell,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   VNode,
   RefObject,

@@ -13,7 +13,7 @@ import {
   buildEventRangeKey,
   sortEventSegs,
   DayTableCell,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   VNode,
   createElement,

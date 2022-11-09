@@ -1,4 +1,4 @@
-import { EventSegUiInteractionState, Seg } from '@fullcalendar/core'
+import { EventSegUiInteractionState, Seg } from '@fullcalendar/core/internal'
 
 // this is a DATA STRUCTURE, not a component
 

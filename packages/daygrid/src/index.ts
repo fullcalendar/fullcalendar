@@ -1,15 +1,7 @@
-import { createPlugin } from '@fullcalendar/core'
+import { createPlugin, PluginDef } from '@fullcalendar/core/internal'
 import { DayTableView } from './DayTableView.js'
 import { TableDateProfileGenerator } from './TableDateProfileGenerator.js'
 import './index.css'
-
-export { DayTable } from './DayTable.js'
-export { DayTableSlicer } from './DayTableSlicer.js'
-export { Table } from './Table.js'
-export { TableSeg } from './TableSeg.js'
-export { TableView } from './TableView.js'
-export { buildDayTableModel } from './DayTableView.js'
-export { DayTableView as DayGridView } // export as old name!
 
 export default createPlugin({
   name: '<%= pkgName %>',
@@ -34,4 +26,4 @@ export default createPlugin({
       fixedWeekCount: true,
     },
   },
-})
+}) as PluginDef

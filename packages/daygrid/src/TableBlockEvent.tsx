@@ -1,4 +1,4 @@
-import { StandardEvent, BaseComponent, MinimalEventProps } from '@fullcalendar/core'
+import { StandardEvent, BaseComponent, MinimalEventProps } from '@fullcalendar/core/internal'
 import { createElement } from '@fullcalendar/core/preact'
 import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering.js'
 

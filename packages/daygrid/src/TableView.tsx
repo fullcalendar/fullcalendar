@@ -11,7 +11,7 @@ import {
   getStickyFooterScrollbar,
   ChunkConfigRowContent,
   Dictionary,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   VNode,
   createElement,

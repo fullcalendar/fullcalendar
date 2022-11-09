@@ -13,7 +13,7 @@ import {
   getUniqueDomId,
   DayCellContentArg,
   hasCustomDayCellContent,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   Ref,
   ComponentChildren,

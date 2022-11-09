@@ -9,7 +9,7 @@ import {
   ViewContext,
   CssDimValue,
   DateProfile,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   createElement,
   createRef,

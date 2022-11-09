@@ -5,7 +5,7 @@ import {
   EventContentArg,
   EventContainer,
   getSegAnchorAttrs,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import { createElement, Fragment } from '@fullcalendar/core/preact'
 import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering.js'
 

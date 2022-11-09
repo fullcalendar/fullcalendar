@@ -9,4 +9,4 @@ export { FormatDateOptions, FormatRangeOptions } from './formatting-api.js'
 export { formatDate, formatRange } from './formatting-api.js'
 export * from './api-type-deps.js'
 
-export const version = '<%= pkgVersion %>'
+export const version: string = '<%= pkgVersion %>'

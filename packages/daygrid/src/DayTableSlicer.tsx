@@ -1,4 +1,4 @@
-import { DayTableModel, DateRange, Slicer } from '@fullcalendar/core'
+import { DayTableModel, DateRange, Slicer } from '@fullcalendar/core/internal'
 import { TableSeg } from './TableSeg.js'
 
 export class DayTableSlicer extends Slicer<TableSeg, [DayTableModel]> {
