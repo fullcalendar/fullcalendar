@@ -11,6 +11,8 @@ import { watchTs, writeTsconfigs } from './utils/monorepo-ts.js'
 import { untilSigInt } from './utils/process.js'
 import { ScriptContext } from './utils/script-runner.js'
 
+// TODO: if error with rollup, kill typescript, and vice-versa
+
 export default async function(this: ScriptContext) {
   const monorepoDir = this.cwd
   const initialMonorepoStruct = this.monorepoStruct
