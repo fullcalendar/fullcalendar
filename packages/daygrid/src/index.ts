@@ -1,4 +1,4 @@
-import { createPlugin, PluginDef } from '@fullcalendar/core/internal'
+import { createPlugin } from '@fullcalendar/core/internal'
 import { DayTableView } from './DayTableView.js'
 import { TableDateProfileGenerator } from './TableDateProfileGenerator.js'
 import './index.css'
@@ -26,4 +26,4 @@ export default createPlugin({
       fixedWeekCount: true,
     },
   },
-}) as PluginDef
+})

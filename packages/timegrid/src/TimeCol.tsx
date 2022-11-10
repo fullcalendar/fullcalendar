@@ -38,7 +38,7 @@ export interface TimeColProps {
 }
 
 export class TimeCol extends BaseComponent<TimeColProps> {
-  sortEventSegs = memoize(sortEventSegs) as (typeof sortEventSegs)
+  sortEventSegs = memoize(sortEventSegs)
   // TODO: memoize event-placement?
 
   render() {
