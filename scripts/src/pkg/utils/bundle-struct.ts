@@ -271,14 +271,19 @@ export function computeOwnIifeExternalPaths(
   currentEntryStruct: EntryStruct,
   pkgBundleStruct: PkgBundleStruct,
 ): string[] {
-  const { entryConfigMap, entryStructMap, iifeGlobalsMap } = pkgBundleStruct
+  const { entryStructMap, iifeGlobalsMap } = pkgBundleStruct
+  const currentGlobalName = iifeGlobalsMap[currentEntryStruct.entryGlob]
 
-  // filter for entries that have an iife global (even if a dedicated iife file is not generated)
-  // and don't externalize current
   const iifeEntryStructMap = filterProps(entryStructMap, (entryStruct) => {
+    const globalName = iifeGlobalsMap[entryStruct.entryGlob]
+
     return Boolean(
+      // not the current entrypoint
       entryStruct.entryGlob !== currentEntryStruct.entryGlob &&
-      iifeGlobalsMap[entryStruct.entryGlob],
+      // has a global variable
+      globalName &&
+      // not nested within current global variable
+      (!currentGlobalName || !globalName.startsWith(currentGlobalName + '.')),
     )
   })
 

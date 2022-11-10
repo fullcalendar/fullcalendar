@@ -97,8 +97,9 @@ Generate separate .d.ts bundles for each endpoints.
 Better than code-splitting because:
 
 - rollup-plugin-dts chokes easily
-- when a user package imports a type that lives within an internal-only chunk,
-  complains about "reference not portable"
+- internal chunks are referenced by .js extensions and the real js file won't exist, which is weird
+- when a user package imports a type that lives within an internal chunk,
+  typescript complains about "reference not portable"
 
 Even without code-splitting, there will be code boundaries between endpoints
 thanks to externalizePathsPlugin & computeOwnExternalPaths.
@@ -280,7 +281,7 @@ function buildJsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
   const pkgAnalysis = analyzePkg(pkgBundleStruct.pkgDir)
 
   if (pkgAnalysis.isTests) {
-    return buildTestsJsPlugins(pkgBundleStruct)
+    return buildTestsJsPlugins()
   } else {
     return buildNormalJsPlugins(pkgBundleStruct)
   }
@@ -311,7 +312,7 @@ function buildNormalJsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
   ]
 }
 
-function buildTestsJsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
+function buildTestsJsPlugins(): Plugin[] {
   return [
     nodeResolvePlugin({ // determines index.js and .js/cjs/mjs
       browser: true, // for xhr-mock (use non-node shims that it wants to)
