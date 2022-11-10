@@ -161,6 +161,33 @@ async function minifySeparately(path: string): Promise<void> {
   })
 }
 
+// .d.ts
+// -------------------------------------------------------------------------------------------------
+
+/*
+Workarounds rollup-plugin-dts
+*/
+export function massageDtsPlugin(): Plugin {
+  return {
+    name: 'massage-dts',
+    renderChunk(code) {
+      // force all import statements (especially auto-generated chunks) to have a .js extension
+      // TODO: file a bug. code splitting w/ es2016 modules
+      code = code.replace(/(} from ['"])([^'"]*)(['"])/g, (whole, start, importId, end) => {
+        if (
+          importId.startsWith('./') && // relative ID
+          !importId.endsWith('.js')
+        ) {
+          return start + importId + '.js' + end
+        }
+        return whole
+      })
+
+      return code
+    },
+  }
+}
+
 // Extensions Find & Replace Utils
 // -------------------------------------------------------------------------------------------------
 

@@ -33,6 +33,7 @@ import {
   externalizePkgsPlugin,
   generatedContentPlugin,
   minifySeparatelyPlugin,
+  massageDtsPlugin,
   rerootPlugin,
 } from './rollup-plugins.js'
 
@@ -64,6 +65,15 @@ export function buildModuleOptions(
   return []
 }
 
+export function buildDtsOptions(pkgBundleStruct: PkgBundleStruct): RollupOptions {
+  return {
+    input: buildDtsInput(pkgBundleStruct),
+    plugins: buildDtsPlugins(pkgBundleStruct),
+    output: buildDtsOutputOptions(pkgBundleStruct),
+    onwarn,
+  }
+}
+
 export async function buildIifeOptions(
   pkgBundleStruct: PkgBundleStruct,
   monorepoStruct: MonorepoStruct,
@@ -92,39 +102,6 @@ export async function buildIifeOptions(
   return optionsObjs
 }
 
-/*
-Generate separate .d.ts bundles for each endpoints.
-Better than code-splitting because:
-
-- rollup-plugin-dts chokes easily
-- internal chunks are referenced by .js extensions and the real js file won't exist, which is weird
-- when a user package imports a type that lives within an internal chunk,
-  typescript complains about "reference not portable"
-
-Even without code-splitting, there will be code boundaries between endpoints
-thanks to externalizePathsPlugin & computeOwnExternalPaths.
-
-However, there will still be repeat types between bundles.
-TODO: federate source code better to mitigate this.
-*/
-export function buildDtsOptions(pkgBundleStruct: PkgBundleStruct): RollupOptions[] {
-  const { entryStructMap } = pkgBundleStruct
-  const optionsObjs: RollupOptions[] = []
-
-  for (let entryAlias in entryStructMap) {
-    const entryStruct = entryStructMap[entryAlias]
-
-    optionsObjs.push({
-      input: buildDtsInput(entryStruct),
-      plugins: buildDtsPlugins(pkgBundleStruct),
-      output: buildDtsOutputOptions(entryAlias, pkgBundleStruct),
-      onwarn,
-    })
-  }
-
-  return optionsObjs
-}
-
 // Input
 // -------------------------------------------------------------------------------------------------
 
@@ -140,8 +117,10 @@ function buildIifeInput(entryStruct: EntryStruct): string {
   return entryStruct.entrySrcBase + '.iife' + transpiledExtension
 }
 
-function buildDtsInput(entryStruct: EntryStruct): string {
-  return entryStruct.entrySrcBase + '.d.ts'
+function buildDtsInput(pkgBundleStruct: PkgBundleStruct): InputMap {
+  return mapProps(pkgBundleStruct.entryStructMap, (entryStruct: EntryStruct) => {
+    return entryStruct.entrySrcBase + '.d.ts'
+  })
 }
 
 // Output
@@ -199,15 +178,12 @@ function buildIifeOutputOptions(
   }
 }
 
-function buildDtsOutputOptions(
-  entryAlias: string,
-  pkgBundleStruct: PkgBundleStruct,
-): OutputOptions {
-  const { pkgDir } = pkgBundleStruct
-
+function buildDtsOutputOptions(pkgBundleStruct: PkgBundleStruct): OutputOptions {
   return {
     format: 'esm',
-    file: joinPaths(pkgDir, 'dist', entryAlias) + '.d.ts',
+    dir: joinPaths(pkgBundleStruct.pkgDir, 'dist'),
+    entryFileNames: '[name].d.ts',
+    chunkFileNames: 'internal-[hash].d.ts',
   }
 }
 
@@ -260,19 +236,18 @@ function buildIifePlugins(
   ]
 }
 
-/*
-TODO: inefficient to repeatedly generate all this?
-*/
 function buildDtsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
   return [
     externalizeAssetsPlugin(),
     externalizePkgsPlugin(
       computeExternalPkgs(pkgBundleStruct),
     ),
+    // rollup-plugin-dts normally gets confused with code splitting. this helps a lot.
     externalizePathsPlugin({
       paths: computeOwnExternalPaths(pkgBundleStruct),
     }),
     dtsPlugin(),
+    massageDtsPlugin(),
     nodeResolvePlugin(),
   ]
 }
