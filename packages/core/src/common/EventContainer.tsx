@@ -1,7 +1,7 @@
 import { createElement, createRef } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
 import { Seg } from '../component/DateComponent.js'
-import { EventApi } from '../api/EventApi.js'
+import { EventImpl } from '../api/EventImpl.js'
 import {
   computeSegDraggable,
   computeSegStartResizable,
@@ -44,7 +44,7 @@ export class EventContainer extends BaseComponent<EventContainerProps> {
     const { ui } = eventRange
 
     const renderProps: EventContentArg = {
-      event: new EventApi(context, eventRange.def, eventRange.instance),
+      event: new EventImpl(context, eventRange.def, eventRange.instance),
       view: context.viewApi,
       timeText: props.timeText,
       textColor: ui.textColor,

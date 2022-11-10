@@ -2,18 +2,18 @@ import { __assign } from 'tslib'
 import { PointerDragEvent } from './interactions/pointer.js'
 import { buildDateSpanApi, DateSpanApi, DatePointApi, DateSpan } from './structs/date-span.js'
 import { CalendarContext } from './CalendarContext.js'
-import { ViewApi } from './ViewApi.js'
+import { ViewImpl } from './api/ViewImpl.js'
 import { DateMarker, startOfDay } from './datelib/marker.js'
 
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement
   jsEvent: UIEvent
-  view: ViewApi
+  view: ViewImpl
 }
 
 export interface DateSelectionApi extends DateSpanApi {
   jsEvent: UIEvent
-  view: ViewApi
+  view: ViewImpl
 }
 
 export type DatePointTransform = (dateSpan: DateSpan, context: CalendarContext) => any
@@ -27,10 +27,10 @@ export type OptionChangeHandlerMap = { [propName: string]: OptionChangeHandler }
 
 export interface DateSelectArg extends DateSpanApi {
   jsEvent: MouseEvent | null
-  view: ViewApi
+  view: ViewImpl
 }
 
-export function triggerDateSelect(selection: DateSpan, pev: PointerDragEvent | null, context: CalendarContext & { viewApi?: ViewApi }) {
+export function triggerDateSelect(selection: DateSpan, pev: PointerDragEvent | null, context: CalendarContext & { viewApi?: ViewImpl }) {
   context.emitter.trigger('select', {
     ...buildDateSpanApiWithContext(selection, context),
     jsEvent: pev ? pev.origEvent as MouseEvent : null, // Is this always a mouse event? See #4655
@@ -40,10 +40,10 @@ export function triggerDateSelect(selection: DateSpan, pev: PointerDragEvent | n
 
 export interface DateUnselectArg {
   jsEvent: MouseEvent
-  view: ViewApi
+  view: ViewImpl
 }
 
-export function triggerDateUnselect(pev: PointerDragEvent | null, context: CalendarContext & { viewApi?: ViewApi }) {
+export function triggerDateUnselect(pev: PointerDragEvent | null, context: CalendarContext & { viewApi?: ViewImpl }) {
   context.emitter.trigger('unselect', {
     jsEvent: pev ? pev.origEvent : null,
     view: context.viewApi || context.calendarApi.view,

@@ -1,15 +1,15 @@
 import { EventStore, parseEvents } from './event-store.js'
 import { EventInput } from './event-parse.js'
 import { DateSpanApi } from './date-span.js'
-import { EventApi } from '../api/EventApi.js'
+import { EventImpl } from '../api/EventImpl.js'
 import { SplittableProps } from '../component/event-splitting.js'
 import { CalendarContext } from '../CalendarContext.js'
 
 // TODO: rename to "criteria" ?
 export type ConstraintInput = 'businessHours' | string | EventInput | EventInput[]
 export type Constraint = 'businessHours' | string | EventStore | false // false means won't pass at all
-export type OverlapFunc = ((stillEvent: EventApi, movingEvent: EventApi | null) => boolean)
-export type AllowFunc = (span: DateSpanApi, movingEvent: EventApi | null) => boolean
+export type OverlapFunc = ((stillEvent: EventImpl, movingEvent: EventImpl | null) => boolean)
+export type AllowFunc = (span: DateSpanApi, movingEvent: EventImpl | null) => boolean
 export type isPropsValidTester = (props: SplittableProps, context: CalendarContext) => boolean
 
 export function normalizeConstraint(input: ConstraintInput, context: CalendarContext): Constraint | null {

@@ -1,19 +1,19 @@
 import { EventStore } from './structs/event-store.js'
 import { CalendarData } from './reducers/data-types.js'
-import { EventApi, buildEventApis } from './api/EventApi.js'
+import { EventImpl, buildEventApis } from './api/EventImpl.js'
 import { Duration } from './datelib/duration.js'
-import { ViewApi } from './ViewApi.js'
+import { ViewImpl } from './api/ViewImpl.js'
 
 export interface EventAddArg {
-  event: EventApi
-  relatedEvents: EventApi[]
+  event: EventImpl
+  relatedEvents: EventImpl[]
   revert: () => void
 }
 
 export interface EventChangeArg {
-  oldEvent: EventApi
-  event: EventApi
-  relatedEvents: EventApi[]
+  oldEvent: EventImpl
+  event: EventImpl
+  relatedEvents: EventImpl[]
   revert: () => void
 }
 
@@ -21,13 +21,13 @@ export interface EventDropArg extends EventChangeArg { // not best place. deals 
   el: HTMLElement
   delta: Duration
   jsEvent: MouseEvent
-  view: ViewApi
+  view: ViewImpl
   // and other "transformed" things
 }
 
 export interface EventRemoveArg {
-  event: EventApi
-  relatedEvents: EventApi[]
+  event: EventImpl
+  relatedEvents: EventImpl[]
   revert: () => void
 }
 

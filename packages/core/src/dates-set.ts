@@ -1,9 +1,9 @@
 import { DateProfile } from './DateProfileGenerator.js'
 import { CalendarData } from './reducers/data-types.js'
 import { RangeApiWithTimeZone, buildRangeApiWithTimeZone } from './structs/date-span.js'
-import { ViewApi } from './ViewApi.js'
+import { ViewImpl } from './api/ViewImpl.js'
 
-export type DatesSetArg = RangeApiWithTimeZone & { view: ViewApi }
+export type DatesSetArg = RangeApiWithTimeZone & { view: ViewImpl }
 
 export function handleDateProfile(dateProfile: DateProfile, context: CalendarData) {
   context.emitter.trigger('datesSet', {

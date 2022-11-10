@@ -1,5 +1,5 @@
-import { CalendarApi } from './CalendarApi.js'
-import { ViewApi } from './ViewApi.js'
+import { CalendarImpl } from './api/CalendarImpl.js'
+import { ViewImpl } from './api/ViewImpl.js'
 import { Theme } from './theme/Theme.js'
 import { DateEnv } from './datelib/env.js'
 import { PluginHooks } from './plugin-system-struct.js'
@@ -29,7 +29,7 @@ export interface ViewContext extends CalendarContext {
   isRtl: boolean
   dateProfileGenerator: DateProfileGenerator
   viewSpec: ViewSpec
-  viewApi: ViewApi
+  viewApi: ViewImpl
   addResizeHandler: (handler: ResizeHandler) => void
   removeResizeHandler: (handler: ResizeHandler) => void
   createScrollResponder: (execFunc: ScrollRequestHandler) => ScrollResponder
@@ -39,7 +39,7 @@ export interface ViewContext extends CalendarContext {
 
 export function buildViewContext(
   viewSpec: ViewSpec,
-  viewApi: ViewApi,
+  viewApi: ViewImpl,
   viewOptions: ViewOptionsRefined,
   dateProfileGenerator: DateProfileGenerator,
   dateEnv: DateEnv,
@@ -48,7 +48,7 @@ export function buildViewContext(
   dispatch: (action: Action) => void,
   getCurrentData: () => CalendarData,
   emitter: Emitter<CalendarListeners>,
-  calendarApi: CalendarApi,
+  calendarApi: CalendarImpl,
   registerInteractiveComponent: (component: DateComponent<any>, settingsInput: InteractionSettingsInput) => void,
   unregisterInteractiveComponent: (component: DateComponent<any>) => void,
 ): ViewContext {

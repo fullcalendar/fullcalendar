@@ -5,7 +5,7 @@ import { Action } from './Action.js'
 import { buildBuildPluginHooks } from '../plugin-system.js'
 import { PluginHooks } from '../plugin-system-struct.js'
 import { DateEnv } from '../datelib/env.js'
-import { CalendarApi } from '../CalendarApi.js'
+import { CalendarImpl } from '../api/CalendarImpl.js'
 import { StandardTheme } from '../theme/StandardTheme.js'
 import { EventSourceHash } from '../structs/event-source.js'
 import { buildViewSpecs, ViewSpec } from '../structs/view-spec.js'
@@ -34,7 +34,7 @@ import {
   CalendarListeners, CALENDAR_LISTENER_REFINERS, Dictionary,
 } from '../options.js'
 import { rangeContainsMarker } from '../datelib/date-range.js'
-import { ViewApi } from '../ViewApi.js'
+import { ViewImpl } from '../api/ViewImpl.js'
 import { parseBusinessHours } from '../structs/business-hours.js'
 import { globalPlugins } from '../global-plugins.js'
 import { createEmptyEventStore } from '../structs/event-store.js'
@@ -45,7 +45,7 @@ import { buildTitle } from './title-formatting.js'
 
 export interface CalendarDataManagerProps {
   optionOverrides: CalendarOptions
-  calendarApi: CalendarApi
+  calendarApi: CalendarImpl
   onAction?: (action: Action) => void
   onData?: (data: CalendarData) => void
 }
@@ -345,7 +345,7 @@ export class CalendarDataManager {
   _computeOptionsData(
     optionOverrides: CalendarOptions,
     dynamicOptionOverrides: CalendarOptions,
-    calendarApi: CalendarApi,
+    calendarApi: CalendarImpl,
   ): CalendarOptionsData {
     // TODO: blacklist options that are handled by optionChangeHandlers
 
@@ -603,7 +603,7 @@ function buildDateProfileGenerator(props: DateProfileGeneratorProps): DateProfil
 }
 
 function buildViewApi(type: string, getCurrentData: () => CalendarData, dateEnv: DateEnv) {
-  return new ViewApi(type, getCurrentData, dateEnv)
+  return new ViewImpl(type, getCurrentData, dateEnv)
 }
 
 function buildEventUiBySource(eventSources: EventSourceHash): EventUiHash {

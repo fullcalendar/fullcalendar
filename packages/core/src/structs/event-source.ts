@@ -2,7 +2,7 @@ import { EventInput, EventInputTransformer } from './event-parse.js'
 import { DateRange } from '../datelib/date-range.js'
 import { EventUi } from '../component/event-ui.js'
 import { CalendarContext } from '../CalendarContext.js'
-import { CalendarApi } from '../CalendarApi.js'
+import { CalendarImpl } from '../api/CalendarImpl.js'
 import { Dictionary } from '../options.js'
 
 /*
@@ -15,7 +15,7 @@ export type EventSourceError = {
   [otherProp: string]: any
 }
 
-export type EventSourceSuccessResponseHandler = (this: CalendarApi, rawData: any, response: any) => EventInput[] | void
+export type EventSourceSuccessResponseHandler = (this: CalendarImpl, rawData: any, response: any) => EventInput[] | void
 export type EventSourceErrorResponseHandler = (error: EventSourceError) => void
 
 export interface EventSource<Meta> {

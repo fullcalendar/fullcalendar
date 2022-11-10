@@ -6,13 +6,13 @@ import { Duration } from '../datelib/duration.js'
 import { compareByFieldSpecs, OrderSpec } from '../util/misc.js'
 import { computeVisibleDayRange } from '../util/date.js'
 import { Seg } from './DateComponent.js'
-import { EventApi } from '../api/EventApi.js'
+import { EventImpl } from '../api/EventImpl.js'
 import { EventUi, EventUiHash, combineEventUis } from './event-ui.js'
 import { mapHash } from '../util/object.js'
 import { ViewContext } from '../ViewContext.js'
 import { DateFormatter } from '../datelib/DateFormatter.js'
 import { addMs, DateMarker, startOfDay } from '../datelib/marker.js'
-import { ViewApi } from '../ViewApi.js'
+import { ViewImpl } from '../api/ViewImpl.js'
 import { MountArg } from '../common/render-hook.js'
 import { createAriaKeyboardAttrs } from '../util/dom-event.js'
 
@@ -157,7 +157,7 @@ export function compileEventUi(eventDef: EventDef, eventUiBases: EventUiHash) {
   return combineEventUis(uis)
 }
 
-export function sortEventSegs(segs, eventOrderSpecs: OrderSpec<EventApi>[]): Seg[] {
+export function sortEventSegs(segs, eventOrderSpecs: OrderSpec<EventImpl>[]): Seg[] {
   let objs = segs.map(buildSegCompareObj)
 
   objs.sort((obj0, obj1) => compareByFieldSpecs(obj0, obj1, eventOrderSpecs))
@@ -188,7 +188,7 @@ export function buildSegCompareObj(seg: Seg) {
 // other stuff
 
 export interface EventContentArg { // for *Content handlers
-  event: EventApi
+  event: EventImpl
   timeText: string
   backgroundColor: string // TODO: add other EventUi props?
   borderColor: string //
@@ -205,7 +205,7 @@ export interface EventContentArg { // for *Content handlers
   isSelected: boolean
   isDragging: boolean
   isResizing: boolean
-  view: ViewApi // specifically for the API
+  view: ViewImpl // specifically for the API
 }
 
 export type EventMountArg = MountArg<EventContentArg>
@@ -364,7 +364,7 @@ export function getSegAnchorAttrs(seg: Seg, context: ViewContext) {
     return createAriaKeyboardAttrs((ev: UIEvent) => {
       emitter.trigger('eventClick', {
         el: ev.target as HTMLElement,
-        event: new EventApi(context, def, instance),
+        event: new EventImpl(context, def, instance),
         jsEvent: ev as MouseEvent,
         view: context.viewApi,
       })

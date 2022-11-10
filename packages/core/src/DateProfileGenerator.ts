@@ -12,7 +12,7 @@ import {
 import { DateEnv, DateInput } from './datelib/env.js'
 import { computeVisibleDayRange } from './util/date.js'
 import { getNow } from './reducers/current-date.js'
-import { CalendarApi } from './CalendarApi.js'
+import { CalendarImpl } from './api/CalendarImpl.js'
 
 export interface DateProfile {
   currentRange: DateRange // TODO: does this include slotMinTime/slotMaxTime?
@@ -33,7 +33,7 @@ export interface DateProfileGeneratorProps extends DateProfileOptions {
   durationUnit: string
   usesMinMaxTime: boolean
   dateEnv: DateEnv
-  calendarApi: CalendarApi
+  calendarApi: CalendarImpl
 }
 
 export interface DateProfileOptions {
@@ -46,8 +46,8 @@ export interface DateProfileOptions {
   hiddenDays?: number[]
   weekends?: boolean
   nowInput?: DateInput | (() => DateInput)
-  validRangeInput?: DateRangeInput | ((this: CalendarApi, nowDate: Date) => DateRangeInput)
-  visibleRangeInput?: DateRangeInput | ((this: CalendarApi, nowDate: Date) => DateRangeInput)
+  validRangeInput?: DateRangeInput | ((this: CalendarImpl, nowDate: Date) => DateRangeInput)
+  visibleRangeInput?: DateRangeInput | ((this: CalendarImpl, nowDate: Date) => DateRangeInput)
   monthMode?: boolean
   fixedWeekCount?: boolean
 }

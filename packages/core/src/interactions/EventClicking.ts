@@ -1,15 +1,15 @@
 import { listenBySelector } from '../util/dom-event.js'
-import { EventApi } from '../api/EventApi.js'
+import { EventImpl } from '../api/EventImpl.js'
 import { elementClosest } from '../util/dom-manip.js'
 import { getElSeg } from '../component/event-rendering.js'
 import { Interaction, InteractionSettings } from './interaction.js'
-import { ViewApi } from '../ViewApi.js'
+import { ViewImpl } from '../api/ViewImpl.js'
 
 export interface EventClickArg {
   el: HTMLElement
-  event: EventApi
+  event: EventImpl
   jsEvent: MouseEvent
-  view: ViewApi
+  view: ViewImpl
 }
 
 /*
@@ -43,7 +43,7 @@ export class EventClicking extends Interaction {
 
       context.emitter.trigger('eventClick', {
         el: segEl,
-        event: new EventApi(
+        event: new EventImpl(
           component.context,
           seg.eventRange.def,
           seg.eventRange.instance,

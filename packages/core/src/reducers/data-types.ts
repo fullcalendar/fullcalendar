@@ -1,14 +1,14 @@
 import { Action } from './Action.js'
 import { PluginHooks } from '../plugin-system-struct.js'
 import { DateEnv } from '../datelib/env.js'
-import { CalendarApi } from '../CalendarApi.js'
+import { CalendarImpl } from '../api/CalendarImpl.js'
 import { EventSourceHash } from '../structs/event-source.js'
 import { ViewSpecHash, ViewSpec } from '../structs/view-spec.js'
 import { DateProfileGenerator, DateProfile } from '../DateProfileGenerator.js'
 import { Emitter } from '../common/Emitter.js'
 import { EventUiHash, EventUi } from '../component/event-ui.js'
 import { DateMarker } from '../datelib/marker.js'
-import { ViewApi } from '../ViewApi.js'
+import { ViewImpl } from '../api/ViewImpl.js'
 import { Theme } from '../theme/Theme.js'
 import { EventStore } from '../structs/event-store.js'
 import { DateSpan } from '../structs/date-span.js'
@@ -46,7 +46,7 @@ export interface CalendarOptionsData {
 export interface CalendarCurrentViewData {
   viewSpec: ViewSpec
   options: ViewOptionsRefined
-  viewApi: ViewApi
+  viewApi: ViewImpl
   dateProfileGenerator: DateProfileGenerator
 }
 
@@ -56,7 +56,7 @@ type CalendarDataBase = CalendarOptionsData & CalendarCurrentViewData & Calendar
 // is a superset of CalendarContext
 export interface CalendarData extends CalendarDataBase {
   viewTitle: string // based on current date
-  calendarApi: CalendarApi // TODO: try to remove this
+  calendarApi: CalendarImpl // TODO: try to remove this
   dispatch: (action: Action) => void
   emitter: Emitter<CalendarListeners>
   getCurrentData(): CalendarData // TODO: try to remove

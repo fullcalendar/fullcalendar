@@ -3,15 +3,15 @@ import { mergeProps, isPropsEqual } from './util/object.js'
 import { createFormatter } from './datelib/formatting.js'
 import { parseFieldSpecs } from './util/misc.js'
 import { DateProfileGeneratorClass } from './DateProfileGenerator.js'
-
-// public
+import { CalendarApi } from './api/CalendarApi.js'
+import { ViewApi } from './api/ViewApi.js'
+import { EventApi } from './api/EventApi.js'
 import {
   CssDimValue,
   DateInput,
   DateRangeInput,
   BusinessHoursInput,
   EventSourceInput,
-  ViewApi,
   LocaleSingularArg, LocaleInput,
   EventInput, EventInputTransformer,
   OverlapFunc, ConstraintInput, AllowFunc,
@@ -30,19 +30,18 @@ import {
   EventClickArg,
   EventHoveringArg,
   DateSelectArg, DateUnselectArg,
-  CalendarApi,
   WeekNumberCalculation,
   FormatterInput,
   ToolbarInput, CustomButtonInput, ButtonIconsInput, ButtonTextCompoundInput,
   EventContentArg, EventMountArg,
   DatesSetArg,
-  EventApi, EventAddArg, EventChangeArg, EventRemoveArg,
+  EventAddArg, EventChangeArg, EventRemoveArg,
   MoreLinkContentArg,
   MoreLinkMountArg,
   MoreLinkAction,
   ButtonHintCompoundInput,
   CustomRenderingHandler,
-} from './api-type-deps.js'
+} from './api/structs.js'
 
 // base options
 // ------------

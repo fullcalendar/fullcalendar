@@ -8,7 +8,7 @@ import { JSON_FEED_EVENT_SOURCE_REFINERS } from './json-feed-event-source-refine
 
 interface JsonFeedMeta {
   url: string
-  format: 'json' // for EventSourceApi
+  format: 'json' // for EventSourceImpl
   method: string
   extraParams?: any
   startParam?: string

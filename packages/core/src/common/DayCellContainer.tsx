@@ -5,7 +5,7 @@ import { getDateMeta, DateMeta, getDayClassNames } from '../component/date-rende
 import { createFormatter } from '../datelib/formatting.js'
 import { formatDayString } from '../datelib/formatting-utils.js'
 import { MountArg } from './render-hook.js'
-import { ViewApi } from '../ViewApi.js'
+import { ViewImpl } from '../api/ViewImpl.js'
 import { BaseComponent } from '../vdom-util.js'
 import { DateProfile } from '../DateProfileGenerator.js'
 import { memoizeObjArg } from '../util/memoize.js'
@@ -16,7 +16,7 @@ import { ElProps, hasCustomRenderingHandler } from '../content-inject/ContentInj
 
 export interface DayCellContentArg extends DateMeta {
   date: DateMarker // localized
-  view: ViewApi
+  view: ViewImpl
   dayNumberText: string
   [extraProp: string]: any // so can include a resource
 }
@@ -87,7 +87,7 @@ interface DayCellRenderPropsInput {
   dateProfile: DateProfile
   todayRange: DateRange
   dateEnv: DateEnv
-  viewApi: ViewApi
+  viewApi: ViewImpl
   showDayNumber?: boolean // defaults to false
   extraRenderProps?: Dictionary // so can include a resource
 }

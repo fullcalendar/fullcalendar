@@ -1,10 +1,10 @@
-import { DateEnv } from './datelib/env.js'
-import { CalendarData } from './reducers/data-types.js'
+import { DateEnv } from '../datelib/env.js'
+import { CalendarData } from '../reducers/data-types.js'
+import { CalendarApi } from './CalendarApi.js'
+import { ViewApi } from './ViewApi.js'
 
-// no public types yet. when there are, export from:
-// import {} from './api-type-deps.js'
-
-export class ViewApi { // always represents the current view. otherwise, it'd need to change value every time date changes
+// always represents the current view. otherwise, it'd need to change value every time date changes
+export class ViewImpl implements ViewApi {
   constructor(
     public type: string,
     private getCurrentData: () => CalendarData,
@@ -12,31 +12,31 @@ export class ViewApi { // always represents the current view. otherwise, it'd ne
   ) {
   }
 
-  get calendar() {
+  get calendar(): CalendarApi {
     return this.getCurrentData().calendarApi
   }
 
-  get title() {
+  get title(): string {
     return this.getCurrentData().viewTitle
   }
 
-  get activeStart() {
+  get activeStart(): Date {
     return this.dateEnv.toDate(this.getCurrentData().dateProfile.activeRange.start)
   }
 
-  get activeEnd() {
+  get activeEnd(): Date {
     return this.dateEnv.toDate(this.getCurrentData().dateProfile.activeRange.end)
   }
 
-  get currentStart() {
+  get currentStart(): Date {
     return this.dateEnv.toDate(this.getCurrentData().dateProfile.currentRange.start)
   }
 
-  get currentEnd() {
+  get currentEnd(): Date {
     return this.dateEnv.toDate(this.getCurrentData().dateProfile.currentRange.end)
   }
 
-  getOption(name: string) {
+  getOption(name: string): any {
     return this.getCurrentData().options[name] // are the view-specific options
   }
 }

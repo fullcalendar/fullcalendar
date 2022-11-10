@@ -1,6 +1,6 @@
 import { ViewSpec, ViewSpecHash } from './structs/view-spec.js'
 import { Theme } from './theme/Theme.js'
-import { CalendarApi } from './CalendarApi.js'
+import { CalendarImpl } from './api/CalendarImpl.js'
 import { CalendarOptionsRefined, CalendarOptions } from './options.js'
 import { ToolbarInput, ToolbarModel, ToolbarWidget, CustomButtonInput } from './toolbar-struct.js'
 import { formatWithOrdinals } from './util/misc.js'
@@ -10,7 +10,7 @@ export function parseToolbars(
   calendarOptionOverrides: CalendarOptions,
   theme: Theme,
   viewSpecs: ViewSpecHash,
-  calendarApi: CalendarApi,
+  calendarApi: CalendarImpl,
 ) {
   let header = calendarOptions.headerToolbar ? parseToolbar(
     calendarOptions.headerToolbar,
@@ -38,7 +38,7 @@ function parseToolbar(
   calendarOptionOverrides: CalendarOptions,
   theme: Theme,
   viewSpecs: ViewSpecHash,
-  calendarApi: CalendarApi,
+  calendarApi: CalendarImpl,
 ) : ToolbarModel {
   let sectionWidgets: { [sectionName: string]: ToolbarWidget[][] } = {}
   let viewsWithButtons: string[] = []
@@ -64,7 +64,7 @@ function parseSection(
   calendarOptionOverrides: CalendarOptions, // overrides only!, unrefined :(
   theme: Theme,
   viewSpecs: ViewSpecHash,
-  calendarApi: CalendarApi,
+  calendarApi: CalendarImpl,
 ): { widgets: ToolbarWidget[][], viewsWithButtons: string[], hasTitle: boolean } {
   let isRtl = calendarOptions.direction === 'rtl'
   let calendarCustomButtons = calendarOptions.customButtons || {}

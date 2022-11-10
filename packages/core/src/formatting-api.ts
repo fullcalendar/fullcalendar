@@ -5,7 +5,7 @@ import { organizeRawLocales, buildLocale } from './datelib/locale.js'
 import { BASE_OPTION_DEFAULTS } from './options.js'
 
 // public
-import { DateInput } from './api-type-deps.js'
+import { DateInput } from './api/structs.js'
 
 export interface FormatDateOptions extends NativeFormatterOptions {
   locale?: string

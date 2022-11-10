@@ -1,14 +1,14 @@
 import { listenToHoverBySelector } from '../util/dom-event.js'
-import { EventApi } from '../api/EventApi.js'
+import { EventImpl } from '../api/EventImpl.js'
 import { getElSeg } from '../component/event-rendering.js'
 import { Interaction, InteractionSettings } from './interaction.js'
-import { ViewApi } from '../ViewApi.js'
+import { ViewImpl } from '../api/ViewImpl.js'
 
 export interface EventHoveringArg {
   el: HTMLElement
-  event: EventApi
+  event: EventImpl
   jsEvent: MouseEvent
-  view: ViewApi
+  view: ViewImpl
 }
 
 /*
@@ -64,7 +64,7 @@ export class EventHovering extends Interaction {
     if (!ev || component.isValidSegDownEl(ev.target as HTMLElement)) {
       context.emitter.trigger(publicEvName, {
         el: segEl,
-        event: new EventApi(
+        event: new EventImpl(
           context,
           seg.eventRange.def,
           seg.eventRange.instance,

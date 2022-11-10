@@ -1,4 +1,4 @@
-import { EventApi } from '../api/EventApi.js'
+import { EventImpl } from '../api/EventImpl.js'
 import { Seg } from '../component/DateComponent.js'
 import { DateRange } from '../datelib/date-range.js'
 import { addDays, DateMarker } from '../datelib/marker.js'
@@ -8,7 +8,7 @@ import { elementClosest, getUniqueDomId } from '../util/dom-manip.js'
 import { formatWithOrdinals } from '../util/misc.js'
 import { createElement, createRef, Fragment, ComponentChild, RefObject } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
-import { ViewApi } from '../ViewApi.js'
+import { ViewImpl } from '../api/ViewImpl.js'
 import { ViewContext, ViewContextType } from '../ViewContext.js'
 import { MorePopover } from './MorePopover.js'
 import { CustomContentGenerator, MountArg } from './render-hook.js'
@@ -35,7 +35,7 @@ export interface MoreLinkContentArg {
   num: number
   text: string
   shortText: string
-  view: ViewApi
+  view: ViewImpl
 }
 
 export type MoreLinkMountArg = MountArg<MoreLinkContentArg>
@@ -150,7 +150,7 @@ export class MoreLinkContainer extends BaseComponent<MoreLinkContainerProps, Mor
     function buildPublicSeg(seg: Seg) {
       let { def, instance, range } = seg.eventRange
       return {
-        event: new EventApi(context, def, instance),
+        event: new EventImpl(context, def, instance),
         start: context.dateEnv.toDate(range.start),
         end: context.dateEnv.toDate(range.end),
         isStart: seg.isStart,

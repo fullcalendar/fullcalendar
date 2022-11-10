@@ -1,22 +1,22 @@
-import { DateMarker } from './datelib/marker.js'
-import { createFormatter } from './datelib/formatting.js'
-import { createDuration } from './datelib/duration.js'
-import { parseDateSpan } from './structs/date-span.js'
-import { parseEventSource } from './structs/event-source-parse.js'
-import { parseEvent } from './structs/event-parse.js'
-import { eventTupleToStore } from './structs/event-store.js'
-import { ViewSpec } from './structs/view-spec.js'
-import { PointerDragEvent } from './interactions/pointer.js'
-import { getNow } from './reducers/current-date.js'
-import { triggerDateSelect, triggerDateUnselect } from './calendar-utils.js'
-import { hashValuesToArray } from './util/object.js'
-import { CalendarDataManager } from './reducers/CalendarDataManager.js'
-import { Action } from './reducers/Action.js'
-import { EventSource } from './structs/event-source.js'
-import { eventApiToStore, buildEventApis } from './api/EventApi.js'
-import { CalendarData } from './reducers/data-types.js'
-
-// public
+import { createFormatter, FormatterInput } from '../datelib/formatting.js'
+import { createDuration } from '../datelib/duration.js'
+import { parseDateSpan } from '../structs/date-span.js'
+import { parseEventSource } from '../structs/event-source-parse.js'
+import { parseEvent } from '../structs/event-parse.js'
+import { eventTupleToStore } from '../structs/event-store.js'
+import { ViewSpec } from '../structs/view-spec.js'
+import { PointerDragEvent } from '../interactions/pointer.js'
+import { getNow } from '../reducers/current-date.js'
+import { triggerDateSelect, triggerDateUnselect } from '../calendar-utils.js'
+import { hashValuesToArray } from '../util/object.js'
+import { CalendarDataManager } from '../reducers/CalendarDataManager.js'
+import { Action } from '../reducers/Action.js'
+import { EventSource } from '../structs/event-source.js'
+import { eventApiToStore, buildEventApis, EventImpl } from './EventImpl.js'
+import { CalendarData } from '../reducers/data-types.js'
+import { CalendarApi } from './CalendarApi.js'
+import { ViewImpl } from './ViewImpl.js'
+import { EventSourceImpl } from './EventSourceImpl.js'
 import {
   CalendarOptions,
   CalendarListeners,
@@ -26,36 +26,33 @@ import {
   DateRangeInput,
   EventSourceInput,
   EventInput,
-  EventSourceApi,
-  EventApi,
-  ViewApi,
-} from './api-type-deps.js'
+} from './structs.js'
 
-export class CalendarApi {
+export class CalendarImpl implements CalendarApi {
   currentDataManager?: CalendarDataManager // will be set by CalendarDataManager
 
   getCurrentData(): CalendarData {
     return this.currentDataManager!.getCurrentData()
   }
 
-  dispatch(action: Action) {
-    return this.currentDataManager!.dispatch(action)
+  dispatch(action: Action): void {
+    this.currentDataManager!.dispatch(action)
   }
 
-  get view(): ViewApi { return this.getCurrentData().viewApi } // for public API
+  get view(): ViewImpl { return this.getCurrentData().viewApi }
 
-  batchRendering(callback: () => void) { // subclasses should implement
+  batchRendering(callback: () => void): void { // subclasses should implement
     callback()
   }
 
-  updateSize() { // public
+  updateSize(): void {
     this.trigger('_resize', true)
   }
 
   // Options
   // -----------------------------------------------------------------------------------------------------------------
 
-  setOption<OptionName extends keyof CalendarOptions>(name: OptionName, val: CalendarOptions[OptionName]) {
+  setOption<OptionName extends keyof CalendarOptions>(name: OptionName, val: CalendarOptions[OptionName]): void {
     this.dispatch({
       type: 'SET_OPTION',
       optionName: name,
@@ -63,18 +60,18 @@ export class CalendarApi {
     })
   }
 
-  getOption<OptionName extends keyof CalendarOptions>(name: OptionName): CalendarOptions[OptionName] { // getter, used externally. WTF TS
+  getOption<OptionName extends keyof CalendarOptions>(name: OptionName): CalendarOptions[OptionName] {
     return this.currentDataManager!.currentCalendarOptionsInput[name]
   }
 
-  getAvailableLocaleCodes() {
+  getAvailableLocaleCodes(): string[] {
     return Object.keys(this.getCurrentData().availableRawLocales)
   }
 
   // Trigger
   // -----------------------------------------------------------------------------------------------------------------
 
-  on<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, handler: CalendarListeners[ListenerName]) {
+  on<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, handler: CalendarListeners[ListenerName]): void {
     let { currentDataManager } = this
 
     if (currentDataManager.currentCalendarOptionsRefiners[handlerName]) {
@@ -84,19 +81,19 @@ export class CalendarApi {
     }
   }
 
-  off<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, handler: CalendarListeners[ListenerName]) {
+  off<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, handler: CalendarListeners[ListenerName]): void {
     this.currentDataManager!.emitter.off(handlerName, handler)
   }
 
   // not meant for public use
-  trigger<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, ...args: Parameters<CalendarListeners[ListenerName]>) {
+  trigger<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, ...args: Parameters<CalendarListeners[ListenerName]>): void {
     this.currentDataManager!.emitter.trigger(handlerName, ...args)
   }
 
   // View
   // -----------------------------------------------------------------------------------------------------------------
 
-  changeView(viewType: string, dateOrRange?: DateRangeInput | DateInput) {
+  changeView(viewType: string, dateOrRange?: DateRangeInput | DateInput): void {
     this.batchRendering(() => {
       this.unselect()
 
@@ -132,7 +129,7 @@ export class CalendarApi {
   // Forces navigation to a view for the given date.
   // `viewType` can be a specific view name or a generic one like "week" or "day".
   // needs to change
-  zoomTo(dateMarker: DateMarker, viewType?: string) {
+  zoomTo(dateMarker: Date, viewType?: string): void {
     let state = this.getCurrentData()
     let spec
 
@@ -185,17 +182,17 @@ export class CalendarApi {
   // Current Date
   // -----------------------------------------------------------------------------------------------------------------
 
-  prev() {
+  prev(): void {
     this.unselect()
     this.dispatch({ type: 'PREV' })
   }
 
-  next() {
+  next(): void {
     this.unselect()
     this.dispatch({ type: 'NEXT' })
   }
 
-  prevYear() {
+  prevYear(): void {
     let state = this.getCurrentData()
     this.unselect()
     this.dispatch({
@@ -204,7 +201,7 @@ export class CalendarApi {
     })
   }
 
-  nextYear() {
+  nextYear(): void {
     let state = this.getCurrentData()
 
     this.unselect()
@@ -214,7 +211,7 @@ export class CalendarApi {
     })
   }
 
-  today() {
+  today(): void {
     let state = this.getCurrentData()
 
     this.unselect()
@@ -224,7 +221,7 @@ export class CalendarApi {
     })
   }
 
-  gotoDate(zonedDateInput) {
+  gotoDate(zonedDateInput: DateInput): void {
     let state = this.getCurrentData()
 
     this.unselect()
@@ -234,7 +231,7 @@ export class CalendarApi {
     })
   }
 
-  incrementDate(deltaInput) { // is public facing
+  incrementDate(deltaInput: DurationInput): void {
     let state = this.getCurrentData()
     let delta = createDuration(deltaInput)
 
@@ -247,7 +244,6 @@ export class CalendarApi {
     }
   }
 
-  // for external API
   getDate(): Date {
     let state = this.getCurrentData()
     return state.dateEnv.toDate(state.currentDate)
@@ -256,7 +252,7 @@ export class CalendarApi {
   // Date Formatting Utils
   // -----------------------------------------------------------------------------------------------------------------
 
-  formatDate(d: DateInput, formatter): string {
+  formatDate(d: DateInput, formatter: FormatterInput): string {
     let { dateEnv } = this.getCurrentData()
 
     return dateEnv.format(
@@ -266,7 +262,7 @@ export class CalendarApi {
   }
 
   // `settings` is for formatter AND isEndExclusive
-  formatRange(d0: DateInput, d1: DateInput, settings) {
+  formatRange(d0: DateInput, d1: DateInput, settings: any): string { // TODO: settings type
     let { dateEnv } = this.getCurrentData()
 
     return dateEnv.formatRange(
@@ -277,7 +273,7 @@ export class CalendarApi {
     )
   }
 
-  formatIso(d: DateInput, omitTime?: boolean) {
+  formatIso(d: DateInput, omitTime?: boolean): string {
     let { dateEnv } = this.getCurrentData()
 
     return dateEnv.formatIso(dateEnv.createMarker(d), { omitTime })
@@ -286,9 +282,7 @@ export class CalendarApi {
   // Date Selection / Event Selection / DayClick
   // -----------------------------------------------------------------------------------------------------------------
 
-  // this public method receives start/end dates in any format, with any timezone
-  // NOTE: args were changed from v3
-  select(dateOrObj: DateInput | any, endDate?: DateInput) {
+  select(dateOrObj: DateInput | any, endDate?: DateInput): void {
     let selectionInput: DateSpanInput
 
     if (endDate == null) {
@@ -320,8 +314,7 @@ export class CalendarApi {
     }
   }
 
-  // public method
-  unselect(pev?: PointerDragEvent) {
+  unselect(pev?: PointerDragEvent): void {
     let state = this.getCurrentData()
 
     if (state.dateSelection) {
@@ -333,8 +326,8 @@ export class CalendarApi {
   // Public Events API
   // -----------------------------------------------------------------------------------------------------------------
 
-  addEvent(eventInput: EventInput, sourceInput?: EventSourceApi | string | boolean): EventApi | null {
-    if (eventInput instanceof EventApi) {
+  addEvent(eventInput: EventInput, sourceInput?: EventSourceImpl | string | boolean): EventImpl | null {
+    if (eventInput instanceof EventImpl) {
       let def = eventInput._def
       let instance = eventInput._instance
       let currentData = this.getCurrentData()
@@ -354,7 +347,7 @@ export class CalendarApi {
     let state = this.getCurrentData()
     let eventSource: EventSource<any>
 
-    if (sourceInput instanceof EventSourceApi) {
+    if (sourceInput instanceof EventSourceImpl) {
       eventSource = sourceInput.internalEventSource
     } else if (typeof sourceInput === 'boolean') {
       if (sourceInput) { // true. part of the first event source
@@ -373,7 +366,7 @@ export class CalendarApi {
     let tuple = parseEvent(eventInput, eventSource, state, false)
 
     if (tuple) {
-      let newEventApi = new EventApi(
+      let newEventApi = new EventImpl(
         state,
         tuple.def,
         tuple.def.recurringDef ? null : tuple.instance,
@@ -390,7 +383,7 @@ export class CalendarApi {
     return null
   }
 
-  private triggerEventAdd(eventApi: EventApi) {
+  private triggerEventAdd(eventApi: EventImpl): void {
     let { emitter } = this.getCurrentData()
 
     emitter.trigger('eventAdd', {
@@ -406,7 +399,7 @@ export class CalendarApi {
   }
 
   // TODO: optimize
-  getEventById(id: string): EventApi | null {
+  getEventById(id: string): EventImpl | null {
     let state = this.getCurrentData()
     let { defs, instances } = state.eventStore
     id = String(id)
@@ -416,14 +409,14 @@ export class CalendarApi {
 
       if (def.publicId === id) {
         if (def.recurringDef) {
-          return new EventApi(state, def, null)
+          return new EventImpl(state, def, null)
         }
 
         for (let instanceId in instances) {
           let instance = instances[instanceId]
 
           if (instance.defId === def.defId) {
-            return new EventApi(state, def, instance)
+            return new EventImpl(state, def, instance)
           }
         }
       }
@@ -432,49 +425,49 @@ export class CalendarApi {
     return null
   }
 
-  getEvents(): EventApi[] {
+  getEvents(): EventImpl[] {
     let currentData = this.getCurrentData()
 
     return buildEventApis(currentData.eventStore, currentData)
   }
 
-  removeAllEvents() {
+  removeAllEvents(): void {
     this.dispatch({ type: 'REMOVE_ALL_EVENTS' })
   }
 
   // Public Event Sources API
   // -----------------------------------------------------------------------------------------------------------------
 
-  getEventSources(): EventSourceApi[] {
+  getEventSources(): EventSourceImpl[] {
     let state = this.getCurrentData()
     let sourceHash = state.eventSources
-    let sourceApis: EventSourceApi[] = []
+    let sourceApis: EventSourceImpl[] = []
 
     for (let internalId in sourceHash) {
-      sourceApis.push(new EventSourceApi(state, sourceHash[internalId]))
+      sourceApis.push(new EventSourceImpl(state, sourceHash[internalId]))
     }
 
     return sourceApis
   }
 
-  getEventSourceById(id: string): EventSourceApi | null {
+  getEventSourceById(id: string): EventSourceImpl | null {
     let state = this.getCurrentData()
     let sourceHash = state.eventSources
     id = String(id)
 
     for (let sourceId in sourceHash) {
       if (sourceHash[sourceId].publicId === id) {
-        return new EventSourceApi(state, sourceHash[sourceId])
+        return new EventSourceImpl(state, sourceHash[sourceId])
       }
     }
 
     return null
   }
 
-  addEventSource(sourceInput: EventSourceInput): EventSourceApi {
+  addEventSource(sourceInput: EventSourceInput): EventSourceImpl {
     let state = this.getCurrentData()
 
-    if (sourceInput instanceof EventSourceApi) {
+    if (sourceInput instanceof EventSourceImpl) {
       // not already present? don't want to add an old snapshot
       if (!state.eventSources[sourceInput.internalEventSource.sourceId]) {
         this.dispatch({
@@ -491,24 +484,24 @@ export class CalendarApi {
     if (eventSource) { // TODO: error otherwise?
       this.dispatch({ type: 'ADD_EVENT_SOURCES', sources: [eventSource] })
 
-      return new EventSourceApi(state, eventSource)
+      return new EventSourceImpl(state, eventSource)
     }
 
     return null
   }
 
-  removeAllEventSources() {
+  removeAllEventSources(): void {
     this.dispatch({ type: 'REMOVE_ALL_EVENT_SOURCES' })
   }
 
-  refetchEvents() {
+  refetchEvents(): void {
     this.dispatch({ type: 'FETCH_EVENT_SOURCES', isRefetch: true })
   }
 
   // Scroll
   // -----------------------------------------------------------------------------------------------------------------
 
-  scrollToTime(timeInput: DurationInput) {
+  scrollToTime(timeInput: DurationInput): void {
     let time = createDuration(timeInput)
 
     if (time) {

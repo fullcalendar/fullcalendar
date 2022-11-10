@@ -146,7 +146,7 @@ export function parseEventDef(
     __assign(def, memberAdder(refined))
   }
 
-  // help out EventApi from having user modify props
+  // help out EventImpl from having user modify props
   Object.freeze(def.ui.classNames)
   Object.freeze(def.extendedProps)
 

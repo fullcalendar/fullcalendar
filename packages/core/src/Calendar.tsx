@@ -1,5 +1,4 @@
 import { CalendarOptions } from './options.js'
-import { CalendarApi } from './CalendarApi.js'
 import { DelayedRunner } from './util/DelayedRunner.js'
 import { CalendarDataManager } from './reducers/CalendarDataManager.js'
 import { Action } from './reducers/Action.js'
@@ -11,17 +10,17 @@ import { isArraysEqual } from './util/array.js'
 import { CssDimValue } from './scrollgrid/util.js'
 import { applyStyleProp } from './util/dom-manip.js'
 import { RenderId } from './content-inject/RenderId.js'
+import { CalendarImpl } from './api/CalendarImpl.js'
 
-export class Calendar extends CalendarApi {
-  currentData: CalendarData
-  renderRunner: DelayedRunner
+export class Calendar extends CalendarImpl {
   el: HTMLElement
-  isRendering = false
-  isRendered = false
-  currentClassNames: string[] = []
-  customContentRenderId = 0
 
-  get view() { return this.currentData.viewApi } // for public API
+  private currentData: CalendarData
+  private renderRunner: DelayedRunner
+  private isRendering = false
+  private isRendered = false
+  private currentClassNames: string[] = []
+  private customContentRenderId = 0
 
   constructor(el: HTMLElement, optionOverrides: CalendarOptions = {}) {
     super()
@@ -37,7 +36,7 @@ export class Calendar extends CalendarApi {
     })
   }
 
-  handleAction = (action: Action) => {
+  private handleAction = (action: Action) => {
     // actions we know we want to render immediately
     switch (action.type) {
       case 'SET_EVENT_DRAG':
@@ -46,12 +45,12 @@ export class Calendar extends CalendarApi {
     }
   }
 
-  handleData = (data: CalendarData) => {
+  private handleData = (data: CalendarData) => {
     this.currentData = data
     this.renderRunner.request(data.calendarOptions.rerenderDelay)
   }
 
-  handleRenderRequest = () => {
+  private handleRenderRequest = () => {
     if (this.isRendering) {
       this.isRendered = true
       let { currentData } = this
@@ -102,20 +101,20 @@ export class Calendar extends CalendarApi {
     }
   }
 
-  destroy() {
+  destroy(): void {
     if (this.isRendering) {
       this.isRendering = false
       this.renderRunner.request()
     }
   }
 
-  updateSize() {
+  updateSize(): void {
     flushSync(() => {
       super.updateSize()
     })
   }
 
-  batchRendering(func) {
+  batchRendering(func): void {
     this.renderRunner.pause('batchRendering')
     func()
     this.renderRunner.resume('batchRendering')
@@ -133,7 +132,7 @@ export class Calendar extends CalendarApi {
     this.currentDataManager.resetOptions(optionOverrides, append)
   }
 
-  setClassNames(classNames: string[]) {
+  private setClassNames(classNames: string[]) {
     if (!isArraysEqual(classNames, this.currentClassNames)) {
       let { classList } = this.el
 
@@ -149,7 +148,7 @@ export class Calendar extends CalendarApi {
     }
   }
 
-  setHeight(height: CssDimValue) {
+  private setHeight(height: CssDimValue) {
     applyStyleProp(this.el, 'height', height)
   }
 }

@@ -1,7 +1,7 @@
 import { EventStore, filterEventStoreDefs } from './structs/event-store.js'
 import { DateSpan } from './structs/date-span.js'
 import { rangeContainsRange, rangesIntersect, DateRange, OpenDateRange } from './datelib/date-range.js'
-import { EventApi } from './api/EventApi.js'
+import { EventImpl } from './api/EventImpl.js'
 import { compileEventUis } from './component/event-rendering.js'
 import { excludeInstances } from './reducers/eventStore.js'
 import { EventInteractionState } from './interactions/event-interaction-state.js'
@@ -131,8 +131,8 @@ function isInteractionPropsValid(state: SplittableProps, context: CalendarContex
         }
 
         if (eventOverlapFunc && !eventOverlapFunc(
-          new EventApi(context, otherDefs[otherInstance.defId], otherInstance), // still event
-          new EventApi(context, subjectDef, subjectInstance), // moving event
+          new EventImpl(context, otherDefs[otherInstance.defId], otherInstance), // still event
+          new EventImpl(context, subjectDef, subjectInstance), // moving event
         )) {
           return false
         }
@@ -155,9 +155,9 @@ function isInteractionPropsValid(state: SplittableProps, context: CalendarContex
       let eventApi
 
       if (origDef) { // was previously in the calendar
-        eventApi = new EventApi(context, origDef, origInstance)
+        eventApi = new EventImpl(context, origDef, origInstance)
       } else { // was an external event
-        eventApi = new EventApi(context, subjectDef) // no instance, because had no dates
+        eventApi = new EventImpl(context, subjectDef) // no instance, because had no dates
       }
 
       if (!subjectAllow(
@@ -208,7 +208,7 @@ function isDateSelectionPropsValid(state: SplittableProps, context: CalendarCont
       }
 
       if (selectOverlapFunc && !selectOverlapFunc(
-        new EventApi(context, relevantDefs[relevantInstance.defId], relevantInstance),
+        new EventImpl(context, relevantDefs[relevantInstance.defId], relevantInstance),
         null,
       )) {
         return false

@@ -267,9 +267,9 @@ export { ViewContainer } from './common/ViewContainer.js'
 export type { DatePointTransform, DateSpanTransform, DateSelectionApi } from './calendar-utils.js'
 export { triggerDateSelect, getDefaultEventEnd } from './calendar-utils.js'
 
-export { buildEventApis } from './api/EventApi.js'
-
 export { injectStyles } from './styleUtils.js'
+
+export {  buildEventApis } from './api/EventImpl.js'
 
 export type { ElProps } from './content-inject/ContentInjector.js'
 export type { InnerContainerFunc } from './content-inject/ContentContainer.js'
