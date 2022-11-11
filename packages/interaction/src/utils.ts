@@ -1,4 +1,5 @@
-import { DateSpan, CalendarContext, DatePointApi, DateEnv, ViewApi, EventApi } from '@fullcalendar/core'
+import { ViewApi, EventApi } from '@fullcalendar/core'
+import { DateSpan, CalendarContext, DatePointApi, DateEnv } from '@fullcalendar/core/internal'
 import { __assign } from 'tslib'
 
 export interface DropArg extends DatePointApi {

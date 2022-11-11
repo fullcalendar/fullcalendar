@@ -1,4 +1,4 @@
-import { PointerDragEvent, ElementDragging } from '@fullcalendar/core'
+import { PointerDragEvent, ElementDragging } from '@fullcalendar/core/internal'
 import { PointerDragging } from '../dnd/PointerDragging.js'
 
 /*

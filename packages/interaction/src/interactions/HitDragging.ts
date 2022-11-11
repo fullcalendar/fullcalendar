@@ -8,7 +8,7 @@ import {
   InteractionSettingsStore,
   mapHash,
   ElementDragging,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import { OffsetTracker } from '../OffsetTracker.js'
 
 /*

@@ -1,4 +1,7 @@
 import {
+  ViewApi,
+} from '@fullcalendar/core'
+import {
   Hit,
   interactionSettingsStore,
   PointerDragEvent,
@@ -8,16 +11,15 @@ import {
   DateSpan, DatePointApi,
   EventInteractionState,
   DragMetaInput, DragMeta, parseDragMeta,
-  EventApi,
   elementMatches,
   enableCursor, disableCursor,
   isInteractionValid,
   ElementDragging,
-  ViewApi,
   CalendarContext,
   getDefaultEventEnd,
   refineEventDef,
-} from '@fullcalendar/core'
+  EventImpl,
+} from '@fullcalendar/core/internal'
 import { __assign } from 'tslib'
 import { HitDragging } from '../interactions/HitDragging.js'
 import { buildDatePointApiWithContext } from '../utils.js'
@@ -154,7 +156,7 @@ export class ExternalElementDragging {
 
         // signal that an external event landed
         receivingContext.emitter.trigger('eventReceive', {
-          event: new EventApi(
+          event: new EventImpl(
             receivingContext,
             droppableEvent.def,
             droppableEvent.instance,

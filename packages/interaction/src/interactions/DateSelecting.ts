@@ -3,7 +3,7 @@ import {
   DateSpan, PointerDragEvent, dateSelectionJoinTransformer,
   Interaction, InteractionSettings, interactionSettingsToStore,
   triggerDateSelect, isDateSelectionValid,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import { __assign } from 'tslib'
 import { HitDragging } from './HitDragging.js'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'

@@ -1,4 +1,11 @@
 import {
+  EventApi,
+  ViewApi,
+  EventChangeArg,
+  EventAddArg,
+  EventRemoveArg,
+} from '@fullcalendar/core'
+import {
   DateComponent, Seg,
   PointerDragEvent, Hit,
   EventMutation, applyMutationToEventStore,
@@ -8,19 +15,15 @@ import {
   EventInteractionState,
   diffDates, enableCursor, disableCursor,
   EventRenderRange, getElSeg,
-  EventApi,
   eventDragMutationMassager,
   Interaction, InteractionSettings, interactionSettingsStore,
   EventDropTransformers,
   CalendarContext,
-  ViewApi,
-  EventChangeArg,
   buildEventApis,
-  EventAddArg,
-  EventRemoveArg,
   isInteractionValid,
   getElRoot,
-} from '@fullcalendar/core'
+  EventImpl,
+} from '@fullcalendar/core/internal'
 import { __assign } from 'tslib'
 import { HitDragging, isHitsEqual } from './HitDragging.js'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'
@@ -139,7 +142,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
       initialContext.calendarApi.unselect(ev) // unselect *date* selection
       initialContext.emitter.trigger('eventDragStart', {
         el: this.subjectEl,
-        event: new EventApi(initialContext, eventRange.def, eventRange.instance),
+        event: new EventImpl(initialContext, eventRange.def, eventRange.instance),
         jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
         view: initialContext.viewApi,
       } as EventDragStartArg)
@@ -241,7 +244,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
       let { receivingContext, validMutation } = this
       let eventDef = this.eventRange!.def
       let eventInstance = this.eventRange!.instance
-      let eventApi = new EventApi(initialContext, eventDef, eventInstance)
+      let eventApi = new EventImpl(initialContext, eventDef, eventInstance)
       let relevantEvents = this.relevantEvents!
       let mutatedRelevantEvents = this.mutatedRelevantEvents!
       let { finalHit } = this.hitDragging
@@ -258,7 +261,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
       if (validMutation) {
         // dropped within same calendar
         if (receivingContext === initialContext) {
-          let updatedEventApi = new EventApi(
+          let updatedEventApi = new EventImpl(
             initialContext,
             mutatedRelevantEvents.defs[eventDef.defId],
             eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null,
@@ -325,7 +328,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
           let addedEventDef = mutatedRelevantEvents.defs[eventDef.defId]
           let addedEventInstance = mutatedRelevantEvents.instances[eventInstance.instanceId]
-          let addedEventApi = new EventApi(receivingContext, addedEventDef, addedEventInstance)
+          let addedEventApi = new EventImpl(receivingContext, addedEventDef, addedEventInstance)
 
           receivingContext.dispatch({
             type: 'MERGE_EVENTS',

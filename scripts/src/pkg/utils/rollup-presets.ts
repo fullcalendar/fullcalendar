@@ -199,13 +199,15 @@ function buildManualChunks(
   pkgBundleStruct: PkgBundleStruct,
   inExtension: string,
 ): { [absPath: string]: string[] } {
-  const { pkgDir } = pkgBundleStruct
+  const { pkgDir, entryStructMap } = pkgBundleStruct
   const manualChunks: { [absPath: string]: string[] } = {}
 
   for (const entryAlias in entryManualChunk) {
     const chunkName = entryManualChunk[entryAlias]
 
-    manualChunks[chunkName] = [joinPaths(pkgDir, transpiledSubdir, entryAlias + inExtension)]
+    if (entryStructMap[entryAlias]) {
+      manualChunks[chunkName] = [joinPaths(pkgDir, transpiledSubdir, entryAlias + inExtension)]
+    }
   }
 
   return manualChunks

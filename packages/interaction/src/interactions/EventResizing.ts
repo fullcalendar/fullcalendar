@@ -1,4 +1,9 @@
 import {
+  ViewApi,
+  EventApi,
+  EventChangeArg,
+} from '@fullcalendar/core'
+import {
   Seg, Hit,
   EventMutation, applyMutationToEventStore,
   elementClosest,
@@ -6,12 +11,12 @@ import {
   EventStore, getRelevantEvents, createEmptyEventStore,
   diffDates, enableCursor, disableCursor,
   DateRange,
-  EventApi,
   EventRenderRange, getElSeg,
   createDuration,
   EventInteractionState,
-  Interaction, InteractionSettings, interactionSettingsToStore, ViewApi, Duration, EventChangeArg, buildEventApis, isInteractionValid,
-} from '@fullcalendar/core'
+  Interaction, InteractionSettings, interactionSettingsToStore, Duration, buildEventApis, isInteractionValid,
+  EventImpl,
+} from '@fullcalendar/core/internal'
 import { __assign } from 'tslib'
 import { HitDragging, isHitsEqual } from './HitDragging.js'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'
@@ -97,7 +102,7 @@ export class EventResizing extends Interaction {
     context.calendarApi.unselect()
     context.emitter.trigger('eventResizeStart', {
       el: segEl,
-      event: new EventApi(context, eventRange.def, eventRange.instance),
+      event: new EventImpl(context, eventRange.def, eventRange.instance),
       jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
       view: context.viewApi,
     } as EventResizeStartArg)
@@ -173,7 +178,7 @@ export class EventResizing extends Interaction {
     let { context } = this.component
     let eventDef = this.eventRange!.def
     let eventInstance = this.eventRange!.instance
-    let eventApi = new EventApi(context, eventDef, eventInstance)
+    let eventApi = new EventImpl(context, eventDef, eventInstance)
     let relevantEvents = this.relevantEvents!
     let mutatedRelevantEvents = this.mutatedRelevantEvents!
 
@@ -185,7 +190,7 @@ export class EventResizing extends Interaction {
     } as EventResizeStopArg)
 
     if (this.validMutation) {
-      let updatedEventApi = new EventApi(
+      let updatedEventApi = new EventImpl(
         context,
         mutatedRelevantEvents.defs[eventDef.defId],
         eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null,

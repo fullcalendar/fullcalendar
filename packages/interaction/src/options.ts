@@ -1,4 +1,5 @@
-import { identity, Identity, EventDropArg } from '@fullcalendar/core'
+import { EventDropArg } from '@fullcalendar/core'
+import { identity, Identity } from '@fullcalendar/core/internal'
 
 // public
 import {

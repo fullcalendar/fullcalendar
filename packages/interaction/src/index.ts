@@ -1,4 +1,4 @@
-import { createPlugin } from '@fullcalendar/core'
+import { createPlugin } from '@fullcalendar/core/internal'
 import { DateClicking } from './interactions/DateClicking.js'
 import { DateSelecting } from './interactions/DateSelecting.js'
 import { EventDragging } from './interactions/EventDragging.js'

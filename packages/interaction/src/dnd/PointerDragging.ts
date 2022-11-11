@@ -1,4 +1,4 @@
-import { config, elementClosest, Emitter, PointerDragEvent } from '@fullcalendar/core'
+import { config, elementClosest, Emitter, PointerDragEvent } from '@fullcalendar/core/internal'
 
 config.touchMouseIgnoreWait = 500
 
