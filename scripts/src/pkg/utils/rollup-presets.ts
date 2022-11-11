@@ -15,6 +15,12 @@ import { analyzePkg } from '../../utils/pkg-analysis.js'
 import { readPkgJson } from '../../utils/pkg-json.js'
 import { standardScriptsDir } from '../../utils/script-runner.js'
 import {
+  entryManualChunk,
+  assetExtensions,
+  transpiledExtension,
+  transpiledSubdir,
+} from './config.js'
+import {
   computeExternalPkgs,
   computeIifeExternalPkgs,
   computeIifeGlobals,
@@ -24,8 +30,6 @@ import {
   entryStructsToContentMap,
   generateIifeContent,
   PkgBundleStruct,
-  transpiledExtension,
-  transpiledSubdir,
 } from './bundle-struct.js'
 import {
   externalizeExtensionsPlugin,
@@ -41,8 +45,6 @@ const commonjsPlugin = cjsInterop(commonjsPluginLib)
 const jsonPlugin = cjsInterop(jsonPluginLib)
 const postcssPlugin = cjsInterop(postcssPluginLib)
 const replacePlugin = cjsInterop(replacePluginLib)
-
-const assetExtensions = ['.css']
 
 export function buildModuleOptions(
   pkgBundleStruct: PkgBundleStruct,
@@ -63,15 +65,6 @@ export function buildModuleOptions(
   }
 
   return []
-}
-
-export function buildDtsOptions(pkgBundleStruct: PkgBundleStruct): RollupOptions {
-  return {
-    input: buildDtsInput(pkgBundleStruct),
-    plugins: buildDtsPlugins(pkgBundleStruct),
-    output: buildDtsOutputOptions(pkgBundleStruct),
-    onwarn,
-  }
 }
 
 export async function buildIifeOptions(
@@ -100,6 +93,15 @@ export async function buildIifeOptions(
   }
 
   return optionsObjs
+}
+
+export function buildDtsOptions(pkgBundleStruct: PkgBundleStruct): RollupOptions {
+  return {
+    input: buildDtsInput(pkgBundleStruct),
+    plugins: buildDtsPlugins(pkgBundleStruct),
+    output: buildDtsOutputOptions(pkgBundleStruct),
+    onwarn,
+  }
 }
 
 // Input
@@ -134,7 +136,8 @@ function buildEsmOutputOptions(
     format: 'esm',
     dir: joinPaths(pkgBundleStruct.pkgDir, 'dist'),
     entryFileNames: '[name].js',
-    chunkFileNames: 'internal-[hash].js',
+    chunkFileNames: '[name].js',
+    manualChunks: buildManualChunks(pkgBundleStruct, transpiledExtension),
     sourcemap,
   }
 }
@@ -148,7 +151,8 @@ function buildCjsOutputOptions(
     exports: 'named',
     dir: joinPaths(pkgBundleStruct.pkgDir, 'dist'),
     entryFileNames: '[name].cjs',
-    chunkFileNames: 'internal-[hash].cjs',
+    chunkFileNames: '[name].cjs',
+    manualChunks: buildManualChunks(pkgBundleStruct, transpiledExtension),
     sourcemap,
   }
 }
@@ -183,8 +187,27 @@ function buildDtsOutputOptions(pkgBundleStruct: PkgBundleStruct): OutputOptions 
     format: 'esm',
     dir: joinPaths(pkgBundleStruct.pkgDir, 'dist'),
     entryFileNames: '[name].d.ts',
-    chunkFileNames: 'internal-[hash].d.ts',
+    chunkFileNames: '[name].d.ts',
+    manualChunks: buildManualChunks(pkgBundleStruct, '.d.ts'),
   }
+}
+
+// Chunk Options
+// -------------------------------------------------------------------------------------------------
+
+function buildManualChunks(
+  pkgBundleStruct: PkgBundleStruct,
+  inExtension: string,
+): { [absPath: string]: string[] } {
+  const { pkgDir } = pkgBundleStruct
+  const manualChunks: { [absPath: string]: string[] } = {}
+
+  for (const entryAlias in entryManualChunk) {
+    const chunkName = entryManualChunk[entryAlias]
+    manualChunks[chunkName] = [joinPaths(pkgDir, transpiledSubdir, entryAlias + inExtension)]
+  }
+
+  return manualChunks
 }
 
 // Plugins Lists

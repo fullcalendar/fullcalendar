@@ -3,6 +3,7 @@ import { globby } from 'globby'
 import { MonorepoStruct, computeLocalDepDirs } from '../../utils/monorepo-struct.js'
 import { filterProps } from '../../utils/lang.js'
 import { pkgLog } from '../../utils/log.js'
+import { srcExtensions, transpiledSubdir, transpiledExtension } from './config.js'
 
 export interface PkgBundleStruct {
   pkgDir: string,
@@ -44,10 +45,6 @@ export type IifeGeneratorFunc = (
 ) => string
 
 export type WatchPathsFunc = (pkgDir: string) => string[]
-
-export const transpiledSubdir = 'dist/.tsout'
-export const transpiledExtension = '.js'
-const srcExtensions = ['.ts', '.tsx']
 
 export async function buildPkgBundleStruct(
   pkgDir: string,
