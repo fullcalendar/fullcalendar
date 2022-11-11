@@ -11,11 +11,8 @@ import { CssDimValue } from './scrollgrid/util.js'
 import { applyStyleProp } from './util/dom-manip.js'
 import { RenderId } from './content-inject/RenderId.js'
 import { CalendarImpl } from './api/CalendarImpl.js'
-import { CalendarApi } from './api/CalendarApi.js'
 
-const Calendar: {
-  new(el: HTMLElement, optionOverrides?: CalendarOptions): CalendarApi
-} = class extends CalendarImpl {
+export class Calendar extends CalendarImpl {
   el: HTMLElement
 
   private currentData: CalendarData
@@ -155,5 +152,3 @@ const Calendar: {
     applyStyleProp(this.el, 'height', height)
   }
 }
-
-export { Calendar }

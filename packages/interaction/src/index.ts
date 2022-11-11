@@ -18,7 +18,5 @@ export default createPlugin({
 })
 
 export * from './api-type-deps.js'
-export { FeaturefulElementDragging }
-export { PointerDragging } from './dnd/PointerDragging.js'
 export { ExternalDraggable as Draggable } from './interactions-external/ExternalDraggable.js'
 export { ThirdPartyDraggable } from './interactions-external/ThirdPartyDraggable.js'
