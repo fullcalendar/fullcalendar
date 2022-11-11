@@ -4,6 +4,7 @@ import { analyzePkg } from '../utils/pkg-analysis.js'
 import { readPkgJson, writePkgJson } from '../utils/pkg-json.js'
 import { mapProps } from '../utils/lang.js'
 import { ScriptContext } from '../utils/script-runner.js'
+import { entryManualChunk } from './utils/config.js'
 
 const cdnFields = [
   'unpkg',
@@ -59,6 +60,16 @@ export async function writeDistPkgJson(
         }
       }),
     },
+  }
+
+  for (const entryAlias in entryManualChunk) {
+    const chunkName = entryManualChunk[entryAlias]
+
+    if (buildConfig.exports[`./${entryAlias}`]) {
+      finalPkgJson.exports[`./${chunkName}.js`] = {
+        types: `./${chunkName}.d.ts`,
+      }
+    }
   }
 
   delete finalPkgJson.scripts

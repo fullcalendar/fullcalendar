@@ -204,6 +204,7 @@ function buildManualChunks(
 
   for (const entryAlias in entryManualChunk) {
     const chunkName = entryManualChunk[entryAlias]
+
     manualChunks[chunkName] = [joinPaths(pkgDir, transpiledSubdir, entryAlias + inExtension)]
   }
 
