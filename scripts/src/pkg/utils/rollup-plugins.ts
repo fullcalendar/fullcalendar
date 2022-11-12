@@ -61,14 +61,21 @@ export function externalizePathsPlugin(options: ExteralizePathsOptions): Plugin 
   }
 }
 
-export function externalizePkgsPlugin(pkgNames: string[]): Plugin {
+export interface ExternalizePkgsOptions {
+  pkgNames: string[],
+  moduleSideEffects?: boolean
+}
+
+export function externalizePkgsPlugin(
+  { pkgNames, moduleSideEffects }: ExternalizePkgsOptions,
+): Plugin {
   return {
     name: 'externalize-pkgs',
     resolveId(importId) {
       if (!isImportRelative(importId)) {
         for (const pkgName of pkgNames) {
           if (importId === pkgName || importId.startsWith(pkgName + '/')) {
-            return { id: importId, external: true }
+            return { id: importId, external: true, moduleSideEffects }
           }
         }
       }

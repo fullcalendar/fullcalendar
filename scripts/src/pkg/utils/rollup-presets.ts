@@ -221,9 +221,9 @@ function buildModulePlugins(pkgBundleStruct: PkgBundleStruct, sourcemap: boolean
 
   return [
     rerootAssetsPlugin(pkgDir),
-    externalizePkgsPlugin(
-      computeExternalPkgs(pkgBundleStruct),
-    ),
+    externalizePkgsPlugin({
+      pkgNames: computeExternalPkgs(pkgBundleStruct),
+    }),
     generatedContentPlugin(
       entryStructsToContentMap(entryStructMap),
     ),
@@ -246,9 +246,9 @@ function buildIifePlugins(
 
   return [
     rerootAssetsPlugin(pkgDir),
-    externalizePkgsPlugin(
-      computeIifeExternalPkgs(pkgBundleStruct),
-    ),
+    externalizePkgsPlugin({
+      pkgNames: computeIifeExternalPkgs(pkgBundleStruct),
+    }),
     externalizePathsPlugin({
       paths: computeOwnIifeExternalPaths(currentEntryStruct, pkgBundleStruct),
     }),
@@ -265,9 +265,10 @@ function buildIifePlugins(
 function buildDtsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
   return [
     externalizeAssetsPlugin(),
-    externalizePkgsPlugin(
-      computeExternalPkgs(pkgBundleStruct),
-    ),
+    externalizePkgsPlugin({
+      pkgNames: computeExternalPkgs(pkgBundleStruct),
+      moduleSideEffects: true, // for including ambient declarations in other packages
+    }),
     // rollup-plugin-dts normally gets confused with code splitting. this helps a lot.
     externalizePathsPlugin({
       paths: computeOwnExternalPaths(pkgBundleStruct),
