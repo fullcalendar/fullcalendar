@@ -31,7 +31,8 @@
   },
   "buildConfig": {
     "exports": {
-      ".": { "iife": true }
+      ".": { "iife": true },
+      "./global": {}
     },
     "iifeGlobals": {
       "tslib": ""

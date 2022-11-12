@@ -1,3 +1,1 @@
-import { defineFullCalendarElement } from './index.js'
-
-defineFullCalendarElement()
+import './global.js'
