@@ -15,7 +15,7 @@ import { analyzePkg } from '../../utils/pkg-analysis.js'
 import { readPkgJson } from '../../utils/pkg-json.js'
 import { standardScriptsDir } from '../../utils/script-runner.js'
 import {
-  entryManualChunk,
+  manualChunkMap,
   assetExtensions,
   transpiledExtension,
   transpiledSubdir,
@@ -181,6 +181,7 @@ function buildIifeOutputOptions(
         : { exports: 'none' }
     ),
     interop: 'auto',
+    freeze: false,
     sourcemap,
   }
 }
@@ -205,8 +206,8 @@ function buildManualChunks(
   const { pkgDir, entryStructMap } = pkgBundleStruct
   const manualChunks: { [absPath: string]: string[] } = {}
 
-  for (const entryAlias in entryManualChunk) {
-    const chunkName = entryManualChunk[entryAlias]
+  for (const entryAlias in manualChunkMap) {
+    const chunkName = manualChunkMap[entryAlias]
 
     if (entryStructMap[entryAlias]) {
       manualChunks[chunkName] = [joinPaths(pkgDir, transpiledSubdir, entryAlias + inExtension)]

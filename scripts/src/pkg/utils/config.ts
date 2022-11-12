@@ -6,8 +6,8 @@ export const assetExtensions = ['.css']
 export const iifeSubExtension = '.global'
 
 /*
-For a consistent chunk name
+For onsistent chunk names
 */
-export const entryManualChunk: { [entryAlias: string]: string } = {
+export const manualChunkMap: { [entryAlias: string]: string } = {
   'internal': 'internal-common',
 }

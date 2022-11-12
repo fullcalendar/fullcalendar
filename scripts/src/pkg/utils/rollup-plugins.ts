@@ -185,7 +185,7 @@ export function minifySeparatelyPlugin(): Plugin {
           }),
         )
       } else {
-        throw new Error('For minification, must specify dir or file output option')
+        this.error('For minification, must specify dir or file output option')
       }
     },
   }
