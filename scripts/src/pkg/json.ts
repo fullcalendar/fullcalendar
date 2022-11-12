@@ -62,16 +62,6 @@ export async function writeDistPkgJson(
     },
   }
 
-  for (const entryAlias in entryManualChunk) {
-    const chunkName = entryManualChunk[entryAlias]
-
-    if (buildConfig.exports[`./${entryAlias}`]) {
-      finalPkgJson.exports[`./${chunkName}.js`] = {
-        types: `./${chunkName}.d.ts`,
-      }
-    }
-  }
-
   delete finalPkgJson.scripts
   delete finalPkgJson.devDependencies
   delete finalPkgJson.tsConfig

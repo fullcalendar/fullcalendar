@@ -5,8 +5,7 @@ export const srcExtensions = ['.ts', '.tsx']
 export const assetExtensions = ['.css']
 
 /*
-Predictable chunk names are better for TypeScript and es2016 module-resolution
-when made explicit in package.json
+For a consistent chunk name
 */
 export const entryManualChunk: { [entryAlias: string]: string } = {
   'internal': 'internal-common',
