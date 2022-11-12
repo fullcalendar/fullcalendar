@@ -6,6 +6,8 @@ instead of:
   do this:
     import { h, Component, Fragment } from '@fullcalendar/core/preact';
 
+TODO: New instructions for angular, web-component API changed
+
 
 v6.0.0-beta.1
 -------------
