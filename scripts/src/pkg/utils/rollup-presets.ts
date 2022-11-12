@@ -40,6 +40,7 @@ import {
   minifySeparatelyPlugin,
   massageDtsPlugin,
   rerootPlugin,
+  simpleDotAssignment,
 } from './rollup-plugins.js'
 
 const commonjsPlugin = cjsInterop(commonjsPluginLib)
@@ -258,6 +259,7 @@ function buildIifePlugins(
       ...entryStructsToContentMap(entryStructMap),
       ...iifeContentMap,
     }),
+    simpleDotAssignment(),
     ...buildJsPlugins(pkgBundleStruct),
     ...(sourcemap ? [sourcemapsPlugin()] : []),
     ...(minify ? [minifySeparatelyPlugin()] : []),
