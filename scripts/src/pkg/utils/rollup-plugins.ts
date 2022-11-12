@@ -162,9 +162,18 @@ function isEncodedDotName(name: string): boolean {
 }
 
 function replaceDotAssignments(code: string): string {
-  return code.replace(/var __dot_name_(\w+)__ =/, (whole, dotName) => {
+  let replaced = false
+
+  code = code.replace(/var __dot_name_(\w+)__ =/, (whole, dotName) => {
+    replaced = true
     return dotName.replaceAll('_', '.') + ' ='
   })
+
+  if (!replaced) {
+    throw new Error('Error transforming dot assignment')
+  }
+
+  return code
 }
 
 // Minify
