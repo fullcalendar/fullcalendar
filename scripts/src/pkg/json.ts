@@ -52,6 +52,7 @@ export async function writeDistPkgJson(
       ...mapProps(buildConfig.exports, (entryConfig, entryName) => {
         const entrySubpath = entryName === '.' ? './index' : entryName
 
+        // TODO: don't do all formats. based on EntryConfig
         return {
           require: entrySubpath + '.cjs',
           import: entrySubpath + '.js',

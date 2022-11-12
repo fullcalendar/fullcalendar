@@ -74,7 +74,7 @@ function initCalendar(moreOptions?: CalendarOptions, el?) {
 
   options.plugins = options.plugins.concat([
     createPlugin({
-      name: 'test-plugin',
+      name: 'current-calendar-' + Date.now(), // ugh, might be called twice per calendar
       contextInit(context) {
         newCalendar = window.currentCalendar = context.calendarApi as Calendar
       },
