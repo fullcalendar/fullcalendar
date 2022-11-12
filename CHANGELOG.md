@@ -1,6 +1,11 @@
 
 Specifying *Content renderer that returns nothing/undefined will render blank
 
+instead of:
+    import { h, Component, Fragment } from 'preact';
+  do this:
+    import { h, Component, Fragment } from '@fullcalendar/core/preact';
+
 
 v6.0.0-beta.1
 -------------
