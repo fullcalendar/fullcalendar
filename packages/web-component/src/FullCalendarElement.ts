@@ -13,7 +13,10 @@ export class FullCalendarElement extends HTMLElement {
   }
 
   attributeChangedCallback(name: string, oldVal: string, newVal: string): void {
-    if (name === 'options') {
+    if (
+      name === 'options' &&
+      this._calendar // initial render happened
+    ) {
       this._handleOptionsStr(newVal)
     }
   }
