@@ -10,7 +10,7 @@ TODO: don't reinit rollup watcher on ANY change. Slow when not using fdescribe t
 */
 
 const thisPkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
-const templatePath = joinPaths(thisPkgDir, 'src/index.iife.js.tpl')
+const templatePath = joinPaths(thisPkgDir, 'src/index.global.js.tpl')
 
 /*
 HACK: watch the transpiled directory, so bundling waits until tsc completes

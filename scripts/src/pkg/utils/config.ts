@@ -3,6 +3,7 @@ export const transpiledSubdir = 'dist/.tsout'
 export const transpiledExtension = '.js'
 export const srcExtensions = ['.ts', '.tsx']
 export const assetExtensions = ['.css']
+export const iifeSubExtension = '.global'
 
 /*
 For a consistent chunk name

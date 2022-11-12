@@ -4,7 +4,7 @@ import { readFile } from 'fs/promises'
 import handlebars from 'handlebars'
 
 const thisPkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
-const templatePath = joinPaths(thisPkgDir, 'src/locales/iife.js.tpl')
+const templatePath = joinPaths(thisPkgDir, 'src/locales/global.js.tpl')
 
 export function getWatchPaths() {
   return [templatePath, templatePath]

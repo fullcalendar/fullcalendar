@@ -19,6 +19,7 @@ import {
   assetExtensions,
   transpiledExtension,
   transpiledSubdir,
+  iifeSubExtension,
 } from './config.js'
 import {
   computeExternalPkgs,
@@ -116,7 +117,7 @@ function buildModuleInput(pkgBundleStruct: PkgBundleStruct): InputMap {
 }
 
 function buildIifeInput(entryStruct: EntryStruct): string {
-  return entryStruct.entrySrcBase + '.iife' + transpiledExtension
+  return entryStruct.entrySrcBase + iifeSubExtension + transpiledExtension
 }
 
 function buildDtsInput(pkgBundleStruct: PkgBundleStruct): InputMap {
