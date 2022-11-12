@@ -38,7 +38,7 @@
       ".": { "iife": true }
     },
     "iifeGlobals": {
-      ".": "FullCalendarLuxon2",
+      ".": "FullCalendar.Luxon2",
       "luxon": "luxon",
       "tslib": ""
     }

@@ -35,7 +35,7 @@
       ".": { "iife": true }
     },
     "iifeGlobals": {
-      ".": "FullCalendarInteraction",
+      ".": "FullCalendar.Interaction",
       "tslib": ""
     }
   },

@@ -36,8 +36,8 @@
       "./internal": {}
     },
     "iifeGlobals": {
-      ".": "FullCalendarDayGrid",
-      "./internal": "FullCalendarDayGrid.Internal",
+      ".": "FullCalendar.DayGrid",
+      "./internal": "FullCalendar.DayGrid.Internal",
       "tslib": ""
     }
   },

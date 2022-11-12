@@ -39,7 +39,7 @@
       ".": { "iife": true }
     },
     "iifeGlobals": {
-      ".": "FullCalendarMomentTimezone",
+      ".": "FullCalendar.MomentTimezone",
       "moment": "moment",
       "tslib": ""
     }

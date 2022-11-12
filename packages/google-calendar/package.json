@@ -35,7 +35,7 @@
       ".": { "iife": true }
     },
     "iifeGlobals": {
-      ".": "FullCalendarGoogleCalendar",
+      ".": "FullCalendar.GoogleCalendar",
       "tslib": ""
     }
   },

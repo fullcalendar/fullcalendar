@@ -37,7 +37,7 @@
       ".": { "iife": true }
     },
     "iifeGlobals": {
-      ".": "FullCalendarMoment",
+      ".": "FullCalendar.Moment",
       "moment": "moment",
       "tslib": ""
     }

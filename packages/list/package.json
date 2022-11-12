@@ -36,8 +36,8 @@
       "./internal": {}
     },
     "iifeGlobals": {
-      ".": "FullCalendarList",
-      "./internal": "FullCalendarList.Internal",
+      ".": "FullCalendar.List",
+      "./internal": "FullCalendar.List.Internal",
       "tslib": ""
     }
   },

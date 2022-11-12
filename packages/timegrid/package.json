@@ -37,8 +37,8 @@
       "./internal": {}
     },
     "iifeGlobals": {
-      ".": "FullCalendarTimeGrid",
-      "./internal": "FullCalendarTimeGrid.Internal",
+      ".": "FullCalendar.TimeGrid",
+      "./internal": "FullCalendar.TimeGrid.Internal",
       "tslib": ""
     }
   },
