@@ -178,6 +178,7 @@ function buildIifeOutputOptions(
         ? { exports: 'named', name: globalName }
         : { exports: 'none' }
     ),
+    interop: 'auto',
     sourcemap,
   }
 }
