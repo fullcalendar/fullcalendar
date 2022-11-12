@@ -1,4 +1,4 @@
-import { findElements, startOfDay, createDuration, parseMarker, addDays, addMs, getRectCenter, asRoughMs } from '@fullcalendar/core'
+import { findElements, startOfDay, createDuration, parseMarker, addDays, addMs, getRectCenter, asRoughMs } from '@fullcalendar/core/internal'
 import { formatIsoDay, formatIsoTime, ensureDate } from '../datelib-utils.js'
 import { parseUtcDate } from '../date-parsing.js'
 import { getBoundingRect } from '../dom-geom.js'

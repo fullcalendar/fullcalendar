@@ -2,6 +2,7 @@ import {
   ViewApi,
   EventApi,
   EventChangeArg,
+  Duration,
 } from '@fullcalendar/core'
 import {
   Seg, Hit,
@@ -14,7 +15,7 @@ import {
   EventRenderRange, getElSeg,
   createDuration,
   EventInteractionState,
-  Interaction, InteractionSettings, interactionSettingsToStore, Duration, buildEventApis, isInteractionValid,
+  Interaction, InteractionSettings, interactionSettingsToStore, buildEventApis, isInteractionValid,
   EventImpl,
 } from '@fullcalendar/core/internal'
 import { __assign } from 'tslib'

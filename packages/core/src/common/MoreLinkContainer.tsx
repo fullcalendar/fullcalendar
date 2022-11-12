@@ -8,7 +8,7 @@ import { elementClosest, getUniqueDomId } from '../util/dom-manip.js'
 import { formatWithOrdinals } from '../util/misc.js'
 import { createElement, createRef, Fragment, ComponentChild, RefObject } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
-import { ViewImpl } from '../api/ViewImpl.js'
+import { ViewApi } from '../api/ViewApi.js'
 import { ViewContext, ViewContextType } from '../ViewContext.js'
 import { MorePopover } from './MorePopover.js'
 import { CustomContentGenerator, MountArg } from './render-hook.js'
@@ -35,7 +35,7 @@ export interface MoreLinkContentArg {
   num: number
   text: string
   shortText: string
-  view: ViewImpl
+  view: ViewApi
 }
 
 export type MoreLinkMountArg = MountArg<MoreLinkContentArg>

@@ -1,11 +1,8 @@
-import { createPlugin } from '@fullcalendar/core'
+import { createPlugin } from '@fullcalendar/core/internal'
 import { ListView } from './ListView.js'
-import { OPTION_REFINERS } from './options.js'
-import './options-declare.js'
+import { OPTION_REFINERS } from './option-refiners.js'
+import './augment.js'
 import './index.css'
-
-export { ListView }
-export * from './api-type-deps.js'
 
 export default createPlugin({
   name: '<%= pkgName %>',
@@ -39,3 +36,5 @@ export default createPlugin({
     },
   },
 })
+
+export * from './public-types.js'

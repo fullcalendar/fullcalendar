@@ -1,4 +1,3 @@
-// TODO: rename file to public-types.ts
 
 export { DateClickArg } from './interactions/DateClicking.js'
 export { EventDragStartArg, EventDragStopArg } from './interactions/EventDragging.js'

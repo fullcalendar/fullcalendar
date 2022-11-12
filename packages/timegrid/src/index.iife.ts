@@ -4,4 +4,5 @@ import * as Internal from './internal.js'
 
 globalPlugins.push(plugin)
 
-export { Internal }
+export { plugin as default, Internal }
+export * from './index.js'

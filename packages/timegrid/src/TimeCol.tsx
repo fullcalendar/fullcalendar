@@ -1,7 +1,8 @@
+import { CssDimValue } from '@fullcalendar/core'
 import {
   DateMarker, BaseComponent, EventSegUiInteractionState, Seg, getSegMeta,
   DateRange, DayCellContainer, NowIndicatorContainer, BgEvent, renderFill, buildIsoString, computeEarliestSegStart,
-  DateProfile, buildEventRangeKey, sortEventSegs, memoize, SegEntryGroup, SegEntry, Dictionary, SegSpan, CssDimValue, hasCustomDayCellContent,
+  DateProfile, buildEventRangeKey, sortEventSegs, memoize, SegEntryGroup, SegEntry, Dictionary, SegSpan, hasCustomDayCellContent,
 } from '@fullcalendar/core/internal'
 import {
   createElement,

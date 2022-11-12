@@ -1,13 +1,12 @@
+import { Duration, CssDimValue } from '@fullcalendar/core'
 import {
   EventStore,
   EventUiHash,
   DateSpan,
   EventInteractionState,
   DayTableModel,
-  Duration,
   DateComponent,
   ViewContext,
-  CssDimValue,
   DateProfile,
 } from '@fullcalendar/core/internal'
 import {

@@ -1,10 +1,10 @@
+import { Duration } from '@fullcalendar/core'
 import {
   createDuration,
   asRoughMs,
   formatIsoTimeString,
   addDurations,
   wholeDivideDurations,
-  Duration,
   DateMarker,
   DateEnv,
 } from '@fullcalendar/core/internal'

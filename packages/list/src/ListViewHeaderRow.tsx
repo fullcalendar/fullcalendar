@@ -1,7 +1,8 @@
+import { DayHeaderContentArg } from '@fullcalendar/core'
 import {
   BaseComponent, DateMarker, DateRange, getDateMeta,
-  DayHeaderContentArg, getDayClassNames, formatDayString, buildNavLinkAttrs, getUniqueDomId, ContentContainer,
-} from '@fullcalendar/core'
+  getDayClassNames, formatDayString, buildNavLinkAttrs, getUniqueDomId, ContentContainer,
+} from '@fullcalendar/core/internal'
 import { createElement, Fragment } from '@fullcalendar/core/preact'
 
 export interface ListViewHeaderRowProps {

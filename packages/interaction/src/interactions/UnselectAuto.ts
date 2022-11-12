@@ -1,5 +1,5 @@
+import { DateSelectionApi } from '@fullcalendar/core'
 import {
-  DateSelectionApi,
   PointerDragEvent,
   elementClosest,
   CalendarContext,

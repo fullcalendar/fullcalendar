@@ -1,3 +1,4 @@
+import { Duration } from '@fullcalendar/core'
 import {
   PositionCache,
   DateMarker,
@@ -5,7 +6,6 @@ import {
   createDuration,
   asRoughMs,
   DateProfile,
-  Duration,
   rangeContainsMarker,
 } from '@fullcalendar/core/internal'
 

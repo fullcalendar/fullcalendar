@@ -3,6 +3,7 @@ import { CalendarSystem } from './calendar-system.js'
 import { Locale } from './locale.js'
 import { ZonedMarker, ExpandedZonedMarker, expandZonedMarker } from './zoned-marker.js'
 
+// TODO: make public, for plugin system
 export interface VerboseFormattingArg { // TODO: kill this
   date: ExpandedZonedMarker
   start: ExpandedZonedMarker

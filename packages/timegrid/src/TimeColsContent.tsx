@@ -1,7 +1,7 @@
+import { CssDimValue } from '@fullcalendar/core'
 import {
   BaseComponent,
   EventSegUiInteractionState,
-  CssDimValue,
   DateMarker,
   RefMap,
   PositionCache,

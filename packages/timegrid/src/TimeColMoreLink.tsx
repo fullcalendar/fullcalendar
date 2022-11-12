@@ -1,6 +1,7 @@
+import { CssDimValue } from '@fullcalendar/core'
 import {
   MoreLinkContentArg, MoreLinkContainer, BaseComponent,
-  Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState, CssDimValue,
+  Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState,
 } from '@fullcalendar/core/internal'
 import { createElement } from '@fullcalendar/core/preact'
 import { renderPlainFgSegs } from './TimeCol.js'

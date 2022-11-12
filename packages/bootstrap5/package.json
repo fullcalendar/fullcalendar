@@ -32,10 +32,12 @@
   },
   "buildConfig": {
     "exports": {
-      ".": { "iife": true }
+      ".": { "iife": true },
+      "./internal": {}
     },
     "iifeGlobals": {
       ".": "FullCalendarBootstrap5",
+      "./internal": "FullCalendarBootstrap5.Internal",
       "tslib": ""
     }
   },

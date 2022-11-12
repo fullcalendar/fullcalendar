@@ -12,7 +12,7 @@ import { mapHash } from '../util/object.js'
 import { ViewContext } from '../ViewContext.js'
 import { DateFormatter } from '../datelib/DateFormatter.js'
 import { addMs, DateMarker, startOfDay } from '../datelib/marker.js'
-import { ViewImpl } from '../api/ViewImpl.js'
+import { ViewApi } from '../api/ViewApi.js'
 import { MountArg } from '../common/render-hook.js'
 import { createAriaKeyboardAttrs } from '../util/dom-event.js'
 
@@ -205,7 +205,7 @@ export interface EventContentArg { // for *Content handlers
   isSelected: boolean
   isDragging: boolean
   isResizing: boolean
-  view: ViewImpl // specifically for the API
+  view: ViewApi // specifically for the API
 }
 
 export type EventMountArg = MountArg<EventContentArg>

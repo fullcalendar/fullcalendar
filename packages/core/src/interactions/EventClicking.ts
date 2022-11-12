@@ -3,13 +3,13 @@ import { EventImpl } from '../api/EventImpl.js'
 import { elementClosest } from '../util/dom-manip.js'
 import { getElSeg } from '../component/event-rendering.js'
 import { Interaction, InteractionSettings } from './interaction.js'
-import { ViewImpl } from '../api/ViewImpl.js'
+import { ViewApi } from '../api/ViewApi.js'
 
 export interface EventClickArg {
   el: HTMLElement
   event: EventImpl
   jsEvent: MouseEvent
-  view: ViewImpl
+  view: ViewApi
 }
 
 /*

@@ -5,8 +5,8 @@ import { EventDragging } from './interactions/EventDragging.js'
 import { EventResizing } from './interactions/EventResizing.js'
 import { UnselectAuto } from './interactions/UnselectAuto.js'
 import { FeaturefulElementDragging } from './dnd/FeaturefulElementDragging.js'
-import { OPTION_REFINERS, LISTENER_REFINERS } from './options.js'
-import './options-declare.js'
+import { OPTION_REFINERS, LISTENER_REFINERS } from './option-refiners.js'
+import './augment.js'
 
 export default createPlugin({
   name: '<%= pkgName %>',
@@ -17,6 +17,6 @@ export default createPlugin({
   listenerRefiners: LISTENER_REFINERS,
 })
 
-export * from './api-type-deps.js'
+export * from './public-types.js'
 export { ExternalDraggable as Draggable } from './interactions-external/ExternalDraggable.js'
 export { ThirdPartyDraggable } from './interactions-external/ThirdPartyDraggable.js'

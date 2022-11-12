@@ -1,4 +1,4 @@
-import { addDays } from '@fullcalendar/core'
+import { addDays } from '@fullcalendar/core/internal'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'

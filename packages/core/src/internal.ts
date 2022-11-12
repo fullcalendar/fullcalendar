@@ -10,9 +10,8 @@ export {
 export type { EventDef, EventDefHash } from './structs/event-def.js'
 export type { EventInstance, EventInstanceHash } from './structs/event-instance.js'
 export { createEventInstance } from './structs/event-instance.js'
-export type { EventInput, EventRefined, EventTuple, EventRefiners } from './structs/event-parse.js'
+export type { EventRefined, EventTuple, EventRefiners } from './structs/event-parse.js'
 export { parseEventDef, refineEventDef } from './structs/event-parse.js'
-export type { BusinessHoursInput } from './structs/business-hours.js'
 export { parseBusinessHours } from './structs/business-hours.js'
 
 export type { OrderSpec } from './util/misc.js'
@@ -112,7 +111,7 @@ export { sliceEvents } from './View.js'
 export type { DateProfile } from './DateProfileGenerator.js'
 export { DateProfileGenerator } from './DateProfileGenerator.js'
 export type { ViewSpec } from './structs/view-spec.js'
-export type { DateSpan, DateSpanApi, DatePointApi } from './structs/date-span.js'
+export type { DateSpan } from './structs/date-span.js'
 export { isDateSpansEqual } from './structs/date-span.js'
 
 export type { DateMarker } from './datelib/marker.js'
@@ -128,7 +127,6 @@ export {
   diffDays,
   isValidDate,
 } from './datelib/marker.js'
-export type { Duration } from './datelib/duration.js'
 export {
   createDuration,
   asCleanDays, multiplyDuration, addDurations,
@@ -137,7 +135,6 @@ export {
 } from './datelib/duration.js'
 export { DateEnv } from './datelib/env.js'
 
-export type { FormatterInput } from './datelib/formatting.js'
 export { createFormatter } from './datelib/formatting.js'
 export type { DateFormatter, VerboseFormattingArg } from './datelib/DateFormatter.js'
 export {
@@ -149,6 +146,8 @@ export { NamedTimeZoneImpl } from './datelib/timezone.js'
 export { parse as parseMarker } from './datelib/parsing.js'
 
 export type { EventSourceDef } from './structs/event-source-def.js'
+export type { EventSourceRefined } from './structs/event-source-parse.js'
+export { EventSourceRefiners } from './structs/event-source-parse.js'
 
 export type { SegSpan, SegRect, SegEntry, SegInsertion, SegEntryGroup } from './seg-hierarchy.js'
 export {
@@ -208,7 +207,7 @@ export { Slicer } from './common/slicing-utils.js'
 
 export type { EventMutation } from './structs/event-mutation.js'
 export { applyMutationToEventStore } from './structs/event-mutation.js'
-export type { Constraint, ConstraintInput, AllowFunc } from './structs/constraint.js'
+export type { Constraint } from './structs/constraint.js'
 export { isPropsValid, isInteractionValid, isDateSelectionValid } from './validation.js'
 
 export { requestJson } from './util/requestJson.js'
@@ -225,7 +224,7 @@ export type {
 export type { SimpleScrollGridSection } from './scrollgrid/SimpleScrollGrid.js'
 export { SimpleScrollGrid } from './scrollgrid/SimpleScrollGrid.js'
 export type {
-  CssDimValue, ScrollerLike, ColProps, ChunkContentCallbackArgs,
+  ScrollerLike, ColProps, ChunkContentCallbackArgs,
   ChunkConfigRowContent, ChunkConfigContent,
 } from './scrollgrid/util.js'
 export {
@@ -264,11 +263,12 @@ export { MoreLinkContainer, computeEarliestSegStart } from './common/MoreLinkCon
 
 export type { ViewContainerProps } from './common/ViewContainer.js'
 export { ViewContainer } from './common/ViewContainer.js'
-export type { DatePointTransform, DateSpanTransform, DateSelectionApi } from './calendar-utils.js'
+export type { DatePointTransform, DateSpanTransform } from './calendar-utils.js'
 export { triggerDateSelect, getDefaultEventEnd } from './calendar-utils.js'
 
 export { injectStyles } from './styleUtils.js'
 
+export { CalendarImpl } from './api/CalendarImpl.js'
 export { EventImpl, buildEventApis } from './api/EventImpl.js'
 
 export type { ElProps } from './content-inject/ContentInjector.js'

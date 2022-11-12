@@ -1,7 +1,7 @@
+import { CssDimValue } from '@fullcalendar/core'
 import {
   BaseComponent,
   RefMap,
-  CssDimValue,
   PositionCache,
   DateProfile,
 } from '@fullcalendar/core/internal'

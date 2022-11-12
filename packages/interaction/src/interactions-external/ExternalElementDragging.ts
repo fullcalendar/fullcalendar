@@ -1,6 +1,5 @@
-import {
-  ViewApi,
-} from '@fullcalendar/core'
+import { __assign } from 'tslib'
+import { ViewApi, DatePointApi } from '@fullcalendar/core'
 import {
   Hit,
   interactionSettingsStore,
@@ -8,7 +7,7 @@ import {
   parseEventDef, createEventInstance, EventTuple,
   createEmptyEventStore, eventTupleToStore,
   config,
-  DateSpan, DatePointApi,
+  DateSpan,
   EventInteractionState,
   DragMetaInput, DragMeta, parseDragMeta,
   elementMatches,
@@ -20,7 +19,6 @@ import {
   refineEventDef,
   EventImpl,
 } from '@fullcalendar/core/internal'
-import { __assign } from 'tslib'
 import { HitDragging } from '../interactions/HitDragging.js'
 import { buildDatePointApiWithContext } from '../utils.js'
 

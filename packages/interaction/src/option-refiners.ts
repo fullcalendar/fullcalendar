@@ -1,13 +1,11 @@
 import { EventDropArg } from '@fullcalendar/core'
 import { identity, Identity } from '@fullcalendar/core/internal'
-
-// public
 import {
   DateClickArg,
   EventDragStartArg, EventDragStopArg,
   EventResizeStartArg, EventResizeStopArg, EventResizeDoneArg,
   DropArg, EventReceiveArg, EventLeaveArg,
-} from './api-type-deps.js'
+} from './public-types.js'
 
 export const OPTION_REFINERS = {
   fixedMirrorParent: identity as Identity<HTMLElement>,

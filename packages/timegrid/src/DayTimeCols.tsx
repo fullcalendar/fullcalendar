@@ -1,3 +1,4 @@
+import { Duration, CssDimValue } from '@fullcalendar/core'
 import {
   DateComponent,
   DateProfile,
@@ -11,8 +12,6 @@ import {
   DateEnv,
   DateMarker,
   NowTimer,
-  CssDimValue,
-  Duration,
 } from '@fullcalendar/core/internal'
 import {
   createElement,

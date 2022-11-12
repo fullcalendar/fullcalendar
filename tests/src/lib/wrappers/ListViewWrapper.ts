@@ -1,4 +1,5 @@
-import { findElements, Calendar } from '@fullcalendar/core'
+import { Calendar } from '@fullcalendar/core'
+import { findElements } from '@fullcalendar/core/internal'
 import { ViewWrapper } from './ViewWrapper.js'
 import { formatIsoDay } from '../datelib-utils.js'
 

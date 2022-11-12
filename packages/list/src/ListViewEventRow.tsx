@@ -1,8 +1,9 @@
+import { AllDayContentArg } from '@fullcalendar/core'
 import {
-  MinimalEventProps, BaseComponent, ViewContext, AllDayContentArg,
+  MinimalEventProps, BaseComponent, ViewContext,
   Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter,
   getSegAnchorAttrs, EventContainer, ContentContainer,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   createElement,
   ComponentChildren,

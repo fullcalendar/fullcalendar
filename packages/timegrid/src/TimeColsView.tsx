@@ -1,6 +1,4 @@
-import {
-  AllDayContentArg,
-} from '@fullcalendar/core'
+import { CssDimValue, AllDayContentArg } from '@fullcalendar/core'
 import {
   diffDays,
   SimpleScrollGridSection,
@@ -16,7 +14,6 @@ import {
   getStickyHeaderDates,
   getStickyFooterScrollbar,
   createFormatter,
-  CssDimValue,
   NowTimer,
   DateMarker,
   NowIndicatorContainer,

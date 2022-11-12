@@ -37,3 +37,10 @@ export type { DatesSetArg } from '../dates-set.js'
 export type { EventAddArg, EventChangeArg, EventDropArg, EventRemoveArg } from '../event-crud.js'
 export type { ButtonHintCompoundInput } from '../toolbar-struct.js'
 export type { CustomRenderingHandler, CustomRenderingStore } from '../content-inject/CustomRenderingStore.js'
+export type { DateSpanApi, DatePointApi } from '../structs/date-span.js'
+export type { DateSelectionApi } from '../calendar-utils.js'
+
+// used by some args
+export type { Duration } from '../datelib/duration.js'
+
+// TODO: make plugin API public

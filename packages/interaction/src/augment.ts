@@ -1,4 +1,4 @@
-import { OPTION_REFINERS, LISTENER_REFINERS } from './options.js'
+import { OPTION_REFINERS, LISTENER_REFINERS } from './option-refiners.js'
 
 type ExtraOptionRefiners = typeof OPTION_REFINERS
 type ExtraListenerRefiners = typeof LISTENER_REFINERS

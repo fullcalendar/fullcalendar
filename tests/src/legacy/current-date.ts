@@ -1,4 +1,5 @@
-import { addDays, FormatRangeOptions } from '@fullcalendar/core'
+import { FormatRangeOptions } from '@fullcalendar/core'
+import { addDays } from '@fullcalendar/core/internal'
 import { parseUtcDate } from '../lib/date-parsing.js'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 

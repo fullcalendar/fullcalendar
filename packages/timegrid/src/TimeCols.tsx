@@ -1,3 +1,4 @@
+import { Duration, CssDimValue } from '@fullcalendar/core'
 import {
   addDurations,
   multiplyDuration,
@@ -5,12 +6,10 @@ import {
   DateMarker,
   EventSegUiInteractionState,
   memoize,
-  CssDimValue,
   PositionCache,
   ScrollResponder,
   ScrollRequest,
   DateRange,
-  Duration,
   DateProfile,
   DayTableCell,
   Hit,

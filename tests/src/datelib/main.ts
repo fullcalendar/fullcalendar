@@ -1,3 +1,4 @@
+import { Calendar } from '@fullcalendar/core'
 import {
   DateEnv,
   createFormatter,
@@ -6,9 +7,8 @@ import {
   diffWholeWeeks,
   diffWholeDays,
   diffDayAndTime,
-  Calendar,
-} from '@fullcalendar/core'
-import { default as dayGridPlugin } from '@fullcalendar/daygrid'
+} from '@fullcalendar/core/internal'
+import dayGridPlugin from '@fullcalendar/daygrid'
 import { getDSTDeadZone } from '../lib/dst-dead-zone.js'
 import { formatPrettyTimeZoneOffset, formatIsoTimeZoneOffset, formatIsoWithoutTz } from '../lib/datelib-utils.js'
 

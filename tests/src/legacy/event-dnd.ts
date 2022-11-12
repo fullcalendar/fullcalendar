@@ -1,4 +1,4 @@
-import { createDuration } from '@fullcalendar/core'
+import { createDuration } from '@fullcalendar/core/internal'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 import { waitEventDrag2 } from '../lib/wrappers/interaction-util.js'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'

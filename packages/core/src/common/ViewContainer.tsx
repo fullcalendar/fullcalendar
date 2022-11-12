@@ -2,7 +2,7 @@ import { ViewSpec } from '../structs/view-spec.js'
 import { MountArg } from './render-hook.js'
 import { ComponentChildren, createElement } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
-import { ViewImpl } from '../api/ViewImpl.js'
+import { ViewApi } from '../api/ViewApi.js'
 import { ContentContainer } from '../content-inject/ContentContainer.js'
 import { ElProps } from '../content-inject/ContentInjector.js'
 
@@ -12,7 +12,7 @@ export interface ViewContainerProps extends Partial<ElProps> {
 }
 
 export interface ViewContentArg {
-  view: ViewImpl
+  view: ViewApi
 }
 
 export type ViewMountArg = MountArg<ViewContentArg>

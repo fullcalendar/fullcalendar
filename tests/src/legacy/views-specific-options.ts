@@ -1,5 +1,5 @@
-import { createPlugin } from '@fullcalendar/core'
-import { default as dayGridPlugin } from '@fullcalendar/daygrid'
+import { createPlugin } from '@fullcalendar/core/internal'
+import dayGridPlugin from '@fullcalendar/daygrid'
 
 describe('view-specific options', () => {
   pushOptions({

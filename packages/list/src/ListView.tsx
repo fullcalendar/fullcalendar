@@ -1,3 +1,4 @@
+import { ViewApi } from '@fullcalendar/core'
 import {
   ViewProps,
   Scroller,
@@ -18,12 +19,11 @@ import {
   NowTimer,
   ViewContainer,
   DateComponent,
-  ViewApi,
   MountArg,
   getUniqueDomId,
   formatDayString,
   ContentContainer,
-} from '@fullcalendar/core'
+} from '@fullcalendar/core/internal'
 import {
   ComponentChild,
   createElement,

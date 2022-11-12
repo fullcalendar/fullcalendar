@@ -1,19 +1,16 @@
+import { ClassNamesGenerator, FormatterInput } from '@fullcalendar/core'
 import {
   identity,
   Identity,
-  ClassNamesGenerator,
   CustomContentGenerator,
   DidMountHandler,
   WillUnmountHandler,
   createFormatter,
-  FormatterInput,
-} from '@fullcalendar/core'
-
-// public
+} from '@fullcalendar/core/internal'
 import {
   NoEventsContentArg,
   NoEventsMountArg,
-} from './api-type-deps.js'
+} from './public-types.js'
 
 export const OPTION_REFINERS = {
   listDayFormat: createFalsableFormatter, // defaults specified in list plugins
