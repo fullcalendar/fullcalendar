@@ -175,7 +175,7 @@ function buildIifeOutputOptions(
     globals: computeIifeGlobals(pkgBundleStruct, monorepoStruct),
     ...(
       globalName
-        ? { name: globalName }
+        ? { exports: 'named', name: globalName }
         : { exports: 'none' }
     ),
     sourcemap,
