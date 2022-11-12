@@ -2,7 +2,7 @@ import { join as joinPaths } from 'path'
 import { fileURLToPath } from 'url'
 import { readFile } from 'fs/promises'
 import { globby } from 'globby'
-import { default as handlebars } from 'handlebars'
+import handlebars from 'handlebars'
 
 const thisPkgDir = joinPaths(fileURLToPath(import.meta.url), '../..')
 const templatePath = joinPaths(thisPkgDir, 'src/locales-all.js.tpl')

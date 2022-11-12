@@ -1,4 +1,4 @@
-import { default as chalk } from 'chalk'
+import chalk from 'chalk'
 
 const timeFormat = new Intl.DateTimeFormat('en', {
   timeStyle: 'medium',

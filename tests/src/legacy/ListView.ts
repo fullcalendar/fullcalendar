@@ -1,4 +1,4 @@
-import { default as frLocale } from '@fullcalendar/core/locales/fr'
+import frLocale from '@fullcalendar/core/locales/fr'
 import { ListViewWrapper } from '../lib/wrappers/ListViewWrapper.js'
 
 describe('ListView rendering', () => {

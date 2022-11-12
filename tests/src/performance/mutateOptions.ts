@@ -1,5 +1,5 @@
 import { Calendar } from '@fullcalendar/core'
-import { default as timeGridPlugin } from '@fullcalendar/timegrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 

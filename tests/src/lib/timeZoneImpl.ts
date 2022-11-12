@@ -1,4 +1,4 @@
-import { default as dayGridPlugin } from '@fullcalendar/daygrid'
+import dayGridPlugin from '@fullcalendar/daygrid'
 
 export function testTimeZoneImpl(timeZoneImplPlugin) {
   describe('named tz implementation', () => {

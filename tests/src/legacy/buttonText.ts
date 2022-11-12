@@ -1,4 +1,4 @@
-import { default as frLocale } from '@fullcalendar/core/locales/fr'
+import frLocale from '@fullcalendar/core/locales/fr'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 describe('button text', () => {
