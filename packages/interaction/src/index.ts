@@ -1,4 +1,4 @@
-import { createPlugin } from '@fullcalendar/core'
+import { createPlugin, PluginDef } from '@fullcalendar/core'
 import { DateClicking } from './interactions/DateClicking.js'
 import { DateSelecting } from './interactions/DateSelecting.js'
 import { EventDragging } from './interactions/EventDragging.js'
@@ -15,7 +15,7 @@ export default createPlugin({
   elementDraggingImpl: FeaturefulElementDragging,
   optionRefiners: OPTION_REFINERS,
   listenerRefiners: LISTENER_REFINERS,
-})
+}) as PluginDef
 
 export * from './public-types.js'
 export { ExternalDraggable as Draggable } from './interactions-external/ExternalDraggable.js'

@@ -1,4 +1,4 @@
-import { createPlugin } from '@fullcalendar/core'
+import { createPlugin, PluginDef } from '@fullcalendar/core'
 import { DayTimeColsView } from './DayTimeColsView.js'
 import { OPTION_REFINERS } from './options.js'
 import './options-declare.js'
@@ -25,4 +25,4 @@ export default createPlugin({
       duration: { weeks: 1 },
     },
   },
-})
+}) as PluginDef

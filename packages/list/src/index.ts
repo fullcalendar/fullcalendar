@@ -1,4 +1,4 @@
-import { createPlugin } from '@fullcalendar/core'
+import { createPlugin, PluginDef } from '@fullcalendar/core'
 import { ListView } from './ListView.js'
 import { OPTION_REFINERS } from './option-refiners.js'
 import './augment.js'
@@ -35,6 +35,6 @@ export default createPlugin({
       listDaySideFormat: { weekday: 'long' }, // day-of-week is nice-to-have
     },
   },
-})
+}) as PluginDef
 
 export * from './public-types.js'
