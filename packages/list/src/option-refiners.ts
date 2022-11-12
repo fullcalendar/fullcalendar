@@ -6,6 +6,7 @@ import {
   DidMountHandler,
   WillUnmountHandler,
   createFormatter,
+  DateFormatter,
 } from '@fullcalendar/core/internal'
 import {
   NoEventsContentArg,
@@ -24,6 +25,6 @@ export const OPTION_REFINERS = {
   // noEventsText is defined in base options
 }
 
-function createFalsableFormatter(input: FormatterInput | false) {
+function createFalsableFormatter(input: FormatterInput | false): DateFormatter {
   return input === false ? null : createFormatter(input)
 }
