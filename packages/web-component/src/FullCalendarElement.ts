@@ -55,5 +55,7 @@ export class FullCalendarElement extends HTMLElement {
     }
   }
 
-  // TODO: observedAttributes
+  static get observedAttributes() {
+    return ['options']
+  }
 }
