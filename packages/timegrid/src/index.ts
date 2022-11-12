@@ -1,4 +1,4 @@
-import { createPlugin } from '@fullcalendar/core/internal'
+import { createPlugin } from '@fullcalendar/core'
 import { DayTimeColsView } from './DayTimeColsView.js'
 import { OPTION_REFINERS } from './options.js'
 import './options-declare.js'

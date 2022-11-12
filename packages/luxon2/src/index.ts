@@ -1,4 +1,4 @@
-import { createPlugin } from '@fullcalendar/core/internal'
+import { createPlugin } from '@fullcalendar/core'
 import { LuxonNamedTimeZone } from './LuxonNamedTimeZone.js'
 import { formatWithCmdStr } from './format.js'
 

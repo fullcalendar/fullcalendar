@@ -1,4 +1,4 @@
-import { createPlugin } from '@fullcalendar/core/internal'
+import { createPlugin } from '@fullcalendar/core'
 import { DayTableView } from './DayTableView.js'
 import { TableDateProfileGenerator } from './TableDateProfileGenerator.js'
 import './index.css'

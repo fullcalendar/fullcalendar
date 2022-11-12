@@ -1,4 +1,4 @@
-import { createPlugin } from '@fullcalendar/core/internal'
+import { createPlugin } from '@fullcalendar/core'
 import { BootstrapTheme } from './BootstrapTheme.js'
 import './index.css'
 

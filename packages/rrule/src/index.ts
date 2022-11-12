@@ -1,4 +1,4 @@
-import { createPlugin } from '@fullcalendar/core/internal'
+import { createPlugin } from '@fullcalendar/core'
 import { recurringType } from './recurring-type.js'
 import { RRULE_EVENT_REFINERS } from './event-refiners.js'
 import './augment.js'
