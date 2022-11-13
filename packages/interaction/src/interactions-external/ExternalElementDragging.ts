@@ -1,4 +1,3 @@
-import { __assign } from 'tslib'
 import { ViewApi, DatePointApi } from '@fullcalendar/core'
 import {
   Hit,
@@ -216,7 +215,7 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, context
   let defProps = { ...dragMeta.leftoverProps }
 
   for (let transform of context.pluginHooks.externalDefTransforms) {
-    __assign(defProps, transform(dateSpan, dragMeta))
+    Object.assign(defProps, transform(dateSpan, dragMeta))
   }
 
   let { refined, extra } = refineEventDef(defProps, context)

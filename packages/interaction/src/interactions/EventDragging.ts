@@ -24,7 +24,6 @@ import {
   getElRoot,
   EventImpl,
 } from '@fullcalendar/core/internal'
-import { __assign } from 'tslib'
 import { HitDragging, isHitsEqual } from './HitDragging.js'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'
 import { buildDatePointApiWithContext } from '../utils.js'
@@ -286,7 +285,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
           let transformed: ReturnType<EventDropTransformers> = {}
           for (let transformer of initialContext.getCurrentData().pluginHooks.eventDropTransformers) {
-            __assign(transformed, transformer(validMutation, initialContext))
+            Object.assign(transformed, transformer(validMutation, initialContext))
           }
 
           initialContext.emitter.trigger('eventDrop', {

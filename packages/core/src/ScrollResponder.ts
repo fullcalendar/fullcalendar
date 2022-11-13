@@ -1,4 +1,3 @@
-import { __assign } from 'tslib'
 import { Duration } from './datelib/duration.js'
 import { Emitter } from './common/Emitter.js'
 import { CalendarListeners } from './options.js'
@@ -42,7 +41,7 @@ export class ScrollResponder {
   }
 
   private handleScrollRequest = (request: ScrollRequest) => {
-    this.queuedRequest = __assign({}, this.queuedRequest || {}, request)
+    this.queuedRequest = Object.assign({}, this.queuedRequest || {}, request)
     this.drain()
   }
 

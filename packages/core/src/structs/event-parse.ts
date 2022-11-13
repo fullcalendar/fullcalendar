@@ -1,4 +1,3 @@
-import { __assign } from 'tslib'
 import { guid } from '../util/misc.js'
 import { DateInput } from '../datelib/env.js'
 import { startOfDay } from '../datelib/marker.js'
@@ -143,7 +142,7 @@ export function parseEventDef(
   }
 
   for (let memberAdder of context.pluginHooks.eventDefMemberAdders) {
-    __assign(def, memberAdder(refined))
+    Object.assign(def, memberAdder(refined))
   }
 
   // help out EventImpl from having user modify props

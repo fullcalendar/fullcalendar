@@ -1,4 +1,3 @@
-import { __assign } from 'tslib'
 import { requestJson } from '../util/requestJson.js'
 import { CalendarContext } from '../CalendarContext.js'
 import { EventSourceDef } from '../structs/event-source-def.js'
@@ -88,7 +87,7 @@ function buildRequestParams(meta: JsonFeedMeta, range: DateRange, context: Calen
     customRequestParams = meta.extraParams || {}
   }
 
-  __assign(params, customRequestParams)
+  Object.assign(params, customRequestParams)
 
   params[startParam] = dateEnv.formatIso(range.start)
   params[endParam] = dateEnv.formatIso(range.end)

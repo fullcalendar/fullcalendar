@@ -1,6 +1,5 @@
 /* eslint max-classes-per-file: off */
 
-import { __assign } from 'tslib'
 import { Component, Ref } from './preact.js'
 import { ViewContextType, ViewContext } from './ViewContext.js'
 import { compareObjs, EqualityFuncs, getUnequalProps } from './util/object.js'
@@ -46,13 +45,13 @@ export abstract class BaseComponent<Props=Dictionary, State=Dictionary> extends 
 
 function addPropsEquality(this: { prototype: { propEquality: any } }, propEquality) {
   let hash = Object.create(this.prototype.propEquality)
-  __assign(hash, propEquality)
+  Object.assign(hash, propEquality)
   this.prototype.propEquality = hash
 }
 
 function addStateEquality(this: { prototype: { stateEquality: any } }, stateEquality) {
   let hash = Object.create(this.prototype.stateEquality)
-  __assign(hash, stateEquality)
+  Object.assign(hash, stateEquality)
   this.prototype.stateEquality = hash
 }
 

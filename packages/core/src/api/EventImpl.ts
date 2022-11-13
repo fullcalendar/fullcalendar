@@ -1,4 +1,3 @@
-import { __assign } from 'tslib'
 import { EventDef } from '../structs/event-def.js'
 import { EVENT_NON_DATE_REFINERS, EVENT_DATE_REFINERS } from '../structs/event-parse.js'
 import { EventInstance } from '../structs/event-instance.js'
@@ -406,7 +405,7 @@ export class EventImpl implements EventApi {
 
     if (Object.keys(def.extendedProps).length) {
       if (settings.collapseExtendedProps) {
-        __assign(res, def.extendedProps)
+        Object.assign(res, def.extendedProps)
       } else {
         res.extendedProps = def.extendedProps
       }

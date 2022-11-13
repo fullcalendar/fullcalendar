@@ -4,7 +4,6 @@ import {
   Interaction, InteractionSettings, interactionSettingsToStore,
   triggerDateSelect, isDateSelectionValid,
 } from '@fullcalendar/core/internal'
-import { __assign } from 'tslib'
 import { HitDragging } from './HitDragging.js'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'
 
@@ -141,7 +140,7 @@ function joinHitsIntoSelection(hit0: Hit, hit1: Hit, dateSelectionTransformers: 
     }
 
     if (res) {
-      __assign(props, res)
+      Object.assign(props, res)
     }
   }
 

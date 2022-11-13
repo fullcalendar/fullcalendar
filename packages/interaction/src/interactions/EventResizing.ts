@@ -18,7 +18,6 @@ import {
   Interaction, InteractionSettings, interactionSettingsToStore, buildEventApis, isInteractionValid,
   EventImpl,
 } from '@fullcalendar/core/internal'
-import { __assign } from 'tslib'
 import { HitDragging, isHitsEqual } from './HitDragging.js'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'
 

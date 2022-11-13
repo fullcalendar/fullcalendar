@@ -1,4 +1,3 @@
-import { __assign } from 'tslib'
 import { Calendar, CalendarOptions } from '@fullcalendar/core'
 import { createPlugin } from '@fullcalendar/core'
 import { parseLocalDate, parseUtcDate } from './date-parsing.js'
@@ -301,7 +300,7 @@ declare global {
 
 }
 
-__assign(window, {
+Object.assign(window, {
   spyOnCalendarCallback,
   pushOptions,
   initCalendar,

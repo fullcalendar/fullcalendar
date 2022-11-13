@@ -1,4 +1,3 @@
-import { __assign } from 'tslib'
 import { PointerDragEvent } from './interactions/pointer.js'
 import { buildDateSpanApi, DateSpanApi, DatePointApi, DateSpan } from './structs/date-span.js'
 import { CalendarContext } from './CalendarContext.js'
@@ -55,10 +54,10 @@ export function buildDateSpanApiWithContext(dateSpan: DateSpan, context: Calenda
   let props = {} as DateSpanApi
 
   for (let transform of context.pluginHooks.dateSpanTransforms) {
-    __assign(props, transform(dateSpan, context))
+    Object.assign(props, transform(dateSpan, context))
   }
 
-  __assign(props, buildDateSpanApi(dateSpan, context.dateEnv))
+  Object.assign(props, buildDateSpanApi(dateSpan, context.dateEnv))
 
   return props
 }

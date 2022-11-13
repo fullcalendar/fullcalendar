@@ -1,4 +1,3 @@
-import { __assign } from 'tslib'
 import { buildLocale, RawLocaleInfo, organizeRawLocales, LocaleSingularArg } from '../datelib/locale.js'
 import { memoize, memoizeObjArg } from '../util/memoize.js'
 import { Action } from './Action.js'
@@ -158,7 +157,7 @@ export class CalendarDataManager {
     let contextAndState = { ...calendarContext, ...initialState }
 
     for (let reducer of optionsData.pluginHooks.reducers) {
-      __assign(initialState, reducer(null, null, contextAndState))
+      Object.assign(initialState, reducer(null, null, contextAndState))
     }
 
     if (computeIsLoading(initialState, calendarContext)) {
@@ -271,7 +270,7 @@ export class CalendarDataManager {
     let contextAndState = { ...calendarContext, ...newState }
 
     for (let reducer of optionsData.pluginHooks.reducers) {
-      __assign(newState, reducer(state, action, contextAndState)) // give the OLD state, for old value
+      Object.assign(newState, reducer(state, action, contextAndState)) // give the OLD state, for old value
     }
 
     let wasLoading = computeIsLoading(state, calendarContext)

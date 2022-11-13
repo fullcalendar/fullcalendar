@@ -1,4 +1,3 @@
-import { __assign } from 'tslib'
 import { ViewContextType, buildViewContext } from './ViewContext.js'
 import { ViewSpec } from './structs/view-spec.js'
 import { ViewProps } from './View.js'
@@ -195,7 +194,7 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
     let transformers = this.buildViewPropTransformers(pluginHooks.viewPropsTransformers)
 
     for (let transformer of transformers) {
-      __assign(
+      Object.assign(
         viewProps,
         transformer.transform(viewProps, props),
       )

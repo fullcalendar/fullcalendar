@@ -1,4 +1,3 @@
-import { __assign } from 'tslib'
 import { EventStore, createEmptyEventStore } from '../structs/event-store.js'
 import { EventDef } from '../structs/event-def.js'
 import { EventInteractionState } from '../interactions/event-interaction-state.js'
@@ -178,7 +177,7 @@ function buildEventUiForKey(allUi: EventUi | null, eventUiForKey: EventUi | null
   }
 
   if (individualUi) {
-    __assign(stuff, individualUi)
+    Object.assign(stuff, individualUi)
   }
 
   return stuff
