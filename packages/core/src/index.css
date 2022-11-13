@@ -1,5 +1,6 @@
 
 @import './styles/mixins';
+@import './styles/vars';
 
 @import './styles/page-root';
 @import './styles/calendar-root';

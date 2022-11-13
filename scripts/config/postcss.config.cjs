@@ -7,14 +7,6 @@ module.exports = {
   plugins: [
     require('postcss-advanced-variables'),
     require('postcss-nesting'),
-    require('@arshaw/postcss-custom-properties')({ // a fork that does preserveWithFallback
-      // available to all stylesheets
-      importFrom: require.resolve('../../packages/core/src/styles/vars.css'),
-      // keep var statements intact (but still reduce their value in a second statement)
-      preserve: true,
-      // the preserved var statements will have a fallback value
-      preserveWithFallback: true,
-    }),
     require('@arshaw/postcss-calc'), // a fork that ensures important spaces (issue 5503)
     require('autoprefixer'),
 
