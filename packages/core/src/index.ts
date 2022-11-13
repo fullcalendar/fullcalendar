@@ -11,5 +11,6 @@ export * from './api/structs.js'
 export { FormatDateOptions, FormatRangeOptions } from './formatting-api.js'
 export { formatDate, formatRange } from './formatting-api.js'
 export { createPlugin } from './plugin-system.js'
+export { JsonRequestError } from './util/requestJson.js'
 
 export const version: string = '<%= pkgVersion %>'

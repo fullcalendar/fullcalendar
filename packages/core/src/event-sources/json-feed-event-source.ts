@@ -4,6 +4,7 @@ import { EventSourceDef } from '../structs/event-source-def.js'
 import { DateRange } from '../datelib/date-range.js'
 import { createPlugin } from '../plugin-system.js'
 import { JSON_FEED_EVENT_SOURCE_REFINERS } from './json-feed-event-source-refiners.js'
+import { EventInput } from '../api/structs.js'
 
 interface JsonFeedMeta {
   url: string
@@ -32,19 +33,18 @@ let eventSourceDef: EventSourceDef<JsonFeedMeta> = {
     return null
   },
 
-  fetch(arg, success, failure) {
+  fetch(arg) {
     let { meta } = arg.eventSource
     let requestParams = buildRequestParams(meta, arg.range, arg.context)
 
-    requestJson(
-      meta.method, meta.url, requestParams,
-      (rawEvents, xhr) => {
-        success({ rawEvents, xhr })
-      },
-      (errorMessage, xhr) => {
-        failure({ message: errorMessage, xhr })
-      },
-    )
+    return requestJson(
+      meta.method,
+      meta.url,
+      requestParams,
+    ).then(([rawEvents, response]: [EventInput[], Response]) => ({
+      rawEvents,
+      response,
+    }))
   },
 
 }

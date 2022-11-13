@@ -1,64 +1,43 @@
 import { Dictionary } from '../options.js'
 
-export function requestJson(method: string, url: string, params: Dictionary, successCallback, failureCallback) {
-  method = method.toUpperCase()
+export class JsonRequestError extends Error {
+  constructor(
+    message: string,
+    public response: Response,
+  ) {
+    super(message)
+  }
+}
 
-  let body = null
+export function requestJson<ParsedResponse>(
+  method: string,
+  url: string,
+  params: Dictionary,
+): Promise<[ParsedResponse, Response]> {
+  method = method.toUpperCase()
+  const fetchOptions: RequestInit = {
+    method,
+  }
 
   if (method === 'GET') {
-    url = injectQueryStringParams(url, params)
+    url += (url.indexOf('?') === -1 ? '?' : '&') +
+      new URLSearchParams(params)
   } else {
-    body = encodeParams(params)
-  }
-
-  let xhr = new XMLHttpRequest()
-  xhr.open(method, url, true)
-
-  if (method !== 'GET') {
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
-  }
-
-  xhr.onload = () => {
-    if (xhr.status >= 200 && xhr.status < 400) {
-      let parsed = false
-      let res
-
-      try {
-        res = JSON.parse(xhr.responseText)
-        parsed = true
-      } catch (err) {
-        // will handle parsed=false
-      }
-
-      if (parsed) {
-        successCallback(res, xhr)
-      } else {
-        failureCallback('Failure parsing JSON', xhr)
-      }
-    } else {
-      failureCallback('Request failed', xhr)
+    fetchOptions.body = new URLSearchParams(params)
+    fetchOptions.headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
     }
   }
 
-  xhr.onerror = () => {
-    failureCallback('Request failed', xhr)
-  }
-
-  xhr.send(body)
-}
-
-function injectQueryStringParams(url: string, params) {
-  return url +
-    (url.indexOf('?') === -1 ? '?' : '&') +
-    encodeParams(params)
-}
-
-function encodeParams(params) {
-  let parts = []
-
-  for (let key in params) {
-    parts.push(`${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-  }
-
-  return parts.join('&')
+  return fetch(url, fetchOptions).then((fetchRes) => {
+    if (fetchRes.ok) {
+      return fetchRes.json().then((parsedResponse: ParsedResponse) => {
+        return [parsedResponse, fetchRes]
+      }, () => {
+        throw new JsonRequestError('Failure parsing JSON', fetchRes)
+      })
+    } else {
+      throw new JsonRequestError('Request failed', fetchRes)
+    }
+  })
 }

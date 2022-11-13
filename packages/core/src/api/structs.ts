@@ -4,7 +4,7 @@ export type { DurationInput } from '../datelib/duration.js'
 export type { DateSpanInput } from '../structs/date-span.js'
 export type { DateRangeInput } from '../datelib/date-range.js'
 export type { EventSourceInput } from '../structs/event-source-parse.js'
-export type { EventSourceFunc } from '../event-sources/func-event-source.js' // people might want this
+export type { EventSourceFunc, EventSourceFuncArg } from '../event-sources/func-event-source.js'
 export type { EventInput, EventInputTransformer } from '../structs/event-parse.js'
 export type { FormatterInput } from '../datelib/formatting.js'
 export type { CssDimValue } from '../scrollgrid/util.js'
@@ -42,5 +42,3 @@ export type { DateSelectionApi } from '../calendar-utils.js'
 
 // used by some args
 export type { Duration } from '../datelib/duration.js'
-
-// TODO: make plugin API public

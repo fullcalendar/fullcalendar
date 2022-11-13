@@ -1,7 +1,7 @@
 import { EventInput } from '../structs/event-parse.js'
 import { DateRange } from '../datelib/date-range.js'
 import { EventStore } from '../structs/event-store.js'
-import { EventSource, EventSourceError } from '../structs/event-source.js'
+import { EventSource } from '../structs/event-source.js'
 import { EventInteractionState } from '../interactions/event-interaction-state.js'
 import { DateSpan } from '../structs/date-span.js'
 import { DateMarker } from '../datelib/marker.js'
@@ -39,7 +39,7 @@ export type Action =
     sourceId: string
     fetchId: string
     fetchRange: DateRange | null
-    error: EventSourceError
+    error: Error
   } | // need all these?
 
   { type: 'ADD_EVENTS', eventStore: EventStore } |

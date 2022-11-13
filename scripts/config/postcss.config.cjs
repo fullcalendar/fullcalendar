@@ -7,7 +7,6 @@ module.exports = {
   plugins: [
     require('postcss-advanced-variables'),
     require('postcss-nesting'),
-    require('@arshaw/postcss-calc'), // a fork that ensures important spaces (issue 5503)
     require('autoprefixer'),
 
     // TODO: remove empty blocks

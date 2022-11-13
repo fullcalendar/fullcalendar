@@ -145,7 +145,7 @@ export const BASE_OPTION_REFINERS = {
   viewHeight: identity as Identity<CssDimValue>,
   defaultAllDay: Boolean,
   eventSourceFailure: identity as Identity<(this: CalendarApi, error: any) => void>,
-  eventSourceSuccess: identity as Identity<(this: CalendarApi, eventsInput: EventInput[], xhr?: XMLHttpRequest) => EventInput[] | void>,
+  eventSourceSuccess: identity as Identity<(this: CalendarApi, eventsInput: EventInput[], response?: Response) => EventInput[] | void>,
 
   eventDisplay: String, // TODO: give more specific
   eventStartEditable: Boolean,

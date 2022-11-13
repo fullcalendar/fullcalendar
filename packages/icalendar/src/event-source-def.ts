@@ -3,9 +3,6 @@ import { EventSourceDef, DateRange, addDays } from '@fullcalendar/core/internal'
 import * as ICAL from 'ical.js'
 import { IcalExpander } from './ical-expander/IcalExpander.js'
 
-type Success = (rawFeed: string, xhr: XMLHttpRequest) => void
-type Failure = (error: string, xhr: XMLHttpRequest) => void
-
 interface ICalFeedMeta {
   url: string
   format: 'ics', // for EventSourceApi
@@ -13,11 +10,8 @@ interface ICalFeedMeta {
 }
 
 interface InternalState {
-  completed: boolean
-  callbacks: ((errorMessage: string, iCalExpander: IcalExpander, xhr: XMLHttpRequest) => void)[]
-  errorMessage: string
-  iCalExpander: IcalExpander
-  xhr: XMLHttpRequest | null
+  iCalExpanderPromise: Promise<IcalExpander>
+  response: Response | null
 }
 
 export const eventSourceDef: EventSourceDef<ICalFeedMeta> = {
@@ -32,79 +26,39 @@ export const eventSourceDef: EventSourceDef<ICalFeedMeta> = {
     return null
   },
 
-  fetch(arg, onSuccess, onFailure) {
-    let { meta } = arg.eventSource
+  fetch(arg) {
+    let meta: ICalFeedMeta = arg.eventSource.meta
     let { internalState } = meta
-
-    function handleICalEvents(errorMessage, iCalExpander: IcalExpander, xhr) {
-      if (errorMessage) {
-        onFailure({ message: errorMessage, xhr })
-      } else {
-        onSuccess({ rawEvents: expandICalEvents(iCalExpander, arg.range), xhr })
-      }
-    }
 
     /*
     NOTE: isRefetch is a HACK. we would do the recurring-expanding in a separate plugin hook,
     but we couldn't leverage built-in allDay-guessing, among other things.
     */
     if (!internalState || arg.isRefetch) {
-      internalState = meta.internalState = { // our ghetto Promise
-        completed: false,
-        callbacks: [handleICalEvents],
-        errorMessage: '',
-        iCalExpander: null,
-        xhr: null,
-      }
-
-      requestICal(
-        meta.url,
-        (rawFeed, xhr) => {
-          let iCalExpander = new IcalExpander({
-            ics: rawFeed,
-            skipInvalidDates: true,
+      internalState = meta.internalState = {
+        response: null,
+        iCalExpanderPromise: fetch(
+          meta.url,
+          { method: 'GET' },
+        ).then((response) => {
+          return response.text().then((icsText) => {
+            internalState.response = response
+            return new IcalExpander({
+              ics: icsText,
+              skipInvalidDates: true,
+            })
           })
-
-          for (let callback of internalState.callbacks) {
-            callback('', iCalExpander, xhr)
-          }
-
-          internalState.completed = true
-          internalState.callbacks = []
-          internalState.iCalExpander = iCalExpander
-          internalState.xhr = xhr
-        },
-        (errorMessage, xhr) => {
-          for (let callback of internalState.callbacks) {
-            callback(errorMessage, null, xhr)
-          }
-
-          internalState.completed = true
-          internalState.callbacks = []
-          internalState.errorMessage = errorMessage
-          internalState.xhr = xhr
-        },
-      )
-    } else if (!internalState.completed) {
-      internalState.callbacks.push(handleICalEvents)
-    } else {
-      handleICalEvents(internalState.errorMessage, internalState.iCalExpander, internalState.xhr)
+        }),
+      }
     }
+
+    return internalState.iCalExpanderPromise.then((iCalExpander) => {
+      return {
+        rawEvents: expandICalEvents(iCalExpander, arg.range),
+        response: internalState.response,
+      }
+    })
   },
-}
-
-function requestICal(url: string, successCallback: Success, failureCallback: Failure) {
-  const xhr = new XMLHttpRequest()
-  xhr.open('GET', url, true)
-  xhr.onload = () => {
-    if (xhr.status >= 200 && xhr.status < 400) {
-      successCallback(xhr.responseText, xhr)
-    } else {
-      failureCallback('Request failed', xhr)
-    }
-  }
-  xhr.onerror = () => failureCallback('Request failed', xhr)
-  xhr.send(null)
 }
 
 function expandICalEvents(iCalExpander: IcalExpander, range: DateRange): EventInput[] {

@@ -159,22 +159,21 @@ function fetchSource(eventSource: EventSource<any>, fetchRange: DateRange, isRef
   let sourceDef = context.pluginHooks.eventSourceDefs[eventSource.sourceDefId]
   let fetchId = guid()
 
-  sourceDef.fetch(
-    {
-      eventSource,
-      range: fetchRange,
-      isRefetch,
-      context,
-    },
+  sourceDef.fetch({
+    eventSource,
+    range: fetchRange,
+    isRefetch,
+    context,
+  }).then(
     (res) => { // success callback
       let { rawEvents } = res
 
       if (options.eventSourceSuccess) {
-        rawEvents = options.eventSourceSuccess.call(calendarApi, rawEvents, res.xhr) || rawEvents
+        rawEvents = options.eventSourceSuccess.call(calendarApi, rawEvents, res.response) || rawEvents
       }
 
       if (eventSource.success) {
-        rawEvents = eventSource.success.call(calendarApi, rawEvents, res.xhr) || rawEvents
+        rawEvents = eventSource.success.call(calendarApi, rawEvents, res.response) || rawEvents
       }
 
       context.dispatch({

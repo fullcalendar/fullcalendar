@@ -9,14 +9,8 @@ import { Dictionary } from '../options.js'
 TODO: "EventSource" is the same name as a built-in type in TypeScript. Rethink.
 */
 
-export type EventSourceError = {
-  message: string
-  response?: any // an XHR or something like it
-  [otherProp: string]: any
-}
-
 export type EventSourceSuccessResponseHandler = (this: CalendarImpl, rawData: any, response: any) => EventInput[] | void
-export type EventSourceErrorResponseHandler = (error: EventSourceError) => void
+export type EventSourceErrorResponseHandler = (error: Error) => void
 
 export interface EventSource<Meta> {
   _raw: any
@@ -37,6 +31,11 @@ export interface EventSource<Meta> {
 
 export type EventSourceHash = { [sourceId: string]: EventSource<any> }
 
+export interface EventSourceFetcherRes {
+  rawEvents: EventInput[]
+  response?: Response
+}
+
 export type EventSourceFetcher<Meta> = (
   arg: {
     eventSource: EventSource<Meta>
@@ -44,6 +43,4 @@ export type EventSourceFetcher<Meta> = (
     isRefetch: boolean
     context: CalendarContext
   },
-  success: (res: { rawEvents: EventInput[], xhr?: XMLHttpRequest }) => void,
-  failure: (error: EventSourceError) => void
-) => (void | PromiseLike<EventInput[]>)
+) => Promise<EventSourceFetcherRes>

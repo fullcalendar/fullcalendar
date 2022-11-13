@@ -1,3 +1,4 @@
+import { JsonRequestError } from '@fullcalendar/core'
 import { EventSourceDef, addDays, DateEnv, requestJson, Dictionary } from '@fullcalendar/core/internal'
 
 // TODO: expose somehow
@@ -31,15 +32,15 @@ export const eventSourceDef: EventSourceDef<GCalMeta> = {
     return null
   },
 
-  fetch(arg, onSuccess, onFailure) {
+  fetch(arg) {
     let { dateEnv, options } = arg.context
     let meta: GCalMeta = arg.eventSource.meta
     let apiKey = meta.googleCalendarApiKey || options.googleCalendarApiKey
 
     if (!apiKey) {
-      onFailure({
-        message: 'Specify a googleCalendarApiKey. See https://fullcalendar.io/docs/google-calendar',
-      })
+      return Promise.reject(
+        new Error('Specify a googleCalendarApiKey. See https://fullcalendar.io/docs/google-calendar'),
+      )
     } else {
       let url = buildUrl(meta)
 
@@ -54,24 +55,22 @@ export const eventSourceDef: EventSourceDef<GCalMeta> = {
         dateEnv,
       )
 
-      requestJson('GET', url, requestParams, (body, xhr) => {
+      return requestJson(
+        'GET',
+        url,
+        requestParams,
+      ).then(([body, response]: [any, Response]) => {
         if (body.error) {
-          onFailure({
-            message: 'Google Calendar API: ' + body.error.message,
-            errors: body.error.errors,
-            xhr,
-          })
+          throw new JsonRequestError('Google Calendar API: ' + body.error.message, response)
         } else {
-          onSuccess({
+          return {
             rawEvents: gcalItemsToRawEventDefs(
               body.items,
               requestParams.timeZone,
             ),
-            xhr,
-          })
+            response,
+          }
         }
-      }, (message, xhr) => {
-        onFailure({ message, xhr })
       })
     }
   },

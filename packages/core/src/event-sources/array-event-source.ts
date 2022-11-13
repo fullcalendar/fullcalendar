@@ -12,8 +12,8 @@ let eventSourceDef: EventSourceDef<EventInput[]> = {
     return null
   },
 
-  fetch(arg, success) {
-    success({
+  fetch(arg) {
+    return Promise.resolve({
       rawEvents: arg.eventSource.meta,
     })
   },
