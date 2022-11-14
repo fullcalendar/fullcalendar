@@ -22,6 +22,7 @@ import {
   iifeSubExtension,
   assetExtensions,
   manualChunkMap,
+  srcIifeSubExtension,
 } from './config.js'
 import {
   computeExternalPkgs,
@@ -120,7 +121,7 @@ function buildModuleInput(pkgBundleStruct: PkgBundleStruct): InputMap {
 }
 
 function buildIifeInput(entryStruct: EntryStruct): string {
-  return entryStruct.entrySrcBase + iifeSubExtension + transpiledExtension
+  return entryStruct.entrySrcBase + srcIifeSubExtension + transpiledExtension
 }
 
 function buildDtsInput(pkgBundleStruct: PkgBundleStruct): InputMap {

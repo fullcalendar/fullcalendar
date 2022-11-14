@@ -3,7 +3,7 @@ import { globby } from 'globby'
 import { MonorepoStruct, computeLocalDepDirs } from '../../utils/monorepo-struct.js'
 import { filterProps } from '../../utils/lang.js'
 import { pkgLog } from '../../utils/log.js'
-import { srcExtensions, transpiledSubdir, transpiledExtension, iifeSubExtension } from './config.js'
+import { srcExtensions, transpiledSubdir, transpiledExtension, srcIifeSubExtension } from './config.js'
 
 export interface PkgBundleStruct {
   pkgDir: string,
@@ -218,7 +218,7 @@ export async function generateIifeContent(
 
       const transpiledDir = joinPaths(pkgDir, transpiledSubdir)
       const transpiledPath = joinPaths(transpiledDir, entryAlias) +
-        iifeSubExtension + transpiledExtension
+        srcIifeSubExtension + transpiledExtension
 
       contentMap[transpiledPath] = iifeGeneratorRes
 
