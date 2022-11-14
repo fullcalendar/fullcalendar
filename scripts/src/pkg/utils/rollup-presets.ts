@@ -19,10 +19,10 @@ import {
   transpiledSubdir,
   cjsExtension,
   esmExtension,
-  iifeSubExtension,
+  iifeSubextension,
   assetExtensions,
-  manualChunkMap,
-  srcIifeSubExtension,
+  srcIifeSubextension,
+  manualChunkEntryAliases,
 } from './config.js'
 import {
   computeExternalPkgs,
@@ -121,7 +121,7 @@ function buildModuleInput(pkgBundleStruct: PkgBundleStruct): InputMap {
 }
 
 function buildIifeInput(entryStruct: EntryStruct): string {
-  return entryStruct.entrySrcBase + srcIifeSubExtension + transpiledExtension
+  return entryStruct.entrySrcBase + srcIifeSubextension + transpiledExtension
 }
 
 function buildDtsInput(pkgBundleStruct: PkgBundleStruct): InputMap {
@@ -176,7 +176,7 @@ function buildIifeOutputOptions(
   return {
     format: 'iife',
     banner,
-    file: joinPaths(pkgDir, 'dist', entryAlias) + iifeSubExtension + '.js',
+    file: joinPaths(pkgDir, 'dist', entryAlias) + iifeSubextension + '.js',
     globals: computeIifeGlobals(pkgBundleStruct, monorepoStruct),
     ...(
       globalName
@@ -209,11 +209,18 @@ function buildManualChunks(
   const { pkgDir, entryStructMap } = pkgBundleStruct
   const manualChunks: { [absPath: string]: string[] } = {}
 
-  for (const entryAlias in manualChunkMap) {
-    const chunkName = manualChunkMap[entryAlias]
+  for (const chunkName in manualChunkEntryAliases) {
+    const entryAliases = manualChunkEntryAliases[chunkName]
+    const validEntryPaths: string[] = []
 
-    if (entryStructMap[entryAlias]) {
-      manualChunks[chunkName] = [joinPaths(pkgDir, transpiledSubdir, entryAlias + inExtension)]
+    for (const entryAlias of entryAliases) {
+      if (entryStructMap[entryAlias]) {
+        validEntryPaths.push(joinPaths(pkgDir, transpiledSubdir, entryAlias + inExtension))
+      }
+    }
+
+    if (validEntryPaths.length) {
+      manualChunks[chunkName] = validEntryPaths
     }
   }
 

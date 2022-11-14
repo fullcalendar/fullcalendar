@@ -4,7 +4,7 @@ import { analyzePkg } from '../utils/pkg-analysis.js'
 import { readPkgJson, writePkgJson } from '../utils/pkg-json.js'
 import { mapProps } from '../utils/lang.js'
 import { ScriptContext } from '../utils/script-runner.js'
-import { cjsExtension, esmExtension, iifeSubExtension } from './utils/config.js'
+import { cjsExtension, esmExtension, iifeSubextension } from './utils/config.js'
 
 const cdnFields = [
   'unpkg',
@@ -45,7 +45,7 @@ export async function writeDistPkgJson(
     types: `${typesRoot}/index.d.ts`,
     ...cdnFields.reduce(
       (props, cdnField) => Object.assign(props, {
-        [cdnField]: './index' + iifeSubExtension + '.min.js',
+        [cdnField]: './index' + iifeSubextension + '.min.js',
       }),
       {},
     ),
@@ -59,7 +59,7 @@ export async function writeDistPkgJson(
           require: entrySubpath + cjsExtension,
           import: entrySubpath + esmExtension,
           types: entrySubpath.replace(/^\./, typesRoot) + '.d.ts',
-          default: entrySubpath + iifeSubExtension + '.js',
+          default: entrySubpath + iifeSubextension + '.js',
         }
       }),
     },

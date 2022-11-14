@@ -1,7 +1,7 @@
 
 // input
 export const srcExtensions = ['.ts', '.tsx']
-export const srcIifeSubExtension = '.global' // always ends in srcExtensions
+export const srcIifeSubextension = '.global' // always ends in srcExtensions
 export const transpiledSubdir = 'dist/.tsout'
 export const transpiledExtension = '.js'
 export const assetExtensions = ['.css']
@@ -9,11 +9,11 @@ export const assetExtensions = ['.css']
 // output
 export const esmExtension = '.esm.js'
 export const cjsExtension = '.js'
-export const iifeSubExtension = '.global' // always ends in .js
+export const iifeSubextension = '.global' // always ends in .js
 
 /*
 For consistent chunk names
 */
-export const manualChunkMap: { [entryAlias: string]: string } = {
-  'internal': 'internal-common',
+export const manualChunkEntryAliases: { [chunkName: string]: string[] } = {
+  'internal-common': ['internal'],
 }
