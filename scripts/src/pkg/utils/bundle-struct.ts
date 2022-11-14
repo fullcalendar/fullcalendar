@@ -101,7 +101,7 @@ async function unglobEntryStructMap(
   return entryStructMap
 }
 
-// Dynamically-Generated Entrypoints
+// Dynamically-Generated Entrypoint Content
 // -------------------------------------------------------------------------------------------------
 
 async function generateEntryStructMap(
@@ -247,6 +247,9 @@ export function computeExternalPkgs(pkgBundleStruct: PkgBundleStruct): string[] 
   })
 }
 
+/*
+For IIFE, some third-party packages are bundled
+*/
 export function computeIifeExternalPkgs(pkgBundleStruct: PkgBundleStruct): string[] {
   const { iifeGlobalsMap } = pkgBundleStruct
 
@@ -255,6 +258,24 @@ export function computeIifeExternalPkgs(pkgBundleStruct: PkgBundleStruct): strin
       iifeGlobalsMap[pkgName] !== '' &&
       iifeGlobalsMap['*'] !== ''
     ))
+}
+
+export function splitPkgNames(
+  pkgNames: string[],
+  monorepoStruct: MonorepoStruct,
+): { ourPkgNames: string[], theirPkgNames: string[] } {
+  const ourPkgNames: string[] = []
+  const theirPkgNames: string[] = []
+
+  for (let pkgName of pkgNames) {
+    if (monorepoStruct.pkgNameToDir[pkgName]) {
+      ourPkgNames.push(pkgName)
+    } else {
+      theirPkgNames.push(pkgName)
+    }
+  }
+
+  return { ourPkgNames, theirPkgNames }
 }
 
 // External File Paths

@@ -12,7 +12,7 @@ export interface MonorepoStruct {
   monorepoPkgJson: any
   monorepoConfigPath: string
   pkgNameToDir: { [name: string]: string }
-  pkgDirToJson: { [name: string]: any }
+  pkgDirToJson: { [dir: string]: any }
 }
 
 export interface PkgStruct { // only for traversing

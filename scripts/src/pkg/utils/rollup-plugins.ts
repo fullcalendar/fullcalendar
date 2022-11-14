@@ -30,7 +30,7 @@ export function generatedContentPlugin(contentMap: { [path: string]: string }): 
   }
 }
 
-// Externalize Imports
+// Externalize certain paths
 // -------------------------------------------------------------------------------------------------
 
 export interface ExteralizePathsOptions {
@@ -61,13 +61,17 @@ export function externalizePathsPlugin(options: ExteralizePathsOptions): Plugin 
   }
 }
 
+// Externalize certain packages
+// -------------------------------------------------------------------------------------------------
+
 export interface ExternalizePkgsOptions {
   pkgNames: string[],
   moduleSideEffects?: boolean
+  forceExtension?: string
 }
 
 export function externalizePkgsPlugin(
-  { pkgNames, moduleSideEffects }: ExternalizePkgsOptions,
+  { pkgNames, moduleSideEffects, forceExtension }: ExternalizePkgsOptions,
 ): Plugin {
   return {
     name: 'externalize-pkgs',
@@ -75,6 +79,14 @@ export function externalizePkgsPlugin(
       if (!isImportRelative(importId)) {
         for (const pkgName of pkgNames) {
           if (importId === pkgName || importId.startsWith(pkgName + '/')) {
+            if (forceExtension) {
+              if (importId === pkgName) {
+                importId += '/index' + forceExtension
+              } else {
+                importId += forceExtension
+              }
+            }
+
             return { id: importId, external: true, moduleSideEffects }
           }
         }
@@ -82,6 +94,9 @@ export function externalizePkgsPlugin(
     },
   }
 }
+
+// Externalize certain extensions
+// -------------------------------------------------------------------------------------------------
 
 export function externalizeExtensionsPlugin(extensionsInput: ExtensionInput): Plugin {
   let extensionMap = normalizeExtensionMap(extensionsInput)

@@ -4,7 +4,7 @@ import { rollup, watch as rollupWatch, RollupOptions, OutputOptions } from 'roll
 import { MonorepoStruct } from '../utils/monorepo-struct.js'
 import { buildPkgBundleStruct, PkgBundleStruct } from './utils/bundle-struct.js'
 import { analyzePkg } from '../utils/pkg-analysis.js'
-import { buildDtsOptions, buildIifeOptions, buildModuleOptions } from './utils/rollup-presets.js'
+import { buildEsmOptions, buildCjsOptions, buildIifeOptions, buildDtsOptions } from './utils/rollup-presets.js'
 import { arrayify, continuousAsync } from '../utils/lang.js'
 import { ScriptContext } from '../utils/script-runner.js'
 import { untilSigInt } from '../utils/process.js'
@@ -106,7 +106,8 @@ async function buildRollupOptionObjs(
   const dts = !isDev && !isTests
 
   return [
-    ...buildModuleOptions(pkgBundleStruct, esm, cjs, moduleSourcemap),
+    ...(esm ? [buildEsmOptions(pkgBundleStruct, monorepoStruct, moduleSourcemap)] : []),
+    ...(cjs ? [buildCjsOptions(pkgBundleStruct, monorepoStruct, moduleSourcemap)] : []),
     ...(iife ? await buildIifeOptions(pkgBundleStruct, monorepoStruct, iifeMinify, iifeSourcemap) : []),
     ...(dts ? [buildDtsOptions(pkgBundleStruct)] : []),
   ]

@@ -34,6 +34,7 @@ import {
   entryStructsToContentMap,
   generateIifeContent,
   PkgBundleStruct,
+  splitPkgNames,
 } from './bundle-struct.js'
 import {
   externalizeExtensionsPlugin,
@@ -51,25 +52,30 @@ const jsonPlugin = cjsInterop(jsonPluginLib)
 const postcssPlugin = cjsInterop(postcssPluginLib)
 const replacePlugin = cjsInterop(replacePluginLib)
 
-export function buildModuleOptions(
+export function buildEsmOptions(
   pkgBundleStruct: PkgBundleStruct,
-  esm: boolean,
-  cjs: boolean,
+  monorepoStruct: MonorepoStruct,
   sourcemap: boolean,
-): RollupOptions[] {
-  if (esm || cjs) {
-    return [{
-      input: buildModuleInput(pkgBundleStruct),
-      plugins: buildModulePlugins(pkgBundleStruct, sourcemap),
-      output: [
-        ...(esm ? [buildEsmOutputOptions(pkgBundleStruct, sourcemap)] : []),
-        ...(cjs ? [buildCjsOutputOptions(pkgBundleStruct, sourcemap)] : []),
-      ],
-      onwarn,
-    }]
+): RollupOptions {
+  return {
+    input: buildModuleInput(pkgBundleStruct),
+    plugins: buildModulePlugins(pkgBundleStruct, monorepoStruct, esmExtension, sourcemap),
+    output: buildEsmOutputOptions(pkgBundleStruct, sourcemap),
+    onwarn,
   }
+}
 
-  return []
+export function buildCjsOptions(
+  pkgBundleStruct: PkgBundleStruct,
+  monorepoStruct: MonorepoStruct,
+  sourcemap: boolean,
+): RollupOptions {
+  return {
+    input: buildModuleInput(pkgBundleStruct),
+    plugins: buildModulePlugins(pkgBundleStruct, monorepoStruct, cjsExtension, sourcemap),
+    output: buildCjsOutputOptions(pkgBundleStruct, sourcemap),
+    onwarn,
+  }
 }
 
 export async function buildIifeOptions(
@@ -230,13 +236,26 @@ function buildManualChunks(
 // Plugins Lists
 // -------------------------------------------------------------------------------------------------
 
-function buildModulePlugins(pkgBundleStruct: PkgBundleStruct, sourcemap: boolean): Plugin[] {
+function buildModulePlugins(
+  pkgBundleStruct: PkgBundleStruct,
+  monorepoStruct: MonorepoStruct,
+  forceOurExtension: string,
+  sourcemap: boolean,
+): Plugin[] {
   const { pkgDir, entryStructMap } = pkgBundleStruct
+  const { ourPkgNames, theirPkgNames } = splitPkgNames(
+    computeExternalPkgs(pkgBundleStruct),
+    monorepoStruct,
+  )
 
   return [
     rerootAssetsPlugin(pkgDir),
     externalizePkgsPlugin({
-      pkgNames: computeExternalPkgs(pkgBundleStruct),
+      pkgNames: theirPkgNames,
+    }),
+    externalizePkgsPlugin({
+      pkgNames: ourPkgNames,
+      forceExtension: forceOurExtension,
     }),
     generatedContentPlugin(
       entryStructsToContentMap(entryStructMap),
@@ -399,12 +418,12 @@ async function buildBanner(pkgBundleStruct: PkgBundleStruct): Promise<string> {
   const templateText = await readFile(templatePath, 'utf8')
   const template = handlebars.compile(templateText)
 
-  return template(fullPkgJson)
+  return template(fullPkgJson).trim()
 }
 
 function onwarn(warning: RollupWarning) {
   if (warning.code !== 'CIRCULAR_DEPENDENCY') {
-    console.error(warning)
+    console.error(warning.toString())
   }
 }
 

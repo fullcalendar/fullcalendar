@@ -38,6 +38,30 @@ export async function writeDistPkgJson(
   const basePkgJson = await readPkgJson(pkgAnalysis.metaRootDir)
   const typesRoot = isDev ? './.tsout' : '.'
 
+  const entryConfigMap = buildConfig.exports
+  const exportsMap: any = {
+    './package.json': './package.json',
+  }
+
+  for (const entryName in entryConfigMap) {
+    const entryConfig = entryConfigMap[entryName]
+    const entrySubpath = entryName === '.' ? './index' : entryName
+
+    // inter-package imports in bundled js use explicit extensions to avoid format confusion
+    exportsMap[entrySubpath + cjsExtension] = entrySubpath + cjsExtension
+    exportsMap[entrySubpath + esmExtension] = entrySubpath + esmExtension
+
+    exportsMap[entryName] = {
+      require: entrySubpath + cjsExtension,
+      import: entrySubpath + esmExtension,
+      types: entrySubpath.replace(/^\./, typesRoot) + '.d.ts',
+    }
+
+    if (entryConfig.iife) {
+      exportsMap[entryName].default = entrySubpath + iifeSubextension + '.js'
+    }
+  }
+
   const finalPkgJson = {
     ...basePkgJson,
     ...pkgJson,
@@ -50,28 +74,7 @@ export async function writeDistPkgJson(
       }),
       {},
     ),
-    exports: {
-      './package.json': './package.json',
-
-      // inter-package imports in bundled js use explicit extensions to avoid format confusion
-      ['./*' + cjsExtension]: './*' + cjsExtension,
-      ['./*' + esmExtension]: './*' + esmExtension,
-
-      ...mapProps(buildConfig.exports, (entryConfig: EntryConfig, entryName: string) => {
-        const entrySubpath = entryName === '.' ? './index' : entryName
-        const conditionMap: any = {
-          require: entrySubpath + cjsExtension,
-          import: entrySubpath + esmExtension,
-          types: entrySubpath.replace(/^\./, typesRoot) + '.d.ts',
-        }
-
-        if (entryConfig.iife) {
-          conditionMap.default = entrySubpath + iifeSubextension + '.js'
-        }
-
-        return conditionMap
-      }),
-    },
+    exports: exportsMap,
   }
 
   delete finalPkgJson.scripts
