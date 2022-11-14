@@ -5,6 +5,7 @@ import { readPkgJson, writePkgJson } from '../utils/pkg-json.js'
 import { mapProps } from '../utils/lang.js'
 import { ScriptContext } from '../utils/script-runner.js'
 import { cjsExtension, esmExtension, iifeSubextension } from './utils/config.js'
+import { EntryConfig } from './utils/bundle-struct.js'
 
 const cdnFields = [
   'unpkg',
@@ -51,16 +52,24 @@ export async function writeDistPkgJson(
     ),
     exports: {
       './package.json': './package.json',
-      ...mapProps(buildConfig.exports, (entryConfig, entryName) => {
-        const entrySubpath = entryName === '.' ? './index' : entryName
 
-        // TODO: don't do all formats. based on EntryConfig
-        return {
+      // inter-package imports in bundled js use explicit extensions to avoid format confusion
+      ['./*' + cjsExtension]: './*' + cjsExtension,
+      ['./*' + esmExtension]: './*' + esmExtension,
+
+      ...mapProps(buildConfig.exports, (entryConfig: EntryConfig, entryName: string) => {
+        const entrySubpath = entryName === '.' ? './index' : entryName
+        const conditionMap: any = {
           require: entrySubpath + cjsExtension,
           import: entrySubpath + esmExtension,
           types: entrySubpath.replace(/^\./, typesRoot) + '.d.ts',
-          default: entrySubpath + iifeSubextension + '.js',
         }
+
+        if (entryConfig.iife) {
+          conditionMap.default = entrySubpath + iifeSubextension + '.js'
+        }
+
+        return conditionMap
       }),
     },
   }

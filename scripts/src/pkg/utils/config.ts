@@ -8,12 +8,10 @@ export const assetExtensions = ['.css']
 
 // output
 export const esmExtension = '.esm.js'
-export const cjsExtension = '.js'
-export const iifeSubextension = '.global' // always ends in .js
+export const cjsExtension = '.cjs'
+export const iifeSubextension = '' // always ends in .js
 
-/*
-For consistent chunk names
-*/
+// for consistent chunk names
 export const manualChunkEntryAliases: { [chunkName: string]: string[] } = {
   'internal-common': ['internal'],
 }
