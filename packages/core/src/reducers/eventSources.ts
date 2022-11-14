@@ -159,13 +159,14 @@ function fetchSource(eventSource: EventSource<any>, fetchRange: DateRange, isRef
   let sourceDef = context.pluginHooks.eventSourceDefs[eventSource.sourceDefId]
   let fetchId = guid()
 
-  sourceDef.fetch({
-    eventSource,
-    range: fetchRange,
-    isRefetch,
-    context,
-  }).then(
-    (res) => { // success callback
+  sourceDef.fetch(
+    {
+      eventSource,
+      range: fetchRange,
+      isRefetch,
+      context,
+    },
+    (res) => {
       let { rawEvents } = res
 
       if (options.eventSourceSuccess) {
@@ -184,7 +185,7 @@ function fetchSource(eventSource: EventSource<any>, fetchRange: DateRange, isRef
         rawEvents,
       })
     },
-    (error) => { // failure callback
+    (error) => {
       console.warn(error.message, error)
 
       if (options.eventSourceFailure) {

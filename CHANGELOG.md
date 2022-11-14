@@ -1,4 +1,6 @@
 
+error-types for event/resource sources changed
+
 Specifying *Content renderer that returns nothing/undefined will render blank
 
 instead of:

@@ -1,4 +1,4 @@
-import XHRMockLib from 'xhr-mock'
+import fetchMock from 'fetch-mock'
 import dayGridMonth from '@fullcalendar/daygrid'
 import { EventSourceInput } from '@fullcalendar/core'
 import iCalendarPlugin from '@fullcalendar/icalendar'
@@ -12,9 +12,6 @@ import recurringWeekly from './data/recurringWeekly.js'
 import recurringWeeklyWithoutEnd from './data/recurringWeeklyWithoutEnd.js'
 import recurringWeeklyWithCount from './data/recurringWeeklyWithCount.js'
 import mungedOneHourMeeting from './data/mungedOneHourMeeting.js'
-import { cjsInterop } from '../lib/cjs.js'
-
-const XHRMock = cjsInterop(XHRMockLib)
 
 describe('addICalEventSource with month view', () => {
   const ICAL_MIME_TYPE = 'text/calendar'
@@ -25,8 +22,9 @@ describe('addICalEventSource with month view', () => {
     initialView: 'dayGridMonth',
   })
 
-  beforeEach(() => { XHRMock.setup() })
-  afterEach(() => { XHRMock.teardown() })
+  afterEach(() => {
+    fetchMock.restore()
+  })
 
   it('adds an all day event', (done) => {
     loadICalendarWith(alldayEvent, () => {
@@ -148,30 +146,31 @@ describe('addICalEventSource with month view', () => {
   })
 
   it('calling refetchEvents request ical feed again', (done) => {
-    const feedUrl = '/mock.ics'
-    let fetchCnt = 0
+    let requestCnt = 0
 
-    XHRMock.get(feedUrl, (req, res) => {
-      fetchCnt += 1
-      return res.status(200)
-        .header('content-type', ICAL_MIME_TYPE)
-        .body(oneHourMeeting)
+    const givenUrl = window.location.href + '/my-feed.php'
+    fetchMock.get(/my-feed\.php/, () => {
+      requestCnt++
+      return {
+        headers: { 'content-type': ICAL_MIME_TYPE },
+        body: oneHourMeeting,
+      }
     })
 
     const calendar = initCalendar({
       events: {
-        url: feedUrl,
+        url: givenUrl,
         format: 'ics',
       },
     })
 
     setTimeout(() => {
-      expect(fetchCnt).toBe(1)
+      expect(requestCnt).toBe(1)
       expect(calendar.getEvents().length).toBe(1)
       calendar.refetchEvents()
 
       setTimeout(() => {
-        expect(fetchCnt).toBe(2)
+        expect(requestCnt).toBe(2)
         expect(calendar.getEvents().length).toBe(1)
         done()
       }, 100)
@@ -179,22 +178,23 @@ describe('addICalEventSource with month view', () => {
   })
 
   function loadICalendarWith(rawICal: string, assertions: () => void, calendarSetup?: (source: EventSourceInput) => void) {
-    const feedUrl = '/mock.ics'
-
-    XHRMock.get(feedUrl, (req, res) => {
-      expect(req.url().query).toEqual({})
-      return res.status(200)
-        .header('content-type', ICAL_MIME_TYPE)
-        .body(rawICal)
+    const givenUrl = window.location.href + '/my-feed.php'
+    fetchMock.get(/my-feed\.php/, {
+      headers: { 'content-type': ICAL_MIME_TYPE },
+      body: rawICal,
     })
 
-    const source = { url: feedUrl, format: 'ics' } as EventSourceInput
+    const source = { url: givenUrl, format: 'ics' } as EventSourceInput
 
     if (calendarSetup) {
       calendarSetup(source)
     } else {
       initCalendar().addEventSource(source)
     }
+
+    const [requestUrl] = fetchMock.lastCall()
+    const requestParamStr = new URL(requestUrl).searchParams.toString()
+    expect(requestParamStr).toBe('')
 
     assertions()
   }

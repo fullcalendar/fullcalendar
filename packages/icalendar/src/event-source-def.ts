@@ -26,7 +26,7 @@ export const eventSourceDef: EventSourceDef<ICalFeedMeta> = {
     return null
   },
 
-  fetch(arg) {
+  fetch(arg, successCallback, errorCallback) {
     let meta: ICalFeedMeta = arg.eventSource.meta
     let { internalState } = meta
 
@@ -52,12 +52,15 @@ export const eventSourceDef: EventSourceDef<ICalFeedMeta> = {
       }
     }
 
-    return internalState.iCalExpanderPromise.then((iCalExpander) => {
-      return {
-        rawEvents: expandICalEvents(iCalExpander, arg.range),
-        response: internalState.response,
-      }
-    })
+    internalState.iCalExpanderPromise.then(
+      (iCalExpander) => {
+        successCallback({
+          rawEvents: expandICalEvents(iCalExpander, arg.range),
+          response: internalState.response,
+        })
+      },
+      errorCallback,
+    )
   },
 }
 

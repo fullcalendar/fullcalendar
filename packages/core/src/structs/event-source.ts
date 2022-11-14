@@ -43,4 +43,6 @@ export type EventSourceFetcher<Meta> = (
     isRefetch: boolean
     context: CalendarContext
   },
-) => Promise<EventSourceFetcherRes>
+  successCallback: (res: EventSourceFetcherRes) => void,
+  errorCallback: (error: Error) => void,
+) => void

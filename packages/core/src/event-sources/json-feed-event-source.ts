@@ -33,18 +33,20 @@ let eventSourceDef: EventSourceDef<JsonFeedMeta> = {
     return null
   },
 
-  fetch(arg) {
-    let { meta } = arg.eventSource
-    let requestParams = buildRequestParams(meta, arg.range, arg.context)
+  fetch(arg, successCallback, errorCallback) {
+    const { meta } = arg.eventSource
+    const requestParams = buildRequestParams(meta, arg.range, arg.context)
 
-    return requestJson(
+    requestJson(
       meta.method,
       meta.url,
       requestParams,
-    ).then(([rawEvents, response]: [EventInput[], Response]) => ({
-      rawEvents,
-      response,
-    }))
+    ).then(
+      ([rawEvents, response]: [EventInput[], Response]) => {
+        successCallback({ rawEvents, response })
+      },
+      errorCallback,
+    )
   },
 
 }

@@ -1,8 +1,5 @@
-import XHRMockLib from 'xhr-mock'
-import { cjsInterop } from '../lib/cjs.js'
+import fetchMock from 'fetch-mock'
 import { formatIsoTimeZoneOffset } from '../lib/datelib-utils.js'
-
-const XHRMock = cjsInterop(XHRMockLib)
 
 describe('events as a json feed', () => {
   pushOptions({
@@ -10,83 +7,77 @@ describe('events as a json feed', () => {
     initialView: 'dayGridMonth',
   })
 
-  beforeEach(() => {
-    XHRMock.setup()
-  })
-
   afterEach(() => {
-    XHRMock.teardown()
+    fetchMock.restore()
   })
 
-  it('requests correctly when local timezone', (done) => {
+  it('requests correctly when local timezone', () => {
     const START = '2014-04-27T00:00:00'
     const END = '2014-06-08T00:00:00'
 
-    XHRMock.get(/^my-feed\.php/, (req, res) => {
-      expect(req.url().query).toEqual({
-        start: START + formatIsoTimeZoneOffset(new Date(START)),
-        end: END + formatIsoTimeZoneOffset(new Date(END)),
-      })
-      done()
-      return res.status(200).header('content-type', 'application/json').body('[]')
-    })
+    const givenUrl = window.location.href + '/my-feed.php'
+    fetchMock.get(/my-feed\.php/, { body: [] })
 
     initCalendar({
-      events: 'my-feed.php',
+      events: givenUrl,
       timeZone: 'local',
     })
+
+    const [requestUrl] = fetchMock.lastCall()
+    const requestParams = new URL(requestUrl).searchParams
+    expect(requestParams.get('start')).toBe(START + formatIsoTimeZoneOffset(new Date(START)))
+    expect(requestParams.get('end')).toBe(END + formatIsoTimeZoneOffset(new Date(END)))
   })
 
-  it('requests correctly when UTC timezone', (done) => {
-    XHRMock.get(/^my-feed\.php/, (req, res) => {
-      expect(req.url().query).toEqual({
-        start: '2014-04-27T00:00:00Z',
-        end: '2014-06-08T00:00:00Z',
-        timeZone: 'UTC',
-      })
-      done()
-      return res.status(200).header('content-type', 'application/json').body('[]')
-    })
+  it('requests correctly when UTC timezone', () => {
+    const givenUrl = window.location.href + '/my-feed.php'
+    fetchMock.get(/my-feed\.php/, { body: [] })
 
     initCalendar({
-      events: 'my-feed.php',
+      events: givenUrl,
       timeZone: 'UTC',
     })
+
+    const [requestUrl] = fetchMock.lastCall()
+    const requestParams = new URL(requestUrl).searchParams
+    expect(requestParams.get('start')).toBe('2014-04-27T00:00:00Z')
+    expect(requestParams.get('end')).toBe('2014-06-08T00:00:00Z')
+    expect(requestParams.get('timeZone')).toBe('UTC')
   })
 
-  it('requests correctly when named timezone', (done) => {
-    XHRMock.get(/^my-feed\.php/, (req, res) => {
-      expect(req.url().query).toEqual({
-        start: '2014-04-27T00:00:00',
-        end: '2014-06-08T00:00:00',
-        timeZone: 'America/Chicago',
-      })
-      done()
-      return res.status(200).header('content-type', 'application/json').body('[]')
-    })
+  it('requests correctly when named timezone', () => {
+    const givenUrl = window.location.href + '/my-feed.php'
+    fetchMock.get(/my-feed\.php/, { body: [] })
 
     initCalendar({
-      events: 'my-feed.php',
+      events: givenUrl,
       timeZone: 'America/Chicago',
     })
+
+    const [requestUrl] = fetchMock.lastCall()
+    const requestParams = new URL(requestUrl).searchParams
+    expect(requestParams.get('start')).toBe('2014-04-27T00:00:00')
+    expect(requestParams.get('end')).toBe('2014-06-08T00:00:00')
+    expect(requestParams.get('timeZone')).toBe('America/Chicago')
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/5485
   it('processes new events under updated time zone', (done) => {
-    XHRMock.get(/^my-feed\.php/, (req, res) => {
-      let reqTimeZone = req.url().query.timeZone
-
-      return res.status(200).header('content-type', 'application/json').body(
-        JSON.stringify([
+    const givenUrl = window.location.href + '/my-feed.php'
+    fetchMock.get(/my-feed\.php/, (requestUrl) => {
+      const requestParams = new URL(requestUrl).searchParams
+      let reqTimeZone = requestParams.get('timeZone')
+      return {
+        body: [
           reqTimeZone === 'America/Chicago'
             ? { start: '2014-06-08T01:00:00' }
             : { start: '2014-06-08T03:00:00' },
-        ]),
-      )
+        ],
+      }
     })
 
     let calendar = initCalendar({
-      events: 'my-feed.php',
+      events: givenUrl,
       timeZone: 'America/Chicago',
     })
 
@@ -104,25 +95,19 @@ describe('events as a json feed', () => {
   })
 
   it('requests correctly with event source extended form', (done) => {
-    XHRMock.get(/^my-feed\.php/, (req, res) => {
-      expect(req.url().query).toEqual({
-        start: '2014-04-27T00:00:00',
-        end: '2014-06-08T00:00:00',
-        timeZone: 'America/Chicago',
-      })
-      return res.status(200).header('content-type', 'application/json').body(
-        JSON.stringify([
-          {
-            title: 'my event',
-            start: '2014-05-21',
-          },
-        ]),
-      )
+    const givenUrl = window.location.href + '/my-feed.php'
+    fetchMock.get(/my-feed\.php/, {
+      body: [
+        {
+          title: 'my event',
+          start: '2014-05-21',
+        },
+      ],
     })
 
     initCalendar({
       eventSources: [{
-        url: 'my-feed.php',
+        url: givenUrl,
         classNames: 'customeventclass',
       }],
       timeZone: 'America/Chicago',
@@ -131,62 +116,62 @@ describe('events as a json feed', () => {
         done()
       },
     })
+
+    const [requestUrl] = fetchMock.lastCall()
+    const requestParams = new URL(requestUrl).searchParams
+    expect(requestParams.get('start')).toBe('2014-04-27T00:00:00')
+    expect(requestParams.get('end')).toBe('2014-06-08T00:00:00')
+    expect(requestParams.get('timeZone')).toBe('America/Chicago')
   })
 
   it('requests POST correctly', (done) => {
-    XHRMock.post(/^my-feed\.php/, (req, res) => {
-      expect(req.url().query).toEqual({})
-      expect(req.body()).toEqual('start=2014-04-27T00%3A00%3A00Z&end=2014-06-08T00%3A00%3A00Z&timeZone=UTC')
+    const givenUrl = window.location.href + '/my-feed.php'
+    fetchMock.post(/my-feed\.php/, (url, options) => {
+      const paramStrGet = new URL(url).searchParams.toString()
+      const paramStrPost = options.body.toString()
+      expect(paramStrGet).toBe('')
+      expect(paramStrPost).toBe('start=2014-04-27T00%3A00%3A00Z&end=2014-06-08T00%3A00%3A00Z&timeZone=UTC')
       done()
-      return res.status(200).header('content-type', 'application/json').body('[]')
+      return { body: [] }
     })
 
     initCalendar({
       events: {
-        url: 'my-feed.php',
+        url: givenUrl,
         method: 'POST',
       },
       timeZone: 'UTC',
     })
   })
 
-  it('accepts a extraParams object', (done) => {
-    XHRMock.get(/^my-feed\.php/, (req, res) => {
-      expect(req.url().query).toEqual({
-        timeZone: 'UTC',
-        start: '2014-04-27T00:00:00Z',
-        end: '2014-06-08T00:00:00Z',
-        customParam: 'yes',
-      })
-      done()
-      return res.status(200).header('content-type', 'application/json').body('[]')
-    })
+  it('accepts a extraParams object', () => {
+    const givenUrl = window.location.href + '/my-feed.php'
+    fetchMock.get(/my-feed\.php/, { body: [] })
 
     initCalendar({
       eventSources: [{
-        url: 'my-feed.php',
+        url: givenUrl,
         extraParams: {
           customParam: 'yes',
         },
       }],
     })
+
+    const [requestUrl] = fetchMock.lastCall()
+    const requestParams = new URL(requestUrl).searchParams
+    expect(requestParams.get('start')).toBe('2014-04-27T00:00:00Z')
+    expect(requestParams.get('end')).toBe('2014-06-08T00:00:00Z')
+    expect(requestParams.get('timeZone')).toBe('UTC')
+    expect(requestParams.get('customParam')).toBe('yes')
   })
 
-  it('accepts a dynamic extraParams function', (done) => {
-    XHRMock.get(/^my-feed\.php/, (req, res) => {
-      expect(req.url().query).toEqual({
-        timeZone: 'UTC',
-        start: '2014-04-27T00:00:00Z',
-        end: '2014-06-08T00:00:00Z',
-        customParam: 'heckyeah',
-      })
-      done()
-      return res.status(200).header('content-type', 'application/json').body('[]')
-    })
+  it('accepts a dynamic extraParams function', () => {
+    const givenUrl = window.location.href + '/my-feed.php'
+    fetchMock.get(/my-feed\.php/, { body: [] })
 
     initCalendar({
       eventSources: [{
-        url: 'my-feed.php',
+        url: givenUrl,
         extraParams() {
           return {
             customParam: 'heckyeah',
@@ -194,15 +179,23 @@ describe('events as a json feed', () => {
         },
       }],
     })
+
+    const [requestUrl] = fetchMock.lastCall()
+    const requestParams = new URL(requestUrl).searchParams
+    expect(requestParams.get('start')).toBe('2014-04-27T00:00:00Z')
+    expect(requestParams.get('end')).toBe('2014-06-08T00:00:00Z')
+    expect(requestParams.get('timeZone')).toBe('UTC')
+    expect(requestParams.get('customParam')).toBe('heckyeah')
   })
 
   it('calls loading callback', (done) => {
-    let loadingCallArgs = []
+    const loadingCallArgs = []
 
-    XHRMock.get(/^my-feed\.php/, (req, res) => res.status(200).header('content-type', 'application/json').body('[]'))
+    const givenUrl = window.location.href + '/my-feed.php'
+    fetchMock.get(/my-feed\.php/, { body: [] })
 
     initCalendar({
-      events: { url: 'my-feed.php' },
+      events: { url: givenUrl },
       loading(bool) {
         loadingCallArgs.push(bool)
       },
@@ -211,15 +204,16 @@ describe('events as a json feed', () => {
     setTimeout(() => {
       expect(loadingCallArgs).toEqual([true, false])
       done()
-    }, 0)
+    }, 100)
   })
 
   it('has and Event Source object with certain props', () => {
-    XHRMock.get(/^my-feed\.php/, (req, res) => res.status(200).header('content-type', 'application/json').body('[]'))
+    const givenUrl = window.location.href + '/my-feed.php'
+    fetchMock.get(/my-feed\.php/, { body: [] })
 
     initCalendar({
-      events: { url: 'my-feed.php' },
+      events: { url: givenUrl },
     })
-    expect(currentCalendar.getEventSources()[0].url).toBe('my-feed.php')
+    expect(currentCalendar.getEventSources()[0].url).toBe(givenUrl)
   })
 })

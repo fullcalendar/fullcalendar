@@ -32,13 +32,13 @@ export const eventSourceDef: EventSourceDef<GCalMeta> = {
     return null
   },
 
-  fetch(arg) {
+  fetch(arg, successCallback, errorCallback) {
     let { dateEnv, options } = arg.context
     let meta: GCalMeta = arg.eventSource.meta
     let apiKey = meta.googleCalendarApiKey || options.googleCalendarApiKey
 
     if (!apiKey) {
-      return Promise.reject(
+      errorCallback(
         new Error('Specify a googleCalendarApiKey. See https://fullcalendar.io/docs/google-calendar'),
       )
     } else {
@@ -59,19 +59,22 @@ export const eventSourceDef: EventSourceDef<GCalMeta> = {
         'GET',
         url,
         requestParams,
-      ).then(([body, response]: [any, Response]) => {
-        if (body.error) {
-          throw new JsonRequestError('Google Calendar API: ' + body.error.message, response)
-        } else {
-          return {
-            rawEvents: gcalItemsToRawEventDefs(
-              body.items,
-              requestParams.timeZone,
-            ),
-            response,
+      ).then(
+        ([body, response]: [any, Response]) => {
+          if (body.error) {
+            errorCallback(new JsonRequestError('Google Calendar API: ' + body.error.message, response))
+          } else {
+            successCallback({
+              rawEvents: gcalItemsToRawEventDefs(
+                body.items,
+                requestParams.timeZone,
+              ),
+              response,
+            })
           }
-        }
-      })
+        },
+        errorCallback,
+      )
     }
   },
 }

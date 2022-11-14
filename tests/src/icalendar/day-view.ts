@@ -1,4 +1,4 @@
-import XHRMockLib, { once } from 'xhr-mock'
+import fetchMock from 'fetch-mock'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import { EventSourceInput } from '@fullcalendar/core'
 import iCalendarPlugin from '@fullcalendar/icalendar'
@@ -12,13 +12,9 @@ import timedMeetingWithDuration from './data/timedMeetingWithDuration.js'
 import dataWithRecurrenceId from './data/recurrenceId.js'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
-import { cjsInterop } from '../lib/cjs.js'
-
-const XHRMock = cjsInterop(XHRMockLib)
 
 describe('addICalEventSource with day view', () => {
   const ICAL_MIME_TYPE = 'text/calendar'
-  const FEED_URL = '/mock.ics'
 
   pushOptions({
     plugins: [iCalendarPlugin, timeGridPlugin],
@@ -27,8 +23,9 @@ describe('addICalEventSource with day view', () => {
     timeZone: 'Europe/Paris',
   })
 
-  beforeEach(() => { XHRMock.setup() })
-  afterEach(() => { XHRMock.teardown() })
+  afterEach(() => {
+    fetchMock.restore()
+  })
 
   it('adds a one-hour long meeting', (done) => {
     loadICalendarWith(oneHourMeeting, () => {
@@ -66,7 +63,7 @@ describe('addICalEventSource with day view', () => {
         expect(events[0].extendedProps.description).toBe('this is the description')
         expect(events[0].extendedProps.location).toBe('this is the location')
         done()
-      })
+      }, 100)
     })
   })
 
@@ -169,20 +166,23 @@ describe('addICalEventSource with day view', () => {
   })
 
   it('does not reload data on next', (done) => {
-    XHRMock.get(FEED_URL, once((req, res) => {
-      expect(req.url().query).toEqual({})
+    let requestCnt = 0
 
-      return res.status(200)
-        .header('content-type', ICAL_MIME_TYPE)
-        .body(timedMeetingWithDuration)
-    }))
+    const givenUrl = window.location.href + '/my-feed.php'
+    fetchMock.get(/my-feed\.php/, () => {
+      requestCnt++
+      return {
+        headers: { 'content-type': ICAL_MIME_TYPE },
+        body: timedMeetingWithDuration,
+      }
+    })
 
-    initCalendar().addEventSource({ url: FEED_URL, format: 'ics' } as EventSourceInput)
+    initCalendar().addEventSource({ url: givenUrl, format: 'ics' } as EventSourceInput)
 
     setTimeout(() => {
       assertEventCount(1)
-      XHRMock.get(FEED_URL, () => Promise.reject(new Error('Calendar.next() should not trigger a new XHR')))
       currentCalendar.next()
+      expect(requestCnt).toBe(1)
       done()
     }, 100)
   })
@@ -192,21 +192,23 @@ describe('addICalEventSource with day view', () => {
     assertions: () => void,
     calendarSetup?: (source: EventSourceInput) => void,
   ) {
-    XHRMock.get(FEED_URL, (req, res) => {
-      expect(req.url().query).toEqual({})
-
-      return res.status(200)
-        .header('content-type', ICAL_MIME_TYPE)
-        .body(rawICal)
+    const givenUrl = window.location.href + '/my-feed.php'
+    fetchMock.get(/my-feed\.php/, {
+      headers: { 'content-type': ICAL_MIME_TYPE },
+      body: rawICal,
     })
 
-    const source = { url: FEED_URL, format: 'ics' } as EventSourceInput
+    const source = { url: givenUrl, format: 'ics' } as EventSourceInput
 
     if (calendarSetup) {
       calendarSetup(source)
     } else {
       initCalendar().addEventSource(source)
     }
+
+    const [requestUrl] = fetchMock.lastCall()
+    const requestParamStr = new URL(requestUrl).searchParams.toString()
+    expect(requestParamStr).toBe('')
 
     assertions()
   }

@@ -2,6 +2,7 @@ import { EventSourceDef } from '../structs/event-source-def.js'
 import { EventInput } from '../structs/event-parse.js'
 import { createPlugin } from '../plugin-system.js'
 import { buildRangeApiWithTimeZone } from '../structs/date-span.js'
+import { unpromisify } from '../util/promise.js'
 
 export type EventSourceFuncArg = {
   start: Date
@@ -24,14 +25,14 @@ let eventSourceDef: EventSourceDef<EventSourceFunc> = {
     return null
   },
 
-  fetch(arg) {
-    let { dateEnv } = arg.context
-    let func = arg.eventSource.meta
+  fetch(arg, successCallback, errorCallback) {
+    const { dateEnv } = arg.context
+    const func = arg.eventSource.meta
 
-    return new Promise<EventInput[]>((resolve) => {
-      return func(buildRangeApiWithTimeZone(arg.range, dateEnv), resolve)
-    }).then(
-      (rawEvents) => ({ rawEvents }),
+    unpromisify(
+      func.bind(null, buildRangeApiWithTimeZone(arg.range, dateEnv)),
+      (rawEvents) => successCallback({ rawEvents }),
+      errorCallback,
     )
   },
 

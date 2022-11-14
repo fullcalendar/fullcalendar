@@ -328,6 +328,12 @@ function buildTestsJsPlugins(): Plugin[] {
     commonjsPlugin(), // for moment and moment-timezone
     jsonPlugin(), // for moment-timezone
     cssPlugin({ inject: true }),
+    replacePlugin({
+      preventAssignment: true,
+      values: {
+        'process.env.NODE_ENV': '"development"',
+      },
+    }),
   ]
 }
 
