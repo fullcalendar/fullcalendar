@@ -4,7 +4,6 @@
   "title": "FullCalendar Moment Timezone Plugin",
   "description": "A connector to the moment-timezone library",
   "docs": "https://fullcalendar.io/docs/moment-timezone-plugin",
-  "type": "module",
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*",
     "moment": "^2.29.1",
@@ -21,6 +20,7 @@
     "clean": "standard-scripts pkg:clean",
     "lint": "eslint ."
   },
+  "type": "module",
   "tsConfig": {
     "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
     "compilerOptions": {

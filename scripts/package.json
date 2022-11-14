@@ -2,7 +2,6 @@
   "private": true,
   "name": "@fullcalendar/standard-scripts",
   "version": "0.0.0",
-  "type": "module",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^12.0.0",
     "@rollup/plugin-json": "^4.0.3",
@@ -61,6 +60,7 @@
     "lint": "eslint .",
     "safe-build": "cp tsconfig.safe.json tsconfig.json && tsc -b"
   },
+  "type": "module",
   "tsConfig": {
     "extends": "./config/tsconfig.node.json",
     "compilerOptions": {

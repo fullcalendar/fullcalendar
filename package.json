@@ -22,7 +22,6 @@
     "url": "http://arshaw.com/"
   },
   "copyright": "2022 Adam Shaw",
-  "type": "module",
   "devDependencies": {
     "@fullcalendar/standard-scripts": "workspace:*"
   },
@@ -36,6 +35,7 @@
     "clean": "standard-scripts clean",
     "ci": "pnpm run lint && pnpm run build && pnpm run test"
   },
+  "type": "module",
   "engines": {
     "pnpm": ">=7.9.5"
   },

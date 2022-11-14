@@ -4,7 +4,6 @@
   "title": "FullCalendar Luxon 2 Plugin",
   "description": "A connector to the Luxon 2 date library",
   "docs": "https://fullcalendar.io/docs/luxon2",
-  "type": "module",
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*",
     "luxon": "^2.0.0"
@@ -20,6 +19,7 @@
     "clean": "standard-scripts pkg:clean",
     "lint": "eslint ."
   },
+  "type": "module",
   "tsConfig": {
     "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
     "compilerOptions": {

@@ -4,7 +4,6 @@
   "title": "FullCalendar Google Calendar Plugin",
   "description": "Fetch events from a public Google Calendar feed",
   "docs": "https://fullcalendar.io/docs/google-calendar",
-  "type": "module",
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*"
   },
@@ -17,6 +16,7 @@
     "clean": "standard-scripts pkg:clean",
     "lint": "eslint ."
   },
+  "type": "module",
   "tsConfig": {
     "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
     "compilerOptions": {

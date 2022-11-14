@@ -4,7 +4,6 @@
   "title": "FullCalendar Moment Plugin",
   "description": "A connector to the MomentJS date library",
   "docs": "https://fullcalendar.io/docs/moment-plugin",
-  "type": "module",
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*",
     "moment": "^2.29.1"
@@ -19,6 +18,7 @@
     "clean": "standard-scripts pkg:clean",
     "lint": "eslint ."
   },
+  "type": "module",
   "tsConfig": {
     "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
     "compilerOptions": {

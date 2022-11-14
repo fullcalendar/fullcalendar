@@ -4,7 +4,6 @@
   "title": "FullCalendar Interaction Plugin",
   "description": "Provides functionality for event drag-n-drop, resizing, dateClick, and selectable actions",
   "docs": "https://fullcalendar.io/docs/editable",
-  "type": "module",
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*"
   },
@@ -17,6 +16,7 @@
     "clean": "standard-scripts pkg:clean",
     "lint": "eslint ."
   },
+  "type": "module",
   "tsConfig": {
     "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
     "compilerOptions": {

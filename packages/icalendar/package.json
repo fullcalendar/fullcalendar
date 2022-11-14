@@ -4,7 +4,6 @@
   "title": "FullCalendar iCalendar Plugin",
   "description": "Fetch events from a public iCalendar / .ics feed",
   "docs": "https://fullcalendar.io/docs/icalendar",
-  "type": "module",
   "dependencies": {
     "ical.js": "^1.4.0"
   },
@@ -20,6 +19,7 @@
     "clean": "standard-scripts pkg:clean",
     "lint": "eslint ."
   },
+  "type": "module",
   "tsConfig": {
     "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
     "compilerOptions": {

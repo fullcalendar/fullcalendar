@@ -4,7 +4,6 @@
   "title": "FullCalendar Day Grid Plugin",
   "description": "Display events on Month view or DayGrid view",
   "docs": "https://fullcalendar.io/docs/month-view",
-  "type": "module",
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*"
   },
@@ -17,6 +16,7 @@
     "clean": "standard-scripts pkg:clean",
     "lint": "eslint ."
   },
+  "type": "module",
   "tsConfig": {
     "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
     "compilerOptions": {

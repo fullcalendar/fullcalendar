@@ -4,7 +4,6 @@
   "title": "FullCalendar Bootstrap 4 Plugin",
   "description": "Bootstrap 4 theming for your calendar",
   "docs": "https://fullcalendar.io/docs/bootstrap4",
-  "type": "module",
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*"
   },
@@ -17,6 +16,7 @@
     "clean": "standard-scripts pkg:clean",
     "lint": "eslint ."
   },
+  "type": "module",
   "tsConfig": {
     "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
     "compilerOptions": {

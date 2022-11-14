@@ -2,7 +2,6 @@
   "private": true,
   "name": "@fullcalendar/standard-tests",
   "version": "0.0.0",
-  "type": "module",
   "dependencies": {
     "@fullcalendar/bootstrap": "workspace:*",
     "@fullcalendar/core": "workspace:*",
@@ -35,6 +34,7 @@
     "clean": "standard-scripts pkg:clean",
     "lint": "eslint ."
   },
+  "type": "module",
   "tsConfig": {
     "extends": "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
     "compilerOptions": {

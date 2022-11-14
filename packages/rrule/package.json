@@ -4,7 +4,6 @@
   "title": "FullCalendar RRule Plugin",
   "description": "A connector to the RRule library, for recurring events",
   "docs": "https://fullcalendar.io/docs/rrule-plugin",
-  "type": "module",
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*",
     "rrule": "^2.6.0"
@@ -19,6 +18,7 @@
     "clean": "standard-scripts pkg:clean",
     "lint": "eslint ."
   },
+  "type": "module",
   "tsConfig": {
     "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
     "compilerOptions": {
