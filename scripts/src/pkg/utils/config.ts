@@ -7,9 +7,9 @@ export const transpiledExtension = '.js'
 export const assetExtensions = ['.css']
 
 // output
-export const esmExtension = '.esm.js'
+export const esmExtension = '.js'
 export const cjsExtension = '.cjs'
-export const iifeSubextension = '' // always ends in .js
+export const iifeSubextension = '.global' // always ends in .js
 
 // for consistent chunk names
 export const manualChunkEntryAliases: { [chunkName: string]: string[] } = {
