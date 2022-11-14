@@ -89,7 +89,7 @@ export function buildHashFromArray<Item, ItemRes>(a: Item[], func: (item: Item, 
   return hash
 }
 
-export function hashValuesToArray(obj) { // can't use Object.values yet because of no IE support
+export function hashValuesToArray(obj) { // can't use Object.values yet because no es2015 support
   let a = []
 
   for (let key in obj) {

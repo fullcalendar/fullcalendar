@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "es6",
+    "target": "es2015",
+    "module": "es2015",
     "moduleResolution": "node16",
     "allowJs": true,
     "lib": [
-      "dom",
-      "es2020",
-      "scripthost"
+      "es2015",
+      "dom"
     ],
     "noUnusedLocals": true,
     "noImplicitUseStrict": true,
