@@ -5,8 +5,7 @@
   "description": "core package",
   "type": "module",
   "dependencies": {
-    "preact": "^10.0.5",
-    "tslib": "^2.1.0"
+    "preact": "^10.0.5"
   },
   "devDependencies": {
     "@fullcalendar/standard-scripts": "workspace:*",
@@ -41,8 +40,7 @@
       "./preact": "FullCalendar.Preact",
       "./internal": "FullCalendar.Internal",
       "preact": "",
-      "preact/compat": "",
-      "tslib": ""
+      "preact/compat": ""
     }
   },
   "publishConfig": {

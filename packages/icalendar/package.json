@@ -6,8 +6,7 @@
   "docs": "https://fullcalendar.io/docs/icalendar",
   "type": "module",
   "dependencies": {
-    "ical.js": "^1.4.0",
-    "tslib": "^2.1.0"
+    "ical.js": "^1.4.0"
   },
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*"
@@ -37,8 +36,7 @@
     },
     "iifeGlobals": {
       ".": "FullCalendar.ICalendar",
-      "ical.js": "ICAL",
-      "tslib": ""
+      "ical.js": "ICAL"
     }
   },
   "publishConfig": {

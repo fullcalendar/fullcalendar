@@ -10,7 +10,6 @@
     ],
     "noUnusedLocals": true,
     "noImplicitUseStrict": true,
-    "importHelpers": true,
     "resolveJsonModule": true,
     "jsx": "react",
     "jsxFactory": "createElement",

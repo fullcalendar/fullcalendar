@@ -5,9 +5,6 @@
   "description": "Bootstrap 5 theming for your calendar",
   "docs": "https://fullcalendar.io/docs/bootstrap5",
   "type": "module",
-  "dependencies": {
-    "tslib": "^2.1.0"
-  },
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*"
   },
@@ -37,8 +34,7 @@
     },
     "iifeGlobals": {
       ".": "FullCalendar.Bootstrap5",
-      "./internal": "FullCalendar.Bootstrap5.Internal",
-      "tslib": ""
+      "./internal": "FullCalendar.Bootstrap5.Internal"
     }
   },
   "publishConfig": {

@@ -10,6 +10,8 @@ instead of:
 
 TODO: New instructions for angular, web-component API changed
 
+No more reliance on tslib. Dist output is es2015 (es6)
+
 
 v6.0.0-beta.1
 -------------

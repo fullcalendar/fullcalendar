@@ -10,8 +10,7 @@
     "@fullcalendar/daygrid": "workspace:*",
     "@fullcalendar/interaction": "workspace:*",
     "@fullcalendar/list": "workspace:*",
-    "@fullcalendar/timegrid": "workspace:*",
-    "tslib": "^2.1.0"
+    "@fullcalendar/timegrid": "workspace:*"
   },
   "devDependencies": {
     "@fullcalendar/standard-scripts": "workspace:*"

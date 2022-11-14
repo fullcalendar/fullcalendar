@@ -6,8 +6,7 @@
   "docs": "https://fullcalendar.io/docs/timegrid-view",
   "type": "module",
   "dependencies": {
-    "@fullcalendar/daygrid": "workspace:*",
-    "tslib": "^2.1.0"
+    "@fullcalendar/daygrid": "workspace:*"
   },
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*"
@@ -38,8 +37,7 @@
     },
     "iifeGlobals": {
       ".": "FullCalendar.TimeGrid",
-      "./internal": "FullCalendar.TimeGrid.Internal",
-      "tslib": ""
+      "./internal": "FullCalendar.TimeGrid.Internal"
     }
   },
   "publishConfig": {

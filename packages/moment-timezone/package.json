@@ -5,9 +5,6 @@
   "description": "A connector to the moment-timezone library",
   "docs": "https://fullcalendar.io/docs/moment-timezone-plugin",
   "type": "module",
-  "dependencies": {
-    "tslib": "^2.1.0"
-  },
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*",
     "moment": "^2.29.1",
@@ -40,8 +37,7 @@
     },
     "iifeGlobals": {
       ".": "FullCalendar.MomentTimezone",
-      "moment": "moment",
-      "tslib": ""
+      "moment": "moment"
     }
   },
   "publishConfig": {

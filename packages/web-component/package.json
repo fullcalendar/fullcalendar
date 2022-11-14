@@ -4,9 +4,6 @@
   "title": "FullCalendar Web Component",
   "description": "FullCalendar implemented as a Custom Element",
   "type": "module",
-  "dependencies": {
-    "tslib": "^2.1.0"
-  },
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*"
   },
@@ -35,8 +32,7 @@
       "./global": {}
     },
     "iifeGlobals": {
-      ".": "FullCalendar.WebComponent",
-      "tslib": ""
+      ".": "FullCalendar.WebComponent"
     }
   },
   "publishConfig": {
