@@ -4,7 +4,7 @@ import { analyzePkg } from '../utils/pkg-analysis.js'
 import { readPkgJson, writePkgJson } from '../utils/pkg-json.js'
 import { mapProps } from '../utils/lang.js'
 import { ScriptContext } from '../utils/script-runner.js'
-import { manualChunkMap } from './utils/config.js'
+import { cjsExtension, esmExtension, iifeSubExtension } from './utils/config.js'
 
 const cdnFields = [
   'unpkg',
@@ -40,11 +40,13 @@ export async function writeDistPkgJson(
   const finalPkgJson = {
     ...basePkgJson,
     ...pkgJson,
-    main: './index.cjs',
-    module: './index.js',
+    main: './index' + cjsExtension,
+    module: './index' + esmExtension,
     types: `${typesRoot}/index.d.ts`,
     ...cdnFields.reduce(
-      (props, cdnField) => Object.assign(props, { [cdnField]: './index.global.min.js' }),
+      (props, cdnField) => Object.assign(props, {
+        [cdnField]: './index' + iifeSubExtension + '.min.js',
+      }),
       {},
     ),
     exports: {
@@ -54,10 +56,10 @@ export async function writeDistPkgJson(
 
         // TODO: don't do all formats. based on EntryConfig
         return {
-          require: entrySubpath + '.cjs',
-          import: entrySubpath + '.js',
+          require: entrySubpath + cjsExtension,
+          import: entrySubpath + esmExtension,
           types: entrySubpath.replace(/^\./, typesRoot) + '.d.ts',
-          default: entrySubpath + '.global.js',
+          default: entrySubpath + iifeSubExtension + '.js',
         }
       }),
     },

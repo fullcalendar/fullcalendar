@@ -15,11 +15,13 @@ import { analyzePkg } from '../../utils/pkg-analysis.js'
 import { readPkgJson } from '../../utils/pkg-json.js'
 import { standardScriptsDir } from '../../utils/script-runner.js'
 import {
-  manualChunkMap,
-  assetExtensions,
   transpiledExtension,
   transpiledSubdir,
+  cjsExtension,
+  esmExtension,
   iifeSubExtension,
+  assetExtensions,
+  manualChunkMap,
 } from './config.js'
 import {
   computeExternalPkgs,
@@ -137,8 +139,8 @@ function buildEsmOutputOptions(
   return {
     format: 'esm',
     dir: joinPaths(pkgBundleStruct.pkgDir, 'dist'),
-    entryFileNames: '[name].js',
-    chunkFileNames: '[name].js',
+    entryFileNames: '[name]' + esmExtension,
+    chunkFileNames: '[name]' + esmExtension,
     manualChunks: buildManualChunks(pkgBundleStruct, transpiledExtension),
     sourcemap,
   }
@@ -152,8 +154,8 @@ function buildCjsOutputOptions(
     format: 'cjs',
     exports: 'named',
     dir: joinPaths(pkgBundleStruct.pkgDir, 'dist'),
-    entryFileNames: '[name].cjs',
-    chunkFileNames: '[name].cjs',
+    entryFileNames: '[name]' + cjsExtension,
+    chunkFileNames: '[name]' + cjsExtension,
     manualChunks: buildManualChunks(pkgBundleStruct, transpiledExtension),
     sourcemap,
   }
@@ -173,7 +175,7 @@ function buildIifeOutputOptions(
   return {
     format: 'iife',
     banner,
-    file: joinPaths(pkgDir, 'dist', entryAlias) + '.global.js',
+    file: joinPaths(pkgDir, 'dist', entryAlias) + iifeSubExtension + '.js',
     globals: computeIifeGlobals(pkgBundleStruct, monorepoStruct),
     ...(
       globalName
