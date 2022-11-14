@@ -32,7 +32,7 @@
       "./global": {}
     },
     "iifeGlobals": {
-      ".": "FullCalendar.WebComponent"
+      ".": ""
     }
   },
   "publishConfig": {
