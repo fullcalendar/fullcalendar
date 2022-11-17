@@ -89,6 +89,8 @@ export function buildHashFromArray<Item, ItemRes>(a: Item[], func: (item: Item, 
   return hash
 }
 
+// TODO: reassess browser support
+// https://caniuse.com/?search=object.values
 export function hashValuesToArray(obj) { // can't use Object.values yet because no es2015 support
   let a = []
 
