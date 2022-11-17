@@ -79,20 +79,11 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
 
   componentDidUpdate(oldProps: ContentInjectorProps<RenderProps>): void {
     this.applyQueueudDomNodes()
-
-    const newProps = this.props
-
-    if (
-      newProps.renderId !== oldProps.renderId ||
-      newProps.elTag !== oldProps.elTag ||
-      !isPropsEqual(newProps.renderProps, oldProps.renderProps)
-    ) {
-      this.triggerCustomRendering(true)
-    }
+    this.triggerCustomRendering(true)
   }
 
   componentWillUnmount(): void {
-    this.triggerCustomRendering(false)
+    this.triggerCustomRendering(false) // TODO: different API for removal?
   }
 
   private triggerCustomRendering(isActive: boolean) {
@@ -107,9 +98,8 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
           id: this.id,
           isActive,
           containerEl: this.base as HTMLElement,
-          generatorName: props.generatorName,
           generatorMeta: customRenderingMeta,
-          renderProps: props.renderProps,
+          ...props,
         })
       }
     }

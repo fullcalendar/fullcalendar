@@ -14,7 +14,7 @@ import { CalendarDataManagerState } from './reducers/data-types.js'
 this array is exposed on the root namespace so that UMD plugins can add to it.
 see the rollup-bundles script.
 */
-export const globalPlugins: PluginDef[] = [ // TODO: make a const?
+export const globalPlugins: PluginDef[] = [
   arrayEventSourcePlugin,
   funcEventSourcePlugin,
   jsonFeedEventSourcePlugin,

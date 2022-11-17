@@ -271,6 +271,7 @@ export { CalendarImpl } from './api/CalendarImpl.js'
 export { EventImpl, buildEventApis } from './api/EventImpl.js'
 
 export type { ElProps } from './content-inject/ContentInjector.js'
+export { buildElAttrs } from './content-inject/ContentInjector.js'
 export type { InnerContainerFunc } from './content-inject/ContentContainer.js'
 export { ContentContainer } from './content-inject/ContentContainer.js'
 export type { CustomRendering } from './content-inject/CustomRenderingStore.js'
