@@ -3,7 +3,7 @@ import { Store } from './Store.js'
 export type CustomRenderingHandler<RenderProps> = (customRender: CustomRendering<RenderProps>) => void
 
 export interface CustomRendering<RenderProps> {
-  id: string
+  id: string // TODO: need this? Map can be responsible for storing key?
   isActive: boolean
   containerEl: HTMLElement
   generatorName: string
@@ -14,8 +14,9 @@ export interface CustomRendering<RenderProps> {
 /*
 Subscribers will get a LIST of CustomRenderings
 */
-export class CustomRenderingStore<RenderProps> extends Store<Iterable<CustomRendering<RenderProps>>> {
+export class CustomRenderingStore<RenderProps> extends Store<Map<string, CustomRendering<RenderProps>>> {
   private map = new Map<string, CustomRendering<RenderProps>>()
+  // for consistent order
 
   handle(customRendering: CustomRendering<RenderProps>): void {
     const { map } = this
@@ -30,7 +31,7 @@ export class CustomRenderingStore<RenderProps> extends Store<Iterable<CustomRend
     }
 
     if (updated) {
-      this.set(map.values())
+      this.set(map)
     }
   }
 }
