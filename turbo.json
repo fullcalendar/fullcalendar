@@ -16,7 +16,8 @@
       "outputs": [
         "./dist/**",
         "!./dist/.tsout",
-        "!./dist/tsconfig.tsbuildinfo"
+        "!./dist/tsconfig.tsbuildinfo",
+        "./tests/dist/**"
       ]
     },
     "test": {
