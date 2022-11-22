@@ -1,22 +1,12 @@
 
-error-types for event/resource sources changed
+v6.0.0-beta.2 (2022-11-22)
+--------------------------
 
-Specifying *Content renderer that returns nothing/undefined will render blank
-
-instead of:
-    import { h, Component, Fragment } from 'preact';
-  do this:
-    import { h, Component, Fragment } from '@fullcalendar/core/preact';
-
-TODO: New instructions for angular, web-component API changed
-
-No more reliance on tslib. Dist output is es2015 (es6)
-
-web-component
+See https://fullcalendar.io/docs/v6/upgrading-from-v5
 
 
-v6.0.0-beta.1
--------------
+v6.0.0-beta.1 (2022-08-03)
+--------------------------
 
 FullCalendar no longer attempts to import .css files. Instead, FullCalendar's JS is responsible for
 injecting its own CSS. This solves many issues with third party libraries:
