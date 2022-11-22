@@ -106,7 +106,6 @@ export type { Seg, EventSegUiInteractionState } from './component/DateComponent.
 export { DateComponent } from './component/DateComponent.js'
 export type { CalendarData } from './reducers/data-types.js'
 export type { ViewProps } from './View.js'
-export { sliceEvents } from './View.js'
 
 export type { DateProfile } from './DateProfileGenerator.js'
 export { DateProfileGenerator } from './DateProfileGenerator.js'

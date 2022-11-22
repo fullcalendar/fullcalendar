@@ -1,5 +1,5 @@
 import { createPlugin } from '@fullcalendar/core'
-import { sliceEvents } from '@fullcalendar/core/internal'
+import { sliceEvents } from '@fullcalendar/core'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 describe('custom view class', () => { // TODO: rename file
