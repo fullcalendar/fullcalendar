@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/bootstrap",
-  "version": "6.0.0-beta.1",
+  "version": "6.0.0-beta.2",
   "title": "FullCalendar Bootstrap 4 Plugin",
   "description": "Bootstrap 4 theming for your calendar",
   "docs": "https://fullcalendar.io/docs/bootstrap4",
