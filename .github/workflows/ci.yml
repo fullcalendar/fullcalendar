@@ -1,7 +1,5 @@
 name: CI
-
 on: [push]
-
 env:
   TZ: "America/New_York"
 
@@ -24,18 +22,16 @@ jobs:
         with:
           node-version: 16.18.0
           cache: 'pnpm'
-          cache-dependency-path: pnpm-lock.yaml
 
       - name: Setup Turbo cache
         uses: actions/cache@v3
         with:
           path: node_modules/.cache/turbo
           key: turbo-${{ github.job }}-${{ github.ref_name }}-${{ github.sha }}
-          restore-keys: |
-            turbo-${{ github.job }}-${{ github.ref_name }}-
+          restore-keys: turbo-${{ github.job }}-${{ github.ref_name }}-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Lint
         run: pnpm run lint
