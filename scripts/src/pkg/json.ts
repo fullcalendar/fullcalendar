@@ -75,6 +75,7 @@ export async function writeDistPkgJson(
       {},
     ),
     exports: exportsMap,
+    sideEffects: false,
   }
 
   delete finalPkgJson.scripts
