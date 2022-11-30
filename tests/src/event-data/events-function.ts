@@ -24,7 +24,7 @@ describe('events as a function', () => {
       initialView: 'dayGridMonth',
       initialDate: '2013-06-01',
       showNonCurrentDates: false,
-      events(arg, callback) {
+      events(arg) {
         expect(arg.start).toEqualDate('2013-06-01T00:00:00Z')
         expect(arg.end).toEqualDate('2013-07-01T00:00:00Z')
         done()
@@ -37,7 +37,7 @@ describe('events as a function', () => {
       initialView: 'timeGridWeek',
       initialDate: '2017-06-08',
       slotMinTime: { hours: -2 },
-      events(arg, callback) {
+      events(arg) {
         expect(arg.start).toEqualDate('2017-06-03T22:00:00Z')
         expect(arg.end).toEqualDate('2017-06-11T00:00:00Z')
         done()
@@ -50,7 +50,7 @@ describe('events as a function', () => {
       initialView: 'timeGridWeek',
       initialDate: '2017-06-08',
       slotMaxTime: '26:00',
-      events(arg, callback) {
+      events(arg) {
         expect(arg.start).toEqualDate('2017-06-04T00:00:00Z')
         expect(arg.end).toEqualDate('2017-06-11T02:00:00Z')
         done()
@@ -103,5 +103,21 @@ describe('events as a function', () => {
       expect(loadingCallArgs).toEqual([true, false])
       done()
     }, 20)
+  })
+
+  it('can call failure callback with error', () => {
+    let calledFailure = false
+
+    initCalendar({
+      events(arg, successCallback, failureCallback) {
+        failureCallback(new Error())
+      },
+      eventSourceFailure(error) {
+        calledFailure = true
+        expect(error instanceof Error).toBe(true)
+      },
+    })
+
+    expect(calledFailure).toBe(true)
   })
 })

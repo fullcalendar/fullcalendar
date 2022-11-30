@@ -1,23 +1,30 @@
-// given a function that resolves a result asynchronously.
-// the function can either call passed-in success and failure callbacks,
-// or it can return a promise.
-// if you need to pass additional params to func, bind them first.
-export function unpromisify(func, success, failure?) {
+/*
+given a function that resolves a result asynchronously.
+the function can either call passed-in success and failure callbacks,
+or it can return a promise.
+if you need to pass additional params to func, bind them first.
+*/
+export function unpromisify<Res>(
+  func: (
+    successCallback: (res: Res) => void,
+    failureCallback: (error: Error) => void,
+  ) => Promise<Res> | void,
+  normalizedSuccessCallback: (res: Res) => void,
+  normalizedFailureCallback: (error: Error) => void,
+) {
   // guard against success/failure callbacks being called more than once
   // and guard against a promise AND callback being used together.
   let isResolved = false
-  let wrappedSuccess = function () { // eslint-disable-line func-names
+  let wrappedSuccess = function(res: Res) {
     if (!isResolved) {
       isResolved = true
-      success.apply(this, arguments) // eslint-disable-line prefer-rest-params
+      normalizedSuccessCallback(res)
     }
   }
-  let wrappedFailure = function () { // eslint-disable-line func-names
+  let wrappedFailure = function(error: Error) {
     if (!isResolved) {
       isResolved = true
-      if (failure) {
-        failure.apply(this, arguments) // eslint-disable-line prefer-rest-params
-      }
+      normalizedFailureCallback(error)
     }
   }
 

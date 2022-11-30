@@ -13,7 +13,11 @@ export type EventSourceFuncArg = {
 }
 
 export type EventSourceFunc =
-  ((arg: EventSourceFuncArg, callback: (eventInputs: EventInput[]) => void) => void) |
+  ((
+    arg: EventSourceFuncArg,
+    successCallback: (eventInputs: EventInput[]) => void,
+    failureCallback: (error: Error) => void,
+  ) => void) |
   ((arg: EventSourceFuncArg) => Promise<EventInput[]>)
 
 let eventSourceDef: EventSourceDef<EventSourceFunc> = {

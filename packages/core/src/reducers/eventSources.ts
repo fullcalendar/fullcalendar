@@ -186,14 +186,20 @@ function fetchSource(eventSource: EventSource<any>, fetchRange: DateRange, isRef
       })
     },
     (error) => {
-      console.warn(error.message, error)
+      let errorHandled = false
 
       if (options.eventSourceFailure) {
         options.eventSourceFailure.call(calendarApi, error)
+        errorHandled = true
       }
 
       if (eventSource.failure) {
         eventSource.failure(error)
+        errorHandled = true
+      }
+
+      if (!errorHandled) {
+        console.warn(error.message, error)
       }
 
       context.dispatch({

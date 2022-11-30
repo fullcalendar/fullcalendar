@@ -20,26 +20,10 @@ describe('Google Calendar plugin', () => {
   const DEFAULT_MONTH = '2021-05'
   const NUM_EVENTS = 6 // number of holidays
 
-  let currentWarnArgs
-  let oldConsoleWarn
-
   pushOptions({
     plugins: [googleCalendarPlugin, dayGridPlugin],
     initialView: 'dayGridMonth',
     initialDate: DEFAULT_MONTH + '-01',
-  })
-
-  beforeEach(() => {
-    // Intercept calls to console.warn
-    currentWarnArgs = null
-    oldConsoleWarn = console.warn
-    console.warn = function () { // eslint-disable-line func-names
-      currentWarnArgs = arguments // eslint-disable-line prefer-rest-params
-    }
-  })
-
-  afterEach(() => {
-    console.warn = oldConsoleWarn
   })
 
   it('request/receives correctly when local timezone', (done) => {
@@ -160,7 +144,6 @@ describe('Google Calendar plugin', () => {
           setTimeout(() => { // wait for potential render
             let events = this.getEvents()
             expect(events.length).toBe(0)
-            expect(currentWarnArgs.length).toBeGreaterThan(0)
             expect(options.events.failure).toHaveBeenCalled()
             done()
           }, 0)
@@ -188,7 +171,6 @@ describe('Google Calendar plugin', () => {
           setTimeout(() => { // wait for potential render
             let events = this.getEvents()
             expect(events.length).toBe(0)
-            expect(currentWarnArgs.length).toBeGreaterThan(0)
             expect(options.events.failure).toHaveBeenCalled()
             done()
           }, 0)
@@ -205,7 +187,7 @@ describe('Google Calendar plugin', () => {
 
     initCalendar({
       googleCalendarApiKey: API_KEY,
-      events: 'https://www.googleapis.com/calendar/v3/calendars/usa__en%40holiday.calendar.google.com/events',
+      events: { googleCalendarId: HOLIDAY_CALENDAR_ID },
       loading(bool) {
         cmds.push(bool)
 

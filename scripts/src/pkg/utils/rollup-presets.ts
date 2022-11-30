@@ -309,7 +309,9 @@ function buildDtsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
     }),
     dtsPlugin(),
     massageDtsPlugin(),
-    nodeResolvePlugin(),
+    nodeResolvePlugin({
+      ignoreSideEffectsForRoot: true,
+    }),
   ]
 }
 
@@ -327,7 +329,9 @@ function buildNormalJsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
   const { pkgDir, pkgJson } = pkgBundleStruct
 
   return [
-    nodeResolvePlugin(),
+    nodeResolvePlugin({
+      ignoreSideEffectsForRoot: true,
+    }),
     cssPlugin({
       inject: {
         importId: pkgJson.name === '@fullcalendar/core' ?
@@ -353,6 +357,7 @@ function buildTestsJsPlugins(): Plugin[] {
     nodeResolvePlugin({ // determines index.js and .js/cjs/mjs
       browser: true, // for xhr-mock (use non-node shims that it wants to)
       preferBuiltins: false, // for xhr-mock (use 'url' npm package)
+      ignoreSideEffectsForRoot: true,
     }),
     commonjsPlugin(), // for moment and moment-timezone
     jsonPlugin(), // for moment-timezone
