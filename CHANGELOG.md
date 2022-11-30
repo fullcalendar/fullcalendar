@@ -5,6 +5,7 @@ v6.0.0-beta.3
 Bugfixes:
 - Wrong typing for events function and errorCallback ([403#issuecomment-1324607595](https://github.com/fullcalendar/fullcalendar-angular/issues/403#issuecomment-1324607595))
 - Error with global bundle and individual global locales (#7033)
+- Rect content-injection functions not accepting jsx (#7034)
 
 
 v6.0.0-beta.2 (2022-11-22)
