@@ -2,10 +2,8 @@ import { join as joinPaths, relative as relativizePath } from 'path'
 import { mkdir } from 'fs/promises'
 import { analyzePkg } from '../utils/pkg-analysis.js'
 import { readPkgJson, writePkgJson } from '../utils/pkg-json.js'
-import { mapProps } from '../utils/lang.js'
 import { ScriptContext } from '../utils/script-runner.js'
 import { cjsExtension, esmExtension, iifeSubextension } from './utils/config.js'
-import { EntryConfig } from './utils/bundle-struct.js'
 
 const cdnFields = [
   'unpkg',
@@ -44,7 +42,6 @@ export async function writeDistPkgJson(
   }
 
   for (const entryName in entryConfigMap) {
-    const entryConfig = entryConfigMap[entryName]
     const entrySubpath = entryName === '.' ? './index' : entryName
 
     // inter-package imports in bundled js use explicit extensions to avoid format confusion
@@ -52,13 +49,9 @@ export async function writeDistPkgJson(
     exportsMap[entrySubpath + esmExtension] = entrySubpath + esmExtension
 
     exportsMap[entryName] = {
+      types: entrySubpath.replace(/^\./, typesRoot) + '.d.ts', // tsc likes this first
       require: entrySubpath + cjsExtension,
       import: entrySubpath + esmExtension,
-      types: entrySubpath.replace(/^\./, typesRoot) + '.d.ts',
-    }
-
-    if (entryConfig.iife) {
-      exportsMap[entryName].default = entrySubpath + iifeSubextension + '.js'
     }
   }
 
