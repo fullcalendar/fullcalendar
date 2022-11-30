@@ -15,6 +15,7 @@
     "@fullcalendar/moment-timezone": "workspace:*",
     "@fullcalendar/rrule": "workspace:*",
     "@fullcalendar/timegrid": "workspace:*",
+    "fullcalendar": "workspace:*",
     "luxon": "^2.0.0",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.31",
@@ -31,6 +32,7 @@
   "scripts": {
     "build": "standard-scripts pkg:build",
     "test": "standard-scripts pkg:test",
+    "test:dev": "standard-scripts pkg:test --dev",
     "clean": "standard-scripts pkg:clean",
     "lint": "eslint ."
   },
@@ -62,9 +64,43 @@
     }
   },
   "karmaConfig": {
-    "files": [
-      "./dist/index.global.js"
-    ]
+    "suites": {
+      "default": {
+        "files": [
+          "./dist/index.global.js"
+        ]
+      },
+      "pkg:global:locale": {
+        "files": [
+          "./node_modules/@fullcalendar/core/index.global.js",
+          "./node_modules/@fullcalendar/core/locales/ar.global.js",
+          "./node_modules/@fullcalendar/daygrid/index.global.js",
+          "./src/global-locale.js"
+        ]
+      },
+      "pkg:global:locales-all": {
+        "files": [
+          "./node_modules/@fullcalendar/core/index.global.js",
+          "./node_modules/@fullcalendar/core/locales-all.global.js",
+          "./node_modules/@fullcalendar/daygrid/index.global.js",
+          "./src/global-locales-all.js"
+        ]
+      },
+      "bundle:global:locale": {
+        "files": [
+          "./node_modules/fullcalendar/index.global.js",
+          "./node_modules/@fullcalendar/core/locales/ar.global.js",
+          "./src/global-locale.js"
+        ]
+      },
+      "bundle:global:locales-all": {
+        "files": [
+          "./node_modules/fullcalendar/index.global.js",
+          "./node_modules/@fullcalendar/core/locales-all.global.js",
+          "./src/global-locales-all.js"
+        ]
+      }
+    }
   },
   "exports": {
     "./package.json": "./package.json",

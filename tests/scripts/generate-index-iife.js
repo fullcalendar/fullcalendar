@@ -24,6 +24,7 @@ export function getWatchPaths(config) {
 export default async function(config) {
   const srcDir = joinPaths(config.pkgDir, 'src')
 
+  // mindepth 2 means subdirectories
   let testPaths = await execCapture(
     'find . -mindepth 2 -type f \\( -name \'*.ts\' -or -name \'*.tsx\' \\) -print0 | ' +
     'xargs -0 grep -E "(fdescribe|fit)\\("',
@@ -44,6 +45,7 @@ export default async function(config) {
       testPaths.join('\n'),
     )
   } else {
+    // mindepth 2 means subdirectories
     testPaths = strToLines((await execCapture(
       'find . -mindepth 2 -type f \\( -name \'*.ts\' -or -name \'*.tsx\' \\)',
       { cwd: srcDir },

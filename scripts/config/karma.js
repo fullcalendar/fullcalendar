@@ -3,20 +3,27 @@ import karma from 'karma'
 
 const require = createRequire(import.meta.url)
 
-export default function(pkgFilePaths, isDev, cliArgs) {
+export default function(filePaths, isDev, cliArgs) {
+  const filePathsWithSrcMaps = filePaths
+    .filter((filePath) => (
+      // TODO: must proper built dist files (HACK)
+      filePath.match(/[\\/]dist[\\/]/)
+    ))
+
   const files = [
     require.resolve('jquery'),
     require.resolve('jasmine-jquery'),
     require.resolve('jquery-simulate'),
     require.resolve('components-jqueryui'),
-    ...pkgFilePaths,
-    ...pkgFilePaths.map((path) => ({
-      pattern: path.replace(/\.js$/, '.js.map'),
-      included: false,
-    })),
+    ...filePaths,
+    ...filePathsWithSrcMaps
+      .map((path) => ({
+        pattern: path.replace(/\.js$/, '.js.map'),
+        included: false,
+      })),
   ]
 
-  const preprocessors = pkgFilePaths.reduce((props, distFile) => (
+  const preprocessors = filePathsWithSrcMaps.reduce((props, distFile) => (
     Object.assign(props, { [distFile]: ['sourcemap'] })
   ), {})
 
