@@ -75,8 +75,17 @@ export async function writeDistPkgJson(
       {},
     ),
     exports: exportsMap,
-    sideEffects: false,
   }
+
+  if (
+    finalPkgJson.sideEffects === undefined &&
+    !pkgAnalysis.isTests &&
+    !pkgAnalysis.isBundle
+  ) {
+    finalPkgJson.sideEffects = false
+  }
+
+  finalPkgJson.repository.directory = relativizePath(pkgAnalysis.metaRootDir, pkgDir)
 
   delete finalPkgJson.scripts
   delete finalPkgJson.devDependencies
@@ -86,8 +95,6 @@ export async function writeDistPkgJson(
   delete finalPkgJson.private
   delete finalPkgJson.pnpm
   delete finalPkgJson.engines
-
-  finalPkgJson.repository.directory = relativizePath(pkgAnalysis.metaRootDir, pkgDir)
 
   const distDir = joinPaths(pkgDir, 'dist')
   await mkdir(distDir, { recursive: true })
