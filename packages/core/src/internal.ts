@@ -188,7 +188,6 @@ export { TableDowCell } from './common/TableDowCell.js'
 export { DaySeriesModel } from './common/DaySeriesModel.js'
 
 export type { EventInteractionState } from './interactions/event-interaction-state.js'
-export type { EventRenderRange, EventContentArg } from './component/event-rendering.js'
 export {
   sliceEventStore, hasBgRendering, getElSeg,
   buildSegTimeText,
@@ -250,13 +249,11 @@ export type {
 export { StandardEvent } from './common/StandardEvent.js'
 export { NowIndicatorContainer } from './common/NowIndicatorContainer.js'
 
-export type { DayCellContentArg } from './common/DayCellContainer.js'
 export { DayCellContainer, hasCustomDayCellContent } from './common/DayCellContainer.js'
 export type { MinimalEventProps } from './common/EventContainer.js'
 export { EventContainer } from './common/EventContainer.js'
 export { renderFill, BgEvent } from './common/bg-fill.js'
 export { WeekNumberContainerProps, WeekNumberContainer } from './common/WeekNumberContainer.js'
-export type { MoreLinkContainerProps, MoreLinkContentArg, MoreLinkMountArg } from './common/MoreLinkContainer.js'
 export { MoreLinkContainer, computeEarliestSegStart } from './common/MoreLinkContainer.js'
 
 export type { ViewContainerProps } from './common/ViewContainer.js'

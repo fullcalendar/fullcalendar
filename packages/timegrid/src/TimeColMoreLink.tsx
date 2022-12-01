@@ -1,6 +1,6 @@
-import { CssDimValue } from '@fullcalendar/core'
+import { MoreLinkContentArg, CssDimValue } from '@fullcalendar/core'
 import {
-  MoreLinkContentArg, MoreLinkContainer, BaseComponent,
+  MoreLinkContainer, BaseComponent,
   Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState,
 } from '@fullcalendar/core/internal'
 import { createElement } from '@fullcalendar/core/preact'

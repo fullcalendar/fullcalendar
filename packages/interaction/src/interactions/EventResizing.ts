@@ -2,6 +2,7 @@ import {
   ViewApi,
   EventApi,
   EventChangeArg,
+  EventRenderRange,
   Duration,
 } from '@fullcalendar/core'
 import {
@@ -12,7 +13,7 @@ import {
   EventStore, getRelevantEvents, createEmptyEventStore,
   diffDates, enableCursor, disableCursor,
   DateRange,
-  EventRenderRange, getElSeg,
+  getElSeg,
   createDuration,
   EventInteractionState,
   Interaction, InteractionSettings, interactionSettingsToStore, buildEventApis, isInteractionValid,

@@ -1,4 +1,4 @@
-import { ViewApi } from '@fullcalendar/core'
+import { ViewApi, EventRenderRange } from '@fullcalendar/core'
 import {
   ViewProps,
   Scroller,
@@ -9,7 +9,6 @@ import {
   intersectRanges,
   DateProfile,
   EventUiHash,
-  EventRenderRange,
   sliceEventStore,
   EventStore,
   memoize,

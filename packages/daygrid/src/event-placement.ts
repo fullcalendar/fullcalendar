@@ -1,10 +1,10 @@
+import { EventRenderRange } from '@fullcalendar/core'
 import {
   SegHierarchy,
   SegRect,
   SegEntry,
   SegInsertion,
   buildEntryKey,
-  EventRenderRange,
   intersectRanges,
   addDays,
   DayTableCell,

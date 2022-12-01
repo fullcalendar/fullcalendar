@@ -1,8 +1,8 @@
+import { EventContentArg } from '@fullcalendar/core'
 import {
   BaseComponent,
   Seg,
   buildSegTimeText,
-  EventContentArg,
   EventContainer,
   getSegAnchorAttrs,
 } from '@fullcalendar/core/internal'

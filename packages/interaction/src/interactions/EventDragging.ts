@@ -4,6 +4,7 @@ import {
   EventChangeArg,
   EventAddArg,
   EventRemoveArg,
+  EventRenderRange,
 } from '@fullcalendar/core'
 import {
   DateComponent, Seg,
@@ -14,7 +15,7 @@ import {
   EventStore, getRelevantEvents, createEmptyEventStore,
   EventInteractionState,
   diffDates, enableCursor, disableCursor,
-  EventRenderRange, getElSeg,
+  getElSeg,
   eventDragMutationMassager,
   Interaction, InteractionSettings, interactionSettingsStore,
   EventDropTransformers,

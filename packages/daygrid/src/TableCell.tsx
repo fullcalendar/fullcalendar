@@ -1,3 +1,4 @@
+import { DayCellContentArg } from '@fullcalendar/core'
 import {
   DateMarker,
   DateComponent,
@@ -11,7 +12,6 @@ import {
   Dictionary,
   EventSegUiInteractionState,
   getUniqueDomId,
-  DayCellContentArg,
   hasCustomDayCellContent,
 } from '@fullcalendar/core/internal'
 import {
