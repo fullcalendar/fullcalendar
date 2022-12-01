@@ -308,6 +308,7 @@ importers:
       '@types/jasmine-jquery': ^1.5.33
       '@types/jquery': ^3.3.29
       fetch-mock: ^9.11.0
+      fullcalendar: workspace:*
       handlebars: ^4.7.7
       luxon: ^2.0.0
       moment: ^2.29.1
@@ -326,6 +327,7 @@ importers:
       '@fullcalendar/moment-timezone': link:../packages/moment-timezone/dist
       '@fullcalendar/rrule': link:../packages/rrule/dist
       '@fullcalendar/timegrid': link:../packages/timegrid/dist
+      fullcalendar: link:../bundle/dist
       luxon: 2.5.0
       moment: 2.29.4
       moment-timezone: 0.5.39
@@ -783,7 +785,7 @@ packages:
   /@types/cross-spawn/6.0.2:
     resolution: {integrity: sha512-KuwNhp3eza+Rhu8IFI5HUXRP0LIhqH5cAjubUvGXXthh4YYBuP2ntwEX+Cz8GJoZUHlKo247wPWOfA9LYEq4cw==}
     dependencies:
-      '@types/node': 16.18.3
+      '@types/node': 18.11.9
     dev: true
 
   /@types/estree/0.0.39:
@@ -798,18 +800,22 @@ packages:
     resolution: {integrity: sha512-l6NQsDDyQUVeoTynNpC9uRvCUint/gSUXQA2euwmTuWGvPY5LSDUu6tkCtJB2SvGQlJQzLaKqcGZP4//7EDveA==}
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 16.18.3
+      '@types/node': 18.11.9
     dev: true
 
   /@types/jasmine-jquery/1.5.34:
     resolution: {integrity: sha512-PQpKqgzQa3nAtJb/zlBpWjagMtQK7xiAy6DsOhSla5lDAeBCvqyHfzBeTJ7YPDto0fernTSycPif8msdWH3Nlg==}
     dependencies:
-      '@types/jasmine': 3.10.6
+      '@types/jasmine': 4.3.0
       '@types/jquery': 3.5.14
     dev: true
 
   /@types/jasmine/3.10.6:
     resolution: {integrity: sha512-twY9adK/vz72oWxCWxzXaxoDtF9TpfEEsxvbc1ibjF3gMD/RThSuSud/GKUTR3aJnfbivAbC/vLqhY+gdWCHfA==}
+    dev: true
+
+  /@types/jasmine/4.3.0:
+    resolution: {integrity: sha512-u1jWakf8CWvLfSEZyxmzkgBzOEvXH/szpT0e6G8BTkx5Eu0BhDn7sbc5dz0JBN/6Wwm9rBe+JAsk9tJRyH9ZkA==}
     dev: true
 
   /@types/jquery/3.5.14:
@@ -829,7 +835,7 @@ packages:
   /@types/karma/6.3.3:
     resolution: {integrity: sha512-nRMec4mTCt+tkpRqh5/pAxmnjzEgAaalIq7mdfLFH88gSRC8+bxejLiSjHMMT/vHIhJHqg4GPIGCnCFbwvDRww==}
     dependencies:
-      '@types/node': 16.18.3
+      '@types/node': 18.11.9
       log4js: 6.7.0
     transitivePeerDependencies:
       - supports-color
