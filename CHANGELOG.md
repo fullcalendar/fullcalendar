@@ -1,4 +1,9 @@
 
+next
+----
+FIX: bundle packages accidentally including sourcemaps
+
+
 v6.0.0-beta.3
 -------------
 
