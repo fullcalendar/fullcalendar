@@ -1,4 +1,5 @@
 import fetchMock from 'fetch-mock'
+import { JsonRequestError } from '@fullcalendar/core'
 import { formatIsoTimeZoneOffset } from '../lib/datelib-utils.js'
 
 describe('events as a json feed', () => {
@@ -215,5 +216,29 @@ describe('events as a json feed', () => {
       events: { url: givenUrl },
     })
     expect(currentCalendar.getEventSources()[0].url).toBe(givenUrl)
+  })
+
+  it('throws JsonRequestError if mangled JSON', (done) => {
+    const givenUrl = window.location.href + '/my-feed.php'
+    fetchMock.get(/my-feed\.php/, { body: '[{title:' })
+
+    let eventSourceFailureCalled = false
+
+    initCalendar({
+      events: { url: givenUrl },
+      eventSourceFailure(error) {
+        let isJsonRequestFailure = error instanceof JsonRequestError
+        if (isJsonRequestFailure) {
+          expect(typeof error.response.url).toBe('string') // NOTE: fetchMock mangles exact url
+        }
+        expect(isJsonRequestFailure).toBe(true)
+        eventSourceFailureCalled = true
+      },
+    })
+
+    setTimeout(() => {
+      expect(eventSourceFailureCalled).toBe(true)
+      done()
+    }, 100)
   })
 })
