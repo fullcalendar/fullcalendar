@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/web-component",
-  "version": "6.0.0-beta.2",
+  "version": "6.0.0-beta.3",
   "title": "FullCalendar Web Component",
   "description": "FullCalendar implemented as a Custom Element",
   "peerDependencies": {

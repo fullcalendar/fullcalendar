@@ -1,6 +1,6 @@
 {
   "name": "fullcalendar",
-  "version": "6.0.0-beta.2",
+  "version": "6.0.0-beta.3",
   "title": "FullCalendar Standard Bundle",
   "description": "An easily consumable combination of standard plugins",
   "docs": "https://fullcalendar.io/docs/initialize-globals",
