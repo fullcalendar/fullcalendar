@@ -6,7 +6,6 @@ Bugfixes:
 - Wrong typing for events function and errorCallback (#7039)
 - Error with global bundle and individual global locales (#7033)
 - Fix package.json lint warnings (#7038)
-- Rename `fullcalendar-scheduler` bundle package to `fullcalendar-premium`
 - Fixes in React/Angular connectors (see individual changelogs)
 
 
