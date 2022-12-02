@@ -6,6 +6,7 @@ import archiver from 'archiver'
 import { MonorepoStruct } from './utils/monorepo-struct.js'
 import { ScriptContext } from './utils/script-runner.js'
 import { getArchiveRootDirs } from './utils/monorepo-config.js'
+import { iifeSubextension } from './pkg/utils/config.js'
 
 export default function(this: ScriptContext) {
   return writeMonorepoArchives(this.monorepoStruct)
@@ -48,9 +49,9 @@ async function createArchive(rootDir: string): Promise<void> {
   })
 
   archive.directory(joinPaths(bundleDir, 'examples'), `${archiveId}/examples`)
-  archive.glob('dist/*.js', { cwd: bundleDir }, { prefix: archiveId })
+  archive.glob(`dist/*${iifeSubextension}.js`, { cwd: bundleDir }, { prefix: archiveId })
 
-  const subpaths = await globby('packages/*/dist/**/*.js', { cwd: rootDir })
+  const subpaths = await globby(`packages/*/dist/**/*${iifeSubextension}.js`, { cwd: rootDir })
 
   for (const subpath of subpaths) {
     const subpathParts = subpath.split(pathSeparator)
