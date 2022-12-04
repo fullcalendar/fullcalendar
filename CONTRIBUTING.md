@@ -68,13 +68,13 @@ If you want to clean up the generated files, run:
 
 To run the Karma tests, you must first run `yarn watch`. Then, in separate console, run:
 
-  yarn test
+	yarn test
 
 You will be given a URL to visit in your browser. When you visit this URL the tests will automatically run.
 
 If you want to execute the tests headlessly, run:
 
-  yarn test:ci
+	yarn test:ci
 
 
 ## Git
