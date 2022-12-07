@@ -1,11 +1,31 @@
 
-next
-----
-FIX: bundle packages accidentally including sourcemaps
+v6.0.0-beta.4 (2022-12-07)
+--------------------------
+
+Standard/Premium:
+
+- FIX: jsDelivr default URLs have wrong mime type (#7045)
+- FIX: Unmet peer dependency "moment" warning from moment-timezone (#6839)
+- FIX: fullcalendar and fullcalendar-scheduler packages accidentally include sourcemaps
+
+Angular:
+
+- FIX: BrowserModule incompatible with lazy-loaded module ([angular-423])
+- FIX: Inputs should accept undefined/null for compatibility with async ([angular-424])
+- FIX: Remove global js 'default' from export maps (#7047)
+- FIX: content-injections bugs with drag-n-drop and rerendering
+
+Vue:
+
+- FIX: Remove global js 'default' from export maps (#7047)
+- FIX: content-injections bugs with drag-n-drop and rerendering
+
+[angular-423]: https://github.com/fullcalendar/fullcalendar-angular/issues/423
+[angular-424]: https://github.com/fullcalendar/fullcalendar-angular/issues/424
 
 
-v6.0.0-beta.3
--------------
+v6.0.0-beta.3 (2022-12-01)
+--------------------------
 
 Bugfixes:
 - Wrong typing for events function and errorCallback (#7039)
