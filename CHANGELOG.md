@@ -12,13 +12,16 @@ Angular:
 
 - FIX: BrowserModule incompatible with lazy-loaded module ([angular-423])
 - FIX: Inputs should accept undefined/null for compatibility with async ([angular-424])
-- FIX: Remove global js 'default' from export maps (#7047)
 - FIX: content-injections bugs with drag-n-drop and rerendering
 
 Vue:
 
 - FIX: Remove global js 'default' from export maps (#7047)
 - FIX: content-injections bugs with drag-n-drop and rerendering
+
+React:
+
+- FIX: Remove global js 'default' from export maps (#7047)
 
 [angular-423]: https://github.com/fullcalendar/fullcalendar-angular/issues/423
 [angular-424]: https://github.com/fullcalendar/fullcalendar-angular/issues/424
