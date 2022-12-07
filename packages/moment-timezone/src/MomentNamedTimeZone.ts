@@ -1,5 +1,4 @@
-import moment from 'moment'
-import 'moment-timezone'
+import moment from 'moment-timezone'
 import { NamedTimeZoneImpl } from '@fullcalendar/core/internal'
 
 export class MomentNamedTimeZone extends NamedTimeZoneImpl {

@@ -6,13 +6,11 @@
   "docs": "https://fullcalendar.io/docs/moment-timezone-plugin",
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*",
-    "moment": "^2.29.1",
     "moment-timezone": "^0.5.31"
   },
   "devDependencies": {
     "@fullcalendar/core": "workspace:*",
     "@fullcalendar/standard-scripts": "workspace:*",
-    "moment": "^2.29.1",
     "moment-timezone": "^0.5.31"
   },
   "scripts": {
