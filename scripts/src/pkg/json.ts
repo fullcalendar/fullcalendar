@@ -7,7 +7,7 @@ import { cjsExtension, esmExtension, iifeSubextension } from './utils/config.js'
 
 const cdnFields = [
   'unpkg',
-  'jsdelvr',
+  'jsdelivr',
 ]
 
 export default async function(this: ScriptContext, ...args: string[]) {
