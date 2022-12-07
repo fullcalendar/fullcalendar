@@ -242,6 +242,7 @@ export const BASE_OPTION_REFINERS = {
   // (can't be part of plugin system b/c must be provided at runtime)
   handleCustomRendering: identity as Identity<CustomRenderingHandler<any>>,
   customRenderingMetaMap: identity as Identity<{ [optionName: string]: any }>,
+  customRenderingReplacesEl: Boolean,
 }
 
 type BuiltInBaseOptionRefiners = typeof BASE_OPTION_REFINERS

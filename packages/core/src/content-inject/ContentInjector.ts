@@ -1,6 +1,6 @@
 import { createElement, ComponentChild, isValidElement, JSX, Ref } from '../preact.js'
 import { CustomContent, CustomContentGenerator, ObjCustomContent } from '../common/render-hook.js'
-import { BaseComponent } from '../vdom-util.js'
+import { BaseComponent, setRef } from '../vdom-util.js'
 import { guid } from '../util/misc.js'
 import { isArraysEqual } from '../util/array.js'
 import { removeElement } from '../util/dom-manip.js'
@@ -45,7 +45,11 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
     let innerContent: ComponentChild | undefined
     let queuedDomNodes: Node[] = []
 
-    if (!hasCustomRenderingHandler(props.generatorName, options)) {
+    if (hasCustomRenderingHandler(props.generatorName, options)) {
+      if (options.customRenderingReplacesEl) {
+        delete attrs.elRef // because handleEl will be used
+      }
+    } else {
       const customContent: CustomContent = typeof generator === 'function' ?
         generator(renderProps, createElement) :
         generator
@@ -77,7 +81,7 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
     this.triggerCustomRendering(true)
   }
 
-  componentDidUpdate(oldProps: ContentInjectorProps<RenderProps>): void {
+  componentDidUpdate(): void {
     this.applyQueueudDomNodes()
     this.triggerCustomRendering(true)
   }
@@ -98,10 +102,17 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
           id: this.id,
           isActive,
           containerEl: this.base as HTMLElement,
+          reportNewContainerEl: this.handleEl, // for customRenderingReplacesEl
           generatorMeta: customRenderingMeta,
           ...props,
         })
       }
+    }
+  }
+
+  private handleEl = (el: HTMLElement | null) => {
+    if (this.props.elRef) {
+      setRef(this.props.elRef, el)
     }
   }
 
