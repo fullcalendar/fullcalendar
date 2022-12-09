@@ -85,7 +85,7 @@ export async function writeDistPkgJson(
   }
 
   if (
-    basePkgJson.sideEffects === undefined &&
+    pkgJson.sideEffects === undefined &&
     !pkgAnalysis.isTests &&
     !pkgAnalysis.isBundle
   ) {
