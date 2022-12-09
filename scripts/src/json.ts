@@ -1,3 +1,5 @@
+import { join as joinPaths } from 'path'
+import { fileExists } from './utils/fs.js'
 import { ScriptContext } from './utils/script-runner.js'
 import { MonorepoStruct, PkgStruct, traverseMonorepoGreedy  } from './utils/monorepo-struct.js'
 import { writeDistPkgJson } from './pkg/json.js'
@@ -8,12 +10,21 @@ export default async function(this: ScriptContext, ...args: string[]) {
   await writeDistPkgJsons(this.monorepoStruct, isDev)
 }
 
-export function writeDistPkgJsons(monorepoStruct: MonorepoStruct, isDev: boolean) {
-  return traverseMonorepoGreedy(monorepoStruct, (pkgStruct: PkgStruct) => {
+export function writeDistPkgJsons(
+  monorepoStruct: MonorepoStruct,
+  isDev: boolean,
+  reuseExisting = false,
+) {
+  return traverseMonorepoGreedy(monorepoStruct, async (pkgStruct: PkgStruct) => {
     const { pkgDir, pkgJson } = pkgStruct
 
     if (pkgJson.buildConfig) {
-      return writeDistPkgJson(pkgDir, pkgJson, isDev)
+      if (
+        !reuseExisting ||
+        !(await fileExists(joinPaths(pkgDir, 'dist/package.json')))
+      ) {
+        await writeDistPkgJson(pkgDir, pkgJson, isDev)
+      }
     }
   })
 }

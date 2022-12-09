@@ -34,7 +34,7 @@ export async function writeDistPkgJson(
 
   const pkgAnalysis = analyzePkg(pkgDir)
   const basePkgJson = await readPkgJson(pkgAnalysis.metaRootDir)
-  const typesRoot = isDev ? './.tsout' : '.'
+  const typesRoot = isDev ? './.tsout' : '.' // TODO: make config var for .tsout?
 
   const entryConfigMap = buildConfig.exports
   const exportsMap: any = {
@@ -70,8 +70,22 @@ export async function writeDistPkgJson(
     exports: exportsMap,
   }
 
+  // add typesVersions as a fallback for build systems that don't understand export maps
+  if (isDev) {
+    const typeVersionsEntryMap: any = {}
+
+    // TODO: use mapProps
+    for (const entryName in entryConfigMap) {
+      const entryAlias = entryName.replace(/^\.\/?/, '') || 'index'
+
+      typeVersionsEntryMap[entryAlias] = [`.tsout/${entryAlias}.d.ts`]
+    }
+
+    finalPkgJson.typesVersions = { '*': typeVersionsEntryMap }
+  }
+
   if (
-    finalPkgJson.sideEffects === undefined &&
+    basePkgJson.sideEffects === undefined &&
     !pkgAnalysis.isTests &&
     !pkgAnalysis.isBundle
   ) {
