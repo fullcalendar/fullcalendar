@@ -1,4 +1,12 @@
 
+next
+----
+
+- FIX: Certain ng-template names don't work ([angular-426])
+
+[angular-426]: https://github.com/fullcalendar/fullcalendar-angular/issues/426
+
+
 v6.0.0-beta.4 (2022-12-07)
 --------------------------
 
