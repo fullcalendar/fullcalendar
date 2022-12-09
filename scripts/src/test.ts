@@ -25,7 +25,13 @@ export default async function(this: ScriptContext, ...args: string[]) {
         console.log(chalk.green(pkgJson.name))
         console.log()
 
-        await execLive(['pnpm', 'run', 'test'], { cwd: pkgDir })
+        const promise = execLive(['pnpm', 'run', subcommand], { cwd: pkgDir })
+
+        if (isDev) {
+          promises.push(promise)
+        } else {
+          await promise
+        }
       }
     }
   }
