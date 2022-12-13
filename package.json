@@ -5,15 +5,14 @@
   "keywords": [
     "calendar",
     "event",
-    "full-sized"
+    "full-sized",
+    "fullcalendar"
   ],
-  "homepage": "https://fullcalendar.io/",
-  "docs": "https://fullcalendar.io/docs",
+  "homepage": "https://fullcalendar.io",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fullcalendar/fullcalendar.git",
-    "homepage": "https://github.com/fullcalendar/fullcalendar"
+    "url": "https://github.com/fullcalendar/fullcalendar.git"
   },
   "license": "MIT",
   "author": {

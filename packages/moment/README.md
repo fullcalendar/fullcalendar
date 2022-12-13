@@ -1,8 +1,37 @@
 
 # FullCalendar Moment Plugin
 
-A connector to the MomentJS date library
+Enhanced date formatting and conversion with [Moment](https://momentjs.com/)
 
-[View the docs &raquo;](https://fullcalendar.io/docs/moment-plugin)
+## Installation
 
-This package was created from the [FullCalendar monorepo &raquo;](https://github.com/fullcalendar/fullcalendar)
+Install the FullCalendar core package, the Moment plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
+
+```sh
+npm install @fullcalendar/core @fullcalendar/moment @fullcalendar/daygrid
+```
+
+## Usage
+
+Instantiate a Calendar with the correct plugins and options:
+
+```js
+import { Calendar } from '@fullcalendar/core'
+import momentPlugin from '@fullcalendar/luxon'
+import dayGridPlugin from '@fullcalendar/daygrid'
+
+document.addEventListener('DOMContentLoaded', function() {
+  const calendarEl = document.getElementById('calendar')
+
+  const calendar = new Calendar(calendarEl, {
+    plugins: [
+      momentPlugin,
+      dayGridPlugin
+    ],
+    initialView: 'dayGridMonth',
+    titleFormat: 'MMMM D, YYYY' // use Moment format strings
+  })
+
+  calendar.render()
+})
+```

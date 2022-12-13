@@ -2,8 +2,12 @@
   "name": "@fullcalendar/daygrid",
   "version": "6.0.0-beta.4",
   "title": "FullCalendar Day Grid Plugin",
-  "description": "Display events on Month view or DayGrid view",
-  "docs": "https://fullcalendar.io/docs/month-view",
+  "description": "Display events on a month view or \"day grid\" view",
+  "homepage": "https://fullcalendar.io/docs/month-view",
+  "keywords": [
+    "month",
+    "month-view"
+  ],
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*"
   },

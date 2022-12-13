@@ -2,8 +2,13 @@
   "name": "@fullcalendar/moment-timezone",
   "version": "6.0.0-beta.4",
   "title": "FullCalendar Moment Timezone Plugin",
-  "description": "A connector to the moment-timezone library",
-  "docs": "https://fullcalendar.io/docs/moment-timezone-plugin",
+  "description": "Enhanced named time zone functionality with Moment Timezone",
+  "keywords": [
+    "moment",
+    "moment-timezone",
+    "timezone"
+  ],
+  "homepage": "https://fullcalendar.io/docs/moment-timezone-plugin",
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*",
     "moment-timezone": "^0.5.31"

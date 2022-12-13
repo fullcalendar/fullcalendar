@@ -2,7 +2,11 @@
   "name": "@fullcalendar/web-component",
   "version": "6.0.0-beta.4",
   "title": "FullCalendar Web Component",
-  "description": "FullCalendar implemented as a Custom Element",
+  "description": "Custom Element for FullCalendar",
+  "keywords": [
+    "web-component",
+    "custom-element"
+  ],
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*"
   },

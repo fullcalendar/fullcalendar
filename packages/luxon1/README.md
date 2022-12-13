@@ -1,8 +1,38 @@
 
-# FullCalendar Luxon Plugin
+# FullCalendar Luxon 1 Plugin
 
-A connector to the Luxon 1 date library
+Enhanced date formatting, conversion, and time zone functionality with [Luxon](https://moment.github.io/luxon/) 1
 
-[View the docs &raquo;](https://fullcalendar.io/docs/luxon1)
+## Installation
 
-This package was created from the [FullCalendar monorepo &raquo;](https://github.com/fullcalendar/fullcalendar)
+Install the FullCalendar core package, the Luxon plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
+
+```sh
+npm install @fullcalendar/core @fullcalendar/luxon @fullcalendar/daygrid
+```
+
+## Usage
+
+Instantiate a Calendar with the correct plugins and options:
+
+```js
+import { Calendar } from '@fullcalendar/core'
+import luxonPlugin from '@fullcalendar/luxon'
+import dayGridPlugin from '@fullcalendar/daygrid'
+
+document.addEventListener('DOMContentLoaded', function() {
+  const calendarEl = document.getElementById('calendar')
+
+  const calendar = new Calendar(calendarEl, {
+    plugins: [
+      luxonPlugin,
+      dayGridPlugin
+    ],
+    initialView: 'dayGridMonth',
+    titleFormat: 'LLLL d, yyyy', // use Luxon format strings
+    timeZone: 'America/New_York' // enhance named time zones
+  })
+
+  calendar.render()
+})
+```

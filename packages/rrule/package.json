@@ -2,8 +2,11 @@
   "name": "@fullcalendar/rrule",
   "version": "6.0.0-beta.4",
   "title": "FullCalendar RRule Plugin",
-  "description": "A connector to the RRule library, for recurring events",
-  "docs": "https://fullcalendar.io/docs/rrule-plugin",
+  "description": "Recurring events with RRule",
+  "keywords": [
+    "rrule"
+  ],
+  "homepage": "https://fullcalendar.io/docs/rrule-plugin",
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*",
     "rrule": "^2.6.0"

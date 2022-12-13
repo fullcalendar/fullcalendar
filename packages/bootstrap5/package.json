@@ -2,8 +2,12 @@
   "name": "@fullcalendar/bootstrap5",
   "version": "6.0.0-beta.4",
   "title": "FullCalendar Bootstrap 5 Plugin",
-  "description": "Bootstrap 5 theming for your calendar",
-  "docs": "https://fullcalendar.io/docs/bootstrap5",
+  "description": "Bootstrap 5 theme for FullCalendar",
+  "keywords": [
+    "bootstrap",
+    "bootstrap5"
+  ],
+  "homepage": "https://fullcalendar.io/docs/bootstrap5",
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*"
   },

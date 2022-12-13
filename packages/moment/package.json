@@ -2,8 +2,11 @@
   "name": "@fullcalendar/moment",
   "version": "6.0.0-beta.4",
   "title": "FullCalendar Moment Plugin",
-  "description": "A connector to the MomentJS date library",
-  "docs": "https://fullcalendar.io/docs/moment-plugin",
+  "description": "Enhanced date formatting and conversion with Moment",
+  "keywords": [
+    "moment"
+  ],
+  "homepage": "https://fullcalendar.io/docs/moment-plugin",
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*",
     "moment": "^2.29.1"

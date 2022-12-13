@@ -2,8 +2,13 @@
   "name": "@fullcalendar/luxon",
   "version": "6.0.0-beta.4",
   "title": "FullCalendar Luxon 1 Plugin",
-  "description": "A connector to the Luxon 1 date library",
-  "docs": "https://fullcalendar.io/docs/luxon1",
+  "description": "Enhanced date formatting, conversion, and time zone functionality with Luxon 1",
+  "keywords": [
+    "luxon",
+    "luxon1",
+    "timezone"
+  ],
+  "homepage": "https://fullcalendar.io/docs/luxon1",
   "peerDependencies": {
     "@fullcalendar/core": "workspace:*",
     "luxon": "^1.12.1"

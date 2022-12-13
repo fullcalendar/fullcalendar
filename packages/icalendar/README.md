@@ -1,8 +1,40 @@
 
 # FullCalendar iCalendar Plugin
 
-Fetch events from a public iCalendar / .ics feed
+Display events from a public [iCalendar feed](https://icalendar.org/)
 
-[View the docs &raquo;](https://fullcalendar.io/docs/icalendar)
+## Installation
 
-This package was created from the [FullCalendar monorepo &raquo;](https://github.com/fullcalendar/fullcalendar)
+Install the FullCalendar core package, the iCalendar plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
+
+```sh
+npm install @fullcalendar/core @fullcalendar/icalendar @fullcalendar/daygrid
+```
+
+## Usage
+
+Instantiate a Calendar with the correct plugins and options:
+
+```js
+import { Calendar } from '@fullcalendar/core'
+import iCalendarPlugin from '@fullcalendar/icalendar'
+import dayGridPlugin from '@fullcalendar/daygrid'
+
+document.addEventListener('DOMContentLoaded', function() {
+  const calendarEl = document.getElementById('calendar')
+
+  const calendar = new Calendar(calendarEl, {
+    plugins: [
+      iCalendarPlugin,
+      dayGridPlugin
+    ],
+    initialView: 'dayGridMonth',
+    events: {
+      url: 'https://mywebsite.com/icalendar-feed.ics',
+      format: 'ics'
+    }
+  })
+
+  calendar.render()
+})
+```

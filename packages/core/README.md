@@ -1,8 +1,47 @@
 
-# FullCalendar Common
+# FullCalendar Core
 
-internal package
+FullCalendar core package for rendering a calendar
 
-[View the docs &raquo;](https://fullcalendar.io/docs)
+## Installation
 
-This package was created from the [FullCalendar monorepo &raquo;](https://github.com/fullcalendar/fullcalendar)
+This package is never used alone. Use it with least one plugin (like [daygrid](https://fullcalendar.io/docs/month-view)):
+
+```sh
+npm install @fullcalendar/core @fullcalendar/daygrid
+```
+
+## Usage
+
+First, ensure there's a DOM element for your calendar to render into:
+
+```html
+<body>
+  <div id='calendar'></div>
+</body>
+```
+
+Then, instantiate a Calendar object with [options](https://fullcalendar.io/docs#toc) and call its `render` method:
+
+```js
+import { Calendar } from '@fullcalendar/core'
+import dayGridPlugin from '@fullcalendar/daygrid'
+
+document.addEventListener('DOMContentLoaded', function() {
+  const calendarEl = document.getElementById('calendar')
+
+  const calendar = new Calendar(calendarEl, {
+    plugins: [
+      dayGridPlugin
+      // any other plugins
+    ],
+    initialView: 'dayGridMonth',
+    weekends: false,
+    events: [
+      { title: 'Meeting', start: new Date() }
+    ]
+  })
+
+  calendar.render()
+})
+```
