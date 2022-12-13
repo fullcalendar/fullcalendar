@@ -20,22 +20,19 @@ import { Calendar } from '@fullcalendar/core'
 import interactionPlugin from '@fullcalendar/interaction'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
-document.addEventListener('DOMContentLoaded', function() {
-  const calendarEl = document.getElementById('calendar')
-
-  const calendar = new Calendar(calendarEl, {
-    plugins: [
-      interactionPlugin,
-      dayGridPlugin
-    ],
-    initialView: 'dayGridMonth',
-    editable: true, // important for activating event interactions!
-    selectable: true, // important for activating date selectability!
-    events: [
-      { title: 'Meeting', start: new Date() }
-    ]
-  })
-
-  calendar.render()
+const calendarEl = document.getElementById('calendar')
+const calendar = new Calendar(calendarEl, {
+  plugins: [
+    interactionPlugin,
+    dayGridPlugin
+  ],
+  initialView: 'dayGridMonth',
+  editable: true, // important for activating event interactions!
+  selectable: true, // important for activating date selectability!
+  events: [
+    { title: 'Meeting', start: new Date() }
+  ]
 })
+
+calendar.render()
 ```

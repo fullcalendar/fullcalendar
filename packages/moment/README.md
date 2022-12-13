@@ -20,18 +20,15 @@ import { Calendar } from '@fullcalendar/core'
 import momentPlugin from '@fullcalendar/luxon'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
-document.addEventListener('DOMContentLoaded', function() {
-  const calendarEl = document.getElementById('calendar')
-
-  const calendar = new Calendar(calendarEl, {
-    plugins: [
-      momentPlugin,
-      dayGridPlugin
-    ],
-    initialView: 'dayGridMonth',
-    titleFormat: 'MMMM D, YYYY' // use Moment format strings
-  })
-
-  calendar.render()
+const calendarEl = document.getElementById('calendar')
+const calendar = new Calendar(calendarEl, {
+  plugins: [
+    momentPlugin,
+    dayGridPlugin
+  ],
+  initialView: 'dayGridMonth',
+  titleFormat: 'MMMM D, YYYY' // use Moment format strings
 })
+
+calendar.render()
 ```

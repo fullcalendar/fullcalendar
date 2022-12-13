@@ -32,18 +32,15 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import 'bootstrap/dist/css/bootstrap.css'
 import '@fortawesome/fontawesome-free/css/all.css' // needs additional webpack config!
 
-document.addEventListener('DOMContentLoaded', function() {
-  const calendarEl = document.getElementById('calendar')
-
-  const calendar = new Calendar(calendarEl, {
-    plugins: [
-      bootstrapPlugin,
-      dayGridPlugin
-    ],
-    themeSystem: 'bootstrap', // don't forget this!
-    initialView: 'dayGridMonth'
-  })
-
-  calendar.render()
+const calendarEl = document.getElementById('calendar')
+const calendar = new Calendar(calendarEl, {
+  plugins: [
+    bootstrapPlugin,
+    dayGridPlugin
+  ],
+  themeSystem: 'bootstrap', // don't forget this!
+  initialView: 'dayGridMonth'
 })
+
+calendar.render()
 ```

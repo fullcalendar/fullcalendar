@@ -19,17 +19,14 @@ Instantiate a Calendar with the correct plugins and options:
 import { Calendar } from '@fullcalendar/core'
 import listPlugin from '@fullcalendar/list'
 
-document.addEventListener('DOMContentLoaded', function() {
-  const calendarEl = document.getElementById('calendar')
-
-  const calendar = new Calendar(calendarEl, {
-    plugins: [listPlugin],
-    initialView: 'listWeek',
-    events: [
-      { title: 'Meeting', start: new Date() }
-    ]
-  })
-
-  calendar.render()
+const calendarEl = document.getElementById('calendar')
+const calendar = new Calendar(calendarEl, {
+  plugins: [listPlugin],
+  initialView: 'listWeek',
+  events: [
+    { title: 'Meeting', start: new Date() }
+  ]
 })
+
+calendar.render()
 ```

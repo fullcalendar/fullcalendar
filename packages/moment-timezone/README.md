@@ -20,18 +20,15 @@ import { Calendar } from '@fullcalendar/core'
 import momentTimezonePlugin from '@fullcalendar/moment-timezone'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
-document.addEventListener('DOMContentLoaded', function() {
-  const calendarEl = document.getElementById('calendar')
-
-  const calendar = new Calendar(calendarEl, {
-    plugins: [
-      momentTimezonePlugin,
-      dayGridPlugin
-    ],
-    initialView: 'dayGridMonth',
-    timeZone: 'America/New_York' // enhance named time zones
-  })
-
-  calendar.render()
+const calendarEl = document.getElementById('calendar')
+const calendar = new Calendar(calendarEl, {
+  plugins: [
+    momentTimezonePlugin,
+    dayGridPlugin
+  ],
+  initialView: 'dayGridMonth',
+  timeZone: 'America/New_York' // enhance named time zones
 })
+
+calendar.render()
 ```

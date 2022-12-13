@@ -27,21 +27,18 @@ Then, instantiate a Calendar object with [options](https://fullcalendar.io/docs#
 import { Calendar } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
-document.addEventListener('DOMContentLoaded', function() {
-  const calendarEl = document.getElementById('calendar')
-
-  const calendar = new Calendar(calendarEl, {
-    plugins: [
-      dayGridPlugin
-      // any other plugins
-    ],
-    initialView: 'dayGridMonth',
-    weekends: false,
-    events: [
-      { title: 'Meeting', start: new Date() }
-    ]
-  })
-
-  calendar.render()
+const calendarEl = document.getElementById('calendar')
+const calendar = new Calendar(calendarEl, {
+  plugins: [
+    dayGridPlugin
+    // any other plugins
+  ],
+  initialView: 'dayGridMonth',
+  weekends: false,
+  events: [
+    { title: 'Meeting', start: new Date() }
+  ]
 })
+
+calendar.render()
 ```

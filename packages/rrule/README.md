@@ -20,26 +20,23 @@ import { Calendar } from '@fullcalendar/core'
 import rrulePlugin from '@fullcalendar/rrule'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
-document.addEventListener('DOMContentLoaded', function() {
-  const calendarEl = document.getElementById('calendar')
-
-  const calendar = new Calendar(calendarEl, {
-    plugins: [
-      rrulePlugin,
-      dayGridPlugin
-    ],
-    initialView: 'dayGridMonth',
-    events: [
-      {
-        title: 'Meeting',
-        rrule: {
-          freq: 'weekly',
-          byweekday: ['mo', 'fr']
-        }
+const calendarEl = document.getElementById('calendar')
+const calendar = new Calendar(calendarEl, {
+  plugins: [
+    rrulePlugin,
+    dayGridPlugin
+  ],
+  initialView: 'dayGridMonth',
+  events: [
+    {
+      title: 'Meeting',
+      rrule: {
+        freq: 'weekly',
+        byweekday: ['mo', 'fr']
       }
-    ]
-  })
-
-  calendar.render()
+    }
+  ]
 })
+
+calendar.render()
 ```

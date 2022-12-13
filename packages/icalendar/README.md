@@ -20,21 +20,18 @@ import { Calendar } from '@fullcalendar/core'
 import iCalendarPlugin from '@fullcalendar/icalendar'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
-document.addEventListener('DOMContentLoaded', function() {
-  const calendarEl = document.getElementById('calendar')
-
-  const calendar = new Calendar(calendarEl, {
-    plugins: [
-      iCalendarPlugin,
-      dayGridPlugin
-    ],
-    initialView: 'dayGridMonth',
-    events: {
-      url: 'https://mywebsite.com/icalendar-feed.ics',
-      format: 'ics'
-    }
-  })
-
-  calendar.render()
+const calendarEl = document.getElementById('calendar')
+const calendar = new Calendar(calendarEl, {
+  plugins: [
+    iCalendarPlugin,
+    dayGridPlugin
+  ],
+  initialView: 'dayGridMonth',
+  events: {
+    url: 'https://mywebsite.com/icalendar-feed.ics',
+    format: 'ics'
+  }
 })
+
+calendar.render()
 ```

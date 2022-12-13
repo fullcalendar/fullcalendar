@@ -20,19 +20,16 @@ import { Calendar } from '@fullcalendar/core'
 import luxon2Plugin from '@fullcalendar/luxon2'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
-document.addEventListener('DOMContentLoaded', function() {
-  const calendarEl = document.getElementById('calendar')
-
-  const calendar = new Calendar(calendarEl, {
-    plugins: [
-      luxon2Plugin,
-      dayGridPlugin
-    ],
-    initialView: 'dayGridMonth',
-    titleFormat: 'LLLL d, yyyy', // use Luxon format strings
-    timeZone: 'America/New_York' // enhance named time zones
-  })
-
-  calendar.render()
+const calendarEl = document.getElementById('calendar')
+const calendar = new Calendar(calendarEl, {
+  plugins: [
+    luxon2Plugin,
+    dayGridPlugin
+  ],
+  initialView: 'dayGridMonth',
+  titleFormat: 'LLLL d, yyyy', // use Luxon format strings
+  timeZone: 'America/New_York' // enhance named time zones
 })
+
+calendar.render()
 ```
