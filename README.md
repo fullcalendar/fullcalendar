@@ -10,7 +10,7 @@ Full-sized drag & drop calendar in JavaScript
 - [License](LICENSE.md)
 - [Roadmap](https://fullcalendar.io/roadmap)
 
-## Connectors
+Connectors:
 
 - [React](https://github.com/fullcalendar/fullcalendar-react)
 - [Angular](https://github.com/fullcalendar/fullcalendar-angular)
@@ -19,7 +19,7 @@ Full-sized drag & drop calendar in JavaScript
 
 ## Bundle
 
-The [fullcalendar bundle](bundle) is easier to install than individual plugins, though filesize will be larger. It works well with a CDN.
+The [FullCalendar Standard Bundle](bundle) is easier to install than individual plugins, though filesize will be larger. It works well with a CDN.
 
 ## Installation
 
