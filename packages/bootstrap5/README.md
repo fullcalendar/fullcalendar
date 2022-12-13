@@ -8,7 +8,7 @@
 First, ensure you have the necessary Bootstrap packages installed:
 
 ```sh
-npm install bootstrap bootstrap-icons
+npm install bootstrap@5 bootstrap-icons
 ```
 
 Then, install the FullCalendar core package, the Bootstrap plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
@@ -19,7 +19,7 @@ npm install @fullcalendar/core @fullcalendar/bootstrap5 @fullcalendar/daygrid
 
 ## Usage
 
-Instantiate a Calendar with the correct plugins and options:
+Instantiate a Calendar with the necessary plugins and options:
 
 ```js
 import { Calendar } from '@fullcalendar/core'
@@ -36,7 +36,7 @@ const calendar = new Calendar(calendarEl, {
     bootstrap5Plugin,
     dayGridPlugin
   ],
-  themeSystem: 'bootstrap5', // don't forget this!
+  themeSystem: 'bootstrap5', // important!
   initialView: 'dayGridMonth'
 })
 

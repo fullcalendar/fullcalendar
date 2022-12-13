@@ -21,7 +21,7 @@ npm install @fullcalendar/core @fullcalendar/bootstrap @fullcalendar/daygrid
 
 ## Usage
 
-Instantiate a Calendar with the correct plugins and options:
+Instantiate a Calendar with the necessary plugins and options:
 
 ```js
 import { Calendar } from '@fullcalendar/core'
@@ -38,7 +38,7 @@ const calendar = new Calendar(calendarEl, {
     bootstrapPlugin,
     dayGridPlugin
   ],
-  themeSystem: 'bootstrap', // don't forget this!
+  themeSystem: 'bootstrap', // important!
   initialView: 'dayGridMonth'
 })
 

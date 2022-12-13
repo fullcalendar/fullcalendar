@@ -1,7 +1,7 @@
 
 # FullCalendar Web Component
 
-This package provides a FullCalendar [Web Component] (aka "Custom Element") that accepts a single
+This package provides a FullCalendar [Web Component](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) (aka "Custom Element") that accepts a single
 `options` attribute. It must be a valid JSON string.
 
 ```html
@@ -41,5 +41,3 @@ fullCalendarElement.options = {
   }
 }
 ```
-
-[Web Component]: https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements

@@ -13,7 +13,7 @@ npm install @fullcalendar/core @fullcalendar/icalendar @fullcalendar/daygrid
 
 ## Usage
 
-Instantiate a Calendar with the correct plugins and options:
+Instantiate a Calendar with the necessary plugins and options:
 
 ```js
 import { Calendar } from '@fullcalendar/core'
@@ -29,7 +29,7 @@ const calendar = new Calendar(calendarEl, {
   initialView: 'dayGridMonth',
   events: {
     url: 'https://mywebsite.com/icalendar-feed.ics',
-    format: 'ics'
+    format: 'ics' // important!
   }
 })
 

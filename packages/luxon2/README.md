@@ -5,7 +5,13 @@ Enhanced date formatting, conversion, and time zone functionality with [Luxon](h
 
 ## Installation
 
-Install the FullCalendar core package, the Luxon plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
+First, ensure you have the Luxon installed:
+
+```sh
+npm install luxon@2
+```
+
+Then, install the FullCalendar core package, the Luxon plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
 
 ```sh
 npm install @fullcalendar/core @fullcalendar/luxon2 @fullcalendar/daygrid
@@ -13,7 +19,7 @@ npm install @fullcalendar/core @fullcalendar/luxon2 @fullcalendar/daygrid
 
 ## Usage
 
-Instantiate a Calendar with the correct plugins and options:
+Instantiate a Calendar with the necessary plugin:
 
 ```js
 import { Calendar } from '@fullcalendar/core'

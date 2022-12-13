@@ -5,7 +5,13 @@ Enhanced named time zone functionality with [Moment Timezone](https://momentjs.c
 
 ## Installation
 
-Install the FullCalendar core package, the Moment plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
+First, ensure you have the Moment Timezone installed:
+
+```sh
+npm install moment-timezone
+```
+
+Then, install the FullCalendar core package, the Moment plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
 
 ```sh
 npm install @fullcalendar/core @fullcalendar/moment-timezone @fullcalendar/daygrid
@@ -13,7 +19,7 @@ npm install @fullcalendar/core @fullcalendar/moment-timezone @fullcalendar/daygr
 
 ## Usage
 
-Instantiate a Calendar with the correct plugins and options:
+Instantiate a Calendar with the necessary plugin:
 
 ```js
 import { Calendar } from '@fullcalendar/core'
