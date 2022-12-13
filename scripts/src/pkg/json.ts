@@ -56,8 +56,10 @@ export async function writeDistPkgJson(
   }
 
   const finalPkgJson = {
+    ...pkgJson, // hack to prefer key order of original file
     ...basePkgJson,
-    ...pkgJson,
+    ...pkgJson, // overrides base
+    keywords: (basePkgJson.keywords || []).concat(pkgJson.keywords || []),
     main: './index' + cjsExtension,
     module: './index' + esmExtension,
     types: `${typesRoot}/index.d.ts`,
