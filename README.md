@@ -8,15 +8,18 @@ Full-sized drag & drop calendar in JavaScript
 - [Changelog](CHANGELOG.md)
 - [Support](https://fullcalendar.io/support)
 - [License](LICENSE.md)
-- [Contributing](CONTRIBUTING.md)
 - [Roadmap](https://fullcalendar.io/roadmap)
 
-Connectors:
+## Connectors
 
 - [React](https://github.com/fullcalendar/fullcalendar-react)
 - [Angular](https://github.com/fullcalendar/fullcalendar-angular)
 - [Vue 3](https://github.com/fullcalendar/fullcalendar-vue) |
   [2](https://github.com/fullcalendar/fullcalendar-vue2)
+
+## Bundle
+
+The [fullcalendar bundle](bundle) is easier to install than individual plugins, though filesize will be larger. It works well with a CDN.
 
 ## Installation
 
