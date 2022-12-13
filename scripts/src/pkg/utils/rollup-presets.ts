@@ -319,7 +319,7 @@ function buildJsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
   const pkgAnalysis = analyzePkg(pkgBundleStruct.pkgDir)
 
   if (pkgAnalysis.isTests) {
-    return buildTestsJsPlugins()
+    return buildTestJsPlugins()
   } else {
     return buildNormalJsPlugins(pkgBundleStruct)
   }
@@ -352,7 +352,7 @@ function buildNormalJsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
   ]
 }
 
-function buildTestsJsPlugins(): Plugin[] {
+function buildTestJsPlugins(): Plugin[] {
   return [
     nodeResolvePlugin({ // determines index.js and .js/cjs/mjs
       browser: true, // for xhr-mock (use non-node shims that it wants to)
@@ -393,6 +393,7 @@ function cssPlugin(options?: { inject?: CssInjector | boolean }): Plugin {
           `injectStyles(${cssVarName});\n`
       } :
       (inject || false),
+    minimize: true,
   })
 }
 
