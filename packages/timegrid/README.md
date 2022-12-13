@@ -1,7 +1,7 @@
 
 # FullCalendar Time Grid Plugin
 
-Display events on a view with time slots
+Display events on time slots
 
 ## Installation
 

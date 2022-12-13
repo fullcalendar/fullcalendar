@@ -1,17 +1,17 @@
 
 # FullCalendar Moment Timezone Plugin
 
-Enhanced named time zone functionality with [Moment Timezone](https://momentjs.com/timezone/)
+Enhanced [named time zone](https://fullcalendar.io/docs/timeZone#named-time-zones) functionality with [Moment Timezone](https://momentjs.com/timezone/)
 
 ## Installation
 
-First, ensure you have the Moment Timezone installed:
+First, ensure Moment Timezone is installed:
 
 ```sh
 npm install moment-timezone
 ```
 
-Then, install the FullCalendar core package, the Moment plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
+Then, install the FullCalendar core package, the Moment Timezone plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
 
 ```sh
 npm install @fullcalendar/core @fullcalendar/moment-timezone @fullcalendar/daygrid

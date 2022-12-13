@@ -7,7 +7,7 @@
 
 ## Installation
 
-First, ensure you have the necessary Bootstrap packages installed:
+First, ensure the necessary Bootstrap packages are installed:
 
 ```sh
 npm install bootstrap@4 @fortawesome/fontawesome-free
@@ -28,7 +28,7 @@ import { Calendar } from '@fullcalendar/core'
 import bootstrapPlugin from '@fullcalendar/bootstrap'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
-// import the third-party stylesheets directly from your JS
+// import third-party stylesheets directly from your JS
 import 'bootstrap/dist/css/bootstrap.css'
 import '@fortawesome/fontawesome-free/css/all.css' // needs additional webpack config!
 

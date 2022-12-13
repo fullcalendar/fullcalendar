@@ -8,15 +8,14 @@
     "ics"
   ],
   "homepage": "https://fullcalendar.io/docs/icalendar",
-  "dependencies": {
-    "ical.js": "^1.4.0"
-  },
   "peerDependencies": {
-    "@fullcalendar/core": "workspace:*"
+    "@fullcalendar/core": "workspace:*",
+    "ical.js": "^1.4.0"
   },
   "devDependencies": {
     "@fullcalendar/core": "workspace:*",
-    "@fullcalendar/standard-scripts": "workspace:*"
+    "@fullcalendar/standard-scripts": "workspace:*",
+    "ical.js": "^1.4.0"
   },
   "scripts": {
     "build": "standard-scripts pkg:build",

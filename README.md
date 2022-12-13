@@ -7,7 +7,7 @@ Full-sized drag & drop calendar in JavaScript
 - [Documentation](https://fullcalendar.io/docs)
 - [Changelog](CHANGELOG.md)
 - [Support](https://fullcalendar.io/support)
-- [License](LICENSE.txt)
+- [License](LICENSE.md)
 - [Contributing](CONTRIBUTING.md)
 - [Roadmap](https://fullcalendar.io/roadmap)
 

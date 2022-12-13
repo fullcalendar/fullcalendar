@@ -5,7 +5,13 @@ Display events from a public [iCalendar feed](https://icalendar.org/)
 
 ## Installation
 
-Install the FullCalendar core package, the iCalendar plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
+First, ensure ical.js is installed:
+
+```sh
+npm install ical.js
+```
+
+Then, install the FullCalendar core package, the iCalendar plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
 
 ```sh
 npm install @fullcalendar/core @fullcalendar/icalendar @fullcalendar/daygrid

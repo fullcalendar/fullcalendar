@@ -5,7 +5,13 @@ Recurring events with [RRule](https://github.com/jakubroztocil/rrule)
 
 ## Installation
 
-Install the FullCalendar core package, the RRule plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
+First, ensure the RRule lib is installed:
+
+```sh
+npm install rrule
+```
+
+Then, install the FullCalendar core package, the RRule plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
 
 ```sh
 npm install @fullcalendar/core @fullcalendar/rrule @fullcalendar/daygrid

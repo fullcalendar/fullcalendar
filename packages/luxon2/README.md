@@ -1,11 +1,11 @@
 
 # FullCalendar Luxon 2 Plugin
 
-Enhanced date formatting, conversion, and time zone functionality with [Luxon](https://moment.github.io/luxon/) 2
+Enhanced date formatting, conversion, and [named time zone](https://fullcalendar.io/docs/timeZone#named-time-zones) functionality with [Luxon](https://moment.github.io/luxon/) 2
 
 ## Installation
 
-First, ensure you have the Luxon installed:
+First, ensure Luxon is installed:
 
 ```sh
 npm install luxon@2

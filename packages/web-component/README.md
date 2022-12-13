@@ -1,8 +1,7 @@
 
 # FullCalendar Web Component
 
-This package provides a FullCalendar [Web Component](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) (aka "Custom Element") that accepts a single
-`options` attribute. It must be a valid JSON string.
+This package provides a FullCalendar [Web Component](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) (aka "Custom Element") that accepts a single `options` attribute. It must be a valid JSON string.
 
 ```html
 <!DOCTYPE html>
@@ -27,8 +26,7 @@ This package provides a FullCalendar [Web Component](https://developer.mozilla.o
 </html>
 ```
 
-It is also possible to set an `options` *property* on the DOM element. This property is a rich
-JavaScript object, not merely a JSON string.
+It is also possible to set an `options` *property* on the DOM element. This property is a real JavaScript object, not merely a JSON string.
 
 ```js
 const fullCalendarElement = document.querySelector('full-calendar')

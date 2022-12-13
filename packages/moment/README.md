@@ -5,7 +5,7 @@ Enhanced date formatting and conversion with [Moment](https://momentjs.com/)
 
 ## Installation
 
-First, ensure you have the Moment installed:
+First, ensure Moment is installed:
 
 ```sh
 npm install moment
@@ -23,7 +23,7 @@ Instantiate a Calendar with the necessary plugin:
 
 ```js
 import { Calendar } from '@fullcalendar/core'
-import momentPlugin from '@fullcalendar/luxon'
+import momentPlugin from '@fullcalendar/moment'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
 const calendarEl = document.getElementById('calendar')

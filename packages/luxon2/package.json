@@ -2,7 +2,7 @@
   "name": "@fullcalendar/luxon2",
   "version": "6.0.0-beta.4",
   "title": "FullCalendar Luxon 2 Plugin",
-  "description": "Enhanced date formatting, conversion, and time zone functionality with Luxon 2",
+  "description": "Enhanced date formatting, conversion, and named time zone functionality with Luxon 2",
   "keywords": [
     "luxon",
     "luxon2",

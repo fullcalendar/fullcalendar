@@ -5,7 +5,7 @@
 
 ## Installation
 
-First, ensure you have the necessary Bootstrap packages installed:
+First, ensure the necessary Bootstrap packages are installed:
 
 ```sh
 npm install bootstrap@5 bootstrap-icons
