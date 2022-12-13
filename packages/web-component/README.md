@@ -8,9 +8,9 @@ This package provides a FullCalendar [Web Component](https://developer.mozilla.o
 <html>
 <head>
 <meta charset='utf-8' />
-<script src='<SOME-CDN>/@fullcalendar/core/index.global.js'></script>
-<script src='<SOME-CDN>/@fullcalendar/web-component/index.global.js'></script>
-<script src='<SOME-CDN>/@fullcalendar/daygrid/index.global.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core/index.global.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/web-component/index.global.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid/index.global.min.js'></script>
 </head>
 <body>
 
