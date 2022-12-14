@@ -40,7 +40,7 @@
     },
     "iifeGlobals": {
       ".": "FullCalendar.MomentTimezone",
-      "moment": "moment"
+      "moment-timezone": "moment"
     }
   },
   "publishConfig": {
