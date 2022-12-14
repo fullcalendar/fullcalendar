@@ -1,8 +1,14 @@
 
-next
-----
+v6.0.0 (2022-12-13)
+-------------------
 
-- FIX: Certain ng-template names don't work ([angular-426])
+[V6 Release Notes and Upgrade Guide](https://fullcalendar.io/docs/v6/upgrading-from-v5)
+
+Changes since final beta:
+
+- FIX: certain ng-template names don't work ([angular-426])
+- FIX: minify CSS that is embedded into JS files
+- FIX: more informational README files in published packages
 
 [angular-426]: https://github.com/fullcalendar/fullcalendar-angular/issues/426
 
