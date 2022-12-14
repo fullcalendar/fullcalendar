@@ -83,9 +83,9 @@ injecting its own CSS. This solves many issues with third party libraries:
   use the new FullCalendar Web Component package (`@fullcalendar/web-component`), which can
   integrate with Angular via the [method described here][angular-web-components].
 
-[webpack-css-hack]: https://github.com/fullcalendar/fullcalendar-example-projects/blob/10fe58abfc94457c7582af3948b3764cd17e7960/webpack/webpack.config.js
-[rollup-css-hack]: https://github.com/fullcalendar/fullcalendar-example-projects/blob/10fe58abfc94457c7582af3948b3764cd17e7960/rollup/rollup.config.js
-[next-css-hack]: https://github.com/fullcalendar/fullcalendar-example-projects/tree/10fe58abfc94457c7582af3948b3764cd17e7960/next
+[webpack-css-hack]: https://github.com/fullcalendar/fullcalendar-examples/blob/10fe58abfc94457c7582af3948b3764cd17e7960/webpack/webpack.config.js
+[rollup-css-hack]: https://github.com/fullcalendar/fullcalendar-examples/blob/10fe58abfc94457c7582af3948b3764cd17e7960/rollup/rollup.config.js
+[next-css-hack]: https://github.com/fullcalendar/fullcalendar-examples/tree/10fe58abfc94457c7582af3948b3764cd17e7960/next
 [angular-css-bug]: https://github.com/fullcalendar/fullcalendar-angular/issues/403
 [angular-web-components]: https://coryrylan.com/blog/using-web-components-in-angular
 
