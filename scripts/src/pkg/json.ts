@@ -94,7 +94,9 @@ export async function writeDistPkgJson(
     finalPkgJson.sideEffects = false
   }
 
-  finalPkgJson.repository.directory = relativizePath(pkgAnalysis.metaRootDir, pkgDir)
+  finalPkgJson.repository.directory =
+    (basePkgJson.repository.directory ? `${basePkgJson.repository.directory}/` : '') +
+    relativizePath(pkgAnalysis.metaRootDir, pkgDir)
 
   delete finalPkgJson.scripts
   delete finalPkgJson.devDependencies
