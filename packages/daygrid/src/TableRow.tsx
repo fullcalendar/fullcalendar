@@ -159,6 +159,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
   componentDidMount() {
     this.updateSizing(true)
+    this.context.addResizeHandler(this.handleResize)
   }
 
   componentDidUpdate(prevProps: TableRowProps, prevState: TableRowState) {
@@ -167,6 +168,16 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     this.updateSizing(
       !isPropsEqual(prevProps, currentProps),
     )
+  }
+
+  componentWillUnmount() {
+    this.context.removeResizeHandler(this.handleResize)
+  }
+
+  handleResize = (isForced: boolean) => {
+    if (isForced) {
+      this.updateSizing(true) // isExternal=true
+    }
   }
 
   getHighlightSegs(): TableSeg[] {
