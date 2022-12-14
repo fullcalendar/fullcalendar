@@ -9,6 +9,7 @@ Changes since final beta:
 - FIX: certain ng-template names don't work ([angular-426])
 - FIX: minify CSS that is embedded into JS files
 - FIX: more informational README files in published packages
+- FIX: daygrid events sometimes not correctly positioned with Vue connectors
 - BREAKING: @fullcalendar/icalendar now has ical.js peer dependency
 
 [angular-426]: https://github.com/fullcalendar/fullcalendar-angular/issues/426
