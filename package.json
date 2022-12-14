@@ -22,7 +22,7 @@
   },
   "copyright": "2022 Adam Shaw",
   "devDependencies": {
-    "@fullcalendar/standard-scripts": "workspace:*"
+    "@fullcalendar/standard-scripts": "*"
   },
   "scripts": {
     "postinstall": "standard-scripts postinstall",
