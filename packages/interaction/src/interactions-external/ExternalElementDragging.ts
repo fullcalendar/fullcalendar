@@ -1,3 +1,4 @@
+import { ViewApi, DatePointApi } from '@fullcalendar/core'
 import {
   Hit,
   interactionSettingsStore,
@@ -5,22 +6,20 @@ import {
   parseEventDef, createEventInstance, EventTuple,
   createEmptyEventStore, eventTupleToStore,
   config,
-  DateSpan, DatePointApi,
+  DateSpan,
   EventInteractionState,
   DragMetaInput, DragMeta, parseDragMeta,
-  EventApi,
   elementMatches,
   enableCursor, disableCursor,
   isInteractionValid,
   ElementDragging,
-  ViewApi,
   CalendarContext,
   getDefaultEventEnd,
   refineEventDef,
-} from '@fullcalendar/common'
-import { __assign } from 'tslib'
-import { HitDragging } from '../interactions/HitDragging'
-import { buildDatePointApiWithContext } from '../utils'
+  EventImpl,
+} from '@fullcalendar/core/internal'
+import { HitDragging } from '../interactions/HitDragging.js'
+import { buildDatePointApiWithContext } from '../utils.js'
 
 export type DragMetaGenerator = DragMetaInput | ((el: HTMLElement) => DragMetaInput)
 
@@ -154,7 +153,7 @@ export class ExternalElementDragging {
 
         // signal that an external event landed
         receivingContext.emitter.trigger('eventReceive', {
-          event: new EventApi(
+          event: new EventImpl(
             receivingContext,
             droppableEvent.def,
             droppableEvent.instance,
@@ -216,7 +215,7 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, context
   let defProps = { ...dragMeta.leftoverProps }
 
   for (let transform of context.pluginHooks.externalDefTransforms) {
-    __assign(defProps, transform(dateSpan, dragMeta))
+    Object.assign(defProps, transform(dateSpan, dragMeta))
   }
 
   let { refined, extra } = refineEventDef(defProps, context)

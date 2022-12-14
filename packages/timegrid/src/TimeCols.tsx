@@ -1,27 +1,29 @@
+import { Duration, CssDimValue } from '@fullcalendar/core'
 import {
-  createElement, VNode,
   addDurations,
   multiplyDuration,
   wholeDivideDurations,
   DateMarker,
   EventSegUiInteractionState,
   memoize,
-  CssDimValue,
   PositionCache,
   ScrollResponder,
   ScrollRequest,
   DateRange,
-  Duration,
   DateProfile,
   DayTableCell,
   Hit,
   DateComponent,
-} from '@fullcalendar/common'
-import { TimeColsSlats } from './TimeColsSlats'
-import { TimeSlatMeta } from './time-slat-meta'
-import { TimeColsContent } from './TimeColsContent'
-import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { TimeColsSeg } from './TimeColsSeg'
+} from '@fullcalendar/core/internal'
+import {
+  createElement,
+  VNode,
+} from '@fullcalendar/core/preact'
+import { TimeColsSlats } from './TimeColsSlats.js'
+import { TimeSlatMeta } from './time-slat-meta.js'
+import { TimeColsContent } from './TimeColsContent.js'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
+import { TimeColsSeg } from './TimeColsSeg.js'
 
 export interface TimeColsProps {
   cells: DayTableCell[]

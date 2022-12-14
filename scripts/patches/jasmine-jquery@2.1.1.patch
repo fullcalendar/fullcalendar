@@ -1,0 +1,21 @@
+diff --git a/lib/jasmine-jquery.js b/lib/jasmine-jquery.js
+index 8d35a8793832996842e6ea491dce48ef0f345e11..dbe57f3b9c011701e394dcdbe95762f86a1c577f 100644
+--- a/lib/jasmine-jquery.js
++++ b/lib/jasmine-jquery.js
+@@ -657,11 +657,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+         }
+       },
+ 
+-      toHaveBeenTriggeredOnAndWith: function (j$, customEqualityTesters) {
++      // removed customEqualityTesters
++      // https://jasmine.github.io/tutorials/upgrading_to_Jasmine_4.0#matchers-cet
++      // https://stackoverflow.com/questions/71117936/how-do-i-fix-deprecation-the-matcher-factory-for-tohavebeentriggeredonandwith
++      toHaveBeenTriggeredOnAndWith: function (j$) {
+         return {
+           compare: function (actual, selector, expectedArgs) {
+             var wasTriggered = jasmine.jQuery.events.wasTriggered(selector, actual)
+-              , result = { pass: wasTriggered && jasmine.jQuery.events.wasTriggeredWith(selector, actual, expectedArgs, j$, customEqualityTesters) }
++              , result = { pass: wasTriggered && jasmine.jQuery.events.wasTriggeredWith(selector, actual, expectedArgs, j$) }
+ 
+               if (wasTriggered) {
+                 var actualArgs = jasmine.jQuery.events.args(selector, actual, expectedArgs)[1]

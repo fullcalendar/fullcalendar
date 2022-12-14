@@ -3,10 +3,10 @@ import {
   SegEntry,
   SegEntryGroup,
   DateMarker,
-} from '@fullcalendar/common'
-import { TimeColsSeg } from './TimeColsSeg'
-import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { SegWebRect, buildPositioning } from './seg-web'
+} from '@fullcalendar/core/internal'
+import { TimeColsSeg } from './TimeColsSeg.js'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
+import { SegWebRect, buildPositioning } from './seg-web.js'
 
 // public interface
 // ------------------------------------------------------------------------------------------

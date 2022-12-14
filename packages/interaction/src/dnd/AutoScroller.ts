@@ -1,7 +1,7 @@
-import { getElRoot } from '@fullcalendar/common'
-import { ScrollGeomCache } from '../ScrollGeomCache'
-import { ElementScrollGeomCache } from '../ElementScrollGeomCache'
-import { WindowScrollGeomCache } from '../WindowScrollGeomCache'
+import { getElRoot } from '@fullcalendar/core/internal'
+import { ScrollGeomCache } from '../ScrollGeomCache.js'
+import { ElementScrollGeomCache } from '../ElementScrollGeomCache.js'
+import { WindowScrollGeomCache } from '../WindowScrollGeomCache.js'
 
 interface Edge {
   scrollCache: ScrollGeomCache

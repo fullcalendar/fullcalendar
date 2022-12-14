@@ -1,5 +1,5 @@
+import { ViewApi, EventRenderRange } from '@fullcalendar/core'
 import {
-  createElement,
   ViewProps,
   Scroller,
   DateMarker,
@@ -9,25 +9,27 @@ import {
   intersectRanges,
   DateProfile,
   EventUiHash,
-  EventRenderRange,
   sliceEventStore,
   EventStore,
   memoize,
   Seg,
-  VNode,
   sortEventSegs,
   getSegMeta,
   NowTimer,
-  ViewRoot,
-  RenderHook,
+  ViewContainer,
   DateComponent,
-  ViewApi,
   MountArg,
   getUniqueDomId,
   formatDayString,
-} from '@fullcalendar/common'
-import { ListViewHeaderRow } from './ListViewHeaderRow'
-import { ListViewEventRow } from './ListViewEventRow'
+  ContentContainer,
+} from '@fullcalendar/core/internal'
+import {
+  ComponentChild,
+  createElement,
+  VNode,
+} from '@fullcalendar/core/preact'
+import { ListViewHeaderRow } from './ListViewHeaderRow.js'
+import { ListViewEventRow } from './ListViewEventRow.js'
 
 export interface NoEventsContentArg {
   text: string
@@ -50,36 +52,35 @@ export class ListView extends DateComponent<ViewProps> {
 
   render() {
     let { props, context } = this
-
-    let extraClassNames = [
-      'fc-list',
-      context.theme.getClass('table'), // just for the outer border. will be on div
-      context.options.stickyHeaderDates !== false ? 'fc-list-sticky' : '',
-    ]
-
     let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
     let eventSegs = this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges)
 
     return (
-      <ViewRoot viewSpec={context.viewSpec} elRef={this.setRootEl}>
-        {(rootElRef, classNames) => (
-          <div ref={rootElRef} className={extraClassNames.concat(classNames).join(' ')}>
-            <Scroller
-              liquid={!props.isHeightAuto}
-              overflowX={props.isHeightAuto ? 'visible' : 'hidden'}
-              overflowY={props.isHeightAuto ? 'visible' : 'auto'}
-            >
-              {eventSegs.length > 0 ?
-                this.renderSegList(eventSegs, dayDates) :
-                this.renderEmptyMessage()}
-            </Scroller>
-          </div>
-        )}
-      </ViewRoot>
+      <ViewContainer
+        elRef={this.setRootEl}
+        elClasses={[
+          'fc-list',
+          context.theme.getClass('table'), // just for the outer border. will be on div
+          context.options.stickyHeaderDates !== false ?
+            'fc-list-sticky' :
+            '',
+        ]}
+        viewSpec={context.viewSpec}
+      >
+        <Scroller
+          liquid={!props.isHeightAuto}
+          overflowX={props.isHeightAuto ? 'visible' : 'hidden'}
+          overflowY={props.isHeightAuto ? 'visible' : 'auto'}
+        >
+          {eventSegs.length > 0 ?
+            this.renderSegList(eventSegs, dayDates) :
+            this.renderEmptyMessage()}
+        </Scroller>
+      </ViewContainer>
     )
   }
 
-  setRootEl = (rootEl: HTMLDivElement | null) => {
+  setRootEl = (rootEl: HTMLElement | null) => {
     if (rootEl) {
       this.context.registerInteractiveComponent(this, { // TODO: make aware that it doesn't do Hits
         el: rootEl,
@@ -91,28 +92,29 @@ export class ListView extends DateComponent<ViewProps> {
 
   renderEmptyMessage() {
     let { options, viewApi } = this.context
-    let hookProps: NoEventsContentArg = {
+    let renderProps: NoEventsContentArg = {
       text: options.noEventsText,
       view: viewApi,
     }
 
     return (
-      <RenderHook<NoEventsContentArg> // needed???
-        hookProps={hookProps}
-        classNames={options.noEventsClassNames}
-        content={options.noEventsContent}
-        defaultContent={renderNoEventsInner}
+      <ContentContainer
+        elTag="div"
+        elClasses={['fc-list-empty']}
+        renderProps={renderProps}
+        generatorName="noEventsContent"
+        generator={options.noEventsContent || renderNoEventsInner}
+        classNameGenerator={options.noEventsClassNames}
         didMount={options.noEventsDidMount}
         willUnmount={options.noEventsWillUnmount}
       >
-        {(rootElRef, classNames, innerElRef, innerContent) => (
-          <div className={['fc-list-empty'].concat(classNames).join(' ')} ref={rootElRef}>
-            <div className="fc-list-empty-cushion" ref={innerElRef}>
-              {innerContent}
-            </div>
-          </div>
+        {(InnerContent) => (
+          <InnerContent
+            elTag="div"
+            elClasses={['fc-list-empty-cushion']}
+          />
         )}
-      </RenderHook>
+      </ContentContainer>
     )
   }
 
@@ -251,8 +253,8 @@ export class ListView extends DateComponent<ViewProps> {
   }
 }
 
-function renderNoEventsInner(hookProps) {
-  return hookProps.text
+function renderNoEventsInner(renderProps: NoEventsContentArg): ComponentChild {
+  return renderProps.text
 }
 
 function computeDateVars(dateProfile: DateProfile) {

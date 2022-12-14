@@ -1,19 +1,22 @@
+import { Duration, CssDimValue } from '@fullcalendar/core'
 import {
-  createElement, createRef, VNode,
   EventStore,
   EventUiHash,
   DateSpan,
   EventInteractionState,
   DayTableModel,
-  Duration,
   DateComponent,
   ViewContext,
-  RefObject,
-  CssDimValue,
   DateProfile,
-} from '@fullcalendar/common'
-import { Table } from './Table'
-import { DayTableSlicer } from './DayTableSlicer'
+} from '@fullcalendar/core/internal'
+import {
+  createElement,
+  createRef,
+  VNode,
+  RefObject,
+} from '@fullcalendar/core/preact'
+import { Table } from './Table.js'
+import { DayTableSlicer } from './DayTableSlicer.js'
 
 export interface DayTableProps {
   dateProfile: DateProfile,

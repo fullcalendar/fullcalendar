@@ -1,32 +1,35 @@
+import { CssDimValue, AllDayContentArg } from '@fullcalendar/core'
 import {
-  createElement, createRef,
   diffDays,
   SimpleScrollGridSection,
-  VNode,
   SimpleScrollGrid,
   ChunkContentCallbackArgs,
   ScrollGridSectionConfig,
   buildNavLinkAttrs,
-  ViewRoot,
-  WeekNumberRoot,
-  RenderHook,
+  ViewContainer,
+  WeekNumberContainer,
   DateComponent,
   ViewProps,
-  RefObject,
   renderScrollShim,
   getStickyHeaderDates,
   getStickyFooterScrollbar,
   createFormatter,
-  AllDayContentArg,
-  CssDimValue,
   NowTimer,
   DateMarker,
-  NowIndicatorRoot,
-} from '@fullcalendar/common'
-import { AllDaySplitter } from './AllDaySplitter'
-import { TimeSlatMeta } from './time-slat-meta'
-import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { TimeBodyAxis } from './TimeBodyAxis'
+  NowIndicatorContainer,
+  ContentContainer,
+} from '@fullcalendar/core/internal'
+import {
+  createElement,
+  createRef,
+  VNode,
+  RefObject,
+  ComponentChild,
+} from '@fullcalendar/core/preact'
+import { AllDaySplitter } from './AllDaySplitter.js'
+import { TimeSlatMeta } from './time-slat-meta.js'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
+import { TimeBodyAxis } from './TimeBodyAxis.js'
 
 const DEFAULT_WEEK_NUM_FORMAT = createFormatter({ week: 'short' })
 const AUTO_ALL_DAY_MAX_EVENT_ROWS = 5
@@ -44,7 +47,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
   protected allDaySplitter = new AllDaySplitter() // for use by subclasses
 
   protected headerElRef: RefObject<HTMLTableCellElement> = createRef<HTMLTableCellElement>()
-  private rootElRef: RefObject<HTMLDivElement> = createRef<HTMLDivElement>()
+  private rootElRef: RefObject<HTMLElement> = createRef<HTMLElement>()
   private scrollerElRef: RefObject<HTMLDivElement> = createRef<HTMLDivElement>()
 
   state = {
@@ -107,18 +110,14 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     })
 
     return (
-      <ViewRoot viewSpec={context.viewSpec} elRef={this.rootElRef}>
-        {(rootElRef, classNames) => (
-          <div className={['fc-timegrid'].concat(classNames).join(' ')} ref={rootElRef}>
-            <SimpleScrollGrid
-              liquid={!props.isHeightAuto && !props.forPrint}
-              collapsibleWidth={props.forPrint}
-              cols={[{ width: 'shrink' }]}
-              sections={sections}
-            />
-          </div>
-        )}
-      </ViewRoot>
+      <ViewContainer elRef={this.rootElRef} elClasses={['fc-timegrid']} viewSpec={context.viewSpec}>
+        <SimpleScrollGrid
+          liquid={!props.isHeightAuto && !props.forPrint}
+          collapsibleWidth={props.forPrint}
+          cols={[{ width: 'shrink' }]}
+          sections={sections}
+        />
+      </ViewContainer>
     )
   }
 
@@ -230,17 +229,12 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
 
                     if (typeof nowIndicatorTop === 'number') {
                       return (
-                        <NowIndicatorRoot isAxis date={nowDate}>
-                          {(rootElRef, classNames, innerElRef, innerContent) => (
-                            <div
-                              ref={rootElRef}
-                              className={['fc-timegrid-now-indicator-arrow'].concat(classNames).join(' ')}
-                              style={{ top: nowIndicatorTop }}
-                            >
-                              {innerContent}
-                            </div>
-                          )}
-                        </NowIndicatorRoot>
+                        <NowIndicatorContainer
+                          elClasses={['fc-timegrid-now-indicator-arrow']}
+                          elStyle={{ top: nowIndicatorTop }}
+                          isAxis
+                          date={nowDate}
+                        />
                       )
                     }
 
@@ -278,21 +272,17 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     }
 
     return (
-      <ViewRoot viewSpec={context.viewSpec} elRef={this.rootElRef}>
-        {(rootElRef, classNames) => (
-          <div className={['fc-timegrid'].concat(classNames).join(' ')} ref={rootElRef}>
-            <ScrollGrid
-              liquid={!props.isHeightAuto && !props.forPrint}
-              collapsibleWidth={false}
-              colGroups={[
-                { width: 'shrink', cols: [{ width: 'shrink' }] }, // TODO: allow no specify cols
-                { cols: [{ span: colCnt, minWidth: dayMinWidth }] },
-              ]}
-              sections={sections}
-            />
-          </div>
-        )}
-      </ViewRoot>
+      <ViewContainer elRef={this.rootElRef} elClasses={['fc-timegrid']} viewSpec={context.viewSpec}>
+        <ScrollGrid
+          liquid={!props.isHeightAuto && !props.forPrint}
+          collapsibleWidth={false}
+          colGroups={[
+            { width: 'shrink', cols: [{ width: 'shrink' }] }, // TODO: allow no specify cols
+            { cols: [{ span: colCnt, minWidth: dayMinWidth }] },
+          ]}
+          sections={sections}
+        />
+      </ViewContainer>
     )
   }
 
@@ -327,37 +317,46 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
     let range = dateProfile.renderRange
     let dayCnt = diffDays(range.start, range.end)
 
-    let navLinkAttrs = (dayCnt === 1) // only do in day views (to avoid doing in week views that dont need it)
+    // only do in day views (to avoid doing in week views that dont need it)
+    let navLinkAttrs = (dayCnt === 1)
       ? buildNavLinkAttrs(this.context, range.start, 'week')
       : {}
 
     if (options.weekNumbers && rowKey === 'day') {
       return (
-        <WeekNumberRoot date={range.start} defaultFormat={DEFAULT_WEEK_NUM_FORMAT}>
-          {(rootElRef, classNames, innerElRef, innerContent) => (
-            <th
-              ref={rootElRef}
-              aria-hidden
+        <WeekNumberContainer
+          elTag="th"
+          elClasses={[
+            'fc-timegrid-axis',
+            'fc-scrollgrid-shrink',
+          ]}
+          elAttrs={{
+            'aria-hidden': true,
+          }}
+          date={range.start}
+          defaultFormat={DEFAULT_WEEK_NUM_FORMAT}
+        >
+          {(InnerContent) => (
+            <div
               className={[
-                'fc-timegrid-axis',
-                'fc-scrollgrid-shrink',
-              ].concat(classNames).join(' ')}
+                'fc-timegrid-axis-frame',
+                'fc-scrollgrid-shrink-frame',
+                'fc-timegrid-axis-frame-liquid',
+              ].join(' ')}
+              style={{ height: frameHeight }}
             >
-              <div
-                className="fc-timegrid-axis-frame fc-scrollgrid-shrink-frame fc-timegrid-axis-frame-liquid"
-                style={{ height: frameHeight }}
-              >
-                <a
-                  ref={innerElRef}
-                  className="fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion fc-scrollgrid-sync-inner"
-                  {...navLinkAttrs}
-                >
-                  {innerContent}
-                </a>
-              </div>
-            </th>
+              <InnerContent
+                elTag="a"
+                elClasses={[
+                  'fc-timegrid-axis-cushion',
+                  'fc-scrollgrid-shrink-cushion',
+                  'fc-scrollgrid-sync-inner',
+                ]}
+                elAttrs={navLinkAttrs}
+              />
+            </div>
           )}
-        </WeekNumberRoot>
+        </WeekNumberContainer>
       )
     }
 
@@ -375,41 +374,49 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
   // but DayGrid still needs to have classNames on inner elements in order to measure.
   renderTableRowAxis = (rowHeight?: number) => {
     let { options, viewApi } = this.context
-    let hookProps: AllDayContentArg = {
+    let renderProps: AllDayContentArg = {
       text: options.allDayText,
       view: viewApi,
     }
 
     return (
       // TODO: make reusable hook. used in list view too
-      <RenderHook<AllDayContentArg>
-        hookProps={hookProps}
-        classNames={options.allDayClassNames}
-        content={options.allDayContent}
-        defaultContent={renderAllDayInner}
+      <ContentContainer
+        elTag="td"
+        elClasses={[
+          'fc-timegrid-axis',
+          'fc-scrollgrid-shrink',
+        ]}
+        elAttrs={{
+          'aria-hidden': true,
+        }}
+        renderProps={renderProps}
+        generatorName="allDayContent"
+        generator={options.allDayContent || renderAllDayInner}
+        classNameGenerator={options.allDayClassNames}
         didMount={options.allDayDidMount}
         willUnmount={options.allDayWillUnmount}
       >
-        {(rootElRef, classNames, innerElRef, innerContent) => (
-          <td
-            ref={rootElRef}
-            aria-hidden
+        {(InnerContent) => (
+          <div
             className={[
-              'fc-timegrid-axis',
-              'fc-scrollgrid-shrink',
-            ].concat(classNames).join(' ')}
+              'fc-timegrid-axis-frame',
+              'fc-scrollgrid-shrink-frame',
+              rowHeight == null ? ' fc-timegrid-axis-frame-liquid' : '',
+            ].join(' ')}
+            style={{ height: rowHeight }}
           >
-            <div
-              className={'fc-timegrid-axis-frame fc-scrollgrid-shrink-frame' + (rowHeight == null ? ' fc-timegrid-axis-frame-liquid' : '')}
-              style={{ height: rowHeight }}
-            >
-              <span className="fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion fc-scrollgrid-sync-inner" ref={innerElRef}>
-                {innerContent}
-              </span>
-            </div>
-          </td>
+            <InnerContent
+              elTag="span"
+              elClasses={[
+                'fc-timegrid-axis-cushion',
+                'fc-scrollgrid-shrink-cushion',
+                'fc-scrollgrid-sync-inner',
+              ]}
+            />
+          </div>
         )}
-      </RenderHook>
+      </ContentContainer>
     )
   }
 
@@ -418,6 +425,6 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
   }
 }
 
-function renderAllDayInner(hookProps) {
-  return hookProps.text
+function renderAllDayInner(renderProps: AllDayContentArg): ComponentChild {
+  return renderProps.text
 }

@@ -3,10 +3,9 @@ import {
   DateSpan, PointerDragEvent, dateSelectionJoinTransformer,
   Interaction, InteractionSettings, interactionSettingsToStore,
   triggerDateSelect, isDateSelectionValid,
-} from '@fullcalendar/common'
-import { __assign } from 'tslib'
-import { HitDragging } from './HitDragging'
-import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
+} from '@fullcalendar/core/internal'
+import { HitDragging } from './HitDragging.js'
+import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'
 
 /*
 Tracks when the user selects a portion of time of a component,
@@ -141,7 +140,7 @@ function joinHitsIntoSelection(hit0: Hit, hit1: Hit, dateSelectionTransformers: 
     }
 
     if (res) {
-      __assign(props, res)
+      Object.assign(props, res)
     }
   }
 

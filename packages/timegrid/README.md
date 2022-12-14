@@ -1,8 +1,32 @@
 
 # FullCalendar Time Grid Plugin
 
-Display your events on a grid of time slots
+Display events on time slots
 
-[View the docs &raquo;](https://fullcalendar.io/docs/timegrid-view)
+## Installation
 
-This package was created from the [FullCalendar monorepo &raquo;](https://github.com/fullcalendar/fullcalendar)
+Install the necessary packages:
+
+```sh
+npm install @fullcalendar/core @fullcalendar/timegrid
+```
+
+## Usage
+
+Instantiate a Calendar with the necessary plugin:
+
+```js
+import { Calendar } from '@fullcalendar/core'
+import timeGridPlugin from '@fullcalendar/timegrid'
+
+const calendarEl = document.getElementById('calendar')
+const calendar = new Calendar(calendarEl, {
+  plugins: [timeGridPlugin],
+  initialView: 'timeGridWeek',
+  events: [
+    { title: 'Meeting', start: new Date() }
+  ]
+})
+
+calendar.render()
+```

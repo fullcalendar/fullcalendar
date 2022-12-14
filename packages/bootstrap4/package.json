@@ -1,0 +1,48 @@
+{
+  "name": "@fullcalendar/bootstrap",
+  "version": "6.0.0",
+  "title": "FullCalendar Bootstrap 4 Plugin",
+  "description": "Bootstrap 4 theme for FullCalendar",
+  "keywords": [
+    "bootstrap",
+    "bootstrap4"
+  ],
+  "homepage": "https://fullcalendar.io/docs/bootstrap4",
+  "peerDependencies": {
+    "@fullcalendar/core": "~6.0.0"
+  },
+  "devDependencies": {
+    "@fullcalendar/core": "~6.0.0",
+    "@fullcalendar/standard-scripts": "*"
+  },
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint ."
+  },
+  "type": "module",
+  "tsConfig": {
+    "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
+    "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist/.tsout"
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  },
+  "buildConfig": {
+    "exports": {
+      ".": { "iife": true },
+      "./internal": { }
+    },
+    "iifeGlobals": {
+      ".": "FullCalendar.Bootstrap",
+      "./internal": "FullCalendar.Bootstrap.Internal"
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
+  }
+}

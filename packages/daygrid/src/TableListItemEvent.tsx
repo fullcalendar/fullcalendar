@@ -1,14 +1,13 @@
+import { EventContentArg } from '@fullcalendar/core'
 import {
-  createElement,
   BaseComponent,
   Seg,
-  EventRoot,
   buildSegTimeText,
-  EventContentArg,
-  Fragment,
+  EventContainer,
   getSegAnchorAttrs,
-} from '@fullcalendar/common'
-import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering'
+} from '@fullcalendar/core/internal'
+import { createElement, Fragment } from '@fullcalendar/core/preact'
+import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering.js'
 
 export interface DotTableEventProps {
   seg: Seg
@@ -18,14 +17,17 @@ export interface DotTableEventProps {
   isFuture: boolean
   isToday: boolean
   defaultDisplayEventEnd: boolean
+  children?: never
 }
 
 export class TableListItemEvent extends BaseComponent<DotTableEventProps> {
   render() {
     let { props, context } = this
-    let timeFormat = context.options.eventTimeFormat || DEFAULT_TABLE_EVENT_TIME_FORMAT
+    let { options } = context
+    let { seg } = props
+    let timeFormat = options.eventTimeFormat || DEFAULT_TABLE_EVENT_TIME_FORMAT
     let timeText = buildSegTimeText(
-      props.seg,
+      seg,
       timeFormat,
       context,
       true,
@@ -33,44 +35,32 @@ export class TableListItemEvent extends BaseComponent<DotTableEventProps> {
     )
 
     return (
-      <EventRoot
-        seg={props.seg}
+      <EventContainer
+        {...props}
+        elTag="a"
+        elClasses={['fc-daygrid-event', 'fc-daygrid-dot-event']}
+        elAttrs={getSegAnchorAttrs(props.seg, context)}
+        defaultGenerator={renderInnerContent}
         timeText={timeText}
-        defaultContent={renderInnerContent}
-        isDragging={props.isDragging}
         isResizing={false}
         isDateSelecting={false}
-        isSelected={props.isSelected}
-        isPast={props.isPast}
-        isFuture={props.isFuture}
-        isToday={props.isToday}
-      >
-        {(rootElRef, classNames, innerElRef, innerContent) => ( // we don't use styles!
-          <a
-            className={['fc-daygrid-event', 'fc-daygrid-dot-event'].concat(classNames).join(' ')}
-            ref={rootElRef}
-            {...getSegAnchorAttrs(props.seg, context)}
-          >
-            {innerContent}
-          </a>
-        )}
-      </EventRoot>
+      />
     )
   }
 }
 
-function renderInnerContent(innerProps: EventContentArg) {
+function renderInnerContent(renderProps: EventContentArg) {
   return (
     <Fragment>
       <div
         className="fc-daygrid-event-dot"
-        style={{ borderColor: innerProps.borderColor || innerProps.backgroundColor }}
+        style={{ borderColor: renderProps.borderColor || renderProps.backgroundColor }}
       />
-      {innerProps.timeText && (
-        <div className="fc-event-time">{innerProps.timeText}</div>
+      {renderProps.timeText && (
+        <div className="fc-event-time">{renderProps.timeText}</div>
       )}
       <div className="fc-event-title">
-        {innerProps.event.title || <Fragment>&nbsp;</Fragment>}
+        {renderProps.event.title || <Fragment>&nbsp;</Fragment>}
       </div>
     </Fragment>
   )

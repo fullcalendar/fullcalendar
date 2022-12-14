@@ -1,7 +1,5 @@
+import { Duration, CssDimValue } from '@fullcalendar/core'
 import {
-  createElement,
-  createRef,
-  VNode,
   DateComponent,
   DateProfile,
   EventStore,
@@ -14,13 +12,16 @@ import {
   DateEnv,
   DateMarker,
   NowTimer,
-  CssDimValue,
-  Duration,
-} from '@fullcalendar/common'
-import { TimeCols } from './TimeCols'
-import { TimeSlatMeta } from './time-slat-meta'
-import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { DayTimeColsSlicer } from './DayTimeColsSlicer'
+} from '@fullcalendar/core/internal'
+import {
+  createElement,
+  createRef,
+  VNode,
+} from '@fullcalendar/core/preact'
+import { TimeCols } from './TimeCols.js'
+import { TimeSlatMeta } from './time-slat-meta.js'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
+import { DayTimeColsSlicer } from './DayTimeColsSlicer.js'
 
 export interface DayTimeColsProps {
   dateProfile: DateProfile

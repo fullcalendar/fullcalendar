@@ -1,16 +1,16 @@
+import { EventRenderRange } from '@fullcalendar/core'
 import {
   SegHierarchy,
   SegRect,
   SegEntry,
   SegInsertion,
   buildEntryKey,
-  EventRenderRange,
   intersectRanges,
   addDays,
   DayTableCell,
   intersectSpans,
-} from '@fullcalendar/common'
-import { TableSeg } from './TableSeg'
+} from '@fullcalendar/core/internal'
+import { TableSeg } from './TableSeg.js'
 
 export interface TableSegPlacement {
   seg: TableSeg

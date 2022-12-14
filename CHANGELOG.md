@@ -1,9 +1,93 @@
 
+v6.0.0 (2022-12-13)
+-------------------
+
+[V6 Release Notes and Upgrade Guide](https://fullcalendar.io/docs/v6/upgrading-from-v5)
+
+Changes since final beta:
+
+- FIX: certain ng-template names don't work ([angular-426])
+- FIX: minify CSS that is embedded into JS files
+- FIX: more informational README files in published packages
+- FIX: daygrid events sometimes not correctly positioned with Vue connectors
+- BREAKING: @fullcalendar/icalendar now has ical.js peer dependency
+
+[angular-426]: https://github.com/fullcalendar/fullcalendar-angular/issues/426
+
+
+v6.0.0-beta.4 (2022-12-07)
+--------------------------
+
+Standard/Premium:
+
+- FIX: jsDelivr default URLs have wrong mime type (#7045)
+- FIX: Unmet peer dependency "moment" warning from moment-timezone (#6839)
+- FIX: fullcalendar and fullcalendar-scheduler packages accidentally include sourcemaps
+
+Angular:
+
+- FIX: BrowserModule incompatible with lazy-loaded module ([angular-423])
+- FIX: Inputs should accept undefined/null for compatibility with async ([angular-424])
+- FIX: content-injections bugs with drag-n-drop and rerendering
+
+Vue:
+
+- FIX: Remove global js 'default' from export maps (#7047)
+- FIX: content-injections bugs with drag-n-drop and rerendering
+
+React:
+
+- FIX: Remove global js 'default' from export maps (#7047)
+
+[angular-423]: https://github.com/fullcalendar/fullcalendar-angular/issues/423
+[angular-424]: https://github.com/fullcalendar/fullcalendar-angular/issues/424
+
+
+v6.0.0-beta.3 (2022-12-01)
+--------------------------
+
+Bugfixes:
+- Wrong typing for events function and errorCallback (#7039)
+- Error with global bundle and individual global locales (#7033)
+- Fix package.json lint warnings (#7038)
+- Fixes in React/Angular connectors (see individual changelogs)
+
+
+v6.0.0-beta.2 (2022-11-22)
+--------------------------
+
+See https://fullcalendar.io/docs/v6/upgrading-from-v5
+
+
 v5.11.3 (2022-08-23)
 --------------------
 
 - fixed: timeline view (without resources) problem with expanding height (#5792)
 - fixed: locales not working in IE11 (#6790)
+
+
+v6.0.0-beta.1 (2022-08-03)
+--------------------------
+
+FullCalendar no longer attempts to import .css files. Instead, FullCalendar's JS is responsible for
+injecting its own CSS. This solves many issues with third party libraries:
+
+- *Webpack*: no longer necessary to use css-loader
+  (see [example project][webpack-css-hack])
+- *Rollup*: no longer necessary to use a css-processing plugin (like postcss)
+  (see [example project][rollup-css-hack])
+- *NextJS*: no longer necessary to ignore and manually import .css files
+  (see [example project][next-css-hack], #6674)
+- *Angular 14* is incompatible with FullCalendar v5 ([see ticket][angular-css-bug]). FullCalendar v6
+  restores support for Angular 14 and above, but does so via a completely different package. Please
+  use the new FullCalendar Web Component package (`@fullcalendar/web-component`), which can
+  integrate with Angular via the [method described here][angular-web-components].
+
+[webpack-css-hack]: https://github.com/fullcalendar/fullcalendar-example-projects/blob/10fe58abfc94457c7582af3948b3764cd17e7960/webpack/webpack.config.js
+[rollup-css-hack]: https://github.com/fullcalendar/fullcalendar-example-projects/blob/10fe58abfc94457c7582af3948b3764cd17e7960/rollup/rollup.config.js
+[next-css-hack]: https://github.com/fullcalendar/fullcalendar-example-projects/tree/10fe58abfc94457c7582af3948b3764cd17e7960/next
+[angular-css-bug]: https://github.com/fullcalendar/fullcalendar-angular/issues/403
+[angular-web-components]: https://coryrylan.com/blog/using-web-components-in-angular
 
 
 v5.11.2 (2022-07-26)
@@ -923,7 +1007,7 @@ v2.9.0 (2016-07-10)
 -------------------
 
 - Setters for (almost) all options (#564).
-  See [docs](http://fullcalendar.io/docs/utilities/dynamic_options/) for more info.
+  See [docs](https://fullcalendar.io/docs/utilities/dynamic_options/) for more info.
 - Travis CI improvements (#3266)
 
 

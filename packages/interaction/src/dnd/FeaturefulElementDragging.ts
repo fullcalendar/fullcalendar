@@ -5,10 +5,10 @@ import {
   preventContextMenu,
   allowContextMenu,
   ElementDragging,
-} from '@fullcalendar/common'
-import { PointerDragging } from './PointerDragging'
-import { ElementMirror } from './ElementMirror'
-import { AutoScroller } from './AutoScroller'
+} from '@fullcalendar/core/internal'
+import { PointerDragging } from './PointerDragging.js'
+import { ElementMirror } from './ElementMirror.js'
+import { AutoScroller } from './AutoScroller.js'
 
 /*
 Monitors dragging on an element. Has a number of high-level features:
