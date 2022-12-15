@@ -1,16 +1,18 @@
+import { CssDimValue } from '@fullcalendar/core'
+import {
+  BaseComponent,
+  RefMap,
+  PositionCache,
+  DateProfile,
+} from '@fullcalendar/core/internal'
 import {
   createElement,
   VNode,
-  BaseComponent,
-  RefMap,
-  CssDimValue,
   createRef,
-  PositionCache,
-  DateProfile,
-} from '@fullcalendar/common'
-import { TimeSlatMeta } from './time-slat-meta'
-import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { TimeColsSlatsBody } from './TimeColsSlatsBody'
+} from '@fullcalendar/core/preact'
+import { TimeSlatMeta } from './time-slat-meta.js'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
+import { TimeColsSlatsBody } from './TimeColsSlatsBody.js'
 
 export interface TimeColsSlatsProps extends TimeColsSlatsContentProps {
   dateProfile: DateProfile

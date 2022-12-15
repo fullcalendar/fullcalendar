@@ -1,21 +1,18 @@
 {
   "private": true,
-  "name": "fullcalendar-workspace",
-  "version": "5.11.3",
-  "title": "FullCalendar",
-  "description": "Full-sized drag & drop event calendar",
+  "name": "@fullcalendar/standard-features",
+  "version": "0.0.0",
   "keywords": [
     "calendar",
     "event",
-    "full-sized"
+    "full-sized",
+    "fullcalendar"
   ],
-  "homepage": "https://fullcalendar.io/",
-  "docs": "https://fullcalendar.io/docs",
+  "homepage": "https://fullcalendar.io",
   "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fullcalendar/fullcalendar.git",
-    "homepage": "https://github.com/fullcalendar/fullcalendar"
+    "url": "https://github.com/fullcalendar/fullcalendar.git"
   },
   "license": "MIT",
   "author": {
@@ -24,100 +21,31 @@
     "url": "http://arshaw.com/"
   },
   "copyright": "2022 Adam Shaw",
-  "workspaces": [
-    "packages/*",
-    "packages-premium/*",
-    "packages-contrib",
-    "example-projects"
-  ],
-  "scripts": {
-    "preinstall": "node ./scripts/ensure-yarn.js",
-    "build": "gulp build",
-    "watch": "gulp watch",
-    "contrib:ci": "cd packages-contrib && yarn workspaces foreach run ci",
-    "contrib:build": "cd packages-contrib && yarn workspaces foreach run build",
-    "example:build": "cd example-projects && yarn workspaces foreach run build",
-    "example:lint": "node ./scripts/example-lint.js",
-    "example:open": "./scripts/example-open.sh",
-    "clean": "./scripts/clean.sh",
-    "lint": "gulp lint",
-    "lintBuilt": "gulp lintBuilt",
-    "lintExamples": "node ./scripts/example-lint.js",
-    "eslint:dir": "node ./scripts/eslint-dir.js",
-    "test": "gulp test",
-    "test:ci": "gulp testCi",
-    "archive": "gulp archive",
-    "ci:all": "./scripts/ci-all.sh",
-    "update-readmes": "node ./scripts/update-readmes.js",
-    "update-licenses": "node ./scripts/update-licenses.js",
-    "update-package-jsons": "node ./scripts/update-package-jsons.js",
-    "preversion": "./scripts/update-example-dates.sh && yarn run clean",
-    "xxxversion": "yarn run ci && yarn run archive",
-    "xxxpostversion": "echo 'EXEC: git push --recurse-submodules=on-demand' && echo 'STILL NEED TO PUSH ALL TAGS'"
-  },
   "devDependencies": {
-    "@arshaw/postcss-calc": "^7.0.2",
-    "@arshaw/postcss-custom-properties": "^9.1.1",
-    "@rollup/plugin-alias": "^3.1.1",
-    "@rollup/plugin-node-resolve": "^8.4.0",
-    "@rollup/plugin-replace": "^2.3.3",
-    "@types/luxon": "^1.12.0",
-    "@types/node": "^12.12.14",
-    "@typescript-eslint/eslint-plugin": "^4.4.1",
-    "@typescript-eslint/parser": "^4.6.1",
-    "@yarnpkg/pnpify": "^2.4.0",
-    "autoprefixer": "^9.8.4",
-    "chokidar": "^2.1.5",
-    "concurrently": "^4.1.1",
-    "css-loader": "^4.3.0",
-    "dragula": "^3.7.2",
-    "esbuild": "^0.15.5",
-    "eslint": "^7.24.0",
-    "eslint-config-airbnb-typescript": "^12.0.0",
-    "eslint-import-resolver-node": "^0.3.4",
-    "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-jsx-a11y": "^6.3.1",
-    "eslint-plugin-react": "^7.20.3",
-    "eslint-plugin-react-hooks": "^4.0.8",
-    "globby": "^11.0.1",
-    "gulp": "^4.0.2",
-    "gulp-cssmin": "^0.2.0",
-    "gulp-modify-file": "^1.0.1",
-    "gulp-rename": "^1.4.0",
-    "gulp-replace": "^1.0.0",
-    "gulp-terser": "^1.2.0",
-    "gulp-zip": "^5.0.0",
-    "handlebars": "^4.1.2",
-    "jasmine-core": "2.5.2",
-    "karma": "^6.3.2",
-    "karma-chrome-launcher": "^3.1.0",
-    "karma-jasmine": "^4.0.1",
-    "karma-sourcemap-loader": "^0.3.8",
-    "karma-verbose-reporter": "0.0.6",
-    "luxon": "^1.22.0",
-    "mini-css-extract-plugin": "^1.2.0",
-    "moment": "^2.29.1",
-    "moment-locales-webpack-plugin": "^1.2.0",
-    "moment-timezone": "^0.5.31",
-    "moment-timezone-data-webpack-plugin": "^1.3.0",
-    "postcss": "^7.0.30",
-    "postcss-advanced-variables": "^3.0.1",
-    "postcss-comment": "^2.0.0",
-    "postcss-loader": "^3.0.0",
-    "postcss-nesting": "^7.0.1",
-    "react": "^18.0.0",
-    "rollup": "^2.49.0",
-    "rollup-plugin-dts": "^3.0.2",
-    "rollup-plugin-esbuild": "^4.9.3",
-    "rollup-plugin-postcss": "^3.1.3",
-    "rollup-plugin-sourcemaps": "^0.6.2",
-    "semver": "^7.3.2",
-    "source-map-loader": "^1.1.1",
-    "style-loader": "^2.0.0",
-    "stylelint": "^13.6.1",
-    "ts-loader": "^7.0.4",
-    "typescript": "^4.3.2",
-    "webpack": "^5.38.1",
-    "webpack-cli": "^4.1.0"
+    "@fullcalendar/standard-scripts": "*"
+  },
+  "scripts": {
+    "postinstall": "standard-scripts postinstall",
+    "lint": "standard-scripts lint",
+    "build": "standard-scripts build",
+    "dev": "standard-scripts dev",
+    "test": "standard-scripts test",
+    "test:dev": "standard-scripts test --dev",
+    "clean": "standard-scripts clean",
+    "ci": "pnpm run lint && pnpm run build && pnpm run test"
+  },
+  "type": "module",
+  "engines": {
+    "pnpm": ">=7.9.5"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowAny": [
+        "postcss"
+      ]
+    },
+    "patchedDependencies": {
+      "jasmine-jquery@2.1.1": "scripts/patches/jasmine-jquery@2.1.1.patch"
+    }
   }
 }

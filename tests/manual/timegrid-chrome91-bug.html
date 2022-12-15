@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<script src='../../bundle/dist/index.global.js'></script>
+<script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'timeGridWeek',
+      allDaySlot: false,
+      slotDuration: '00:10',
+      slotLabelInterval: '00:30',
+
+      timeZone: 'UTC',
+      editable: true,
+      initialDate: '2021-06-02',
+      events: [
+        {
+          resourceId: 'a',
+          title: 'Timed Event',
+          start: '2021-06-02T16:00:00+00:00'
+        },
+        {
+          resourceId: 'b',
+          title: 'Conference',
+          start: '2021-06-02'
+        },
+        {
+          resourceId: 'c',
+          title: 'Meeting',
+          start: '2021-06-02T10:30:00+00:00',
+          end: '2021-06-02T12:30:00+00:00'
+        },
+        {
+          resourceId: 'a',
+          title: 'Lunch',
+          start: '2021-06-02T12:00:00+00:00'
+        }
+      ]
+    });
+
+    calendar.render();
+  });
+
+</script>
+<style>
+
+  body {
+    margin: 40px 10px;
+    padding: 0;
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 14px;
+  }
+
+  #calendar {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* required to cause the bug
+  .fc-theme-standard td {
+    border: none !important;
+  }
+  .fc-theme-standard th {
+    border: none !important;
+  }
+  */
+
+  /* CSS-only fix
+  .fc-scrollgrid-section-liquid {
+    height: 1px !important;
+  }
+  */
+
+</style>
+</head>
+<body>
+
+  <div id='calendar'></div>
+
+</body>
+</html>

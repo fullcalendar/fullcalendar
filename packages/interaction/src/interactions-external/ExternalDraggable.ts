@@ -1,6 +1,6 @@
-import { BASE_OPTION_DEFAULTS, PointerDragEvent } from '@fullcalendar/common'
-import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
-import { ExternalElementDragging, DragMetaGenerator } from './ExternalElementDragging'
+import { BASE_OPTION_DEFAULTS, PointerDragEvent } from '@fullcalendar/core/internal'
+import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'
+import { ExternalElementDragging, DragMetaGenerator } from './ExternalElementDragging.js'
 
 export interface ExternalDraggableSettings {
   eventData?: DragMetaGenerator

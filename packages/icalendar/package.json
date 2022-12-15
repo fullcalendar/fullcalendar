@@ -1,30 +1,49 @@
 {
   "name": "@fullcalendar/icalendar",
-  "version": "5.11.3",
+  "version": "6.0.0",
   "title": "FullCalendar iCalendar Plugin",
-  "description": "Fetch events from a public iCalendar / .ics feed",
-  "docs": "https://fullcalendar.io/docs/icalendar",
-  "dependencies": {
-    "@fullcalendar/common": "workspace:~5.11.3",
-    "ical.js": "^1.4.0",
-    "tslib": "^2.1.0"
+  "description": "Display events from a public iCalendar feed",
+  "keywords": [
+    "icalendar",
+    "ics"
+  ],
+  "homepage": "https://fullcalendar.io/docs/icalendar",
+  "peerDependencies": {
+    "@fullcalendar/core": "~6.0.0",
+    "ical.js": "^1.4.0"
   },
-  "main": "main.cjs.js",
-  "module": "main.js",
-  "types": "main.d.ts",
-  "jsdelivr": "main.global.min.js",
-  "browserGlobal": "FullCalendarICalendar",
-  "homepage": "https://fullcalendar.io/",
-  "bugs": "https://fullcalendar.io/reporting-bugs",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fullcalendar/fullcalendar.git",
-    "homepage": "https://github.com/fullcalendar/fullcalendar"
+  "devDependencies": {
+    "@fullcalendar/core": "~6.0.0",
+    "@fullcalendar/standard-scripts": "*",
+    "ical.js": "^1.4.0"
   },
-  "license": "MIT",
-  "author": {
-    "name": "NJ Pearman",
-    "email": "n.pearman@gmail.com",
-    "url": "https://github.com/njpearman/"
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint ."
+  },
+  "type": "module",
+  "tsConfig": {
+    "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
+    "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist/.tsout"
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  },
+  "buildConfig": {
+    "exports": {
+      ".": { "iife": true }
+    },
+    "iifeGlobals": {
+      ".": "FullCalendar.ICalendar",
+      "ical.js": "ICAL"
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
   }
 }

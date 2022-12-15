@@ -1,8 +1,36 @@
 
 # FullCalendar Google Calendar Plugin
 
-Fetch events from a public Google Calendar feed
+Display events from a public [Google Calendar feed](https://support.google.com/calendar/answer/37648?hl=en)
 
-[View the docs &raquo;](https://fullcalendar.io/docs/google-calendar)
+## Installation
 
-This package was created from the [FullCalendar monorepo &raquo;](https://github.com/fullcalendar/fullcalendar)
+Install the FullCalendar core package, the Google Calendar plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
+
+```sh
+npm install @fullcalendar/core @fullcalendar/google-calendar @fullcalendar/daygrid
+```
+
+## Usage
+
+Instantiate a Calendar with the necessary plugin:
+
+```js
+import { Calendar } from '@fullcalendar/core'
+import googleCalendarPlugin from '@fullcalendar/google-calendar'
+import dayGridPlugin from '@fullcalendar/daygrid'
+
+const calendarEl = document.getElementById('calendar')
+const calendar = new Calendar(calendarEl, {
+  plugins: [
+    googleCalendarPlugin,
+    dayGridPlugin
+  ],
+  initialView: 'dayGridMonth',
+  events: {
+    googleCalendarId: 'abcd1234@group.calendar.google.com'
+  }
+})
+
+calendar.render()
+```

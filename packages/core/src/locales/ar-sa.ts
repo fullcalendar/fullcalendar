@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'ar-sa',

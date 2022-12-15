@@ -1,29 +1,31 @@
+import { CssDimValue } from '@fullcalendar/core'
 import {
   EventSegUiInteractionState,
-  VNode,
   DateComponent,
-  createElement,
   PositionCache,
   RefMap,
-  CssDimValue,
   DateRange,
   getSegMeta,
   DateProfile,
-  Fragment,
   BgEvent,
   renderFill,
   isPropsEqual,
-  createRef,
   buildEventRangeKey,
   sortEventSegs,
   DayTableCell,
-} from '@fullcalendar/common'
-import { TableSeg, splitSegsByFirstCol } from './TableSeg'
-import { TableCell } from './TableCell'
-import { TableListItemEvent } from './TableListItemEvent'
-import { TableBlockEvent } from './TableBlockEvent'
-import { computeFgSegPlacement, TableSegPlacement } from './event-placement'
-import { hasListItemDisplay } from './event-rendering'
+} from '@fullcalendar/core/internal'
+import {
+  VNode,
+  createElement,
+  Fragment,
+  createRef,
+} from '@fullcalendar/core/preact'
+import { TableSeg, splitSegsByFirstCol } from './TableSeg.js'
+import { TableCell } from './TableCell.js'
+import { TableListItemEvent } from './TableListItemEvent.js'
+import { TableBlockEvent } from './TableBlockEvent.js'
+import { computeFgSegPlacement, TableSegPlacement } from './event-placement.js'
+import { hasListItemDisplay } from './event-rendering.js'
 
 // TODO: attach to window resize?
 
@@ -127,7 +129,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               eventSelection={props.eventSelection}
               eventDrag={props.eventDrag}
               eventResize={props.eventResize}
-              extraHookProps={cell.extraHookProps}
+              extraRenderProps={cell.extraRenderProps}
               extraDataAttrs={cell.extraDataAttrs}
               extraClassNames={cell.extraClassNames}
               extraDateSpan={cell.extraDateSpan}
@@ -157,6 +159,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
   componentDidMount() {
     this.updateSizing(true)
+    this.context.addResizeHandler(this.handleResize)
   }
 
   componentDidUpdate(prevProps: TableRowProps, prevState: TableRowState) {
@@ -165,6 +168,16 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     this.updateSizing(
       !isPropsEqual(prevProps, currentProps),
     )
+  }
+
+  componentWillUnmount() {
+    this.context.removeResizeHandler(this.handleResize)
+  }
+
+  handleResize = (isForced: boolean) => {
+    if (isForced) {
+      this.updateSizing(true) // isExternal=true
+    }
   }
 
   getHighlightSegs(): TableSeg[] {

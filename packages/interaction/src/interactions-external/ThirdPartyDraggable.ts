@@ -1,5 +1,5 @@
-import { ExternalElementDragging, DragMetaGenerator } from './ExternalElementDragging'
-import { InferredElementDragging } from './InferredElementDragging'
+import { ExternalElementDragging, DragMetaGenerator } from './ExternalElementDragging.js'
+import { InferredElementDragging } from './InferredElementDragging.js'
 
 export interface ThirdPartyDraggableSettings {
   eventData?: DragMetaGenerator

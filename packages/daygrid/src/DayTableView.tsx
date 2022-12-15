@@ -1,5 +1,4 @@
 import {
-  createElement, createRef,
   DayHeader,
   DateProfileGenerator,
   DateProfile,
@@ -7,9 +6,10 @@ import {
   DaySeriesModel,
   DayTableModel,
   ChunkContentCallbackArgs,
-} from '@fullcalendar/common'
-import { TableView } from './TableView'
-import { DayTable } from './DayTable'
+} from '@fullcalendar/core/internal'
+import { createElement, createRef } from '@fullcalendar/core/preact'
+import { TableView } from './TableView.js'
+import { DayTable } from './DayTable.js'
 
 export class DayTableView extends TableView {
   private buildDayTableModel = memoize(buildDayTableModel)

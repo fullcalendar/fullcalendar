@@ -1,6 +1,7 @@
-import { createElement, BaseComponent } from '@fullcalendar/common'
-import { TimeColsAxisCell } from './TimeColsAxisCell'
-import { TimeSlatMeta } from './time-slat-meta'
+import { BaseComponent } from '@fullcalendar/core/internal'
+import { createElement } from '@fullcalendar/core/preact'
+import { TimeColsAxisCell } from './TimeColsAxisCell.js'
+import { TimeSlatMeta } from './time-slat-meta.js'
 
 /* Thin Axis
 ------------------------------------------------------------------------------------------------------------------*/

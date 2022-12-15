@@ -1,10 +1,7 @@
+import { CssDimValue } from '@fullcalendar/core'
 import {
   EventSegUiInteractionState,
-  VNode,
   DateComponent,
-  RefObject,
-  CssDimValue,
-  createElement,
   PositionCache,
   memoize,
   addDays,
@@ -13,12 +10,17 @@ import {
   NowTimer,
   DateMarker,
   DateProfile,
-  Fragment,
   Hit,
   DayTableCell,
-} from '@fullcalendar/common'
-import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg'
-import { TableRow } from './TableRow'
+} from '@fullcalendar/core/internal'
+import {
+  VNode,
+  RefObject,
+  createElement,
+  Fragment,
+} from '@fullcalendar/core/preact'
+import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg.js'
+import { TableRow } from './TableRow.js'
 
 export interface TableProps {
   dateProfile: DateProfile

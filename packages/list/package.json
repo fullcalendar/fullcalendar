@@ -1,32 +1,47 @@
 {
   "name": "@fullcalendar/list",
-  "version": "5.11.3",
+  "version": "6.0.0",
   "title": "FullCalendar List View Plugin",
-  "description": "View your events as a bulleted list",
-  "docs": "https://fullcalendar.io/docs/list-view",
-  "dependencies": {
-    "@fullcalendar/common": "workspace:~5.11.3",
-    "tslib": "^2.1.0"
-  },
-  "main": "main.cjs.js",
-  "module": "main.js",
-  "types": "main.d.ts",
-  "jsdelivr": "main.global.min.js",
-  "browserGlobal": "FullCalendarList",
-  "homepage": "https://fullcalendar.io/",
-  "bugs": "https://fullcalendar.io/reporting-bugs",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fullcalendar/fullcalendar.git",
-    "homepage": "https://github.com/fullcalendar/fullcalendar"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Adam Shaw",
-    "email": "arshaw@arshaw.com",
-    "url": "http://arshaw.com/"
+  "description": "Display events on a calendar view that looks like a bulleted list",
+  "keywords": [
+    "list-view"
+  ],
+  "homepage": "https://fullcalendar.io/docs/list-view",
+  "peerDependencies": {
+    "@fullcalendar/core": "~6.0.0"
   },
   "devDependencies": {
-    "@fullcalendar/core-preact": "workspace:*"
+    "@fullcalendar/core": "~6.0.0",
+    "@fullcalendar/standard-scripts": "*"
+  },
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint ."
+  },
+  "type": "module",
+  "tsConfig": {
+    "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
+    "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist/.tsout"
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  },
+  "buildConfig": {
+    "exports": {
+      ".": { "iife": true },
+      "./internal": {}
+    },
+    "iifeGlobals": {
+      ".": "FullCalendar.List",
+      "./internal": "FullCalendar.List.Internal"
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
   }
 }

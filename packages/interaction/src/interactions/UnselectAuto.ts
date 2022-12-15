@@ -1,12 +1,12 @@
+import { DateSelectionApi } from '@fullcalendar/core'
 import {
-  DateSelectionApi,
   PointerDragEvent,
   elementClosest,
   CalendarContext,
   getEventTargetViaRoot,
-} from '@fullcalendar/common'
-import { PointerDragging } from '../dnd/PointerDragging'
-import { EventDragging } from './EventDragging'
+} from '@fullcalendar/core/internal'
+import { PointerDragging } from '../dnd/PointerDragging.js'
+import { EventDragging } from './EventDragging.js'
 
 export class UnselectAuto {
   documentPointer: PointerDragging // for unfocusing
