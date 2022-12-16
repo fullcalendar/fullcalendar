@@ -1,16 +1,27 @@
-name: Feature request
+name: Feature Request
 description: Suggest an idea you want implemented
 body:
   - type: checkboxes
     id: confirmations
     attributes:
       label: Checklist
-      description:
       options:
         - label: I've already searched through [existing tickets](https://github.com/fullcalendar/fullcalendar/issues)
           required: true
         - label: Other people will find this feature useful
           required: true
+  - type: dropdown
+    id: connector
+    attributes:
+      label: Is this feature for a specific connector?
+      options:
+        - No connector in particular
+        - React
+        - Angular
+        - Vue
+        - Other
+    validations:
+      required: true
   - type: textarea
     id: description
     attributes:
@@ -22,4 +33,4 @@ body:
     id: mockup
     attributes:
       label: Visual Mockups
-      description: If you are requesting a new UI, please include a mockup.
+      description: If you are requesting a new UI, drag a screenshot into the area below.

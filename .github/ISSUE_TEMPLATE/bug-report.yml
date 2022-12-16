@@ -1,42 +1,41 @@
-name: Bug report
+name: Bug Report
 description: Report something that doesn't work correctly
 body:
   - type: input
     id: reduced-test-case
     attributes:
       label: Reduced Test Case
-      description: |
-        You must paste a link to a [REDUCED TEST CASE](https://fullcalendar.io/reduced-test-cases).
-        Take a look at the [DEBUG TEMPLATES](https://fullcalendar.io/reduced-test-cases).
-      placeholder: Your reduced test case URL
+      description: >
+        A [reduced test case](https://css-tricks.com/reduced-test-cases/) is required.
+        A [debugging template]Ihttps://fullcalendar.io/reduced-test-cases) will help you get started.
+      placeholder: URL of reduced test case
     validations:
       required: true
   - type: checkboxes
     id: reduced-test-case-confirmation
     attributes:
-      label: Importance of Reduced Test Case
-      description:
+      description: >
+        Do you understand that if a reduced test case is not provided,
+        we will intentionally delay triaging of your ticket?
       options:
-        - label: |
-            I understand that if I do not provode a RUNNABLE reduced test case,
-            triaging of my ticket will be delayed a week.
+        - label: I understand
           required: true
-  - type: checkboxes
-    id: connectors
+  - type: dropdown
+    id: connector
     attributes:
       label: Which connector are you using?
       options:
-        - label: No connector (vanilla JS)
-        - label: React
-        - label: Angular
-        - label: Vue
+        - No connector (vanilla JS)
+        - React
+        - Angular
+        - Vue
     validations:
       required: true
   - type: textarea
     id: description
     attributes:
       label: Bug Description
-      description: |
+      description: >
         Describe how to recreate the bug.
         What do you expect to happen?
         What happens instead?
@@ -46,4 +45,4 @@ body:
     id: screenshot
     attributes:
       label: Screenshot
-      description: If the bug is visual, attach a screenshot.
+      description: If the bug is visual, drag a screenshot into the area below.
