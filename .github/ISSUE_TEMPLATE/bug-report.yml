@@ -14,7 +14,7 @@ body:
   - type: checkboxes
     id: reduced-test-case-confirmation
     attributes:
-      description: >
+      label: >
         Do you understand that if a reduced test case is not provided,
         we will intentionally delay triaging of your ticket?
       options:
