@@ -40,9 +40,10 @@ body:
         Describe how to recreate the bug.
         What do you expect to happen?
         What happens instead?
-      validations:
-        required: true
-  - type: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
     attributes:
       label: Screenshot
-      value: If the bug is visual, include a screenshot.
+      description: If the bug is visual, attach a screenshot.

@@ -16,11 +16,12 @@ body:
     attributes:
       label: Feature Description
       description: Please describe what this feature will do.
-      validations:
-        required: true
-  - type: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: mockup
     attributes:
       label: Visual Mockups
-      value: |
+      description: |
         If you are requesting a new UI, please include a mockup.
         If not, erase this section.
