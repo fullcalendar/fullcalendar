@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "@fullcalendar/standard-features",
+  "description": "Full-sized drag & drop event calendar in JavaScript",
   "version": "0.0.0",
   "keywords": [
     "calendar",
