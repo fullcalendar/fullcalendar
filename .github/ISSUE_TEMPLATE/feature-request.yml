@@ -10,16 +10,18 @@ body:
           required: true
         - label: Other people will find this feature useful
           required: true
-  - type: checkboxes
+  - type: dropdown
     id: connector
     attributes:
-      label: Is this feature for a specific connector?
+      label: Is this feature for a specific connector (React/Angular/etc)?
       options:
-        - label: No connector in particular
-        - label: React
-        - label: Angular
-        - label: Vue
-        - label: Other
+        - No connector in particular
+        - React
+        - Angular
+        - Vue
+        - Other
+    validations:
+      required: true
   - type: textarea
     id: description
     attributes:
