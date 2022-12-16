@@ -29,7 +29,7 @@ body:
       description: Please describe what this feature will do.
     validations:
       required: true
-  - type: textarea
+  - type: markdown
     id: mockup
     attributes:
       value: >
