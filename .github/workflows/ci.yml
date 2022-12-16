@@ -2,7 +2,7 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - main-nevermind
   pull_request:
     branches:
       - main
