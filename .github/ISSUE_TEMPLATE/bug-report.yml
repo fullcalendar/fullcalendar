@@ -20,15 +20,15 @@ body:
       options:
         - label: I understand
           required: true
-  - type: dropdown
+  - type: checkboxes
     id: connector
     attributes:
       label: Which connector are you using?
       options:
-        - No connector (vanilla JS)
-        - React
-        - Angular
-        - Vue
+        - label: No connector (vanilla JS)
+        - label: React
+        - label: Angular
+        - label: Vue
   - type: textarea
     id: description
     attributes:
