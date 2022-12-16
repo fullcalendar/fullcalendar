@@ -32,17 +32,17 @@ body:
         - Vue
     validations:
       required: true
-- type: textarea
-  id: description
-  attributes:
-    label: Bug Description
-    description: |
-      Describe how to recreate the bug.
-      What do you expect to happen?
-      What happens instead?
-    validations:
-      required: true
-- type: markdown
-  attributes:
-    label: Screenshot
-    value: If the bug is visual, include a screenshot.
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: |
+        Describe how to recreate the bug.
+        What do you expect to happen?
+        What happens instead?
+      validations:
+        required: true
+  - type: markdown
+    attributes:
+      label: Screenshot
+      value: If the bug is visual, include a screenshot.
