@@ -22,6 +22,4 @@ body:
     id: mockup
     attributes:
       label: Visual Mockups
-      description: |
-        If you are requesting a new UI, please include a mockup.
-        If not, erase this section.
+      description: If you are requesting a new UI, please include a mockup.

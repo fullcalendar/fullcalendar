@@ -21,7 +21,7 @@ body:
             I understand that if I do not provode a RUNNABLE reduced test case,
             triaging of my ticket will be delayed a week.
           required: true
-  - type: dropdown
+  - type: checkboxes
     id: connectors
     attributes:
       label: Which connector are you using?
