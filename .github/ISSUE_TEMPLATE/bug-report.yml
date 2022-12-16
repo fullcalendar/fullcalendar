@@ -26,10 +26,10 @@ body:
     attributes:
       label: Which connector are you using?
       options:
-        - No connector (vanilla JS)
-        - React
-        - Angular
-        - Vue
+        - label: No connector (vanilla JS)
+        - label: React
+        - label: Angular
+        - label: Vue
     validations:
       required: true
   - type: textarea
