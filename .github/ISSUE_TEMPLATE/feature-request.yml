@@ -1,0 +1,26 @@
+name: Feature request
+description: Suggest an idea you want implemented
+body:
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Checklist
+      description:
+      options:
+        - label: I've already searched through [existing tickets](https://github.com/fullcalendar/fullcalendar/issues)
+          required: true
+        - label: Other people will find this feature useful
+          required: true
+- type: textarea
+  id: description
+  attributes:
+    label: Feature Description
+    description: Please describe what this feature will do.
+    validations:
+      required: true
+- type: markdown
+  attributes:
+    label: Visual Mockups
+    value: |
+      If you are requesting a new UI, please include a mockup.
+      If not, erase this section.

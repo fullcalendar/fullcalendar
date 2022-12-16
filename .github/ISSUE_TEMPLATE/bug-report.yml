@@ -1,0 +1,48 @@
+name: Bug report
+description: Report something that doesn't work correctly
+body:
+  - type: input
+    id: reduced-test-case
+    attributes:
+      label: Reduced Test Case
+      description: |
+        You must paste a link to a [REDUCED TEST CASE](https://fullcalendar.io/reduced-test-cases).
+        Take a look at the [DEBUG TEMPLATES](https://fullcalendar.io/reduced-test-cases).
+      placeholder: Your reduced test case URL
+    validations:
+      required: true
+  - type: checkboxes
+    id: reduced-test-case-confirmation
+    attributes:
+      label: Importance of Reduced Test Case
+      description:
+      options:
+        - label: |
+            I understand that if I do not provode a RUNNABLE reduced test case,
+            triaging of my ticket will be delayed a week.
+          required: true
+  - type: dropdown
+    id: connectors
+    attributes:
+      label: Which connector are you using?
+      options:
+        - No connector (vanilla JS)
+        - React
+        - Angular
+        - Vue
+    validations:
+      required: true
+- type: textarea
+  id: description
+  attributes:
+    label: Bug Description
+    description: |
+      Describe how to recreate the bug.
+      What do you expect to happen?
+      What happens instead?
+    validations:
+      required: true
+- type: markdown
+  attributes:
+    label: Screenshot
+    value: If the bug is visual, include a screenshot.
