@@ -7,7 +7,7 @@ body:
       label: Reduced Test Case
       description: >
         A [reduced test case](https://css-tricks.com/reduced-test-cases/) is required.
-        A [debugging template]Ihttps://fullcalendar.io/reduced-test-cases) will help you get started.
+        A [debugging template](https://fullcalendar.io/reduced-test-cases) will help you get started.
       placeholder: URL of reduced test case
     validations:
       required: true
@@ -41,8 +41,9 @@ body:
         What happens instead?
     validations:
       required: true
-  - type: textarea
+  - type: markdown
     id: screenshot
     attributes:
-      label: Screenshot
-      description: If the bug is visual, drag a screenshot into the area below.
+      value: >
+        **Screenshot:**
+        If the bug is visual, drag a screenshot into the description above.

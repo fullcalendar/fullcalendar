@@ -32,5 +32,6 @@ body:
   - type: textarea
     id: mockup
     attributes:
-      label: Visual Mockups
-      description: If you are requesting a new UI, drag a screenshot into the area below.
+      value: >
+        **Visual Mockup:**
+        If you are requesting a new UI, drag some sort of mockup or screenshot into the area above.
