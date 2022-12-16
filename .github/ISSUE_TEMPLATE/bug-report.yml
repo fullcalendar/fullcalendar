@@ -29,8 +29,6 @@ body:
         - React
         - Angular
         - Vue
-    validations:
-      required: true
   - type: textarea
     id: description
     attributes:

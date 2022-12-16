@@ -20,8 +20,6 @@ body:
         - Angular
         - Vue
         - Other
-    validations:
-      required: true
   - type: textarea
     id: description
     attributes:
