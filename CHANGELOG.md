@@ -1,4 +1,21 @@
 
+v6.0.1 (2022-12-20)
+-------------------
+
+Standard/premium:
+
+- FIX: Property `type` does not exist on type `ViewApi` (#7056)
+- FIX: Expose `globalLocales` publicly for importing on-demand (#7057)
+
+React:
+
+- FIX: multi-day events rendered by eventContent are overlapping each other (#7089)
+
+Angular:
+
+- FIX: error with eventContent & list view (#7058)
+
+
 v6.0.0 (2022-12-13)
 -------------------
 
