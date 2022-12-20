@@ -3,6 +3,7 @@ import { CalendarApi } from './CalendarApi.js'
 export interface ViewApi {
   calendar: CalendarApi
 
+  type: string
   title: string
   activeStart: Date
   activeEnd: Date
