@@ -15,4 +15,7 @@ export { sliceEvents } from './View.js'
 export { EventRenderRange } from './component/event-rendering.js' // for sliceEvents
 export { JsonRequestError } from './util/requestJson.js'
 
+export { globalLocales } from './global-locales.js'
+export { globalPlugins } from './global-plugins.js'
+
 export const version: string = '<%= pkgVersion %>'

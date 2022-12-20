@@ -1,4 +1,4 @@
-import { globalLocales } from './internal.js'
+import { globalLocales } from './index.js'
 import localesAll from './locales-all.js'
 
 globalLocales.push(...localesAll)

@@ -1,4 +1,4 @@
-import { globalPlugins } from '@fullcalendar/core/internal'
+import { globalPlugins } from '@fullcalendar/core'
 import plugin from './index.js'
 import * as Internal from './internal.js'
 

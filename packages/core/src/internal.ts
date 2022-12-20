@@ -167,7 +167,6 @@ export type { eventDragMutationMassager, EventDropTransformers } from './interac
 export { ElementDragging } from './interactions/ElementDragging.js'
 
 export { config } from './global-config.js'
-export { globalLocales } from './global-locales.js'
 
 export type { RecurringType } from './structs/recurring-event.js'
 
@@ -242,7 +241,6 @@ export { getIsRtlScrollbarOnLeft } from './util/scrollbar-side.js'
 export { NowTimer } from './NowTimer.js'
 export type { ScrollRequest } from './ScrollResponder.js'
 export { ScrollResponder } from './ScrollResponder.js'
-export { globalPlugins } from './global-plugins.js'
 export type {
   CustomContentGenerator, DidMountHandler, WillUnmountHandler, MountArg,
 } from './common/render-hook.js'

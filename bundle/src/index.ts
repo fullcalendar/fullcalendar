@@ -1,4 +1,4 @@
-import { globalPlugins } from '@fullcalendar/core/internal'
+import { globalPlugins } from '@fullcalendar/core'
 import interactionPlugin from '@fullcalendar/interaction'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
