@@ -15,8 +15,27 @@ export default {
     day: 'Día',
     list: 'Axenda',
   },
+  buttonHints: {
+    prev: '$0 antes',
+    next: '$0 seguinte',
+    today(buttonText) {
+      return (buttonText === 'Día') ? 'Hoxe' :
+        ((buttonText === 'Semana') ? 'Esta' : 'Este') + ' ' + buttonText.toLocaleLowerCase()
+    },
+  },
+  viewHint(buttonText) {
+    return 'Vista ' + (buttonText === 'Semana' ? 'da' : 'do') + ' ' + buttonText.toLocaleLowerCase()
+  },
   weekText: 'Sm',
+  weekTextLong: 'Semana',
   allDayText: 'Todo o día',
   moreLinkText: 'máis',
+  moreLinkHint(eventCnt) {
+    return `Amosar ${eventCnt} eventos máis`
+  },
   noEventsText: 'Non hai eventos para amosar',
+  navLinkHint: 'Ir ao $0',
+  closeHint: 'Pechar',
+  timeHint: 'A hora',
+  eventHint: 'Evento',
 } as LocaleInput
