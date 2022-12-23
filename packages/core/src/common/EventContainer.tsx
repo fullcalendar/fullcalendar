@@ -1,4 +1,4 @@
-import { createElement, createRef } from '../preact.js'
+import { createElement } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
 import { Seg } from '../component/DateComponent.js'
 import { EventImpl } from '../api/EventImpl.js'
@@ -34,7 +34,7 @@ export type EventContainerProps = ElProps & MinimalEventProps & {
 }
 
 export class EventContainer extends BaseComponent<EventContainerProps> {
-  elRef = createRef<HTMLElement>()
+  el: HTMLElement
 
   render() {
     const { props, context } = this
@@ -67,7 +67,7 @@ export class EventContainer extends BaseComponent<EventContainerProps> {
     return (
       <ContentContainer
         {...props /* contains children */}
-        elRef={this.elRef}
+        elRef={this.handleEl}
         elClasses={[
           ...getEventClassNames(renderProps),
           ...seg.eventRange.ui.classNames,
@@ -83,15 +83,17 @@ export class EventContainer extends BaseComponent<EventContainerProps> {
     )
   }
 
-  componentDidMount() {
-    setElSeg(this.elRef.current, this.props.seg)
+  handleEl = (el: HTMLElement | null) => {
+    this.el = el
+
+    if (el) {
+      setElSeg(el, this.props.seg)
+    }
   }
 
   componentDidUpdate(prevProps: EventContainerProps): void {
-    let { seg } = this.props
-
-    if (seg !== prevProps.seg) {
-      setElSeg(this.elRef.current, seg)
+    if (this.el && this.props.seg !== prevProps.seg) {
+      setElSeg(this.el, this.props.seg)
     }
   }
 }
