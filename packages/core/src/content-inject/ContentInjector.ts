@@ -5,7 +5,7 @@ import { guid } from '../util/misc.js'
 import { isArraysEqual } from '../util/array.js'
 import { removeElement } from '../util/dom-manip.js'
 import { ViewOptions } from '../options.js'
-import { isPropsEqual } from '../util/object.js'
+import { isNonHandlerPropsEqual, isPropsEqual } from '../util/object.js'
 
 export type ElRef = Ref<HTMLElement>
 export type ElAttrs = JSX.HTMLAttributes & JSX.SVGAttributes & { ref?: ElRef } & Record<string, any>
@@ -135,7 +135,7 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
 ContentInjector.addPropsEquality({
   elClasses: isArraysEqual,
   elStyle: isPropsEqual,
-  elAttrs: isPropsEqual,
+  elAttrs: isNonHandlerPropsEqual,
   renderProps: isPropsEqual,
 })
 

@@ -1,4 +1,13 @@
 
+v6.0.1
+------
+
+React:
+
+- Re-rendering loop with navLink and dayCellContent (#7107)
+
+
+
 v6.0.1 (2022-12-20)
 -------------------
 

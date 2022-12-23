@@ -125,6 +125,20 @@ export function isPropsEqual(obj0, obj1) { // TODO: merge with compareObjs
   return true
 }
 
+const HANDLER_RE = /^on[A-Z]/
+
+export function isNonHandlerPropsEqual(obj0, obj1) {
+  const keys = getUnequalProps(obj0, obj1)
+
+  for (let key of keys) {
+    if (!HANDLER_RE.test(key)) {
+      return false
+    }
+  }
+
+  return true
+}
+
 export function getUnequalProps(obj0, obj1) {
   let keys: string[] = []
 
