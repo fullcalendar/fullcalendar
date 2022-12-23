@@ -3,17 +3,20 @@ import { LocaleInput } from '../index.js'
 export default {
   code: 'pt-br',
   buttonText: {
-    prev: 'Anterior',
-    next: 'Próximo',
-    today: 'Hoje',
-    month: 'Mês',
-    week: 'Semana',
-    day: 'Dia',
-    list: 'Lista',
+      prev: 'Anterior',
+      next: 'Próximo',
+      prevYear: 'Ano anterior',
+      nextYear: 'Próximo ano',
+      year: 'Ano',
+      today: 'Hoje',
+      month: 'Mês',
+      week: 'Semana',
+      day: 'Dia',
+      list: 'Lista',
   },
   buttonHints: {
-    prev: '$0 anterior',
-    next: '$0 seguinte',
+    prev: '$0 Anterior',
+    next: 'Próximo $0',
     today(buttonText) {
       return (buttonText === 'Dia') ? 'Hoje' :
         ((buttonText === 'Semana') ? 'Esta' : 'Este') + ' ' + buttonText.toLocaleLowerCase()
