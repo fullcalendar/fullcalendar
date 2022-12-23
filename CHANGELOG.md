@@ -2,10 +2,13 @@
 v6.0.1
 ------
 
+Standard/premium:
+
+- FIX: unable to resize an event smaller after initial resize (#7099)
+
 React:
 
-- Re-rendering loop with navLink and dayCellContent (#7107)
-
+- FIX: re-rendering loop error with navLink and dayCellContent (#7107)
 
 
 v6.0.1 (2022-12-20)

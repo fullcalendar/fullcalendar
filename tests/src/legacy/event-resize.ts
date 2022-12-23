@@ -353,6 +353,31 @@ describe('eventResize', () => {
           done()
         })
       })
+
+      // https://github.com/fullcalendar/fullcalendar/issues/7099
+      it('should handle two consecutive resizes', (done) => {
+        let calendar = initCalendar()
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
+        timeGridWrapper.resizeEvent(
+          timeGridWrapper.getFirstEventEl(),
+          '2014-06-11T07:00:00Z',
+          '2014-06-11T12:00:00Z',
+        ).then(() => {
+          let event = calendar.getEvents()[0]
+          expect(event.end).toEqualDate('2014-06-11T12:00:00Z')
+
+          timeGridWrapper.resizeEvent(
+            timeGridWrapper.getFirstEventEl(),
+            '2014-06-11T12:00:00Z',
+            '2014-06-11T09:00:00Z',
+          ).then(() => {
+            event = calendar.getEvents()[0]
+            expect(event.end).toEqualDate('2014-06-11T09:00:00Z')
+            done()
+          })
+        })
+      })
     })
 
     describe('when resizing a timed event without an end', () => {
