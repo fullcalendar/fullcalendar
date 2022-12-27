@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/web-component",
-  "version": "6.0.1",
+  "version": "6.0.2",
   "title": "FullCalendar Web Component",
   "description": "Custom Element for FullCalendar",
   "keywords": [
@@ -8,10 +8,10 @@
     "custom-element"
   ],
   "peerDependencies": {
-    "@fullcalendar/core": "~6.0.1"
+    "@fullcalendar/core": "~6.0.2"
   },
   "devDependencies": {
-    "@fullcalendar/core": "~6.0.1",
+    "@fullcalendar/core": "~6.0.2",
     "@fullcalendar/standard-scripts": "*"
   },
   "scripts": {

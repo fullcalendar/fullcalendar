@@ -16,7 +16,7 @@ Angular:
 
 Vue 2:
 
-- FIX: resource content-injection, when resource element destroyed, throws JS error (#7105)
+- FIX: resource content-injection, when resource element destroyed, throws JS error
 
 
 v6.0.1 (2022-12-20)
