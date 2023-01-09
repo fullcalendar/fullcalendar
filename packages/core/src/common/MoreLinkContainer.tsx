@@ -6,8 +6,8 @@ import { DateProfile } from '../DateProfileGenerator.js'
 import { Dictionary } from '../options.js'
 import { elementClosest, getUniqueDomId } from '../util/dom-manip.js'
 import { formatWithOrdinals } from '../util/misc.js'
-import { createElement, createRef, Fragment, ComponentChild, RefObject } from '../preact.js'
-import { BaseComponent } from '../vdom-util.js'
+import { createElement, Fragment, ComponentChild, RefObject } from '../preact.js'
+import { BaseComponent, setRef } from '../vdom-util.js'
 import { ViewApi } from '../api/ViewApi.js'
 import { ViewContext, ViewContextType } from '../ViewContext.js'
 import { MorePopover } from './MorePopover.js'
@@ -46,7 +46,7 @@ interface MoreLinkContainerState {
 }
 
 export class MoreLinkContainer extends BaseComponent<MoreLinkContainerProps, MoreLinkContainerState> {
-  private linkElRef = createRef<HTMLElement>()
+  private linkEl: HTMLElement
   private parentEl: HTMLElement
 
   state = {
@@ -81,11 +81,12 @@ export class MoreLinkContainer extends BaseComponent<MoreLinkContainerProps, Mor
               {Boolean(props.moreCnt) && (
                 <ContentContainer
                   elTag={props.elTag || 'a'}
-                  elRef={this.linkElRef}
+                  elRef={this.handleLinkEl}
                   elClasses={[
                     ...(props.elClasses || []),
                     'fc-more-link',
                   ]}
+                  elStyle={props.elStyle}
                   elAttrs={{
                     ...props.elAttrs,
                     ...createAriaClickAttrs(this.handleClick),
@@ -113,7 +114,7 @@ export class MoreLinkContainer extends BaseComponent<MoreLinkContainerProps, Mor
                   alignmentEl={
                     props.alignmentElRef ?
                       props.alignmentElRef.current :
-                      this.linkElRef.current
+                      this.linkEl
                   }
                   alignGridTop={props.alignGridTop}
                   onClose={this.handlePopoverClose}
@@ -136,9 +137,17 @@ export class MoreLinkContainer extends BaseComponent<MoreLinkContainerProps, Mor
     this.updateParentEl()
   }
 
+  handleLinkEl = (linkEl: HTMLElement | null) => {
+    this.linkEl = linkEl
+
+    if (this.props.elRef) {
+      setRef(this.props.elRef, linkEl)
+    }
+  }
+
   updateParentEl() {
-    if (this.linkElRef.current) {
-      this.parentEl = elementClosest(this.linkElRef.current, '.fc-view-harness')
+    if (this.linkEl) {
+      this.parentEl = elementClosest(this.linkEl, '.fc-view-harness')
     }
   }
 
