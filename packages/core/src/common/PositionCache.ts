@@ -99,4 +99,27 @@ export class PositionCache {
   getHeight(topIndex: number) {
     return this.bottoms[topIndex] - this.tops[topIndex]
   }
+
+  similarTo(otherCache: PositionCache) {
+    return similarNumArrays(this.tops || [], otherCache.tops || []) &&
+      similarNumArrays(this.bottoms || [], otherCache.bottoms || []) &&
+      similarNumArrays(this.lefts || [], otherCache.lefts || []) &&
+      similarNumArrays(this.rights || [], otherCache.rights || [])
+  }
+}
+
+function similarNumArrays(a: number[], b: number[]): boolean {
+  const len = a.length
+
+  if (len !== b.length) {
+    return false
+  }
+
+  for (let i = 0; i < len; i++) {
+    if (Math.round(a[i]) !== Math.round(b[i])) {
+      return false
+    }
+  }
+
+  return true
 }

@@ -318,7 +318,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   }
 
   updateSizing(isExternalSizingChange) {
-    let { props, frameElRefs } = this
+    let { props, state, frameElRefs } = this
 
     if (
       !props.forPrint &&
@@ -329,15 +329,23 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
         if (frameEls.length) {
           let originEl = this.rootElRef.current
+          let newPositionCache = new PositionCache(
+            originEl,
+            frameEls,
+            true, // isHorizontal
+            false,
+          )
 
-          this.setState({ // will trigger isCellPositionsChanged...
-            framePositions: new PositionCache(
-              originEl,
-              frameEls,
-              true, // isHorizontal
-              false,
-            ),
-          })
+          if (!state.framePositions || !state.framePositions.similarTo(newPositionCache)) {
+            this.setState({ // will trigger isCellPositionsChanged...
+              framePositions: new PositionCache(
+                originEl,
+                frameEls,
+                true, // isHorizontal
+                false,
+              ),
+            })
+          }
         }
       }
 
