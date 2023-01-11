@@ -7,8 +7,8 @@ export const transpiledExtension = '.js'
 export const assetExtensions = ['.css']
 
 // output
-export const esmExtension = '.js'
-export const cjsExtension = '.cjs'
+export const cjsExtension = '.js'
+export const esmExtension = '.esm.js'
 export const iifeSubextension = '.global' // always ends in .js
 
 // for consistent chunk names

@@ -52,6 +52,9 @@ const jsonPlugin = cjsInterop(jsonPluginLib)
 const postcssPlugin = cjsInterop(postcssPluginLib)
 const replacePlugin = cjsInterop(replacePluginLib)
 
+/*
+TODO: converge with buildCjsOptions and just have multiple outputs?
+*/
 export function buildEsmOptions(
   pkgBundleStruct: PkgBundleStruct,
   monorepoStruct: MonorepoStruct,
@@ -59,7 +62,7 @@ export function buildEsmOptions(
 ): RollupOptions {
   return {
     input: buildModuleInput(pkgBundleStruct),
-    plugins: buildModulePlugins(pkgBundleStruct, monorepoStruct, esmExtension, sourcemap),
+    plugins: buildModulePlugins(pkgBundleStruct, monorepoStruct, sourcemap),
     output: buildEsmOutputOptions(pkgBundleStruct, sourcemap),
     onwarn,
   }
@@ -72,7 +75,7 @@ export function buildCjsOptions(
 ): RollupOptions {
   return {
     input: buildModuleInput(pkgBundleStruct),
-    plugins: buildModulePlugins(pkgBundleStruct, monorepoStruct, cjsExtension, sourcemap),
+    plugins: buildModulePlugins(pkgBundleStruct, monorepoStruct, sourcemap),
     output: buildCjsOutputOptions(pkgBundleStruct, sourcemap),
     onwarn,
   }
@@ -239,7 +242,6 @@ function buildManualChunks(
 function buildModulePlugins(
   pkgBundleStruct: PkgBundleStruct,
   monorepoStruct: MonorepoStruct,
-  forceOurExtension: string,
   sourcemap: boolean,
 ): Plugin[] {
   const { pkgDir, entryStructMap } = pkgBundleStruct
@@ -255,7 +257,6 @@ function buildModulePlugins(
     }),
     externalizePkgsPlugin({
       pkgNames: ourPkgNames,
-      forceExtension: forceOurExtension,
     }),
     generatedContentPlugin(
       entryStructsToContentMap(entryStructMap),

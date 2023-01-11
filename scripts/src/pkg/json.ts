@@ -44,10 +44,6 @@ export async function writeDistPkgJson(
   for (const entryName in entryConfigMap) {
     const entrySubpath = entryName === '.' ? './index' : entryName
 
-    // inter-package imports in bundled js use explicit extensions to avoid format confusion
-    exportsMap[entrySubpath + cjsExtension] = entrySubpath + cjsExtension
-    exportsMap[entrySubpath + esmExtension] = entrySubpath + esmExtension
-
     exportsMap[entryName] = {
       types: entrySubpath.replace(/^\./, typesRoot) + '.d.ts', // tsc likes this first
       require: entrySubpath + cjsExtension,
@@ -60,9 +56,9 @@ export async function writeDistPkgJson(
     ...basePkgJson,
     ...pkgJson, // overrides base
     keywords: (basePkgJson.keywords || []).concat(pkgJson.keywords || []),
+    types: `${typesRoot}/index.d.ts`,
     main: './index' + cjsExtension,
     module: './index' + esmExtension,
-    types: `${typesRoot}/index.d.ts`,
     ...cdnFields.reduce(
       (props, cdnField) => Object.assign(props, {
         [cdnField]: './index' + iifeSubextension + '.min.js',
