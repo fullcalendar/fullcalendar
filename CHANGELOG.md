@@ -1,6 +1,24 @@
 
-v6.0.1
-------
+v6.0.3 (2023-01-11)
+-------------------
+
+Standard/premium
+
+- FIX: Time grid and timeline more-events link positioned incorrectly (#7134, #7115)
+
+React:
+
+- FIX: Maximum update depth exceeded w/ eventContent & dayMaxEvents (#7116)
+- FIX: Certain cases of broken rendering w/ React 17 and content-injection (#7127, #7131)
+- FIX: Content-injection not using updated function closures for rendering (#7119)
+
+Vue 3:
+
+- FIX: With Webpack, fullySpecified:false workaroung no longer needed (#7125, #7114)
+
+
+v6.0.2 (2022-12-27)
+-------------------
 
 Standard/premium:
 
