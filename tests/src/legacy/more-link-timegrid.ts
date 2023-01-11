@@ -70,7 +70,6 @@ describe('eventMaxStack', () => {
     expect(moreLinkEls.length).toBe(2)
   })
 
-  // TODO: test coords of more link
   it('puts overlapping hidden events in same popover, respecting eventOrder', (done) => {
     let calendar = initCalendar({
       eventOrder: 'title',
@@ -84,6 +83,12 @@ describe('eventMaxStack', () => {
     let timeGrid = new TimeGridViewWrapper(calendar).timeGrid
     let moreLinkEls = timeGrid.getMoreEls()
     expect(moreLinkEls.length).toBe(1)
+
+    const canvasCoords = timeGrid.el.getBoundingClientRect()
+    const moreLinkCoords = moreLinkEls[0].getBoundingClientRect()
+    const moreLinkTop = moreLinkCoords.top - canvasCoords.top
+    // TODO: more precise coord matching
+    expect(moreLinkTop).toBeGreaterThan(10)
 
     timeGrid.openMorePopover()
     setTimeout(() => {
