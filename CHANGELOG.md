@@ -5,6 +5,7 @@ v6.0.3 (2023-01-11)
 Standard/premium
 
 - FIX: Time grid and timeline more-events link positioned incorrectly (#7134, #7115)
+- FIX: file extensions of CJS/ESM dist files changed to support Jest (#7113)
 
 React:
 
