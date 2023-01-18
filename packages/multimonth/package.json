@@ -1,18 +1,20 @@
 {
-  "name": "fullcalendar",
+  "name": "@fullcalendar/multimonth",
   "version": "6.0.3",
-  "title": "FullCalendar Standard Bundle",
-  "description": "Easily render a full-sized drag & drop calendar with a combination of standard plugins",
-  "homepage": "https://fullcalendar.io/docs/initialize-globals",
+  "title": "FullCalendar Multi-Month Plugin",
+  "description": "Display a sequence or grid of multiple months",
+  "keywords": [
+    "month"
+  ],
+  "homepage": "https://fullcalendar.io/docs/multimonth-view",
   "dependencies": {
-    "@fullcalendar/core": "~6.0.3",
-    "@fullcalendar/daygrid": "~6.0.3",
-    "@fullcalendar/interaction": "~6.0.3",
-    "@fullcalendar/list": "~6.0.3",
-    "@fullcalendar/multimonth": "~6.0.3",
-    "@fullcalendar/timegrid": "~6.0.3"
+    "@fullcalendar/daygrid": "~6.0.3"
+  },
+  "peerDependencies": {
+    "@fullcalendar/core": "~6.0.3"
   },
   "devDependencies": {
+    "@fullcalendar/core": "~6.0.3",
     "@fullcalendar/standard-scripts": "*"
   },
   "scripts": {
@@ -33,11 +35,11 @@
   },
   "buildConfig": {
     "exports": {
-      ".": { "iife": true }
+      ".": { "iife": true },
+      "./internal": {}
     },
     "iifeGlobals": {
-      ".": "FullCalendar",
-      "*": ""
+      ".": "FullCalendar.MultiMonth"
     }
   },
   "publishConfig": {
