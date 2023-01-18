@@ -1,0 +1,6 @@
+
+.fc-multimonth {
+  border: 1px solid var(--fc-border-color);
+  overflow-y: auto;
+  overflow-x: hidden;
+}

@@ -1,4 +1,5 @@
 import { createPlugin, PluginDef } from '@fullcalendar/core'
+import { TableDateProfileGenerator } from '@fullcalendar/daygrid/internal'
 import { MultiMonthView } from './MultiMonthView.js'
 import { OPTION_REFINERS } from './options-refiners.js'
 import './ambient.js'
@@ -11,6 +12,7 @@ export default createPlugin({
   views: {
     multiMonth: {
       component: MultiMonthView,
+      dateProfileGeneratorClass: TableDateProfileGenerator,
     },
     multiMonthYear: {
       type: 'multiMonth',

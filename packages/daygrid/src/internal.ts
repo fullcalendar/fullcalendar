@@ -1,5 +1,6 @@
 export { DayTable } from './DayTable.js'
 export { DayTableSlicer } from './DayTableSlicer.js'
+export { TableDateProfileGenerator, buildDayTableRenderRange } from './TableDateProfileGenerator.js'
 export { Table } from './Table.js'
 export { TableSeg } from './TableSeg.js'
 export { TableView } from './TableView.js'
