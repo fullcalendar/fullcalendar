@@ -27,15 +27,26 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
   private elRef = createRef<HTMLElement>()
 
   render() {
-    const { context, props } = this
+    const { context, props, state } = this
     const { options, dateEnv } = context
-    // const { multiMonthColumns, multiMonthColumnMinWidth } = options
     const monthDateProfiles = this.splitDateProfileByMonth(
       props.dateProfile,
       context.dateEnv,
       options.fixedWeekCount,
     )
     const monthFormat = this.buildMonthFormat(options.multiMonthFormat, monthDateProfiles)
+
+    const { multiMonthColumnMinWidth, multiMonthColumns, aspectRatio } = options
+    const { clientWidth, clientHeight } = state
+    const cols = (typeof multiMonthColumns === 'number') ?
+      multiMonthColumns :
+      ( // auto
+        clientWidth != null ?
+          Math.floor(clientWidth / multiMonthColumnMinWidth) :
+          1
+      )
+    let monthWidthPct = (100 / cols) + '%'
+    let monthHeight = (clientWidth != null ? (clientWidth / cols / aspectRatio) : '')
 
     return (
       <ViewContainer
@@ -49,13 +60,15 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
             <div
               key={monthStart.toISOString()}
               className="fc-multimonth-month"
+              style={{ width: monthWidthPct }}
             >
               <div>{dateEnv.format(monthStart, monthFormat)}</div>
               <SingleMonth
                 {...props}
                 dateProfile={monthDateProfile}
-                clientWidth={this.state.clientWidth}
-                clientHeight={this.state.clientHeight}
+                clientWidth={clientWidth}
+                clientHeight={clientHeight}
+                tableHeight={monthHeight}
               />
             </div>
           )

@@ -1,3 +1,4 @@
+import { CssDimValue } from '@fullcalendar/core'
 import { DateComponent, DayHeader, ViewProps, memoize } from '@fullcalendar/core/internal'
 import { TableRows, buildDayTableModel, DayTableSlicer } from '@fullcalendar/daygrid/internal'
 import { createElement } from '@fullcalendar/core/preact'
@@ -5,6 +6,7 @@ import { createElement } from '@fullcalendar/core/preact'
 export interface SingleMonthProps extends ViewProps {
   clientWidth: number | null
   clientHeight: number | null
+  tableHeight: CssDimValue
 }
 
 export class SingleMonth extends DateComponent<SingleMonthProps> {
@@ -25,7 +27,7 @@ export class SingleMonth extends DateComponent<SingleMonthProps> {
 
     return (
       <div className={dayGridClassNames.join(' ')}>
-        <table className="fc-multimonth-daygrid-table" style={{ height: 300 }}>
+        <table className="fc-multimonth-daygrid-table" style={{ height: props.tableHeight }}>
           <thead>
             <DayHeader
               dateProfile={props.dateProfile}

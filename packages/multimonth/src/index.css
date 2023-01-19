@@ -3,12 +3,12 @@
   border: 1px solid var(--fc-border-color);
   overflow-y: auto;
   overflow-x: hidden;
+  padding: 10px;
 }
 
 .fc-multimonth-month {
   float: left;
-  width: 300px;
-  margin-right: 50px;
+  padding: 10px;
 }
 
 .fc-multimonth-daygrid-table {
