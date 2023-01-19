@@ -9,7 +9,7 @@ import { DateMarker } from './datelib/marker.js'
 import { CalendarData } from './reducers/data-types.js'
 import { ViewPropsTransformerClass } from './plugin-system-struct.js'
 import { createElement, createRef, Fragment, VNode } from './preact.js'
-import { ViewContainer } from './ViewContainer.js'
+import { ViewHarness } from './ViewHarness.js'
 import {
   Interaction,
   InteractionSettingsInput,
@@ -106,7 +106,7 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
             {...toolbarProps}
           />
         )}
-        <ViewContainer
+        <ViewHarness
           liquid={viewVGrow}
           height={viewHeight}
           aspectRatio={viewAspectRatio}
@@ -114,7 +114,7 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
         >
           {this.renderView(props)}
           {this.buildAppendContent()}
-        </ViewContainer>
+        </ViewHarness>
         {toolbarConfig.footer && (
           <Toolbar
             ref={this.footerRef}

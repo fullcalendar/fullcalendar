@@ -104,7 +104,7 @@ export class TableRows extends DateComponent<TableRowsProps> {
     })
   }
 
-  componentWillMount(): void {
+  componentWillUnmount(): void {
     this.context.unregisterInteractiveComponent(this)
     this.rootEl = null
   }

@@ -42,7 +42,10 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
       multiMonthColumns :
       ( // auto
         clientWidth != null ?
-          Math.floor(clientWidth / multiMonthColumnMinWidth) :
+          Math.min(
+            Math.floor(clientWidth / (multiMonthColumnMinWidth ?? 300)),
+            3,
+          ) :
           1
       )
     let monthWidthPct = (100 / cols) + '%'
@@ -62,7 +65,9 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
               className="fc-multimonth-month"
               style={{ width: monthWidthPct }}
             >
-              <div>{dateEnv.format(monthStart, monthFormat)}</div>
+              <div className="fc-multimonth-month-title">
+                {dateEnv.format(monthStart, monthFormat)}
+              </div>
               <SingleMonth
                 {...props}
                 dateProfile={monthDateProfile}
@@ -78,10 +83,8 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
   }
 
   componentDidMount(): void {
-    setTimeout(() => { // workaround for flushSync issue
-      this.updateSize()
-      this.context.addResizeHandler(this.handleSizing)
-    })
+    this.updateSize()
+    this.context.addResizeHandler(this.handleSizing)
   }
 
   componentDidUpdate(prevProps: ViewProps) {
@@ -108,6 +111,12 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
         clientHeight: el.clientHeight,
       })
     }
+  }
+
+  // workaround for when queued setState render (w/ clientWidth) gets cancelled because
+  // subsequent update and shouldComponentUpdate says not to render :(
+  shouldComponentUpdate() {
+    return true
   }
 }
 

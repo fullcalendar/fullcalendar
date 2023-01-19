@@ -17,7 +17,6 @@ export class SingleMonth extends DateComponent<SingleMonthProps> {
     const { props, context } = this
     const { options } = context
     const dayTableModel = this.buildDayTableModel(props.dateProfile, context.dateProfileGenerator)
-
     const dayGridClassNames = [
       'fc-multimonth-daygrid',
       'fc-daygrid',

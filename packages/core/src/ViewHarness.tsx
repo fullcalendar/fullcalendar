@@ -2,7 +2,7 @@ import { BaseComponent, setRef } from './vdom-util.js'
 import { ComponentChildren, Ref, createElement } from './preact.js'
 import { CssDimValue } from './scrollgrid/util.js'
 
-export interface ViewContainerProps {
+export interface ViewHarnessProps {
   elRef?: Ref<HTMLDivElement>
   labeledById: string
   liquid?: boolean
@@ -11,15 +11,14 @@ export interface ViewContainerProps {
   children?: ComponentChildren
 }
 
-interface ViewContainerState {
+interface ViewHarnessState {
   availableWidth: number | null
 }
 
-// TODO: do function component?
-export class ViewContainer extends BaseComponent<ViewContainerProps, ViewContainerState> {
+export class ViewHarness extends BaseComponent<ViewHarnessProps, ViewHarnessState> {
   el: HTMLElement
 
-  state: ViewContainerState = {
+  state: ViewHarnessState = {
     availableWidth: null,
   }
 

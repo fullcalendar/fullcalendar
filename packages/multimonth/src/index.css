@@ -11,6 +11,13 @@
   padding: 10px;
 }
 
+.fc-multimonth-month-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2em;
+  padding: 0.5em 0;
+}
+
 .fc-multimonth-daygrid-table {
   width: 100%;
   table-layout: fixed;
