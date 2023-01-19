@@ -17,6 +17,7 @@ export default createPlugin({
     multiMonthYear: {
       type: 'multiMonth',
       duration: { years: 1 },
+      // fixedWeekCount: true, // broken. see TableDateProfileGenerator
     },
   },
 }) as PluginDef

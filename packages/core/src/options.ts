@@ -215,7 +215,6 @@ export const BASE_OPTION_REFINERS = {
   dateAlignment: String,
   dateIncrement: createDuration,
   hiddenDays: identity as Identity<number[]>,
-  monthMode: Boolean,
   fixedWeekCount: Boolean,
   validRange: identity as Identity<DateRangeInput | ((this: CalendarApi, nowDate: Date) => DateRangeInput)>, // `this` works?
   visibleRange: identity as Identity<DateRangeInput | ((this: CalendarApi, currentDate: Date) => DateRangeInput)>, // `this` works?

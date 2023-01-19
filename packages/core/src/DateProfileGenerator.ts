@@ -48,7 +48,6 @@ export interface DateProfileOptions {
   nowInput?: DateInput | (() => DateInput)
   validRangeInput?: DateRangeInput | ((this: CalendarImpl, nowDate: Date) => DateRangeInput)
   visibleRangeInput?: DateRangeInput | ((this: CalendarImpl, nowDate: Date) => DateRangeInput)
-  monthMode?: boolean
   fixedWeekCount?: boolean
 }
 

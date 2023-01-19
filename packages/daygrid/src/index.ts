@@ -22,7 +22,6 @@ export default createPlugin({
     dayGridMonth: {
       type: 'dayGrid',
       duration: { months: 1 },
-      monthMode: true,
       fixedWeekCount: true,
     },
   },

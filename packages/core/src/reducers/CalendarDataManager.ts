@@ -487,7 +487,6 @@ export class CalendarDataManager {
       nowInput: refinedOptions.now,
       validRangeInput: refinedOptions.validRange,
       visibleRangeInput: refinedOptions.visibleRange,
-      monthMode: refinedOptions.monthMode,
       fixedWeekCount: refinedOptions.fixedWeekCount,
     })
 

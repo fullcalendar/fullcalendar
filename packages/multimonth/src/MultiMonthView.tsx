@@ -11,9 +11,10 @@ import {
 } from '@fullcalendar/core/internal'
 import { buildDayTableRenderRange } from '@fullcalendar/daygrid/internal'
 import { createElement } from '@fullcalendar/core/preact'
+import { SingleMonth } from './SingleMonth.js'
 
 export class MultiMonthView extends DateComponent<ViewProps> {
-  splitDateProfileByMonth = memoize(splitDateProfileByMonth)
+  private splitDateProfileByMonth = memoize(splitDateProfileByMonth)
 
   render() {
     const { context, props } = this
@@ -22,21 +23,18 @@ export class MultiMonthView extends DateComponent<ViewProps> {
     const monthDateProfiles = this.splitDateProfileByMonth(
       props.dateProfile,
       context.dateEnv,
-      options.monthMode,
       options.fixedWeekCount,
     )
 
     return (
       <ViewContainer elClasses={['fc-multimonth']} viewSpec={context.viewSpec}>
-        {monthDateProfiles.map((monthDateProfile) => {
-          const monthStart = monthDateProfile.currentRange.start
-
-          return (
-            <div key={monthStart.toISOString()}>
-              {monthStart.toUTCString()}
-            </div>
-          )
-        })}
+        {monthDateProfiles.map((monthDateProfile) => (
+          <SingleMonth
+            key={monthDateProfile.currentRange.start.toISOString()}
+            {...props}
+            dateProfile={monthDateProfile}
+          />
+        ))}
       </ViewContainer>
     )
   }
@@ -47,7 +45,6 @@ const oneMonthDuration = createDuration(1, 'month')
 function splitDateProfileByMonth(
   dateProfile: DateProfile,
   dateEnv: DateEnv,
-  monthMode?: boolean,
   fixedWeekCount?: boolean,
 ): DateProfile[] {
   const { start, end } = dateProfile.currentRange
@@ -60,7 +57,6 @@ function splitDateProfileByMonth(
     const renderRange = buildDayTableRenderRange({
       currentRange,
       snapToWeek: true,
-      monthMode,
       fixedWeekCount,
       dateEnv,
     })

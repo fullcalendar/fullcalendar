@@ -4,3 +4,13 @@
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+.fc-multimonth-month {
+  float: left;
+  width: 300px;
+  margin-right: 50px;
+}
+
+.fc-multimonth-daygrid-table {
+  width: 100%;
+}

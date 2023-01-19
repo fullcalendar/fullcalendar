@@ -14,7 +14,6 @@ export class TableDateProfileGenerator extends DateProfileGenerator {
     return buildDayTableRenderRange({
       currentRange: renderRange, // ???
       snapToWeek: /^(year|month)$/.test(currentRangeUnit),
-      monthMode: props.monthMode,
       fixedWeekCount: props.fixedWeekCount,
       dateEnv: props.dateEnv,
     })
@@ -24,7 +23,6 @@ export class TableDateProfileGenerator extends DateProfileGenerator {
 export function buildDayTableRenderRange(props: {
   currentRange: DateRange,
   snapToWeek: boolean,
-  monthMode: boolean,
   fixedWeekCount: boolean,
   dateEnv: DateEnv,
 }): DateRange {
@@ -44,10 +42,7 @@ export function buildDayTableRenderRange(props: {
   }
 
   // ensure 6 weeks
-  if (
-    props.monthMode &&
-    props.fixedWeekCount
-  ) {
+  if (props.fixedWeekCount) {
     let rowCnt = Math.ceil( // could be partial weeks due to hiddenDays
       diffWeeks(start, end),
     )
