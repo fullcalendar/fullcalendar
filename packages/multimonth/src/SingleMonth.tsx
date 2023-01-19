@@ -22,35 +22,32 @@ export class SingleMonth extends DateComponent<ViewProps> {
     ]
 
     return (
-      <div className="fc-multimonth-month">
-        <div>title</div>
-        <div className={dayGridClassNames.join(' ')}>
-          <table className="fc-multimonth-daygrid-table">
-            <thead>
-              <DayHeader
-                dateProfile={props.dateProfile}
-                dates={dayTableModel.headerDates}
-                datesRepDistinctDays={false}
-              />
-            </thead>
-            <tbody>
-              <TableRows
-                {...this.slicer.sliceProps(props, props.dateProfile, options.nextDayThreshold, context, dayTableModel)}
-                dateProfile={props.dateProfile}
-                cells={dayTableModel.cells}
-                eventSelection={props.eventSelection}
-                eventDrag={props.eventDrag as any}
-                eventResize={props.eventResize as any}
-                dayMaxEvents={options.dayMaxEvents}
-                dayMaxEventRows={options.dayMaxEventRows}
-                showWeekNumbers={options.weekNumbers}
-                clientWidth={null}
-                clientHeight={null}
-                forPrint={props.forPrint}
-              />
-            </tbody>
-          </table>
-        </div>
+      <div className={dayGridClassNames.join(' ')}>
+        <table className="fc-multimonth-daygrid-table">
+          <thead>
+            <DayHeader
+              dateProfile={props.dateProfile}
+              dates={dayTableModel.headerDates}
+              datesRepDistinctDays={false}
+            />
+          </thead>
+          <tbody>
+            <TableRows
+              {...this.slicer.sliceProps(props, props.dateProfile, options.nextDayThreshold, context, dayTableModel)}
+              dateProfile={props.dateProfile}
+              cells={dayTableModel.cells}
+              eventSelection={props.eventSelection}
+              eventDrag={props.eventDrag as any}
+              eventResize={props.eventResize as any}
+              dayMaxEvents={options.dayMaxEvents}
+              dayMaxEventRows={options.dayMaxEventRows}
+              showWeekNumbers={options.weekNumbers}
+              clientWidth={null}
+              clientHeight={null}
+              forPrint={props.forPrint}
+            />
+          </tbody>
+        </table>
       </div>
     )
   }
