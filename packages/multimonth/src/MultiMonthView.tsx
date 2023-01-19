@@ -10,14 +10,21 @@ import {
   memoize,
   DateFormatter,
   createFormatter,
+  isPropsEqual,
 } from '@fullcalendar/core/internal'
 import { buildDayTableRenderRange } from '@fullcalendar/daygrid/internal'
-import { createElement } from '@fullcalendar/core/preact'
+import { createElement, createRef } from '@fullcalendar/core/preact'
 import { SingleMonth } from './SingleMonth.js'
 
-export class MultiMonthView extends DateComponent<ViewProps> {
+interface MultiMonthViewState {
+  clientWidth?: number
+  clientHeight?: number
+}
+
+export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState> {
   private splitDateProfileByMonth = memoize(splitDateProfileByMonth)
   private buildMonthFormat = memoize(buildMonthFormat)
+  private elRef = createRef<HTMLElement>()
 
   render() {
     const { context, props } = this
@@ -31,22 +38,63 @@ export class MultiMonthView extends DateComponent<ViewProps> {
     const monthFormat = this.buildMonthFormat(options.multiMonthFormat, monthDateProfiles)
 
     return (
-      <ViewContainer elClasses={['fc-multimonth']} viewSpec={context.viewSpec}>
+      <ViewContainer
+        elRef={this.elRef}
+        elClasses={['fc-multimonth']}
+        viewSpec={context.viewSpec}
+      >
         {monthDateProfiles.map((monthDateProfile) => {
           const monthStart = monthDateProfile.currentRange.start
-
           return (
             <div
               key={monthStart.toISOString()}
               className="fc-multimonth-month"
             >
               <div>{dateEnv.format(monthStart, monthFormat)}</div>
-              <SingleMonth {...props} dateProfile={monthDateProfile} />
+              <SingleMonth
+                {...props}
+                dateProfile={monthDateProfile}
+                clientWidth={this.state.clientWidth}
+                clientHeight={this.state.clientHeight}
+              />
             </div>
           )
         })}
       </ViewContainer>
     )
+  }
+
+  componentDidMount(): void {
+    setTimeout(() => { // workaround for flushSync issue
+      this.updateSize()
+      this.context.addResizeHandler(this.handleSizing)
+    })
+  }
+
+  componentDidUpdate(prevProps: ViewProps) {
+    if (!isPropsEqual(prevProps, this.props)) { // an external change?
+      this.handleSizing(false)
+    }
+  }
+
+  componentWillUnmount() {
+    this.context.removeResizeHandler(this.handleSizing)
+  }
+
+  handleSizing = (isForced: boolean) => {
+    if (isForced) {
+      this.updateSize()
+    }
+  }
+
+  updateSize() {
+    const el = this.elRef.current
+    if (el) {
+      this.setState({
+        clientWidth: el.clientWidth,
+        clientHeight: el.clientHeight,
+      })
+    }
   }
 }
 

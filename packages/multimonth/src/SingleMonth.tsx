@@ -2,10 +2,12 @@ import { DateComponent, DayHeader, ViewProps, memoize } from '@fullcalendar/core
 import { TableRows, buildDayTableModel, DayTableSlicer } from '@fullcalendar/daygrid/internal'
 import { createElement } from '@fullcalendar/core/preact'
 
-/*
-Accepts all ViewProps but isn't actually a view!
-*/
-export class SingleMonth extends DateComponent<ViewProps> {
+export interface SingleMonthProps extends ViewProps {
+  clientWidth: number | null
+  clientHeight: number | null
+}
+
+export class SingleMonth extends DateComponent<SingleMonthProps> {
   private buildDayTableModel = memoize(buildDayTableModel)
   private slicer = new DayTableSlicer()
 
@@ -23,7 +25,7 @@ export class SingleMonth extends DateComponent<ViewProps> {
 
     return (
       <div className={dayGridClassNames.join(' ')}>
-        <table className="fc-multimonth-daygrid-table">
+        <table className="fc-multimonth-daygrid-table" style={{ height: 300 }}>
           <thead>
             <DayHeader
               dateProfile={props.dateProfile}
@@ -37,13 +39,11 @@ export class SingleMonth extends DateComponent<ViewProps> {
               dateProfile={props.dateProfile}
               cells={dayTableModel.cells}
               eventSelection={props.eventSelection}
-              eventDrag={props.eventDrag as any}
-              eventResize={props.eventResize as any}
               dayMaxEvents={options.dayMaxEvents}
               dayMaxEventRows={options.dayMaxEventRows}
               showWeekNumbers={options.weekNumbers}
-              clientWidth={null}
-              clientHeight={null}
+              clientWidth={props.clientWidth}
+              clientHeight={props.clientHeight}
               forPrint={props.forPrint}
             />
           </tbody>

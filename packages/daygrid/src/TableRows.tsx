@@ -21,8 +21,8 @@ export interface TableRowsProps {
   cells: DayTableCell[][] // cells-BY-ROW
   renderRowIntro?: () => VNode
   showWeekNumbers: boolean
-  clientWidth: number | null
-  clientHeight: number | null
+  clientWidth: number | null // of outer view container. weird, i know
+  clientHeight: number | null // of outer view container. weird, i know
   businessHourSegs: TableSeg[]
   bgEventSegs: TableSeg[]
   fgEventSegs: TableSeg[]

@@ -9,6 +9,11 @@
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'multiMonthYear,dayGridMonth,dayGridWeek,dayGridDay' // needs translation for "year"?
+      },
       initialView: 'multiMonthYear',
       initialDate: '2020-09-12',
       multiMonthColumns: 3,
