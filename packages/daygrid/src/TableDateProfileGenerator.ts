@@ -3,6 +3,7 @@ import {
   addWeeks, diffWeeks,
   DateRange,
   DateEnv,
+  addDays,
 } from '@fullcalendar/core/internal'
 
 export class TableDateProfileGenerator extends DateProfileGenerator {
@@ -43,8 +44,14 @@ export function buildDayTableRenderRange(props: {
 
   // ensure 6 weeks
   if (props.fixedWeekCount) {
+    // TODO: instead of these date-math gymnastics (for multimonth view),
+    // compute dateprofiles of all months, then use start of first and end of last.
+    let lastMonthRenderStart = dateEnv.startOfWeek(
+      dateEnv.startOfMonth(addDays(currentRange.end, -1)),
+    )
+
     let rowCnt = Math.ceil( // could be partial weeks due to hiddenDays
-      diffWeeks(start, end),
+      diffWeeks(lastMonthRenderStart, end),
     )
     end = addWeeks(end, 6 - rowCnt)
   }
