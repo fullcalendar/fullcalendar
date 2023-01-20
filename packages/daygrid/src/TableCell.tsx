@@ -93,21 +93,24 @@ export class TableCell extends DateComponent<TableCellProps> {
                 defaultFormat={DEFAULT_WEEK_NUM_FORMAT}
               />
             )}
-            {Boolean(
-              !renderProps.isDisabled &&
-              (props.showDayNumber || hasCustomDayCellContent(options) || props.forceDayTop),
-            ) && (
-              <div className="fc-daygrid-day-top">
-                <InnerContent
-                  elTag="a"
-                  elClasses={['fc-daygrid-day-number']}
-                  elAttrs={{
-                    ...buildNavLinkAttrs(context, date),
-                    id: state.dayNumberId,
-                  }}
-                />
-              </div>
-            )}
+            {!renderProps.isDisabled &&
+              (props.showDayNumber || hasCustomDayCellContent(options) || props.forceDayTop) ? (
+                <div className="fc-daygrid-day-top">
+                  <InnerContent
+                    elTag="a"
+                    elClasses={['fc-daygrid-day-number']}
+                    elAttrs={{
+                      ...buildNavLinkAttrs(context, date),
+                      id: state.dayNumberId,
+                    }}
+                  />
+                </div>
+              ) : (
+                // for creating correct amount of space (see issue #7162)
+                <div className="fc-daygrid-day-top" style={{ visibility: 'hidden' }}>
+                  <a className="fc-daygrid-day-number">&nbsp;</a>
+                </div>
+              )}
             <div
               className="fc-daygrid-day-events"
               ref={props.fgContentElRef}
