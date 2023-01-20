@@ -1,7 +1,7 @@
-import { createFormatter, Identity, identity } from '@fullcalendar/core/internal'
+import { createFormatter } from '@fullcalendar/core/internal'
 
 export const OPTION_REFINERS = {
-  multiMonthColumns: identity as Identity<number | 'auto'>,
-  multiMonthColumnMinWidth: Number,
-  multiMonthFormat: createFormatter,
+  multiMonthTitleFormat: createFormatter,
+  multiMonthMaxColumns: Number,
+  multiMonthMinWidth: Number,
 }

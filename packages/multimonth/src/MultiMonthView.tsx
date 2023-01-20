@@ -19,65 +19,87 @@ import { SingleMonth } from './SingleMonth.js'
 interface MultiMonthViewState {
   clientWidth?: number
   clientHeight?: number
+  firstMonthHPadding?: number
 }
+
+const DEFAULT_COL_MIN_WIDTH = 350
+const DEFAULT_COL_MAX_COUNT = 3
 
 export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState> {
   private splitDateProfileByMonth = memoize(splitDateProfileByMonth)
   private buildMonthFormat = memoize(buildMonthFormat)
-  private elRef = createRef<HTMLElement>()
+  private elRef = createRef<HTMLDivElement>()
+  private innerElRef = createRef<HTMLDivElement>()
+  private firstMonthElRef = createRef<HTMLDivElement>()
 
   render() {
     const { context, props, state } = this
     const { options, dateEnv } = context
+    const { clientWidth, clientHeight } = state
+
     const monthDateProfiles = this.splitDateProfileByMonth(
       props.dateProfile,
       context.dateEnv,
       options.fixedWeekCount,
     )
-    const monthFormat = this.buildMonthFormat(options.multiMonthFormat, monthDateProfiles)
+    const monthTitleFormat = this.buildMonthFormat(options.multiMonthTitleFormat, monthDateProfiles)
 
-    const { multiMonthColumnMinWidth, multiMonthColumns, aspectRatio } = options
-    const { clientWidth, clientHeight } = state
-    const cols = (typeof multiMonthColumns === 'number') ?
-      multiMonthColumns :
-      ( // auto
-        clientWidth != null ?
-          Math.min(
-            Math.floor(clientWidth / (multiMonthColumnMinWidth ?? 350)),
-            3,
-          ) :
-          1
-      )
-    let monthWidthPct = (100 / cols) + '%'
-    let monthHeight = (clientWidth != null ? (clientWidth / cols / aspectRatio) : '')
+    const colMinWidth = options.multiMonthMinWidth || DEFAULT_COL_MIN_WIDTH
+    const colMaxCnt = options.multiMonthMaxColumns || DEFAULT_COL_MAX_COUNT
+    const colCount = Math.min(
+      clientWidth != null ?
+        Math.floor(clientWidth / (colMinWidth + (state.firstMonthHPadding || 0))) :
+        1,
+      colMaxCnt,
+    )
+
+    const monthWidthPct = (100 / colCount) + '%'
+    const monthWidth = clientWidth != null ? (clientWidth / colCount) : null
+    const monthHeight = monthWidth != null ? (monthWidth / options.aspectRatio) : null
+
+    const rootClassNames = [
+      'fc-multimonth',
+      (clientWidth != null && colCount === 1) ?
+        'fc-multimonth-singlecol' :
+        '',
+    ]
+    const monthClassNames = [
+      'fc-multimonth-month',
+      (monthWidth != null && monthWidth < 400) ?
+        'fc-multimonth-month-condensed' :
+        '',
+    ]
 
     return (
       <ViewContainer
         elRef={this.elRef}
-        elClasses={['fc-multimonth']}
+        elClasses={rootClassNames}
         viewSpec={context.viewSpec}
       >
-        {monthDateProfiles.map((monthDateProfile) => {
-          const monthStart = monthDateProfile.currentRange.start
-          return (
-            <div
-              key={monthStart.toISOString()}
-              className="fc-multimonth-month"
-              style={{ width: monthWidthPct }}
-            >
-              <div className="fc-multimonth-month-title">
-                {dateEnv.format(monthStart, monthFormat)}
+        <div ref={this.innerElRef}>
+          {monthDateProfiles.map((monthDateProfile, i) => {
+            const monthStart = monthDateProfile.currentRange.start
+            return (
+              <div
+                key={monthStart.toISOString()}
+                ref={i === 0 ? this.firstMonthElRef : undefined}
+                className={monthClassNames.join(' ')}
+                style={{ width: monthWidthPct }}
+              >
+                <div className="fc-multimonth-month-title">
+                  {dateEnv.format(monthStart, monthTitleFormat)}
+                </div>
+                <SingleMonth
+                  {...props}
+                  dateProfile={monthDateProfile}
+                  clientWidth={clientWidth}
+                  clientHeight={clientHeight}
+                  tableHeight={monthHeight}
+                />
               </div>
-              <SingleMonth
-                {...props}
-                dateProfile={monthDateProfile}
-                clientWidth={clientWidth}
-                clientHeight={clientHeight}
-                tableHeight={monthHeight}
-              />
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </ViewContainer>
     )
   }
@@ -105,11 +127,28 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
 
   updateSize() {
     const el = this.elRef.current
+    const innerEl = this.innerElRef.current
+    const firstMonthEl = this.firstMonthElRef.current
+
     if (el) {
       this.setState({
-        clientWidth: el.clientWidth,
         clientHeight: el.clientHeight,
       })
+    }
+
+    if (innerEl) {
+      this.setState({
+        clientWidth: innerEl.offsetWidth, // within padding
+      })
+    }
+
+    if (firstMonthEl) {
+      if (!this.state.firstMonthHPadding) { // always remember initial non-zero value
+        this.setState({
+          firstMonthHPadding: firstMonthEl.offsetWidth -
+            (firstMonthEl.querySelector('.fc-multimonth-daygrid-table') as HTMLElement).offsetWidth,
+        })
+      }
     }
   }
 
