@@ -3,6 +3,7 @@
 <head>
 <meta charset='utf-8' />
 <script src='../dist/index.global.js'></script>
+<script src='../../packages/core/dist/locales-all.global.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -12,8 +13,9 @@
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
-        right: 'multiMonthYear,dayGridMonth,dayGridWeek,dayGridDay' // needs translation for "year"?
+        right: 'multiMonthYear,dayGridMonth,timeGridWeek'
       },
+      locale: 'es',
       initialView: 'multiMonthYear',
       initialDate: '2020-09-12',
       // multiMonthColumns: 1,

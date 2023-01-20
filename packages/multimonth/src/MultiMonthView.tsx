@@ -43,7 +43,7 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
       ( // auto
         clientWidth != null ?
           Math.min(
-            Math.floor(clientWidth / (multiMonthColumnMinWidth ?? 300)),
+            Math.floor(clientWidth / (multiMonthColumnMinWidth ?? 350)),
             3,
           ) :
           1
