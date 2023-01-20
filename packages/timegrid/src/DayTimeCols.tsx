@@ -54,14 +54,13 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
   render() {
     let { props, context } = this
     let { dateProfile, dayTableModel } = props
-
-    let isNowIndicator = context.options.nowIndicator
+    let { nowIndicator, nextDayThreshold } = context.options
     let dayRanges = this.buildDayRanges(dayTableModel, dateProfile, context.dateEnv)
 
     // give it the first row of cells
     // TODO: would move this further down hierarchy, but sliceNowDate needs it
     return (
-      <NowTimer unit={isNowIndicator ? 'minute' : 'day'}>
+      <NowTimer unit={nowIndicator ? 'minute' : 'day'}>
         {(nowDate: DateMarker, todayRange: DateRange) => (
           <TimeCols
             ref={this.timeColsRef}
@@ -78,7 +77,7 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
             clientHeight={props.clientHeight}
             expandRows={props.expandRows}
             nowDate={nowDate}
-            nowIndicatorSegs={isNowIndicator && this.slicer.sliceNowDate(nowDate, context, dayRanges)}
+            nowIndicatorSegs={nowIndicator && this.slicer.sliceNowDate(nowDate, dateProfile, nextDayThreshold, context, dayRanges)}
             todayRange={todayRange}
             onScrollTopRequest={props.onScrollTopRequest}
             onSlatCoords={props.onSlatCoords}

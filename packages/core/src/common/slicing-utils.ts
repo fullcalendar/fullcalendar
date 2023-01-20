@@ -1,4 +1,4 @@
-import { DateRange } from '../datelib/date-range.js'
+import { DateRange, intersectRanges } from '../datelib/date-range.js'
 import { EventStore } from '../structs/event-store.js'
 import { EventUiHash } from '../component/event-ui.js'
 import { sliceEventStore, EventRenderRange } from '../component/event-rendering.js'
@@ -53,7 +53,7 @@ export abstract class Slicer<SegType extends Seg, ExtraArgs extends any[] = []> 
     let eventSegs = this.sliceEventStore(props.eventStore, eventUiBases, dateProfile, nextDayThreshold, ...extraArgs)
 
     return {
-      dateSelectionSegs: this.sliceDateSelection(props.dateSelection, eventUiBases, context, ...extraArgs),
+      dateSelectionSegs: this.sliceDateSelection(props.dateSelection, dateProfile, nextDayThreshold, eventUiBases, context, ...extraArgs),
       businessHourSegs: this.sliceBusinessHours(props.businessHours, dateProfile, nextDayThreshold, context, ...extraArgs),
       fgEventSegs: eventSegs.fg,
       bgEventSegs: eventSegs.bg,
@@ -65,11 +65,15 @@ export abstract class Slicer<SegType extends Seg, ExtraArgs extends any[] = []> 
 
   sliceNowDate( // does not memoize
     date: DateMarker,
+    dateProfile: DateProfile,
+    nextDayThreshold: Duration | null,
     context: CalendarContext,
     ...extraArgs: ExtraArgs
   ): SegType[] {
     return this._sliceDateSpan(
       { range: { start: date, end: addMs(date, 1) }, allDay: false }, // add 1 ms, protect against null range
+      dateProfile,
+      nextDayThreshold,
       {},
       context,
       ...extraArgs,
@@ -150,6 +154,8 @@ export abstract class Slicer<SegType extends Seg, ExtraArgs extends any[] = []> 
 
   private _sliceDateSpan(
     dateSpan: DateSpan,
+    dateProfile: DateProfile,
+    nextDayThreshold: Duration | null,
     eventUiBases: EventUiHash,
     context: CalendarContext,
     ...extraArgs: ExtraArgs
@@ -158,14 +164,23 @@ export abstract class Slicer<SegType extends Seg, ExtraArgs extends any[] = []> 
       return []
     }
 
-    let eventRange = fabricateEventRange(dateSpan, eventUiBases, context)
-    let segs = this.sliceRange(dateSpan.range, ...extraArgs)
+    let activeRange = computeActiveRange(dateProfile, Boolean(nextDayThreshold))
+    let activeDateSpanRange = intersectRanges(dateSpan.range, activeRange)
 
-    for (let seg of segs) {
-      seg.eventRange = eventRange
+    if (activeDateSpanRange) {
+      dateSpan = { ...dateSpan, range: activeDateSpanRange }
+
+      let eventRange = fabricateEventRange(dateSpan, eventUiBases, context)
+      let segs = this.sliceRange(dateSpan.range, ...extraArgs)
+
+      for (let seg of segs) {
+        seg.eventRange = eventRange
+      }
+
+      return segs
     }
 
-    return segs
+    return []
   }
 
   /*
