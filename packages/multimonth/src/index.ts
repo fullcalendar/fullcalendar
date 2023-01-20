@@ -18,6 +18,7 @@ export default createPlugin({
       type: 'multiMonth',
       duration: { years: 1 },
       fixedWeekCount: true,
+      showNonCurrentDates: false,
     },
   },
 }) as PluginDef

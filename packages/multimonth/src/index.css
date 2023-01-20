@@ -1,6 +1,6 @@
 
 :root {
-  --fc-multimonth-padding: 10px;
+  --fc-multimonth-padding: 15px;
 }
 
 .fc-multimonth {
@@ -8,18 +8,26 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding: var(--fc-multimonth-padding);
+  background: var(--fc-neutral-bg-color);
 }
 
 .fc-multimonth-month {
   float: left;
   padding: var(--fc-multimonth-padding);
+  padding-top: 0;
 }
 
-.fc-multimonth-month-title {
+.fc-multimonth-title {
   text-align: center;
   font-weight: bold;
   font-size: 1.2em;
-  padding: 0.5em 0;
+  padding-top: var(--fc-multimonth-padding);
+  padding-bottom: var(--fc-multimonth-padding);
+}
+
+.fc-multimonth-daygrid {
+  background: var(--fc-page-bg-color);
+  box-shadow: 0 1px 5px rgb(0 0 0 / 10%);
 }
 
 .fc-multimonth-daygrid-table {
@@ -29,7 +37,7 @@
 
 // variants
 
-.fc-multimonth-month-condensed {
+.fc-multimonth-condensed {
   & .fc-multimonth-daygrid-table {
     font-size: 0.9em;
   }

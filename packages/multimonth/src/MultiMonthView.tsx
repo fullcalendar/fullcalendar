@@ -41,6 +41,7 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
       props.dateProfile,
       context.dateEnv,
       options.fixedWeekCount,
+      options.showNonCurrentDates,
     )
     const monthTitleFormat = this.buildMonthFormat(options.multiMonthTitleFormat, monthDateProfiles)
 
@@ -61,12 +62,9 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
       'fc-multimonth',
       (clientWidth != null && colCount === 1) ?
         'fc-multimonth-singlecol' :
-        '',
-    ]
-    const monthClassNames = [
-      'fc-multimonth-month',
+        'fc-multimonth-multicol',
       (monthWidth != null && monthWidth < 400) ?
-        'fc-multimonth-month-condensed' :
+        'fc-multimonth-condensed' :
         '',
     ]
 
@@ -83,10 +81,10 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
               <div
                 key={monthStart.toISOString()}
                 ref={i === 0 ? this.firstMonthElRef : undefined}
-                className={monthClassNames.join(' ')}
+                className="fc-multimonth-month"
                 style={{ width: monthWidthPct }}
               >
-                <div className="fc-multimonth-month-title">
+                <div className="fc-multimonth-title">
                   {dateEnv.format(monthStart, monthTitleFormat)}
                 </div>
                 <SingleMonth
@@ -165,6 +163,7 @@ function splitDateProfileByMonth(
   dateProfile: DateProfile,
   dateEnv: DateEnv,
   fixedWeekCount?: boolean,
+  showNonCurrentDates?: boolean,
 ): DateProfile[] {
   const { start, end } = dateProfile.currentRange
   let monthStart: DateMarker = start
@@ -179,18 +178,24 @@ function splitDateProfileByMonth(
       fixedWeekCount,
       dateEnv,
     })
+    const activeRange = dateProfile.activeRange ?
+      intersectRanges(
+        dateProfile.activeRange,
+        showNonCurrentDates ? renderRange : currentRange,
+      ) :
+      null
 
     monthDateProfiles.push({
+      isValid: dateProfile.isValid,
+      validRange: dateProfile.validRange,
+      renderRange,
+      activeRange,
       currentRange,
       currentRangeUnit: 'month',
       isRangeAllDay: true,
-      validRange: intersectRanges(dateProfile.validRange, renderRange),
-      activeRange: dateProfile.activeRange ? intersectRanges(dateProfile.activeRange, renderRange) : null,
-      renderRange,
+      dateIncrement: dateProfile.dateIncrement,
       slotMinTime: dateProfile.slotMaxTime,
       slotMaxTime: dateProfile.slotMinTime,
-      isValid: dateProfile.isValid,
-      dateIncrement: dateProfile.dateIncrement,
     })
 
     monthStart = monthEnd

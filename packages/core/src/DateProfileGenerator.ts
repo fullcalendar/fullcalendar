@@ -15,16 +15,16 @@ import { getNow } from './reducers/current-date.js'
 import { CalendarImpl } from './api/CalendarImpl.js'
 
 export interface DateProfile {
-  currentRange: DateRange // TODO: does this include slotMinTime/slotMaxTime?
+  isValid: boolean
+  validRange: OpenDateRange // dates in past/present/future the user can interact with
+  renderRange: DateRange // dates that get rendered (even if they're completely blank)
+  activeRange: DateRange | null // dates where content is rendered
+  currentRange: DateRange // dates for current interval (TODO: include slotMinTime/slotMaxTime?)
   currentRangeUnit: string
   isRangeAllDay: boolean
-  validRange: OpenDateRange
-  activeRange: DateRange | null
-  renderRange: DateRange
+  dateIncrement: Duration
   slotMinTime: Duration
   slotMaxTime: Duration
-  isValid: boolean
-  dateIncrement: Duration
 }
 
 export interface DateProfileGeneratorProps extends DateProfileOptions {

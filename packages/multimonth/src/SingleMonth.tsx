@@ -40,8 +40,8 @@ export class SingleMonth extends DateComponent<SingleMonthProps> {
               dateProfile={props.dateProfile}
               cells={dayTableModel.cells}
               eventSelection={props.eventSelection}
-              dayMaxEvents={options.dayMaxEvents}
-              dayMaxEventRows={options.dayMaxEventRows}
+              dayMaxEvents={true}
+              dayMaxEventRows={true}
               showWeekNumbers={options.weekNumbers}
               clientWidth={props.clientWidth}
               clientHeight={props.clientHeight}
