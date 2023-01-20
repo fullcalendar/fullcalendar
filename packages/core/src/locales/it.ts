@@ -10,6 +10,7 @@ export default {
     prev: 'Prec',
     next: 'Succ',
     today: 'Oggi',
+    year: 'Anno',
     month: 'Mese',
     week: 'Settimana',
     day: 'Giorno',

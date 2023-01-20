@@ -10,6 +10,7 @@ export default {
     prev: 'Antaŭa',
     next: 'Sekva',
     today: 'Hodiaŭ',
+    year: 'Jaro',
     month: 'Monato',
     week: 'Semajno',
     day: 'Tago',

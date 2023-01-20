@@ -10,6 +10,7 @@ export default {
     prev: 'precedentă',
     next: 'următoare',
     today: 'Azi',
+    year: 'An',
     month: 'Lună',
     week: 'Săptămână',
     day: 'Zi',

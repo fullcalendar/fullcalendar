@@ -6,6 +6,7 @@ export default {
     prev: 'Anterior',
     next: 'Próximo',
     today: 'Hoje',
+    year: 'Ano',
     month: 'Mês',
     week: 'Semana',
     day: 'Dia',

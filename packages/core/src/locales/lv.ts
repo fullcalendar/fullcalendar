@@ -10,6 +10,7 @@ export default {
     prev: 'Iepr.',
     next: 'Nāk.',
     today: 'Šodien',
+    year: 'Gads',
     month: 'Mēnesis',
     week: 'Nedēļa',
     day: 'Diena',

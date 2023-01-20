@@ -10,6 +10,7 @@ export default {
     prev: 'अघिल्लो',
     next: 'अर्को',
     today: 'आज',
+    year: 'वर्ष',
     month: 'महिना',
     week: 'हप्ता',
     day: 'दिन',

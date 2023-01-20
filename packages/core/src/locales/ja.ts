@@ -6,6 +6,7 @@ export default {
     prev: '前',
     next: '次',
     today: '今日',
+    year: '年',
     month: '月',
     week: '週',
     day: '日',

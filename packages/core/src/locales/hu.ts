@@ -10,6 +10,7 @@ export default {
     prev: 'vissza',
     next: 'előre',
     today: 'ma',
+    year: 'Év',
     month: 'Hónap',
     week: 'Hét',
     day: 'Nap',

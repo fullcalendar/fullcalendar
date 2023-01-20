@@ -10,6 +10,7 @@ export default {
     prev: 'Προηγούμενος',
     next: 'Επόμενος',
     today: 'Σήμερα',
+    year: 'Ετος',
     month: 'Μήνας',
     week: 'Εβδομάδα',
     day: 'Ημέρα',

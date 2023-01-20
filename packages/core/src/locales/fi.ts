@@ -10,6 +10,7 @@ export default {
     prev: 'Edellinen',
     next: 'Seuraava',
     today: 'Tänään',
+    year: 'Vuosi',
     month: 'Kuukausi',
     week: 'Viikko',
     day: 'Päivä',

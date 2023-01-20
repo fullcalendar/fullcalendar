@@ -10,6 +10,7 @@ export default {
     prev: 'Dříve',
     next: 'Později',
     today: 'Nyní',
+    year: 'Rok',
     month: 'Měsíc',
     week: 'Týden',
     day: 'Den',

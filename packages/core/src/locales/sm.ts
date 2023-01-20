@@ -6,6 +6,7 @@ export default {
     prev: 'Talu ai',
     next: 'Mulimuli atu',
     today: 'Aso nei',
+    year: 'Tausaga',
     month: 'Masina',
     week: 'Vaiaso',
     day: 'Aso',

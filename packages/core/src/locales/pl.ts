@@ -10,6 +10,7 @@ export default {
     prev: 'Poprzedni',
     next: 'Następny',
     today: 'Dziś',
+    year: 'Rok',
     month: 'Miesiąc',
     week: 'Tydzień',
     day: 'Dzień',

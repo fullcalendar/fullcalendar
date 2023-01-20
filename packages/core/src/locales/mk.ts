@@ -6,6 +6,7 @@ export default {
     prev: 'претходно',
     next: 'следно',
     today: 'Денес',
+    year: 'година',
     month: 'Месец',
     week: 'Недела',
     day: 'Ден',

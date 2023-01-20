@@ -10,6 +10,7 @@ export default {
     prev: 'Anterior',
     next: 'Següent',
     today: 'Avui',
+    year: 'Curs',
     month: 'Mes',
     week: 'Setmana',
     day: 'Dia',

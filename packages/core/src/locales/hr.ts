@@ -10,6 +10,7 @@ export default {
     prev: 'Prijašnji',
     next: 'Sljedeći',
     today: 'Danas',
+    year: 'Godina',
     month: 'Mjesec',
     week: 'Tjedan',
     day: 'Dan',

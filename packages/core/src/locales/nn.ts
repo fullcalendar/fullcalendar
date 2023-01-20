@@ -10,6 +10,7 @@ export default {
     prev: 'Førre',
     next: 'Neste',
     today: 'I dag',
+    year: 'År',
     month: 'Månad',
     week: 'Veke',
     day: 'Dag',

@@ -10,6 +10,7 @@ export default {
     prev: 'Նախորդ',
     next: 'Հաջորդ',
     today: 'Այսօր',
+    year: 'Տարի',
     month: 'Ամիս',
     week: 'Շաբաթ',
     day: 'Օր',

@@ -10,6 +10,7 @@ export default {
     prev: 'geri',
     next: 'ileri',
     today: 'bugün',
+    year: 'Yıl',
     month: 'Ay',
     week: 'Hafta',
     day: 'Gün',

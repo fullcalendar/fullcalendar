@@ -10,6 +10,7 @@ export default {
     prev: 'Predchádzajúci',
     next: 'Nasledujúci',
     today: 'Dnes',
+    year: 'Rok',
     month: 'Mesiac',
     week: 'Týždeň',
     day: 'Deň',

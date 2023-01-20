@@ -10,6 +10,7 @@ export default {
     prev: 'წინა',
     next: 'შემდეგი',
     today: 'დღეს',
+    year: 'წელიწადი',
     month: 'თვე',
     week: 'კვირა',
     day: 'დღე',

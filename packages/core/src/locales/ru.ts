@@ -10,6 +10,7 @@ export default {
     prev: 'Пред',
     next: 'След',
     today: 'Сегодня',
+    year: 'Год',
     month: 'Месяц',
     week: 'Неделя',
     day: 'День',

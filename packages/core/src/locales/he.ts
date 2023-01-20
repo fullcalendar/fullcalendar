@@ -7,6 +7,7 @@ export default {
     prev: 'הקודם',
     next: 'הבא',
     today: 'היום',
+    year: 'שנה',
     month: 'חודש',
     week: 'שבוע',
     day: 'יום',

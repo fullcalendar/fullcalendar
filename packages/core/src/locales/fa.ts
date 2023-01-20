@@ -11,6 +11,7 @@ export default {
     prev: 'قبلی',
     next: 'بعدی',
     today: 'امروز',
+    year: 'سال',
     month: 'ماه',
     week: 'هفته',
     day: 'روز',

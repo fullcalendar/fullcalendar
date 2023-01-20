@@ -10,6 +10,7 @@ export default {
     prev: 'Ant',
     next: 'Seg',
     today: 'Hoxe',
+    year: 'Ano',
     month: 'Mes',
     week: 'Semana',
     day: 'Día',

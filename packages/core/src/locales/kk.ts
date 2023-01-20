@@ -10,6 +10,7 @@ export default {
     prev: 'Алдыңғы',
     next: 'Келесі',
     today: 'Бүгін',
+    year: 'Жыл',
     month: 'Ай',
     week: 'Апта',
     day: 'Күн',

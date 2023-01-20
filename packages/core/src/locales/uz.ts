@@ -3,6 +3,10 @@ import { LocaleInput } from '../index.js'
 export default {
   code: 'uz',
   buttonText: {
+    prev: 'Oldingi',
+    next: 'Keyingi',
+    today: 'Bugun',
+    year: 'Yil',
     month: 'Oy',
     week: 'Xafta',
     day: 'Kun',

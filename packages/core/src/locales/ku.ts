@@ -11,6 +11,7 @@ export default {
     prev: 'پێشتر',
     next: 'دواتر',
     today: 'ئەمڕو',
+    year: 'ساڵ',
     month: 'مانگ',
     week: 'هەفتە',
     day: 'ڕۆژ',

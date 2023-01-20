@@ -10,6 +10,7 @@ export default {
     prev: 'Əvvəl',
     next: 'Sonra',
     today: 'Bu Gün',
+    year: 'Il',
     month: 'Ay',
     week: 'Həftə',
     day: 'Gün',

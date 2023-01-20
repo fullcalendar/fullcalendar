@@ -10,6 +10,7 @@ export default {
     prev: 'Aur',
     next: 'Hur',
     today: 'Gaur',
+    year: 'Urtea',
     month: 'Hilabetea',
     week: 'Astea',
     day: 'Eguna',

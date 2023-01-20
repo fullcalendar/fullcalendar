@@ -10,6 +10,7 @@ export default {
     prev: 'Попередній',
     next: 'далі',
     today: 'Сьогодні',
+    year: 'рік',
     month: 'Місяць',
     week: 'Тиждень',
     day: 'День',

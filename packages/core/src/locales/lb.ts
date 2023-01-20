@@ -10,6 +10,7 @@ export default {
     prev: 'Zréck',
     next: 'Weider',
     today: 'Haut',
+    year: 'Joer',
     month: 'Mount',
     week: 'Woch',
     day: 'Dag',

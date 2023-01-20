@@ -10,6 +10,7 @@ export default {
     prev: 'Fyrri',
     next: 'Næsti',
     today: 'Í dag',
+    year: 'Ár',
     month: 'Mánuður',
     week: 'Vika',
     day: 'Dagur',

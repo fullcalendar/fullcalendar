@@ -10,6 +10,7 @@ export default {
     prev: 'Anterior',
     next: 'Seguinte',
     today: 'Hoje',
+    year: 'Ano',
     month: 'Mês',
     week: 'Semana',
     day: 'Dia',

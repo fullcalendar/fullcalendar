@@ -10,6 +10,7 @@ export default {
     prev: 'Atgal',
     next: 'Pirmyn',
     today: 'Šiandien',
+    year: 'Metai',
     month: 'Mėnuo',
     week: 'Savaitė',
     day: 'Diena',

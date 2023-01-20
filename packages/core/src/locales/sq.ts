@@ -9,7 +9,8 @@ export default {
   buttonText: {
     prev: 'mbrapa',
     next: 'Përpara',
-    today: 'sot',
+    today: 'Sot',
+    year: 'Viti',
     month: 'Muaj',
     week: 'Javë',
     day: 'Ditë',

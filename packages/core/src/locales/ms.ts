@@ -10,6 +10,7 @@ export default {
     prev: 'Sebelum',
     next: 'Selepas',
     today: 'hari ini',
+    year: 'Tahun',
     month: 'Bulan',
     week: 'Minggu',
     day: 'Hari',

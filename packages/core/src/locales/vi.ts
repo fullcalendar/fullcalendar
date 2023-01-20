@@ -10,6 +10,7 @@ export default {
     prev: 'Trước',
     next: 'Tiếp',
     today: 'Hôm nay',
+    year: 'Năm',
     month: 'Tháng',
     week: 'Tuần',
     day: 'Ngày',

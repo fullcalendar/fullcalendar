@@ -10,6 +10,7 @@ export default {
     prev: 'முந்தைய',
     next: 'அடுத்தது',
     today: 'இன்று',
+    year: 'ஆண்டு',
     month: 'மாதம்',
     week: 'வாரம்',
     day: 'நாள்',

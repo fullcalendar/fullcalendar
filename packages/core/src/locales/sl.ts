@@ -10,6 +10,7 @@ export default {
     prev: 'Prejšnji',
     next: 'Naslednji',
     today: 'Trenutni',
+    year: 'Leto',
     month: 'Mesec',
     week: 'Teden',
     day: 'Dan',
