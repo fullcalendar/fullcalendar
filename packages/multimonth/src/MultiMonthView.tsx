@@ -37,14 +37,6 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
     const { options, dateEnv } = context
     const { clientWidth, clientHeight } = state
 
-    const monthDateProfiles = this.splitDateProfileByMonth(
-      props.dateProfile,
-      context.dateEnv,
-      options.fixedWeekCount,
-      options.showNonCurrentDates,
-    )
-    const monthTitleFormat = this.buildMonthFormat(options.multiMonthTitleFormat, monthDateProfiles)
-
     const colMinWidth = options.multiMonthMinWidth || DEFAULT_COL_MIN_WIDTH
     const colMaxCnt = options.multiMonthMaxColumns || DEFAULT_COL_MAX_COUNT
     const colCount = Math.min(
@@ -58,9 +50,18 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
     const monthWidth = clientWidth != null ? (clientWidth / colCount) : null
     const monthHeight = monthWidth != null ? (monthWidth / options.aspectRatio) : null
 
+    const isLegitSingleCol = clientWidth != null && colCount === 1
+    const monthDateProfiles = this.splitDateProfileByMonth(
+      props.dateProfile,
+      context.dateEnv,
+      isLegitSingleCol ? false : options.fixedWeekCount,
+      options.showNonCurrentDates,
+    )
+
+    const monthTitleFormat = this.buildMonthFormat(options.multiMonthTitleFormat, monthDateProfiles)
     const rootClassNames = [
       'fc-multimonth',
-      (clientWidth != null && colCount === 1) ?
+      isLegitSingleCol ?
         'fc-multimonth-singlecol' :
         'fc-multimonth-multicol',
       (monthWidth != null && monthWidth < 400) ?
@@ -110,6 +111,13 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
   componentDidUpdate(prevProps: ViewProps) {
     if (!isPropsEqual(prevProps, this.props)) { // an external change?
       this.handleSizing(false)
+    }
+
+    if (
+      this.context.options.scrollTimeReset &&
+      prevProps.dateProfile !== this.props.dateProfile
+    ) {
+      this.elRef.current.scrollTop = 0
     }
   }
 
