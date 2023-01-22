@@ -1,30 +1,22 @@
 
-:root {
-  --fc-multimonth-padding: 15px;
-}
-
 .fc-multimonth {
   border: 1px solid var(--fc-border-color);
   overflow-y: auto;
   overflow-x: hidden;
-  padding: var(--fc-multimonth-padding);
-  background: var(--fc-neutral-bg-color);
+}
+
+.fc-multimonth-inner {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 // a single month
 
-.fc-multimonth-month {
-  float: left;
-  padding: var(--fc-multimonth-padding);
-  padding-top: 0;
-}
-
 .fc-multimonth-title {
+  padding: 1em 0;
   text-align: center;
   font-weight: bold;
   font-size: 1.2em;
-  padding-top: var(--fc-multimonth-padding);
-  padding-bottom: var(--fc-multimonth-padding);
 }
 
 .fc-multimonth-daygrid {
@@ -44,20 +36,44 @@
 // variants
 
 .fc-multimonth-condensed {
+  & .fc-multimonth-header-table,
   & .fc-multimonth-daygrid-table {
     font-size: 0.9em;
   }
 }
 
 .fc-multimonth-singlecol {
-  padding: 0;
-
-  & .fc-multimonth-month {
-    padding: 0;
+  & .fc-multimonth {
+    position: relative;
   }
 
+  & .fc-multimonth-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--fc-page-bg-color);
+    margin-bottom: 100px; // hack
+  }
+
+  & .fc-multimonth-daygrid {
+    margin-top: -100px; // hack
+    position: relative;
+    z-index: 1;
+  }
+
+  & .fc-multimonth-header-table,
   & .fc-multimonth-daygrid-table {
     border-left-style: hidden;
     border-right-style: hidden;
+  }
+
+  & .fc-multimonth-month:last-child .fc-multimonth-daygrid-table {
+    border-bottom-style: hidden;
+  }
+}
+
+.fc-multimonth-multicol {
+  & .fc-multimonth-month {
+    padding: 0 1.2em 1.2em;
   }
 }

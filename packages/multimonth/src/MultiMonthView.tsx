@@ -75,7 +75,7 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
         elClasses={rootClassNames}
         viewSpec={context.viewSpec}
       >
-        <div ref={this.innerElRef}>
+        <div className="fc-multimonth-inner" ref={this.innerElRef}>
           {monthDateProfiles.map((monthDateProfile, i) => (
             <SingleMonth
               {...props}
