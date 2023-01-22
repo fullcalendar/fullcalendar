@@ -7,7 +7,7 @@ export interface SingleMonthProps extends ViewProps {
   elRef?: Ref<HTMLDivElement>
   titleFormat: DateFormatter
   width: CssDimValue
-  tableHeight: CssDimValue
+  tableWidth: number | null // solely for computation purposes
   clientWidth: number | null
   clientHeight: number | null
 }
@@ -28,6 +28,14 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
     const { props, state, context } = this
     const { options } = context
     const dayTableModel = this.buildDayTableModel(props.dateProfile, context.dateProfileGenerator)
+    const slicedProps = this.slicer.sliceProps(props, props.dateProfile, options.nextDayThreshold, context, dayTableModel)
+
+    // ensure day-cell aspect ratio
+    const rowCnt = dayTableModel.cells.length
+    const rowHeight = props.tableWidth == null ? null :
+      props.tableWidth / options.aspectRatio / 6
+    const tableHeight = rowHeight == null ? null :
+      rowHeight * rowCnt
 
     return (
       <div
@@ -37,7 +45,11 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
         role="grid"
         aria-labelledby={state.labelId}
       >
-        <div className="fc-multimonth-header" role="presentation">
+        <div
+          className="fc-multimonth-header"
+          style={{ marginBottom: rowHeight }} // for stickyness
+          role="presentation"
+        >
           <div className="fc-multimonth-title" id={state.labelId}>
             {context.dateEnv.format(
               props.dateProfile.currentRange.start,
@@ -57,20 +69,23 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
             </thead>
           </table>
         </div>
-        <div className={[
-          'fc-multimonth-daygrid',
-          'fc-daygrid',
-          'fc-daygrid-body', // necessary for TableRows DnD parent
-          'fc-daygrid-body-balanced',
-        ].join(' ')}>
+        <div
+          className={[
+            'fc-multimonth-daygrid',
+            'fc-daygrid',
+            'fc-daygrid-body', // necessary for TableRows DnD parent
+            'fc-daygrid-body-balanced',
+          ].join(' ')}
+          style={{ marginTop: -rowHeight }} // for stickyness
+        >
           <table
             className="fc-multimonth-daygrid-table"
-            style={{ height: props.tableHeight }}
+            style={{ height: tableHeight }}
             role="presentation"
           >
             <tbody role="rowgroup">
               <TableRows
-                {...this.slicer.sliceProps(props, props.dateProfile, options.nextDayThreshold, context, dayTableModel)}
+                {...slicedProps}
                 dateProfile={props.dateProfile}
                 cells={dayTableModel.cells}
                 eventSelection={props.eventSelection}

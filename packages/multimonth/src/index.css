@@ -1,13 +1,10 @@
 
 .fc-multimonth {
+  display: flex;
+  flex-wrap: wrap;
   border: 1px solid var(--fc-border-color);
   overflow-y: auto;
   overflow-x: hidden;
-}
-
-.fc-multimonth-inner {
-  display: flex;
-  flex-wrap: wrap;
 }
 
 // a single month
@@ -35,13 +32,6 @@
 
 // variants
 
-.fc-multimonth-condensed {
-  & .fc-multimonth-header-table,
-  & .fc-multimonth-daygrid-table {
-    font-size: 0.9em;
-  }
-}
-
 .fc-multimonth-singlecol {
   & .fc-multimonth {
     position: relative;
@@ -52,11 +42,9 @@
     top: 0;
     z-index: 2;
     background: var(--fc-page-bg-color);
-    margin-bottom: 100px; // hack
   }
 
   & .fc-multimonth-daygrid {
-    margin-top: -100px; // hack
     position: relative;
     z-index: 1;
   }
@@ -75,5 +63,12 @@
 .fc-multimonth-multicol {
   & .fc-multimonth-month {
     padding: 0 1.2em 1.2em;
+  }
+}
+
+.fc-multimonth-condensed {
+  & .fc-multimonth-header-table,
+  & .fc-multimonth-daygrid-table {
+    font-size: 0.9em;
   }
 }

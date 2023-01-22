@@ -19,7 +19,7 @@ import { SingleMonth } from './SingleMonth.js'
 interface MultiMonthViewState {
   clientWidth?: number
   clientHeight?: number
-  firstMonthHPadding?: number
+  monthHPadding?: number
 }
 
 const DEFAULT_COL_MIN_WIDTH = 350
@@ -28,27 +28,27 @@ const DEFAULT_COL_MAX_COUNT = 3
 export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState> {
   private splitDateProfileByMonth = memoize(splitDateProfileByMonth)
   private buildMonthFormat = memoize(buildMonthFormat)
-  private elRef = createRef<HTMLDivElement>()
-  private innerElRef = createRef<HTMLDivElement>()
+  private scrollElRef = createRef<HTMLDivElement>()
   private firstMonthElRef = createRef<HTMLDivElement>()
 
   render() {
     const { context, props, state } = this
     const { options } = context
     const { clientWidth, clientHeight } = state
+    const monthHPadding = state.monthHPadding || 0
 
-    const colMinWidth = options.multiMonthMinWidth || DEFAULT_COL_MIN_WIDTH
+    const monthTableMinWidth = options.multiMonthMinWidth || DEFAULT_COL_MIN_WIDTH
     const colMaxCnt = options.multiMonthMaxColumns || DEFAULT_COL_MAX_COUNT
     const colCount = Math.min(
       clientWidth != null ?
-        Math.floor(clientWidth / (colMinWidth + (state.firstMonthHPadding || 0))) :
+        Math.floor(clientWidth / (monthTableMinWidth + monthHPadding)) :
         1,
       colMaxCnt,
-    )
+    ) || 1
 
     const monthWidthPct = (100 / colCount) + '%'
-    const monthWidth = clientWidth != null ? (clientWidth / colCount) : null
-    const monthHeight = monthWidth != null ? (monthWidth / options.aspectRatio) : null
+    const monthTableWidth = clientWidth == null ? null :
+      (clientWidth / colCount) - monthHPadding
 
     const isLegitSingleCol = clientWidth != null && colCount === 1
     const monthDateProfiles = this.splitDateProfileByMonth(
@@ -64,32 +64,30 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
       isLegitSingleCol ?
         'fc-multimonth-singlecol' :
         'fc-multimonth-multicol',
-      (monthWidth != null && monthWidth < 400) ?
+      (monthTableWidth != null && monthTableWidth < 400) ?
         'fc-multimonth-condensed' :
         '',
     ]
 
     return (
       <ViewContainer
-        elRef={this.elRef}
+        elRef={this.scrollElRef}
         elClasses={rootClassNames}
         viewSpec={context.viewSpec}
       >
-        <div className="fc-multimonth-inner" ref={this.innerElRef}>
-          {monthDateProfiles.map((monthDateProfile, i) => (
-            <SingleMonth
-              {...props}
-              key={monthDateProfile.currentRange.start.toISOString()}
-              elRef={i === 0 ? this.firstMonthElRef : undefined}
-              titleFormat={monthTitleFormat}
-              dateProfile={monthDateProfile}
-              clientWidth={clientWidth}
-              clientHeight={clientHeight}
-              tableHeight={monthHeight}
-              width={monthWidthPct}
-            />
-          ))}
-        </div>
+        {monthDateProfiles.map((monthDateProfile, i) => (
+          <SingleMonth
+            {...props}
+            key={monthDateProfile.currentRange.start.toISOString()}
+            elRef={i === 0 ? this.firstMonthElRef : undefined}
+            titleFormat={monthTitleFormat}
+            dateProfile={monthDateProfile}
+            width={monthWidthPct}
+            tableWidth={monthTableWidth}
+            clientWidth={clientWidth}
+            clientHeight={clientHeight}
+          />
+        ))}
       </ViewContainer>
     )
   }
@@ -108,7 +106,7 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
       this.context.options.scrollTimeReset &&
       prevProps.dateProfile !== this.props.dateProfile
     ) {
-      this.elRef.current.scrollTop = 0
+      this.scrollElRef.current.scrollTop = 0
     }
   }
 
@@ -123,27 +121,22 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
   }
 
   updateSize() {
-    const el = this.elRef.current
-    const innerEl = this.innerElRef.current
+    const scrollEl = this.scrollElRef.current
     const firstMonthEl = this.firstMonthElRef.current
 
-    if (el) {
+    if (scrollEl) {
       this.setState({
-        clientHeight: el.clientHeight,
+        clientWidth: scrollEl.clientWidth,
+        clientHeight: scrollEl.clientHeight,
       })
     }
 
-    if (innerEl) {
-      this.setState({
-        clientWidth: innerEl.offsetWidth, // within padding
-      })
-    }
-
-    if (firstMonthEl) {
-      if (!this.state.firstMonthHPadding) { // always remember initial non-zero value
+    if (firstMonthEl && scrollEl) {
+      if (!this.state.monthHPadding) { // always remember initial non-zero value
         this.setState({
-          firstMonthHPadding: firstMonthEl.offsetWidth -
-            (firstMonthEl.querySelector('.fc-multimonth-daygrid-table') as HTMLElement).offsetWidth,
+          monthHPadding:
+            scrollEl.clientWidth - // go within padding
+            (firstMonthEl.firstChild as HTMLElement).offsetWidth,
         })
       }
     }
