@@ -5,6 +5,7 @@ import { createElement, Ref } from '@fullcalendar/core/preact'
 
 export interface SingleMonthProps extends ViewProps {
   elRef?: Ref<HTMLDivElement>
+  isoDateStr?: string
   titleFormat: DateFormatter
   width: CssDimValue
   tableWidth: number | null // solely for computation purposes
@@ -40,6 +41,7 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
     return (
       <div
         ref={props.elRef}
+        data-date={props.isoDateStr}
         className="fc-multimonth-month"
         style={{ width: props.width }}
         role="grid"

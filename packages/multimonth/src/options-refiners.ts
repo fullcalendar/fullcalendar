@@ -4,4 +4,5 @@ export const OPTION_REFINERS = {
   multiMonthTitleFormat: createFormatter,
   multiMonthMaxColumns: Number,
   multiMonthMinWidth: Number,
+  multiMonthScrollReset: Boolean,
 }

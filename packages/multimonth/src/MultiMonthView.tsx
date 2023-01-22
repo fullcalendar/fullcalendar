@@ -11,6 +11,7 @@ import {
   DateFormatter,
   createFormatter,
   isPropsEqual,
+  rangeContainsMarker,
 } from '@fullcalendar/core/internal'
 import { buildDayTableRenderRange } from '@fullcalendar/daygrid/internal'
 import { createElement, createRef } from '@fullcalendar/core/preact'
@@ -30,6 +31,8 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
   private buildMonthFormat = memoize(buildMonthFormat)
   private scrollElRef = createRef<HTMLDivElement>()
   private firstMonthElRef = createRef<HTMLDivElement>()
+  private needsScrollReset = false
+  private anyScrollReset = false // scroll-reset happened at least once?
 
   render() {
     const { context, props, state } = this
@@ -75,19 +78,24 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
         elClasses={rootClassNames}
         viewSpec={context.viewSpec}
       >
-        {monthDateProfiles.map((monthDateProfile, i) => (
-          <SingleMonth
-            {...props}
-            key={monthDateProfile.currentRange.start.toISOString()}
-            elRef={i === 0 ? this.firstMonthElRef : undefined}
-            titleFormat={monthTitleFormat}
-            dateProfile={monthDateProfile}
-            width={monthWidthPct}
-            tableWidth={monthTableWidth}
-            clientWidth={clientWidth}
-            clientHeight={clientHeight}
-          />
-        ))}
+        {monthDateProfiles.map((monthDateProfile, i) => {
+          const monthStr = formatIsoMonthStr(monthDateProfile.currentRange.start)
+
+          return (
+            <SingleMonth
+              {...props}
+              key={monthStr}
+              isoDateStr={monthStr}
+              elRef={i === 0 ? this.firstMonthElRef : undefined}
+              titleFormat={monthTitleFormat}
+              dateProfile={monthDateProfile}
+              width={monthWidthPct}
+              tableWidth={monthTableWidth}
+              clientWidth={clientWidth}
+              clientHeight={clientHeight}
+            />
+          )
+        })}
       </ViewContainer>
     )
   }
@@ -95,6 +103,7 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
   componentDidMount(): void {
     this.updateSize()
     this.context.addResizeHandler(this.handleSizing)
+    this.requestScrollReset()
   }
 
   componentDidUpdate(prevProps: ViewProps) {
@@ -102,11 +111,10 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
       this.handleSizing(false)
     }
 
-    if (
-      this.context.options.scrollTimeReset &&
-      prevProps.dateProfile !== this.props.dateProfile
-    ) {
-      this.scrollElRef.current.scrollTop = 0
+    if (prevProps.dateProfile !== this.props.dateProfile) {
+      this.requestScrollReset()
+    } else {
+      this.flushScrollReset()
     }
   }
 
@@ -132,13 +140,48 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
     }
 
     if (firstMonthEl && scrollEl) {
-      if (!this.state.monthHPadding) { // always remember initial non-zero value
+      if (this.state.monthHPadding == null) { // always remember initial non-zero value
         this.setState({
           monthHPadding:
             scrollEl.clientWidth - // go within padding
             (firstMonthEl.firstChild as HTMLElement).offsetWidth,
         })
       }
+    }
+  }
+
+  requestScrollReset() {
+    this.needsScrollReset = true
+    this.flushScrollReset()
+  }
+
+  flushScrollReset() {
+    if (
+      this.needsScrollReset &&
+      this.state.monthHPadding != null // indicates sizing already happened
+    ) {
+      if (
+        this.context.options.multiMonthScrollReset !== false || // scroll-reset enabled?
+        !this.anyScrollReset // OR first time rendering?
+      ) {
+        const { nowDate } = this.context.dateProfileGenerator // TODO: make dynamic
+        const scrollEl = this.scrollElRef.current
+        let scrollTop = 0
+
+        if (rangeContainsMarker(this.props.dateProfile.currentRange, nowDate)) {
+          const monthEl = scrollEl.querySelector(`[data-date="${formatIsoMonthStr(nowDate)}"]`)
+
+          if (monthEl) {
+            scrollTop = monthEl.getBoundingClientRect().top -
+              scrollEl.getBoundingClientRect().top
+          }
+        }
+
+        scrollEl.scrollTop = scrollTop
+      }
+
+      this.needsScrollReset = false
+      this.anyScrollReset = true
     }
   }
 
@@ -208,4 +251,9 @@ function buildMonthFormat(
       monthDateProfiles[monthDateProfiles.length - 1].currentRange.start.getUTCFullYear())
       ? YEAR_MONTH_FORMATTER
       : YEAR_FORMATTER)
+}
+
+// TODO: move to general utils
+function formatIsoMonthStr(marker: DateMarker) {
+  return marker.toISOString().match(/^\d{4}-\d{2}/)[0]
 }
