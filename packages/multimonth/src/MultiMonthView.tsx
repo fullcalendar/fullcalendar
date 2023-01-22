@@ -34,7 +34,7 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
 
   render() {
     const { context, props, state } = this
-    const { options, dateEnv } = context
+    const { options } = context
     const { clientWidth, clientHeight } = state
 
     const colMinWidth = options.multiMonthMinWidth || DEFAULT_COL_MIN_WIDTH
@@ -76,28 +76,19 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
         viewSpec={context.viewSpec}
       >
         <div ref={this.innerElRef}>
-          {monthDateProfiles.map((monthDateProfile, i) => {
-            const monthStart = monthDateProfile.currentRange.start
-            return (
-              <div
-                key={monthStart.toISOString()}
-                ref={i === 0 ? this.firstMonthElRef : undefined}
-                className="fc-multimonth-month"
-                style={{ width: monthWidthPct }}
-              >
-                <div className="fc-multimonth-title">
-                  {dateEnv.format(monthStart, monthTitleFormat)}
-                </div>
-                <SingleMonth
-                  {...props}
-                  dateProfile={monthDateProfile}
-                  clientWidth={clientWidth}
-                  clientHeight={clientHeight}
-                  tableHeight={monthHeight}
-                />
-              </div>
-            )
-          })}
+          {monthDateProfiles.map((monthDateProfile, i) => (
+            <SingleMonth
+              {...props}
+              key={monthDateProfile.currentRange.start.toISOString()}
+              elRef={i === 0 ? this.firstMonthElRef : undefined}
+              titleFormat={monthTitleFormat}
+              dateProfile={monthDateProfile}
+              clientWidth={clientWidth}
+              clientHeight={clientHeight}
+              tableHeight={monthHeight}
+              width={monthWidthPct}
+            />
+          ))}
         </div>
       </ViewContainer>
     )

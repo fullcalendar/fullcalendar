@@ -11,6 +11,8 @@
   background: var(--fc-neutral-bg-color);
 }
 
+// a single month
+
 .fc-multimonth-month {
   float: left;
   padding: var(--fc-multimonth-padding);
@@ -27,12 +29,16 @@
 
 .fc-multimonth-daygrid {
   background: var(--fc-page-bg-color);
-  box-shadow: 0 1px 5px rgb(0 0 0 / 10%);
 }
 
+.fc-multimonth-header-table,
 .fc-multimonth-daygrid-table {
   width: 100%;
   table-layout: fixed;
+}
+
+.fc-multimonth-daygrid-table {
+  border-top-style: hidden;
 }
 
 // variants
