@@ -1,4 +1,10 @@
 
+multi-month-view release
+------------------------
+- more-link hover effect
+- post-release: fix selection across separate months
+
+
 v6.0.4 (2023-01-13)
 -------------------
 

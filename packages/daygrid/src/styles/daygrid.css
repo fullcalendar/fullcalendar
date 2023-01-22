@@ -125,15 +125,24 @@ $daygrid-event-mirror-z: 7;
 
   & .fc-daygrid-day-bottom {
     font-size: .85em;
-    padding: 2px 3px 0;
+    overflow: hidden;
 
     &:before { @include clearfix; }
+    &:after { @include clearfix; }
   }
 
   & .fc-daygrid-more-link {
     position: relative;
     z-index: $daygrid-topbottom-z;
+    padding: 2px;
+    margin: 1px 2px 0;
+    border-radius: 3px;
+    white-space: nowrap;
     cursor: pointer;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
   }
 
   // week number (within frame)
@@ -170,6 +179,10 @@ $daygrid-event-mirror-z: 7;
 
 .fc-direction-ltr {
 
+  & .fc-daygrid-more-link {
+    float: left;
+  }
+
   & .fc-daygrid-week-number {
     left: 0;
     border-radius: 0 0 3px 0;
@@ -178,6 +191,10 @@ $daygrid-event-mirror-z: 7;
 }
 
 .fc-direction-rtl {
+
+  & .fc-daygrid-more-link {
+    float: right;
+  }
 
   & .fc-daygrid-week-number {
     right: 0;
