@@ -32,12 +32,10 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
     const dayTableModel = this.buildDayTableModel(dateProfile, context.dateProfileGenerator)
     const slicedProps = this.slicer.sliceProps(props, dateProfile, options.nextDayThreshold, context, dayTableModel)
 
-    // ensure day-cell aspect ratio
+    // ensure single-month has aspect ratio
+    const tableHeight = props.tableWidth != null ? props.tableWidth / options.aspectRatio : null
     const rowCnt = dayTableModel.cells.length
-    const rowHeight = props.tableWidth == null ? null :
-      props.tableWidth / options.aspectRatio / 6
-    const tableHeight = rowHeight == null ? null :
-      rowHeight * rowCnt
+    const rowHeight = tableHeight != null ? tableHeight / rowCnt : null
 
     return (
       <div
