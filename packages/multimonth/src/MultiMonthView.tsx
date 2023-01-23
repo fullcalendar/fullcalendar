@@ -173,7 +173,7 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
 
           if (monthEl) {
             scrollTop = monthEl.getBoundingClientRect().top -
-              scrollEl.getBoundingClientRect().top
+              this.firstMonthElRef.current.getBoundingClientRect().top
           }
         }
 
