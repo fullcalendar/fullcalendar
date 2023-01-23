@@ -173,6 +173,9 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
   }
 }
 
+// date profile
+// -------------------------------------------------------------------------------------------------
+
 const oneMonthDuration = createDuration(1, 'month')
 
 function splitDateProfileByMonth(
@@ -230,6 +233,9 @@ function splitDateProfileByMonth(
 
   return monthDateProfiles
 }
+
+// date formatting
+// -------------------------------------------------------------------------------------------------
 
 const YEAR_MONTH_FORMATTER = createFormatter({ year: 'numeric', month: 'long' })
 const YEAR_FORMATTER = createFormatter({ month: 'long' })

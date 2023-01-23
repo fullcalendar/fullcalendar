@@ -54,6 +54,11 @@ $daygrid-event-mirror-z: 7;
     padding: 4px;
   }
 
+  & .fc-daygrid-month-start { // on .fc-daygrid-day-number
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+
   // event container
 
   & .fc-daygrid-day-events {

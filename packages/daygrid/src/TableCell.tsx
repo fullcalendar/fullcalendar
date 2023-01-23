@@ -63,6 +63,13 @@ export class TableCell extends DateComponent<TableCellProps> {
     let { options } = context
     let { date, dateProfile } = props
 
+    // TODO: memoize this?
+    let isMonthStart =
+      dateProfile.currentRangeUnit !== 'month' && (
+        dateProfile.currentRange.start.valueOf() === date.valueOf() ||
+        date.getUTCDate() === 1
+      )
+
     return (
       <DayCellContainer
         elTag="td"
@@ -81,6 +88,7 @@ export class TableCell extends DateComponent<TableCellProps> {
         dateProfile={dateProfile}
         todayRange={props.todayRange}
         showDayNumber={props.showDayNumber}
+        isMonthStart={isMonthStart}
         extraRenderProps={props.extraRenderProps}
       >
         {(InnerContent, renderProps) => (
@@ -103,7 +111,10 @@ export class TableCell extends DateComponent<TableCellProps> {
                 <div className="fc-daygrid-day-top">
                   <InnerContent
                     elTag="a"
-                    elClasses={['fc-daygrid-day-number']}
+                    elClasses={[
+                      'fc-daygrid-day-number',
+                      isMonthStart && 'fc-daygrid-month-start',
+                    ]}
                     elAttrs={{
                       ...buildNavLinkAttrs(context, date),
                       id: state.dayNumberId,

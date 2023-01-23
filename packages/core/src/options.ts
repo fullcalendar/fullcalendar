@@ -237,6 +237,8 @@ export const BASE_OPTION_REFINERS = {
   moreLinkDidMount: identity as Identity<DidMountHandler<MoreLinkMountArg>>,
   moreLinkWillUnmount: identity as Identity<WillUnmountHandler<MoreLinkMountArg>>,
 
+  monthStartFormat: createFormatter,
+
   // for connectors
   // (can't be part of plugin system b/c must be provided at runtime)
   handleCustomRendering: identity as Identity<CustomRenderingHandler<any>>,
@@ -307,6 +309,7 @@ export const BASE_OPTION_DEFAULTS = {
   eventMinHeight: 15,
   eventMinWidth: 30,
   eventShortHeight: 30,
+  monthStartFormat: { month: 'long', day: 'numeric' },
 }
 
 export type BaseOptionsRefined = DefaultedRefinedOptions<

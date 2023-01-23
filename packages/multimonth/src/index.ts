@@ -13,7 +13,7 @@ export default createPlugin({
     multiMonth: {
       component: MultiMonthView,
       dateProfileGeneratorClass: TableDateProfileGenerator,
-      duration: { months: 1 },
+      duration: { months: 1 }, // better default than 1 day
       multiMonthMinWidth: 350,
       multiMonthMaxColumns: 3,
     },

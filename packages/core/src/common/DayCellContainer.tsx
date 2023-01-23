@@ -3,6 +3,7 @@ import { DateMarker } from '../datelib/marker.js'
 import { DateRange } from '../datelib/date-range.js'
 import { getDateMeta, DateMeta, getDayClassNames } from '../component/date-rendering.js'
 import { createFormatter } from '../datelib/formatting.js'
+import { DateFormatter } from '../datelib/DateFormatter.js'
 import { formatDayString } from '../datelib/formatting-utils.js'
 import { MountArg } from './render-hook.js'
 import { ViewApi } from '../api/ViewApi.js'
@@ -27,6 +28,7 @@ export interface DayCellContainerProps extends Partial<ElProps> {
   date: DateMarker
   dateProfile: DateProfile
   todayRange: DateRange
+  isMonthStart?: boolean
   showDayNumber?: boolean // defaults to false
   extraRenderProps?: Dictionary
   defaultGenerator?: (renderProps: DayCellContentArg) => ComponentChild
@@ -45,10 +47,12 @@ export class DayCellContainer extends BaseComponent<DayCellContainerProps> {
       date: props.date,
       dateProfile: props.dateProfile,
       todayRange: props.todayRange,
+      isMonthStart: props.isMonthStart || false,
       showDayNumber: props.showDayNumber,
       extraRenderProps: props.extraRenderProps,
       viewApi: context.viewApi,
       dateEnv: context.dateEnv,
+      monthStartFormat: options.monthStartFormat,
     })
 
     return (
@@ -88,19 +92,25 @@ interface DayCellRenderPropsInput {
   todayRange: DateRange
   dateEnv: DateEnv
   viewApi: ViewApi
+  monthStartFormat: DateFormatter
+  isMonthStart: boolean // defaults to false
   showDayNumber?: boolean // defaults to false
   extraRenderProps?: Dictionary // so can include a resource
 }
 
 function refineRenderProps(raw: DayCellRenderPropsInput): DayCellContentArg {
-  let { date, dateEnv } = raw
-  let dayMeta = getDateMeta(date, raw.todayRange, null, raw.dateProfile)
+  let { date, dateEnv, dateProfile, isMonthStart } = raw
+  let dayMeta = getDateMeta(date, raw.todayRange, null, dateProfile)
+  let dayNumberText = raw.showDayNumber ? (
+    dateEnv.format(date, isMonthStart ? raw.monthStartFormat : DAY_NUM_FORMAT)
+  ) : ''
 
   return {
     date: dateEnv.toDate(date),
     view: raw.viewApi,
     ...dayMeta,
-    dayNumberText: raw.showDayNumber ? dateEnv.format(date, DAY_NUM_FORMAT) : '',
+    isMonthStart,
+    dayNumberText,
     ...raw.extraRenderProps,
   }
 }
