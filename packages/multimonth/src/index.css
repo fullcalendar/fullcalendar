@@ -1,8 +1,4 @@
 
-:root {
-  --fc-multimonth-more-link-color: #cee6ff;
-}
-
 .fc-multimonth {
   display: flex;
   flex-wrap: wrap;
@@ -71,7 +67,8 @@
 
   // more-link look like an event
   & .fc-daygrid-more-link {
-    background-color: var(--fc-multimonth-more-link-color);
+    border: 1px solid var(--fc-event-border-color);
+    padding: 1px;
     float: none;
     display: block;
     overflow: hidden;
