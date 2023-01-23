@@ -23,9 +23,6 @@ interface MultiMonthViewState {
   monthHPadding?: number
 }
 
-const DEFAULT_COL_MIN_WIDTH = 350
-const DEFAULT_COL_MAX_COUNT = 3
-
 export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState> {
   private splitDateProfileByMonth = memoize(splitDateProfileByMonth)
   private buildMonthFormat = memoize(buildMonthFormat)
@@ -39,13 +36,11 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
     const { clientWidth, clientHeight } = state
     const monthHPadding = state.monthHPadding || 0
 
-    const monthTableMinWidth = options.multiMonthMinWidth || DEFAULT_COL_MIN_WIDTH
-    const colMaxCnt = options.multiMonthMaxColumns || DEFAULT_COL_MAX_COUNT
     const colCount = Math.min(
       clientWidth != null ?
-        Math.floor(clientWidth / (monthTableMinWidth + monthHPadding)) :
+        Math.floor(clientWidth / (options.multiMonthMinWidth + monthHPadding)) :
         1,
-      colMaxCnt,
+      options.multiMonthMaxColumns,
     ) || 1
 
     const monthWidthPct = (100 / colCount) + '%'
