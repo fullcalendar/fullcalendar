@@ -11,6 +11,7 @@ import {
   DateFormatter,
   createFormatter,
   isPropsEqual,
+  DateProfileGenerator,
 } from '@fullcalendar/core/internal'
 import { buildDayTableRenderRange } from '@fullcalendar/daygrid/internal'
 import { createElement, createRef } from '@fullcalendar/core/preact'
@@ -53,6 +54,7 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
 
     const isLegitSingleCol = clientWidth != null && colCount === 1
     const monthDateProfiles = this.splitDateProfileByMonth(
+      context.dateProfileGenerator,
       props.dateProfile,
       context.dateEnv,
       isLegitSingleCol ? false : options.fixedWeekCount,
@@ -179,6 +181,7 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
 const oneMonthDuration = createDuration(1, 'month')
 
 function splitDateProfileByMonth(
+  dateProfileGenerator: DateProfileGenerator,
   dateProfile: DateProfile,
   dateEnv: DateEnv,
   fixedWeekCount?: boolean,
@@ -190,13 +193,22 @@ function splitDateProfileByMonth(
 
   while (monthStart.valueOf() < end.valueOf()) {
     const monthEnd = dateEnv.add(monthStart, oneMonthDuration)
-    const currentRange = { start: monthStart, end: monthEnd }
-    const renderRange = buildDayTableRenderRange({
+    const currentRange = {
+      // yuck
+      start: dateProfileGenerator.skipHiddenDays(monthStart),
+      end: dateProfileGenerator.skipHiddenDays(monthEnd, -1, true),
+    }
+    let renderRange = buildDayTableRenderRange({
       currentRange,
       snapToWeek: true,
       fixedWeekCount,
       dateEnv,
     })
+    renderRange = {
+      // yuck
+      start: dateProfileGenerator.skipHiddenDays(renderRange.start),
+      end: dateProfileGenerator.skipHiddenDays(renderRange.end, -1, true),
+    }
     const activeRange = dateProfile.activeRange ?
       intersectRanges(
         dateProfile.activeRange,
