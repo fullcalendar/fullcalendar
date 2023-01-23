@@ -1,4 +1,4 @@
-import { DayCellContentArg } from '@fullcalendar/core'
+import { CssDimValue, DayCellContentArg } from '@fullcalendar/core'
 import {
   DateMarker,
   DateComponent,
@@ -47,6 +47,7 @@ export interface TableCellProps {
   eventDrag: EventSegUiInteractionState | null
   eventResize: EventSegUiInteractionState | null
   singlePlacements: TableSegPlacement[]
+  minHeight?: CssDimValue
 }
 
 const DEFAULT_WEEK_NUM_FORMAT = createFormatter({ week: 'narrow' })
@@ -83,7 +84,11 @@ export class TableCell extends DateComponent<TableCellProps> {
         extraRenderProps={props.extraRenderProps}
       >
         {(InnerContent, renderProps) => (
-          <div className="fc-daygrid-day-frame fc-scrollgrid-sync-inner" ref={props.innerElRef}>
+          <div
+            ref={props.innerElRef}
+            className="fc-daygrid-day-frame fc-scrollgrid-sync-inner"
+            style={{ minHeight: props.minHeight }}
+          >
             {props.showWeekNumber && (
               <WeekNumberContainer
                 elTag="a"

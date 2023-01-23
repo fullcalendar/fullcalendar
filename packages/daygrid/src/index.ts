@@ -24,5 +24,9 @@ export default createPlugin({
       duration: { months: 1 },
       fixedWeekCount: true,
     },
+    dayGridYear: {
+      type: 'dayGrid',
+      duration: { years: 1 },
+    },
   },
 }) as PluginDef

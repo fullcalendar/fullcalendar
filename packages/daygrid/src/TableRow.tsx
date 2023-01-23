@@ -48,6 +48,7 @@ export interface TableRowProps {
   showDayNumbers: boolean
   showWeekNumbers: boolean
   forPrint: boolean
+  cellMinHeight?: CssDimValue
 }
 
 interface TableRowState {
@@ -150,6 +151,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
                   {this.renderFillSegs(bgEventSegsByCol[col], 'bg-event')}
                 </Fragment>
               )}
+              minHeight={props.cellMinHeight}
             />
           )
         })}

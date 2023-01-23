@@ -49,14 +49,21 @@ export class TableRows extends DateComponent<TableRowsProps> {
   private colPositions: PositionCache
 
   render() {
-    let { props } = this
+    let { props, context } = this
     let rowCnt = props.cells.length
+
     let businessHourSegsByRow = this.splitBusinessHourSegs(props.businessHourSegs, rowCnt)
     let bgEventSegsByRow = this.splitBgEventSegs(props.bgEventSegs, rowCnt)
     let fgEventSegsByRow = this.splitFgEventSegs(props.fgEventSegs, rowCnt)
     let dateSelectionSegsByRow = this.splitDateSelectionSegs(props.dateSelectionSegs, rowCnt)
     let eventDragByRow = this.splitEventDrag(props.eventDrag, rowCnt)
     let eventResizeByRow = this.splitEventResize(props.eventResize, rowCnt)
+
+    // for DayGrid view with many rows, force a min-height on cells so doesn't appear squished
+    // choose 7 because a month view will have max 6 rows
+    let cellMinHeight = (rowCnt >= 7 && props.clientWidth) ?
+      props.clientWidth / context.options.aspectRatio / 6 :
+      null
 
     return (
       <NowTimer unit="day">{(nowDate: DateMarker, todayRange: DateRange) => (
@@ -86,6 +93,7 @@ export class TableRows extends DateComponent<TableRowsProps> {
               dayMaxEventRows={props.dayMaxEventRows}
               clientWidth={props.clientWidth}
               clientHeight={props.clientHeight}
+              cellMinHeight={cellMinHeight}
               forPrint={props.forPrint}
             />
           ))}
