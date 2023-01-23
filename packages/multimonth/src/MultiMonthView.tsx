@@ -11,7 +11,6 @@ import {
   DateFormatter,
   createFormatter,
   isPropsEqual,
-  rangeContainsMarker,
 } from '@fullcalendar/core/internal'
 import { buildDayTableRenderRange } from '@fullcalendar/daygrid/internal'
 import { createElement, createRef } from '@fullcalendar/core/preact'
@@ -32,7 +31,6 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
   private scrollElRef = createRef<HTMLDivElement>()
   private firstMonthElRef = createRef<HTMLDivElement>()
   private needsScrollReset = false
-  private anyScrollReset = false // scroll-reset happened at least once?
 
   render() {
     const { context, props, state } = this
@@ -160,28 +158,14 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
       this.needsScrollReset &&
       this.state.monthHPadding != null // indicates sizing already happened
     ) {
-      if (
-        this.context.options.multiMonthScrollReset !== false || // scroll-reset enabled?
-        !this.anyScrollReset // OR first time rendering?
-      ) {
-        const { nowDate } = this.context.dateProfileGenerator // TODO: make dynamic
-        const scrollEl = this.scrollElRef.current
-        let scrollTop = 0
+      const { currentDate } = this.props.dateProfile
+      const scrollEl = this.scrollElRef.current
+      const monthEl = scrollEl.querySelector(`[data-date="${formatIsoMonthStr(currentDate)}"]`)
 
-        if (rangeContainsMarker(this.props.dateProfile.currentRange, nowDate)) {
-          const monthEl = scrollEl.querySelector(`[data-date="${formatIsoMonthStr(nowDate)}"]`)
-
-          if (monthEl) {
-            scrollTop = monthEl.getBoundingClientRect().top -
-              this.firstMonthElRef.current.getBoundingClientRect().top
-          }
-        }
-
-        scrollEl.scrollTop = scrollTop
-      }
+      scrollEl.scrollTop = monthEl.getBoundingClientRect().top -
+        this.firstMonthElRef.current.getBoundingClientRect().top
 
       this.needsScrollReset = false
-      this.anyScrollReset = true
     }
   }
 
@@ -221,6 +205,7 @@ function splitDateProfileByMonth(
       null
 
     monthDateProfiles.push({
+      currentDate: dateProfile.currentDate,
       isValid: dateProfile.isValid,
       validRange: dateProfile.validRange,
       renderRange,

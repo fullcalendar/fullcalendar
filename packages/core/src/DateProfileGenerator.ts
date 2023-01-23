@@ -15,6 +15,7 @@ import { getNow } from './reducers/current-date.js'
 import { CalendarImpl } from './api/CalendarImpl.js'
 
 export interface DateProfile {
+  currentDate: DateMarker
   isValid: boolean
   validRange: OpenDateRange // dates in past/present/future the user can interact with
   renderRange: DateRange // dates that get rendered (even if they're completely blank)
@@ -133,6 +134,8 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     isValid = rangesIntersect(currentInfo.range, validRange)
 
     return {
+      currentDate,
+
       // constraint for where prev/next operations can go and where events can be dragged/resized to.
       // an object with optional start and end properties.
       validRange,
