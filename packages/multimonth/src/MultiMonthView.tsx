@@ -68,7 +68,7 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
         'fc-multimonth-singlecol' :
         'fc-multimonth-multicol',
       (monthTableWidth != null && monthTableWidth < 400) ?
-        'fc-multimonth-condensed' :
+        'fc-multimonth-compact' :
         '',
     ]
 

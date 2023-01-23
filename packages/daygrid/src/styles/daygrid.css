@@ -141,6 +141,7 @@ $daygrid-event-mirror-z: 7;
     padding: 2px;
     overflow: hidden;
     white-space: nowrap;
+    line-height: 1; // undo themes that have thick line-height
     cursor: pointer;
 
     &:hover {

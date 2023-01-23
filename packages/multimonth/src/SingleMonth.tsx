@@ -27,9 +27,10 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
 
   render() {
     const { props, state, context } = this
+    const { dateProfile, forPrint } = props
     const { options } = context
-    const dayTableModel = this.buildDayTableModel(props.dateProfile, context.dateProfileGenerator)
-    const slicedProps = this.slicer.sliceProps(props, props.dateProfile, options.nextDayThreshold, context, dayTableModel)
+    const dayTableModel = this.buildDayTableModel(dateProfile, context.dateProfileGenerator)
+    const slicedProps = this.slicer.sliceProps(props, dateProfile, options.nextDayThreshold, context, dayTableModel)
 
     // ensure day-cell aspect ratio
     const rowCnt = dayTableModel.cells.length
@@ -59,7 +60,10 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
             )}
           </div>
           <table
-            className="fc-multimonth-header-table"
+            className={[
+              'fc-multimonth-header-table',
+              context.theme.getClass('table'),
+            ].join(' ')}
             role="presentation"
           >
             <thead role="rowgroup">
@@ -76,27 +80,32 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
             'fc-multimonth-daygrid',
             'fc-daygrid',
             'fc-daygrid-body', // necessary for TableRows DnD parent
-            'fc-daygrid-body-balanced',
+            !forPrint && 'fc-daygrid-body-balanced',
+            forPrint && 'fc-daygrid-body-unbalanced',
+            forPrint && 'fc-daygrid-body-natural',
           ].join(' ')}
           style={{ marginTop: -rowHeight }} // for stickyness
         >
           <table
-            className="fc-multimonth-daygrid-table"
-            style={{ height: tableHeight }}
+            className={[
+              'fc-multimonth-daygrid-table',
+              context.theme.getClass('table'),
+            ].join(' ')}
+            style={{ height: forPrint ? '' : tableHeight }}
             role="presentation"
           >
             <tbody role="rowgroup">
               <TableRows
                 {...slicedProps}
-                dateProfile={props.dateProfile}
+                dateProfile={dateProfile}
                 cells={dayTableModel.cells}
                 eventSelection={props.eventSelection}
-                dayMaxEvents={true}
-                dayMaxEventRows={true}
+                dayMaxEvents={!forPrint}
+                dayMaxEventRows={!forPrint}
                 showWeekNumbers={options.weekNumbers}
                 clientWidth={props.clientWidth}
                 clientHeight={props.clientHeight}
-                forPrint={props.forPrint}
+                forPrint={forPrint}
               />
             </tbody>
           </table>

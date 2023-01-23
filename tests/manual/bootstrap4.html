@@ -3,7 +3,13 @@
 <head>
 <meta charset='utf-8' />
 
-<script src='../../bundle/main.js'></script>
+<script src='../../packages/core/dist/index.global.js'></script>
+<script src='../../packages/interaction/dist/index.global.js'></script>
+<script src='../../packages/daygrid/dist/index.global.js'></script>
+<script src='../../packages/timegrid/dist/index.global.js'></script>
+<script src='../../packages/list/dist/index.global.js'></script>
+<script src='../../packages/multimonth/dist/index.global.js'></script>
+<script src='../../packages/bootstrap4/dist/index.global.js'></script>
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
@@ -26,9 +32,9 @@
         }
       },
       headerToolbar: {
-        left: 'prevYear,prev,today,next,nextYear',
+        left: 'prevYear,prev,today,next,nextYear myCustomButton',
         center: 'title',
-        right: 'myCustomButton dayGridMonth,timeGridWeek,timeGridDay'
+        right: 'multiMonthYear,dayGridMonth,timeGridWeek,listMonth'
       },
       themeSystem: 'bootstrap',
       bootstrapFontAwesome: {
@@ -115,7 +121,7 @@
   }
 
   #calendar {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
   }
 

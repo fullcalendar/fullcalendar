@@ -5,4 +5,8 @@
     color: inherit; // natural color for navlinks
   }
 
+  & .fc-more-link:hover {
+    text-decoration: none;
+  }
+
 }
