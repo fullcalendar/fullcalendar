@@ -125,8 +125,9 @@ $daygrid-event-mirror-z: 7;
 
   & .fc-daygrid-day-bottom {
     font-size: .85em;
-    overflow: hidden;
+    margin: 0 2px;
 
+    // can't use flexbox well inside tables. for floating
     &:before { @include clearfix; }
     &:after { @include clearfix; }
   }
@@ -134,9 +135,11 @@ $daygrid-event-mirror-z: 7;
   & .fc-daygrid-more-link {
     position: relative;
     z-index: $daygrid-topbottom-z;
-    padding: 2px;
-    margin: 1px 2px 0;
+    margin-top: 1px;
+    max-width: 100%;
     border-radius: 3px;
+    padding: 2px;
+    overflow: hidden;
     white-space: nowrap;
     cursor: pointer;
 
