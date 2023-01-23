@@ -30,6 +30,10 @@ export function formatDayString(marker: DateMarker) {
   return marker.toISOString().replace(/T.*$/, '')
 }
 
+export function formatIsoMonthStr(marker: DateMarker) {
+  return marker.toISOString().match(/^\d{4}-\d{2}/)[0]
+}
+
 // TODO: use Date::toISOString and use everything after the T?
 export function formatIsoTimeString(marker: DateMarker) {
   return padStart(marker.getUTCHours(), 2) + ':' +

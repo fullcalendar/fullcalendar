@@ -60,6 +60,8 @@ export class DayTableView extends TableView {
       ? this.renderHScrollLayout(headerContent, bodyContent, dayTableModel.colCnt, options.dayMinWidth)
       : this.renderSimpleLayout(headerContent, bodyContent)
   }
+
+  // can't override any lifecycle methods from parent
 }
 
 export function buildDayTableModel(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {

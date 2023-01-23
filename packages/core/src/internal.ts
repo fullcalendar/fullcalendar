@@ -140,6 +140,7 @@ export {
   formatIsoTimeString,
   formatDayString,
   buildIsoString,
+  formatIsoMonthStr,
 } from './datelib/formatting-utils.js'
 export { NamedTimeZoneImpl } from './datelib/timezone.js'
 export { parse as parseMarker } from './datelib/parsing.js'

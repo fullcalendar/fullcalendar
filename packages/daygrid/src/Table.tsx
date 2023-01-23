@@ -1,6 +1,6 @@
 import { CssDimValue } from '@fullcalendar/core'
-import { DateComponent } from '@fullcalendar/core/internal'
-import { VNode, RefObject, createElement } from '@fullcalendar/core/preact'
+import { DateComponent, formatIsoMonthStr, formatDayString } from '@fullcalendar/core/internal'
+import { VNode, RefObject, createElement, createRef } from '@fullcalendar/core/preact'
 import { TableRows, TableRowsProps } from './TableRows.js'
 
 export interface TableProps extends TableRowsProps {
@@ -11,6 +11,9 @@ export interface TableProps extends TableRowsProps {
 }
 
 export class Table extends DateComponent<TableProps> {
+  private elRef = createRef<HTMLDivElement>()
+  private needsScrollReset = false
+
   render() {
     let { props } = this
     let { dayMaxEventRows, dayMaxEvents, expandRows } = props
@@ -32,6 +35,7 @@ export class Table extends DateComponent<TableProps> {
 
     return (
       <div
+        ref={this.elRef}
         className={classNames.join(' ')}
         style={{
           // these props are important to give this wrapper correct dimensions for interactions
@@ -74,5 +78,44 @@ export class Table extends DateComponent<TableProps> {
         </table>
       </div>
     )
+  }
+
+  componentDidMount(): void {
+    this.requestScrollReset()
+  }
+
+  componentDidUpdate(prevProps: TableProps): void {
+    if (prevProps.dateProfile !== this.props.dateProfile) {
+      this.requestScrollReset()
+    } else {
+      this.flushScrollReset()
+    }
+  }
+
+  requestScrollReset() {
+    this.needsScrollReset = true
+    this.flushScrollReset()
+  }
+
+  flushScrollReset() {
+    if (
+      this.needsScrollReset &&
+      this.props.clientWidth // sizes computed?
+    ) {
+      const { dateProfile } = this.props
+      const dateStr = dateProfile.currentRangeUnit === 'week' ?
+        formatDayString(dateProfile.currentDate) :
+        formatIsoMonthStr(dateProfile.currentDate) + '-01'
+
+      const subjectEl = this.elRef.current.querySelector(`[data-date="${dateStr}"]`)
+      const originEl = subjectEl.closest('.fc-daygrid-body')
+      const scrollEl = originEl.closest('.fc-scroller')
+      const scrollTop = subjectEl.getBoundingClientRect().top -
+        originEl.getBoundingClientRect().top
+
+      scrollEl.scrollTop = scrollTop ? (scrollTop + 1) : 0 // overcome border
+
+      this.needsScrollReset = false
+    }
   }
 }

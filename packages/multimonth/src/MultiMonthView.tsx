@@ -12,6 +12,7 @@ import {
   createFormatter,
   isPropsEqual,
   DateProfileGenerator,
+  formatIsoMonthStr,
 } from '@fullcalendar/core/internal'
 import { buildDayTableRenderRange } from '@fullcalendar/daygrid/internal'
 import { createElement, createRef } from '@fullcalendar/core/preact'
@@ -249,9 +250,4 @@ function buildMonthFormat(
       monthDateProfiles[monthDateProfiles.length - 1].currentRange.start.getUTCFullYear())
       ? YEAR_MONTH_FORMATTER
       : YEAR_FORMATTER)
-}
-
-// TODO: move to general utils
-function formatIsoMonthStr(marker: DateMarker) {
-  return marker.toISOString().match(/^\d{4}-\d{2}/)[0]
 }
