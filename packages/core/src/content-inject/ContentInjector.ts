@@ -42,8 +42,9 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
   render() {
     const { props, context } = this
     const { options } = context
-    let { customGenerator, defaultGenerator, renderProps } = props
+    const { customGenerator, defaultGenerator, renderProps } = props
     const attrs = buildElAttrs(props)
+    let useDefault = false
     let innerContent: ComponentChild | undefined
     let queuedDomNodes: Node[] = []
     let currentGeneratorMeta: any
@@ -54,7 +55,7 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
         customGenerator
 
       if (customGeneratorRes === true) {
-        customGenerator = undefined // use default
+        useDefault = true
       } else {
         if (options.handleCustomRendering) { // non-Preact (likely React)
           currentGeneratorMeta = customGeneratorRes
@@ -70,9 +71,11 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
           }
         }
       }
+    } else {
+      useDefault = !hasCustomRenderingHandler(props.generatorName, options)
     }
 
-    if (customGenerator == null && defaultGenerator) {
+    if (useDefault && defaultGenerator) {
       innerContent = defaultGenerator(renderProps)
     }
 
@@ -102,7 +105,7 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
 
     if (handleCustomRendering) {
       const generatorMeta =
-        this.currentGeneratorMeta ||
+        this.currentGeneratorMeta ??
         customRenderingMetaMap?.[props.generatorName]
 
       if (generatorMeta) {
