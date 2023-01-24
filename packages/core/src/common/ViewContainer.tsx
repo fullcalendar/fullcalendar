@@ -34,7 +34,6 @@ export class ViewContainer extends BaseComponent<ViewContainerProps> {
         renderProps={renderProps}
         classNameGenerator={options.viewClassNames}
         generatorName={undefined}
-        generator={undefined}
         didMount={options.viewDidMount}
         willUnmount={options.viewWillUnmount}
       >

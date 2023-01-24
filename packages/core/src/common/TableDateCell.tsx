@@ -62,7 +62,8 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> {
         }}
         renderProps={renderProps}
         generatorName="dayHeaderContent"
-        generator={options.dayHeaderContent || renderInner}
+        customGenerator={options.dayHeaderContent}
+        defaultGenerator={renderInner}
         classNameGenerator={options.dayHeaderClassNames}
         didMount={options.dayHeaderDidMount}
         willUnmount={options.dayHeaderWillUnmount}

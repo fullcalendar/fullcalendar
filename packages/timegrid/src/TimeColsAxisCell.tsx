@@ -58,7 +58,8 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
             }}
             renderProps={renderProps}
             generatorName="slotLabelContent"
-            generator={options.slotLabelContent || renderInnerContent}
+            customGenerator={options.slotLabelContent}
+            defaultGenerator={renderInnerContent}
             classNameGenerator={options.slotLabelClassNames}
             didMount={options.slotLabelDidMount}
             willUnmount={options.slotLabelWillUnmount}

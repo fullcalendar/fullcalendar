@@ -68,7 +68,8 @@ export class DayCellContainer extends BaseComponent<DayCellContainerProps> {
         }}
         renderProps={renderProps}
         generatorName="dayCellContent"
-        generator={options.dayCellContent || props.defaultGenerator}
+        customGenerator={options.dayCellContent}
+        defaultGenerator={props.defaultGenerator}
         classNameGenerator={
           // don't use custom classNames if disabled
           renderProps.isDisabled ? undefined : options.dayCellClassNames

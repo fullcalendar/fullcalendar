@@ -1,5 +1,5 @@
-import { createElement, ComponentChild, isValidElement, JSX, Ref } from '../preact.js'
-import { CustomContent, CustomContentGenerator, ObjCustomContent } from '../common/render-hook.js'
+import { createElement, ComponentChild, JSX, Ref } from '../preact.js'
+import { CustomContentGenerator } from '../common/render-hook.js'
 import { BaseComponent, setRef } from '../vdom-util.js'
 import { guid } from '../util/misc.js'
 import { isArraysEqual } from '../util/array.js'
@@ -23,8 +23,9 @@ export interface ElProps extends ElAttrsProps {
 
 export interface ContentGeneratorProps<RenderProps> {
   renderProps: RenderProps
-  generatorName: string | undefined
-  generator: CustomContentGenerator<RenderProps> | undefined
+  generatorName: string | undefined // for informing UI-framework if `customGenerator` is undefined
+  customGenerator?: CustomContentGenerator<RenderProps>
+  defaultGenerator?: (renderProps: RenderProps) => ComponentChild
 }
 
 export type ContentInjectorProps<RenderProps> =
@@ -34,44 +35,49 @@ export type ContentInjectorProps<RenderProps> =
 
 export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorProps<RenderProps>> {
   private id = guid()
-  private currentDomNodes: Node[] = []
   private queuedDomNodes: Node[] = []
+  private currentDomNodes: Node[] = []
+  private currentGeneratorMeta: any
 
   render() {
     const { props, context } = this
     const { options } = context
-    const { generator, renderProps } = props
+    let { customGenerator, defaultGenerator, renderProps } = props
     const attrs = buildElAttrs(props)
     let innerContent: ComponentChild | undefined
     let queuedDomNodes: Node[] = []
+    let currentGeneratorMeta: any
 
-    if (hasCustomRenderingHandler(props.generatorName, options)) {
-      if (options.customRenderingReplacesEl) {
-        delete attrs.elRef // because handleEl will be used
-      }
-    } else {
-      const customContent: CustomContent = typeof generator === 'function' ?
-        generator(renderProps, createElement) :
-        generator
+    if (customGenerator != null) {
+      const customGeneratorRes = typeof customGenerator === 'function' ?
+        customGenerator(renderProps, createElement) :
+        customGenerator
 
-      if (
-        typeof customContent === 'string' ||
-        isValidElement(customContent) ||
-        Array.isArray(customContent)
-      ) {
-        innerContent = customContent
-      } else if (typeof customContent === 'object') {
-        if ('html' in customContent) {
-          attrs.dangerouslySetInnerHTML = { __html: customContent.html }
-        } else if ('domNodes' in customContent) {
-          queuedDomNodes = Array.prototype.slice.call(
-            (customContent as ObjCustomContent).domNodes,
-          )
+      if (customGeneratorRes === true) {
+        customGenerator = undefined // use default
+      } else {
+        if (options.handleCustomRendering) { // non-Preact (likely React)
+          currentGeneratorMeta = customGeneratorRes
+        } else { // preact or { html, domNodes }
+          const isObject = typeof customGeneratorRes === 'object'
+
+          if (isObject && ('html' in customGeneratorRes)) {
+            attrs.dangerouslySetInnerHTML = { __html: customGeneratorRes.html }
+          } else if (isObject && ('domNodes' in customGeneratorRes)) {
+            queuedDomNodes = Array.prototype.slice.call(customGeneratorRes.domNodes)
+          } else {
+            innerContent = customGeneratorRes
+          }
         }
       }
     }
 
+    if (customGenerator == null && defaultGenerator) {
+      innerContent = defaultGenerator(renderProps)
+    }
+
     this.queuedDomNodes = queuedDomNodes
+    this.currentGeneratorMeta = currentGeneratorMeta
 
     return createElement(props.elTag, attrs, innerContent)
   }
@@ -95,15 +101,17 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
     const { handleCustomRendering, customRenderingMetaMap } = context.options
 
     if (handleCustomRendering) {
-      const customRenderingMeta = customRenderingMetaMap?.[props.generatorName]
+      const generatorMeta =
+        this.currentGeneratorMeta ||
+        customRenderingMetaMap?.[props.generatorName]
 
-      if (customRenderingMeta) {
+      if (generatorMeta) {
         handleCustomRendering({
           id: this.id,
           isActive,
           containerEl: this.base as HTMLElement,
           reportNewContainerEl: this.handleEl, // for customRenderingReplacesEl
-          generatorMeta: customRenderingMeta,
+          generatorMeta,
           ...props,
         })
       }
@@ -141,6 +149,9 @@ ContentInjector.addPropsEquality({
 
 // Util
 
+/*
+Does UI-framework provide custom way of rendering?
+*/
 export function hasCustomRenderingHandler(
   generatorName: string | undefined,
   options: ViewOptions,

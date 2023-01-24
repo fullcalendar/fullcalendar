@@ -52,7 +52,8 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
         }}
         renderProps={renderProps}
         generatorName="dayHeaderContent"
-        generator={options.dayHeaderContent || renderInnerContent}
+        customGenerator={options.dayHeaderContent}
+        defaultGenerator={renderInnerContent}
         classNameGenerator={options.dayHeaderClassNames}
         didMount={options.dayHeaderDidMount}
         willUnmount={options.dayHeaderWillUnmount}

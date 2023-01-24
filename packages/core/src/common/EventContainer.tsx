@@ -1,4 +1,4 @@
-import { createElement } from '../preact.js'
+import { ComponentChild, createElement } from '../preact.js'
 import { BaseComponent } from '../vdom-util.js'
 import { Seg } from '../component/DateComponent.js'
 import { EventImpl } from '../api/EventImpl.js'
@@ -12,7 +12,6 @@ import {
 } from '../component/event-rendering.js'
 import { ContentContainer, InnerContainerFunc } from '../content-inject/ContentContainer.js'
 import { ElProps } from '../content-inject/ContentInjector.js'
-import { CustomContentGenerator } from './render-hook.js'
 
 export interface MinimalEventProps {
   seg: Seg
@@ -26,7 +25,7 @@ export interface MinimalEventProps {
 }
 
 export type EventContainerProps = ElProps & MinimalEventProps & {
-  defaultGenerator: CustomContentGenerator<EventContentArg>
+  defaultGenerator: (renderProps: EventContentArg) => ComponentChild
   disableDragging?: boolean
   disableResizing?: boolean
   timeText: string
@@ -75,7 +74,8 @@ export class EventContainer extends BaseComponent<EventContainerProps> {
         ]}
         renderProps={renderProps}
         generatorName="eventContent"
-        generator={options.eventContent || props.defaultGenerator}
+        customGenerator={options.eventContent}
+        defaultGenerator={props.defaultGenerator}
         classNameGenerator={options.eventClassNames}
         didMount={options.eventDidMount}
         willUnmount={options.eventWillUnmount}

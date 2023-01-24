@@ -35,7 +35,8 @@ export const WeekNumberContainer = (props: WeekNumberContainerProps) => (
           {...props /* includes children */}
           renderProps={renderProps}
           generatorName="weekNumberContent"
-          generator={options.weekNumberContent || renderInner}
+          customGenerator={options.weekNumberContent}
+          defaultGenerator={renderInner}
           classNameGenerator={options.weekNumberClassNames}
           didMount={options.weekNumberDidMount}
           willUnmount={options.weekNumberWillUnmount}

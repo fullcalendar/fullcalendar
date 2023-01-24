@@ -392,7 +392,8 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
         }}
         renderProps={renderProps}
         generatorName="allDayContent"
-        generator={options.allDayContent || renderAllDayInner}
+        customGenerator={options.allDayContent}
+        defaultGenerator={renderAllDayInner}
         classNameGenerator={options.allDayClassNames}
         didMount={options.allDayDidMount}
         willUnmount={options.allDayWillUnmount}

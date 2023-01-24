@@ -82,7 +82,8 @@ function InnerContentInjector<RenderProps>(
   return createElement(ContentInjector<RenderProps>, {
     renderProps: parentProps.renderProps,
     generatorName: parentProps.generatorName,
-    generator: parentProps.generator,
+    customGenerator: parentProps.customGenerator,
+    defaultGenerator: parentProps.defaultGenerator,
     renderId: containerComponent.context,
     ...props,
   })

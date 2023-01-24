@@ -36,7 +36,7 @@ export const NowIndicatorContainer = (props: NowIndicatorContainerProps) => (
           elTag={props.elTag || 'div'}
           renderProps={renderProps}
           generatorName="nowIndicatorContent"
-          generator={options.nowIndicatorContent}
+          customGenerator={options.nowIndicatorContent}
           classNameGenerator={options.nowIndicatorClassNames}
           didMount={options.nowIndicatorDidMount}
           willUnmount={options.nowIndicatorWillUnmount}

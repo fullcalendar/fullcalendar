@@ -13,5 +13,5 @@ export interface ObjCustomContent {
 }
 
 export type CustomContent = ComponentChildren | ObjCustomContent
-export type CustomContentGenerator<RenderProps> = CustomContent | ((renderProps: RenderProps, createElement: any) => CustomContent)
+export type CustomContentGenerator<RenderProps> = CustomContent | ((renderProps: RenderProps, createElement: any) => (CustomContent | true))
 export type ClassNamesGenerator<RenderProps> = ClassNamesInput | ((renderProps: RenderProps) => ClassNamesInput)

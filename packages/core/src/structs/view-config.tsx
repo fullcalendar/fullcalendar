@@ -68,7 +68,7 @@ function createViewHookComponent(options: ViewOptions) {
             nextDayThreshold: context.options.nextDayThreshold,
           }}
           generatorName={undefined}
-          generator={options.content as any}
+          customGenerator={options.content as any}
           classNameGenerator={options.classNames as any}
           didMount={options.didMount as any}
           willUnmount={options.willUnmount as any}

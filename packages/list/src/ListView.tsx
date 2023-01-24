@@ -103,7 +103,8 @@ export class ListView extends DateComponent<ViewProps> {
         elClasses={['fc-list-empty']}
         renderProps={renderProps}
         generatorName="noEventsContent"
-        generator={options.noEventsContent || renderNoEventsInner}
+        customGenerator={options.noEventsContent}
+        defaultGenerator={renderNoEventsInner}
         classNameGenerator={options.noEventsClassNames}
         didMount={options.noEventsDidMount}
         willUnmount={options.noEventsWillUnmount}

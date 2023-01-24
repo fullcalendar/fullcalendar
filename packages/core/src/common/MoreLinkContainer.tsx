@@ -11,7 +11,7 @@ import { BaseComponent, setRef } from '../vdom-util.js'
 import { ViewApi } from '../api/ViewApi.js'
 import { ViewContext, ViewContextType } from '../ViewContext.js'
 import { MorePopover } from './MorePopover.js'
-import { CustomContentGenerator, MountArg } from './render-hook.js'
+import { MountArg } from './render-hook.js'
 import { ContentContainer, InnerContainerFunc } from '../content-inject/ContentContainer.js'
 import { ElProps } from '../content-inject/ContentInjector.js'
 import { createAriaClickAttrs } from '../util/dom-event.js'
@@ -27,7 +27,7 @@ export interface MoreLinkContainerProps extends Partial<ElProps> {
   alignmentElRef?: RefObject<HTMLElement> // will use internal <a> if unspecified
   alignGridTop?: boolean // for popover
   popoverContent: () => ComponentChild
-  defaultGenerator?: CustomContentGenerator<MoreLinkContentArg>
+  defaultGenerator?: (renderProps: MoreLinkContentArg) => ComponentChild
   children?: InnerContainerFunc<MoreLinkContentArg>
 }
 
@@ -96,7 +96,8 @@ export class MoreLinkContainer extends BaseComponent<MoreLinkContainerProps, Mor
                   }}
                   renderProps={renderProps}
                   generatorName="moreLinkContent"
-                  generator={options.moreLinkContent || props.defaultGenerator || renderMoreLinkInner}
+                  customGenerator={options.moreLinkContent}
+                  defaultGenerator={props.defaultGenerator || renderMoreLinkInner}
                   classNameGenerator={options.moreLinkClassNames}
                   didMount={options.moreLinkDidMount}
                   willUnmount={options.moreLinkWillUnmount}
