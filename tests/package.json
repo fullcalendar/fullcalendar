@@ -18,7 +18,7 @@
     "fullcalendar": "~6.0.3",
     "luxon": "^2.0.0",
     "moment": "^2.29.1",
-    "moment-timezone": "^0.5.31",
+    "moment-timezone": "^0.5.40",
     "xhr-mock": "^2.5.1"
   },
   "devDependencies": {

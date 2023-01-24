@@ -11,12 +11,12 @@
   "homepage": "https://fullcalendar.io/docs/moment-timezone-plugin",
   "peerDependencies": {
     "@fullcalendar/core": "~6.0.3",
-    "moment-timezone": "^0.5.31"
+    "moment-timezone": "^0.5.40"
   },
   "devDependencies": {
     "@fullcalendar/core": "~6.0.3",
     "@fullcalendar/standard-scripts": "*",
-    "moment-timezone": "^0.5.31"
+    "moment-timezone": "^0.5.40"
   },
   "scripts": {
     "build": "standard-scripts pkg:build",
