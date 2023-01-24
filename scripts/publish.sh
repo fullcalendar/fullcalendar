@@ -34,8 +34,11 @@ cd /Users/adam/Code/fullcalendar-legacy/packages-contrib/vue3 && yarn publish --
 cd /Users/adam/Code/fullcalendar-legacy
 
 echo "Must manuall do:"
-echo /Users/adam/Code/fullcalendar-legacy/packages-contrib/angular && yarn publish
+echo "/Users/adam/Code/fullcalendar-legacy/packages-contrib/angular"
 echo "Ensure you specify correct --tag before publishing!"
+
+# recursive push
+# git push --recurse-submodules=on-demand
 
 # tag pushing
 # git tag -a v5.11.4 -m v5.11.4 && git push origin v5.11.4
