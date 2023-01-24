@@ -20,5 +20,5 @@ export default {
   weekTextLong: 'Semaine',
   allDayText: 'Toute la journée',
   moreLinkText: 'en plus',
-  noEventsText: 'Aucun événement à afficher',
+  noEventsText: 'Aucun évènement à afficher',
 } as LocaleInput
