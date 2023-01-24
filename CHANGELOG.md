@@ -1,4 +1,10 @@
 
+v5.11.4 (2023-01-24)
+--------------------
+
+- fixed: Background color of background events not displayed on Internet Explorer 11 (#6789)
+
+
 v5.11.3 (2022-08-23)
 --------------------
 
