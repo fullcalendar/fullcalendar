@@ -2040,38 +2040,38 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/adaptive@^5.11.2, @fullcalendar/adaptive@workspace:packages-premium/adaptive, @fullcalendar/adaptive@workspace:~5.11.2":
+"@fullcalendar/adaptive@^5.11.2, @fullcalendar/adaptive@workspace:packages-premium/adaptive, @fullcalendar/adaptive@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/adaptive@workspace:packages-premium/adaptive"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/premium-common": "workspace:~5.11.2"
+    "@fullcalendar/premium-common": "workspace:~5.11.3"
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/bootstrap5@^5.11.2, @fullcalendar/bootstrap5@workspace:packages/bootstrap5, @fullcalendar/bootstrap5@workspace:~5.11.2":
+"@fullcalendar/bootstrap5@^5.11.2, @fullcalendar/bootstrap5@workspace:packages/bootstrap5, @fullcalendar/bootstrap5@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/bootstrap5@workspace:packages/bootstrap5"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/bootstrap@^5.11.2, @fullcalendar/bootstrap@workspace:packages/bootstrap, @fullcalendar/bootstrap@workspace:~5.11.2":
+"@fullcalendar/bootstrap@^5.11.2, @fullcalendar/bootstrap@workspace:packages/bootstrap, @fullcalendar/bootstrap@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/bootstrap@workspace:packages/bootstrap"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/common@workspace:packages/common, @fullcalendar/common@workspace:~5.11.2, @fullcalendar/common@~5.11.2":
+"@fullcalendar/common@workspace:packages/common, @fullcalendar/common@workspace:~5.11.3, @fullcalendar/common@~5.11.2":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/common@workspace:packages/common"
   dependencies:
@@ -2089,72 +2089,72 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/core@^5.11.2, @fullcalendar/core@workspace:packages/core, @fullcalendar/core@workspace:~5.11.2, @fullcalendar/core@~5.11.2":
+"@fullcalendar/core@^5.11.2, @fullcalendar/core@workspace:packages/core, @fullcalendar/core@workspace:~5.11.3, @fullcalendar/core@~5.11.2":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/core@workspace:packages/core"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
     preact: ^10.0.5
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/daygrid@^5.11.2, @fullcalendar/daygrid@workspace:packages/daygrid, @fullcalendar/daygrid@workspace:~5.11.2, @fullcalendar/daygrid@~5.11.2":
+"@fullcalendar/daygrid@^5.11.2, @fullcalendar/daygrid@workspace:packages/daygrid, @fullcalendar/daygrid@workspace:~5.11.3, @fullcalendar/daygrid@~5.11.2":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/daygrid@workspace:packages/daygrid"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/google-calendar@workspace:packages/google-calendar, @fullcalendar/google-calendar@workspace:~5.11.2":
+"@fullcalendar/google-calendar@workspace:packages/google-calendar, @fullcalendar/google-calendar@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/google-calendar@workspace:packages/google-calendar"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/icalendar@workspace:packages/icalendar, @fullcalendar/icalendar@workspace:~5.11.2":
+"@fullcalendar/icalendar@workspace:packages/icalendar, @fullcalendar/icalendar@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/icalendar@workspace:packages/icalendar"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     ical.js: ^1.4.0
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/interaction@^5.11.2, @fullcalendar/interaction@workspace:packages/interaction, @fullcalendar/interaction@workspace:~5.11.2":
+"@fullcalendar/interaction@^5.11.2, @fullcalendar/interaction@workspace:packages/interaction, @fullcalendar/interaction@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/interaction@workspace:packages/interaction"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/list@^5.11.2, @fullcalendar/list@workspace:packages/list, @fullcalendar/list@workspace:~5.11.2":
+"@fullcalendar/list@^5.11.2, @fullcalendar/list@workspace:packages/list, @fullcalendar/list@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/list@workspace:packages/list"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/luxon2@workspace:packages/luxon2, @fullcalendar/luxon2@workspace:~5.11.2":
+"@fullcalendar/luxon2@workspace:packages/luxon2, @fullcalendar/luxon2@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/luxon2@workspace:packages/luxon2"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
     "@types/luxon": ^2.0.9
     luxon: ^2.0.0
@@ -2168,7 +2168,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fullcalendar/luxon@workspace:packages/luxon"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
     luxon: ^1.12.1
     tslib: ^2.1.0
@@ -2177,11 +2177,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/moment-timezone@^5.11.2, @fullcalendar/moment-timezone@workspace:packages/moment-timezone, @fullcalendar/moment-timezone@workspace:~5.11.2":
+"@fullcalendar/moment-timezone@^5.11.2, @fullcalendar/moment-timezone@workspace:packages/moment-timezone, @fullcalendar/moment-timezone@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/moment-timezone@workspace:packages/moment-timezone"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
     moment: ^2.29.1
     moment-timezone: ^0.5.31
@@ -2192,11 +2192,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/moment@^5.11.2, @fullcalendar/moment@workspace:packages/moment, @fullcalendar/moment@workspace:~5.11.2":
+"@fullcalendar/moment@^5.11.2, @fullcalendar/moment@workspace:packages/moment, @fullcalendar/moment@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/moment@workspace:packages/moment"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
     moment: ^2.29.1
     tslib: ^2.1.0
@@ -2205,11 +2205,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/premium-common@workspace:packages-premium/premium-common, @fullcalendar/premium-common@workspace:~5.11.2":
+"@fullcalendar/premium-common@workspace:packages-premium/premium-common, @fullcalendar/premium-common@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/premium-common@workspace:packages-premium/premium-common"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
     tslib: ^2.1.0
   languageName: unknown
@@ -2262,63 +2262,63 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/resource-common@workspace:packages-premium/resource-common, @fullcalendar/resource-common@workspace:~5.11.2":
+"@fullcalendar/resource-common@workspace:packages-premium/resource-common, @fullcalendar/resource-common@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/resource-common@workspace:packages-premium/resource-common"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/premium-common": "workspace:~5.11.2"
+    "@fullcalendar/premium-common": "workspace:~5.11.3"
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/resource-daygrid@workspace:packages-premium/resource-daygrid, @fullcalendar/resource-daygrid@workspace:~5.11.2":
+"@fullcalendar/resource-daygrid@workspace:packages-premium/resource-daygrid, @fullcalendar/resource-daygrid@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/resource-daygrid@workspace:packages-premium/resource-daygrid"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/daygrid": "workspace:~5.11.2"
-    "@fullcalendar/premium-common": "workspace:~5.11.2"
-    "@fullcalendar/resource-common": "workspace:~5.11.2"
+    "@fullcalendar/daygrid": "workspace:~5.11.3"
+    "@fullcalendar/premium-common": "workspace:~5.11.3"
+    "@fullcalendar/resource-common": "workspace:~5.11.3"
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/resource-timegrid@workspace:packages-premium/resource-timegrid, @fullcalendar/resource-timegrid@workspace:~5.11.2":
+"@fullcalendar/resource-timegrid@workspace:packages-premium/resource-timegrid, @fullcalendar/resource-timegrid@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/resource-timegrid@workspace:packages-premium/resource-timegrid"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/premium-common": "workspace:~5.11.2"
-    "@fullcalendar/resource-common": "workspace:~5.11.2"
-    "@fullcalendar/resource-daygrid": "workspace:~5.11.2"
-    "@fullcalendar/timegrid": "workspace:~5.11.2"
+    "@fullcalendar/premium-common": "workspace:~5.11.3"
+    "@fullcalendar/resource-common": "workspace:~5.11.3"
+    "@fullcalendar/resource-daygrid": "workspace:~5.11.3"
+    "@fullcalendar/timegrid": "workspace:~5.11.3"
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/resource-timeline@^5.11.2, @fullcalendar/resource-timeline@workspace:packages-premium/resource-timeline, @fullcalendar/resource-timeline@workspace:~5.11.2":
+"@fullcalendar/resource-timeline@^5.11.2, @fullcalendar/resource-timeline@workspace:packages-premium/resource-timeline, @fullcalendar/resource-timeline@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/resource-timeline@workspace:packages-premium/resource-timeline"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/premium-common": "workspace:~5.11.2"
-    "@fullcalendar/resource-common": "workspace:~5.11.2"
-    "@fullcalendar/scrollgrid": "workspace:~5.11.2"
-    "@fullcalendar/timeline": "workspace:~5.11.2"
+    "@fullcalendar/premium-common": "workspace:~5.11.3"
+    "@fullcalendar/resource-common": "workspace:~5.11.3"
+    "@fullcalendar/scrollgrid": "workspace:~5.11.3"
+    "@fullcalendar/timeline": "workspace:~5.11.3"
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/rrule@workspace:packages/rrule, @fullcalendar/rrule@workspace:~5.11.2":
+"@fullcalendar/rrule@workspace:packages/rrule, @fullcalendar/rrule@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/rrule@workspace:packages/rrule"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
     rrule: ^2.6.0
     tslib: ^2.1.0
@@ -2327,36 +2327,36 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/scrollgrid@workspace:packages-premium/scrollgrid, @fullcalendar/scrollgrid@workspace:~5.11.2":
+"@fullcalendar/scrollgrid@workspace:packages-premium/scrollgrid, @fullcalendar/scrollgrid@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/scrollgrid@workspace:packages-premium/scrollgrid"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/premium-common": "workspace:~5.11.2"
+    "@fullcalendar/premium-common": "workspace:~5.11.3"
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/timegrid@^5.11.2, @fullcalendar/timegrid@workspace:packages/timegrid, @fullcalendar/timegrid@workspace:~5.11.2":
+"@fullcalendar/timegrid@^5.11.2, @fullcalendar/timegrid@workspace:packages/timegrid, @fullcalendar/timegrid@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/timegrid@workspace:packages/timegrid"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/daygrid": "workspace:~5.11.2"
+    "@fullcalendar/daygrid": "workspace:~5.11.3"
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@fullcalendar/timeline@^5.11.2, @fullcalendar/timeline@workspace:packages-premium/timeline, @fullcalendar/timeline@workspace:~5.11.2":
+"@fullcalendar/timeline@^5.11.2, @fullcalendar/timeline@workspace:packages-premium/timeline, @fullcalendar/timeline@workspace:~5.11.3":
   version: 0.0.0-use.local
   resolution: "@fullcalendar/timeline@workspace:packages-premium/timeline"
   dependencies:
-    "@fullcalendar/common": "workspace:~5.11.2"
+    "@fullcalendar/common": "workspace:~5.11.3"
     "@fullcalendar/core-preact": "workspace:*"
-    "@fullcalendar/premium-common": "workspace:~5.11.2"
-    "@fullcalendar/scrollgrid": "workspace:~5.11.2"
+    "@fullcalendar/premium-common": "workspace:~5.11.3"
+    "@fullcalendar/scrollgrid": "workspace:~5.11.3"
     tslib: ^2.1.0
   languageName: unknown
   linkType: soft
@@ -5614,13 +5614,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"amdefine@npm:>=0.0.4":
-  version: 1.0.1
-  resolution: "amdefine@npm:1.0.1"
-  checksum: 8b163d7cd3224b8648a6f9be045f1e111847d53acb21b3f9fca3b7ef20da63de4b256c6dfc175a340d9a2bb13fcab9f633089e2d4ac230ea9721db038962d256
-  languageName: node
-  linkType: hard
-
 "ansi-align@npm:^3.0.0":
   version: 3.0.0
   resolution: "ansi-align@npm:3.0.0"
@@ -5680,13 +5673,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ansi-regex@npm:^0.2.0, ansi-regex@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "ansi-regex@npm:0.2.1"
-  checksum: 02d72aea8823265473bb61bddfa421be5fd854de65bc9e2943cd4df2c95a88c5770e23e3c9125953bedf061b39f884b9b2105e1c62a601bb771d4735d5a15307
-  languageName: node
-  linkType: hard
-
 "ansi-regex@npm:^2.0.0":
   version: 2.1.1
   resolution: "ansi-regex@npm:2.1.1"
@@ -5712,13 +5698,6 @@ __metadata:
   version: 5.0.0
   resolution: "ansi-regex@npm:5.0.0"
   checksum: cbd9b5c9dbbb4a949c2a6e93f1c6cc19f0683d8a4724d08d2158627be6d373f0f3ba1f4ada01dce7ee141f2ba2628fbbd29932c7d49926e3b630c7f329f3178b
-  languageName: node
-  linkType: hard
-
-"ansi-styles@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "ansi-styles@npm:1.1.0"
-  checksum: 63957e50fd91a92344a0438c987f0ad0e6ea2cc3fb6245a328c68f11aaeb3ac221621a45ee923fb164bf1d885d722b0063aa2f3eb0beacae2b33eb371f93962f
   languageName: node
   linkType: hard
 
@@ -5918,13 +5897,6 @@ __metadata:
   version: 1.0.1
   resolution: "array-each@npm:1.0.1"
   checksum: 59a456f95151c1c4bdf02550ef455cd86cf1fff44f0ce3e5559caa9550a7663dd147f9bda58bff85756a5454da4e136282396391aedec1f19793f143910c6272
-  languageName: node
-  linkType: hard
-
-"array-find-index@npm:^1.0.1":
-  version: 1.0.2
-  resolution: "array-find-index@npm:1.0.2"
-  checksum: 5320b3bd4680eadee5191b8d8a4f01788f8761e11ae5d8d8f67e836308760d453c38300cdef41315e8adf24979083f73c353f651f1dc029ab3c712c1ef5ebf17
   languageName: node
   linkType: hard
 
@@ -7582,16 +7554,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"camelcase-keys@npm:^2.0.0":
-  version: 2.1.0
-  resolution: "camelcase-keys@npm:2.1.0"
-  dependencies:
-    camelcase: ^2.0.0
-    map-obj: ^1.0.0
-  checksum: 74eff079c8e6335aee88e3e950a138a293cd97055520a404d51eb5caad36af2bca92efcf4f78a5f319d41fcb146d46630fef380daf897a7ce38711ed66c52849
-  languageName: node
-  linkType: hard
-
 "camelcase-keys@npm:^6.2.2":
   version: 6.2.2
   resolution: "camelcase-keys@npm:6.2.2"
@@ -7600,13 +7562,6 @@ __metadata:
     map-obj: ^4.0.0
     quick-lru: ^4.0.1
   checksum: d4bd5fa5249127be0f5b1aa961da3a9de7d0a578d9524c5013f21c0ed345637eaa1e42bab28a75bbfc8511911ffb30fec4191a9efcec52741c1a3402dc38dd53
-  languageName: node
-  linkType: hard
-
-"camelcase@npm:^2.0.0":
-  version: 2.1.1
-  resolution: "camelcase@npm:2.1.1"
-  checksum: 311182686b3b87ac07851d6bc8c1327d55ef5fe95403bce97e21696dfe666dec70cf2b008593c00ae69a2b84e0074e4c130157a41db1d237f6fe5686cbf870b3
   languageName: node
   linkType: hard
 
@@ -7647,19 +7602,6 @@ __metadata:
   version: 1.0.30001237
   resolution: "caniuse-lite@npm:1.0.30001237"
   checksum: 8b56e2fff5856adbc3abde2ee85defeba6f6df6cf4e1c195bb0fd863c9d09ee318721d5c228a74beaac812e2c79009bc8ef998d6e85f44153dc6c26cc8bae7ce
-  languageName: node
-  linkType: hard
-
-"chalk@npm:^0.5.0":
-  version: 0.5.1
-  resolution: "chalk@npm:0.5.1"
-  dependencies:
-    ansi-styles: ^1.1.0
-    escape-string-regexp: ^1.0.0
-    has-ansi: ^0.1.0
-    strip-ansi: ^0.3.0
-    supports-color: ^0.2.0
-  checksum: 9c233e6784f6152f6a3b0d0a41f21655c8dce976cc5c4071274ce24241199b343915630096eb477875b9c30b9499add4985f5ffb7a81f6a6b59d130618193efc
   languageName: node
   linkType: hard
 
@@ -7862,19 +7804,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clean-css@npm:^3.1.9":
-  version: 3.4.28
-  resolution: "clean-css@npm:3.4.28"
-  dependencies:
-    commander: 2.8.x
-    source-map: 0.4.x
-  bin:
-    cleancss: ./bin/cleancss
-  checksum: c3a7e4c1c08a2dc9e74c072fd7cdd7df6bf4786b35b9d2fcfd52e8656da503af88a2e107a1bb27e9149f4abcb1dbf3d3bb75e906a7abecf7056c81bf64fb6662
-  languageName: node
-  linkType: hard
-
-"clean-css@npm:^4.2.1, clean-css@npm:^4.2.3":
+"clean-css@npm:4.2.3, clean-css@npm:^4.2.1, clean-css@npm:^4.2.3":
   version: 4.2.3
   resolution: "clean-css@npm:4.2.3"
   dependencies:
@@ -8000,7 +7930,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clone-stats@npm:^0.0.1, clone-stats@npm:~0.0.1":
+"clone-stats@npm:^0.0.1":
   version: 0.0.1
   resolution: "clone-stats@npm:0.0.1"
   checksum: 748137ed60ef702b78e3041843bb865c14220335227988874f663515bb2ff3449a7040b0f701a5a1ef3198bba879fd436276a3f774a2afda1d77d6c36ff17b98
@@ -8216,15 +8146,6 @@ __metadata:
     table-layout: ^1.0.1
     typical: ^5.2.0
   checksum: 82616f12132c90f5e7d5e7617276717d1c2297718aef3bc54d33c453246657644c747cf70f2ff98a14b07b0a83a3958c77d7904acda83349e5077cc7c3da3e9d
-  languageName: node
-  linkType: hard
-
-"commander@npm:2.8.x":
-  version: 2.8.1
-  resolution: "commander@npm:2.8.1"
-  dependencies:
-    graceful-readlink: ">= 1.0.0"
-  checksum: aee28c886bcda957c96e94fe5eb6d33066ac9c1c8443995fe3f1933a7c83986c76cd617a88f82872eb4d0a362c71a2416b4770ccb3d3e2f554a5232a2408bc37
   languageName: node
   linkType: hard
 
@@ -9093,15 +9014,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"currently-unhandled@npm:^0.4.1":
-  version: 0.4.1
-  resolution: "currently-unhandled@npm:0.4.1"
-  dependencies:
-    array-find-index: ^1.0.1
-  checksum: 1968b4b57677da838b8b3f0db806e1eb4f59cc95addb6e0fd3098703fe31a3e7e5e437f253aa74408a80699e7cc59947881a7e678d0ced887619077dcccdf70f
-  languageName: node
-  linkType: hard
-
 "custom-event@npm:^1.0.0, custom-event@npm:~1.0.0":
   version: 1.0.1
   resolution: "custom-event@npm:1.0.1"
@@ -9169,18 +9081,6 @@ __metadata:
   version: 3.0.0
   resolution: "date-format@npm:3.0.0"
   checksum: 42fc691af56bd78c1881e3f2d1f64d02f9b821fe3d927e4d559a75c8b67f22492e471372e2b37514451bbf37b705f0b130ef5aa07cb1e9d2ebaf11ccc0fa295f
-  languageName: node
-  linkType: hard
-
-"dateformat@npm:^1.0.7-1.2.3":
-  version: 1.0.12
-  resolution: "dateformat@npm:1.0.12"
-  dependencies:
-    get-stdin: ^4.0.1
-    meow: ^3.3.0
-  bin:
-    dateformat: bin/cli.js
-  checksum: 621f645716286b0c1aa7b9540e9c754dc170025575d6c7751d1d62d3afb8d85ad21caa54239ae9758ec6c633cbffdbba35e06b64d413039309f44f5a73bdb6a8
   languageName: node
   linkType: hard
 
@@ -9266,7 +9166,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"decamelize@npm:^1.1.0, decamelize@npm:^1.1.1, decamelize@npm:^1.1.2, decamelize@npm:^1.2.0":
+"decamelize@npm:^1.1.0, decamelize@npm:^1.1.1, decamelize@npm:^1.2.0":
   version: 1.2.0
   resolution: "decamelize@npm:1.2.0"
   checksum: 8ca9d03ea8ac07920f4504e219d18edff2491bdd0a3e05a1e5ca2e9a0bf6333564231de3528b01d5e76c40a38c37bbc1e09cb5a0424714f53dd615ed78ced464
@@ -10486,7 +10386,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"escape-string-regexp@npm:^1.0.0, escape-string-regexp@npm:^1.0.2, escape-string-regexp@npm:^1.0.3, escape-string-regexp@npm:^1.0.5":
+"escape-string-regexp@npm:^1.0.2, escape-string-regexp@npm:^1.0.3, escape-string-regexp@npm:^1.0.5":
   version: 1.0.5
   resolution: "escape-string-regexp@npm:1.0.5"
   checksum: f9484b8b4c8827d816e0fd905c25ed4b561376a9c220e1430403ea84619bf680c76a883a48cff8b8e091daf55d6a497e37479f9787b9f15f3c421b6054289744
@@ -11319,13 +11219,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"filesize@npm:~2.0.0":
-  version: 2.0.4
-  resolution: "filesize@npm:2.0.4"
-  checksum: b8276746358f7d0c056851b25423a6a633ca964d1eb29a113d71458e42d05397f27dbe4f0c98ae533d4e0af8c0441359f5fda76c2886a2a283e2849573d490c8
-  languageName: node
-  linkType: hard
-
 "fill-range@npm:^4.0.0":
   version: 4.0.0
   resolution: "fill-range@npm:4.0.0"
@@ -11752,17 +11645,17 @@ fsevents@^1.2.7:
   version: 0.0.0-use.local
   resolution: "fullcalendar-scheduler-tests@workspace:packages-premium/__tests__"
   dependencies:
-    "@fullcalendar/core": "workspace:~5.11.2"
-    "@fullcalendar/daygrid": "workspace:~5.11.2"
-    "@fullcalendar/interaction": "workspace:~5.11.2"
-    "@fullcalendar/list": "workspace:~5.11.2"
-    "@fullcalendar/premium-common": "workspace:~5.11.2"
-    "@fullcalendar/resource-daygrid": "workspace:~5.11.2"
-    "@fullcalendar/resource-timegrid": "workspace:~5.11.2"
-    "@fullcalendar/resource-timeline": "workspace:~5.11.2"
-    "@fullcalendar/scrollgrid": "workspace:~5.11.2"
-    "@fullcalendar/timegrid": "workspace:~5.11.2"
-    "@fullcalendar/timeline": "workspace:~5.11.2"
+    "@fullcalendar/core": "workspace:~5.11.3"
+    "@fullcalendar/daygrid": "workspace:~5.11.3"
+    "@fullcalendar/interaction": "workspace:~5.11.3"
+    "@fullcalendar/list": "workspace:~5.11.3"
+    "@fullcalendar/premium-common": "workspace:~5.11.3"
+    "@fullcalendar/resource-daygrid": "workspace:~5.11.3"
+    "@fullcalendar/resource-timegrid": "workspace:~5.11.3"
+    "@fullcalendar/resource-timeline": "workspace:~5.11.3"
+    "@fullcalendar/scrollgrid": "workspace:~5.11.3"
+    "@fullcalendar/timegrid": "workspace:~5.11.3"
+    "@fullcalendar/timeline": "workspace:~5.11.3"
     "@types/jasmine": ^3.3.12
     "@types/jasmine-jquery": ^1.5.33
     "@types/jquery": ^3.3.29
@@ -11777,21 +11670,21 @@ fsevents@^1.2.7:
   version: 0.0.0-use.local
   resolution: "fullcalendar-scheduler@workspace:packages-premium/bundle"
   dependencies:
-    "@fullcalendar/adaptive": "workspace:~5.11.2"
-    "@fullcalendar/bootstrap": "workspace:~5.11.2"
-    "@fullcalendar/bootstrap5": "workspace:~5.11.2"
-    "@fullcalendar/core": "workspace:~5.11.2"
-    "@fullcalendar/daygrid": "workspace:~5.11.2"
-    "@fullcalendar/google-calendar": "workspace:~5.11.2"
-    "@fullcalendar/interaction": "workspace:~5.11.2"
-    "@fullcalendar/list": "workspace:~5.11.2"
-    "@fullcalendar/resource-common": "workspace:~5.11.2"
-    "@fullcalendar/resource-daygrid": "workspace:~5.11.2"
-    "@fullcalendar/resource-timegrid": "workspace:~5.11.2"
-    "@fullcalendar/resource-timeline": "workspace:~5.11.2"
-    "@fullcalendar/scrollgrid": "workspace:~5.11.2"
-    "@fullcalendar/timegrid": "workspace:~5.11.2"
-    "@fullcalendar/timeline": "workspace:~5.11.2"
+    "@fullcalendar/adaptive": "workspace:~5.11.3"
+    "@fullcalendar/bootstrap": "workspace:~5.11.3"
+    "@fullcalendar/bootstrap5": "workspace:~5.11.3"
+    "@fullcalendar/core": "workspace:~5.11.3"
+    "@fullcalendar/daygrid": "workspace:~5.11.3"
+    "@fullcalendar/google-calendar": "workspace:~5.11.3"
+    "@fullcalendar/interaction": "workspace:~5.11.3"
+    "@fullcalendar/list": "workspace:~5.11.3"
+    "@fullcalendar/resource-common": "workspace:~5.11.3"
+    "@fullcalendar/resource-daygrid": "workspace:~5.11.3"
+    "@fullcalendar/resource-timegrid": "workspace:~5.11.3"
+    "@fullcalendar/resource-timeline": "workspace:~5.11.3"
+    "@fullcalendar/scrollgrid": "workspace:~5.11.3"
+    "@fullcalendar/timegrid": "workspace:~5.11.3"
+    "@fullcalendar/timeline": "workspace:~5.11.3"
   languageName: unknown
   linkType: soft
 
@@ -11799,19 +11692,19 @@ fsevents@^1.2.7:
   version: 0.0.0-use.local
   resolution: "fullcalendar-tests@workspace:packages/__tests__"
   dependencies:
-    "@fullcalendar/bootstrap": "workspace:~5.11.2"
-    "@fullcalendar/common": "workspace:~5.11.2"
-    "@fullcalendar/core": "workspace:~5.11.2"
-    "@fullcalendar/daygrid": "workspace:~5.11.2"
-    "@fullcalendar/google-calendar": "workspace:~5.11.2"
-    "@fullcalendar/icalendar": "workspace:~5.11.2"
-    "@fullcalendar/interaction": "workspace:~5.11.2"
-    "@fullcalendar/list": "workspace:~5.11.2"
-    "@fullcalendar/luxon2": "workspace:~5.11.2"
-    "@fullcalendar/moment": "workspace:~5.11.2"
-    "@fullcalendar/moment-timezone": "workspace:~5.11.2"
-    "@fullcalendar/rrule": "workspace:~5.11.2"
-    "@fullcalendar/timegrid": "workspace:~5.11.2"
+    "@fullcalendar/bootstrap": "workspace:~5.11.3"
+    "@fullcalendar/common": "workspace:~5.11.3"
+    "@fullcalendar/core": "workspace:~5.11.3"
+    "@fullcalendar/daygrid": "workspace:~5.11.3"
+    "@fullcalendar/google-calendar": "workspace:~5.11.3"
+    "@fullcalendar/icalendar": "workspace:~5.11.3"
+    "@fullcalendar/interaction": "workspace:~5.11.3"
+    "@fullcalendar/list": "workspace:~5.11.3"
+    "@fullcalendar/luxon2": "workspace:~5.11.3"
+    "@fullcalendar/moment": "workspace:~5.11.3"
+    "@fullcalendar/moment-timezone": "workspace:~5.11.3"
+    "@fullcalendar/rrule": "workspace:~5.11.3"
+    "@fullcalendar/timegrid": "workspace:~5.11.3"
     "@types/jasmine": ^3.3.12
     "@types/jasmine-jquery": ^1.5.33
     "@types/jquery": ^3.3.29
@@ -11856,7 +11749,7 @@ fsevents@^1.2.7:
     eslint-plugin-react-hooks: ^4.0.8
     globby: ^11.0.1
     gulp: ^4.0.2
-    gulp-cssmin: ^0.2.0
+    gulp-clean-css: ^4.3.0
     gulp-modify-file: ^1.0.1
     gulp-rename: ^1.4.0
     gulp-replace: ^1.0.0
@@ -11901,14 +11794,14 @@ fsevents@^1.2.7:
   version: 0.0.0-use.local
   resolution: "fullcalendar@workspace:packages/bundle"
   dependencies:
-    "@fullcalendar/bootstrap": "workspace:~5.11.2"
-    "@fullcalendar/bootstrap5": "workspace:~5.11.2"
-    "@fullcalendar/core": "workspace:~5.11.2"
-    "@fullcalendar/daygrid": "workspace:~5.11.2"
-    "@fullcalendar/google-calendar": "workspace:~5.11.2"
-    "@fullcalendar/interaction": "workspace:~5.11.2"
-    "@fullcalendar/list": "workspace:~5.11.2"
-    "@fullcalendar/timegrid": "workspace:~5.11.2"
+    "@fullcalendar/bootstrap": "workspace:~5.11.3"
+    "@fullcalendar/bootstrap5": "workspace:~5.11.3"
+    "@fullcalendar/core": "workspace:~5.11.3"
+    "@fullcalendar/daygrid": "workspace:~5.11.3"
+    "@fullcalendar/google-calendar": "workspace:~5.11.3"
+    "@fullcalendar/interaction": "workspace:~5.11.3"
+    "@fullcalendar/list": "workspace:~5.11.3"
+    "@fullcalendar/timegrid": "workspace:~5.11.3"
   languageName: unknown
   linkType: soft
 
@@ -12005,13 +11898,6 @@ fsevents@^1.2.7:
   dependencies:
     fs-memo: ^1.2.0
   checksum: b5f9192a60602c9a71618f5b568fb4e9ca2c3672351386ec84adac30911da1bc215069d967592af489087290d62c549f277074e6ffee0c3134c40087adbe9a74
-  languageName: node
-  linkType: hard
-
-"get-stdin@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "get-stdin@npm:4.0.1"
-  checksum: ba122b05691e29aa1c93f9dfe76671c23b311e5f299c4205c030c00a656045fcf56d2bb5a924b6cd576f278563643b6689b50aa54fc87abcdc2e6e8eda09920e
   languageName: node
   linkType: hard
 
@@ -12392,31 +12278,22 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"graceful-fs@npm:~2.0.0":
-  version: 2.0.3
-  resolution: "graceful-fs@npm:2.0.3"
-  checksum: c8b1b54ee12f873b24688414a4d6bf5381fe09375e9398356cba38ce992a9469ec504541bcae274efb007a95bc911918a58e9df732fe05fb7630b6d4abb0a40a
-  languageName: node
-  linkType: hard
-
-"graceful-fs@npm:~4.1.4":
-  version: 4.1.15
-  resolution: "graceful-fs@npm:4.1.15"
-  checksum: 4248d318a18b0e0b55d6393a393c72916fdf75a98c42b2278f992b08e30b4556faecd84715b53e76d00e6d466a1ab2e2e04ba45bef31fb87d4ca047eb56a3222
-  languageName: node
-  linkType: hard
-
-"graceful-readlink@npm:>= 1.0.0":
-  version: 1.0.1
-  resolution: "graceful-readlink@npm:1.0.1"
-  checksum: a0675771561e8f8401ce4f8feddcc5bc3fc7370d7cc95c9dab3fff8e4bb6f69316072267075e2e54ecaeb2ba72019cf9bd334732cdb1582b5a0642dd33b5b0e0
-  languageName: node
-  linkType: hard
-
 "grapheme-splitter@npm:^1.0.4":
   version: 1.0.4
   resolution: "grapheme-splitter@npm:1.0.4"
   checksum: 6875e94add80360364a609e1fd0fe325e3b82326db2278dd36c1011a6bfc0e098811e791dedf9a88d4ae3f9d17a5c6a8d684948dd7b097f1f8d5ff905676e2b2
+  languageName: node
+  linkType: hard
+
+"gulp-clean-css@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "gulp-clean-css@npm:4.3.0"
+  dependencies:
+    clean-css: 4.2.3
+    plugin-error: 1.0.1
+    through2: 3.0.1
+    vinyl-sourcemaps-apply: 0.2.1
+  checksum: f28ab0a2a4ad9d50ec16ea67c42c6dd60b789f8f4701ffa42dd2acd63f4cf42e43036cf9b22d1ea99245c826496af59f398101cfcdda7a5e2705e934d849f3c9
   languageName: node
   linkType: hard
 
@@ -12448,21 +12325,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"gulp-cssmin@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "gulp-cssmin@npm:0.2.0"
-  dependencies:
-    clean-css: ^3.1.9
-    filesize: ~2.0.0
-    graceful-fs: ~4.1.4
-    gulp-rename: ~1.1.0
-    gulp-util: ~2.2.0
-    map-stream: 0.0.4
-    temp-write: ~0.1.0
-  checksum: 16e965b6bc66eb28f6af115f098a39a0bb158ff9165df94e91007c3ce5c9584b0c9ac8b8f82b5f98bcd63dc9974922fc937f4e3dcd13d54c71dfd79abe9592ee
-  languageName: node
-  linkType: hard
-
 "gulp-modify-file@npm:^1.0.1":
   version: 1.0.1
   resolution: "gulp-modify-file@npm:1.0.1"
@@ -12477,15 +12339,6 @@ fsevents@^1.2.7:
   version: 1.4.0
   resolution: "gulp-rename@npm:1.4.0"
   checksum: 8241dcd0312d14cc1b6fd121a59eafc352291263f3ac0c47f118e999ef18df3a7d0718fb81021c825e18367fb25a93375b1bc9d6bb3402ed9319ab1f740d72f5
-  languageName: node
-  linkType: hard
-
-"gulp-rename@npm:~1.1.0":
-  version: 1.1.0
-  resolution: "gulp-rename@npm:1.1.0"
-  dependencies:
-    map-stream: ">=0.0.4"
-  checksum: c2ed3906fca4fac877917a34eb34a02ce32c0a2adbb4370acd81011b2e37c6260d2ee54242ed2d93e162e2069e8c9992484b8f450dabf21d50fd7985374c48b2
   languageName: node
   linkType: hard
 
@@ -12538,22 +12391,6 @@ fsevents@^1.2.7:
     through2: ^2.0.0
     vinyl: ^0.5.0
   checksum: 274b103525335681c003b9203d742979cba79e63d1fd0c89f459c8aab4d457bf2e24b44e4e694582dcf8f1a6b9169d98535dd7c9e5c134cc4bc27c7229224135
-  languageName: node
-  linkType: hard
-
-"gulp-util@npm:~2.2.0":
-  version: 2.2.20
-  resolution: "gulp-util@npm:2.2.20"
-  dependencies:
-    chalk: ^0.5.0
-    dateformat: ^1.0.7-1.2.3
-    lodash._reinterpolate: ^2.4.1
-    lodash.template: ^2.4.1
-    minimist: ^0.2.0
-    multipipe: ^0.1.0
-    through2: ^0.5.0
-    vinyl: ^0.2.1
-  checksum: a1da7c3ab72d139646d18c080dba2882b07fc0c4a09055c4fd6c7667502af5c696c692d2039b26ac1fcbfdaf5e893493f8d3918c80ec5b531af0a476440cb898
   languageName: node
   linkType: hard
 
@@ -12689,17 +12526,6 @@ fsevents@^1.2.7:
   peerDependencies:
     webpack: "*"
   checksum: 1199091073b4fca50da1dbf6135de679966bd7c6d902706f0a80b1c448917b00fa2175bed03939cf255a9985dec62ad42c0a7773c82e9282fb102fde901684a8
-  languageName: node
-  linkType: hard
-
-"has-ansi@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "has-ansi@npm:0.1.0"
-  dependencies:
-    ansi-regex: ^0.2.0
-  bin:
-    has-ansi: cli.js
-  checksum: 4f26f2a76e394687e797d0069ddd433049c83c7e396cef6afea10a73ec1f51df4587b6ad1b97caccd19e668fdf2453122c47b1bb35aef9d3a51880c910ae7501
   languageName: node
   linkType: hard
 
@@ -13394,15 +13220,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"indent-string@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "indent-string@npm:2.1.0"
-  dependencies:
-    repeating: ^2.0.0
-  checksum: 5c6bc6548e7c65c6f69c50a6cee286c4093e0d5a43cebaf4dae5b2acc321455dde8d80c421c9a14920ad44743a56bbe87082b1a619cd829477ab8da34dec1b59
-  languageName: node
-  linkType: hard
-
 "indent-string@npm:^4.0.0":
   version: 4.0.0
   resolution: "indent-string@npm:4.0.0"
@@ -13853,13 +13670,6 @@ fsevents@^1.2.7:
   version: 2.1.1
   resolution: "is-extglob@npm:2.1.1"
   checksum: ca623e2c56c893714a237aff645ec7caa8fea4d78868682af8d6803d7f0780323f8d566311e0dc6f942c886e81cbfa517597e48fcada7f3bf78a4d099eeecdd3
-  languageName: node
-  linkType: hard
-
-"is-finite@npm:^1.0.0":
-  version: 1.1.0
-  resolution: "is-finite@npm:1.1.0"
-  checksum: d2ea9746ecc273e50183f56a51073862ff9f39bb1e63f6e2830da6be77d0d17c78e5ad1f8573d26c2a23457ab4a1b444472a46d64ba6f73824435cd734517ad4
   languageName: node
   linkType: hard
 
@@ -15692,22 +15502,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lodash._escapehtmlchar@npm:~2.4.1":
-  version: 2.4.1
-  resolution: "lodash._escapehtmlchar@npm:2.4.1"
-  dependencies:
-    lodash._htmlescapes: ~2.4.1
-  checksum: fec4ad459419f45ae1a83ebf728c53ffec8fb17983b118ad1e703f2f9c7d9f194c5369e3c989a919411e12f0f468eb7ddf82311265cf294f26536e77a3e1764f
-  languageName: node
-  linkType: hard
-
-"lodash._escapestringchar@npm:~2.4.1":
-  version: 2.4.1
-  resolution: "lodash._escapestringchar@npm:2.4.1"
-  checksum: 724eeeaf8046c031be782e1109cb440cf3c873f58d9ea59c79e83fcc6fe6e3d941feea3c3e7ace79b675e211838d745dc153484d8189862ab06cdba6cc1fc5b9
-  languageName: node
-  linkType: hard
-
 "lodash._getnative@npm:^3.0.0":
   version: 3.9.1
   resolution: "lodash._getnative@npm:3.9.1"
@@ -15715,31 +15509,10 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lodash._htmlescapes@npm:~2.4.1":
-  version: 2.4.1
-  resolution: "lodash._htmlescapes@npm:2.4.1"
-  checksum: 102bdb2f722bd637627008b5223e9551b9d5ee9339245c352e31dc372b78d962ffded6cca6060e29b202751346bf9ad3880211da37f6585f004fe41583e90c9d
-  languageName: node
-  linkType: hard
-
 "lodash._isiterateecall@npm:^3.0.0":
   version: 3.0.9
   resolution: "lodash._isiterateecall@npm:3.0.9"
   checksum: ee4ec77d8a21f5b64de6870c0a38f9dc64c33271dd119bf9b32adbab3e483cc1b4b6b899d2c3172972678b188a4c38e615cf23b8142229a9d0725c140d0157a6
-  languageName: node
-  linkType: hard
-
-"lodash._isnative@npm:~2.4.1":
-  version: 2.4.1
-  resolution: "lodash._isnative@npm:2.4.1"
-  checksum: 9d7d057286380ad4fa5304ab2983dce4af0fe411b07b2a6b0812611e400d8407829a3b5b82e0c80b44a2ef0971f582cf3fe971ea57d4635ff3c4b3054e8371b0
-  languageName: node
-  linkType: hard
-
-"lodash._objecttypes@npm:~2.4.1":
-  version: 2.4.1
-  resolution: "lodash._objecttypes@npm:2.4.1"
-  checksum: 87e134c5acd925df72a061e45459726cf45523240ad7a079770e65004118520d47583bd8db5ce5591dc46c4887426700b09c1568e199c0a0f5abec36e1755c63
   languageName: node
   linkType: hard
 
@@ -15757,13 +15530,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lodash._reinterpolate@npm:^2.4.1, lodash._reinterpolate@npm:~2.4.1":
-  version: 2.4.1
-  resolution: "lodash._reinterpolate@npm:2.4.1"
-  checksum: 78e35333f8ec6d42c67cc04b2350f4ce9a5df79315a9ef8dca00d934b79bc2ab0e3c8758b51ecd1a966af146ded63f1bd5dae3b947d23fd61c846a551bb24956
-  languageName: node
-  linkType: hard
-
 "lodash._reinterpolate@npm:^3.0.0":
   version: 3.0.0
   resolution: "lodash._reinterpolate@npm:3.0.0"
@@ -15771,29 +15537,10 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lodash._reunescapedhtml@npm:~2.4.1":
-  version: 2.4.1
-  resolution: "lodash._reunescapedhtml@npm:2.4.1"
-  dependencies:
-    lodash._htmlescapes: ~2.4.1
-    lodash.keys: ~2.4.1
-  checksum: c597093abd2c5c579d9c8530f34123d2985109febe7fe8331df5e7aa7c99f80c5d7764d58d30753276a0a386018576e97417f8b10152ab332a17b572f7c00ad6
-  languageName: node
-  linkType: hard
-
 "lodash._root@npm:^3.0.0":
   version: 3.0.1
   resolution: "lodash._root@npm:3.0.1"
   checksum: 9fc348b1222b2f5fb34d92473ff5a827623b356596a2c65f03f4e4f90189b27f08217684e6c4c7b0c8bc060c674ef9619b0a520c822ae3a7af4b535894c55451
-  languageName: node
-  linkType: hard
-
-"lodash._shimkeys@npm:~2.4.1":
-  version: 2.4.1
-  resolution: "lodash._shimkeys@npm:2.4.1"
-  dependencies:
-    lodash._objecttypes: ~2.4.1
-  checksum: 8c38fd371aea4491d05e84a3b68abfe0af45c8a3f495d0b359386c820a2d97846df5e9deff394fa149fad041c727326c3967f8782fa34bef74465c647f0f84c5
   languageName: node
   linkType: hard
 
@@ -15818,16 +15565,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lodash.defaults@npm:~2.4.1":
-  version: 2.4.1
-  resolution: "lodash.defaults@npm:2.4.1"
-  dependencies:
-    lodash._objecttypes: ~2.4.1
-    lodash.keys: ~2.4.1
-  checksum: f173be12cb29f0bbc45f92deb904ba77b13985949ddec3c86195378c1c64d49fa64eefef16f6ee5d9da97f788aad211d92a986097f90ab70ec7d299c84e7aae6
-  languageName: node
-  linkType: hard
-
 "lodash.difference@npm:^4.5.0":
   version: 4.5.0
   resolution: "lodash.difference@npm:4.5.0"
@@ -15844,17 +15581,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lodash.escape@npm:~2.4.1":
-  version: 2.4.1
-  resolution: "lodash.escape@npm:2.4.1"
-  dependencies:
-    lodash._escapehtmlchar: ~2.4.1
-    lodash._reunescapedhtml: ~2.4.1
-    lodash.keys: ~2.4.1
-  checksum: fc70d669f3c286257711603fb8771f279b62772634a7e75a5aeb89a2f95b9634485ef0d60d3e38a2b20cc6d22fad9ae345438edf568aa48586e53dd25abd1192
-  languageName: node
-  linkType: hard
-
 "lodash.isarguments@npm:^3.0.0":
   version: 3.1.0
   resolution: "lodash.isarguments@npm:3.1.0"
@@ -15866,15 +15592,6 @@ fsevents@^1.2.7:
   version: 3.0.4
   resolution: "lodash.isarray@npm:3.0.4"
   checksum: 9335120bb50e1755441d3384c14f943a99d4e0d12076bb1a4a31d8b52e7693d790e4e1a429eba604fd64f5c074b372cd8b03f501a06ba1ad1785acf0ad4c0fff
-  languageName: node
-  linkType: hard
-
-"lodash.isobject@npm:~2.4.1":
-  version: 2.4.1
-  resolution: "lodash.isobject@npm:2.4.1"
-  dependencies:
-    lodash._objecttypes: ~2.4.1
-  checksum: c466729d13110948c19d830ecf9d6d9f965edaac01af874b968521961b69cc64df600aac6b936afd62b62b4d0277daa8f9a71c0241963874a29065f2c8625742
   languageName: node
   linkType: hard
 
@@ -15896,17 +15613,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lodash.keys@npm:~2.4.1":
-  version: 2.4.1
-  resolution: "lodash.keys@npm:2.4.1"
-  dependencies:
-    lodash._isnative: ~2.4.1
-    lodash._shimkeys: ~2.4.1
-    lodash.isobject: ~2.4.1
-  checksum: f9b4290b644114312a66ddf45f6eb661e78745b566d234f6b1cd1abcfb48c531fa7b9ca98817988f0d21ef52120ba9a669a1a420153335a368330e28e73f03e6
-  languageName: node
-  linkType: hard
-
 "lodash.memoize@npm:^4.1.2":
   version: 4.1.2
   resolution: "lodash.memoize@npm:4.1.2"
@@ -15925,21 +15631,6 @@ fsevents@^1.2.7:
   version: 3.6.1
   resolution: "lodash.restparam@npm:3.6.1"
   checksum: 04f731cff248ece32331352f1b0bb63d323555a418cd6c99903f9337c0a7ad5a93937a28cdaa5c47b0d6fa4a9bc9324f7790c0ddffad838a1329221ce8bbb301
-  languageName: node
-  linkType: hard
-
-"lodash.template@npm:^2.4.1":
-  version: 2.4.1
-  resolution: "lodash.template@npm:2.4.1"
-  dependencies:
-    lodash._escapestringchar: ~2.4.1
-    lodash._reinterpolate: ~2.4.1
-    lodash.defaults: ~2.4.1
-    lodash.escape: ~2.4.1
-    lodash.keys: ~2.4.1
-    lodash.templatesettings: ~2.4.1
-    lodash.values: ~2.4.1
-  checksum: 0197e0dc4291e034e2ac743a76e8d145a70fa7e190aeeb0becf39ff367c8defc3481f651b441ecfd314cad6541ce255bd156a240f21da0b585c967d1dbeaa5fc
   languageName: node
   linkType: hard
 
@@ -15989,16 +15680,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lodash.templatesettings@npm:~2.4.1":
-  version: 2.4.1
-  resolution: "lodash.templatesettings@npm:2.4.1"
-  dependencies:
-    lodash._reinterpolate: ~2.4.1
-    lodash.escape: ~2.4.1
-  checksum: 80fde21a60f8c4041053e572207394a2343534fae45e7d4c0eaab2b05a327319a9dc8d39fb9fa440bb35fb66aa49f26efb3f112f7ad52b1327336dfd9c93a66f
-  languageName: node
-  linkType: hard
-
 "lodash.truncate@npm:^4.4.2":
   version: 4.4.2
   resolution: "lodash.truncate@npm:4.4.2"
@@ -16010,15 +15691,6 @@ fsevents@^1.2.7:
   version: 4.5.0
   resolution: "lodash.uniq@npm:4.5.0"
   checksum: 47cb25b59bf40ef3bdf441b7b6cb41d0b95ae0ca576be2c206724dd66041fa8aadab55c1210792671aa0b1c9878d5c0be48927bf4d22f3ed50e5f79d3b2e90b7
-  languageName: node
-  linkType: hard
-
-"lodash.values@npm:~2.4.1":
-  version: 2.4.1
-  resolution: "lodash.values@npm:2.4.1"
-  dependencies:
-    lodash.keys: ~2.4.1
-  checksum: 1b97eab2a455c0a66f57885530e055e1627c2ebccac92e166616a7f3fc8552366947f951cad3a5e260e0b0181785b1c28277c79da864414266518d4a5ec1cd7f
   languageName: node
   linkType: hard
 
@@ -16093,16 +15765,6 @@ fsevents@^1.2.7:
   bin:
     loose-envify: cli.js
   checksum: 5c3b47bbe5f597a3889fb001a3a98aaea2a3fafa48089c19034de1e0121bf57dbee609d184478514d74d5c5a7e9cfa3d846343455e5123b060040d46c39e91dc
-  languageName: node
-  linkType: hard
-
-"loud-rejection@npm:^1.0.0":
-  version: 1.6.0
-  resolution: "loud-rejection@npm:1.6.0"
-  dependencies:
-    currently-unhandled: ^0.4.1
-    signal-exit: ^3.0.0
-  checksum: 9d57f7bc81da9a167dca46f9cc986dd18b0ae822811c69c2374f4945418234bb1ee102ca3a34bacf74e3bee122b27eed15604e57d5e1974f6fef8984861ed9ca
   languageName: node
   linkType: hard
 
@@ -16290,7 +15952,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"map-obj@npm:^1.0.0, map-obj@npm:^1.0.1":
+"map-obj@npm:^1.0.0":
   version: 1.0.1
   resolution: "map-obj@npm:1.0.1"
   checksum: e68b20e4fa76efdbba9a7af05b879eb7a6c5ccb7a9d813796de825da4c182fc3dab66f4b2a32a9aefae83db152a0172deb1e19a9c2322c6d412b8f9f81ca51a4
@@ -16301,20 +15963,6 @@ fsevents@^1.2.7:
   version: 4.2.1
   resolution: "map-obj@npm:4.2.1"
   checksum: 59c2f09ffccf8878cdb67dc46d0dd73a55bcfb27c20afc2fb87250ac95f2b19e3187c8de887c40f41b96b0200aac3dfdbc31759615cb666b35864a307885c896
-  languageName: node
-  linkType: hard
-
-"map-stream@npm:0.0.4":
-  version: 0.0.4
-  resolution: "map-stream@npm:0.0.4"
-  checksum: 57f2beebd48100230cce9a9673b734fa35d046eacf2a17236b92709093d0bf21a35f3aac7d8ef59c831a7cfbaaa0f3337d3f5cc65da789d52b8a7d196ded7c24
-  languageName: node
-  linkType: hard
-
-"map-stream@npm:>=0.0.4":
-  version: 0.1.0
-  resolution: "map-stream@npm:0.1.0"
-  checksum: 46003aa4a78c32d2f6d6e71d93f3401cf97ee1823117d1b148872d50373d3642fc1becdbbbf4f27b40692db7cd1cb770fc2be282f2bd785662c68eb1956a1219
   languageName: node
   linkType: hard
 
@@ -16466,24 +16114,6 @@ fsevents@^1.2.7:
     errno: ^0.1.3
     readable-stream: ^2.0.1
   checksum: deb916f33ca09215d6ad58db30854bbf36aaca86e018dcbbbdb7c6160661e8c0b9acdcc23c9931fc6dcd62f3dd5318a7ecab519e3688f7787d0833e5f48c0d0a
-  languageName: node
-  linkType: hard
-
-"meow@npm:^3.3.0":
-  version: 3.7.0
-  resolution: "meow@npm:3.7.0"
-  dependencies:
-    camelcase-keys: ^2.0.0
-    decamelize: ^1.1.2
-    loud-rejection: ^1.0.0
-    map-obj: ^1.0.1
-    minimist: ^1.1.3
-    normalize-package-data: ^2.3.4
-    object-assign: ^4.0.1
-    read-pkg-up: ^1.0.1
-    redent: ^1.0.0
-    trim-newlines: ^1.0.0
-  checksum: f0d4feec4052507e9be2902a89143f92c19925130655aa83fc5c5fd51b80c58e140a6d127dae596d8723cc614f31575a49408f70bef7c638f6989276be01d301
   languageName: node
   linkType: hard
 
@@ -16741,14 +16371,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"minimist@npm:^0.2.0":
-  version: 0.2.1
-  resolution: "minimist@npm:0.2.1"
-  checksum: ae323ce3fee003746b519141820755a15bc1442c569626c98885f71e23fc51654770d5231ec4136bb302460ca4a4e322915be088b429d83e98917b08b35334f3
-  languageName: node
-  linkType: hard
-
-"minimist@npm:^1.1.0, minimist@npm:^1.1.3, minimist@npm:^1.2.0, minimist@npm:^1.2.5":
+"minimist@npm:^1.1.0, minimist@npm:^1.2.0, minimist@npm:^1.2.5":
   version: 1.2.5
   resolution: "minimist@npm:1.2.5"
   checksum: b77b8590147a4e217ff34266236bc39de23b52e6e33054076991ff674c7397a1380a7bde11111916f16f003a94aaa7e4f3d92595a32189644ff607fabc65a5b6
@@ -17004,7 +16627,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"multipipe@npm:^0.1.0, multipipe@npm:^0.1.2":
+"multipipe@npm:^0.1.2":
   version: 0.1.2
   resolution: "multipipe@npm:0.1.2"
   dependencies:
@@ -17271,7 +16894,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"normalize-package-data@npm:^2.3.2, normalize-package-data@npm:^2.3.4, normalize-package-data@npm:^2.5.0":
+"normalize-package-data@npm:^2.3.2, normalize-package-data@npm:^2.5.0":
   version: 2.5.0
   resolution: "normalize-package-data@npm:2.5.0"
   dependencies:
@@ -18392,7 +18015,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"plugin-error@npm:^1.0.1":
+"plugin-error@npm:1.0.1, plugin-error@npm:^1.0.1":
   version: 1.0.1
   resolution: "plugin-error@npm:1.0.1"
   dependencies:
@@ -20251,7 +19874,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:>=1.0.33-1 <1.1.0-0, readable-stream@npm:~1.0.17":
+"readable-stream@npm:>=1.0.33-1 <1.1.0-0":
   version: 1.0.34
   resolution: "readable-stream@npm:1.0.34"
   dependencies:
@@ -20310,16 +19933,6 @@ fsevents@^1.2.7:
   dependencies:
     resolve: ^1.9.0
   checksum: 1d4cc8db1d4ff51d4c156db7ff6fe0a376e7527b61afafd148f1cfa2c19a6c454f3f77f1cb175e1f1f1476a83dbeba3632de088441dbaa404091a30d39c8749f
-  languageName: node
-  linkType: hard
-
-"redent@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "redent@npm:1.0.0"
-  dependencies:
-    indent-string: ^2.1.0
-    strip-indent: ^1.0.1
-  checksum: 961d06c069c2a3932e9cde95822eceffa4d09ae01af33c123b0387d67bc976fd895b2012a3b8988c336b6f79cd17a8cc0a4a5f003b1e60cafad0d3b905111527
   languageName: node
   linkType: hard
 
@@ -20582,15 +20195,6 @@ fsevents@^1.2.7:
   version: 1.6.1
   resolution: "repeat-string@npm:1.6.1"
   checksum: 99c431ba7bef7a5d39819d562ebca89206368b45f73213677a3b562e25b5dd272d9e6a2ca8105001df14b6fc8cc71f0b10258c86e16cf8a256318fac1ddc8a77
-  languageName: node
-  linkType: hard
-
-"repeating@npm:^2.0.0":
-  version: 2.0.1
-  resolution: "repeating@npm:2.0.1"
-  dependencies:
-    is-finite: ^1.0.0
-  checksum: a788561778bfcbe4fc6fd15cb912ed53665933514524e4b5a998934ef20793c0afd21229f411d15bc5b7ab171eca7ac531655070f1dfc427f723bae57b61d55a
   languageName: node
   linkType: hard
 
@@ -21805,15 +21409,6 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"source-map@npm:0.4.x":
-  version: 0.4.4
-  resolution: "source-map@npm:0.4.4"
-  dependencies:
-    amdefine: ">=0.0.4"
-  checksum: 8602363865290e334111cafb2335ccd8faef321b5998f88e6a64278dd0bd27a2b1e614622e706bc943635eb5402cf155078ff2c684b78f28377bc8b47f47bf9c
-  languageName: node
-  linkType: hard
-
 "source-map@npm:0.5.6":
   version: 0.5.6
   resolution: "source-map@npm:0.5.6"
@@ -22257,17 +21852,6 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"strip-ansi@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "strip-ansi@npm:0.3.0"
-  dependencies:
-    ansi-regex: ^0.2.1
-  bin:
-    strip-ansi: cli.js
-  checksum: 765ce0270eda45a2e99df8766c41fb76ac7bde4855ef1c3c527ca97b0566abdf16857d245a33c08ffeff8fa1d1ac504138595ad3c204fe9f01e40fe1aa29a9fd
-  languageName: node
-  linkType: hard
-
 "strip-ansi@npm:^3.0.0, strip-ansi@npm:^3.0.1":
   version: 3.0.1
   resolution: "strip-ansi@npm:3.0.1"
@@ -22350,17 +21934,6 @@ resolve@^2.0.0-next.3:
   version: 2.0.0
   resolution: "strip-final-newline@npm:2.0.0"
   checksum: 74dbd8a602409706748db730200efab53ba739ed7888310e74e45697efbd760981df6d6f0fa34b23e973135fb07d3b22adae6e6d58898f692a094e49692c6c33
-  languageName: node
-  linkType: hard
-
-"strip-indent@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "strip-indent@npm:1.0.1"
-  dependencies:
-    get-stdin: ^4.0.1
-  bin:
-    strip-indent: cli.js
-  checksum: 9ec818484a53a8f564b7a56148db2883dad4fe665cc76583df5eb5b2e216b5ed48e4d63d1da525e990030c47c41d648e48053a505dd29f7a87568733b147a533
   languageName: node
   linkType: hard
 
@@ -22494,15 +22067,6 @@ resolve@^2.0.0-next.3:
   dependencies:
     postcss: ^7.0.2
   checksum: fd3c61168784e63bcd149291cce1668c437165688cc96a403e013d1f31e22fd10beff7e08c6cc33afa8b69fa2ed8db236a352ace92fe9e861396b69a73c2f7f4
-  languageName: node
-  linkType: hard
-
-"supports-color@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "supports-color@npm:0.2.0"
-  bin:
-    supports-color: cli.js
-  checksum: a626d1668349eb96dbdf9eef2755dda76b89cb2799ed3da5a649f76ec001fda44f1b43e3205edc6379eaa7991926449cf55f73c21a4f3607dbe2c004d06da285
   languageName: node
   linkType: hard
 
@@ -22710,25 +22274,6 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"temp-write@npm:~0.1.0":
-  version: 0.1.1
-  resolution: "temp-write@npm:0.1.1"
-  dependencies:
-    graceful-fs: ~2.0.0
-    tempfile: ~0.1.2
-  checksum: 0861565d422d49b7f310a27f142b18e66abe3729a3e6143e348219efed125f7630033de555f5b3a285454eb1935c32878ec44923cead8328d7ab733bcc4abdd8
-  languageName: node
-  linkType: hard
-
-"tempfile@npm:~0.1.2":
-  version: 0.1.3
-  resolution: "tempfile@npm:0.1.3"
-  dependencies:
-    uuid: ~1.4.0
-  checksum: 1de658e4e47b4c75ee9ab5cb1b6aae3b63dd9b98cb1ffbf35f83e42ba36219471c63ac8f08c35762a519f69085f7b5e3775de5e84140f1a9fd9dccf630cb410a
-  languageName: node
-  linkType: hard
-
 "terminal-link@npm:^2.0.0":
   version: 2.1.1
   resolution: "terminal-link@npm:2.1.1"
@@ -22886,13 +22431,12 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"through2@npm:^0.5.0":
-  version: 0.5.1
-  resolution: "through2@npm:0.5.1"
+"through2@npm:3.0.1":
+  version: 3.0.1
+  resolution: "through2@npm:3.0.1"
   dependencies:
-    readable-stream: ~1.0.17
-    xtend: ~3.0.0
-  checksum: 1a6e01361f38f029de7507be7ced6624fc2e8fad7e9ec777cc08667f2a357ad471f20ccda5c988f6f13bff9dece5b6e6c6144c6f46fa1fd98fadd43fc23599de
+    readable-stream: 2 || 3
+  checksum: f0ff930ba9ce2309b05c8621bb053f99733b0fa0d0cd4fe475e9a980b35f7ccd71141192ecd88b45d97249db5c0e158778397f77842ad47bab0384eac75ad31c
   languageName: node
   linkType: hard
 
@@ -23158,13 +22702,6 @@ resolve@^2.0.0-next.3:
   version: 1.1.0
   resolution: "treeify@npm:1.1.0"
   checksum: 78db62f564d025ffd9ec0f89e9195ee343298db0eb2d54cd84bce2b7460d347a1d3ea14a75a7f04d3c45b87aa9eb4b0c8ecd7ab4fba9b456cf29c4c895f4fc1d
-  languageName: node
-  linkType: hard
-
-"trim-newlines@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "trim-newlines@npm:1.0.0"
-  checksum: acc229ae8f6e7615df28a9cdb33a40db3f385afa9076c8b53a0a2d63d49dd646a6a4827ad93e1bc92ef24286121f66042c00da089f1585e473c010ca88309c78
   languageName: node
   linkType: hard
 
@@ -23847,13 +23384,6 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"uuid@npm:~1.4.0":
-  version: 1.4.2
-  resolution: "uuid@npm:1.4.2"
-  checksum: bb6341c09fb0738227a1505f10e97beb90a0e52ad881848921dccfd0976e8457ff0517f733275b645996e607a94bdc7e242fd0ef40f88bff4aa4ceac9c7274df
-  languageName: node
-  linkType: hard
-
 "v8-compile-cache@npm:^2.0.3, v8-compile-cache@npm:^2.2.0, v8-compile-cache@npm:^2.3.0":
   version: 2.3.0
   resolution: "v8-compile-cache@npm:2.3.0"
@@ -23999,21 +23529,12 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"vinyl-sourcemaps-apply@npm:^0.2.1":
+"vinyl-sourcemaps-apply@npm:0.2.1, vinyl-sourcemaps-apply@npm:^0.2.1":
   version: 0.2.1
   resolution: "vinyl-sourcemaps-apply@npm:0.2.1"
   dependencies:
     source-map: ^0.5.1
   checksum: c1d826acf474831a58609e0d19f0f7e907cd6f2a347a67c2879aa44e149491f0b47449bfe906e9da54f026806196b3ac92f8ae4dfe3d3a44353baab1885a03b4
-  languageName: node
-  linkType: hard
-
-"vinyl@npm:^0.2.1":
-  version: 0.2.3
-  resolution: "vinyl@npm:0.2.3"
-  dependencies:
-    clone-stats: ~0.0.1
-  checksum: 59cf8f99e23180352f089a4f245771322d3c2e04b60c5c11a8caa3989b4c3ea835ca9b5b3d6e69dd6b09f97dcabc39e11aeafcd9446f0ed0c80232c8eb8b0a0b
   languageName: node
   linkType: hard
 
@@ -24950,13 +24471,6 @@ resolve@^2.0.0-next.3:
   version: 4.0.2
   resolution: "xtend@npm:4.0.2"
   checksum: 37ee522a3e9fb9b143a400c30b21dc122aa8c9c9411c6afae1005a4617dc20a21765c114d544e37a6bb60c2733dd8ee0a44ed9e80d884ac78cccd30b5e0ab0da
-  languageName: node
-  linkType: hard
-
-"xtend@npm:~3.0.0":
-  version: 3.0.0
-  resolution: "xtend@npm:3.0.0"
-  checksum: bcba207830b7842d5052eac815872b89b070eba9dd0e1e4087b58fb8e780de21c051fbefdb43e80950ab2caf2895d4a4803332d3f9e98fcdff3db5933f0ab286
   languageName: node
   linkType: hard
 

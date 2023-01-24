@@ -81,7 +81,7 @@
     "eslint-plugin-react-hooks": "^4.0.8",
     "globby": "^11.0.1",
     "gulp": "^4.0.2",
-    "gulp-cssmin": "^0.2.0",
+    "gulp-clean-css": "^4.3.0",
     "gulp-modify-file": "^1.0.1",
     "gulp-rename": "^1.4.0",
     "gulp-replace": "^1.0.0",

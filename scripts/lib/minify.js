@@ -1,6 +1,6 @@
 const { src, dest } = require('gulp')
 const terser = require('gulp-terser')
-const cssmin = require('gulp-cssmin')
+const cleanCss = require('gulp-clean-css')
 const rename = require('gulp-rename')
 
 
@@ -36,7 +36,7 @@ function minifyBundleCss() {
     '!**/*.min.css' // avoid double minify
   ], { base: '.' })
     .pipe(
-      cssmin()
+      cleanCss()
     )
     .pipe(
       rename({ extname: '.min.css' })
