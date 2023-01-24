@@ -65,6 +65,7 @@ export class TableCell extends DateComponent<TableCellProps> {
 
     // TODO: memoize this?
     let isMonthStart =
+      props.showDayNumber &&
       dateProfile.currentRangeUnit !== 'month' && (
         dateProfile.currentRange.start.valueOf() === date.valueOf() ||
         date.getUTCDate() === 1

@@ -1,5 +1,5 @@
 import { CssDimValue } from '@fullcalendar/core'
-import { DateComponent, formatIsoMonthStr, formatDayString } from '@fullcalendar/core/internal'
+import { DateComponent, formatIsoMonthStr, formatDayString, DateProfile } from '@fullcalendar/core/internal'
 import { VNode, RefObject, createElement, createRef } from '@fullcalendar/core/preact'
 import { TableRows, TableRowsProps } from './TableRows.js'
 
@@ -102,20 +102,34 @@ export class Table extends DateComponent<TableProps> {
       this.needsScrollReset &&
       this.props.clientWidth // sizes computed?
     ) {
-      const { dateProfile } = this.props
-      const dateStr = dateProfile.currentRangeUnit === 'week' ?
-        formatDayString(dateProfile.currentDate) :
-        formatIsoMonthStr(dateProfile.currentDate) + '-01'
+      const subjectEl = getScrollSubjectEl(this.elRef.current, this.props.dateProfile)
 
-      const subjectEl = this.elRef.current.querySelector(`[data-date="${dateStr}"]`)
-      const originEl = subjectEl.closest('.fc-daygrid-body')
-      const scrollEl = originEl.closest('.fc-scroller')
-      const scrollTop = subjectEl.getBoundingClientRect().top -
-        originEl.getBoundingClientRect().top
+      if (subjectEl) {
+        const originEl = subjectEl.closest('.fc-daygrid-body')
+        const scrollEl = originEl.closest('.fc-scroller')
+        const scrollTop = subjectEl.getBoundingClientRect().top -
+          originEl.getBoundingClientRect().top
 
-      scrollEl.scrollTop = scrollTop ? (scrollTop + 1) : 0 // overcome border
+        scrollEl.scrollTop = scrollTop ? (scrollTop + 1) : 0 // overcome border
+      }
 
       this.needsScrollReset = false
     }
   }
+}
+
+function getScrollSubjectEl(containerEl: HTMLElement, dateProfile: DateProfile): HTMLElement | undefined {
+  let el: HTMLElement
+
+  if (dateProfile.currentRangeUnit.match(/year|month/)) {
+    el = containerEl.querySelector(`[data-date="${formatIsoMonthStr(dateProfile.currentDate)}-01"]`)
+    // even if view is month-based, first-of-month might be hidden...
+  }
+
+  if (!el) {
+    el = containerEl.querySelector(`[data-date="${formatDayString(dateProfile.currentDate)}"]`)
+    // could still be hidden if an interior-view hidden day
+  }
+
+  return el
 }

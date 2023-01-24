@@ -5,6 +5,7 @@ import {
   OpenDateRange,
   constrainMarkerToRange,
   intersectRanges,
+  rangeContainsMarker,
   rangesIntersect,
   parseRange,
   DateRangeInput,
@@ -132,6 +133,11 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     // it's invalid if the originally requested date is not contained,
     // or if the range is completely outside of the valid range.
     isValid = rangesIntersect(currentInfo.range, validRange)
+
+    // HACK: constrain to render-range so `currentDate` is more useful to view rendering
+    if (!rangeContainsMarker(renderRange, currentDate)) {
+      currentDate = renderRange.start
+    }
 
     return {
       currentDate,

@@ -104,17 +104,23 @@ export class TableRows extends DateComponent<TableRowsProps> {
 
   componentDidMount(): void {
     // HACK: need a daygrid wrapper parent to do positioning
-    this.rootEl = this.rowRefs.currentMap[0].getCellEls()[0].closest('.fc-daygrid-body')!
+    // NOTE: a daygrid resource view w/o resources can have zero cells
+    const firstCellEl = this.rowRefs.currentMap[0].getCellEls()[0]
+    this.rootEl = firstCellEl ? firstCellEl.closest('.fc-daygrid-body')! : null
 
-    this.context.registerInteractiveComponent(this, {
-      el: this.rootEl,
-      isHitComboAllowed: this.props.isHitComboAllowed,
-    })
+    if (this.rootEl) {
+      this.context.registerInteractiveComponent(this, {
+        el: this.rootEl,
+        isHitComboAllowed: this.props.isHitComboAllowed,
+      })
+    }
   }
 
   componentWillUnmount(): void {
-    this.context.unregisterInteractiveComponent(this)
-    this.rootEl = null
+    if (this.rootEl) {
+      this.context.unregisterInteractiveComponent(this)
+      this.rootEl = null
+    }
   }
 
   // Hit System
