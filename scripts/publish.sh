@@ -3,8 +3,12 @@
 # exit upon error
 set -e
 
+#
+# NOTE: common & resource-common don't have `--tag legacy` because they are stuck in v5,
+# because they were removed from v6
+#
 cd /Users/adam/Code/fullcalendar-legacy/packages/core && yarn npm publish --tag legacy --access=public
-cd /Users/adam/Code/fullcalendar-legacy/packages/common && yarn npm publish --tag legacy --access=public
+cd /Users/adam/Code/fullcalendar-legacy/packages/common && yarn npm publish --access=public
 cd /Users/adam/Code/fullcalendar-legacy/packages/daygrid && yarn npm publish --tag legacy --access=public
 cd /Users/adam/Code/fullcalendar-legacy/packages/timegrid && yarn npm publish --tag legacy --access=public
 cd /Users/adam/Code/fullcalendar-legacy/packages/bootstrap && yarn npm publish --tag legacy --access=public
@@ -23,7 +27,7 @@ cd /Users/adam/Code/fullcalendar-legacy/packages-premium/premium-common && yarn 
 cd /Users/adam/Code/fullcalendar-legacy/packages-premium/timeline && yarn npm publish --tag legacy --access=public
 cd /Users/adam/Code/fullcalendar-legacy/packages-premium/adaptive && yarn npm publish --tag legacy --access=public
 cd /Users/adam/Code/fullcalendar-legacy/packages-premium/scrollgrid && yarn npm publish --tag legacy --access=public
-cd /Users/adam/Code/fullcalendar-legacy/packages-premium/resource-common && yarn npm publish --tag legacy --access=public
+cd /Users/adam/Code/fullcalendar-legacy/packages-premium/resource-common && yarn npm publish --access=public
 cd /Users/adam/Code/fullcalendar-legacy/packages-premium/resource-daygrid && yarn npm publish --tag legacy --access=public
 cd /Users/adam/Code/fullcalendar-legacy/packages-premium/resource-timegrid && yarn npm publish --tag legacy --access=public
 cd /Users/adam/Code/fullcalendar-legacy/packages-premium/resource-timeline && yarn npm publish --tag legacy --access=public
