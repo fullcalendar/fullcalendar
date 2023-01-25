@@ -104,13 +104,6 @@ export function getEventTargetViaRoot(ev: Event) {
   return ev.composedPath?.()[0] ?? ev.target
 }
 
-// Shadow DOM consuderations
-// ----------------------------------------------------------------------------------------------------------------
-
-export function getElRoot(el: HTMLElement): ShadowRoot | Document {
-  return el.getRootNode ? el.getRootNode() as ShadowRoot : document
-}
-
 // Unique ID for DOM attribute
 
 let guid = 0

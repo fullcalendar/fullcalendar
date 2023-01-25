@@ -1,4 +1,3 @@
-import { getElRoot } from '@fullcalendar/core/internal'
 import { ScrollGeomCache } from '../ScrollGeomCache.js'
 import { ElementScrollGeomCache } from '../ElementScrollGeomCache.js'
 import { WindowScrollGeomCache } from '../WindowScrollGeomCache.js'
@@ -208,7 +207,7 @@ export class AutoScroller {
         els.push(query)
       } else {
         els.push(...Array.prototype.slice.call(
-          getElRoot(scrollStartEl).querySelectorAll(query),
+          (scrollStartEl.getRootNode() as ParentNode).querySelectorAll(query),
         ))
       }
     }
