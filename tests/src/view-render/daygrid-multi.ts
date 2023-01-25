@@ -1,5 +1,5 @@
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
-import '../lib/dom-misc'
+import '../lib/dom-misc.js'
 
 describe('DayGrid w/ multiple weeks/days', () => {
   it('dayGridYear has correct start/end dates', () => {
@@ -47,6 +47,25 @@ describe('DayGrid w/ multiple weeks/days', () => {
     expect(monthStartEls.length).toBe(2)
     expect(monthStartEls[0].innerText).toBe('January 29')
     expect(monthStartEls[1].innerText).toBe('February 1')
+  })
+
+  it('scrolls to initialDate', () => {
+    const calendar = initCalendar({
+      initialDate: '2023-06-25',
+      initialView: 'dayGridYear',
+    })
+
+    const viewWrapper = new DayGridViewWrapper(calendar)
+    const scrollerEl = viewWrapper.getScrollerEl()
+    const dayGridWrapper = viewWrapper.dayGrid
+    const initialDayEl = dayGridWrapper.getDayEl('2023-06-25')
+
+    expect(
+      Math.abs(
+        initialDayEl.getBoundingClientRect().top -
+        scrollerEl.getBoundingClientRect().top,
+      ) < 1,
+    )
   })
 
   it('has customizable monthStartFormat', () => {

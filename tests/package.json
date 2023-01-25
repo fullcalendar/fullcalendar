@@ -13,6 +13,7 @@
     "@fullcalendar/luxon2": "~6.0.3",
     "@fullcalendar/moment": "~6.0.3",
     "@fullcalendar/moment-timezone": "~6.0.3",
+    "@fullcalendar/multimonth": "~6.0.3",
     "@fullcalendar/rrule": "~6.0.3",
     "@fullcalendar/timegrid": "~6.0.3",
     "fullcalendar": "~6.0.3",
