@@ -4,20 +4,14 @@ export function injectStyles(css: string): void {
 
   const head = document.head || document.getElementsByTagName('head')[0]
   const style = document.createElement('style')
-  style.type = 'text/css'
 
   const nonce = getNonceValue()
   if (nonce) {
     style.nonce = nonce
   }
 
+  style.innerText = css
   head.appendChild(style)
-
-  if ((style as any).styleSheet) {
-    (style as any).styleSheet.cssText = css
-  } else {
-    style.appendChild(document.createTextNode(css))
-  }
 }
 
 // nonce
