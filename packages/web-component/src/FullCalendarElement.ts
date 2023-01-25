@@ -42,8 +42,18 @@ export class FullCalendarElement extends HTMLElement {
       if (this._calendar) {
         this._calendar.resetOptions(options)
       } else {
-        this.innerHTML = '<div></div>'
-        let calendarEl = this.querySelector('div')
+        let root: ShadowRoot | HTMLElement
+
+        if (this.hasAttribute('shadow')) {
+          this.attachShadow({ mode: 'open' })
+          root = this.shadowRoot
+        } else {
+          // eslint-disable-next-line @typescript-eslint/no-this-alias
+          root = this
+        }
+
+        root.innerHTML = '<div></div>'
+        let calendarEl = root.querySelector('div')
         let calendar = new Calendar(calendarEl, options)
         calendar.render()
         this._calendar = calendar
