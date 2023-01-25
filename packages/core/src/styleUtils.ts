@@ -1,8 +1,34 @@
 
-export function injectStyles(css: string): void {
-  if (!css || typeof document === 'undefined') { return }
+const injectedStyleEls: HTMLStyleElement[] = []
 
-  const head = document.head || document.getElementsByTagName('head')[0]
+const rootHasStyles = new WeakMap<ParentNode, true>()
+rootHasStyles.set(document, true)
+
+/*
+Called from top-level core/plugin code
+*/
+export function injectStyles(css: string): void {
+  if (css && typeof document !== 'undefined') {
+    injectedStyleEls.push(injectStylesInParent(document.head, css))
+  }
+}
+
+/*
+Called during calendar initialization
+*/
+export function ensureElHasStyles(calendarEl: HTMLElement): void {
+  const root = calendarEl.getRootNode() as ParentNode
+
+  if (!rootHasStyles.get(root)) {
+    rootHasStyles.set(root, true)
+
+    for (const injectedStyleEl of injectedStyleEls) {
+      injectStylesInParent(root, injectedStyleEl.innerText)
+    }
+  }
+}
+
+function injectStylesInParent(parentEl: Node, css: string): HTMLStyleElement {
   const style = document.createElement('style')
 
   const nonce = getNonceValue()
@@ -11,7 +37,8 @@ export function injectStyles(css: string): void {
   }
 
   style.innerText = css
-  head.appendChild(style)
+  parentEl.appendChild(style)
+  return style
 }
 
 // nonce
