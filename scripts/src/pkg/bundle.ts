@@ -100,7 +100,7 @@ async function buildRollupOptionObjs(
   const esm = !isTests
   const cjs = !isDev && !isTests
   const moduleSourcemap = isDev || isTests
-  const iife = !isDev || isBundle || isTests
+  const iife = true // !isDev || isBundle || isTests
   const iifeMinify = !isDev && !isTests
   const iifeSourcemap = (isBundle && isDev) || isTests
   const dts = !isDev && !isTests
