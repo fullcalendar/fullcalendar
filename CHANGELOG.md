@@ -1,10 +1,33 @@
 
-multi-month-view release
-------------------------
-- more-link hover effect
-- post-release: fix selection across separate months
-- fix: FullCalendar.Preact exposed
-- todo: write tests for weekends:false
+v6.1.0 (2023-??-??)
+-------------------
+
+- feature: multimonth view
+  - provides `multiMonthYear` view, which displays 3x4 small months when space permits
+  - can extend `multiMonth` view with custom durations
+  - can specify `multiMonthMinWidth`, which will force wrapping if months are too small
+  - can specify `multiMonthMaxColumns: 1` to guarantee one column of months
+  - can specify `multiMonthTitleFormat` to customize text above each month
+- feature: improved daygrid behavior when multiple weeks/months
+  - when many rows, instead of condensing rows, guaranteed min-height, for forcing scrollbars
+  - displaying month names for month switchovers, controlled by `monthStartFormat`
+  - a new stock `dayGridYear` view
+- feature: in daygrid/multimonth, +more link has hover effect with grey background color
+- feature: `@fullcalendar/web-component` has `shadow` option
+- feature/fix: from content-injection hooks, returning `true` does default rendering (#7110)
+- feature/fix: CSP nonce value passed to dynamically-injected stylesheets (#7104)
+- fix: styles are not applied correctly for elements using shadow DOM (#7118)
+- fix: custom view `content` with JSX doesn't render (#7160)
+- fix: `resourceAreaHeaderContent` overrides `headerContent` in resource columns (#7153)
+- fix: update moment-timezone for latest tz data (#6987)
+- fix: dayGrid w/ `showNonCurrentDates: false` can have final squished row (#7162)
+- fix: root-level repo with git submodules shouldn't force ssh protocol (#6714)
+- fix: in `fullcalendar` bundle, `FullCalendar.Preact` exposed for interop with plugins
+- locale: add weekTextLong for French locale (#6731, #7144)
+- locale: replace "évènement" in French locales (#7108)
+- locale: add Uzbek cyrillic translation (#6853)
+- locale: update Galician locale (#7103)
+- locale: update pt-br locale (#7106)
 
 
 v6.0.4 (2023-01-13)
