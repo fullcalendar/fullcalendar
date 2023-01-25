@@ -46,6 +46,17 @@ describe('eventContent', () => {
     expect($(eventEl).text()).toBe('')
   })
 
+  it('can return true to render default content', () => {
+    let calendar = initCalendar({
+      eventContent() {
+        return true
+      },
+    })
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEl = dayGridWrapper.getEventEls()[0]
+    expect($(eventEl).text()).toMatch('my event')
+  })
+
   // https://github.com/fullcalendar/fullcalendar/issues/5916
   xit('can render multiple appearance changes in eventDidMount', () => {
     let calendar = initCalendar({
