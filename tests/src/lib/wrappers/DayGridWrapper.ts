@@ -58,6 +58,10 @@ export class DayGridWrapper {
     return findElements(this.el, `tr:first-child > td.fc-day-${dayAbbrev}`)
   }
 
+  getMonthStartEls() {
+    return findElements(this.el, '.fc-daygrid-month-start')
+  }
+
   getDisabledDayEls() {
     return findElements(this.el, '.fc-day-disabled')
   }
