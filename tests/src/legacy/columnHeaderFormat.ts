@@ -135,12 +135,12 @@ describe('dayHeaderFormat', () => { // TODO: rename file
     it('multi-year default only displays day-of-week', () => {
       let calendar = initCalendar({
         views: {
-          multiYear: {
+          dayGridTwoYear: {
             type: 'dayGrid',
             duration: { years: 2 },
           },
         },
-        initialView: 'multiYear',
+        initialView: 'dayGridTwoYear',
         initialDate: '2014-12-25',
       })
       let header = new DayGridViewWrapper(calendar).header
@@ -150,12 +150,12 @@ describe('dayHeaderFormat', () => { // TODO: rename file
     it('multi-month default only displays day-of-week', () => {
       let calendar = initCalendar({
         views: {
-          multiMonth: {
+          dayGridTwoMonth: {
             type: 'dayGrid',
             duration: { months: 2 },
           },
         },
-        initialView: 'multiMonth',
+        initialView: 'dayGridTwoMonth',
         initialDate: '2014-12-25',
       })
       let header = new DayGridViewWrapper(calendar).header
@@ -165,12 +165,12 @@ describe('dayHeaderFormat', () => { // TODO: rename file
     it('multi-week default only displays day-of-week', () => {
       let calendar = initCalendar({
         views: {
-          multiWeek: {
+          dayGridTwoWeek: {
             type: 'dayGrid',
             duration: { weeks: 2 },
           },
         },
-        initialView: 'multiWeek',
+        initialView: 'dayGridTwoWeek',
         initialDate: '2014-12-25',
       })
       let header = new DayGridViewWrapper(calendar).header
