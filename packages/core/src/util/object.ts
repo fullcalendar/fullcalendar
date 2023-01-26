@@ -1,3 +1,5 @@
+import { isMaybeObjectsEqual } from '../options.js'
+
 const { hasOwnProperty } = Object.prototype
 
 // Merges an array of objects into a single object.
@@ -7,23 +9,25 @@ export function mergeProps(propObjs, complexPropsMap?): any {
 
   if (complexPropsMap) {
     for (let name in complexPropsMap) {
-      let complexObjs = []
+      if (complexPropsMap[name] === isMaybeObjectsEqual) { // implies that it's object-mergeable
+        let complexObjs = []
 
-      // collect the trailing object values, stopping when a non-object is discovered
-      for (let i = propObjs.length - 1; i >= 0; i -= 1) {
-        let val = propObjs[i][name]
+        // collect the trailing object values, stopping when a non-object is discovered
+        for (let i = propObjs.length - 1; i >= 0; i -= 1) {
+          let val = propObjs[i][name]
 
-        if (typeof val === 'object' && val) { // non-null object
-          complexObjs.unshift(val)
-        } else if (val !== undefined) {
-          dest[name] = val // if there were no objects, this value will be used
-          break
+          if (typeof val === 'object' && val) { // non-null object
+            complexObjs.unshift(val)
+          } else if (val !== undefined) {
+            dest[name] = val // if there were no objects, this value will be used
+            break
+          }
         }
-      }
 
-      // if the trailing values were objects, use the merged value
-      if (complexObjs.length) {
-        dest[name] = mergeProps(complexObjs)
+        // if the trailing values were objects, use the merged value
+        if (complexObjs.length) {
+          dest[name] = mergeProps(complexObjs)
+        }
       }
     }
   }

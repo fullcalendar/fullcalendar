@@ -1,5 +1,6 @@
 import { createDuration } from './datelib/duration.js'
 import { mergeProps, isPropsEqual } from './util/object.js'
+import { isArraysEqual } from './util/array.js'
 import { createFormatter } from './datelib/formatting.js'
 import { parseFieldSpecs } from './util/misc.js'
 import { DateProfileGeneratorClass } from './DateProfileGenerator.js'
@@ -391,11 +392,22 @@ export const COMPLEX_OPTION_COMPARATORS: {
   buttonHints: isMaybeObjectsEqual,
   buttonIcons: isMaybeObjectsEqual,
   dateIncrement: isMaybeObjectsEqual,
+  plugins: isMaybeArraysEqual,
+  events: isMaybeArraysEqual,
+  eventSources: isMaybeArraysEqual,
+  ['resources' as any]: isMaybeArraysEqual,
 }
 
-function isMaybeObjectsEqual(a, b) {
+export function isMaybeObjectsEqual(a, b) {
   if (typeof a === 'object' && typeof b === 'object' && a && b) { // both non-null objects
     return isPropsEqual(a, b)
+  }
+  return a === b
+}
+
+function isMaybeArraysEqual(a, b) {
+  if (Array.isArray(a) && Array.isArray(b)) {
+    return isArraysEqual(a, b)
   }
   return a === b
 }

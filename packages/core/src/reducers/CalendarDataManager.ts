@@ -365,9 +365,9 @@ export class CalendarDataManager {
       refinedOptions.defaultRangeSeparator,
     )
 
-    let viewSpecs = this.buildViewSpecs(pluginHooks.views, optionOverrides, dynamicOptionOverrides, localeDefaults)
+    let viewSpecs = this.buildViewSpecs(pluginHooks.views, this.stableOptionOverrides, this.stableDynamicOptionOverrides, localeDefaults)
     let theme = this.buildTheme(refinedOptions, pluginHooks)
-    let toolbarConfig = this.parseToolbars(refinedOptions, optionOverrides, theme, viewSpecs, calendarApi)
+    let toolbarConfig = this.parseToolbars(refinedOptions, this.stableOptionOverrides, theme, viewSpecs, calendarApi)
 
     return {
       calendarOptions: refinedOptions,
@@ -380,6 +380,9 @@ export class CalendarDataManager {
       availableRawLocales: availableLocaleData.map,
     }
   }
+
+  stableOptionOverrides: CalendarOptions
+  stableDynamicOptionOverrides: CalendarOptions
 
   // always called from behind a memoizer
   processRawCalendarOptions(optionOverrides: CalendarOptions, dynamicOptionOverrides: CalendarOptions) {
@@ -413,28 +416,29 @@ export class CalendarDataManager {
     let anyChanges = false
 
     for (let optionName in raw) {
-      if (optionName !== 'plugins') { // because plugins is special-cased
-        if (
-          raw[optionName] === currentRaw[optionName] ||
-          (
-            COMPLEX_OPTION_COMPARATORS[optionName] &&
-            (optionName in currentRaw) &&
-            COMPLEX_OPTION_COMPARATORS[optionName](currentRaw[optionName], raw[optionName])
-          )
-        ) {
-          refined[optionName] = currentRefined[optionName]
-        } else if (refiners[optionName]) {
-          refined[optionName] = refiners[optionName](raw[optionName])
-          anyChanges = true
-        } else {
-          extra[optionName] = currentRaw[optionName]
-        }
+      if (
+        raw[optionName] === currentRaw[optionName] ||
+        (
+          COMPLEX_OPTION_COMPARATORS[optionName] &&
+          (optionName in currentRaw) &&
+          COMPLEX_OPTION_COMPARATORS[optionName](currentRaw[optionName], raw[optionName])
+        )
+      ) {
+        refined[optionName] = currentRefined[optionName]
+      } else if (refiners[optionName]) {
+        refined[optionName] = refiners[optionName](raw[optionName])
+        anyChanges = true
+      } else {
+        extra[optionName] = currentRaw[optionName]
       }
     }
 
     if (anyChanges) {
       this.currentCalendarOptionsInput = raw
       this.currentCalendarOptionsRefined = refined as CalendarOptionsRefined
+
+      this.stableOptionOverrides = optionOverrides
+      this.stableDynamicOptionOverrides = dynamicOptionOverrides
     }
 
     return {
