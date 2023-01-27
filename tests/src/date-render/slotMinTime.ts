@@ -9,7 +9,7 @@ describe('slotMinTime', () => {
     })
     let gridWrapper = new TimeGridViewWrapper(calendar).timeGrid
     expect(gridWrapper.getAxisTexts()[0]).toBe('1am')
-    calendar.resetOptions({ slotMinTime: '09:00' }, true)
+    calendar.setOption('slotMinTime', '09:00')
     expect(gridWrapper.getAxisTexts()[0]).toBe('9am')
   })
 })

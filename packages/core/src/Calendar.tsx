@@ -130,8 +130,8 @@ export class Calendar extends CalendarImpl {
     this.renderRunner.resume('pauseRendering', true)
   }
 
-  resetOptions(optionOverrides, append?) {
-    this.currentDataManager.resetOptions(optionOverrides, append)
+  resetOptions(optionOverrides, changedOptionNames?: string[]) {
+    this.currentDataManager.resetOptions(optionOverrides, changedOptionNames)
   }
 
   private setClassNames(classNames: string[]) {

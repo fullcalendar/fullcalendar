@@ -59,7 +59,6 @@ export type ReducerFunc = ( // TODO: rename to CalendarDataInjector. move view-p
 // also, whatever is happening in constructor, have it happen in action queue too
 
 export class CalendarDataManager {
-  private computeOptionsData = memoize(this._computeOptionsData)
   private computeCurrentViewData = memoize(this._computeCurrentViewData)
   private organizeRawLocales = memoize(organizeRawLocales)
   private buildLocale = memoize(buildLocale)
@@ -87,6 +86,12 @@ export class CalendarDataManager {
   private currentViewOptionsInput: ViewOptions = {}
   private currentViewOptionsRefined: ViewOptionsRefined = ({} as any)
   public currentCalendarOptionsRefiners: any = {}
+
+  private stableOptionOverrides: CalendarOptions
+  private stableDynamicOptionOverrides: CalendarOptions
+  private stableCalendarOptionsData: CalendarOptionsData
+  private optionsForRefining: string[] = []
+  private optionsForHandling: string[] = []
 
   constructor(props: CalendarDataManagerProps) {
     this.props = props
@@ -175,16 +180,21 @@ export class CalendarDataManager {
     this.actionRunner.request(action) // protects against recursive calls to _handleAction
   }
 
-  resetOptions(optionOverrides: CalendarOptions, append?: boolean) {
+  resetOptions(optionOverrides: CalendarOptions, changedOptionNames?: string[]) {
     let { props } = this
 
-    props.optionOverrides = append
-      ? { ...props.optionOverrides, ...optionOverrides }
-      : optionOverrides
+    if (changedOptionNames === undefined) {
+      props.optionOverrides = optionOverrides
+    } else {
+      props.optionOverrides = { ...(props.optionOverrides || {}), ...optionOverrides }
+      this.optionsForRefining.push(...changedOptionNames)
+    }
 
-    this.actionRunner.request({ // hack. will cause updateData
-      type: 'NOTHING',
-    })
+    if (changedOptionNames === undefined || changedOptionNames.length) {
+      this.actionRunner.request({ // hack. will cause updateData
+        type: 'NOTHING',
+      })
+    }
   }
 
   _handleAction(action: Action) {
@@ -330,23 +340,36 @@ export class CalendarDataManager {
       }
 
       for (let optionName in changeHandlers) {
-        if (oldCalendarOptions[optionName] !== newCalendarOptions[optionName]) {
+        if (
+          this.optionsForHandling.indexOf(optionName) !== -1 ||
+          oldCalendarOptions[optionName] !== newCalendarOptions[optionName]
+        ) {
           changeHandlers[optionName](newCalendarOptions[optionName], data)
         }
       }
     }
+
+    this.optionsForHandling = []
 
     if (props.onData) {
       props.onData(data)
     }
   }
 
-  _computeOptionsData(
+  computeOptionsData(
     optionOverrides: CalendarOptions,
     dynamicOptionOverrides: CalendarOptions,
     calendarApi: CalendarImpl,
   ): CalendarOptionsData {
     // TODO: blacklist options that are handled by optionChangeHandlers
+
+    if (
+      !this.optionsForRefining.length &&
+      optionOverrides === this.stableOptionOverrides &&
+      dynamicOptionOverrides === this.stableDynamicOptionOverrides
+    ) {
+      return this.stableCalendarOptionsData
+    }
 
     let {
       refinedOptions, pluginHooks, localeDefaults, availableLocaleData, extra,
@@ -369,7 +392,7 @@ export class CalendarDataManager {
     let theme = this.buildTheme(refinedOptions, pluginHooks)
     let toolbarConfig = this.parseToolbars(refinedOptions, this.stableOptionOverrides, theme, viewSpecs, calendarApi)
 
-    return {
+    return this.stableCalendarOptionsData = {
       calendarOptions: refinedOptions,
       pluginHooks,
       dateEnv,
@@ -380,9 +403,6 @@ export class CalendarDataManager {
       availableRawLocales: availableLocaleData.map,
     }
   }
-
-  stableOptionOverrides: CalendarOptions
-  stableDynamicOptionOverrides: CalendarOptions
 
   // always called from behind a memoizer
   processRawCalendarOptions(optionOverrides: CalendarOptions, dynamicOptionOverrides: CalendarOptions) {
@@ -417,11 +437,12 @@ export class CalendarDataManager {
 
     for (let optionName in raw) {
       if (
-        raw[optionName] === currentRaw[optionName] ||
-        (
-          COMPLEX_OPTION_COMPARATORS[optionName] &&
-          (optionName in currentRaw) &&
-          COMPLEX_OPTION_COMPARATORS[optionName](currentRaw[optionName], raw[optionName])
+        this.optionsForRefining.indexOf(optionName) === -1 && (
+          raw[optionName] === currentRaw[optionName] || (
+            COMPLEX_OPTION_COMPARATORS[optionName] &&
+            (optionName in currentRaw) &&
+            COMPLEX_OPTION_COMPARATORS[optionName](currentRaw[optionName], raw[optionName])
+          )
         )
       ) {
         refined[optionName] = currentRefined[optionName]
@@ -440,6 +461,9 @@ export class CalendarDataManager {
       this.stableOptionOverrides = optionOverrides
       this.stableDynamicOptionOverrides = dynamicOptionOverrides
     }
+
+    this.optionsForHandling.push(...this.optionsForRefining)
+    this.optionsForRefining = []
 
     return {
       rawOptions: this.currentCalendarOptionsInput,
