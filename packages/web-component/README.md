@@ -14,7 +14,7 @@ This package provides a FullCalendar [Web Component](https://developer.mozilla.o
 </head>
 <body>
 
-  <full-calendar options='{
+  <full-calendar shadow options='{
     "headerToolbar": {
       "left": "prev,next today",
       "center": "title",
@@ -26,7 +26,9 @@ This package provides a FullCalendar [Web Component](https://developer.mozilla.o
 </html>
 ```
 
-It is also possible to set an `options` *property* on the DOM element. This property is a real JavaScript object, not merely a JSON string.
+The `shadow` attribute is necessary for rendering the calendar within its own shadow DOM. This is recommended.
+
+It is possible to set an `options` *property* on the DOM element. This property is a real JavaScript object, not merely a JSON string.
 
 ```js
 const fullCalendarElement = document.querySelector('full-calendar')
