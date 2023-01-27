@@ -1,8 +1,10 @@
 
 const injectedStyleEls: HTMLStyleElement[] = []
-
 const rootHasStyles = new WeakMap<ParentNode, true>()
-rootHasStyles.set(document, true)
+
+if (typeof document !== 'undefined') {
+  rootHasStyles.set(document, true)
+}
 
 /*
 Called from top-level core/plugin code
