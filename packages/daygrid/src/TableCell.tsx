@@ -122,12 +122,12 @@ export class TableCell extends DateComponent<TableCellProps> {
                     }}
                   />
                 </div>
-              ) : (
+              ) : props.showDayNumber ? (
                 // for creating correct amount of space (see issue #7162)
                 <div className="fc-daygrid-day-top" style={{ visibility: 'hidden' }}>
                   <a className="fc-daygrid-day-number">&nbsp;</a>
                 </div>
-              )}
+              ) : undefined}
             <div
               className="fc-daygrid-day-events"
               ref={props.fgContentElRef}
