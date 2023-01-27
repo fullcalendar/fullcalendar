@@ -351,7 +351,9 @@ export class EventImpl implements EventApi {
     let def = this._def
     let { ui } = def
     let { startStr, endStr } = this
-    let res: Dictionary = {}
+    let res: Dictionary = {
+      allDay: def.allDay,
+    }
 
     if (def.title) {
       res.title = def.title

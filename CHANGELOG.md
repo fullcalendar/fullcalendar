@@ -16,6 +16,7 @@ v6.1.0 (2023-??-??)
 - feature: `@fullcalendar/web-component` has `shadow` option
 - feature/fix: from content-injection hooks, returning `true` does default rendering (#7110)
 - feature/fix: CSP nonce value passed to dynamically-injected stylesheets (#7104)
+- fix: React event duplication while DnD and updating redux store (#7066, #7067, #7071)
 - fix: styles are not applied correctly for elements using shadow DOM (#7118)
 - fix: custom view `content` with JSX doesn't render (#7160)
 - fix: `resourceAreaHeaderContent` overrides `headerContent` in resource columns (#7153)
@@ -23,6 +24,7 @@ v6.1.0 (2023-??-??)
 - fix: dayGrid w/ `showNonCurrentDates: false` can have final squished row (#7162)
 - fix: root-level repo with git submodules shouldn't force ssh protocol (#6714)
 - fix: in `fullcalendar` bundle, `FullCalendar.Preact` exposed for interop with plugins
+- fix: EventApi::toPlainObject now returns `allDay` property
 - locale: add weekTextLong for French locale (#6731, #7144)
 - locale: replace "évènement" in French locales (#7108)
 - locale: add Uzbek cyrillic translation (#6853)
@@ -54,7 +56,7 @@ React:
 
 Vue 3:
 
-- FIX: With Webpack, fullySpecified:false workaroung no longer needed (#7125, #7114)
+- FIX: With Webpack, fullySpecified:false workaround no longer needed (#7125, #7114)
 
 
 v6.0.2 (2022-12-27)

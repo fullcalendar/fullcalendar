@@ -36,6 +36,14 @@ export function reduceEventStore(
         context,
       )
 
+    case 'RESET_RAW_EVENTS':
+      return resetRawEvents(
+        eventStore,
+        eventSources[action.sourceId],
+        action.rawEvents,
+        context,
+      )
+
     case 'ADD_EVENTS': // already parsed, but not expanded
       return addEvent(
         eventStore,
@@ -107,6 +115,30 @@ function receiveRawEvents(
   }
 
   return eventStore
+}
+
+function resetRawEvents(
+  existingEventStore: EventStore,
+  eventSource: EventSource<any>,
+  rawEvents: EventInput[],
+  context: CalendarContext,
+): EventStore {
+  const { defIdMap, instanceIdMap } = buildPublicIdMaps(existingEventStore)
+
+  let newEventStore = parseEvents(
+    transformRawEvents(rawEvents, eventSource, context),
+    eventSource,
+    context,
+    false,
+    defIdMap,
+    instanceIdMap,
+  )
+
+  if (eventSource.fetchRange) {
+    newEventStore = expandRecurring(newEventStore, eventSource.fetchRange, context)
+  }
+
+  return newEventStore
 }
 
 function transformRawEvents(rawEvents, eventSource: EventSource<any>, context: CalendarContext) {
@@ -187,4 +219,40 @@ export function excludeInstances(eventStore: EventStore, removals: EventInstance
     defs: eventStore.defs,
     instances: filterHash(eventStore.instances, (instance: EventInstance) => !removals[instance.instanceId]),
   }
+}
+
+// ID reusing
+// -------------------------------------------------------------------------------------------------
+
+export type EventDefIdMap = { [publicId: string]: string }
+export type EventInstanceIdMap = { [publicId: string]: string }
+
+function buildPublicIdMaps(eventStore: EventStore): {
+  defIdMap: EventDefIdMap
+  instanceIdMap: EventInstanceIdMap
+} {
+  const { defs, instances } = eventStore
+  const defIdMap: EventDefIdMap = {}
+  const instanceIdMap: EventInstanceIdMap = {}
+
+  for (let defId in defs) {
+    const def = defs[defId]
+    const { publicId } = def
+
+    if (publicId) {
+      defIdMap[publicId] = defId
+    }
+  }
+
+  for (let instanceId in instances) {
+    const instance = instances[instanceId]
+    const def = defs[instance.defId]
+    const { publicId } = def
+
+    if (publicId) {
+      instanceIdMap[publicId] = instanceId
+    }
+  }
+
+  return { defIdMap, instanceIdMap }
 }

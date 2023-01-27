@@ -8,6 +8,7 @@ import { createEventInstance, EventInstance } from './event-instance.js'
 import { EventSource } from './event-source.js'
 import { RefinedOptionsFromRefiners, RawOptionsFromRefiners, identity, Identity, Dictionary, refineProps, GenericRefiners } from '../options.js'
 import { EVENT_UI_REFINERS, createEventUi, EventUiInput, EventUiRefined } from '../component/event-ui.js'
+import { EventDefIdMap, EventInstanceIdMap } from '../reducers/eventStore.js'
 
 export const EVENT_NON_DATE_REFINERS = {
   id: String,
@@ -59,6 +60,8 @@ export function parseEvent(
   context: CalendarContext,
   allowOpenRange: boolean,
   refiners = buildEventRefiners(context),
+  defIdMap?: EventDefIdMap,
+  instanceIdMap?: EventInstanceIdMap,
 ): EventTuple | null {
   let { refined, extra } = refineEventDef(raw, context, refiners)
 
@@ -78,6 +81,7 @@ export function parseEvent(
       recurringRes.allDay,
       Boolean(recurringRes.duration),
       context,
+      defIdMap,
     )
 
     def.recurringDef = { // don't want all the props from recurringRes. TODO: more efficient way to do this
@@ -88,11 +92,16 @@ export function parseEvent(
 
     return { def, instance: null }
   }
+
   let singleRes = parseSingle(refined, defaultAllDay, context, allowOpenRange)
 
   if (singleRes) {
-    let def = parseEventDef(refined, extra, eventSource ? eventSource.sourceId : '', singleRes.allDay, singleRes.hasEnd, context)
+    let def = parseEventDef(refined, extra, eventSource ? eventSource.sourceId : '', singleRes.allDay, singleRes.hasEnd, context, defIdMap)
     let instance = createEventInstance(def.defId, singleRes.range, singleRes.forcedStartTzo, singleRes.forcedEndTzo)
+
+    if (instanceIdMap && def.publicId && instanceIdMap[def.publicId]) {
+      instance.instanceId = instanceIdMap[def.publicId]
+    }
 
     return { def, instance }
   }
@@ -122,6 +131,7 @@ export function parseEventDef(
   allDay: boolean,
   hasEnd: boolean,
   context: CalendarContext,
+  defIdMap?: EventDefIdMap,
 ): EventDef {
   let def: EventDef = {
     title: refined.title || '',
@@ -129,7 +139,7 @@ export function parseEventDef(
     publicId: refined.id || '',
     url: refined.url || '',
     recurringDef: null,
-    defId: guid(),
+    defId: ((defIdMap && refined.id) ? defIdMap[refined.id] : '') || guid(),
     sourceId,
     allDay,
     hasEnd,

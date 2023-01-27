@@ -36,14 +36,27 @@ function handleEventSources(inputs, context: CalendarContext) {
     }
   }
 
-  for (let unfoundSource of unfoundSources) {
+  if (
+    unfoundSources.length === 1 &&
+    newInputs.length === 1 &&
+    Array.isArray(unfoundSources[0]._raw) &&
+    Array.isArray(newInputs[0])
+  ) {
     context.dispatch({
-      type: 'REMOVE_EVENT_SOURCE',
-      sourceId: unfoundSource.sourceId,
+      type: 'RESET_RAW_EVENTS',
+      sourceId: unfoundSources[0].sourceId,
+      rawEvents: newInputs[0],
     })
-  }
+  } else {
+    for (let unfoundSource of unfoundSources) {
+      context.dispatch({
+        type: 'REMOVE_EVENT_SOURCE',
+        sourceId: unfoundSource.sourceId,
+      })
+    }
 
-  for (let newInput of newInputs) {
-    context.calendarApi.addEventSource(newInput)
+    for (let newInput of newInputs) {
+      context.calendarApi.addEventSource(newInput)
+    }
   }
 }

@@ -44,6 +44,7 @@ export type Action =
 
   { type: 'ADD_EVENTS', eventStore: EventStore } |
   { type: 'RESET_EVENTS', eventStore: EventStore } |
+  { type: 'RESET_RAW_EVENTS', rawEvents: EventInput[], sourceId: string } |
   { type: 'MERGE_EVENTS', eventStore: EventStore } |
   { type: 'REMOVE_EVENTS', eventStore: EventStore } |
   { type: 'REMOVE_ALL_EVENTS' }

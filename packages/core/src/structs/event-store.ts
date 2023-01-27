@@ -4,6 +4,7 @@ import { EventInput, parseEvent, EventTuple, buildEventRefiners } from './event-
 import { filterHash } from '../util/object.js'
 import { CalendarContext } from '../CalendarContext.js'
 import { EventSource } from './event-source.js'
+import { EventDefIdMap, EventInstanceIdMap } from '../reducers/eventStore.js'
 
 /*
 A data structure that encapsulates EventDefs and EventInstances.
@@ -21,12 +22,14 @@ export function parseEvents(
   eventSource: EventSource<any> | null,
   context: CalendarContext,
   allowOpenRange?: boolean,
+  defIdMap?: EventDefIdMap,
+  instanceIdMap?: EventInstanceIdMap,
 ): EventStore {
   let eventStore = createEmptyEventStore()
   let eventRefiners = buildEventRefiners(context)
 
   for (let rawEvent of rawEvents) {
-    let tuple = parseEvent(rawEvent, eventSource, context, allowOpenRange, eventRefiners)
+    let tuple = parseEvent(rawEvent, eventSource, context, allowOpenRange, eventRefiners, defIdMap, instanceIdMap)
 
     if (tuple) {
       eventTupleToStore(tuple, eventStore)
