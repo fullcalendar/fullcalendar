@@ -26,7 +26,7 @@ This package provides a FullCalendar [Web Component](https://developer.mozilla.o
 </html>
 ```
 
-The `shadow` attribute is necessary for rendering the calendar within its own shadow DOM. This is recommended.
+The `shadow` attribute is necessary for rendering the calendar within its own shadow DOM (added in v6.1.0). This is recommended.
 
 It is possible to set an `options` *property* on the DOM element. This property is a real JavaScript object, not merely a JSON string.
 

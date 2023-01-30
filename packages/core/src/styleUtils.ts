@@ -62,10 +62,10 @@ function queryNonceValue() {
     return metaWithNonce.getAttribute('content')
   }
 
-  const elWithNonce = document.querySelector('script[nonce],link[nonce]')
+  const elWithNonce = document.querySelector('script[nonce]')
 
   if (elWithNonce) {
-    return (elWithNonce as any).nonce
+    return (elWithNonce as any).nonce || ''
   }
 
   return ''
