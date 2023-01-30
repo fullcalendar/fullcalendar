@@ -1,5 +1,5 @@
 
-v6.1.1 (2023-??-??)
+v6.1.1 (2023-01-30)
 -------------------
 
 - fix: Multi-Month not included in fullcalendar-scheduler (#7177)
