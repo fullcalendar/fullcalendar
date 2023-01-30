@@ -35,8 +35,7 @@
   },
   "buildConfig": {
     "exports": {
-      ".": { "iife": true },
-      "./internal": {}
+      ".": { "iife": true }
     },
     "iifeGlobals": {
       ".": "FullCalendar.MultiMonth"
