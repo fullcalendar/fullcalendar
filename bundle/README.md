@@ -10,6 +10,7 @@ This `fullcalendar` package bundles these plugins:
 - [@fullcalendar/daygrid](https://github.com/fullcalendar/fullcalendar/tree/main/packages/daygrid)
 - [@fullcalendar/timegrid](https://github.com/fullcalendar/fullcalendar/tree/main/packages/timegrid)
 - [@fullcalendar/list](https://github.com/fullcalendar/fullcalendar/tree/main/packages/list)
+- [@fullcalendar/multimonth](https://github.com/fullcalendar/fullcalendar/tree/main/packages/multimonth)
 
 ## Usage with CDN or ZIP archive
 

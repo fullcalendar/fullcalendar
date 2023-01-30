@@ -6,7 +6,7 @@
   "keywords": [
     "month"
   ],
-  "homepage": "https://fullcalendar.io/docs/multimonth-view",
+  "homepage": "https://fullcalendar.io/docs/multimonth-grid",
   "dependencies": {
     "@fullcalendar/daygrid": "~6.1.0"
   },

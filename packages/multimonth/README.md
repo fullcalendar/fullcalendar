@@ -1,7 +1,7 @@
 
 # FullCalendar Multi-Month Plugin
 
-Display a sequence or grid of multiple months
+Display multiple months, in a grid or vertical stack
 
 ## Installation
 
