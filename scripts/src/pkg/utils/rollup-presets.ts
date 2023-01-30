@@ -62,7 +62,7 @@ export function buildEsmOptions(
 ): RollupOptions {
   return {
     input: buildModuleInput(pkgBundleStruct),
-    plugins: buildModulePlugins(pkgBundleStruct, monorepoStruct, sourcemap),
+    plugins: buildModulePlugins(pkgBundleStruct, monorepoStruct, '', sourcemap),
     output: buildEsmOutputOptions(pkgBundleStruct, sourcemap),
     onwarn,
   }
@@ -75,7 +75,7 @@ export function buildCjsOptions(
 ): RollupOptions {
   return {
     input: buildModuleInput(pkgBundleStruct),
-    plugins: buildModulePlugins(pkgBundleStruct, monorepoStruct, sourcemap),
+    plugins: buildModulePlugins(pkgBundleStruct, monorepoStruct, cjsExtension, sourcemap),
     output: buildCjsOutputOptions(pkgBundleStruct, sourcemap),
     onwarn,
   }
@@ -242,6 +242,7 @@ function buildManualChunks(
 function buildModulePlugins(
   pkgBundleStruct: PkgBundleStruct,
   monorepoStruct: MonorepoStruct,
+  forceOurExtension: string,
   sourcemap: boolean,
 ): Plugin[] {
   const { pkgDir, entryStructMap } = pkgBundleStruct
@@ -257,6 +258,7 @@ function buildModulePlugins(
     }),
     externalizePkgsPlugin({
       pkgNames: ourPkgNames,
+      forceExtension: forceOurExtension,
     }),
     generatedContentPlugin(
       entryStructsToContentMap(entryStructMap),

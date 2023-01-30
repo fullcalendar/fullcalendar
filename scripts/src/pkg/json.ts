@@ -44,6 +44,9 @@ export async function writeDistPkgJson(
   for (const entryName in entryConfigMap) {
     const entrySubpath = entryName === '.' ? './index' : entryName
 
+    // inter-package CJS imports use explicit extensions to avoid format confusion
+    exportsMap[entrySubpath + cjsExtension] = entrySubpath + cjsExtension
+
     exportsMap[entryName] = {
       types: entrySubpath.replace(/^\./, typesRoot) + '.d.ts', // tsc likes this first
       require: entrySubpath + cjsExtension,
