@@ -86,6 +86,10 @@ async function unglobEntryStructMap(
   const srcDir = joinPaths(pkgDir, 'src')
   const srcPaths = await globby(massagedGlob, { cwd: srcDir })
 
+  if (!srcPaths.length) {
+    throw new Error(`Glob '${entryGlob}' does not exist in package '${pkgDir}'`)
+  }
+
   for (const srcPath of srcPaths) {
     for (const srcExtension of srcExtensions) {
       if (srcPath.endsWith(srcExtension)) {
