@@ -1,4 +1,11 @@
 
+v6.1.1 (2023-??-??)
+-------------------
+
+- fix: Multi-Month not included in fullcalendar-scheduler (#7177)
+- fix: Multi-Month has nonexistent 'internal' entrypoint, causing error for skypack (#7176)
+
+
 v6.1.0 (2023-01-29)
 -------------------
 
