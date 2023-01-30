@@ -2,7 +2,7 @@
 v6.1.0 (2023-01-29)
 -------------------
 
-- feature: multimonth view
+- feature: multimonth view (#470, #1140)
   - provides `multiMonthYear` view, which displays 3x4 small months when space permits
   - can extend `multiMonth` view with custom durations
   - can specify `multiMonthMinWidth`, which will force wrapping if months are too small
