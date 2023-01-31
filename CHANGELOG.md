@@ -1,4 +1,13 @@
 
+v6.1.2 (2023-01-31)
+-------------------
+
+Apply v6.1.1's new CJS/ESM/nested-import interop strategy to React/Vue connectors. Details:
+
+- For maximum compatibility with legacy build systems like create-react-app
+- Only affects React/Vue2/Vue3 connectors. Assets for standard/premium not generated
+
+
 v6.1.1 (2023-01-30)
 -------------------
 
