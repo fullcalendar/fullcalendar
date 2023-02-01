@@ -57,18 +57,18 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
       if (customGeneratorRes === true) {
         useDefault = true
       } else {
-        if (options.handleCustomRendering) { // non-Preact (likely React)
-          currentGeneratorMeta = customGeneratorRes
-        } else { // preact or { html, domNodes }
-          const isObject = typeof customGeneratorRes === 'object'
+        const isObject = customGeneratorRes && typeof customGeneratorRes === 'object' // non-null
 
-          if (isObject && ('html' in customGeneratorRes)) {
-            attrs.dangerouslySetInnerHTML = { __html: customGeneratorRes.html }
-          } else if (isObject && ('domNodes' in customGeneratorRes)) {
-            queuedDomNodes = Array.prototype.slice.call(customGeneratorRes.domNodes)
-          } else {
-            innerContent = customGeneratorRes
-          }
+        if (isObject && ('html' in customGeneratorRes)) {
+          attrs.dangerouslySetInnerHTML = { __html: customGeneratorRes.html }
+        } else if (isObject && ('domNodes' in customGeneratorRes)) {
+          queuedDomNodes = Array.prototype.slice.call(customGeneratorRes.domNodes)
+        } else if (!isObject && typeof customGeneratorRes !== 'function') {
+          // primitive value (like string or number)
+          innerContent = customGeneratorRes
+        } else {
+          // an exotic object for handleCustomRendering
+          currentGeneratorMeta = customGeneratorRes
         }
       }
     } else {
