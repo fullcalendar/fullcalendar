@@ -116,6 +116,7 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
           reportNewContainerEl: this.handleEl, // for customRenderingReplacesEl
           generatorMeta,
           ...props,
+          elClasses: props.elClasses.filter(isTruthy),
         })
       }
     }
@@ -185,4 +186,8 @@ export function buildElAttrs(props: ElAttrsProps, extraClassNames?: string[]): E
   }
 
   return attrs
+}
+
+function isTruthy(val: any): boolean {
+  return Boolean(val)
 }
