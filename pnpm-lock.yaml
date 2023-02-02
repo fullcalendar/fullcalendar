@@ -15,17 +15,19 @@ importers:
 
   bundle:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
-      '@fullcalendar/daygrid': ~6.0.0
-      '@fullcalendar/interaction': ~6.0.0
-      '@fullcalendar/list': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
+      '@fullcalendar/daygrid': ~6.1.1
+      '@fullcalendar/interaction': ~6.1.1
+      '@fullcalendar/list': ~6.1.1
+      '@fullcalendar/multimonth': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
-      '@fullcalendar/timegrid': ~6.0.0
+      '@fullcalendar/timegrid': ~6.1.1
     dependencies:
       '@fullcalendar/core': link:../packages/core/dist
       '@fullcalendar/daygrid': link:../packages/daygrid/dist
       '@fullcalendar/interaction': link:../packages/interaction/dist
       '@fullcalendar/list': link:../packages/list/dist
+      '@fullcalendar/multimonth': link:../packages/multimonth/dist
       '@fullcalendar/timegrid': link:../packages/timegrid/dist
     devDependencies:
       '@fullcalendar/standard-scripts': link:../scripts
@@ -33,7 +35,7 @@ importers:
 
   packages/bootstrap4:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
     devDependencies:
       '@fullcalendar/core': link:../core/dist
@@ -42,7 +44,7 @@ importers:
 
   packages/bootstrap5:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
     devDependencies:
       '@fullcalendar/core': link:../core/dist
@@ -65,7 +67,7 @@ importers:
 
   packages/daygrid:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
     devDependencies:
       '@fullcalendar/core': link:../core/dist
@@ -74,7 +76,7 @@ importers:
 
   packages/google-calendar:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
     devDependencies:
       '@fullcalendar/core': link:../core/dist
@@ -83,7 +85,7 @@ importers:
 
   packages/icalendar:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
       ical.js: ^1.4.0
     devDependencies:
@@ -94,7 +96,7 @@ importers:
 
   packages/interaction:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
     devDependencies:
       '@fullcalendar/core': link:../core/dist
@@ -103,7 +105,7 @@ importers:
 
   packages/list:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
     devDependencies:
       '@fullcalendar/core': link:../core/dist
@@ -112,7 +114,7 @@ importers:
 
   packages/luxon1:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
       luxon: ^1.12.1
     devDependencies:
@@ -123,7 +125,7 @@ importers:
 
   packages/luxon2:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
       '@types/luxon': ^2.0.9
       luxon: ^2.0.0
@@ -136,7 +138,7 @@ importers:
 
   packages/moment:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
       moment: ^2.29.1
     devDependencies:
@@ -147,18 +149,30 @@ importers:
 
   packages/moment-timezone:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
-      moment-timezone: ^0.5.31
+      moment-timezone: ^0.5.40
     devDependencies:
       '@fullcalendar/core': link:../core/dist
       '@fullcalendar/standard-scripts': link:../../scripts
-      moment-timezone: 0.5.39
+      moment-timezone: 0.5.40
+    publishDirectory: ./dist
+
+  packages/multimonth:
+    specifiers:
+      '@fullcalendar/core': ~6.1.1
+      '@fullcalendar/daygrid': ~6.1.1
+      '@fullcalendar/standard-scripts': '*'
+    dependencies:
+      '@fullcalendar/daygrid': link:../daygrid/dist
+    devDependencies:
+      '@fullcalendar/core': link:../core/dist
+      '@fullcalendar/standard-scripts': link:../../scripts
     publishDirectory: ./dist
 
   packages/rrule:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
       rrule: ^2.6.0
     devDependencies:
@@ -169,8 +183,8 @@ importers:
 
   packages/timegrid:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
-      '@fullcalendar/daygrid': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
+      '@fullcalendar/daygrid': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
     dependencies:
       '@fullcalendar/daygrid': link:../daygrid/dist
@@ -181,7 +195,7 @@ importers:
 
   packages/web-component:
     specifiers:
-      '@fullcalendar/core': ~6.0.0
+      '@fullcalendar/core': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
     devDependencies:
       '@fullcalendar/core': link:../core/dist
@@ -286,28 +300,29 @@ importers:
 
   tests:
     specifiers:
-      '@fullcalendar/bootstrap': ~6.0.0
-      '@fullcalendar/core': ~6.0.0
-      '@fullcalendar/daygrid': ~6.0.0
-      '@fullcalendar/google-calendar': ~6.0.0
-      '@fullcalendar/icalendar': ~6.0.0
-      '@fullcalendar/interaction': ~6.0.0
-      '@fullcalendar/list': ~6.0.0
-      '@fullcalendar/luxon2': ~6.0.0
-      '@fullcalendar/moment': ~6.0.0
-      '@fullcalendar/moment-timezone': ~6.0.0
-      '@fullcalendar/rrule': ~6.0.0
+      '@fullcalendar/bootstrap': ~6.1.1
+      '@fullcalendar/core': ~6.1.1
+      '@fullcalendar/daygrid': ~6.1.1
+      '@fullcalendar/google-calendar': ~6.1.1
+      '@fullcalendar/icalendar': ~6.1.1
+      '@fullcalendar/interaction': ~6.1.1
+      '@fullcalendar/list': ~6.1.1
+      '@fullcalendar/luxon2': ~6.1.1
+      '@fullcalendar/moment': ~6.1.1
+      '@fullcalendar/moment-timezone': ~6.1.1
+      '@fullcalendar/multimonth': ~6.1.1
+      '@fullcalendar/rrule': ~6.1.1
       '@fullcalendar/standard-scripts': '*'
-      '@fullcalendar/timegrid': ~6.0.0
+      '@fullcalendar/timegrid': ~6.1.1
       '@types/jasmine': ^3.3.12
       '@types/jasmine-jquery': ^1.5.33
       '@types/jquery': ^3.3.29
       fetch-mock: ^9.11.0
-      fullcalendar: ~6.0.0
+      fullcalendar: ~6.1.1
       handlebars: ^4.7.7
       luxon: ^2.0.0
       moment: ^2.29.1
-      moment-timezone: ^0.5.31
+      moment-timezone: ^0.5.40
       xhr-mock: ^2.5.1
     dependencies:
       '@fullcalendar/bootstrap': link:../packages/bootstrap4/dist
@@ -320,12 +335,13 @@ importers:
       '@fullcalendar/luxon2': link:../packages/luxon2/dist
       '@fullcalendar/moment': link:../packages/moment/dist
       '@fullcalendar/moment-timezone': link:../packages/moment-timezone/dist
+      '@fullcalendar/multimonth': link:../packages/multimonth/dist
       '@fullcalendar/rrule': link:../packages/rrule/dist
       '@fullcalendar/timegrid': link:../packages/timegrid/dist
       fullcalendar: link:../bundle/dist
       luxon: 2.5.0
       moment: 2.29.4
-      moment-timezone: 0.5.39
+      moment-timezone: 0.5.40
       xhr-mock: 2.5.1
     devDependencies:
       '@fullcalendar/standard-scripts': link:../scripts
@@ -3553,8 +3569,8 @@ packages:
       minimist: 1.2.7
     dev: true
 
-  /moment-timezone/0.5.39:
-    resolution: {integrity: sha512-hoB6suq4ISDj7BDgctiOy6zljBsdYT0++0ZzZm9rtxIvJhIbQ3nmbgSWe7dNFGurl6/7b1OUkHlmN9JWgXVz7w==}
+  /moment-timezone/0.5.40:
+    resolution: {integrity: sha512-tWfmNkRYmBkPJz5mr9GVDn9vRlVZOTe6yqY92rFxiOdWXbjaR0+9LwQnZGGuNR63X456NqmEkbskte8tWL5ePg==}
     dependencies:
       moment: 2.29.4
 
