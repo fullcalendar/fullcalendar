@@ -161,6 +161,10 @@ export class DateEnv {
     return this.calendarSystem.getMarkerMonth(marker)
   }
 
+  getDay(marker: DateMarker): number {
+    return this.calendarSystem.getMarkerDay(marker)
+  }
+
   // Adding / Subtracting
 
   add(marker: DateMarker, dur: Duration): DateMarker {

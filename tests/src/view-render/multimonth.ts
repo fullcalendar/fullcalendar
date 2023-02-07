@@ -115,4 +115,15 @@ describe('multimonth view', () => {
     const monthWrappers = new MultiMonthViewWrapper(calendar).getMonths()
     expect(monthWrappers[0].title).toBe('Jan 2023')
   })
+
+  it('does not accidentally render month-start within cells', () => {
+    const calendar = initCalendar({
+      initialDate: '2023-06-01',
+      initialView: 'multiMonthYear',
+      multiMonthTitleFormat: { month: 'short', year: 'numeric' },
+    })
+
+    const viewWrapper = new MultiMonthViewWrapper(calendar)
+    expect(viewWrapper.el.querySelectorAll('.fc-daygrid-month-start').length).toBe(0)
+  })
 })

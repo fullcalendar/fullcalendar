@@ -13,6 +13,8 @@ import {
   EventSegUiInteractionState,
   getUniqueDomId,
   hasCustomDayCellContent,
+  addMs,
+  DateEnv,
 } from '@fullcalendar/core/internal'
 import {
   Ref,
@@ -60,20 +62,12 @@ export class TableCell extends DateComponent<TableCellProps> {
 
   render() {
     let { context, props, state, rootElRef } = this
-    let { options } = context
+    let { options, dateEnv } = context
     let { date, dateProfile } = props
 
     // TODO: memoize this?
-    const { currentRange } = dateProfile
-    const isMonthStart =
-      props.showDayNumber &&
-      context.viewSpec.singleUnit !== 'month' && // NOT a single-month
-      Boolean(
-        // first date in current view?
-        date.valueOf() === currentRange.start.valueOf() ||
-        // a month-start that's within the current range?
-        (date.getUTCDate() === 1 && date.valueOf() < currentRange.end.valueOf()),
-      )
+    const isMonthStart = props.showDayNumber &&
+      shouldDisplayMonthStart(date, dateProfile.currentRange, dateEnv)
 
     return (
       <DayCellContainer
@@ -170,4 +164,22 @@ export class TableCell extends DateComponent<TableCellProps> {
 
 function renderTopInner(props: DayCellContentArg): ComponentChild {
   return props.dayNumberText || <Fragment>&nbsp;</Fragment>
+}
+
+function shouldDisplayMonthStart(date: DateMarker, currentRange: DateRange, dateEnv: DateEnv): boolean {
+  const { start: currentStart, end: currentEnd } = currentRange
+  const currentEndIncl = addMs(currentEnd, -1)
+  const currentFirstYear = dateEnv.getYear(currentStart)
+  const currentFirstMonth = dateEnv.getMonth(currentStart)
+  const currentLastYear = dateEnv.getYear(currentEndIncl)
+  const currentLastMonth = dateEnv.getMonth(currentEndIncl)
+
+  // spans more than one month?
+  return !(currentFirstYear === currentLastYear && currentFirstMonth === currentLastMonth) &&
+    Boolean(
+      // first date in current view?
+      date.valueOf() === currentStart.valueOf() ||
+      // a month-start that's within the current range?
+      (dateEnv.getDay(date) === 1 && date.valueOf() < currentEnd.valueOf()),
+    )
 }
