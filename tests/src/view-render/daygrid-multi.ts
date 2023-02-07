@@ -83,4 +83,21 @@ describe('DayGrid w/ multiple weeks/days', () => {
     expect(monthStartEls[0].innerText).toBe('Jan 29, 2023')
     expect(monthStartEls[1].innerText).toBe('Feb 01, 2023')
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/7197
+  it('has month-titles for each month in custom 6-month calendar', () => {
+    const calendar = initCalendar({
+      initialDate: '2023-01-30',
+      initialView: 'dayGrid',
+      duration: { months: 6 },
+      monthStartFormat: { year: 'numeric', month: 'short', day: '2-digit' },
+    })
+
+    const dayGrid = new DayGridViewWrapper(calendar).dayGrid
+    const monthStartEls = dayGrid.getMonthStartEls()
+
+    expect(monthStartEls.length).toBe(6)
+    expect(monthStartEls[0].innerText).toBe('Jan 01, 2023')
+    expect(monthStartEls[1].innerText).toBe('Feb 01, 2023')
+  })
 })

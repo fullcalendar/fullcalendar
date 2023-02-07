@@ -64,11 +64,15 @@ export class TableCell extends DateComponent<TableCellProps> {
     let { date, dateProfile } = props
 
     // TODO: memoize this?
-    let isMonthStart =
+    const { currentRange } = dateProfile
+    const isMonthStart =
       props.showDayNumber &&
-      dateProfile.currentRangeUnit !== 'month' && (
-        dateProfile.currentRange.start.valueOf() === date.valueOf() ||
-        date.getUTCDate() === 1
+      context.viewSpec.singleUnit !== 'month' && // NOT a single-month
+      Boolean(
+        // first date in current view?
+        date.valueOf() === currentRange.start.valueOf() ||
+        // a month-start that's within the current range?
+        (date.getUTCDate() === 1 && date.valueOf() < currentRange.end.valueOf()),
       )
 
     return (
