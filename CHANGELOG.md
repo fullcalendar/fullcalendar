@@ -1,4 +1,9 @@
 
+v6.1.4 (2023-02-07)
+-------------------
+fix: bug introduced in v6.1.3 where month-start-text appears within day cells of multimonth view
+
+
 v6.1.3 (2023-02-07)
 -------------------
 
