@@ -30,6 +30,7 @@ function handleEventSources(inputs, context: CalendarContext) {
       sourceId: unfoundSources[0].sourceId,
       rawEvents: inputs[0],
     })
+    return
   }
 
   let newInputs = []
