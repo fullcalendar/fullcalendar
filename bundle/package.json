@@ -1,16 +1,16 @@
 {
   "name": "fullcalendar",
-  "version": "6.1.1",
+  "version": "6.1.3",
   "title": "FullCalendar Standard Bundle",
   "description": "Easily render a full-sized drag & drop calendar with a combination of standard plugins",
   "homepage": "https://fullcalendar.io/docs/initialize-globals",
   "dependencies": {
-    "@fullcalendar/core": "~6.1.1",
-    "@fullcalendar/daygrid": "~6.1.1",
-    "@fullcalendar/interaction": "~6.1.1",
-    "@fullcalendar/list": "~6.1.1",
-    "@fullcalendar/multimonth": "~6.1.1",
-    "@fullcalendar/timegrid": "~6.1.1"
+    "@fullcalendar/core": "~6.1.3",
+    "@fullcalendar/daygrid": "~6.1.3",
+    "@fullcalendar/interaction": "~6.1.3",
+    "@fullcalendar/list": "~6.1.3",
+    "@fullcalendar/multimonth": "~6.1.3",
+    "@fullcalendar/timegrid": "~6.1.3"
   },
   "devDependencies": {
     "@fullcalendar/standard-scripts": "*"
