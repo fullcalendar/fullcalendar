@@ -1,4 +1,13 @@
 
+v6.1.3 (2023-02-07)
+-------------------
+
+- fix: React: finally fix root cause of state issues (#7066, #7067, #7071)
+- fix: Angular: NgClass can only toggle CSS classes expressed as strings (#7182)
+- fix: Angular/Vue: accept content-injection function w/ { html } or { domNodes } (#7188)
+- fix: monthStartFormat not working with dayGrid views having a custom duration (#7197)
+
+
 v6.1.2 (2023-01-31)
 -------------------
 
