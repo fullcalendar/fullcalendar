@@ -7,6 +7,7 @@
     "web-component",
     "custom-element"
   ],
+  "homepage": "https://fullcalendar.io/docs/web-component",
   "peerDependencies": {
     "@fullcalendar/core": "~6.1.4"
   },
