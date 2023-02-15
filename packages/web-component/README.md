@@ -1,7 +1,37 @@
 
 # FullCalendar Web Component
 
-This package provides a FullCalendar [Web Component](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) (aka "Custom Element") that accepts a single `options` attribute. It must be a valid JSON string.
+This package provides a FullCalendar [Web Component](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) (aka "Custom Element").
+
+
+## Installing via NPM
+
+Install the core package, the web-component package, and any plugins you plan to use:
+
+```sh
+npm install --save \
+  @fullcalendar/core \
+  @fullcalendar/web-component \
+  @fullcalendar/daygrid
+```
+
+Then, either register the element globally under its default tag name of `<full-calendar />`:
+
+```js
+import '@fullcalendar/web-component/global'
+```
+
+Or, customize the tag name:
+
+```js
+import { FullCalendarElement } from '@fullcalendar/web-component'
+
+customElements.define('some-calendar-tag', FullCalendarElement);
+```
+
+## Installing via CDN
+
+Include script tags for the core package, the web-component package, and any plugins you plan to use:
 
 ```html
 <!DOCTYPE html>
@@ -25,6 +55,11 @@ This package provides a FullCalendar [Web Component](https://developer.mozilla.o
 </body>
 </html>
 ```
+
+
+## Options
+
+The full-calendar element accepts a single `options` attribute. It must be a valid JSON string.
 
 The `shadow` attribute is necessary for rendering the calendar within its own shadow DOM (added in v6.1.0). This is recommended.
 
