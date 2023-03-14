@@ -1,7 +1,7 @@
 import { createElement } from './preact.js'
 import { BaseComponent } from './vdom-util.js'
 import { ToolbarModel, ToolbarWidget } from './toolbar-struct.js'
-import { ToolbarSection, ToolbarContent } from './ToolbarSection.js'
+import { ToolbarSection, ToolbarContent, ToolbarSectionPosition } from './ToolbarSection.js'
 
 export interface ToolbarProps extends ToolbarContent {
   extraClassName: string // wish this could be array, but easier for pureness
@@ -47,7 +47,7 @@ export class Toolbar extends BaseComponent<ToolbarProps> {
     )
   }
 
-  renderSection(key: string, widgetGroups: ToolbarWidget[][]) {
+  renderSection(key: ToolbarSectionPosition, widgetGroups: ToolbarWidget[][]) {
     let { props } = this
 
     return (
@@ -61,6 +61,7 @@ export class Toolbar extends BaseComponent<ToolbarProps> {
         isPrevEnabled={props.isPrevEnabled}
         isNextEnabled={props.isNextEnabled}
         titleId={props.titleId}
+        position={key}
       />
     )
   }
