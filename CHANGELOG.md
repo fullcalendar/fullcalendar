@@ -3,6 +3,8 @@ next
 ----
 
 - workaround Preact's breaking type changes by using more specific semver range (#7225)
+- vue-2: fix SSR
+- vue-2: fix error in Nuxt 2: Cannot read properties of undefined (reading 'isHiddenDay') (#7217)
 
 
 v6.1.4 (2023-02-07)
