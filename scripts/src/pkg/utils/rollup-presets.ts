@@ -62,7 +62,7 @@ export function buildEsmOptions(
 ): RollupOptions {
   return {
     input: buildModuleInput(pkgBundleStruct),
-    plugins: buildModulePlugins(pkgBundleStruct, monorepoStruct, '', sourcemap),
+    plugins: buildModulePlugins(pkgBundleStruct, monorepoStruct, esmExtension, sourcemap),
     output: buildEsmOutputOptions(pkgBundleStruct, sourcemap),
     onwarn,
   }
