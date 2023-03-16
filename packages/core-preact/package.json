@@ -6,7 +6,7 @@
   "description": "Internal package",
   "docs": "https://fullcalendar.io/docs",
   "dependencies": {
-    "preact": "^10.0.5",
+    "preact": "~10.12.1",
     "tslib": "^2.1.0"
   },
   "main": "tsc/vdom.js",

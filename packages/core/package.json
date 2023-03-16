@@ -6,7 +6,7 @@
   "docs": "https://fullcalendar.io/docs/initialize-es6",
   "dependencies": {
     "@fullcalendar/common": "workspace:~5.11.4",
-    "preact": "^10.0.5",
+    "preact": "~10.12.1",
     "tslib": "^2.1.0"
   },
   "main": "main.cjs.js",
