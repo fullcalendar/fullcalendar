@@ -4,7 +4,7 @@
   "title": "FullCalendar Core",
   "description": "FullCalendar core package for rendering a calendar",
   "dependencies": {
-    "preact": "^10.0.5"
+    "preact": "~10.12.1"
   },
   "devDependencies": {
     "@fullcalendar/standard-scripts": "*",
