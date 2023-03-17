@@ -1,3 +1,5 @@
+import './index.css'
+
 export { TimeColsView } from './TimeColsView.js'
 export { DayTimeColsView, buildTimeColsModel } from './DayTimeColsView.js'
 export { TimeColsSeg } from './TimeColsSeg.js'
