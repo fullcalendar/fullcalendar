@@ -275,6 +275,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps, TimeColsView
       <ViewContainer elRef={this.rootElRef} elClasses={['fc-timegrid']} viewSpec={context.viewSpec}>
         <ScrollGrid
           liquid={!props.isHeightAuto && !props.forPrint}
+          forPrint={props.forPrint}
           collapsibleWidth={false}
           colGroups={[
             { width: 'shrink', cols: [{ width: 'shrink' }] }, // TODO: allow no specify cols

@@ -124,6 +124,7 @@ export abstract class TableView<State=Dictionary> extends DateComponent<ViewProp
       <ViewContainer elClasses={['fc-daygrid']} viewSpec={context.viewSpec}>
         <ScrollGrid
           liquid={!props.isHeightAuto && !props.forPrint}
+          forPrint={props.forPrint}
           collapsibleWidth={props.forPrint}
           colGroups={[{ cols: [{ span: colCnt, minWidth: dayMinWidth }] }]}
           sections={sections}

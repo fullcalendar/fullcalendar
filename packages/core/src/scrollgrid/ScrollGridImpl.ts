@@ -7,6 +7,7 @@ export interface ScrollGridProps {
   colGroups?: ColGroupConfig[]
   sections: ScrollGridSectionConfig[]
   liquid: boolean // liquid *height*
+  forPrint: boolean
   collapsibleWidth: boolean // can ALL sections be fully collapsed in width?
 }
 

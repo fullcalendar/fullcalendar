@@ -20,7 +20,7 @@ export interface ScrollerProps {
 const VISIBLE_HIDDEN_RE = /^(visible|hidden)$/
 
 export class Scroller extends BaseComponent<ScrollerProps> implements ScrollerLike {
-  private el: HTMLElement // TODO: just use this.base?
+  public el: HTMLElement // TODO: just use this.base?
 
   render() {
     let { props } = this
