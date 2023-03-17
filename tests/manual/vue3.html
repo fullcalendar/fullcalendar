@@ -2,23 +2,29 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<script src='https://cdn.jsdelivr.net/npm/vue@2.7.10/dist/vue.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.prod.js'></script>
 <script src='../../packages/core/dist/index.global.js'></script>
 <script src='../../packages/daygrid/dist/index.global.js'></script>
-<script src='../../../contrib/vue2/dist/index.global.js'></script>
+<script src='../../../contrib/vue3/dist/index.global.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function () {
-    new Vue({
-      el: '#app',
+    const App = {
       data() {
         return {
           calendarOptions: {
-            initialView: 'dayGridMonth'
+            initialView: 'dayGridMonth',
+            events: [
+              { title: 'Nice Event', start: new Date() }
+            ]
           }
         }
       }
-    })
+    }
+
+    const app = Vue.createApp(App)
+    app.component('full-calendar', FullCalendar.Vue.default)
+    app.mount('#app')
   })
 
 </script>
@@ -41,7 +47,12 @@
 <body>
 
   <div id='app'>
-    <full-calendar :plugins='calendarOptions' />
+    <full-calendar :options='calendarOptions'>
+      <template v-slot:event-content='arg'>
+        <b>{{ arg.timeText }}</b>
+        <i>{{ arg.event.title }}</i>
+      </template>
+    </full-calendar>
   </div>
 
 </body>

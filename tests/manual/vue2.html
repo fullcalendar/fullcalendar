@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<script src='https://cdn.jsdelivr.net/npm/vue@2.7.10/dist/vue.js'></script>
+<script src='../../packages/core/dist/index.global.js'></script>
+<script src='../../packages/daygrid/dist/index.global.js'></script>
+<script src='../../../contrib/vue2/dist/index.global.js'></script>
+<script>
+
+  document.addEventListener('DOMContentLoaded', function () {
+    new Vue({
+      el: '#app',
+      data() {
+        return {
+          calendarOptions: {
+            initialView: 'dayGridMonth',
+            events: [
+              { title: 'Nice Event', start: new Date() }
+            ]
+          }
+        }
+      }
+    })
+  })
+
+</script>
+<style>
+
+  body {
+    margin: 40px 10px;
+    padding: 0;
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 14px;
+  }
+
+  #calendar {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+</style>
+</head>
+<body>
+
+  <div id='app'>
+    <full-calendar :options='calendarOptions'>
+      <template v-slot:event-content='arg'>
+        <b>{{ arg.timeText }}</b>
+        <i>{{ arg.event.title }}</i>
+      </template>
+    </full-calendar>
+  </div>
+
+</body>
+</html>
