@@ -1,0 +1,48 @@
+{
+  "name": "@fullcalendar/bootstrap5",
+  "version": "6.1.4",
+  "title": "FullCalendar Bootstrap 5 Plugin",
+  "description": "Bootstrap 5 theme for FullCalendar",
+  "keywords": [
+    "bootstrap",
+    "bootstrap5"
+  ],
+  "homepage": "https://fullcalendar.io/docs/bootstrap5",
+  "peerDependencies": {
+    "@fullcalendar/core": "~6.1.4"
+  },
+  "devDependencies": {
+    "@fullcalendar/core": "~6.1.4",
+    "@fullcalendar/standard-scripts": "*"
+  },
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint ."
+  },
+  "type": "module",
+  "tsConfig": {
+    "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
+    "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist/.tsout"
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  },
+  "buildConfig": {
+    "exports": {
+      ".": { "iife": true },
+      "./internal": {}
+    },
+    "iifeGlobals": {
+      ".": "FullCalendar.Bootstrap5",
+      "./internal": "FullCalendar.Bootstrap5.Internal"
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
+  }
+}

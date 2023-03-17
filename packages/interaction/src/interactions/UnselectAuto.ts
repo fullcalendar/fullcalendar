@@ -1,11 +1,12 @@
+import { DateSelectionApi } from '@fullcalendar/core'
 import {
-  DateSelectionApi,
   PointerDragEvent,
   elementClosest,
   CalendarContext,
-} from '@fullcalendar/common'
-import { PointerDragging } from '../dnd/PointerDragging'
-import { EventDragging } from './EventDragging'
+  getEventTargetViaRoot,
+} from '@fullcalendar/core/internal'
+import { PointerDragging } from '../dnd/PointerDragging.js'
+import { EventDragging } from './EventDragging.js'
 
 export class UnselectAuto {
   documentPointer: PointerDragging // for unfocusing
@@ -39,7 +40,7 @@ export class UnselectAuto {
 
   onDocumentPointerDown = (pev: PointerDragEvent) => {
     let unselectCancel = this.context.options.unselectCancel
-    let downEl = pev.origEvent.target as HTMLElement
+    let downEl = getEventTargetViaRoot(pev.origEvent) as HTMLElement
 
     this.matchesCancel = !!elementClosest(downEl, unselectCancel)
     this.matchesEvent = !!elementClosest(downEl, EventDragging.SELECTOR) // interaction started on an event?

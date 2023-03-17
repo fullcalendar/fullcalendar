@@ -1,8 +1,48 @@
 
 # FullCalendar RRule Plugin
 
-A connector to the RRule library, for recurring events
+Recurring events with [RRule](https://github.com/jakubroztocil/rrule)
 
-[View the docs &raquo;](https://fullcalendar.io/docs/rrule-plugin)
+## Installation
 
-This package was created from the [FullCalendar monorepo &raquo;](https://github.com/fullcalendar/fullcalendar)
+First, ensure the RRule lib is installed:
+
+```sh
+npm install rrule
+```
+
+Then, install the FullCalendar core package, the RRule plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
+
+```sh
+npm install @fullcalendar/core @fullcalendar/rrule @fullcalendar/daygrid
+```
+
+## Usage
+
+Instantiate a Calendar with the necessary plugin:
+
+```js
+import { Calendar } from '@fullcalendar/core'
+import rrulePlugin from '@fullcalendar/rrule'
+import dayGridPlugin from '@fullcalendar/daygrid'
+
+const calendarEl = document.getElementById('calendar')
+const calendar = new Calendar(calendarEl, {
+  plugins: [
+    rrulePlugin,
+    dayGridPlugin
+  ],
+  initialView: 'dayGridMonth',
+  events: [
+    {
+      title: 'Meeting',
+      rrule: {
+        freq: 'weekly',
+        byweekday: ['mo', 'fr']
+      }
+    }
+  ]
+})
+
+calendar.render()
+```

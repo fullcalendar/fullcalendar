@@ -1,11 +1,11 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'fr',
   buttonText: {
     prev: 'Précédent',
     next: 'Suivant',
-    today: "Aujourd'hui",
+    today: 'Aujourd\'hui',
     year: 'Année',
     month: 'Mois',
     week: 'Semaine',
@@ -15,5 +15,5 @@ export default {
   weekText: 'Sem.',
   allDayText: 'Toute la journée',
   moreLinkText: 'en plus',
-  noEventsText: 'Aucun événement à afficher',
+  noEventsText: 'Aucun évènement à afficher',
 } as LocaleInput

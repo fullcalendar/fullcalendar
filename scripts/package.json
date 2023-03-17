@@ -1,0 +1,81 @@
+{
+  "private": true,
+  "name": "@fullcalendar/standard-scripts",
+  "version": "0.0.0",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^12.0.0",
+    "@rollup/plugin-json": "^4.0.3",
+    "@rollup/plugin-node-resolve": "^14.0.1",
+    "@rollup/plugin-replace": "^5.0.1",
+    "@tsconfig/node16": "^1.0.3",
+    "@types/archiver": "^5.3.1",
+    "@types/cross-spawn": "^6.0.2",
+    "@types/js-yaml": "^4.0.5",
+    "@types/karma": "^6.3.3",
+    "@types/node": "^16.11.7",
+    "@types/semver": "^7.3.12",
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "@typescript-eslint/parser": "^5.40.0",
+    "archiver": "^5.3.1",
+    "autoprefixer": "^9.8.4",
+    "chalk": "^5.0.1",
+    "chokidar": "^2.1.5",
+    "cleye": "^1.2.1",
+    "components-jqueryui": "^1.12.1",
+    "cross-spawn": "^7.0.3",
+    "esbuild": "^0.15.7",
+    "eslint": "^8.25.0",
+    "eslint-plugin-react": "^7.31.10",
+    "globby": "^13.1.2",
+    "handlebars": "^4.1.2",
+    "jasmine-jquery": "^2.1.1",
+    "jquery": "^3.4.0",
+    "jquery-simulate": "^1.0.2",
+    "js-yaml": "^4.1.0",
+    "karma": "^6.3.2",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-jasmine": "^4.0.1",
+    "karma-sourcemap-loader": "^0.3.8",
+    "karma-verbose-reporter": "0.0.6",
+    "postcss": "^8.4.20",
+    "postcss-advanced-variables": "^3.0.1",
+    "postcss-comment": "^2.0.0",
+    "postcss-nesting": "^7.0.1",
+    "rollup": "^2.79.0",
+    "rollup-plugin-dts": "^3.0.2",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-sourcemaps": "^0.6.3",
+    "semver": "^7.3.8",
+    "terser": "^4.8.0",
+    "turbo": "^1.5.6",
+    "typescript": "^4.8.2"
+  },
+  "bin": {
+    "standard-scripts": "./bin/standard-scripts.js",
+    "ss": "./bin/standard-scripts.js",
+    "eslint": "./node_modules/eslint/bin/eslint.js"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "safe-build": "cp tsconfig.safe.json tsconfig.json && tsc -b"
+  },
+  "type": "module",
+  "tsConfig": {
+    "extends": "./config/tsconfig.node.json",
+    "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist"
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    "./config/*": "./config/*",
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
+    }
+  }
+}

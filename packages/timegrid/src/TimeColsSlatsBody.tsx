@@ -1,12 +1,16 @@
 import {
-  createElement,
-  BaseComponent,
-  RefMap,
-  RenderHook,
   SlotLaneContentArg,
-} from '@fullcalendar/common'
-import { TimeColsAxisCell } from './TimeColsAxisCell'
-import { TimeSlatMeta } from './time-slat-meta'
+} from '@fullcalendar/core'
+import {
+  BaseComponent,
+  ContentContainer,
+  RefMap,
+} from '@fullcalendar/core/internal'
+import {
+  createElement,
+} from '@fullcalendar/core/preact'
+import { TimeColsAxisCell } from './TimeColsAxisCell.js'
+import { TimeSlatMeta } from './time-slat-meta.js'
 
 export interface TimeColsSlatsBodyProps {
   axis: boolean
@@ -23,17 +27,11 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
     return (
       <tbody>
         {props.slatMetas.map((slatMeta, i) => {
-          let hookProps: SlotLaneContentArg = {
+          let renderProps: SlotLaneContentArg = {
             time: slatMeta.time,
             date: context.dateEnv.toDate(slatMeta.date),
             view: context.viewApi,
           }
-
-          let classNames = [
-            'fc-timegrid-slot',
-            'fc-timegrid-slot-lane',
-            slatMeta.isLabeled ? '' : 'fc-timegrid-slot-minor',
-          ]
 
           return (
             <tr
@@ -43,23 +41,23 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
               {props.axis && (
                 <TimeColsAxisCell {...slatMeta} />
               )}
-              <RenderHook
-                hookProps={hookProps}
-                classNames={options.slotLaneClassNames}
-                content={options.slotLaneContent}
+              <ContentContainer
+                elTag="td"
+                elClasses={[
+                  'fc-timegrid-slot',
+                  'fc-timegrid-slot-lane',
+                  !slatMeta.isLabeled && 'fc-timegrid-slot-minor',
+                ]}
+                elAttrs={{
+                  'data-time': slatMeta.isoTimeStr,
+                }}
+                renderProps={renderProps}
+                generatorName="slotLaneContent"
+                customGenerator={options.slotLaneContent}
+                classNameGenerator={options.slotLaneClassNames}
                 didMount={options.slotLaneDidMount}
                 willUnmount={options.slotLaneWillUnmount}
-              >
-                {(rootElRef, customClassNames, innerElRef, innerContent) => (
-                  <td
-                    ref={rootElRef}
-                    className={classNames.concat(customClassNames).join(' ')}
-                    data-time={slatMeta.isoTimeStr}
-                  >
-                    {innerContent}
-                  </td>
-                )}
-              </RenderHook>
+              />
             </tr>
           )
         })}

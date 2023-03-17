@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'hu',
@@ -10,10 +10,11 @@ export default {
     prev: 'vissza',
     next: 'előre',
     today: 'ma',
+    year: 'Év',
     month: 'Hónap',
     week: 'Hét',
     day: 'Nap',
-    list: 'Napló',
+    list: 'Lista',
   },
   weekText: 'Hét',
   allDayText: 'Egész nap',

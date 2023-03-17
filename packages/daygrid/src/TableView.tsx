@@ -1,20 +1,23 @@
 import {
-  VNode, createElement,
   SimpleScrollGrid,
   SimpleScrollGridSection,
   ChunkContentCallbackArgs,
-  createRef,
   ScrollGridSectionConfig,
-  ViewRoot,
+  ViewContainer,
   DateComponent,
   ViewProps,
-  RefObject,
   renderScrollShim,
   getStickyHeaderDates,
   getStickyFooterScrollbar,
   ChunkConfigRowContent,
   Dictionary,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core/internal'
+import {
+  VNode,
+  createElement,
+  createRef,
+  RefObject,
+} from '@fullcalendar/core/preact'
 
 /* An abstract class for the daygrid views, as well as month view. Renders one or more rows of day cells.
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -53,18 +56,14 @@ export abstract class TableView<State=Dictionary> extends DateComponent<ViewProp
     })
 
     return (
-      <ViewRoot viewSpec={context.viewSpec}>
-        {(rootElRef, classNames) => (
-          <div ref={rootElRef} className={['fc-daygrid'].concat(classNames).join(' ')}>
-            <SimpleScrollGrid
-              liquid={!props.isHeightAuto && !props.forPrint}
-              collapsibleWidth={props.forPrint}
-              cols={[] /* TODO: make optional? */}
-              sections={sections}
-            />
-          </div>
-        )}
-      </ViewRoot>
+      <ViewContainer elClasses={['fc-daygrid']} viewSpec={context.viewSpec}>
+        <SimpleScrollGrid
+          liquid={!props.isHeightAuto && !props.forPrint}
+          collapsibleWidth={props.forPrint}
+          cols={[] /* TODO: make optional? */}
+          sections={sections}
+        />
+      </ViewContainer>
     )
   }
 
@@ -122,18 +121,14 @@ export abstract class TableView<State=Dictionary> extends DateComponent<ViewProp
     }
 
     return (
-      <ViewRoot viewSpec={context.viewSpec}>
-        {(rootElRef, classNames) => (
-          <div ref={rootElRef} className={['fc-daygrid'].concat(classNames).join(' ')}>
-            <ScrollGrid
-              liquid={!props.isHeightAuto && !props.forPrint}
-              collapsibleWidth={props.forPrint}
-              colGroups={[{ cols: [{ span: colCnt, minWidth: dayMinWidth }] }]}
-              sections={sections}
-            />
-          </div>
-        )}
-      </ViewRoot>
+      <ViewContainer elClasses={['fc-daygrid']} viewSpec={context.viewSpec}>
+        <ScrollGrid
+          liquid={!props.isHeightAuto && !props.forPrint}
+          collapsibleWidth={props.forPrint}
+          colGroups={[{ cols: [{ span: colCnt, minWidth: dayMinWidth }] }]}
+          sections={sections}
+        />
+      </ViewContainer>
     )
   }
 }

@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'el',
@@ -10,6 +10,7 @@ export default {
     prev: 'Προηγούμενος',
     next: 'Επόμενος',
     today: 'Σήμερα',
+    year: 'Ετος',
     month: 'Μήνας',
     week: 'Εβδομάδα',
     day: 'Ημέρα',

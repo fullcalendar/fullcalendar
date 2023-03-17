@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'sk',
@@ -10,6 +10,7 @@ export default {
     prev: 'Predchádzajúci',
     next: 'Nasledujúci',
     today: 'Dnes',
+    year: 'Rok',
     month: 'Mesiac',
     week: 'Týždeň',
     day: 'Deň',

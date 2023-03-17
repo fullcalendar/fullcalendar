@@ -1,7 +1,5 @@
 import {
-  createElement,
-  MoreLinkRoot,
-  RefObject,
+  MoreLinkContainer,
   BaseComponent,
   memoize,
   DateMarker,
@@ -10,19 +8,19 @@ import {
   DateRange,
   EventSegUiInteractionState,
   getSegMeta,
-  Fragment,
-} from '@fullcalendar/common'
-import { TableSegPlacement } from './event-placement'
-import { hasListItemDisplay } from './event-rendering'
-import { TableBlockEvent } from './TableBlockEvent'
-import { TableListItemEvent } from './TableListItemEvent'
-import { TableSeg } from './TableSeg'
+} from '@fullcalendar/core/internal'
+import { createElement, RefObject, Fragment } from '@fullcalendar/core/preact'
+import { TableSegPlacement } from './event-placement.js'
+import { hasListItemDisplay } from './event-rendering.js'
+import { TableBlockEvent } from './TableBlockEvent.js'
+import { TableListItemEvent } from './TableListItemEvent.js'
+import { TableSeg } from './TableSeg.js'
 
 export interface TableCellMoreLinkProps {
   allDayDate: DateMarker
   singlePlacements: TableSegPlacement[]
   moreCnt: number
-  alignmentElRef: RefObject<HTMLElement> // for popover
+  alignmentElRef: RefObject<HTMLElement>
   alignGridTop: boolean // for popover
   extraDateSpan?: Dictionary
   dateProfile: DateProfile
@@ -40,7 +38,8 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
     let { allSegs, invisibleSegs } = this.compileSegs(props.singlePlacements)
 
     return (
-      <MoreLinkRoot
+      <MoreLinkContainer
+        elClasses={['fc-daygrid-more-link']}
         dateProfile={props.dateProfile}
         todayRange={props.todayRange}
         allDayDate={props.allDayDate}
@@ -92,17 +91,7 @@ export class TableCellMoreLink extends BaseComponent<TableCellMoreLinkProps> {
             </Fragment>
           )
         }}
-      >
-        {(rootElRef, classNames, innerElRef, innerContent, handleClick) => (
-          <a
-            ref={rootElRef}
-            className={['fc-daygrid-more-link'].concat(classNames).join(' ')}
-            onClick={handleClick}
-          >
-            {innerContent}
-          </a>
-        )}
-      </MoreLinkRoot>
+      />
     )
   }
 }

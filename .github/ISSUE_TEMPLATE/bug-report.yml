@@ -1,0 +1,49 @@
+name: Bug Report
+description: Report something that doesn't work correctly
+body:
+  - type: input
+    id: reduced-test-case
+    attributes:
+      label: Reduced Test Case
+      description: >
+        A [reduced test case](https://css-tricks.com/reduced-test-cases/) is required.
+        A [debugging template](https://fullcalendar.io/reduced-test-cases) will help you get started.
+      placeholder: URL of reduced test case
+    validations:
+      required: true
+  - type: checkboxes
+    id: reduced-test-case-confirmation
+    attributes:
+      label: >
+        Do you understand that if a reduced test case is not provided,
+        we will intentionally delay triaging of your ticket?
+      options:
+        - label: I understand
+          required: true
+  - type: dropdown
+    id: connector
+    attributes:
+      label: Which connector are you using (React/Angular/etc)?
+      options:
+        - No connector (vanilla JS)
+        - React
+        - Angular
+        - Vue
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: >
+        Describe how to recreate the bug.
+        What do you expect to happen?
+        What happens instead?
+    validations:
+      required: true
+  - type: markdown
+    id: screenshot
+    attributes:
+      value: >
+        **Screenshot:**
+        If the bug is visual, drag a screenshot into the description above.

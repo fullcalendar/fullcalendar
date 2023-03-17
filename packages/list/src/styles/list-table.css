@@ -22,6 +22,17 @@
     }
   }
 
+  // only exists for aria reasons, hide for non-screen-readers
+  & .fc-list-table thead {
+    position: absolute;
+    left: -10000px;
+  }
+
+  // the table's border-style:hidden gets confused by hidden thead. force-hide top border of first cell
+  & .fc-list-table tbody > tr:first-child th {
+    border-top: 0;
+  }
+
   & .fc-list-table th {
     padding: 0; // uses an inner-wrapper instead...
   }

@@ -1,13 +1,13 @@
+import { Duration } from '@fullcalendar/core'
 import {
   createDuration,
   asRoughMs,
   formatIsoTimeString,
   addDurations,
   wholeDivideDurations,
-  Duration,
   DateMarker,
   DateEnv,
-} from '@fullcalendar/common'
+} from '@fullcalendar/core/internal'
 
 export interface TimeSlatMeta {
   date: DateMarker

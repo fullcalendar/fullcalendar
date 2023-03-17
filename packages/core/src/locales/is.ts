@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'is',
@@ -10,6 +10,7 @@ export default {
     prev: 'Fyrri',
     next: 'Næsti',
     today: 'Í dag',
+    year: 'Ár',
     month: 'Mánuður',
     week: 'Vika',
     day: 'Dagur',

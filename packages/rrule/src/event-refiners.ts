@@ -1,10 +1,11 @@
-import { createDuration, DateInput, identity, Identity } from '@fullcalendar/common'
 import { Options as RRuleOptions } from 'rrule'
+import { DateInput } from '@fullcalendar/core'
+import { createDuration, identity, Identity } from '@fullcalendar/core/internal'
 
 export type RRuleInputObjectFull = Omit<RRuleOptions, 'dtstart' | 'until' | 'freq' | 'wkst' | 'byweekday'> & {
   dtstart: RRuleOptions['dtstart'] | DateInput
   until: RRuleOptions['until'] | DateInput
-  freq: RRuleOptions['until'] | string
+  freq: RRuleOptions['freq'] | string
   wkst: RRuleOptions['wkst'] | string
   byweekday: RRuleOptions['byweekday'] | string | string[]
 }

@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'sl',
@@ -10,6 +10,7 @@ export default {
     prev: 'Prejšnji',
     next: 'Naslednji',
     today: 'Trenutni',
+    year: 'Leto',
     month: 'Mesec',
     week: 'Teden',
     day: 'Dan',

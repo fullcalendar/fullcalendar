@@ -1,0 +1,47 @@
+{
+  "name": "fullcalendar",
+  "version": "6.1.4",
+  "title": "FullCalendar Standard Bundle",
+  "description": "Easily render a full-sized drag & drop calendar with a combination of standard plugins",
+  "homepage": "https://fullcalendar.io/docs/initialize-globals",
+  "dependencies": {
+    "@fullcalendar/core": "~6.1.4",
+    "@fullcalendar/daygrid": "~6.1.4",
+    "@fullcalendar/interaction": "~6.1.4",
+    "@fullcalendar/list": "~6.1.4",
+    "@fullcalendar/multimonth": "~6.1.4",
+    "@fullcalendar/timegrid": "~6.1.4"
+  },
+  "devDependencies": {
+    "@fullcalendar/standard-scripts": "*"
+  },
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint ."
+  },
+  "type": "module",
+  "tsConfig": {
+    "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
+    "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist/.tsout"
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  },
+  "buildConfig": {
+    "exports": {
+      ".": { "iife": true }
+    },
+    "iifeGlobals": {
+      ".": "FullCalendar",
+      "*": ""
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
+  }
+}

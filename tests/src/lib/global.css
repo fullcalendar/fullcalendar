@@ -1,0 +1,12 @@
+/* BAD: premium's css copies this css */
+
+body {
+  margin-top: 40px;
+  font-size: 13px;
+  font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+}
+
+.fc {
+  max-width: 900px;
+  margin: 20px auto;
+}

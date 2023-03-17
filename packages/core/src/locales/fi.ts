@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'fi',
@@ -10,6 +10,7 @@ export default {
     prev: 'Edellinen',
     next: 'Seuraava',
     today: 'Tänään',
+    year: 'Vuosi',
     month: 'Kuukausi',
     week: 'Viikko',
     day: 'Päivä',

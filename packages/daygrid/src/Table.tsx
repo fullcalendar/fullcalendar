@@ -1,73 +1,22 @@
-import {
-  EventSegUiInteractionState,
-  VNode,
-  DateComponent,
-  RefObject,
-  CssDimValue,
-  createElement,
-  PositionCache,
-  memoize,
-  addDays,
-  RefMap,
-  DateRange,
-  NowTimer,
-  DateMarker,
-  DateProfile,
-  Fragment,
-  Hit,
-  DayTableCell,
-} from '@fullcalendar/common'
-import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg'
-import { TableRow } from './TableRow'
+import { CssDimValue } from '@fullcalendar/core'
+import { DateComponent, formatIsoMonthStr, formatDayString, DateProfile } from '@fullcalendar/core/internal'
+import { VNode, RefObject, createElement, createRef } from '@fullcalendar/core/preact'
+import { TableRows, TableRowsProps } from './TableRows.js'
 
-export interface TableProps {
-  dateProfile: DateProfile
-  cells: DayTableCell[][] // cells-BY-ROW
-  renderRowIntro?: () => VNode
+export interface TableProps extends TableRowsProps {
   colGroupNode: VNode
   tableMinWidth: CssDimValue
   expandRows: boolean
-  showWeekNumbers: boolean
-  clientWidth: number | null
-  clientHeight: number | null
-  businessHourSegs: TableSeg[]
-  bgEventSegs: TableSeg[]
-  fgEventSegs: TableSeg[]
-  dateSelectionSegs: TableSeg[]
-  eventSelection: string
-  eventDrag: EventSegUiInteractionState | null
-  eventResize: EventSegUiInteractionState | null
-  dayMaxEvents: boolean | number
-  dayMaxEventRows: boolean | number
   headerAlignElRef?: RefObject<HTMLElement>
-  forPrint: boolean
-  isHitComboAllowed?: (hit0: Hit, hit1: Hit) => boolean
 }
 
 export class Table extends DateComponent<TableProps> {
-  private splitBusinessHourSegs = memoize(splitSegsByRow)
-  private splitBgEventSegs = memoize(splitSegsByRow)
-  private splitFgEventSegs = memoize(splitSegsByRow)
-  private splitDateSelectionSegs = memoize(splitSegsByRow)
-  private splitEventDrag = memoize(splitInteractionByRow)
-  private splitEventResize = memoize(splitInteractionByRow)
-  private rootEl: HTMLElement
-  private rowRefs = new RefMap<TableRow>()
-  private rowPositions: PositionCache
-  private colPositions: PositionCache
+  private elRef = createRef<HTMLDivElement>()
+  private needsScrollReset = false
 
   render() {
     let { props } = this
-    let { dateProfile, dayMaxEventRows, dayMaxEvents, expandRows } = props
-    let rowCnt = props.cells.length
-
-    let businessHourSegsByRow = this.splitBusinessHourSegs(props.businessHourSegs, rowCnt)
-    let bgEventSegsByRow = this.splitBgEventSegs(props.bgEventSegs, rowCnt)
-    let fgEventSegsByRow = this.splitFgEventSegs(props.fgEventSegs, rowCnt)
-    let dateSelectionSegsByRow = this.splitDateSelectionSegs(props.dateSelectionSegs, rowCnt)
-    let eventDragByRow = this.splitEventDrag(props.eventDrag, rowCnt)
-    let eventResizeByRow = this.splitEventResize(props.eventResize, rowCnt)
-
+    let { dayMaxEventRows, dayMaxEvents, expandRows } = props
     let limitViaBalanced = dayMaxEvents === true || dayMaxEventRows === true
 
     // if rows can't expand to fill fixed height, can't do balanced-height event limit
@@ -79,15 +28,15 @@ export class Table extends DateComponent<TableProps> {
     }
 
     let classNames = [
-      'fc-daygrid-body',
+      'fc-daygrid-body', // necessary for TableRows DnD parent
       limitViaBalanced ? 'fc-daygrid-body-balanced' : 'fc-daygrid-body-unbalanced', // will all row heights be equal?
       expandRows ? '' : 'fc-daygrid-body-natural', // will height of one row depend on the others?
     ]
 
     return (
       <div
+        ref={this.elRef}
         className={classNames.join(' ')}
-        ref={this.handleRootEl}
         style={{
           // these props are important to give this wrapper correct dimensions for interactions
           // TODO: if we set it here, can we avoid giving to inner tables?
@@ -95,128 +44,92 @@ export class Table extends DateComponent<TableProps> {
           minWidth: props.tableMinWidth,
         }}
       >
-        <NowTimer unit="day">
-          {(nowDate: DateMarker, todayRange: DateRange) => (
-            <Fragment>
-              <table
-                className="fc-scrollgrid-sync-table"
-                style={{
-                  width: props.clientWidth,
-                  minWidth: props.tableMinWidth,
-                  height: expandRows ? props.clientHeight : '',
-                }}
-              >
-                {props.colGroupNode}
-                <tbody>
-                  {props.cells.map((cells, row) => (
-                    <TableRow
-                      ref={this.rowRefs.createRef(row)}
-                      key={
-                        cells.length
-                          ? cells[0].date.toISOString() /* best? or put key on cell? or use diff formatter? */
-                          : row // in case there are no cells (like when resource view is loading)
-                      }
-                      showDayNumbers={rowCnt > 1}
-                      showWeekNumbers={props.showWeekNumbers}
-                      todayRange={todayRange}
-                      dateProfile={dateProfile}
-                      cells={cells}
-                      renderIntro={props.renderRowIntro}
-                      businessHourSegs={businessHourSegsByRow[row]}
-                      eventSelection={props.eventSelection}
-                      bgEventSegs={bgEventSegsByRow[row].filter(isSegAllDay) /* hack */}
-                      fgEventSegs={fgEventSegsByRow[row]}
-                      dateSelectionSegs={dateSelectionSegsByRow[row]}
-                      eventDrag={eventDragByRow[row]}
-                      eventResize={eventResizeByRow[row]}
-                      dayMaxEvents={dayMaxEvents}
-                      dayMaxEventRows={dayMaxEventRows}
-                      clientWidth={props.clientWidth}
-                      clientHeight={props.clientHeight}
-                      forPrint={props.forPrint}
-                    />
-                  ))}
-                </tbody>
-              </table>
-            </Fragment>
-          )}
-        </NowTimer>
+        <table
+          role="presentation"
+          className="fc-scrollgrid-sync-table"
+          style={{
+            width: props.clientWidth,
+            minWidth: props.tableMinWidth,
+            height: expandRows ? props.clientHeight : '',
+          }}
+        >
+          {props.colGroupNode}
+          <tbody role="presentation">
+            <TableRows
+              dateProfile={props.dateProfile}
+              cells={props.cells}
+              renderRowIntro={props.renderRowIntro}
+              showWeekNumbers={props.showWeekNumbers}
+              clientWidth={props.clientWidth}
+              clientHeight={props.clientHeight}
+              businessHourSegs={props.businessHourSegs}
+              bgEventSegs={props.bgEventSegs}
+              fgEventSegs={props.fgEventSegs}
+              dateSelectionSegs={props.dateSelectionSegs}
+              eventSelection={props.eventSelection}
+              eventDrag={props.eventDrag}
+              eventResize={props.eventResize}
+              dayMaxEvents={dayMaxEvents}
+              dayMaxEventRows={dayMaxEventRows}
+              forPrint={props.forPrint}
+              isHitComboAllowed={props.isHitComboAllowed}
+            />
+          </tbody>
+        </table>
       </div>
     )
   }
 
-  handleRootEl = (rootEl: HTMLElement | null) => {
-    this.rootEl = rootEl
+  componentDidMount(): void {
+    this.requestScrollReset()
+  }
 
-    if (rootEl) {
-      this.context.registerInteractiveComponent(this, {
-        el: rootEl,
-        isHitComboAllowed: this.props.isHitComboAllowed,
-      })
+  componentDidUpdate(prevProps: TableProps): void {
+    if (prevProps.dateProfile !== this.props.dateProfile) {
+      this.requestScrollReset()
     } else {
-      this.context.unregisterInteractiveComponent(this)
+      this.flushScrollReset()
     }
   }
 
-  // Hit System
-  // ----------------------------------------------------------------------------------------------------
-
-  prepareHits() {
-    this.rowPositions = new PositionCache(
-      this.rootEl,
-      this.rowRefs.collect().map((rowObj) => rowObj.getCellEls()[0]), // first cell el in each row. TODO: not optimal
-      false,
-      true, // vertical
-    )
-
-    this.colPositions = new PositionCache(
-      this.rootEl,
-      this.rowRefs.currentMap[0].getCellEls(), // cell els in first row
-      true, // horizontal
-      false,
-    )
+  requestScrollReset() {
+    this.needsScrollReset = true
+    this.flushScrollReset()
   }
 
-  queryHit(positionLeft: number, positionTop: number): Hit {
-    let { colPositions, rowPositions } = this
-    let col = colPositions.leftToIndex(positionLeft)
-    let row = rowPositions.topToIndex(positionTop)
+  flushScrollReset() {
+    if (
+      this.needsScrollReset &&
+      this.props.clientWidth // sizes computed?
+    ) {
+      const subjectEl = getScrollSubjectEl(this.elRef.current, this.props.dateProfile)
 
-    if (row != null && col != null) {
-      let cell = this.props.cells[row][col]
+      if (subjectEl) {
+        const originEl = subjectEl.closest('.fc-daygrid-body')
+        const scrollEl = originEl.closest('.fc-scroller')
+        const scrollTop = subjectEl.getBoundingClientRect().top -
+          originEl.getBoundingClientRect().top
 
-      return {
-        dateProfile: this.props.dateProfile,
-        dateSpan: {
-          range: this.getCellRange(row, col),
-          allDay: true,
-          ...cell.extraDateSpan,
-        },
-        dayEl: this.getCellEl(row, col),
-        rect: {
-          left: colPositions.lefts[col],
-          right: colPositions.rights[col],
-          top: rowPositions.tops[row],
-          bottom: rowPositions.bottoms[row],
-        },
-        layer: 0,
+        scrollEl.scrollTop = scrollTop ? (scrollTop + 1) : 0 // overcome border
       }
+
+      this.needsScrollReset = false
     }
-
-    return null
-  }
-
-  private getCellEl(row, col) {
-    return this.rowRefs.currentMap[row].getCellEls()[col] // TODO: not optimal
-  }
-
-  private getCellRange(row, col) {
-    let start = this.props.cells[row][col].date
-    let end = addDays(start, 1)
-    return { start, end }
   }
 }
 
-function isSegAllDay(seg: TableSeg) {
-  return seg.eventRange.def.allDay
+function getScrollSubjectEl(containerEl: HTMLElement, dateProfile: DateProfile): HTMLElement | undefined {
+  let el: HTMLElement
+
+  if (dateProfile.currentRangeUnit.match(/year|month/)) {
+    el = containerEl.querySelector(`[data-date="${formatIsoMonthStr(dateProfile.currentDate)}-01"]`)
+    // even if view is month-based, first-of-month might be hidden...
+  }
+
+  if (!el) {
+    el = containerEl.querySelector(`[data-date="${formatDayString(dateProfile.currentDate)}"]`)
+    // could still be hidden if an interior-view hidden day
+  }
+
+  return el
 }

@@ -1,22 +1,25 @@
+import { DayHeaderContentArg } from '@fullcalendar/core'
 import {
-  BaseComponent, DateMarker, createElement, DateRange, getDateMeta,
-  RenderHook, buildNavLinkData, DayHeaderContentArg, getDayClassNames, formatDayString, Fragment,
-} from '@fullcalendar/common'
+  BaseComponent, DateMarker, DateRange, getDateMeta,
+  getDayClassNames, formatDayString, buildNavLinkAttrs, getUniqueDomId, ContentContainer,
+} from '@fullcalendar/core/internal'
+import { createElement, Fragment } from '@fullcalendar/core/preact'
 
 export interface ListViewHeaderRowProps {
+  cellId: string
   dayDate: DateMarker
   todayRange: DateRange
 }
 
-interface HookProps extends DayHeaderContentArg { // doesn't enforce much since DayCellContentArg allow extra props
-  text: string
-  sideText: string
-}
-
 export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
+  state = {
+    textId: getUniqueDomId(),
+  }
+
   render() {
-    let { dayDate, todayRange } = this.props
     let { theme, dateEnv, options, viewApi } = this.context
+    let { cellId, dayDate, todayRange } = this.props
+    let { textId } = this.state
     let dayMeta = getDateMeta(dayDate, todayRange)
 
     // will ever be falsy?
@@ -25,65 +28,69 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
     // will ever be falsy? also, BAD NAME "alt"
     let sideText = options.listDaySideFormat ? dateEnv.format(dayDate, options.listDaySideFormat) : ''
 
-    let navLinkData = options.navLinks
-      ? buildNavLinkData(dayDate)
-      : null
-
-    let hookProps: HookProps = {
+    let renderProps: RenderProps = {
       date: dateEnv.toDate(dayDate),
       view: viewApi,
+      textId,
       text,
       sideText,
-      navLinkData,
+      navLinkAttrs: buildNavLinkAttrs(this.context, dayDate),
+      sideNavLinkAttrs: buildNavLinkAttrs(this.context, dayDate, 'day', false),
       ...dayMeta,
     }
 
-    let classNames = ['fc-list-day'].concat(
-      getDayClassNames(dayMeta, theme),
-    )
-
     // TODO: make a reusable HOC for dayHeader (used in daygrid/timegrid too)
     return (
-      <RenderHook<HookProps>
-        hookProps={hookProps}
-        classNames={options.dayHeaderClassNames}
-        content={options.dayHeaderContent}
-        defaultContent={renderInnerContent}
+      <ContentContainer
+        elTag="tr"
+        elClasses={[
+          'fc-list-day',
+          ...getDayClassNames(dayMeta, theme),
+        ]}
+        elAttrs={{
+          'data-date': formatDayString(dayDate),
+        }}
+        renderProps={renderProps}
+        generatorName="dayHeaderContent"
+        customGenerator={options.dayHeaderContent}
+        defaultGenerator={renderInnerContent}
+        classNameGenerator={options.dayHeaderClassNames}
         didMount={options.dayHeaderDidMount}
         willUnmount={options.dayHeaderWillUnmount}
       >
-        {(rootElRef, customClassNames, innerElRef, innerContent) => (
-          <tr
-            ref={rootElRef}
-            className={classNames.concat(customClassNames).join(' ')}
-            data-date={formatDayString(dayDate)}
-          >
-            <th colSpan={3}>
-              <div className={'fc-list-day-cushion ' + theme.getClass('tableCellShaded')} ref={innerElRef}>
-                {innerContent}
-              </div>
-            </th>
-          </tr>
+        {(InnerContent) => ( // TODO: force-hide top border based on :first-child
+          <th scope="colgroup" colSpan={3} id={cellId} aria-labelledby={textId}>
+            <InnerContent
+              elTag="div"
+              elClasses={[
+                'fc-list-day-cushion',
+                theme.getClass('tableCellShaded'),
+              ]}
+            />
+          </th>
         )}
-      </RenderHook>
+      </ContentContainer>
     )
   }
 }
 
-function renderInnerContent(props: HookProps) {
-  let navLinkAttrs = props.navLinkData // is there a type for this?
-    ? { 'data-navlink': props.navLinkData, tabIndex: 0 }
-    : {}
+// doesn't enforce much since DayCellContentArg allow extra props
+interface RenderProps extends DayHeaderContentArg {
+  textId: string // for aria-labelledby
+  text: string
+  sideText: string
+}
 
+function renderInnerContent(props: RenderProps) {
   return (
     <Fragment>
       {props.text && (
-        <a className="fc-list-day-text" {...navLinkAttrs}>
+        <a id={props.textId} className="fc-list-day-text" {...props.navLinkAttrs}>
           {props.text}
         </a>
       )}
-      {props.sideText && (
-        <a className="fc-list-day-side-text" {...navLinkAttrs}>
+      {props.sideText && (/* not keyboard tabbable */
+        <a aria-hidden className="fc-list-day-side-text" {...props.sideNavLinkAttrs}>
           {props.sideText}
         </a>
       )}

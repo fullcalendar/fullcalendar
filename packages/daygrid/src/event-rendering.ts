@@ -1,7 +1,7 @@
-import { createFormatter } from '@fullcalendar/common'
-import { TableSeg } from './TableSeg'
+import { createFormatter, DateFormatter } from '@fullcalendar/core/internal'
+import { TableSeg } from './TableSeg.js'
 
-export const DEFAULT_TABLE_EVENT_TIME_FORMAT = createFormatter({
+export const DEFAULT_TABLE_EVENT_TIME_FORMAT: DateFormatter = createFormatter({
   hour: 'numeric',
   minute: '2-digit',
   omitZeroMinute: true,

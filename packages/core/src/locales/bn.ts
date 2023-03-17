@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'bn',
@@ -10,6 +10,7 @@ export default {
     prev: 'পেছনে',
     next: 'সামনে',
     today: 'আজ',
+    year: 'বছর',
     month: 'মাস',
     week: 'সপ্তাহ',
     day: 'দিন',

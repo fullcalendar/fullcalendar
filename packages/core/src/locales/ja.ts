@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'ja',
@@ -6,6 +6,7 @@ export default {
     prev: '前',
     next: '次',
     today: '今日',
+    year: '年',
     month: '月',
     week: '週',
     day: '日',

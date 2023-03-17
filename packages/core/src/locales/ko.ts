@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'ko',
@@ -6,6 +6,7 @@ export default {
     prev: '이전달',
     next: '다음달',
     today: '오늘',
+    year: '년도',
     month: '월',
     week: '주',
     day: '일',

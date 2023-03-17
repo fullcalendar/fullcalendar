@@ -1,32 +1,40 @@
+import { CssDimValue, DayCellContentArg } from '@fullcalendar/core'
 import {
-  Ref,
-  ComponentChildren,
-  createElement,
   DateMarker,
   DateComponent,
   DateRange,
-  buildNavLinkData,
-  WeekNumberRoot,
-  DayCellRoot,
+  buildNavLinkAttrs,
+  WeekNumberContainer,
+  DayCellContainer,
   DateProfile,
   setRef,
   createFormatter,
   Dictionary,
-  createRef,
   EventSegUiInteractionState,
-} from '@fullcalendar/common'
-import { TableCellTop } from './TableCellTop'
-import { TableCellMoreLink } from './TableCellMoreLink'
-import { TableSegPlacement } from './event-placement'
+  getUniqueDomId,
+  hasCustomDayCellContent,
+  addMs,
+  DateEnv,
+} from '@fullcalendar/core/internal'
+import {
+  Ref,
+  ComponentChildren,
+  createElement,
+  createRef,
+  ComponentChild,
+  Fragment,
+} from '@fullcalendar/core/preact'
+import { TableCellMoreLink } from './TableCellMoreLink.js'
+import { TableSegPlacement } from './event-placement.js'
 
 export interface TableCellProps {
+  elRef?: Ref<HTMLTableCellElement>
   date: DateMarker
   dateProfile: DateProfile
-  extraHookProps?: Dictionary
+  extraRenderProps?: Dictionary
   extraDataAttrs?: Dictionary
   extraClassNames?: string[]
   extraDateSpan?: Dictionary
-  elRef?: Ref<HTMLTableCellElement>
   innerElRef?: Ref<HTMLDivElement>
   bgContent: ComponentChildren
   fgContentElRef?: Ref<HTMLDivElement> // TODO: rename!!! classname confusion. is the "event" div
@@ -41,89 +49,110 @@ export interface TableCellProps {
   eventDrag: EventSegUiInteractionState | null
   eventResize: EventSegUiInteractionState | null
   singlePlacements: TableSegPlacement[]
+  minHeight?: CssDimValue
 }
 
 const DEFAULT_WEEK_NUM_FORMAT = createFormatter({ week: 'narrow' })
 
 export class TableCell extends DateComponent<TableCellProps> {
   private rootElRef = createRef<HTMLElement>()
+  state = {
+    dayNumberId: getUniqueDomId(),
+  }
 
   render() {
-    let { props, context, rootElRef } = this
-    let { options } = context
+    let { context, props, state, rootElRef } = this
+    let { options, dateEnv } = context
     let { date, dateProfile } = props
-    let navLinkAttrs = options.navLinks
-      ? { 'data-navlink': buildNavLinkData(date, 'week'), tabIndex: 0 }
-      : {}
+
+    // TODO: memoize this?
+    const isMonthStart = props.showDayNumber &&
+      shouldDisplayMonthStart(date, dateProfile.currentRange, dateEnv)
 
     return (
-      <DayCellRoot
+      <DayCellContainer
+        elTag="td"
+        elRef={this.handleRootEl}
+        elClasses={[
+          'fc-daygrid-day',
+          ...(props.extraClassNames || []),
+        ]}
+        elAttrs={{
+          ...props.extraDataAttrs,
+          ...(props.showDayNumber ? { 'aria-labelledby': state.dayNumberId } : {}),
+          role: 'gridcell',
+        }}
+        defaultGenerator={renderTopInner}
         date={date}
         dateProfile={dateProfile}
         todayRange={props.todayRange}
         showDayNumber={props.showDayNumber}
-        extraHookProps={props.extraHookProps}
-        elRef={this.handleRootEl}
+        isMonthStart={isMonthStart}
+        extraRenderProps={props.extraRenderProps}
       >
-        {(dayElRef, dayClassNames, rootDataAttrs, isDisabled) => (
-          <td
-            ref={dayElRef}
-            className={['fc-daygrid-day'].concat(dayClassNames, props.extraClassNames || []).join(' ')}
-            {...rootDataAttrs}
-            {...props.extraDataAttrs}
+        {(InnerContent, renderProps) => (
+          <div
+            ref={props.innerElRef}
+            className="fc-daygrid-day-frame fc-scrollgrid-sync-inner"
+            style={{ minHeight: props.minHeight }}
           >
-            <div className="fc-daygrid-day-frame fc-scrollgrid-sync-inner" ref={props.innerElRef /* different from hook system! RENAME */}>
-              {props.showWeekNumber && (
-                <WeekNumberRoot date={date} defaultFormat={DEFAULT_WEEK_NUM_FORMAT}>
-                  {(weekElRef, weekClassNames, innerElRef, innerContent) => (
-                    <a
-                      ref={weekElRef}
-                      className={['fc-daygrid-week-number'].concat(weekClassNames).join(' ')}
-                      {...navLinkAttrs}
-                    >
-                      {innerContent}
-                    </a>
-                  )}
-                </WeekNumberRoot>
-              )}
-              {!isDisabled && (
-                <TableCellTop
-                  date={date}
-                  dateProfile={dateProfile}
-                  showDayNumber={props.showDayNumber}
-                  forceDayTop={props.forceDayTop}
-                  todayRange={props.todayRange}
-                  extraHookProps={props.extraHookProps}
-                />
-              )}
-              <div
-                className="fc-daygrid-day-events"
-                ref={props.fgContentElRef}
-              >
-                {props.fgContent}
-                <div className="fc-daygrid-day-bottom" style={{ marginTop: props.moreMarginTop }}>
-                  <TableCellMoreLink
-                    allDayDate={date}
-                    singlePlacements={props.singlePlacements}
-                    moreCnt={props.moreCnt}
-                    alignmentElRef={rootElRef}
-                    alignGridTop={!props.showDayNumber}
-                    extraDateSpan={props.extraDateSpan}
-                    dateProfile={props.dateProfile}
-                    eventSelection={props.eventSelection}
-                    eventDrag={props.eventDrag}
-                    eventResize={props.eventResize}
-                    todayRange={props.todayRange}
+            {props.showWeekNumber && (
+              <WeekNumberContainer
+                elTag="a"
+                elClasses={['fc-daygrid-week-number']}
+                elAttrs={buildNavLinkAttrs(context, date, 'week')}
+                date={date}
+                defaultFormat={DEFAULT_WEEK_NUM_FORMAT}
+              />
+            )}
+            {!renderProps.isDisabled &&
+              (props.showDayNumber || hasCustomDayCellContent(options) || props.forceDayTop) ? (
+                <div className="fc-daygrid-day-top">
+                  <InnerContent
+                    elTag="a"
+                    elClasses={[
+                      'fc-daygrid-day-number',
+                      isMonthStart && 'fc-daygrid-month-start',
+                    ]}
+                    elAttrs={{
+                      ...buildNavLinkAttrs(context, date),
+                      id: state.dayNumberId,
+                    }}
                   />
                 </div>
-              </div>
-              <div className="fc-daygrid-day-bg">
-                {props.bgContent}
+              ) : props.showDayNumber ? (
+                // for creating correct amount of space (see issue #7162)
+                <div className="fc-daygrid-day-top" style={{ visibility: 'hidden' }}>
+                  <a className="fc-daygrid-day-number">&nbsp;</a>
+                </div>
+              ) : undefined}
+            <div
+              className="fc-daygrid-day-events"
+              ref={props.fgContentElRef}
+            >
+              {props.fgContent}
+              <div className="fc-daygrid-day-bottom" style={{ marginTop: props.moreMarginTop }}>
+                <TableCellMoreLink
+                  allDayDate={date}
+                  singlePlacements={props.singlePlacements}
+                  moreCnt={props.moreCnt}
+                  alignmentElRef={rootElRef}
+                  alignGridTop={!props.showDayNumber}
+                  extraDateSpan={props.extraDateSpan}
+                  dateProfile={props.dateProfile}
+                  eventSelection={props.eventSelection}
+                  eventDrag={props.eventDrag}
+                  eventResize={props.eventResize}
+                  todayRange={props.todayRange}
+                />
               </div>
             </div>
-          </td>
+            <div className="fc-daygrid-day-bg">
+              {props.bgContent}
+            </div>
+          </div>
         )}
-      </DayCellRoot>
+      </DayCellContainer>
     )
   }
 
@@ -131,4 +160,26 @@ export class TableCell extends DateComponent<TableCellProps> {
     setRef(this.rootElRef, el)
     setRef(this.props.elRef, el)
   }
+}
+
+function renderTopInner(props: DayCellContentArg): ComponentChild {
+  return props.dayNumberText || <Fragment>&nbsp;</Fragment>
+}
+
+function shouldDisplayMonthStart(date: DateMarker, currentRange: DateRange, dateEnv: DateEnv): boolean {
+  const { start: currentStart, end: currentEnd } = currentRange
+  const currentEndIncl = addMs(currentEnd, -1)
+  const currentFirstYear = dateEnv.getYear(currentStart)
+  const currentFirstMonth = dateEnv.getMonth(currentStart)
+  const currentLastYear = dateEnv.getYear(currentEndIncl)
+  const currentLastMonth = dateEnv.getMonth(currentEndIncl)
+
+  // spans more than one month?
+  return !(currentFirstYear === currentLastYear && currentFirstMonth === currentLastMonth) &&
+    Boolean(
+      // first date in current view?
+      date.valueOf() === currentStart.valueOf() ||
+      // a month-start that's within the current range?
+      (dateEnv.getDay(date) === 1 && date.valueOf() < currentEnd.valueOf()),
+    )
 }

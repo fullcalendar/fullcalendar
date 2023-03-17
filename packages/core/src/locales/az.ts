@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'az',
@@ -10,6 +10,7 @@ export default {
     prev: 'Əvvəl',
     next: 'Sonra',
     today: 'Bu Gün',
+    year: 'Il',
     month: 'Ay',
     week: 'Həftə',
     day: 'Gün',

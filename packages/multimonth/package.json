@@ -1,0 +1,48 @@
+{
+  "name": "@fullcalendar/multimonth",
+  "version": "6.1.4",
+  "title": "FullCalendar Multi-Month Plugin",
+  "description": "Display a sequence or grid of multiple months",
+  "keywords": [
+    "month"
+  ],
+  "homepage": "https://fullcalendar.io/docs/multimonth-grid",
+  "dependencies": {
+    "@fullcalendar/daygrid": "~6.1.4"
+  },
+  "peerDependencies": {
+    "@fullcalendar/core": "~6.1.4"
+  },
+  "devDependencies": {
+    "@fullcalendar/core": "~6.1.4",
+    "@fullcalendar/standard-scripts": "*"
+  },
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint ."
+  },
+  "type": "module",
+  "tsConfig": {
+    "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
+    "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist/.tsout"
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  },
+  "buildConfig": {
+    "exports": {
+      ".": { "iife": true }
+    },
+    "iifeGlobals": {
+      ".": "FullCalendar.MultiMonth"
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
+  }
+}

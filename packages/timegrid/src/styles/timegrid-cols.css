@@ -14,13 +14,12 @@
 
 }
 
-.fc-liquid-hack {
-  & .fc-timegrid-col-frame {
-    @include liquid-absolute-override;
-  }
-}
-
 .fc-media-screen {
+  &.fc-liquid-hack {
+    & .fc-timegrid-col-frame {
+      @include liquid-absolute-override;
+    }
+  }
 
   & .fc-timegrid-cols {
     position: absolute; // no z-index. children will decide and go above slots

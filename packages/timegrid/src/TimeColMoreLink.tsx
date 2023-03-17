@@ -1,14 +1,16 @@
+import { MoreLinkContentArg, CssDimValue } from '@fullcalendar/core'
 import {
-  createElement, MoreLinkContentArg, MoreLinkRoot, BaseComponent, createRef, setRef,
+  MoreLinkContainer, BaseComponent,
   Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState,
-} from '@fullcalendar/common'
-import { renderPlainFgSegs } from './TimeCol'
-import { TimeColsSeg } from './TimeColsSeg'
+} from '@fullcalendar/core/internal'
+import { createElement } from '@fullcalendar/core/preact'
+import { renderPlainFgSegs } from './TimeCol.js'
+import { TimeColsSeg } from './TimeColsSeg.js'
 
 export interface TimeColMoreLinkProps {
   hiddenSegs: TimeColsSeg[]
-  top: number
-  bottom: number
+  top: CssDimValue
+  bottom: CssDimValue
   extraDateSpan?: Dictionary
   dateProfile: DateProfile
   todayRange: DateRange
@@ -19,39 +21,33 @@ export interface TimeColMoreLinkProps {
 }
 
 export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
-  rootElRef = createRef<HTMLElement>()
-
   render() {
     let { props } = this
+
     return (
-      <MoreLinkRoot
+      <MoreLinkContainer
+        elClasses={['fc-timegrid-more-link']}
+        elStyle={{
+          top: props.top,
+          bottom: props.bottom,
+        }}
         allDayDate={null}
         moreCnt={props.hiddenSegs.length}
         allSegs={props.hiddenSegs}
         hiddenSegs={props.hiddenSegs}
-        alignmentElRef={this.rootElRef}
-        defaultContent={renderMoreLinkInner}
         extraDateSpan={props.extraDateSpan}
         dateProfile={props.dateProfile}
         todayRange={props.todayRange}
         popoverContent={() => renderPlainFgSegs(props.hiddenSegs, props)}
+        defaultGenerator={renderMoreLinkInner}
       >
-        {(rootElRef, classNames, innerElRef, innerContent, handleClick) => (
-          <a
-            ref={(el: HTMLElement | null) => {
-              setRef(rootElRef, el)
-              setRef(this.rootElRef, el)
-            }}
-            className={['fc-timegrid-more-link'].concat(classNames).join(' ')}
-            style={{ top: props.top, bottom: props.bottom }}
-            onClick={handleClick}
-          >
-            <div ref={innerElRef} className="fc-timegrid-more-link-inner fc-sticky">
-              {innerContent}
-            </div>
-          </a>
+        {(InnerContent) => (
+          <InnerContent
+            elTag="div"
+            elClasses={['fc-timegrid-more-link-inner', 'fc-sticky']}
+          />
         )}
-      </MoreLinkRoot>
+      </MoreLinkContainer>
     )
   }
 }

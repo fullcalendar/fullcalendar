@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'fr-ch',
@@ -19,5 +19,5 @@ export default {
   weekText: 'Sm',
   allDayText: 'Toute la journée',
   moreLinkText: 'en plus',
-  noEventsText: 'Aucun événement à afficher',
+  noEventsText: 'Aucun évènement à afficher',
 } as LocaleInput

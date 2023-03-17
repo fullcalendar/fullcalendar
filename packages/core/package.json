@@ -1,34 +1,50 @@
 {
   "name": "@fullcalendar/core",
-  "version": "5.7.0",
-  "title": "FullCalendar Core Package",
-  "description": "Provides core functionality, including the Calendar class",
-  "docs": "https://fullcalendar.io/docs/initialize-es6",
+  "version": "6.1.4",
+  "title": "FullCalendar Core",
+  "description": "FullCalendar core package for rendering a calendar",
   "dependencies": {
-    "@fullcalendar/common": "workspace:~5.7.0",
-    "preact": "^10.0.5",
-    "tslib": "^2.0.3"
-  },
-  "main": "main.cjs.js",
-  "module": "main.js",
-  "types": "main.d.ts",
-  "jsdelivr": "main.global.min.js",
-  "browserGlobal": "FullCalendar",
-  "sideEffects": true,
-  "homepage": "https://fullcalendar.io/",
-  "bugs": "https://fullcalendar.io/reporting-bugs",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fullcalendar/fullcalendar.git",
-    "homepage": "https://github.com/fullcalendar/fullcalendar"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Adam Shaw",
-    "email": "arshaw@arshaw.com",
-    "url": "http://arshaw.com/"
+    "preact": "~10.12.1"
   },
   "devDependencies": {
-    "@fullcalendar/core-preact": "workspace:*"
+    "@fullcalendar/standard-scripts": "*",
+    "globby": "^13.1.2",
+    "handlebars": "^4.1.2"
+  },
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint ."
+  },
+  "type": "module",
+  "tsConfig": {
+    "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
+    "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist/.tsout"
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  },
+  "buildConfig": {
+    "exports": {
+      ".": { "iife": true },
+      "./preact": {},
+      "./internal": {},
+      "./locales-all": { "iife": true, "generator": "./scripts/generate-locales-all.js" },
+      "./locales/*": { "iife": true, "iifeGenerator": "./scripts/generate-locale-iife.js" }
+    },
+    "iifeGlobals": {
+      ".": "FullCalendar",
+      "./preact": "FullCalendar.Preact",
+      "./internal": "FullCalendar.Internal",
+      "preact": "",
+      "preact/compat": ""
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
   }
 }

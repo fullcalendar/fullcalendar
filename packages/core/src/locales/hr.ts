@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'hr',
@@ -10,6 +10,7 @@ export default {
     prev: 'Prijašnji',
     next: 'Sljedeći',
     today: 'Danas',
+    year: 'Godina',
     month: 'Mjesec',
     week: 'Tjedan',
     day: 'Dan',

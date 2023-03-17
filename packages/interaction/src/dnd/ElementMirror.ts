@@ -1,4 +1,4 @@
-import { removeElement, applyStyle, whenTransitionDone, Rect } from '@fullcalendar/common'
+import { removeElement, applyStyle, whenTransitionDone, Rect } from '@fullcalendar/core/internal'
 
 /*
 An effect in which an element follows the movement of a pointer across the screen.
@@ -16,7 +16,7 @@ export class ElementMirror {
   sourceElRect: Rect | null = null // screen coords relative to viewport
 
   // options that can be set directly by caller
-  parentNode: HTMLElement = document.body
+  parentNode: HTMLElement = document.body // HIGHLY SUGGESTED to set this to sidestep ShadowDOM issues
   zIndex: number = 9999
   revertDuration: number = 0
 

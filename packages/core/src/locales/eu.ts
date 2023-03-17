@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'eu',
@@ -10,6 +10,7 @@ export default {
     prev: 'Aur',
     next: 'Hur',
     today: 'Gaur',
+    year: 'Urtea',
     month: 'Hilabetea',
     week: 'Astea',
     day: 'Eguna',

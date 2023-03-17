@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'sq',
@@ -9,7 +9,8 @@ export default {
   buttonText: {
     prev: 'mbrapa',
     next: 'Përpara',
-    today: 'sot',
+    today: 'Sot',
+    year: 'Viti',
     month: 'Muaj',
     week: 'Javë',
     day: 'Ditë',

@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'nn',
@@ -10,6 +10,7 @@ export default {
     prev: 'Førre',
     next: 'Neste',
     today: 'I dag',
+    year: 'År',
     month: 'Månad',
     week: 'Veke',
     day: 'Dag',

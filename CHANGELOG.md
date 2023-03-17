@@ -1,4 +1,378 @@
 
+next
+----
+
+- workaround Preact's breaking type changes by using more specific semver range (#7225)
+- vue-2: fix SSR
+- vue-2: fix error in Nuxt 2: Cannot read properties of undefined (reading 'isHiddenDay') (#7217)
+- vite: broken daygrid-related styles in timegrid/multimonth (#7238)
+
+
+v6.1.4 (2023-02-07)
+-------------------
+fix: bug introduced in v6.1.3 where month-start-text appears within day cells of multimonth view
+
+
+v6.1.3 (2023-02-07)
+-------------------
+
+- fix: React: finally fix root cause of state issues (#7066, #7067, #7071)
+- fix: Angular: NgClass can only toggle CSS classes expressed as strings (#7182)
+- fix: Angular/Vue: accept content-injection function w/ { html } or { domNodes } (#7188)
+- fix: monthStartFormat not working with dayGrid views having a custom duration (#7197)
+
+
+v6.1.2 (2023-01-31)
+-------------------
+
+Apply v6.1.1's new CJS/ESM/nested-import interop strategy to React/Vue connectors. Details:
+
+- For maximum compatibility with legacy build systems like create-react-app
+- Only affects React/Vue2/Vue3 connectors. Assets for standard/premium not generated
+
+
+v6.1.1 (2023-01-30)
+-------------------
+
+- fix: Multi-Month not included in fullcalendar-scheduler (#7177)
+- fix: Multi-Month has nonexistent 'internal' entrypoint, causing error for skypack (#7176)
+- fix: Vue connector should not error-out when given content-injector functions (#7175)
+- fix: continued CJS/ESM confusion with certain build tools (#7170, #7113, #7143)
+
+
+v6.1.0 (2023-01-29)
+-------------------
+
+- feature: multimonth view (#470, #1140)
+  - provides `multiMonthYear` view, which displays 3x4 small months when space permits
+  - can extend `multiMonth` view with custom durations
+  - can specify `multiMonthMinWidth`, which will force wrapping if months are too small
+  - can specify `multiMonthMaxColumns: 1` to guarantee one column of months
+  - can specify `multiMonthTitleFormat` to customize text above each month
+- feature: improved daygrid behavior when multiple weeks/months
+  - when many rows, instead of condensing rows, guaranteed min-height, for forcing scrollbars
+  - displaying month names for month switchovers, controlled by `monthStartFormat`
+  - a new stock `dayGridYear` view
+- feature: in daygrid/multimonth, +more link has hover effect with grey background color
+- feature: `@fullcalendar/web-component` has `shadow` option
+- feature/fix: from content-injection hooks, returning `true` does default rendering (#7110)
+- feature/fix: CSP nonce value passed to dynamically-injected stylesheets (#7104)
+- fix: React event duplication while DnD and updating redux store (#7066, #7067, #7071)
+- fix: styles are not applied correctly for elements using shadow DOM (#7118)
+- fix: custom view `content` with JSX doesn't render (#7160)
+- fix: `resourceAreaHeaderContent` overrides `headerContent` in resource columns (#7153)
+- fix: update moment-timezone for latest tz data (#6987)
+- fix: dayGrid w/ `showNonCurrentDates: false` can have final squished row (#7162)
+- fix: root-level repo with git submodules shouldn't force ssh protocol (#6714)
+- fix: in `fullcalendar` bundle, `FullCalendar.Preact` exposed for interop with plugins
+- fix: EventApi::toPlainObject now returns `allDay` property
+- locale: add weekTextLong for French locale (#6731, #7144)
+- locale: replace "évènement" in French locales (#7108)
+- locale: add Uzbek cyrillic translation (#6853)
+- locale: update Galician locale (#7103)
+- locale: update pt-br locale (#7106)
+
+
+v6.0.4 (2023-01-13)
+-------------------
+
+React:
+
+- FIX: Remove need to import `react-dom/test-utils` for `act()` (#7140, #7141)
+
+
+v6.0.3 (2023-01-11)
+-------------------
+
+Standard/premium
+
+- FIX: Time grid and timeline more-events link positioned incorrectly (#7134, #7115)
+- FIX: file extensions of CJS/ESM dist files changed to support Jest (#7113)
+
+React:
+
+- FIX: Maximum update depth exceeded w/ eventContent & dayMaxEvents (#7116)
+- FIX: Certain cases of broken rendering w/ React 17 and content-injection (#7127, #7131)
+- FIX: Content-injection not using updated function closures for rendering (#7119)
+
+Vue 3:
+
+- FIX: With Webpack, fullySpecified:false workaround no longer needed (#7125, #7114)
+
+
+v6.0.2 (2022-12-27)
+-------------------
+
+Standard/premium:
+
+- FIX: unable to resize an event smaller after initial resize (#7099)
+
+React:
+
+- FIX: re-rendering loop error with navLink and dayCellContent (#7107)
+
+Angular:
+
+- FIX: resource content-injection, when resource element destroyed, throws JS error (#7105)
+
+Vue 2:
+
+- FIX: resource content-injection, when resource element destroyed, throws JS error
+
+
+v6.0.1 (2022-12-20)
+-------------------
+
+Standard/premium:
+
+- FIX: Property `type` does not exist on type `ViewApi` (#7056)
+- FIX: Expose `globalLocales` publicly for importing on-demand (#7057)
+
+React:
+
+- FIX: multi-day events rendered by eventContent are overlapping each other (#7089)
+
+Angular:
+
+- FIX: error with eventContent & list view (#7058)
+
+
+v6.0.0 (2022-12-13)
+-------------------
+
+[V6 Release Notes and Upgrade Guide](https://fullcalendar.io/docs/v6/upgrading-from-v5)
+
+Changes since final beta:
+
+- FIX: certain ng-template names don't work ([angular-426])
+- FIX: minify CSS that is embedded into JS files
+- FIX: more informational README files in published packages
+- FIX: daygrid events sometimes not correctly positioned with Vue connectors
+- BREAKING: @fullcalendar/icalendar now has ical.js peer dependency
+
+[angular-426]: https://github.com/fullcalendar/fullcalendar-angular/issues/426
+
+
+v6.0.0-beta.4 (2022-12-07)
+--------------------------
+
+Standard/Premium:
+
+- FIX: jsDelivr default URLs have wrong mime type (#7045)
+- FIX: Unmet peer dependency "moment" warning from moment-timezone (#6839)
+- FIX: fullcalendar and fullcalendar-scheduler packages accidentally include sourcemaps
+
+Angular:
+
+- FIX: BrowserModule incompatible with lazy-loaded module ([angular-423])
+- FIX: Inputs should accept undefined/null for compatibility with async ([angular-424])
+- FIX: content-injections bugs with drag-n-drop and rerendering
+
+Vue:
+
+- FIX: Remove global js 'default' from export maps (#7047)
+- FIX: content-injections bugs with drag-n-drop and rerendering
+
+React:
+
+- FIX: Remove global js 'default' from export maps (#7047)
+
+[angular-423]: https://github.com/fullcalendar/fullcalendar-angular/issues/423
+[angular-424]: https://github.com/fullcalendar/fullcalendar-angular/issues/424
+
+
+v6.0.0-beta.3 (2022-12-01)
+--------------------------
+
+Bugfixes:
+- Wrong typing for events function and errorCallback (#7039)
+- Error with global bundle and individual global locales (#7033)
+- Fix package.json lint warnings (#7038)
+- Fixes in React/Angular connectors (see individual changelogs)
+
+
+v6.0.0-beta.2 (2022-11-22)
+--------------------------
+
+See https://fullcalendar.io/docs/v6/upgrading-from-v5
+
+
+v5.11.3 (2022-08-23)
+--------------------
+
+- fixed: timeline view (without resources) problem with expanding height (#5792)
+- fixed: locales not working in IE11 (#6790)
+
+
+v6.0.0-beta.1 (2022-08-03)
+--------------------------
+
+FullCalendar no longer attempts to import .css files. Instead, FullCalendar's JS is responsible for
+injecting its own CSS. This solves many issues with third party libraries:
+
+- *Webpack*: no longer necessary to use css-loader
+  (see [example project][webpack-css-hack])
+- *Rollup*: no longer necessary to use a css-processing plugin (like postcss)
+  (see [example project][rollup-css-hack])
+- *NextJS*: no longer necessary to ignore and manually import .css files
+  (see [example project][next-css-hack], #6674)
+- *Angular 14* is incompatible with FullCalendar v5 ([see ticket][angular-css-bug]). FullCalendar v6
+  restores support for Angular 14 and above, but does so via a completely different package. Please
+  use the new FullCalendar Web Component package (`@fullcalendar/web-component`), which can
+  integrate with Angular via the [method described here][angular-web-components].
+
+[webpack-css-hack]: https://github.com/fullcalendar/fullcalendar-examples/blob/10fe58abfc94457c7582af3948b3764cd17e7960/webpack/webpack.config.js
+[rollup-css-hack]: https://github.com/fullcalendar/fullcalendar-examples/blob/10fe58abfc94457c7582af3948b3764cd17e7960/rollup/rollup.config.js
+[next-css-hack]: https://github.com/fullcalendar/fullcalendar-examples/tree/10fe58abfc94457c7582af3948b3764cd17e7960/next
+[angular-css-bug]: https://github.com/fullcalendar/fullcalendar-angular/issues/403
+[angular-web-components]: https://coryrylan.com/blog/using-web-components-in-angular
+
+
+v5.11.2 (2022-07-26)
+--------------------
+
+- fixed: React Strict Mode, dateSet, and "Maximum update depth exceeded error" (#5935, [react-185])
+- fixed: React Strict Mode, timeline scrolling not synced ([react-192])
+- fixed: React, datesSet with object-like dateIncrement, "Maximum update depth..." ([react-131])
+
+[react-185]: https://github.com/fullcalendar/fullcalendar-react/issues/185
+[react-192]: https://github.com/fullcalendar/fullcalendar-react/issues/192
+[react-131]: https://github.com/fullcalendar/fullcalendar-react/issues/131
+
+
+v5.11.1 (*see dates in tickets*)
+--------------------------------
+
+- react fix: restore accidentally-removed support for React 17 ([react-182])
+- vue3 fix: Cannot target calendar api with several instances ([vue-155])
+
+[react-182]: https://github.com/fullcalendar/fullcalendar-react/issues/182
+[vue-155]: https://github.com/fullcalendar/fullcalendar-vue/issues/155
+
+
+v5.11.0 (2022-04-08)
+--------------------
+
+- internal changes for compatibility with React 18
+
+
+v5.10.2 (2022-02-09)
+--------------------
+
+- bootstrap 5 support, via `@fullcalendar/bootstrap5` package (#6299)
+- luxon 2 support, via `@fullcalendar/luxon2` package (#6502)
+- angular 13 support ([ang-387][ang-387])
+
+[ang-387]: https://github.com/fullcalendar/fullcalendar-angular/issues/387
+
+
+v5.10.1 (2021-11-02)
+--------------------
+
+- locale strings for the recent WAI-ARIA improvements:
+  - nb (#6610)
+  - de (#6597)
+  - sv (#6592)
+
+
+v5.10.0 (2021-10-13)
+--------------------
+
+- feature: WAI-ARIA improvements:
+  - toolbar (#6521)
+    - human-readable `title` attributes on all buttons. new options:
+      - `buttonHints`
+      - `customButtons.hint`
+      - `viewHint` (ex: `$0 view` -> `"month view"`)
+    - `aria-labelledby` attribute connecting view-title with view-container
+  - event elements (#3364)
+    - previously, only events with an `event.url` property were tabbable by the end-user.
+      now, events *without* urls can be made tabbable by enabling `event.interactive` or by
+      enabling the calendar-wide `eventInteractive` option.
+    - when focused, pressing enter/spacebar will trigger an `eventClick`
+  - more-links and popover (#6523)
+    - human-readable `title` attributes on "+more" links via new option `moreLinkHint`
+    - when focused, pressing enter/spacebar will open popover
+    - `aria-controls`/`aria-expanded` attributes connecting link to popover
+    - `aria-labelledby` attribute connecting popover-title to popover
+    - `aria-label` attribute describing "X" close icon via new option `closeHint`
+    - pressing escape key closes popover
+  - nav-links (#6524)
+    - human-readable `title` attributes on all navLinks via new option `navLinkHint`
+    - when focused, pressing enter/spacebar will trigger `navLinkClick`
+  - table-based views (#6526)
+    - all cells within thead elements have been made into `<th>` tags
+    - retrofit the necessarily non-ARIA-friendly table markup with `role` tags. the root table is a
+      `grid`, children have been given `rowgroup`/`row`/`columnheader`/`rowheader`/`cell`, and
+      non-functional table elements have been given `presentation`.
+    - in timegrid views, the time-axis axis has been removed from the accessibility tree
+  - list-view (#6525)
+    - introduced a table-header specifically for screen readers. header cells label the time/event
+      columns using the following new options: `timeHint` and `eventHint`
+    - removed the "dot" column from the accessibility tree
+- feature: date formatting option `week` now accepts `'long'` if locale defines `weekTextLong`
+- bugfix: timeline-view events hidden by `eventMaxStack` sometimes appear over other events (#6543)
+- bugfix: daygrid event rendering with `dayMaxEventRows` and custom `eventOrder` can cause infinite loop (#6573)
+- bugfix: content-injected html/domNodes as view-specific options don't clear when switching views (#6079, #6555)
+- bugfix: more compliant CSS with Sass processors (#6564)
+- locale: added si-lk (#6553)
+
+HELP WANTED populating new options in locales (examples: [es][es-aria-example], [en-GB][en-aria-example])
+- `buttonHints`
+- `viewHint`
+- `weekTextLong`
+- `moreLinkHint`
+- `navLinkHint`
+- `closeHint`
+- `timeHint`
+- `eventHint`
+
+[es-aria-example]: https://github.com/fullcalendar/fullcalendar/commit/63cd61bd89ae56642e76e3ea8b3a44cbd3fe2555
+[en-aria-example]: https://github.com/fullcalendar/fullcalendar/commit/d8e33a04ecc9bd8dd54f1d2c39aaa7ed919f896c
+
+
+v5.9.0 (2021-07-28)
+-------------------
+- fix: dayGrid events sometimes overlap when eventOrderStrict:true (#6393)
+- fix: timeline events incorrectly positioned when uneven heights (#6395)
+- fix: dayGrid events snap to top of cell while resizing (#6308)
+- fix: duplicate events in dayGrid popover (#6397)
+- fix: sticky elements within header of timeline views not sticking
+- fix: resource-timeline views with sticky elements not working within shadow DOM (#5888)
+- fix: event dragging auto-scroll does not work within shadow DOM (#6428)
+- fix: cannot resize timeline events via touch within shadow DOM (#6429, #6449)
+- fix: error with eventContent, domNodes, and view-specific options (#6079)
+- fix: times events do not get printed in Firefox using adaptive plugin (#6438)
+- fix: icalendar events with RECURRENCE-ID are displayed twice (#6451)
+- fix: typing of Event::setProp does not allow boolean (#6445)
+- fix: typing fix rrule's freq property (#6235)
+- locale: added Samoan (#6368)
+- locale: added Central Kurdish (#6400)
+- locale: added Khmer (#6416)
+- locale: fixed Hungarian (#6229)
+
+
+v5.8.0 (2021-06-15)
+-------------------
+- fix: events not rendering in Jest environment (#6377)
+- fix: prev button sometimes ineffective when dateIncrement < view's duration (#5319, #4678)
+- fix: changeDate ineffective when date already in view (#4929)
+- fix: upgrade tslib to guarantee __spreadArray (#6376)
+- fix: eventOrderStrict positioning problems (#5767)
+
+
+v5.7.2 (2021-06-03)
+-------------------
+- fixed table-related Chrome 91 bug causing timegrid view with allDaySlot:false and certain
+  custom CSS to appear broken (#6338, #6343)
+
+
+v5.7.1 (2021-06-02)
+-------------------
+- updated Angular connector to support Angular 12 ([angular-369](https://github.com/fullcalendar/fullcalendar-angular/issues/369))
+- new Vue 3 connector ([vue-131](https://github.com/fullcalendar/fullcalendar-vue/issues/131))
+
+
 v5.7.0 (2021-05-11)
 -------------------
 
@@ -18,6 +392,7 @@ v5.7.0 (2021-05-11)
 - fix: respect duration in eventOrder as highest precedence (#5481)
 - fix: refetching events should keep event popover open (#3958)
 - fix: accidental +more popover close with shadow dom (#6205)
+- fix: dayGrid events stretched out of cells in print media (#6300)
 - dev: when attempting `npm install` in the dev repo, will throw an error saying to use yarn (#5504)
 - dev: ensure building on windows works (#5366)
 obscure breaking changes:
@@ -770,7 +1145,7 @@ v2.9.0 (2016-07-10)
 -------------------
 
 - Setters for (almost) all options (#564).
-  See [docs](http://fullcalendar.io/docs/utilities/dynamic_options/) for more info.
+  See [docs](https://fullcalendar.io/docs/utilities/dynamic_options/) for more info.
 - Travis CI improvements (#3266)
 
 

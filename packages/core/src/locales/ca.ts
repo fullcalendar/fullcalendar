@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'ca',
@@ -10,6 +10,7 @@ export default {
     prev: 'Anterior',
     next: 'Següent',
     today: 'Avui',
+    year: 'Curs',
     month: 'Mes',
     week: 'Setmana',
     day: 'Dia',

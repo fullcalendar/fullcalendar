@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'et',
@@ -10,6 +10,7 @@ export default {
     prev: 'Eelnev',
     next: 'Järgnev',
     today: 'Täna',
+    year: 'Aasta',
     month: 'Kuu',
     week: 'Nädal',
     day: 'Päev',

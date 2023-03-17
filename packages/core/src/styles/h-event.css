@@ -1,0 +1,98 @@
+
+/*
+A HORIZONTAL event
+*/
+
+.fc-h-event { // allowed to be top-level
+  display: block;
+  border: 1px solid var(--fc-event-border-color);
+  background-color: var(--fc-event-bg-color);
+
+  & .fc-event-main {
+    color: var(--fc-event-text-color);
+  }
+
+  & .fc-event-main-frame {
+    display: flex; // for make fc-event-title-container expand
+  }
+
+  & .fc-event-time {
+    max-width: 100%; // clip overflow on this element
+    overflow: hidden;
+  }
+
+  & .fc-event-title-container { // serves as a container for the sticky cushion
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0; // important for allowing to shrink all the way
+  }
+
+  & .fc-event-title {
+    display: inline-block; // need this to be sticky cross-browser
+    vertical-align: top; // for not messing up line-height
+    left: 0;  // for sticky
+    right: 0; // for sticky
+    max-width: 100%; // clip overflow on this element
+    overflow: hidden;
+  }
+
+  &.fc-event-selected:before {
+    // expand hit area
+    top: -10px;
+    bottom: -10px;
+  }
+
+}
+
+// adjust border and border-radius (if there is any) for non-start/end
+
+.fc-direction-ltr .fc-daygrid-block-event:not(.fc-event-start),
+.fc-direction-rtl .fc-daygrid-block-event:not(.fc-event-end) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left-width: 0;
+}
+
+.fc-direction-ltr .fc-daygrid-block-event:not(.fc-event-end),
+.fc-direction-rtl .fc-daygrid-block-event:not(.fc-event-start) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right-width: 0;
+}
+
+// resizers
+
+.fc-h-event:not(.fc-event-selected) .fc-event-resizer {
+  top: 0;
+  bottom: 0;
+  width: var(--fc-event-resizer-thickness);
+}
+
+.fc-direction-ltr .fc-h-event:not(.fc-event-selected) .fc-event-resizer-start,
+.fc-direction-rtl .fc-h-event:not(.fc-event-selected) .fc-event-resizer-end {
+  cursor: w-resize;
+  left: calc(-0.5 * var(--fc-event-resizer-thickness));
+}
+
+.fc-direction-ltr .fc-h-event:not(.fc-event-selected) .fc-event-resizer-end,
+.fc-direction-rtl .fc-h-event:not(.fc-event-selected) .fc-event-resizer-start {
+  cursor: e-resize;
+  right: calc(-0.5 * var(--fc-event-resizer-thickness));
+}
+
+// resizers for TOUCH
+
+.fc-h-event.fc-event-selected .fc-event-resizer {
+  top: 50%;
+  margin-top: calc(-0.5 * var(--fc-event-resizer-dot-total-width));
+}
+
+.fc-direction-ltr .fc-h-event.fc-event-selected .fc-event-resizer-start,
+.fc-direction-rtl .fc-h-event.fc-event-selected .fc-event-resizer-end {
+  left: calc(-0.5 * var(--fc-event-resizer-dot-total-width));
+}
+
+.fc-direction-ltr .fc-h-event.fc-event-selected .fc-event-resizer-end,
+.fc-direction-rtl .fc-h-event.fc-event-selected .fc-event-resizer-start {
+  right: calc(-0.5 * var(--fc-event-resizer-dot-total-width));
+}

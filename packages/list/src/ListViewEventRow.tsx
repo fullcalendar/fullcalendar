@@ -1,7 +1,15 @@
+import { AllDayContentArg } from '@fullcalendar/core'
 import {
-  MinimalEventProps, BaseComponent, ViewContext, createElement, AllDayContentArg,
-  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventContentArg, EventRoot, ComponentChildren, RenderHook,
-} from '@fullcalendar/common'
+  MinimalEventProps, BaseComponent, ViewContext,
+  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter,
+  getSegAnchorAttrs, EventContainer, ContentContainer,
+} from '@fullcalendar/core/internal'
+import {
+  createElement,
+  ComponentChildren,
+  Fragment,
+  ComponentChild,
+} from '@fullcalendar/core/preact'
 
 const DEFAULT_TIME_FORMAT = createFormatter({
   hour: 'numeric',
@@ -9,58 +17,73 @@ const DEFAULT_TIME_FORMAT = createFormatter({
   meridiem: 'short',
 })
 
-export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
+export interface ListViewEventRowProps extends MinimalEventProps {
+  timeHeaderId: string
+  eventHeaderId: string
+  dateHeaderId: string
+}
+
+export class ListViewEventRow extends BaseComponent<ListViewEventRowProps> {
   render() {
     let { props, context } = this
-    let { seg } = props
-
-    let timeFormat = context.options.eventTimeFormat || DEFAULT_TIME_FORMAT
+    let { options } = context
+    let { seg, timeHeaderId, eventHeaderId, dateHeaderId } = props
+    let timeFormat = options.eventTimeFormat || DEFAULT_TIME_FORMAT
 
     return (
-      <EventRoot
+      <EventContainer
+        {...props}
+        elTag="tr"
+        elClasses={[
+          'fc-list-event',
+          seg.eventRange.def.url && 'fc-event-forced-url',
+        ]}
+        defaultGenerator={() => renderEventInnerContent(seg, context) /* weird */}
         seg={seg}
-        timeText="" // BAD. because of all-day content
-        disableDragging
-        disableResizing
-        defaultContent={renderEventInnerContent}
-        isPast={props.isPast}
-        isFuture={props.isFuture}
-        isToday={props.isToday}
-        isSelected={props.isSelected}
-        isDragging={props.isDragging}
-        isResizing={props.isResizing}
-        isDateSelecting={props.isDateSelecting}
+        timeText=""
+        disableDragging={true}
+        disableResizing={true}
       >
-        {(rootElRef, classNames, innerElRef, innerContent, hookProps) => (
-          <tr className={['fc-list-event', hookProps.event.url ? 'fc-event-forced-url' : ''].concat(classNames).join(' ')} ref={rootElRef}>
-            {buildTimeContent(seg, timeFormat, context)}
-            <td className="fc-list-event-graphic">
-              <span className="fc-list-event-dot" style={{ borderColor: hookProps.borderColor || hookProps.backgroundColor }} />
+        {(InnerContent, eventContentArg) => (
+          <Fragment>
+            {buildTimeContent(seg, timeFormat, context, timeHeaderId, dateHeaderId)}
+            <td aria-hidden className="fc-list-event-graphic">
+              <span
+                className="fc-list-event-dot"
+                style={{
+                  borderColor: eventContentArg.borderColor || eventContentArg.backgroundColor,
+                }}
+              />
             </td>
-            <td className="fc-list-event-title" ref={innerElRef}>
-              {innerContent}
-            </td>
-          </tr>
+            <InnerContent
+              elTag="td"
+              elClasses={['fc-list-event-title']}
+              elAttrs={{ headers: `${eventHeaderId} ${dateHeaderId}` }}
+            />
+          </Fragment>
         )}
-      </EventRoot>
+      </EventContainer>
     )
   }
 }
 
-function renderEventInnerContent(props: EventContentArg) {
-  let { event } = props
-  let url = event.url
-  let anchorAttrs = url ? { href: url } : {}
-
+function renderEventInnerContent(seg: Seg, context: ViewContext) {
+  let interactiveAttrs = getSegAnchorAttrs(seg, context)
   return (
-    <a {...anchorAttrs}>
+    <a {...interactiveAttrs}>
       {/* TODO: document how whole row become clickable */}
-      {event.title}
+      {seg.eventRange.def.title}
     </a>
   )
 }
 
-function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewContext): ComponentChildren {
+function buildTimeContent(
+  seg: Seg,
+  timeFormat: DateFormatter,
+  context: ViewContext,
+  timeHeaderId: string,
+  dateHeaderId: string,
+): ComponentChildren {
   let { options } = context
 
   if (options.displayEventTime !== false) {
@@ -104,26 +127,26 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewCont
     }
 
     if (doAllDay) {
-      let hookProps: AllDayContentArg = {
+      let renderProps: AllDayContentArg = {
         text: context.options.allDayText,
         view: context.viewApi,
       }
 
       return (
-        <RenderHook<AllDayContentArg> // needed?
-          hookProps={hookProps}
-          classNames={options.allDayClassNames}
-          content={options.allDayContent}
-          defaultContent={renderAllDayInner}
+        <ContentContainer
+          elTag="td"
+          elClasses={['fc-list-event-time']}
+          elAttrs={{
+            headers: `${timeHeaderId} ${dateHeaderId}`,
+          }}
+          renderProps={renderProps}
+          generatorName="allDayContent"
+          customGenerator={options.allDayContent}
+          defaultGenerator={renderAllDayInner}
+          classNameGenerator={options.allDayClassNames}
           didMount={options.allDayDidMount}
           willUnmount={options.allDayWillUnmount}
-        >
-          {(rootElRef, classNames, innerElRef, innerContent) => (
-            <td className={['fc-list-event-time'].concat(classNames).join(' ')} ref={rootElRef}>
-              {innerContent}
-            </td>
-          )}
-        </RenderHook>
+        />
       )
     }
 
@@ -137,6 +160,6 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ViewCont
   return null
 }
 
-function renderAllDayInner(hookProps) {
-  return hookProps.text
+function renderAllDayInner(renderProps: AllDayContentArg): ComponentChild {
+  return renderProps.text
 }

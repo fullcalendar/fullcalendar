@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "es2015",
+    "moduleResolution": "node16",
+    "allowJs": true,
+    "lib": [
+      "es2015",
+      "dom"
+    ],
+    "noUnusedLocals": true,
+    "noImplicitUseStrict": true,
+    "resolveJsonModule": true,
+    "jsx": "react",
+    "jsxFactory": "createElement",
+    "strictBindCallApply": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "types": [],
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "allowSyntheticDefaultImports": true
+  }
+}

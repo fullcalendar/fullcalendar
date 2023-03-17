@@ -5,10 +5,10 @@ import {
   preventContextMenu,
   allowContextMenu,
   ElementDragging,
-} from '@fullcalendar/common'
-import { PointerDragging } from './PointerDragging'
-import { ElementMirror } from './ElementMirror'
-import { AutoScroller } from './AutoScroller'
+} from '@fullcalendar/core/internal'
+import { PointerDragging } from './PointerDragging.js'
+import { ElementMirror } from './ElementMirror.js'
+import { AutoScroller } from './AutoScroller.js'
 
 /*
 Monitors dragging on an element. Has a number of high-level features:
@@ -34,7 +34,7 @@ export class FeaturefulElementDragging extends ElementDragging {
   isDistanceSurpassed: boolean = false
   delayTimeoutId: number | null = null
 
-  constructor(containerEl: HTMLElement, selector?: string) {
+  constructor(private containerEl: HTMLElement, selector?: string) {
     super(containerEl)
 
     let pointer = this.pointer = new PointerDragging(containerEl)
@@ -169,7 +169,7 @@ export class FeaturefulElementDragging extends ElementDragging {
         this.isDragging = true
         this.mirrorNeedsRevert = false
 
-        this.autoScroller.start(ev.pageX, ev.pageY)
+        this.autoScroller.start(ev.pageX, ev.pageY, this.containerEl)
         this.emitter.trigger('dragstart', ev)
 
         if (this.touchScrollAllowed === false) {

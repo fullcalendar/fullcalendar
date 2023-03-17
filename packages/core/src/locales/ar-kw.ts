@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'ar-kw',
@@ -11,6 +11,7 @@ export default {
     prev: 'السابق',
     next: 'التالي',
     today: 'اليوم',
+    year: 'سنة',
     month: 'شهر',
     week: 'أسبوع',
     day: 'يوم',

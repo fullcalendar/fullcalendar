@@ -1,0 +1,103 @@
+
+.fc {
+
+  & .fc-multimonth {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid var(--fc-border-color);
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  // a single month
+
+  & .fc-multimonth-title {
+    padding: 1em 0;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+  }
+
+  & .fc-multimonth-daygrid {
+    background: var(--fc-page-bg-color);
+  }
+
+  & .fc-multimonth-header-table,
+  & .fc-multimonth-daygrid-table {
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  & .fc-multimonth-daygrid-table {
+    border-top-style: hidden !important;
+  }
+
+  // variants
+
+  & .fc-multimonth-singlecol {
+    & .fc-multimonth {
+      position: relative;
+    }
+
+    & .fc-multimonth-header {
+      position: relative; // ultimately for stick
+      top: 0;
+      z-index: 2;
+      background: var(--fc-page-bg-color);
+    }
+
+    & .fc-multimonth-daygrid {
+      position: relative;
+      z-index: 1;
+    }
+
+    & .fc-multimonth-header-table,
+    & .fc-multimonth-daygrid-table {
+      border-left-style: hidden;
+      border-right-style: hidden;
+    }
+
+    & .fc-multimonth-month:last-child .fc-multimonth-daygrid-table {
+      border-bottom-style: hidden;
+    }
+  }
+
+  & .fc-multimonth-multicol {
+    line-height: 1; // undo themes that have thick line-height
+
+    & .fc-multimonth-month {
+      padding: 0 1.2em 1.2em;
+    }
+
+    // more-link look like an event
+    & .fc-daygrid-more-link {
+      border: 1px solid var(--fc-event-border-color);
+      padding: 1px;
+      float: none;
+      display: block;
+    }
+  }
+
+  & .fc-multimonth-compact {
+    line-height: 1; // undo themes that have thick line-height
+
+    & .fc-multimonth-header-table,
+    & .fc-multimonth-daygrid-table {
+      font-size: 0.9em;
+    }
+  }
+}
+
+.fc-media-screen {
+  & .fc-multimonth-singlecol {
+    & .fc-multimonth-header {
+      position: sticky;
+    }
+  }
+}
+
+.fc-media-print {
+  & .fc-multimonth {
+    overflow: visible;
+  }
+}

@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'cs',
@@ -10,6 +10,7 @@ export default {
     prev: 'Dříve',
     next: 'Později',
     today: 'Nyní',
+    year: 'Rok',
     month: 'Měsíc',
     week: 'Týden',
     day: 'Den',

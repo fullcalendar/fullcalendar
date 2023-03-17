@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'kk',
@@ -10,6 +10,7 @@ export default {
     prev: 'Алдыңғы',
     next: 'Келесі',
     today: 'Бүгін',
+    year: 'Жыл',
     month: 'Ай',
     week: 'Апта',
     day: 'Күн',

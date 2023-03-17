@@ -1,5 +1,5 @@
-import { DateSpan, CalendarContext, DatePointApi, DateEnv, ViewApi, EventApi } from '@fullcalendar/common'
-import { __assign } from 'tslib'
+import { ViewApi, EventApi, DatePointApi } from '@fullcalendar/core'
+import { DateSpan, CalendarContext, DateEnv } from '@fullcalendar/core/internal'
 
 export interface DropArg extends DatePointApi {
   draggedEl: HTMLElement
@@ -21,10 +21,10 @@ export function buildDatePointApiWithContext(dateSpan: DateSpan, context: Calend
   let props = {} as DatePointApi
 
   for (let transform of context.pluginHooks.datePointTransforms) {
-    __assign(props, transform(dateSpan, context))
+    Object.assign(props, transform(dateSpan, context))
   }
 
-  __assign(props, buildDatePointApi(dateSpan, context.dateEnv))
+  Object.assign(props, buildDatePointApi(dateSpan, context.dateEnv))
 
   return props
 }

@@ -1,0 +1,118 @@
+{
+  "private": true,
+  "name": "@fullcalendar/standard-tests",
+  "version": "0.0.0",
+  "dependencies": {
+    "@fullcalendar/bootstrap": "~6.1.4",
+    "@fullcalendar/core": "~6.1.4",
+    "@fullcalendar/daygrid": "~6.1.4",
+    "@fullcalendar/google-calendar": "~6.1.4",
+    "@fullcalendar/icalendar": "~6.1.4",
+    "@fullcalendar/interaction": "~6.1.4",
+    "@fullcalendar/list": "~6.1.4",
+    "@fullcalendar/luxon2": "~6.1.4",
+    "@fullcalendar/moment": "~6.1.4",
+    "@fullcalendar/moment-timezone": "~6.1.4",
+    "@fullcalendar/multimonth": "~6.1.4",
+    "@fullcalendar/rrule": "~6.1.4",
+    "@fullcalendar/timegrid": "~6.1.4",
+    "fullcalendar": "~6.1.4",
+    "luxon": "^2.0.0",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.40",
+    "xhr-mock": "^2.5.1"
+  },
+  "devDependencies": {
+    "@fullcalendar/standard-scripts": "*",
+    "@types/jasmine": "^3.3.12",
+    "@types/jasmine-jquery": "^1.5.33",
+    "@types/jquery": "^3.3.29",
+    "fetch-mock": "^9.11.0",
+    "handlebars": "^4.7.7"
+  },
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "test": "standard-scripts pkg:test",
+    "test:dev": "standard-scripts pkg:test --dev",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint ."
+  },
+  "type": "module",
+  "tsConfig": {
+    "extends": "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
+    "compilerOptions": {
+      "types": [
+        "jasmine",
+        "jasmine-jquery",
+        "jquery"
+      ],
+      "rootDir": "./src",
+      "outDir": "./dist/.tsout"
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  },
+  "buildConfig": {
+    "exports": {
+      ".": {
+        "iife": true,
+        "iifeGenerator": "./scripts/generate-index-iife.js"
+      }
+    },
+    "iifeGlobals": {
+      "*": ""
+    }
+  },
+  "karmaConfig": {
+    "suites": {
+      "default": {
+        "files": [
+          "./dist/index.global.js"
+        ]
+      },
+      "pkg:global:locale": {
+        "files": [
+          "./node_modules/@fullcalendar/core/index.global.js",
+          "./node_modules/@fullcalendar/core/locales/ar.global.js",
+          "./node_modules/@fullcalendar/daygrid/index.global.js",
+          "./src/global-locale.js"
+        ]
+      },
+      "pkg:global:locales-all": {
+        "files": [
+          "./node_modules/@fullcalendar/core/index.global.js",
+          "./node_modules/@fullcalendar/core/locales-all.global.js",
+          "./node_modules/@fullcalendar/daygrid/index.global.js",
+          "./src/global-locales-all.js"
+        ]
+      },
+      "bundle:global:locale": {
+        "files": [
+          "./node_modules/fullcalendar/index.global.js",
+          "./node_modules/@fullcalendar/core/locales/ar.global.js",
+          "./src/global-locale.js"
+        ]
+      },
+      "bundle:global:locales-all": {
+        "files": [
+          "./node_modules/fullcalendar/index.global.js",
+          "./node_modules/@fullcalendar/core/locales-all.global.js",
+          "./src/global-locales-all.js"
+        ]
+      }
+    }
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    "./scripts/*": "./scripts/*.js",
+    "./lib/*": {
+      "types": "./dist/.tsout/lib/*.d.ts",
+      "default": "./dist/.tsout/lib/*.js"
+    },
+    ".": {
+      "types": "./dist/.tsout/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  }
+}

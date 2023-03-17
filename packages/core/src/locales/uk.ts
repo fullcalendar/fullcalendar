@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'uk',
@@ -10,6 +10,7 @@ export default {
     prev: 'Попередній',
     next: 'далі',
     today: 'Сьогодні',
+    year: 'рік',
     month: 'Місяць',
     week: 'Тиждень',
     day: 'День',

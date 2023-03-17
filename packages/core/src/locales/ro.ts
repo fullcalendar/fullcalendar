@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'ro',
@@ -10,6 +10,7 @@ export default {
     prev: 'precedentă',
     next: 'următoare',
     today: 'Azi',
+    year: 'An',
     month: 'Lună',
     week: 'Săptămână',
     day: 'Zi',

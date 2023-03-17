@@ -1,0 +1,95 @@
+
+.fc-theme-standard {
+
+  & .fc-scrollgrid {
+    border: 1px solid var(--fc-border-color); // bootstrap does this. match
+  }
+
+}
+
+.fc {
+
+  & .fc-scrollgrid {
+
+    &,
+    & table { // all tables (self included)
+      width: 100%; // because tables don't normally do this
+      table-layout: fixed;
+    }
+
+    & table { // inner tables
+      border-top-style: hidden;
+      border-left-style: hidden;
+      border-right-style: hidden;
+    }
+
+    border-collapse: separate;
+    border-right-width: 0;
+    border-bottom-width: 0;
+
+  }
+
+  & .fc-scrollgrid-liquid {
+    height: 100%;
+  }
+
+  & .fc-scrollgrid-section { // a <tr>
+    height: 1px; // better than 0, for firefox
+
+    & > td {
+      height: 1px; // needs a height so inner div within grow. better than 0, for firefox
+    }
+
+    & table {
+      height: 1px;
+        // for most browsers, if a height isn't set on the table, can't do liquid-height within cells
+        // serves as a min-height. harmless
+    }
+
+  }
+
+  & .fc-scrollgrid-section-liquid {
+    & > td {
+      height: 100%; // better than `auto`, for firefox
+    }
+  }
+
+  & .fc-scrollgrid-section > * {
+    border-top-width: 0;
+    border-left-width: 0;
+  }
+
+  & .fc-scrollgrid-section-header > *,
+  & .fc-scrollgrid-section-footer > * {
+    border-bottom-width: 0;
+  }
+
+  & .fc-scrollgrid-section-body table,
+  & .fc-scrollgrid-section-footer table {
+    border-bottom-style: hidden; // head keeps its bottom border tho
+  }
+
+  // stickiness
+
+  & .fc-scrollgrid-section-sticky > * {
+    background: var(--fc-page-bg-color);
+    position: sticky;
+    z-index: 3; // TODO: var
+    // TODO: box-shadow when sticking
+  }
+
+  & .fc-scrollgrid-section-header.fc-scrollgrid-section-sticky > * {
+    top: 0; // because border-sharing causes a gap at the top
+      // TODO: give safari -1. has bug
+  }
+
+  & .fc-scrollgrid-section-footer.fc-scrollgrid-section-sticky > * {
+    bottom: 0; // known bug: bottom-stickiness doesn't work in safari
+  }
+
+  & .fc-scrollgrid-sticky-shim { // for horizontal scrollbar
+    height: 1px; // needs height to create scrollbars
+    margin-bottom: -1px;
+  }
+
+}

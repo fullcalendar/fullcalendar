@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'ne', // code for nepal
@@ -10,6 +10,7 @@ export default {
     prev: 'अघिल्लो',
     next: 'अर्को',
     today: 'आज',
+    year: 'वर्ष',
     month: 'महिना',
     week: 'हप्ता',
     day: 'दिन',

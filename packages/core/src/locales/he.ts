@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'he',
@@ -7,6 +7,7 @@ export default {
     prev: 'הקודם',
     next: 'הבא',
     today: 'היום',
+    year: 'שנה',
     month: 'חודש',
     week: 'שבוע',
     day: 'יום',

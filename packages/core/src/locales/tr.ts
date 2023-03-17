@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'tr',
@@ -10,6 +10,7 @@ export default {
     prev: 'geri',
     next: 'ileri',
     today: 'bugün',
+    year: 'Yıl',
     month: 'Ay',
     week: 'Hafta',
     day: 'Gün',

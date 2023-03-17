@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'es',
@@ -10,6 +10,7 @@ export default {
     prev: 'Ant',
     next: 'Sig',
     today: 'Hoy',
+    year: 'Año',
     month: 'Mes',
     week: 'Semana',
     day: 'Día',

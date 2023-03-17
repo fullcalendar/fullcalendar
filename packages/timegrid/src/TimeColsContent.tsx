@@ -1,21 +1,24 @@
+import { CssDimValue } from '@fullcalendar/core'
 import {
-  createElement, VNode,
   BaseComponent,
   EventSegUiInteractionState,
-  CssDimValue,
   DateMarker,
   RefMap,
-  createRef,
   PositionCache,
   memoize,
   DateRange,
-  NowIndicatorRoot,
+  NowIndicatorContainer,
   DateProfile,
   DayTableCell,
-} from '@fullcalendar/common'
-import { TimeColsSeg, splitSegsByCol, splitInteractionByCol } from './TimeColsSeg'
-import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { TimeCol } from './TimeCol'
+} from '@fullcalendar/core/internal'
+import {
+  createElement,
+  createRef,
+  VNode,
+} from '@fullcalendar/core/preact'
+import { TimeColsSeg, splitSegsByCol, splitInteractionByCol } from './TimeColsSeg.js'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
+import { TimeCol } from './TimeCol.js'
 
 export interface TimeColsContentProps {
   axis: boolean
@@ -68,30 +71,27 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
 
     return (
       <div className="fc-timegrid-cols" ref={this.rootElRef}>
-        <table style={{
-          minWidth: props.tableMinWidth,
-          width: props.clientWidth,
-        }}
+        <table
+          role="presentation"
+          style={{
+            minWidth: props.tableMinWidth,
+            width: props.clientWidth,
+          }}
         >
           {props.tableColGroupNode}
-          <tbody>
-            <tr>
+          <tbody role="presentation">
+            <tr role="row">
               {props.axis && (
-                <td className="fc-timegrid-col fc-timegrid-axis">
+                <td aria-hidden className="fc-timegrid-col fc-timegrid-axis">
                   <div className="fc-timegrid-col-frame">
                     <div className="fc-timegrid-now-indicator-container">
                       {typeof nowIndicatorTop === 'number' && (
-                        <NowIndicatorRoot isAxis date={props.nowDate}>
-                          {(rootElRef, classNames, innerElRef, innerContent) => (
-                            <div
-                              ref={rootElRef}
-                              className={['fc-timegrid-now-indicator-arrow'].concat(classNames).join(' ')}
-                              style={{ top: nowIndicatorTop }}
-                            >
-                              {innerContent}
-                            </div>
-                          )}
-                        </NowIndicatorRoot>
+                        <NowIndicatorContainer
+                          elClasses={['fc-timegrid-now-indicator-arrow']}
+                          elStyle={{ top: nowIndicatorTop }}
+                          isAxis
+                          date={props.nowDate}
+                        />
                       )}
                     </div>
                   </div>
@@ -105,7 +105,7 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
                   date={cell.date}
                   nowDate={props.nowDate}
                   todayRange={props.todayRange}
-                  extraHookProps={cell.extraHookProps}
+                  extraRenderProps={cell.extraRenderProps}
                   extraDataAttrs={cell.extraDataAttrs}
                   extraClassNames={cell.extraClassNames}
                   extraDateSpan={cell.extraDateSpan}

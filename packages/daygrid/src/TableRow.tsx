@@ -1,29 +1,31 @@
+import { CssDimValue } from '@fullcalendar/core'
 import {
   EventSegUiInteractionState,
-  VNode,
   DateComponent,
-  createElement,
   PositionCache,
   RefMap,
-  CssDimValue,
   DateRange,
   getSegMeta,
   DateProfile,
-  Fragment,
   BgEvent,
   renderFill,
   isPropsEqual,
-  createRef,
   buildEventRangeKey,
   sortEventSegs,
   DayTableCell,
-} from '@fullcalendar/common'
-import { TableSeg, splitSegsByFirstCol } from './TableSeg'
-import { TableCell } from './TableCell'
-import { TableListItemEvent } from './TableListItemEvent'
-import { TableBlockEvent } from './TableBlockEvent'
-import { computeFgSegPlacement, TableSegPlacement } from './event-placement'
-import { hasListItemDisplay } from './event-rendering'
+} from '@fullcalendar/core/internal'
+import {
+  VNode,
+  createElement,
+  Fragment,
+  createRef,
+} from '@fullcalendar/core/preact'
+import { TableSeg, splitSegsByFirstCol } from './TableSeg.js'
+import { TableCell } from './TableCell.js'
+import { TableListItemEvent } from './TableListItemEvent.js'
+import { TableBlockEvent } from './TableBlockEvent.js'
+import { computeFgSegPlacement, TableSegPlacement } from './event-placement.js'
+import { hasListItemDisplay } from './event-rendering.js'
 
 // TODO: attach to window resize?
 
@@ -46,6 +48,7 @@ export interface TableRowProps {
   showDayNumbers: boolean
   showWeekNumbers: boolean
   forPrint: boolean
+  cellMinHeight?: CssDimValue
 }
 
 interface TableRowState {
@@ -93,7 +96,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
       {}
 
     return (
-      <tr ref={this.rootElRef}>
+      <tr ref={this.rootElRef} role="row">
         {props.renderIntro && props.renderIntro()}
         {props.cells.map((cell, col) => {
           let normalFgNodes = this.renderFgSegs(
@@ -127,7 +130,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               eventSelection={props.eventSelection}
               eventDrag={props.eventDrag}
               eventResize={props.eventResize}
-              extraHookProps={cell.extraHookProps}
+              extraRenderProps={cell.extraRenderProps}
               extraDataAttrs={cell.extraDataAttrs}
               extraClassNames={cell.extraClassNames}
               extraDateSpan={cell.extraDateSpan}
@@ -148,6 +151,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
                   {this.renderFillSegs(bgEventSegsByCol[col], 'bg-event')}
                 </Fragment>
               )}
+              minHeight={props.cellMinHeight}
             />
           )
         })}
@@ -157,6 +161,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
   componentDidMount() {
     this.updateSizing(true)
+    this.context.addResizeHandler(this.handleResize)
   }
 
   componentDidUpdate(prevProps: TableRowProps, prevState: TableRowState) {
@@ -165,6 +170,16 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     this.updateSizing(
       !isPropsEqual(prevProps, currentProps),
     )
+  }
+
+  componentWillUnmount() {
+    this.context.removeResizeHandler(this.handleResize)
+  }
+
+  handleResize = (isForced: boolean) => {
+    if (isForced) {
+      this.updateSizing(true) // isExternal=true
+    }
   }
 
   getHighlightSegs(): TableSeg[] {
@@ -209,7 +224,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
     if (framePositions) {
       for (let placement of segPlacements) {
-        let seg = placement.seg
+        let { seg } = placement
         let { instanceId } = seg.eventRange.instance
         let key = instanceId + ':' + col
         let isVisible = placement.isVisible && !isForcedInvisible[instanceId]
@@ -305,7 +320,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
   }
 
   updateSizing(isExternalSizingChange) {
-    let { props, frameElRefs } = this
+    let { props, state, frameElRefs } = this
 
     if (
       !props.forPrint &&
@@ -316,22 +331,36 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
         if (frameEls.length) {
           let originEl = this.rootElRef.current
+          let newPositionCache = new PositionCache(
+            originEl,
+            frameEls,
+            true, // isHorizontal
+            false,
+          )
 
-          this.setState({ // will trigger isCellPositionsChanged...
-            framePositions: new PositionCache(
-              originEl,
-              frameEls,
-              true, // isHorizontal
-              false,
-            ),
-          })
+          if (!state.framePositions || !state.framePositions.similarTo(newPositionCache)) {
+            this.setState({ // will trigger isCellPositionsChanged...
+              framePositions: new PositionCache(
+                originEl,
+                frameEls,
+                true, // isHorizontal
+                false,
+              ),
+            })
+          }
         }
       }
 
-      let limitByContentHeight = props.dayMaxEvents === true || props.dayMaxEventRows === true
+      const oldInstanceHeights = this.state.eventInstanceHeights
+      const newInstanceHeights = this.queryEventInstanceHeights()
+      const limitByContentHeight = props.dayMaxEvents === true || props.dayMaxEventRows === true
 
-      this.setState({
-        eventInstanceHeights: this.queryEventInstanceHeights(),
+      this.safeSetState({
+        // HACK to prevent oscillations of events being shown/hidden from max-event-rows
+        // Essentially, once you compute an element's height, never null-out.
+        // TODO: always display all events, as visibility:hidden?
+        eventInstanceHeights: { ...oldInstanceHeights, ...newInstanceHeights },
+
         maxContentHeight: limitByContentHeight ? this.computeMaxContentHeight() : null,
       })
     }
@@ -384,7 +413,7 @@ function buildMirrorPlacements(mirrorSegs: TableSeg[], colPlacements: TableSegPl
   }))
 }
 
-function buildAbsoluteTopHash(colPlacements: TableSegPlacement[][]) {
+function buildAbsoluteTopHash(colPlacements: TableSegPlacement[][]): { [instanceId: string]: number } {
   let topsByInstanceId: { [instanceId: string]: number } = {}
 
   for (let placements of colPlacements) {
@@ -393,5 +422,5 @@ function buildAbsoluteTopHash(colPlacements: TableSegPlacement[][]) {
     }
   }
 
-  return colPlacements
+  return topsByInstanceId
 }

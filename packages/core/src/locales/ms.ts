@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'ms',
@@ -10,6 +10,7 @@ export default {
     prev: 'Sebelum',
     next: 'Selepas',
     today: 'hari ini',
+    year: 'Tahun',
     month: 'Bulan',
     week: 'Minggu',
     day: 'Hari',

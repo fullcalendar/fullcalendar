@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'lv',
@@ -10,6 +10,7 @@ export default {
     prev: 'Iepr.',
     next: 'Nāk.',
     today: 'Šodien',
+    year: 'Gads',
     month: 'Mēnesis',
     week: 'Nedēļa',
     day: 'Diena',

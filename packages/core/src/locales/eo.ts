@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'eo',
@@ -10,6 +10,7 @@ export default {
     prev: 'Antaŭa',
     next: 'Sekva',
     today: 'Hodiaŭ',
+    year: 'Jaro',
     month: 'Monato',
     week: 'Semajno',
     day: 'Tago',

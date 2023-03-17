@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'ru',
@@ -10,6 +10,7 @@ export default {
     prev: 'Пред',
     next: 'След',
     today: 'Сегодня',
+    year: 'Год',
     month: 'Месяц',
     week: 'Неделя',
     day: 'День',

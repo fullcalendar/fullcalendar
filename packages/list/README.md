@@ -1,8 +1,32 @@
 
 # FullCalendar List View Plugin
 
-View your events as a bulleted list
+Display events on a calendar view that looks like a bulleted list
 
-[View the docs &raquo;](https://fullcalendar.io/docs/list-view)
+## Installation
 
-This package was created from the [FullCalendar monorepo &raquo;](https://github.com/fullcalendar/fullcalendar)
+Install the necessary packages:
+
+```sh
+npm install @fullcalendar/core @fullcalendar/list
+```
+
+## Usage
+
+Instantiate a Calendar with the necessary plugin:
+
+```js
+import { Calendar } from '@fullcalendar/core'
+import listPlugin from '@fullcalendar/list'
+
+const calendarEl = document.getElementById('calendar')
+const calendar = new Calendar(calendarEl, {
+  plugins: [listPlugin],
+  initialView: 'listWeek',
+  events: [
+    { title: 'Meeting', start: new Date() }
+  ]
+})
+
+calendar.render()
+```

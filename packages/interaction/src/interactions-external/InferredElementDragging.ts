@@ -1,5 +1,5 @@
-import { PointerDragEvent, ElementDragging } from '@fullcalendar/common'
-import { PointerDragging } from '../dnd/PointerDragging'
+import { PointerDragEvent, ElementDragging } from '@fullcalendar/core/internal'
+import { PointerDragging } from '../dnd/PointerDragging.js'
 
 /*
 Detects when a *THIRD-PARTY* drag-n-drop system interacts with elements.
@@ -63,9 +63,10 @@ export class InferredElementDragging extends ElementDragging {
         this.currentMirrorEl = null
       }
     } else {
-      let mirrorEl = this.mirrorSelector ?
-        document.querySelector(this.mirrorSelector) as HTMLElement :
-        null
+      let mirrorEl = this.mirrorSelector
+        // TODO: somehow query FullCalendars WITHIN shadow-roots
+        ? document.querySelector(this.mirrorSelector) as HTMLElement
+        : null
 
       if (mirrorEl) {
         this.currentMirrorEl = mirrorEl

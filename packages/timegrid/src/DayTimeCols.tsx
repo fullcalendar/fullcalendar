@@ -1,7 +1,5 @@
+import { Duration, CssDimValue } from '@fullcalendar/core'
 import {
-  createElement,
-  createRef,
-  VNode,
   DateComponent,
   DateProfile,
   EventStore,
@@ -14,13 +12,16 @@ import {
   DateEnv,
   DateMarker,
   NowTimer,
-  CssDimValue,
-  Duration,
-} from '@fullcalendar/common'
-import { TimeCols } from './TimeCols'
-import { TimeSlatMeta } from './time-slat-meta'
-import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { DayTimeColsSlicer } from './DayTimeColsSlicer'
+} from '@fullcalendar/core/internal'
+import {
+  createElement,
+  createRef,
+  VNode,
+} from '@fullcalendar/core/preact'
+import { TimeCols } from './TimeCols.js'
+import { TimeSlatMeta } from './time-slat-meta.js'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
+import { DayTimeColsSlicer } from './DayTimeColsSlicer.js'
 
 export interface DayTimeColsProps {
   dateProfile: DateProfile
@@ -53,14 +54,13 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
   render() {
     let { props, context } = this
     let { dateProfile, dayTableModel } = props
-
-    let isNowIndicator = context.options.nowIndicator
+    let { nowIndicator, nextDayThreshold } = context.options
     let dayRanges = this.buildDayRanges(dayTableModel, dateProfile, context.dateEnv)
 
     // give it the first row of cells
     // TODO: would move this further down hierarchy, but sliceNowDate needs it
     return (
-      <NowTimer unit={isNowIndicator ? 'minute' : 'day'}>
+      <NowTimer unit={nowIndicator ? 'minute' : 'day'}>
         {(nowDate: DateMarker, todayRange: DateRange) => (
           <TimeCols
             ref={this.timeColsRef}
@@ -77,7 +77,7 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
             clientHeight={props.clientHeight}
             expandRows={props.expandRows}
             nowDate={nowDate}
-            nowIndicatorSegs={isNowIndicator && this.slicer.sliceNowDate(nowDate, context, dayRanges)}
+            nowIndicatorSegs={nowIndicator && this.slicer.sliceNowDate(nowDate, dateProfile, nextDayThreshold, context, dayRanges)}
             todayRange={todayRange}
             onScrollTopRequest={props.onScrollTopRequest}
             onSlatCoords={props.onSlatCoords}

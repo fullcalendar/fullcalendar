@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'hy-am',
@@ -10,6 +10,7 @@ export default {
     prev: 'Նախորդ',
     next: 'Հաջորդ',
     today: 'Այսօր',
+    year: 'Տարի',
     month: 'Ամիս',
     week: 'Շաբաթ',
     day: 'Օր',

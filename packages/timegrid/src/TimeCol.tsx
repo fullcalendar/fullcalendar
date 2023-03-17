@@ -1,14 +1,20 @@
+import { CssDimValue } from '@fullcalendar/core'
 import {
-  Ref, DateMarker, BaseComponent, createElement, EventSegUiInteractionState, Seg, getSegMeta,
-  DateRange, Fragment, DayCellRoot, NowIndicatorRoot, BgEvent, renderFill, buildIsoString, computeEarliestSegStart,
-  DateProfile, buildEventRangeKey, sortEventSegs, SegInput, memoize, SegEntryGroup, SegEntry, Dictionary,
-} from '@fullcalendar/common'
-import { TimeColMoreLink } from './TimeColMoreLink'
-import { TimeColsSeg } from './TimeColsSeg'
-import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
-import { computeFgSegPlacements, TimeColSegRect } from './event-placement'
-import { TimeColEvent } from './TimeColEvent'
-import { TimeColMisc } from './TimeColMisc'
+  DateMarker, BaseComponent, EventSegUiInteractionState, Seg, getSegMeta,
+  DateRange, DayCellContainer, NowIndicatorContainer, BgEvent, renderFill, buildIsoString, computeEarliestSegStart,
+  DateProfile, buildEventRangeKey, sortEventSegs, memoize, SegEntryGroup, SegEntry, Dictionary, SegSpan, hasCustomDayCellContent,
+} from '@fullcalendar/core/internal'
+import {
+  createElement,
+  Fragment,
+  Ref,
+} from '@fullcalendar/core/preact'
+import { TimeColMoreLink } from './TimeColMoreLink.js'
+import { TimeColsSeg } from './TimeColsSeg.js'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
+import { SegWebRect } from './seg-web.js'
+import { computeFgSegPlacements, computeSegVCoords } from './event-placement.js'
+import { TimeColEvent } from './TimeColEvent.js'
 
 export interface TimeColProps {
   elRef?: Ref<HTMLTableCellElement>
@@ -17,7 +23,7 @@ export interface TimeColProps {
   nowDate: DateMarker
   todayRange: DateRange
   extraDataAttrs?: any
-  extraHookProps?: any
+  extraRenderProps?: any
   extraClassNames?: string[]
   extraDateSpan?: Dictionary
   fgEventSegs: TimeColsSeg[]
@@ -33,12 +39,13 @@ export interface TimeColProps {
 }
 
 export class TimeCol extends BaseComponent<TimeColProps> {
-  sortEventSegs = memoize(sortEventSegs)
-  computeFgSegPlacements = memoize(computeFgSegPlacements) // only for non-print, non-mirror
+  sortEventSegs = memoize(sortEventSegs) as (typeof sortEventSegs)
+  // TODO: memoize event-placement?
 
   render() {
     let { props, context } = this
-    let isSelectMirror = context.options.selectMirror
+    let { options } = context
+    let isSelectMirror = options.selectMirror
 
     let mirrorSegs: Seg[] = // yuck
       (props.eventDrag && props.eventDrag.segs) ||
@@ -51,115 +58,115 @@ export class TimeCol extends BaseComponent<TimeColProps> {
       (props.eventResize && props.eventResize.affectedInstances) ||
       {}
 
-    let sortedFgSegs = this.sortEventSegs(props.fgEventSegs, context.options.eventOrder) as TimeColsSeg[]
+    let sortedFgSegs = this.sortEventSegs(props.fgEventSegs, options.eventOrder) as TimeColsSeg[]
 
     return (
-      <DayCellRoot
+      <DayCellContainer
+        elTag="td"
         elRef={props.elRef}
+        elClasses={[
+          'fc-timegrid-col',
+          ...(props.extraClassNames || []),
+        ]}
+        elAttrs={{
+          role: 'gridcell',
+          ...props.extraDataAttrs,
+        }}
         date={props.date}
         dateProfile={props.dateProfile}
         todayRange={props.todayRange}
-        extraHookProps={props.extraHookProps}
+        extraRenderProps={props.extraRenderProps}
       >
-        {(rootElRef, classNames, dataAttrs) => (
-          <td
-            ref={rootElRef}
-            className={['fc-timegrid-col'].concat(classNames, props.extraClassNames || []).join(' ')}
-            {...dataAttrs}
-            {...props.extraDataAttrs}
-          >
-            <div className="fc-timegrid-col-frame">
-              <div className="fc-timegrid-col-bg">
-                {this.renderFillSegs(props.businessHourSegs, 'non-business')}
-                {this.renderFillSegs(props.bgEventSegs, 'bg-event')}
-                {this.renderFillSegs(props.dateSelectionSegs, 'highlight')}
-              </div>
-              <div className="fc-timegrid-col-events">
-                {this.renderFgSegs(
-                  sortedFgSegs,
-                  interactionAffectedInstances,
-                )}
-              </div>
-              <div className="fc-timegrid-col-events">
-                {this.renderFgSegs(
-                  mirrorSegs as TimeColsSeg[],
-                  {},
-                  Boolean(props.eventDrag),
-                  Boolean(props.eventResize),
-                  Boolean(isSelectMirror),
-                  // TODO: pass in left/right instead of using only computeSegTopBottomCss
-                )}
-              </div>
-              <div className="fc-timegrid-now-indicator-container">
-                {this.renderNowIndicator(props.nowIndicatorSegs)}
-              </div>
-              <TimeColMisc
-                date={props.date}
-                dateProfile={props.dateProfile}
-                todayRange={props.todayRange}
-                extraHookProps={props.extraHookProps}
-              />
+        {(InnerContent) => (
+          <div className="fc-timegrid-col-frame">
+            <div className="fc-timegrid-col-bg">
+              {this.renderFillSegs(props.businessHourSegs, 'non-business')}
+              {this.renderFillSegs(props.bgEventSegs, 'bg-event')}
+              {this.renderFillSegs(props.dateSelectionSegs, 'highlight')}
             </div>
-          </td>
+            <div className="fc-timegrid-col-events">
+              {this.renderFgSegs(
+                sortedFgSegs,
+                interactionAffectedInstances,
+                false,
+                false,
+                false,
+              )}
+            </div>
+            <div className="fc-timegrid-col-events">
+              {this.renderFgSegs(
+                mirrorSegs as TimeColsSeg[],
+                {},
+                Boolean(props.eventDrag),
+                Boolean(props.eventResize),
+                Boolean(isSelectMirror),
+              )}
+            </div>
+            <div className="fc-timegrid-now-indicator-container">
+              {this.renderNowIndicator(props.nowIndicatorSegs)}
+            </div>
+            {hasCustomDayCellContent(options) && (
+              <InnerContent
+                elTag="div"
+                elClasses={['fc-timegrid-col-misc']}
+              />
+            )}
+          </div>
         )}
-      </DayCellRoot>
+      </DayCellContainer>
     )
   }
 
   renderFgSegs(
     sortedFgSegs: TimeColsSeg[],
     segIsInvisible: { [instanceId: string]: any },
-    isDragging?: boolean,
-    isResizing?: boolean,
-    isDateSelecting?: boolean,
+    isDragging: boolean,
+    isResizing: boolean,
+    isDateSelecting: boolean,
   ) {
     let { props } = this
-
     if (props.forPrint) {
       return renderPlainFgSegs(sortedFgSegs, props)
     }
-
-    if (props.slatCoords) {
-      return this.renderPositionedFgSegs(sortedFgSegs, segIsInvisible, isDragging, isResizing, isDateSelecting)
-    }
-
-    return null
+    return this.renderPositionedFgSegs(sortedFgSegs, segIsInvisible, isDragging, isResizing, isDateSelecting)
   }
 
   renderPositionedFgSegs(
     segs: TimeColsSeg[], // if not mirror, needs to be sorted
     segIsInvisible: { [instanceId: string]: any },
-    isDragging?: boolean,
-    isResizing?: boolean,
-    isDateSelecting?: boolean,
+    isDragging: boolean,
+    isResizing: boolean,
+    isDateSelecting: boolean,
   ) {
-    let { eventMaxStack, eventShortHeight, eventOrderStrict } = this.context.options
-    let { eventSelection, todayRange, nowDate } = this.props
+    let { eventMaxStack, eventShortHeight, eventOrderStrict, eventMinHeight } = this.context.options
+    let { date, slatCoords, eventSelection, todayRange, nowDate } = this.props
     let isMirror = isDragging || isResizing || isDateSelecting
-    let segInputs = this.buildSegInputs(segs)
-    let { segRects, hiddenGroups } = isMirror ? computeFgSegPlacements(segInputs) : // don't use memoized
-      this.computeFgSegPlacements(segInputs, eventOrderStrict, eventMaxStack)
+    let segVCoords = computeSegVCoords(segs, date, slatCoords, eventMinHeight)
+    let { segPlacements, hiddenGroups } = computeFgSegPlacements(segs, segVCoords, eventOrderStrict, eventMaxStack)
 
     return (
       <Fragment>
         {this.renderHiddenGroups(hiddenGroups, segs)}
-        {segRects.map((segRect) => {
-          let seg = segs[segRect.segInput.index] as TimeColsSeg
+        {segPlacements.map((segPlacement) => {
+          let { seg, rect } = segPlacement
           let instanceId = seg.eventRange.instance.instanceId
-          let positionCss = {
-            ...this.computeSegTopBottomCss(segRect.segInput),
-            // mirrors will span entire column width
-            // also, won't assign z-index, which is good, fc-event-mirror will overpower other harnesses
-            ...(isMirror ? { left: 0, right: 0 } : this.computeSegLeftRightCss(segRect)),
-          }
+          let isVisible = isMirror || Boolean(!segIsInvisible[instanceId] && rect)
+          let vStyle = computeSegVStyle(rect && rect.span)
+          let hStyle = (!isMirror && rect) ? this.computeSegHStyle(rect) : { left: 0, right: 0 }
+          let isInset = Boolean(rect) && rect.stackForward > 0
+          let isShort = Boolean(rect) && (rect.span.end - rect.span.start) < eventShortHeight // look at other places for this problem
 
           return (
             <div
-              className={'fc-timegrid-event-harness' + (segRect.stackForward > 0 ? ' fc-timegrid-event-harness-inset' : '')}
+              className={
+                'fc-timegrid-event-harness' +
+                (isInset ? ' fc-timegrid-event-harness-inset' : '')
+              }
               key={instanceId}
               style={{
-                visibility: segIsInvisible[instanceId] ? 'hidden' : ('' as any),
-                ...positionCss,
+                visibility: isVisible ? ('' as any) : 'hidden',
+                ...vStyle,
+                ...hStyle,
               }}
             >
               <TimeColEvent
@@ -168,7 +175,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
                 isResizing={isResizing}
                 isDateSelecting={isDateSelecting}
                 isSelected={instanceId === eventSelection}
-                isShort={(segRect.spanEnd - segRect.spanStart) < eventShortHeight}
+                isShort={isShort}
                 {...getSegMeta(seg, todayRange, nowDate)}
               />
             </div>
@@ -184,7 +191,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     return (
       <Fragment>
         {hiddenGroups.map((hiddenGroup) => {
-          let positionCss = this.computeSegTopBottomCss(hiddenGroup)
+          let positionCss = computeSegVStyle(hiddenGroup.span)
           let hiddenSegs = compileSegsFromEntries(hiddenGroup.entries, segs)
           return (
             <TimeColMoreLink
@@ -206,40 +213,18 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     )
   }
 
-  buildSegInputs(segs: TimeColsSeg[]): SegInput[] {
-    let { date, slatCoords } = this.props
-    let { eventMinHeight } = this.context.options
-    let segInputs: SegInput[] = []
-
-    for (let i = 0; i < segs.length; i += 1) {
-      let seg = segs[i]
-      let spanStart = slatCoords.computeDateTop(seg.start, date)
-      let spanEnd = Math.max(
-        spanStart + (eventMinHeight || 0), // yuck
-        slatCoords.computeDateTop(seg.end, date),
-      )
-      segInputs.push({
-        index: i,
-        spanStart: Math.round(spanStart), // for barely-overlapping collisions
-        spanEnd: Math.round(spanEnd), //
-        thickness: 1,
-      })
-    }
-
-    return segInputs
-  }
-
   renderFillSegs(segs: TimeColsSeg[], fillType: string) {
-    let { props } = this
+    let { props, context } = this
+    let segVCoords = computeSegVCoords(segs, props.date, props.slatCoords, context.options.eventMinHeight) // don't assume all populated
 
-    if (!props.slatCoords) { return null }
-
-    let segInputs = this.buildSegInputs(segs)
-
-    let children = segInputs.map((segInput) => {
-      let seg = segs[segInput.index]
+    let children = segVCoords.map((vcoords, i) => {
+      let seg = segs[i]
       return (
-        <div key={buildEventRangeKey(seg.eventRange)} className="fc-timegrid-bg-harness" style={this.computeSegTopBottomCss(segInput)}>
+        <div
+          key={buildEventRangeKey(seg.eventRange)}
+          className="fc-timegrid-bg-harness"
+          style={computeSegVStyle(vcoords)}
+        >
           {fillType === 'bg-event' ?
             <BgEvent seg={seg} {...getSegMeta(seg, props.todayRange, props.nowDate)} /> :
             renderFill(fillType)}
@@ -256,37 +241,24 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     if (!slatCoords) { return null }
 
     return segs.map((seg, i) => (
-      <NowIndicatorRoot
-        isAxis={false}
-        date={date}
+      <NowIndicatorContainer
         // key doesn't matter. will only ever be one
         key={i} // eslint-disable-line react/no-array-index-key
-      >
-        {(rootElRef, classNames, innerElRef, innerContent) => (
-          <div
-            ref={rootElRef}
-            className={['fc-timegrid-now-indicator-line'].concat(classNames).join(' ')}
-            style={{ top: slatCoords.computeDateTop(seg.start, date) }}
-          >
-            {innerContent}
-          </div>
-        )}
-      </NowIndicatorRoot>
+        elClasses={['fc-timegrid-now-indicator-line']}
+        elStyle={{
+          top: slatCoords.computeDateTop(seg.start, date),
+        }}
+        isAxis={false}
+        date={date}
+      />
     ))
   }
 
-  computeSegTopBottomCss(segLike: { spanStart: number, spanEnd: number }) {
-    return {
-      top: segLike.spanStart,
-      bottom: -segLike.spanEnd,
-    }
-  }
-
-  computeSegLeftRightCss(segRect: TimeColSegRect) {
+  computeSegHStyle(segHCoords: SegWebRect) {
     let { isRtl, options } = this.context
     let shouldOverlap = options.slotEventOverlap
-    let nearCoord = segRect.levelCoord // the left side if LTR. the right side if RTL. floating-point
-    let farCoord = segRect.levelCoord + segRect.thickness // the right side if LTR. the left side if RTL. floating-point
+    let nearCoord = segHCoords.levelCoord // the left side if LTR. the right side if RTL. floating-point
+    let farCoord = segHCoords.levelCoord + segHCoords.thickness // the right side if LTR. the left side if RTL. floating-point
     let left // amount of space from left edge, a fraction of the total width
     let right // amount of space from right edge, a fraction of the total width
 
@@ -304,12 +276,12 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     }
 
     let props = {
-      zIndex: segRect.stackDepth + 1, // convert from 0-base to 1-based
+      zIndex: segHCoords.stackDepth + 1, // convert from 0-base to 1-based
       left: left * 100 + '%',
       right: right * 100 + '%',
     }
 
-    if (shouldOverlap && !segRect.stackForward) {
+    if (shouldOverlap && !segHCoords.stackForward) {
       // add padding to the edge so that forward stacked events don't cover the resizer's icon
       props[isRtl ? 'marginLeft' : 'marginRight'] = 10 * 2 // 10 is a guesstimate of the icon's width
     }
@@ -357,9 +329,19 @@ export function renderPlainFgSegs(
   )
 }
 
+function computeSegVStyle(segVCoords: SegSpan | null): { top: CssDimValue, bottom: CssDimValue } {
+  if (!segVCoords) {
+    return { top: '', bottom: '' }
+  }
+  return {
+    top: segVCoords.start,
+    bottom: -segVCoords.end,
+  }
+}
+
 function compileSegsFromEntries(
   segEntries: SegEntry[],
   allSegs: TimeColsSeg[],
 ): TimeColsSeg[] {
-  return segEntries.map((segEntry) => allSegs[segEntry.segInput.index])
+  return segEntries.map((segEntry) => allSegs[segEntry.index])
 }

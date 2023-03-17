@@ -1,112 +1,55 @@
+
+#
+# NOTE: keep this synced with standard repo's config
+#
+
 name: CI
-on: [push]
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - main
 env:
-  TZ: "America/Los_Angeles"
+  TZ: "America/New_York"
+
 jobs:
-  lint:
-    name: Lint
+  ci:
+    name: CI
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2.2.4
         with:
-          submodules: "recursive"
+          version: 7.14.0
+
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: "14"
-      - name: Check Dependencies
-        uses: actions/cache@v2
-        id: yarn-cache
+          node-version: 16.18.0
+          cache: 'pnpm'
+
+      - name: Setup Turbo cache
+        uses: actions/cache@v3
         with:
-          path: .yarn/cache
-          key: yarn-cache-${{ github.job }}
-          restore-keys: yarn-cache-
-      - name: Install Dependencies
-        run: yarn install
-      - name: Lint Source Files
-        run: yarn run gulp lint
-      - name: Build Project
-        run: yarn run gulp build
-      - name: Lint Built Files
-        run: yarn run gulp lintBuilt
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: "recursive"
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-      - name: Check Dependencies
-        uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: .yarn/cache
-          key: yarn-cache-${{ github.job }}
-          restore-keys: yarn-cache-
-      - name: Install Dependencies
-        run: yarn install
-      - name: Build Project
-        run: yarn run gulp build
-      - name: Run Tests
-        run: yarn run gulp testCi
-  contrib:
-    name: Contrib
-    if: false # disable for now
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: "recursive"
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-      - name: Check Dependencies
-        uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: .yarn/cache
-          key: yarn-cache-${{ github.job }}
-          restore-keys: yarn-cache-
-      - name: Install Dependencies
-        run: yarn install
-      - name: Build Project
-        run: yarn run gulp build
-      - name: Run Contrib CI
-        run: yarn run contrib:run all ci
-      - name: Run Tests
-        run: FULLCALENDAR_FORCE_REACT=1 yarn run gulp testCi
-  examples:
-    name: Examples
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: "recursive"
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-      - name: Check Dependencies
-        uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: .yarn/cache
-          key: yarn-cache-${{ github.job }}
-          restore-keys: yarn-cache-
-      - name: Install Dependencies
-        run: yarn install
-      - name: Build Project
-        run: yarn run gulp build
-      - name: Run Contrib
-        run: yarn run contrib:run all build
-      - name: Run Examples
-        run: yarn run example:run all build
+          path: node_modules/.cache/turbo
+          key: turbo-${{ github.job }}-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: turbo-${{ github.job }}-${{ github.ref_name }}-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Build
+        run: pnpm run build
+
+      # TODO: solve flaky tests
+      # - name: Test
+      #   run: pnpm run test

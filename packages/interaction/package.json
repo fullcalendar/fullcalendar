@@ -1,32 +1,47 @@
 {
   "name": "@fullcalendar/interaction",
-  "version": "5.7.0",
+  "version": "6.1.4",
   "title": "FullCalendar Interaction Plugin",
-  "description": "Provides functionality for event drag-n-drop, resizing, dateClick, and selectable actions",
-  "docs": "https://fullcalendar.io/docs/editable",
-  "dependencies": {
-    "@fullcalendar/common": "workspace:~5.7.0",
-    "tslib": "^2.0.3"
-  },
-  "main": "main.cjs.js",
-  "module": "main.js",
-  "types": "main.d.ts",
-  "jsdelivr": "main.global.min.js",
-  "browserGlobal": "FullCalendarInteraction",
-  "homepage": "https://fullcalendar.io/",
-  "bugs": "https://fullcalendar.io/reporting-bugs",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fullcalendar/fullcalendar.git",
-    "homepage": "https://github.com/fullcalendar/fullcalendar"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Adam Shaw",
-    "email": "arshaw@arshaw.com",
-    "url": "http://arshaw.com/"
+  "description": "Calendar functionality for event drag-n-drop, event resizing, date clicking, and date selecting",
+  "keywords": [
+    "drag-n-drop",
+    "resizing",
+    "selecting"
+  ],
+  "homepage": "https://fullcalendar.io/docs/editable",
+  "peerDependencies": {
+    "@fullcalendar/core": "~6.1.4"
   },
   "devDependencies": {
-    "@fullcalendar/core-preact": "workspace:*"
+    "@fullcalendar/core": "~6.1.4",
+    "@fullcalendar/standard-scripts": "*"
+  },
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint ."
+  },
+  "type": "module",
+  "tsConfig": {
+    "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
+    "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist/.tsout"
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  },
+  "buildConfig": {
+    "exports": {
+      ".": { "iife": true }
+    },
+    "iifeGlobals": {
+      ".": "FullCalendar.Interaction"
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
   }
 }

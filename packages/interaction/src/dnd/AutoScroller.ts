@@ -1,6 +1,6 @@
-import { ScrollGeomCache } from '../ScrollGeomCache'
-import { ElementScrollGeomCache } from '../ElementScrollGeomCache'
-import { WindowScrollGeomCache } from '../WindowScrollGeomCache'
+import { ScrollGeomCache } from '../ScrollGeomCache.js'
+import { ElementScrollGeomCache } from '../ElementScrollGeomCache.js'
+import { WindowScrollGeomCache } from '../WindowScrollGeomCache.js'
 
 interface Edge {
   scrollCache: ScrollGeomCache
@@ -39,9 +39,9 @@ export class AutoScroller {
   everMovedLeft: boolean = false
   everMovedRight: boolean = false
 
-  start(pageX: number, pageY: number) {
+  start(pageX: number, pageY: number, scrollStartEl: HTMLElement) {
     if (this.isEnabled) {
-      this.scrollCaches = this.buildCaches()
+      this.scrollCaches = this.buildCaches(scrollStartEl)
       this.pointerScreenX = null
       this.pointerScreenY = null
       this.everMovedUp = false
@@ -146,8 +146,9 @@ export class AutoScroller {
   private computeBestEdge(left: number, top: number): Edge | null {
     let { edgeThreshold } = this
     let bestSide: Edge | null = null
+    let scrollCaches = this.scrollCaches || []
 
-    for (let scrollCache of this.scrollCaches!) {
+    for (let scrollCache of scrollCaches) {
       let rect = scrollCache.clientRect
       let leftDist = left - rect.left
       let rightDist = rect.right - left
@@ -189,8 +190,8 @@ export class AutoScroller {
     return bestSide
   }
 
-  private buildCaches() {
-    return this.queryScrollEls().map((el) => {
+  private buildCaches(scrollStartEl: HTMLElement) {
+    return this.queryScrollEls(scrollStartEl).map((el) => {
       if (el === window) {
         return new WindowScrollGeomCache(false) // false = don't listen to user-generated scrolls
       }
@@ -198,14 +199,16 @@ export class AutoScroller {
     })
   }
 
-  private queryScrollEls() {
+  private queryScrollEls(scrollStartEl: HTMLElement) {
     let els = []
 
     for (let query of this.scrollQuery) {
       if (typeof query === 'object') {
         els.push(query)
       } else {
-        els.push(...Array.prototype.slice.call(document.querySelectorAll(query)))
+        els.push(...Array.prototype.slice.call(
+          (scrollStartEl.getRootNode() as ParentNode).querySelectorAll(query),
+        ))
       }
     }
 

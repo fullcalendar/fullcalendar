@@ -1,0 +1,48 @@
+{
+  "name": "@fullcalendar/web-component",
+  "version": "6.1.4",
+  "title": "FullCalendar Web Component",
+  "description": "Custom Element for FullCalendar",
+  "keywords": [
+    "web-component",
+    "custom-element"
+  ],
+  "homepage": "https://fullcalendar.io/docs/web-component",
+  "peerDependencies": {
+    "@fullcalendar/core": "~6.1.4"
+  },
+  "devDependencies": {
+    "@fullcalendar/core": "~6.1.4",
+    "@fullcalendar/standard-scripts": "*"
+  },
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint ."
+  },
+  "type": "module",
+  "tsConfig": {
+    "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
+    "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist/.tsout"
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  },
+  "buildConfig": {
+    "exports": {
+      ".": { "iife": true },
+      "./global": {}
+    },
+    "iifeGlobals": {
+      ".": ""
+    }
+  },
+  "sideEffects": true,
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
+  }
+}

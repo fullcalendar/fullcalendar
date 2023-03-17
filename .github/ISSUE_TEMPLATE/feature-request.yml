@@ -1,0 +1,37 @@
+name: Feature Request
+description: Suggest an idea you want implemented
+body:
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Checklist
+      options:
+        - label: I've already searched through [existing tickets](https://github.com/fullcalendar/fullcalendar/issues)
+          required: true
+        - label: Other people will find this feature useful
+          required: true
+  - type: dropdown
+    id: connector
+    attributes:
+      label: Is this feature for a specific connector (React/Angular/etc)?
+      options:
+        - No connector in particular
+        - React
+        - Angular
+        - Vue
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature Description
+      description: Please describe what this feature will do.
+    validations:
+      required: true
+  - type: markdown
+    id: mockup
+    attributes:
+      value: >
+        **Visual Mockup:**
+        If you are requesting a new UI, drag some sort of mockup or screenshot into the area above.

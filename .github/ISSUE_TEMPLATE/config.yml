@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Getting Help
+    url: https://stackoverflow.com/questions/tagged/fullcalendar
+    about: Stuck on a tough problem? Visit the StackOverflow fullcalendar tags

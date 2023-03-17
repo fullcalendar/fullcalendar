@@ -1,4 +1,4 @@
-import { LocaleInput } from '@fullcalendar/common'
+import { LocaleInput } from '../index.js'
 
 export default {
   code: 'vi',
@@ -10,6 +10,7 @@ export default {
     prev: 'Trước',
     next: 'Tiếp',
     today: 'Hôm nay',
+    year: 'Năm',
     month: 'Tháng',
     week: 'Tuần',
     day: 'Ngày',
