@@ -6,8 +6,10 @@ TODO: Don't rely on legacy simulateDrag
 Given the rectangles of the origin and destination
 slot or day area.
 */
-export function drag(rect0, rect1, debug?) {
-  let eventEl = new CalendarWrapper(currentCalendar).getFirstEventEl()
+export function drag(rect0, rect1, debug?, eventEl?) {
+  if (!eventEl) {
+    eventEl = new CalendarWrapper(currentCalendar).getFirstEventEl()
+  }
 
   let eventRect = eventEl.getBoundingClientRect()
   let point0 = getRectCenter(
