@@ -9,6 +9,7 @@ import {
   ElAttrs,
 } from './ContentInjector.js'
 import { RenderId } from './RenderId.js'
+import { setRef } from '../vdom-util.js'
 
 export type ContentContainerProps<RenderProps> =
   ElAttrsProps &
@@ -23,6 +24,7 @@ export type ContentContainerProps<RenderProps> =
 export class ContentContainer<RenderProps> extends Component<ContentContainerProps<RenderProps>> {
   static contextType = RenderId
   context: number
+  rootEl: HTMLElement
 
   InnerContent = InnerContentInjector.bind(undefined, this)
 
@@ -42,6 +44,7 @@ export class ContentContainer<RenderProps> extends Component<ContentContainerPro
     } else {
       return createElement(ContentInjector<RenderProps>, {
         ...props,
+        elRef: this.handleRootEl,
         elTag: props.elTag || 'div',
         elClasses: (props.elClasses || []).concat(generatedClassNames),
         renderId: this.context,
@@ -49,17 +52,25 @@ export class ContentContainer<RenderProps> extends Component<ContentContainerPro
     }
   }
 
+  handleRootEl = (el: HTMLElement) => {
+    this.rootEl = el
+
+    if (this.props.elRef) {
+      setRef(this.props.elRef, el)
+    }
+  }
+
   componentDidMount(): void {
     this.props.didMount?.({
       ...this.props.renderProps,
-      el: this.base as HTMLElement,
+      el: this.rootEl || (this.base as HTMLElement),
     })
   }
 
   componentWillUnmount(): void {
     this.props.willUnmount?.({
       ...this.props.renderProps,
-      el: this.base as HTMLElement,
+      el: this.rootEl || (this.base as HTMLElement),
     })
   }
 }
