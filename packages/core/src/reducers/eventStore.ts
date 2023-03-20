@@ -41,6 +41,7 @@ export function reduceEventStore(
         eventStore,
         eventSources[action.sourceId],
         action.rawEvents,
+        dateProfile.activeRange,
         context,
       )
 
@@ -121,6 +122,7 @@ function resetRawEvents(
   existingEventStore: EventStore,
   eventSource: EventSource<any>,
   rawEvents: EventInput[],
+  activeRange: DateRange,
   context: CalendarContext,
 ): EventStore {
   const { defIdMap, instanceIdMap } = buildPublicIdMaps(existingEventStore)
@@ -134,11 +136,7 @@ function resetRawEvents(
     instanceIdMap,
   )
 
-  if (eventSource.fetchRange) {
-    newEventStore = expandRecurring(newEventStore, eventSource.fetchRange, context)
-  }
-
-  return newEventStore
+  return expandRecurring(newEventStore, activeRange, context)
 }
 
 function transformRawEvents(rawEvents, eventSource: EventSource<any>, context: CalendarContext) {

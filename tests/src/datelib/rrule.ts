@@ -2,6 +2,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import rrulePlugin from '@fullcalendar/rrule'
 import luxonPlugin from '@fullcalendar/luxon2'
 import { parseUtcDate, parseLocalDate } from '../lib/date-parsing.js'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 
 describe('rrule plugin', () => {
   pushOptions({
@@ -511,6 +512,40 @@ describe('rrule plugin', () => {
 
       let events = calendar.getEvents()
       expect(events[0].start).toEqualDate(calendar.view.activeStart)
+    })
+
+    // https://github.com/fullcalendar/fullcalendar/issues/7230
+    it('updating the rrule dynamically renders correct number of events', () => {
+      const recurringEventDef = {
+        id: '4',
+        groupId: '4',
+        allDay: true,
+        rrule: {
+          freq: 'weekly',
+          dtstart: '2023-03-10',
+        },
+      }
+
+      let calendar = initCalendar({
+        plugins: [rrulePlugin, dayGridPlugin],
+        initialDate: '2023-03-10',
+        initialView: 'dayGridMonth',
+        events: [recurringEventDef],
+      })
+
+      const dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+      expect(dayGridWrapper.getEventEls().length).toBe(5)
+
+      calendar.next()
+      expect(dayGridWrapper.getEventEls().length).toBe(6)
+
+      calendar.resetOptions({
+        events: [{
+          ...recurringEventDef,
+          duration: { days: 2 },
+        }],
+      }, ['events'])
+      expect(dayGridWrapper.getEventEls().length).toBe(6)
     })
   })
 
