@@ -26,6 +26,7 @@ export interface MoreLinkContainerProps extends Partial<ElProps> {
   extraDateSpan?: Dictionary
   alignmentElRef?: RefObject<HTMLElement> // will use internal <a> if unspecified
   alignGridTop?: boolean // for popover
+  forceTimed?: boolean // for popover
   popoverContent: () => ComponentChild
   defaultGenerator?: (renderProps: MoreLinkContentArg) => ComponentChild
   children?: InnerContainerFunc<MoreLinkContentArg>
@@ -118,6 +119,7 @@ export class MoreLinkContainer extends BaseComponent<MoreLinkContainerProps, Mor
                       this.linkEl
                   }
                   alignGridTop={props.alignGridTop}
+                  forceTimed={props.forceTimed}
                   onClose={this.handlePopoverClose}
                 >
                   {props.popoverContent()}

@@ -16,6 +16,7 @@ export interface MorePopoverProps {
   parentEl: HTMLElement
   alignmentEl: HTMLElement
   alignGridTop?: boolean
+  forceTimed?: boolean
   todayRange: DateRange
   extraDateSpan: Dictionary
   children: ComponentChildren
@@ -90,7 +91,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
       return {
         dateProfile: props.dateProfile,
         dateSpan: {
-          allDay: true,
+          allDay: !props.forceTimed,
           range: {
             start: props.startDate,
             end: props.endDate,
@@ -105,7 +106,6 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
           bottom: elHeight,
         },
         layer: 1, // important when comparing with hits from other components
-        useSubjectAllDay: true,
       }
     }
 

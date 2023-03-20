@@ -40,6 +40,7 @@ export class TimeColMoreLink extends BaseComponent<TimeColMoreLinkProps> {
         todayRange={props.todayRange}
         popoverContent={() => renderPlainFgSegs(props.hiddenSegs, props)}
         defaultGenerator={renderMoreLinkInner}
+        forceTimed={true}
       >
         {(InnerContent) => (
           <InnerContent
