@@ -12,4 +12,5 @@ export interface Hit {
   rect: Rect
   layer: number
   largeUnit?: string // TODO: have timeline set this!
+  useSubjectAllDay?: boolean
 }

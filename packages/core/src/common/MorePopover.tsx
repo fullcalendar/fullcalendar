@@ -105,6 +105,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
           bottom: elHeight,
         },
         layer: 1, // important when comparing with hits from other components
+        useSubjectAllDay: true,
       }
     }
 

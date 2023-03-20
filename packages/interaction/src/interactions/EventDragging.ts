@@ -176,7 +176,14 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
         initialContext === receivingContext ||
         (receivingOptions.editable && receivingOptions.droppable)
       ) {
-        mutation = computeEventMutation(initialHit, hit, receivingContext.getCurrentData().pluginHooks.eventDragMutationMassagers)
+        mutation = computeEventMutation(
+          initialHit,
+          hit,
+          receivingContext.getCurrentData().pluginHooks.eventDragMutationMassagers,
+          initialHit.componentId !== hit.componentId ?
+            this.subjectSeg.eventRange.def.allDay :
+            undefined,
+        )
 
         if (mutation) {
           mutatedRelevantEvents = applyMutationToEventStore(
@@ -430,14 +437,22 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
   }
 }
 
-function computeEventMutation(hit0: Hit, hit1: Hit, massagers: eventDragMutationMassager[]): EventMutation {
+function computeEventMutation(
+  hit0: Hit,
+  hit1: Hit,
+  massagers: eventDragMutationMassager[],
+  subjectAllDay?: boolean,
+): EventMutation {
   let dateSpan0 = hit0.dateSpan
   let dateSpan1 = hit1.dateSpan
   let date0 = dateSpan0.range.start
   let date1 = dateSpan1.range.start
   let standardProps = {} as any
+  let origAllDay = (hit0.useSubjectAllDay && subjectAllDay !== undefined) ?
+    subjectAllDay :
+    dateSpan0.allDay
 
-  if (dateSpan0.allDay !== dateSpan1.allDay) {
+  if (origAllDay !== dateSpan1.allDay) {
     standardProps.allDay = dateSpan1.allDay
     standardProps.hasEnd = hit1.context.options.allDayMaintainDuration
 

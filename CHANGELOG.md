@@ -6,6 +6,7 @@ next
 - vue-2: fix SSR
 - vue-2: fix error in Nuxt 2: Cannot read properties of undefined (reading 'isHiddenDay') (#7217)
 - vite: broken daygrid-related styles in timegrid/multimonth (#7238)
+- fix buggy dragging of timed event from timegrid more-popover to all-day slot (#7222)
 
 
 v6.1.4 (2023-02-07)
