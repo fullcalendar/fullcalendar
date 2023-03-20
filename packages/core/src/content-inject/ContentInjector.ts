@@ -116,7 +116,7 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
           reportNewContainerEl: this.handleEl, // for customRenderingReplacesEl
           generatorMeta,
           ...props,
-          elClasses: props.elClasses.filter(isTruthy),
+          elClasses: (props.elClasses || []).filter(isTruthy),
         })
       }
     }
