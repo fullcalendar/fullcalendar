@@ -2,11 +2,18 @@
 next
 ----
 
-- workaround Preact's breaking type changes by using more specific semver range (#7225)
-- vue-2: fix SSR
-- vue-2: fix error in Nuxt 2: Cannot read properties of undefined (reading 'isHiddenDay') (#7217)
-- vite: broken daygrid-related styles in timegrid/multimonth (#7238)
-- fix buggy dragging of timed event from timegrid more-popover to all-day slot (#7222)
+- fix: RRule events w/ wrong dates after being dynamically updated (#7230)
+- fix: incorrect calendar dimensions when first rendered in Ionic-Angular (#4967)
+- fix: dayGrid timed events w/ custom eventContent fire eventDidMount w/ stale element (#7191)
+- fix: resource-timeline crashes when resourceGroupLaneContent is set (#7203)
+- fix: buggy dragging of timed event from timegrid more-popover to all-day slot (#7222)
+- fix: timeline slots do not fill print version if initially scrolled (#6859)
+- fix: Resource::getParent() returns undefined (#7023)
+- fix: Preact breaking .d.ts changes, using more specific semver range (#7225)
+- fix: broken daygrid-related styles in timegrid/multimonth if daygrid not loaded (#7238)
+- fix: support Vue dash-name slot names, for use with script tags (#7078)
+- fix: Nuxt 2 error: Cannot read properties of undefined (reading 'isHiddenDay') (#7217)
+- fix: Vue 2 SSR broken
 
 
 v6.1.4 (2023-02-07)
