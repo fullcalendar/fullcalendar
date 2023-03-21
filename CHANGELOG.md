@@ -2,6 +2,7 @@
 next
 ----
 
+- fix: prevent unnecessary reflows during clicking (potentially solves #7209)
 - fix: RRule events w/ wrong dates after being dynamically updated (#7230)
 - fix: incorrect calendar dimensions when first rendered in Ionic-Angular (#4967)
 - fix: dayGrid timed events w/ custom eventContent fire eventDidMount w/ stale element (#7191)

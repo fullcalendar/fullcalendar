@@ -26,12 +26,12 @@ export function enableCursor() {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 export function preventSelection(el: HTMLElement) {
-  el.classList.add('fc-unselectable')
+  el.style.userSelect = 'none'
   el.addEventListener('selectstart', preventDefault)
 }
 
 export function allowSelection(el: HTMLElement) {
-  el.classList.remove('fc-unselectable')
+  el.style.userSelect = ''
   el.removeEventListener('selectstart', preventDefault)
 }
 
