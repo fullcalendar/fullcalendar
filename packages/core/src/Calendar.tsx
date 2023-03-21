@@ -11,6 +11,7 @@ import { CssDimValue } from './scrollgrid/util.js'
 import { applyStyleProp } from './util/dom-manip.js'
 import { RenderId } from './content-inject/RenderId.js'
 import { CalendarImpl } from './api/CalendarImpl.js'
+import { ensureElHasStyles } from './styleUtils.js'
 
 export class Calendar extends CalendarImpl {
   el: HTMLElement
@@ -24,6 +25,7 @@ export class Calendar extends CalendarImpl {
 
   constructor(el: HTMLElement, optionOverrides: CalendarOptions = {}) {
     super()
+    ensureElHasStyles(el)
 
     this.el = el
     this.renderRunner = new DelayedRunner(this.handleRenderRequest)

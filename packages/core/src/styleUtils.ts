@@ -1,10 +1,11 @@
 
 const styleTexts: string[] = []
-const styleEndMarkers = new Map<Node, Node>()
+const styleEndMarkers = new Map<Node, Node>() // rootNode:endMarker
 const commentText = ' fullcalendar styles '
 
 if (typeof document !== 'undefined') {
-  registerStylesDest(
+  registerStylesRoot(
+    document,
     document.head,
     document.head.querySelector('script,link,style'),
   )
@@ -17,18 +18,26 @@ export function injectStyles(styleText: string): void {
   })
 }
 
-export function registerStylesDest(parentEl: Node, insertBefore: Node | null): void {
-  if (!styleEndMarkers.has(parentEl)) {
+export function ensureElHasStyles(el: HTMLElement): void {
+  registerStylesRoot(el.getRootNode())
+}
+
+function registerStylesRoot(
+  rootNode: Node,
+  parentEl: Node = rootNode,
+  insertBefore: Node | null = parentEl.firstChild,
+): void {
+  if (!styleEndMarkers.has(rootNode)) {
     const startMarker = document.createComment(commentText)
     const endMarker = document.createComment(` END${commentText}`)
     parentEl.insertBefore(endMarker, insertBefore)
     parentEl.insertBefore(startMarker, endMarker)
-    styleEndMarkers.set(parentEl, endMarker)
-    hydrateStylesDest(endMarker)
+    styleEndMarkers.set(rootNode, endMarker)
+    hydrateStylesRoot(endMarker)
   }
 }
 
-function hydrateStylesDest(endMarker: Node): void {
+function hydrateStylesRoot(endMarker: Node): void {
   for (const styleText of styleTexts) {
     injectStylesBefore(styleText, endMarker)
   }

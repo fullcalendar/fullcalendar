@@ -260,7 +260,7 @@ export { ViewContainer } from './common/ViewContainer.js'
 export type { DatePointTransform, DateSpanTransform } from './calendar-utils.js'
 export { triggerDateSelect, getDefaultEventEnd } from './calendar-utils.js'
 
-export { injectStyles, registerStylesDest } from './styleUtils.js'
+export { injectStyles } from './styleUtils.js'
 
 export { CalendarImpl } from './api/CalendarImpl.js'
 export { EventImpl, buildEventApis } from './api/EventImpl.js'
