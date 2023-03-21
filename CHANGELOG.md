@@ -1,6 +1,6 @@
 
-next
-----
+v6.1.5 (2023-03-21)
+-------------------
 
 - fix: inject static runtime stylesheets near top of head, avoid CSS precedence problems (#7220)
 - fix: prevent unnecessary reflows during clicking (potentially solves #7209)
