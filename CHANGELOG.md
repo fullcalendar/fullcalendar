@@ -2,6 +2,7 @@
 next
 ----
 
+- fix: inject static runtime stylesheets near top of head, avoid CSS precedence problems (#7220)
 - fix: prevent unnecessary reflows during clicking (potentially solves #7209)
 - fix: RRule events w/ wrong dates after being dynamically updated (#7230)
 - fix: incorrect calendar dimensions when first rendered in Ionic-Angular (#4967)
@@ -19,7 +20,8 @@ next
 
 v6.1.4 (2023-02-07)
 -------------------
-fix: bug introduced in v6.1.3 where month-start-text appears within day cells of multimonth view
+
+- fix: bug introduced in v6.1.3 where month-start-text appears within day cells of multimonth view
 
 
 v6.1.3 (2023-02-07)

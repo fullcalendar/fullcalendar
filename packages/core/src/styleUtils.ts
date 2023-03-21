@@ -1,46 +1,47 @@
 
-const injectedStyleEls: HTMLStyleElement[] = []
-const rootHasStyles = new WeakMap<ParentNode, true>()
+const styleTexts: string[] = []
+const styleEndMarkers = new Map<Node, Node>()
+const commentText = ' fullcalendar styles '
 
 if (typeof document !== 'undefined') {
-  rootHasStyles.set(document, true)
+  registerStylesDest(
+    document.head,
+    document.head.querySelector('script,link,style'),
+  )
 }
 
-/*
-Called from top-level core/plugin code
-*/
-export function injectStyles(css: string): void {
-  if (css && typeof document !== 'undefined') {
-    injectedStyleEls.push(injectStylesInParent(document.head, css))
+export function injectStyles(styleText: string): void {
+  styleTexts.push(styleText)
+  styleEndMarkers.forEach((endMarker) => {
+    injectStylesBefore(styleText, endMarker)
+  })
+}
+
+export function registerStylesDest(parentEl: Node, insertBefore: Node | null): void {
+  if (!styleEndMarkers.has(parentEl)) {
+    const startMarker = document.createComment(commentText)
+    const endMarker = document.createComment(` END${commentText}`)
+    parentEl.insertBefore(endMarker, insertBefore)
+    parentEl.insertBefore(startMarker, endMarker)
+    styleEndMarkers.set(parentEl, endMarker)
+    hydrateStylesDest(endMarker)
   }
 }
 
-/*
-Called during calendar initialization
-*/
-export function ensureElHasStyles(calendarEl: HTMLElement): void {
-  const root = calendarEl.getRootNode() as ParentNode
-
-  if (!rootHasStyles.get(root)) {
-    rootHasStyles.set(root, true)
-
-    for (const injectedStyleEl of injectedStyleEls) {
-      injectStylesInParent(root, injectedStyleEl.innerText)
-    }
+function hydrateStylesDest(endMarker: Node): void {
+  for (const styleText of styleTexts) {
+    injectStylesBefore(styleText, endMarker)
   }
 }
 
-function injectStylesInParent(parentEl: Node, css: string): HTMLStyleElement {
-  const style = document.createElement('style')
-
+function injectStylesBefore(styleText: string, endMarker: Node): void {
+  const styleNode = document.createElement('style')
   const nonce = getNonceValue()
   if (nonce) {
-    style.nonce = nonce
+    styleNode.nonce = nonce
   }
-
-  style.innerText = css
-  parentEl.appendChild(style)
-  return style
+  styleNode.innerText = styleText
+  endMarker.parentNode.insertBefore(styleNode, endMarker)
 }
 
 // nonce

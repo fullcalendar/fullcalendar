@@ -1,4 +1,5 @@
 import { Calendar, CalendarApi, CalendarOptions } from '@fullcalendar/core'
+import { registerStylesDest } from '@fullcalendar/core/internal'
 
 export class FullCalendarElement extends HTMLElement {
   _calendar: Calendar | null = null
@@ -42,9 +43,10 @@ export class FullCalendarElement extends HTMLElement {
       if (this._calendar) {
         this._calendar.resetOptions(options)
       } else {
+        const useShadow = this.hasAttribute('shadow')
         let root: ShadowRoot | HTMLElement
 
-        if (this.hasAttribute('shadow')) {
+        if (useShadow) {
           this.attachShadow({ mode: 'open' })
           root = this.shadowRoot
         } else {
@@ -54,6 +56,11 @@ export class FullCalendarElement extends HTMLElement {
 
         root.innerHTML = '<div></div>'
         let calendarEl = root.querySelector('div')
+
+        if (useShadow) {
+          registerStylesDest(root, calendarEl)
+        }
+
         let calendar = new Calendar(calendarEl, options)
         calendar.render()
         this._calendar = calendar
