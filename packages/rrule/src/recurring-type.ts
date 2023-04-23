@@ -1,4 +1,4 @@
-import { RRule, RRuleSet, rrulestr, Options as RRuleOptions } from 'rrule'
+import * as rruleLib from 'rrule' // see https://github.com/jakubroztocil/rrule/issues/548
 import { DateInput } from '@fullcalendar/core'
 import {
   RecurringType,
@@ -11,7 +11,7 @@ import {
 import { RRuleInputObject } from './event-refiners.js'
 
 interface EventRRuleData {
-  rruleSet: RRuleSet
+  rruleSet: rruleLib.RRuleSet
   isTimeZoneSpecified: boolean
 }
 
@@ -54,7 +54,7 @@ export const recurringType: RecurringType<EventRRuleData> = {
 }
 
 function parseEventRRule(eventProps: EventRefined, dateEnv: DateEnv) {
-  let rruleSet: RRuleSet
+  let rruleSet: rruleLib.RRuleSet
   let isTimeSpecified = false
   let isTimeZoneSpecified = false
 
@@ -67,7 +67,7 @@ function parseEventRRule(eventProps: EventRefined, dateEnv: DateEnv) {
 
   if (typeof eventProps.rrule === 'object' && eventProps.rrule) { // non-null object
     let res = parseRRuleObject(eventProps.rrule, dateEnv)
-    rruleSet = new RRuleSet()
+    rruleSet = new rruleLib.RRuleSet()
     rruleSet.rrule(res.rrule)
     isTimeSpecified = res.isTimeSpecified
     isTimeZoneSpecified = res.isTimeZoneSpecified
@@ -114,7 +114,7 @@ function parseRRuleObject(rruleInput: RRuleInputObject, dateEnv: DateEnv) {
     return dateInput as Date // TODO: what about number timestamps?
   }
 
-  let rruleOptions: Partial<RRuleOptions> = {
+  let rruleOptions: Partial<rruleLib.Options> = {
     ...rruleInput,
     dtstart: processDateInput(rruleInput.dtstart),
     until: processDateInput(rruleInput.until),
@@ -125,11 +125,11 @@ function parseRRuleObject(rruleInput: RRuleInputObject, dateEnv: DateEnv) {
     byweekday: convertConstants(rruleInput.byweekday),
   }
 
-  return { rrule: new RRule(rruleOptions), isTimeSpecified, isTimeZoneSpecified }
+  return { rrule: new rruleLib.RRule(rruleOptions), isTimeSpecified, isTimeZoneSpecified }
 }
 
 function parseRRuleString(str) {
-  let rruleSet = rrulestr(str, { forceset: true }) as RRuleSet
+  let rruleSet = rruleLib.rrulestr(str, { forceset: true }) as rruleLib.RRuleSet
   let analysis = analyzeRRuleString(str)
 
   return { rruleSet, ...analysis }
@@ -161,7 +161,7 @@ function convertConstants(input): number | null | number[] | null[] {
 
 function convertConstant(input): number | null {
   if (typeof input === 'string') {
-    return RRule[input.toUpperCase()]
+    return rruleLib.RRule[input.toUpperCase()]
   }
   return input
 }
