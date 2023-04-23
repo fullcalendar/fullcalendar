@@ -1,4 +1,11 @@
 
+v6.1.6
+------
+
+- fix: timeZone change (w/ tz plugin) not updating recurring event times (#5273)
+- fix: timeZone change (w/ tz plugin) not updating events specified w/o explicit zone
+
+
 v6.1.5 (2023-03-21)
 -------------------
 

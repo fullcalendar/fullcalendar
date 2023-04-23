@@ -549,6 +549,45 @@ describe('rrule plugin', () => {
     })
   })
 
+  // https://github.com/fullcalendar/fullcalendar/issues/5273
+  it('updates rrule timed events when timeZone changes', () => {
+    const timeTexts = []
+
+    const calendar = initCalendar({
+      plugins: [rrulePlugin, dayGridPlugin, luxonPlugin],
+      timeZone: 'America/New_York',
+      initialDate: '2023-02-10',
+      initialView: 'dayGridMonth',
+      events: [{
+        id: '4',
+        groupId: '4',
+        allDay: false,
+        rrule: {
+          freq: 'weekly',
+          dtstart: '2023-02-10T12:00:00', // assumed to be Asia/Chicago
+          until: '2023-02-11', // only one instance
+        },
+      }],
+      eventContent(arg) {
+        timeTexts.push(arg.timeText)
+        return true
+      },
+    })
+
+    let events = calendar.getEvents()
+    expect(events[0].allDay).toBe(false)
+    expect(events[0].start).toEqualDate('2023-02-10T17:00:00Z')
+    expect(timeTexts.length).toBe(1)
+    expect(timeTexts[0]).toBe('12p')
+
+    calendar.setOption('timeZone', 'America/Chicago')
+    events = calendar.getEvents()
+    expect(events[0].allDay).toBe(false)
+    expect(events[0].start).toEqualDate('2023-02-10T17:00:00Z')
+    expect(timeTexts.length).toBe(2)
+    expect(timeTexts[1]).toBe('11a')
+  })
+
   // utils
 
   function buildLocalRRuleDateStr(inputStr) { // produces strings like '20200101123030'

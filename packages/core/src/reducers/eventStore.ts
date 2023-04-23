@@ -190,7 +190,7 @@ export function rezoneEventStoreDates(eventStore: EventStore, oldDateEnv: DateEn
   let instances = mapHash(eventStore.instances, (instance: EventInstance): EventInstance => {
     let def = defs[instance.defId]
 
-    if (def.allDay || def.recurringDef) {
+    if (def.allDay) {
       return instance // isn't dependent on timezone
     }
     return {

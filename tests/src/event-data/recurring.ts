@@ -1,3 +1,6 @@
+import timeGridPlugin from '@fullcalendar/timegrid'
+import luxonPlugin from '@fullcalendar/luxon2'
+
 describe('recurring events', () => {
   describe('when timed events in local timezone', () => {
     pushOptions({
@@ -73,5 +76,32 @@ describe('recurring events', () => {
       expect(events[1].end).toEqualDate('2019-06-10')
       expect(events.length).toBe(2)
     })
+  })
+
+  it('when timeZone changes, events with unspecified timezone offsets move', () => {
+    const timeTexts = []
+    const calendar = initCalendar({
+      plugins: [timeGridPlugin, luxonPlugin],
+      timeZone: 'America/New_York',
+      initialView: 'timeGridWeek',
+      initialDate: '2023-02-07',
+      events: [
+        { startTime: '12:00', daysOfWeek: [2] },
+      ],
+      eventContent(arg) {
+        timeTexts.push(arg.timeText)
+        return true
+      },
+    })
+
+    let events = calendar.getEvents()
+    expect(events[0].start).toEqualDate('2023-02-07T17:00:00Z')
+    expect(timeTexts.length).toBe(1)
+    expect(timeTexts[0]).toBe('12:00')
+
+    calendar.setOption('timeZone', 'America/Chicago')
+    expect(events[0].start).toEqualDate('2023-02-07T17:00:00Z')
+    expect(timeTexts.length).toBe(2)
+    expect(timeTexts[1]).toBe('11:00')
   })
 })
