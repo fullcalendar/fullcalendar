@@ -4,7 +4,7 @@ v6.1.6 (2023-04-23)
 
 - fix: timeZone change (w/ tz plugin) not updating recurring event times (#5273)
 - fix: timeZone change (w/ tz plugin) not rerendering timed events
-- fix: rrule package breaks when imported via cjs, like in Next.js (#7261)
+- fix: rrule package breaks when imported via cjs, like in Next.js (#7260)
 
 
 v6.1.5 (2023-03-21)
