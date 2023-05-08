@@ -100,6 +100,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
                 Boolean(props.eventDrag),
                 Boolean(props.eventResize),
                 Boolean(isSelectMirror),
+                'mirror',
               )}
             </div>
             <div className="fc-timegrid-now-indicator-container">
@@ -123,12 +124,20 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     isDragging: boolean,
     isResizing: boolean,
     isDateSelecting: boolean,
+    forcedKey?: string,
   ) {
     let { props } = this
     if (props.forPrint) {
       return renderPlainFgSegs(sortedFgSegs, props)
     }
-    return this.renderPositionedFgSegs(sortedFgSegs, segIsInvisible, isDragging, isResizing, isDateSelecting)
+    return this.renderPositionedFgSegs(
+      sortedFgSegs,
+      segIsInvisible,
+      isDragging,
+      isResizing,
+      isDateSelecting,
+      forcedKey,
+    )
   }
 
   renderPositionedFgSegs(
@@ -137,6 +146,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     isDragging: boolean,
     isResizing: boolean,
     isDateSelecting: boolean,
+    forcedKey?: string,
   ) {
     let { eventMaxStack, eventShortHeight, eventOrderStrict, eventMinHeight } = this.context.options
     let { date, slatCoords, eventSelection, todayRange, nowDate } = this.props
@@ -162,7 +172,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
                 'fc-timegrid-event-harness' +
                 (isInset ? ' fc-timegrid-event-harness-inset' : '')
               }
-              key={instanceId}
+              key={forcedKey || instanceId}
               style={{
                 visibility: isVisible ? ('' as any) : 'hidden',
                 ...vStyle,

@@ -1,4 +1,11 @@
 
+v6.1.7
+------
+
+- fix: React 18 flickering while rendering event-mirror during drag/resize/select (#7165, #7234)
+- fix: unnecessary calls to `eventContent` for event-mirror during drag/resize/select
+
+
 v6.1.6 (2023-04-23)
 -------------------
 
