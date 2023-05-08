@@ -1,11 +1,11 @@
 {
   "name": "@fullcalendar/icalendar",
-  "version": "5.11.4",
+  "version": "5.11.5",
   "title": "FullCalendar iCalendar Plugin",
   "description": "Fetch events from a public iCalendar / .ics feed",
   "docs": "https://fullcalendar.io/docs/icalendar",
   "dependencies": {
-    "@fullcalendar/common": "workspace:~5.11.4",
+    "@fullcalendar/common": "workspace:~5.11.5",
     "ical.js": "^1.4.0",
     "tslib": "^2.1.0"
   },

@@ -1,11 +1,11 @@
 {
   "name": "@fullcalendar/daygrid",
-  "version": "5.11.4",
+  "version": "5.11.5",
   "title": "FullCalendar Day Grid Plugin",
   "description": "Display events on Month view or DayGrid view",
   "docs": "https://fullcalendar.io/docs/month-view",
   "dependencies": {
-    "@fullcalendar/common": "workspace:~5.11.4",
+    "@fullcalendar/common": "workspace:~5.11.5",
     "tslib": "^2.1.0"
   },
   "main": "main.cjs.js",
