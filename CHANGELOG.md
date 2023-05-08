@@ -1,6 +1,6 @@
 
-v6.1.7
-------
+v6.1.7 (2023-05-08)
+-------------------
 
 - fix: React 18 flickering while rendering event-mirror during drag/resize/select (#7165, #7234)
 - fix: React & Vue3: unnecessary calls to `eventContent` for event-mirror during drag/resize/select
