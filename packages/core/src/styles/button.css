@@ -33,11 +33,6 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
     cursor: pointer;
   }
 
-  & .fc-button::-moz-focus-inner {
-    padding: 0;
-    border-style: none;
-  }
-
   // theme
 
   & .fc-button {

@@ -1,56 +1,61 @@
 
 const styleTexts: string[] = []
-const styleEndMarkers = new Map<Node, Node>() // rootNode:endMarker
-const commentText = ' fullcalendar styles '
-
-if (typeof document !== 'undefined') {
-  registerStylesRoot(
-    document,
-    document.head,
-    document.head.querySelector('script,link,style'),
-  )
-}
+const styleEls = new Map<ParentNode, HTMLStyleElement>()
 
 export function injectStyles(styleText: string): void {
   styleTexts.push(styleText)
-  styleEndMarkers.forEach((endMarker) => {
-    injectStylesBefore(styleText, endMarker)
+  styleEls.forEach((styleEl) => {
+    appendStylesTo(styleEl, styleText)
   })
 }
 
 export function ensureElHasStyles(el: HTMLElement): void {
-  registerStylesRoot(el.getRootNode())
+  registerStylesRoot(el.getRootNode() as ParentNode)
 }
 
 function registerStylesRoot(
-  rootNode: Node,
-  parentEl: Node = rootNode,
+  rootNode: ParentNode,
+  parentEl: ParentNode = rootNode,
   insertBefore: Node | null = parentEl.firstChild,
 ): void {
-  if (!styleEndMarkers.has(rootNode)) {
-    const startMarker = document.createComment(commentText)
-    const endMarker = document.createComment(` END${commentText}`)
-    parentEl.insertBefore(endMarker, insertBefore)
-    parentEl.insertBefore(startMarker, endMarker)
-    styleEndMarkers.set(rootNode, endMarker)
-    hydrateStylesRoot(endMarker)
+  let styleEl: HTMLStyleElement = styleEls.get(rootNode)
+
+  if (!styleEl || !styleEl.isConnected) {
+    styleEl = rootNode.querySelector('style[data-fullcalendar]')
+
+    if (!styleEl) {
+      styleEl = document.createElement('style')
+      styleEl.setAttribute('data-fullcalendar', '')
+
+      const nonce = getNonceValue()
+      if (nonce) {
+        styleEl.nonce = nonce
+      }
+
+      parentEl.insertBefore(styleEl, insertBefore)
+    }
+
+    styleEls.set(rootNode, styleEl)
+    hydrateStylesRoot(styleEl)
   }
 }
 
-function hydrateStylesRoot(endMarker: Node): void {
+function hydrateStylesRoot(styleEl: HTMLStyleElement): void {
   for (const styleText of styleTexts) {
-    injectStylesBefore(styleText, endMarker)
+    appendStylesTo(styleEl, styleText)
   }
 }
 
-function injectStylesBefore(styleText: string, endMarker: Node): void {
-  const styleNode = document.createElement('style')
-  const nonce = getNonceValue()
-  if (nonce) {
-    styleNode.nonce = nonce
-  }
-  styleNode.innerText = styleText
-  endMarker.parentNode.insertBefore(styleNode, endMarker)
+function appendStylesTo(styleEl: HTMLStyleElement, styleText: string): void {
+  const { sheet } = styleEl
+  const ruleCnt = sheet.cssRules.length
+
+  styleText.split('}').forEach((styleStr, i) => {
+    styleStr = styleStr.trim()
+    if (styleStr) {
+      sheet.insertRule(styleStr + '}', ruleCnt + i)
+    }
+  })
 }
 
 // nonce
@@ -65,6 +70,9 @@ function getNonceValue() {
   return queriedNonceValue
 }
 
+/*
+TODO: discourage meta tag and instead put nonce attribute on placeholder <style> tag
+*/
 function queryNonceValue() {
   const metaWithNonce = document.querySelector('meta[name="csp-nonce"]')
 
@@ -79,4 +87,15 @@ function queryNonceValue() {
   }
 
   return ''
+}
+
+// main
+// -------------------------------------------------------------------------------------------------
+
+if (typeof document !== 'undefined') {
+  registerStylesRoot(
+    document,
+    document.head,
+    document.head.querySelector('script,link,style'), // if none, will put at end of <head>
+  )
 }
