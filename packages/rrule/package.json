@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/rrule",
-  "version": "6.1.7",
+  "version": "6.1.8",
   "title": "FullCalendar RRule Plugin",
   "description": "Recurring events with RRule",
   "keywords": [
@@ -8,11 +8,11 @@
   ],
   "homepage": "https://fullcalendar.io/docs/rrule-plugin",
   "peerDependencies": {
-    "@fullcalendar/core": "~6.1.7",
+    "@fullcalendar/core": "~6.1.8",
     "rrule": "^2.6.0"
   },
   "devDependencies": {
-    "@fullcalendar/core": "~6.1.7",
+    "@fullcalendar/core": "~6.1.8",
     "@fullcalendar/standard-scripts": "*",
     "rrule": "^2.6.0"
   },

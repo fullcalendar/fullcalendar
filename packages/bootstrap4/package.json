@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/bootstrap",
-  "version": "6.1.7",
+  "version": "6.1.8",
   "title": "FullCalendar Bootstrap 4 Plugin",
   "description": "Bootstrap 4 theme for FullCalendar",
   "keywords": [
@@ -9,10 +9,10 @@
   ],
   "homepage": "https://fullcalendar.io/docs/bootstrap4",
   "peerDependencies": {
-    "@fullcalendar/core": "~6.1.7"
+    "@fullcalendar/core": "~6.1.8"
   },
   "devDependencies": {
-    "@fullcalendar/core": "~6.1.7",
+    "@fullcalendar/core": "~6.1.8",
     "@fullcalendar/standard-scripts": "*"
   },
   "scripts": {
