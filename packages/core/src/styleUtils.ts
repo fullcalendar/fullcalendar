@@ -13,11 +13,7 @@ export function ensureElHasStyles(el: HTMLElement): void {
   registerStylesRoot(el.getRootNode() as ParentNode)
 }
 
-function registerStylesRoot(
-  rootNode: ParentNode,
-  parentEl: ParentNode = rootNode,
-  insertBefore: Node | null = parentEl.firstChild,
-): void {
+function registerStylesRoot(rootNode: ParentNode): void {
   let styleEl: HTMLStyleElement = styleEls.get(rootNode)
 
   if (!styleEl || !styleEl.isConnected) {
@@ -31,6 +27,11 @@ function registerStylesRoot(
       if (nonce) {
         styleEl.nonce = nonce
       }
+
+      const parentEl = rootNode === document ? document.head : rootNode
+      const insertBefore = rootNode === document
+        ? parentEl.querySelector('script,link[rel=stylesheet],link[as=style],style')
+        : parentEl.firstChild
 
       parentEl.insertBefore(styleEl, insertBefore)
     }
@@ -93,9 +94,5 @@ function queryNonceValue() {
 // -------------------------------------------------------------------------------------------------
 
 if (typeof document !== 'undefined') {
-  registerStylesRoot(
-    document,
-    document.head,
-    document.head.querySelector('script,link,style'), // if none, will put at end of <head>
-  )
+  registerStylesRoot(document)
 }
