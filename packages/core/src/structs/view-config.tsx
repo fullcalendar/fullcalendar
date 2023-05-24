@@ -7,6 +7,7 @@ import { ViewContext, ViewContextType } from '../ViewContext.js'
 import { ViewOptions } from '../options.js'
 import { Duration } from '../datelib/duration.js'
 import { ContentContainer } from '../content-inject/ContentContainer.js'
+import { BaseComponent } from '../vdom-util.js'
 
 /*
 A view-config represents information for either:
@@ -39,8 +40,12 @@ function parseViewConfig(input: ViewConfigInput): ViewConfig {
   let { component } = rawOptions
 
   if (rawOptions.content) {
-    component = createViewHookComponent(rawOptions)
     // TODO: remove content/classNames/didMount/etc from options?
+    component = createViewHookComponent(rawOptions)
+  } else if (component && !((component as any).prototype instanceof BaseComponent)) {
+    // WHY?: people were using `component` property for `content`
+    // TODO: converge on one setting name
+    component = createViewHookComponent({ ...rawOptions, content: component })
   }
 
   return {
