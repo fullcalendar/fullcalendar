@@ -9,6 +9,8 @@ Full-sized drag & drop calendar in JavaScript
 - [Support](https://fullcalendar.io/support)
 - [License](LICENSE.md)
 - [Roadmap](https://fullcalendar.io/roadmap)
+- [StackOverflow](https://stackoverflow.com/users/5947043/adyson)
+
 
 Connectors:
 
