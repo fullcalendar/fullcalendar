@@ -10,7 +10,9 @@ export function injectStyles(styleText: string): void {
 }
 
 export function ensureElHasStyles(el: HTMLElement): void {
-  registerStylesRoot(el.getRootNode() as ParentNode)
+  if (el.isConnected) {
+    registerStylesRoot(el.getRootNode() as ParentNode)
+  }
 }
 
 function registerStylesRoot(rootNode: ParentNode): void {
