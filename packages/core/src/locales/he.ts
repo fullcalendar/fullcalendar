@@ -14,7 +14,7 @@ export default {
     list: 'סדר יום',
   },
   allDayText: 'כל היום',
-  moreLinkText: 'אחר',
+  moreLinkText: 'נוספים',
   noEventsText: 'אין אירועים להצגה',
   weekText: 'שבוע',
 } as LocaleInput
