@@ -2,11 +2,14 @@
 v6.1.8 (2023-05-24)
 -------------------
 
+- feature: Luxon 3 plugin (#6957)
 - feature: Angular 16 support (#7312)
 - fix: React warning with JSX "flushSync was called from inside a lifecycle method" (#7334)
 - fix: styling sometimes broken in production Next.js (#7284)
 - fix: styling broken in Remix, use official workaround (#7261)
 - fix: for React custom views, alias `component` setting to `content` (#7207)
+- locale fix: he (#7124)
+- locale fix: zh-tw (#7289)
 
 
 v6.1.7 (2023-05-08)
