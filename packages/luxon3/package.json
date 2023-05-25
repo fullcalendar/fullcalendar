@@ -1,0 +1,51 @@
+{
+  "name": "@fullcalendar/luxon3",
+  "version": "6.1.8",
+  "title": "FullCalendar Luxon 3 Plugin",
+  "description": "Enhanced date formatting, conversion, and named time zone functionality with Luxon 3",
+  "keywords": [
+    "luxon",
+    "luxon3",
+    "timezone"
+  ],
+  "homepage": "https://fullcalendar.io/docs/luxon",
+  "peerDependencies": {
+    "@fullcalendar/core": "~6.1.8",
+    "luxon": "^3.0.0"
+  },
+  "devDependencies": {
+    "@fullcalendar/core": "~6.1.8",
+    "@fullcalendar/standard-scripts": "*",
+    "@types/luxon": "^3.3.0",
+    "luxon": "^3.0.0"
+  },
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint ."
+  },
+  "type": "module",
+  "tsConfig": {
+    "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
+    "compilerOptions": {
+      "rootDir": "./src",
+      "outDir": "./dist/.tsout"
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  },
+  "buildConfig": {
+    "exports": {
+      ".": { "iife": true }
+    },
+    "iifeGlobals": {
+      ".": "FullCalendar.Luxon3",
+      "luxon": "luxon"
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
+  }
+}

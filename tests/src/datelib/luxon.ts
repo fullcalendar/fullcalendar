@@ -1,6 +1,6 @@
 import { Calendar } from '@fullcalendar/core'
 import esLocale from '@fullcalendar/core/locales/es'
-import luxonPlugin, { toLuxonDateTime, toLuxonDuration } from '@fullcalendar/luxon2'
+import luxonPlugin, { toLuxonDateTime, toLuxonDuration } from '@fullcalendar/luxon3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import { testTimeZoneImpl } from '../lib/timeZoneImpl.js'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'

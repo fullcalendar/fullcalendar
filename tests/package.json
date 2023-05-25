@@ -10,7 +10,7 @@
     "@fullcalendar/icalendar": "~6.1.8",
     "@fullcalendar/interaction": "~6.1.8",
     "@fullcalendar/list": "~6.1.8",
-    "@fullcalendar/luxon2": "~6.1.8",
+    "@fullcalendar/luxon3": "~6.1.8",
     "@fullcalendar/moment": "~6.1.8",
     "@fullcalendar/moment-timezone": "~6.1.8",
     "@fullcalendar/multimonth": "~6.1.8",

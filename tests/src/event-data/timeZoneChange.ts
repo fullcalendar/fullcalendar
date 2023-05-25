@@ -1,5 +1,5 @@
 import timeGridPlugin from '@fullcalendar/timegrid'
-import luxonPlugin from '@fullcalendar/luxon2'
+import luxonPlugin from '@fullcalendar/luxon3'
 
 describe('timeZone change', () => {
   describe('with non-recurring timed events and luxon plugin', () => {
