@@ -18,6 +18,6 @@ export default {
   },
   weekText: 'Tydz',
   allDayText: 'Cały dzień',
-  moreLinkText: 'więcej',
+  moreLinkText: 'Więcej',
   noEventsText: 'Brak wydarzeń do wyświetlenia',
 } as LocaleInput
