@@ -80,10 +80,11 @@ function expandICalEvents(iCalExpander: IcalExpander, range: DateRange): EventIn
   for (let iCalEvent of iCalRes.events) {
     expanded.push({
       ...buildNonDateProps(iCalEvent),
-      start: iCalEvent.startDate.toString(),
+      start: iCalEvent.startDate.toJSDate().toISOString(),
       end: (specifiesEnd(iCalEvent) && iCalEvent.endDate)
-        ? iCalEvent.endDate.toString()
+        ? iCalEvent.endDate.toJSDate().toISOString()
         : null,
+      allDay: iCalEvent.startDate.isDate && (!iCalEvent.endDate || iCalEvent.endDate.isDate),
     })
   }
 
@@ -92,10 +93,11 @@ function expandICalEvents(iCalExpander: IcalExpander, range: DateRange): EventIn
     let iCalEvent = iCalOccurence.item
     expanded.push({
       ...buildNonDateProps(iCalEvent),
-      start: iCalOccurence.startDate.toString(),
+      start: iCalOccurence.startDate.toJSDate().toISOString(),
       end: (specifiesEnd(iCalEvent) && iCalOccurence.endDate)
-        ? iCalOccurence.endDate.toString()
+        ? iCalOccurence.endDate.toJSDate().toISOString()
         : null,
+      allDay: iCalEvent.startDate.isDate && (!iCalEvent.endDate || iCalEvent.endDate.isDate),
     })
   }
 
