@@ -24,7 +24,7 @@ import { TableSeg, splitSegsByFirstCol } from './TableSeg.js'
 import { TableCell } from './TableCell.js'
 import { TableListItemEvent } from './TableListItemEvent.js'
 import { TableBlockEvent } from './TableBlockEvent.js'
-import { computeFgSegPlacement, generateSegUid, TableSegPlacement } from './event-placement.js'
+import { computeFgSegPlacement, generateSegKey, generateSegUid, TableSegPlacement } from './event-placement.js'
 import { hasListItemDisplay } from './event-rendering.js'
 
 // TODO: attach to window resize?
@@ -226,7 +226,6 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
       for (let placement of segPlacements) {
         let { seg } = placement
         let { instanceId } = seg.eventRange.instance
-        let segUid = generateSegUid(seg)
         let isVisible = placement.isVisible && !isForcedInvisible[instanceId]
         let isAbsolute = placement.isAbsolute
         let left: CssDimValue = ''
@@ -249,8 +248,8 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
         nodes.push(
           <div
             className={'fc-daygrid-event-harness' + (isAbsolute ? ' fc-daygrid-event-harness-abs' : '')}
-            key={segUid}
-            ref={isMirror ? null : this.segHarnessRefs.createRef(segUid)}
+            key={generateSegKey(seg)}
+            ref={isMirror ? null : this.segHarnessRefs.createRef(generateSegUid(seg))}
             style={{
               visibility: isVisible ? ('' as any) : 'hidden',
               marginTop: isAbsolute ? '' : placement.marginTop,

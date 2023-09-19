@@ -20,8 +20,12 @@ export interface TableSegPlacement {
   marginTop: number
 }
 
+export function generateSegKey(seg: TableSeg): string {
+  return seg.eventRange.instance.instanceId + ':' + seg.firstCol
+}
+
 export function generateSegUid(seg: TableSeg): string {
-  return seg.eventRange.instance.instanceId + ':' + seg.firstCol + ':' + seg.lastCol
+  return generateSegKey(seg) + ':' + seg.lastCol
 }
 
 export function computeFgSegPlacement(
