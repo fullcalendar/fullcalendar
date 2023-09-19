@@ -523,7 +523,7 @@ describe('dayGrid advanced event rendering', () => {
       eventContent() {
         return {
           html: '<div style="white-space: normal">' +
-            '<strong>AAAAAAAAAA</strong> <strong>BBBBBBBBB</strong></div>'
+            '<strong>AAAAAAAAAA</strong> <strong>BBBBBBBBB</strong></div>',
         }
       },
       events: [
@@ -576,8 +576,8 @@ describe('dayGrid advanced event rendering', () => {
           id: 'j',
           start: '2023-04-12',
           end: '2023-04-15',
-        }
-      ]
+        },
+      ],
     })
 
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid

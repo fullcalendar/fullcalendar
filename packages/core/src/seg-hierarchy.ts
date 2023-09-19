@@ -45,7 +45,7 @@ export class SegHierarchy {
     private getEntryThickness = (entry: SegEntry) => {
       // should return an integer
       return entry.thickness!
-    }
+    },
   ) {}
 
   addSegs(inputs: SegEntry[]): SegEntry[] {
