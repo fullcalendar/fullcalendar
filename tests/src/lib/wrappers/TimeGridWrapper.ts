@@ -218,7 +218,7 @@ export class TimeGridWrapper {
     })
   }
 
-  selectDatesTouch(start, end) {
+  selectDatesTouch(start, end, debug = false) {
     let dayEls = this.getDayEls(start)
     let startPoint = this.getPoint(start)
     let endPoint = this.getPoint(end, true)
@@ -230,6 +230,7 @@ export class TimeGridWrapper {
       setTimeout(() => { // wait for calendar to accept touch :(
         // QUESTION: why do we not need to do press-down first?
         $(dayEls).simulate('drag', {
+          debug,
           isTouch: true,
           point: startPoint,
           end: endPoint,

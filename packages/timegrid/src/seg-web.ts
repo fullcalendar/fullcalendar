@@ -182,12 +182,12 @@ function webToRects(topLevelNodes: SegNode[]): SegWebRect[] {
   const processNode = cacheable(
     (node: SegNode, levelCoord: number, stackDepth: number) => buildEntryKey(node),
     (node: SegNode, levelCoord: number, stackDepth: number) => { // returns forwardPressure
-      let rect: SegWebRect = {
+      let rect = {
         ...node,
         levelCoord,
         stackDepth,
         stackForward: 0, // will assign after recursing
-      }
+      } as SegWebRect
       rects.push(rect)
 
       return (

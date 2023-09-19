@@ -66,7 +66,11 @@ describe('select callback', () => {
         let calendar = initCalendar(options)
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-        dayGridWrapper.selectDatesTouch('2014-04-28', '2014-05-06').then(() => {
+        dayGridWrapper.selectDatesTouch(
+          '2014-04-28',
+          '2014-05-06',
+          true, // debug. HACK
+        ).then(() => {
           expect(options.select).toHaveBeenCalled()
           done()
         })
@@ -221,7 +225,11 @@ describe('select callback', () => {
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
           setTimeout(() => { // HACK: sometimes touch dragging wouldn't grab onto anything
-            timeGridWrapper.selectDatesTouch('2014-05-28T09:00:00', '2014-05-28T10:30:00').then(() => {
+            timeGridWrapper.selectDatesTouch(
+              '2014-05-28T09:00:00',
+              '2014-05-28T10:30:00',
+              true, // debug. HACK
+            ).then(() => {
               expect(options.select).toHaveBeenCalled()
               done()
             })

@@ -189,13 +189,14 @@ export class DayGridWrapper {
     })
   }
 
-  selectDatesTouch(start, inclusiveEnd) {
+  selectDatesTouch(start, inclusiveEnd, debug = false) {
     return new Promise<void>((resolve) => {
       let startEl = this.getDayEl(start)
 
       setTimeout(() => { // wait for calendar to accept touch :(
         // QUESTION: why do we not need to do press-down first?
         $(startEl).simulate('drag', {
+          debug,
           isTouch: true,
           end: getRectCenter(this.getDayEl(inclusiveEnd).getBoundingClientRect()),
           onRelease: () => resolve(),

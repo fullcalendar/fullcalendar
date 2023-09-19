@@ -20,16 +20,26 @@ export interface TableSegPlacement {
   marginTop: number
 }
 
+export function generateSegUid(seg: TableSeg): string {
+  return seg.eventRange.instance.instanceId + ':' + seg.firstCol + ':' + seg.lastCol
+}
+
 export function computeFgSegPlacement(
   segs: TableSeg[], // assumed already sorted
   dayMaxEvents: boolean | number,
   dayMaxEventRows: boolean | number,
   strictOrder: boolean,
-  eventInstanceHeights: { [instanceId: string]: number },
+  segHeights: { [segUid: string]: number },
   maxContentHeight: number | null,
   cells: DayTableCell[],
 ) {
-  let hierarchy = new DayGridSegHierarchy()
+  let hierarchy = new DayGridSegHierarchy((segEntry: SegEntry) => {
+    // TODO: more DRY with generateSegUid
+    let segUid = segs[segEntry.index].eventRange.instance.instanceId +
+      ':' + segEntry.span.start +
+      ':' + (segEntry.span.end - 1)
+    return segHeights[segUid]
+  })
   hierarchy.allowReslicing = true
   hierarchy.strictOrder = strictOrder
 
@@ -48,13 +58,12 @@ export function computeFgSegPlacement(
   let unknownHeightSegs: TableSeg[] = []
   for (let i = 0; i < segs.length; i += 1) {
     let seg = segs[i]
-    let { instanceId } = seg.eventRange.instance
-    let eventHeight = eventInstanceHeights[instanceId]
+    let segUid = generateSegUid(seg)
+    let eventHeight = segHeights[segUid]
 
     if (eventHeight != null) {
       segInputs.push({
         index: i,
-        thickness: eventHeight,
         span: {
           start: seg.firstCol,
           end: seg.lastCol + 1,

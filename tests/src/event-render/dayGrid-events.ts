@@ -513,4 +513,76 @@ describe('dayGrid advanced event rendering', () => {
       done()
     })
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/7447
+  it('Doesn\'t error or overlap event positions when white-space:normal', () => {
+    let calendar = initCalendar({
+      initialView: 'dayGridWeek',
+      initialDate: '2023-04-09',
+      dayMaxEvents: 4,
+      eventContent() {
+        return {
+          html: '<div style="white-space: normal">' +
+            '<strong>AAAAAAAAAA</strong> <strong>BBBBBBBBB</strong></div>'
+        }
+      },
+      events: [
+        {
+          id: 'a',
+          start: '2023-04-14',
+          end: '2023-04-21',
+        },
+        {
+          id: 'b',
+          start: '2023-04-13',
+          end: '2023-04-22',
+        },
+        {
+          id: 'c',
+          start: '2023-04-06',
+          end: '2023-04-15',
+        },
+        {
+          id: 'd',
+          start: '2023-04-11',
+          end: '2023-04-14',
+        },
+        {
+          id: 'e',
+          start: '2023-04-14',
+          end: '2023-04-19',
+        },
+        {
+          id: 'f',
+          start: '2023-04-13',
+          end: '2023-04-19',
+        },
+        {
+          id: 'g',
+          start: '2023-04-05',
+          end: '2023-04-14',
+        },
+        {
+          id: 'h',
+          start: '2023-04-06',
+          end: '2023-04-15',
+        },
+        {
+          id: 'i',
+          start: '2023-04-13',
+          end: '2023-04-15',
+        },
+        {
+          id: 'j',
+          start: '2023-04-12',
+          end: '2023-04-15',
+        }
+      ]
+    })
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEls = dayGridWrapper.getEventEls()
+    let visibleEventEls = filterVisibleEls(eventEls)
+    expect(anyElsIntersect(visibleEventEls)).toBe(false)
+  })
 })

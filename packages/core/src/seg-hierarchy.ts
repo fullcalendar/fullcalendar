@@ -5,7 +5,7 @@ export interface SegSpan {
 
 export interface SegEntry {
   index: number
-  thickness: number // should be an integer
+  thickness?: number // should be an integer
   span: SegSpan
 }
 
@@ -21,6 +21,7 @@ export interface SegInsertion {
 }
 
 export interface SegRect extends SegEntry {
+  thickness: number
   levelCoord: number
 }
 
@@ -39,6 +40,13 @@ export class SegHierarchy {
   levelCoords: number[] = [] // ordered
   entriesByLevel: SegEntry[][] = [] // parallel with levelCoords
   stackCnts: { [entryId: string]: number } = {} // TODO: use better technique!?
+
+  constructor(
+    private getEntryThickness = (entry: SegEntry) => {
+      // should return an integer
+      return entry.thickness!
+    }
+  ) {}
 
   addSegs(inputs: SegEntry[]): SegEntry[] {
     let hiddenEntries: SegEntry[] = []
@@ -62,7 +70,7 @@ export class SegHierarchy {
   }
 
   isInsertionValid(insertion: SegInsertion, entry: SegEntry): boolean {
-    return (this.maxCoord === -1 || insertion.levelCoord + entry.thickness <= this.maxCoord) &&
+    return (this.maxCoord === -1 || insertion.levelCoord + this.getEntryThickness(entry) <= this.maxCoord) &&
       (this.maxStackCnt === -1 || insertion.stackCnt < this.maxStackCnt)
   }
 
@@ -140,7 +148,7 @@ export class SegHierarchy {
 
       // if the current level is past the placed entry, we have found a good empty space and can stop.
       // if strictOrder, keep finding more lateral intersections.
-      if (!strictOrder && trackingCoord >= candidateCoord + newEntry.thickness) {
+      if (!strictOrder && trackingCoord >= candidateCoord + this.getEntryThickness(newEntry)) {
         break
       }
 
@@ -153,7 +161,7 @@ export class SegHierarchy {
         (trackingEntry = trackingEntries[lateralIndex]) && // but not past the whole entry list
         trackingEntry.span.start < newEntry.span.end // and not entirely past newEntry
       ) {
-        let trackingEntryBottom = trackingCoord + trackingEntry.thickness
+        let trackingEntryBottom = trackingCoord + this.getEntryThickness(trackingEntry)
         // intersects into the top of the candidate?
         if (trackingEntryBottom > candidateCoord) {
           candidateCoord = trackingEntryBottom
@@ -207,7 +215,11 @@ export class SegHierarchy {
       let levelCoord = levelCoords[level]
 
       for (let entry of entries) {
-        rects.push({ ...entry, levelCoord })
+        rects.push({
+          ...entry,
+          thickness: this.getEntryThickness(entry),
+          levelCoord,
+        })
       }
     }
 
