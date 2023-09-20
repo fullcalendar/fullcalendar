@@ -11,6 +11,23 @@ describe('eventContent', () => {
     ],
   })
 
+  it('can inject vdom nodes', () => {
+    let calendar = initCalendar({
+      eventContent(info, createElement) {
+        return (
+          createElement('span', {}, [ // TODO: document how to use Fragment
+            createElement('b', {}, info.timeText),
+            createElement('i', {}, info.event.title),
+          ])
+        )
+      },
+    })
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEl = dayGridWrapper.getEventEls()[0]
+    expect(eventEl.querySelector('b').innerHTML).toBe('1a')
+    expect(eventEl.querySelector('i').innerHTML).toBe('my event')
+  })
+
   it('can inject html content', () => {
     let calendar = initCalendar({
       eventContent(info) {

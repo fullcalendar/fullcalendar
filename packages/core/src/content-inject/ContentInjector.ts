@@ -1,4 +1,4 @@
-import { createElement, ComponentChild, JSX, Ref } from '../preact.js'
+import { createElement, ComponentChild, JSX, Ref, isValidElement } from '../preact.js'
 import { CustomContentGenerator } from '../common/render-hook.js'
 import { BaseComponent, setRef } from '../vdom-util.js'
 import { guid } from '../util/misc.js'
@@ -63,8 +63,12 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
           attrs.dangerouslySetInnerHTML = { __html: customGeneratorRes.html }
         } else if (isObject && ('domNodes' in customGeneratorRes)) {
           queuedDomNodes = Array.prototype.slice.call(customGeneratorRes.domNodes)
-        } else if (!isObject && typeof customGeneratorRes !== 'function') {
-          // primitive value (like string or number)
+        } else if (
+          isObject
+            ? isValidElement(customGeneratorRes) // vdom node
+            : typeof customGeneratorRes !== 'function' // primitive value (like string or number)
+        ) {
+          // use in vdom
           innerContent = customGeneratorRes
         } else {
           // an exotic object for handleCustomRendering
