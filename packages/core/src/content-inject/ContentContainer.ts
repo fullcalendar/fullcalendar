@@ -11,6 +11,9 @@ import {
 import { RenderId } from './RenderId.js'
 import { setRef } from '../vdom-util.js'
 
+/*
+The `children` prop is a function that defines inner wrappers (ex: ResourceCell)
+*/
 export type ContentContainerProps<RenderProps> =
   ElAttrsProps &
   ContentGeneratorProps<RenderProps> & {
@@ -24,7 +27,7 @@ export type ContentContainerProps<RenderProps> =
 export class ContentContainer<RenderProps> extends Component<ContentContainerProps<RenderProps>> {
   static contextType = RenderId
   context: number
-  rootEl: HTMLElement
+  el: HTMLElement
 
   InnerContent = InnerContentInjector.bind(undefined, this)
 
@@ -33,7 +36,7 @@ export class ContentContainer<RenderProps> extends Component<ContentContainerPro
     const generatedClassNames = generateClassNames(props.classNameGenerator, props.renderProps)
 
     if (props.children) {
-      const elAttrs = buildElAttrs(props, generatedClassNames)
+      const elAttrs = buildElAttrs(props, generatedClassNames, this.handleEl)
       const children = props.children(this.InnerContent, props.renderProps, elAttrs)
 
       if (props.elTag) {
@@ -44,7 +47,7 @@ export class ContentContainer<RenderProps> extends Component<ContentContainerPro
     } else {
       return createElement(ContentInjector<RenderProps>, {
         ...props,
-        elRef: this.handleRootEl,
+        elRef: this.handleEl,
         elTag: props.elTag || 'div',
         elClasses: (props.elClasses || []).concat(generatedClassNames),
         renderId: this.context,
@@ -52,8 +55,8 @@ export class ContentContainer<RenderProps> extends Component<ContentContainerPro
     }
   }
 
-  handleRootEl = (el: HTMLElement) => {
-    this.rootEl = el
+  handleEl = (el: HTMLElement) => {
+    this.el = el
 
     if (this.props.elRef) {
       setRef(this.props.elRef, el)
@@ -63,14 +66,14 @@ export class ContentContainer<RenderProps> extends Component<ContentContainerPro
   componentDidMount(): void {
     this.props.didMount?.({
       ...this.props.renderProps,
-      el: this.rootEl || (this.base as HTMLElement),
+      el: this.el,
     })
   }
 
   componentWillUnmount(): void {
     this.props.willUnmount?.({
       ...this.props.renderProps,
-      el: this.rootEl || (this.base as HTMLElement),
+      el: this.el,
     })
   }
 }

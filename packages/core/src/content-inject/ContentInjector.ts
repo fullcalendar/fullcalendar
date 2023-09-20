@@ -43,7 +43,7 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
     const { props, context } = this
     const { options } = context
     const { customGenerator, defaultGenerator, renderProps } = props
-    const attrs = buildElAttrs(props)
+    const attrs = buildElAttrs(props, [], this.handleEl)
     let useDefault = false
     let innerContent: ComponentChild | undefined
     let queuedDomNodes: Node[] = []
@@ -113,7 +113,7 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
           id: this.id,
           isActive,
           containerEl: this.base as HTMLElement,
-          reportNewContainerEl: this.handleEl, // for customRenderingReplacesEl
+          reportNewContainerEl: this.updateElRef, // front-end framework tells us about new container els
           generatorMeta,
           ...props,
           elClasses: (props.elClasses || []).filter(isTruthy),
@@ -123,6 +123,12 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
   }
 
   private handleEl = (el: HTMLElement | null) => {
+    if (!hasCustomRenderingHandler(this.props.generatorName, this.context.options)) {
+      this.updateElRef(el)
+    }
+  }
+
+  private updateElRef = (el: HTMLElement | null) => {
     if (this.props.elRef) {
       setRef(this.props.elRef, el)
     }
@@ -167,11 +173,12 @@ export function hasCustomRenderingHandler(
   )
 }
 
-export function buildElAttrs(props: ElAttrsProps, extraClassNames?: string[]): ElAttrs {
-  const attrs: ElAttrs = {
-    ...props.elAttrs,
-    ref: props.elRef as any,
-  }
+export function buildElAttrs(
+  props: ElAttrsProps,
+  extraClassNames?: string[],
+  elRef?: ElRef,
+): ElAttrs {
+  const attrs: ElAttrs = { ...props.elAttrs, ref: elRef as any, }
 
   if (props.elClasses || extraClassNames) {
     attrs.className = (props.elClasses || [])
