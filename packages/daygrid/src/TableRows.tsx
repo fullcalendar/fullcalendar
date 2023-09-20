@@ -103,16 +103,29 @@ export class TableRows extends DateComponent<TableRowsProps> {
   }
 
   componentDidMount(): void {
-    // HACK: need a daygrid wrapper parent to do positioning
-    // NOTE: a daygrid resource view w/o resources can have zero cells
-    const firstCellEl = this.rowRefs.currentMap[0].getCellEls()[0]
-    this.rootEl = firstCellEl ? firstCellEl.closest('.fc-daygrid-body')! : null
+    this.registerInteractiveComponent()
+  }
 
-    if (this.rootEl) {
-      this.context.registerInteractiveComponent(this, {
-        el: this.rootEl,
-        isHitComboAllowed: this.props.isHitComboAllowed,
-      })
+  componentDidUpdate(): void {
+    // for if started with zero cells
+    this.registerInteractiveComponent()
+  }
+
+  registerInteractiveComponent() {
+    if (!this.rootEl) {
+      // HACK: need a daygrid wrapper parent to do positioning
+      // NOTE: a daygrid resource view w/o resources can have zero cells
+      const firstCellEl = this.rowRefs.currentMap[0].getCellEls()[0]
+      const rootEl = firstCellEl ? firstCellEl.closest('.fc-daygrid-body')! as HTMLElement : null
+
+      if (rootEl) {
+        this.rootEl = rootEl
+
+        this.context.registerInteractiveComponent(this, {
+          el: rootEl,
+          isHitComboAllowed: this.props.isHitComboAllowed,
+        })
+      }
     }
   }
 
