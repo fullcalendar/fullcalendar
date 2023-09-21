@@ -123,6 +123,7 @@ export class ElementMirror {
       // we don't want long taps or any mouse interaction causing selection/menus.
       // would use preventSelection(), but that prevents selectstart, causing problems.
       mirrorEl.style.userSelect = 'none'
+      mirrorEl.style.webkitUserSelect = 'none'
 
       mirrorEl.classList.add('fc-event-dragging')
 
