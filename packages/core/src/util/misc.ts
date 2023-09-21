@@ -27,11 +27,13 @@ export function enableCursor() {
 
 export function preventSelection(el: HTMLElement) {
   el.style.userSelect = 'none'
+  el.style.webkitUserSelect = 'none'
   el.addEventListener('selectstart', preventDefault)
 }
 
 export function allowSelection(el: HTMLElement) {
   el.style.userSelect = ''
+  el.style.webkitUserSelect = ''
   el.removeEventListener('selectstart', preventDefault)
 }
 
