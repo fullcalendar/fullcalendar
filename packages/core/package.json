@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/core",
-  "version": "6.1.8",
+  "version": "6.1.9",
   "title": "FullCalendar Core",
   "description": "FullCalendar core package for rendering a calendar",
   "dependencies": {
