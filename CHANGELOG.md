@@ -1,4 +1,16 @@
 
+v6.1.9 (2023-09-21)
+-------------------
+
+- fix: Table selection is not prevented when long pressing to drag events in Safari (#7441)
+- fix: Custom event rendering with `white-space:normal` can causes infinite loop (#7447)
+- fix: `eventClick` does not fire for allDay events with async provided resources (#7365)
+- fix: `eventContent` with Preact nodes (via `createElement`) not rendering (#7342)
+- fix: React 16: calling calendarApi methods within useEffect causes fatal error (#7448)
+- fix: Angular/Vue2: dot-event element from `eventDidMount` does not exists in the DOM (#7191)
+- fix: Angular Universal: `document` is not defined error (#7352)
+
+
 v6.1.8 (2023-05-24)
 -------------------
 
