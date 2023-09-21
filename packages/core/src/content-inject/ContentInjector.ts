@@ -182,7 +182,7 @@ export function buildElAttrs(
   extraClassNames?: string[],
   elRef?: ElRef,
 ): ElAttrs {
-  const attrs: ElAttrs = { ...props.elAttrs, ref: elRef as any, }
+  const attrs: ElAttrs = { ...props.elAttrs, ref: elRef as any }
 
   if (props.elClasses || extraClassNames) {
     attrs.className = (props.elClasses || [])
