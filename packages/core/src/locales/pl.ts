@@ -14,10 +14,10 @@ export default {
     month: 'Miesiąc',
     week: 'Tydzień',
     day: 'Dzień',
-    list: 'Plan dnia',
+    list: 'Plan',
   },
   weekText: 'Tydz',
   allDayText: 'Cały dzień',
-  moreLinkText: 'więcej',
+  moreLinkText: 'Więcej',
   noEventsText: 'Brak wydarzeń do wyświetlenia',
 } as LocaleInput
