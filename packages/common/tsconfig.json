@@ -2,7 +2,8 @@
   "extends":  "../../tsconfig.base",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "tsc"
+    "outDir": "tsc",
+    "ignoreDeprecations": "5.0"
   },
   "include": [
     "src/**/*"

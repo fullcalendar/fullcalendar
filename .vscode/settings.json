@@ -6,5 +6,8 @@
   "eslint.nodePath": ".yarn/sdks",
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "stylelint.stylelintPath": ".yarn/sdks/stylelint/lib/index.js"
+  "stylelint.stylelintPath": ".yarn/sdks/stylelint/lib/index.js",
+  "cSpell.words": [
+    "fullcalendar"
+  ]
 }
