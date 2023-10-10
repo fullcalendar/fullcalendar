@@ -85,6 +85,7 @@ export type InnerContainerFunc<RenderProps> = (
   InnerContainer: InnerContainerComponent,
   renderProps: RenderProps,
   elAttrs: ElAttrs,
+  ExtraCell?: InnerContainerComponent
 ) => ComponentChildren
 
 function InnerContentInjector<RenderProps>(

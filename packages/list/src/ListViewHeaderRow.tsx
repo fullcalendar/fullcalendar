@@ -59,7 +59,7 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
         willUnmount={options.dayHeaderWillUnmount}
       >
         {(InnerContent) => ( // TODO: force-hide top border based on :first-child
-          <th scope="colgroup" colSpan={3} id={cellId} aria-labelledby={textId}>
+          <th scope="colgroup" colSpan={4} id={cellId} aria-labelledby={textId}>
             <InnerContent
               elTag="div"
               elClasses={[

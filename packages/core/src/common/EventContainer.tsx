@@ -26,6 +26,7 @@ export interface MinimalEventProps {
 
 export type EventContainerProps = ElProps & MinimalEventProps & {
   defaultGenerator: (renderProps: EventContentArg) => ComponentChild
+  extraCellGenerator: (renderProps: EventContentArg) => ComponentChild
   disableDragging?: boolean
   disableResizing?: boolean
   timeText: string
@@ -76,6 +77,7 @@ export class EventContainer extends BaseComponent<EventContainerProps> {
         generatorName="eventContent"
         customGenerator={options.eventContent}
         defaultGenerator={props.defaultGenerator}
+        extraCellGenerator={props.extraCellGenerator}
         classNameGenerator={options.eventClassNames}
         didMount={options.eventDidMount}
         willUnmount={options.eventWillUnmount}
