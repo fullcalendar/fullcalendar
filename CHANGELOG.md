@@ -2,6 +2,7 @@
 v6.1.10 (2023-11-22)
 --------------------
 
+- fix: font-icon elements should have role="img" (#7501)
 - locale: fix bg (#7493)
 - locale: fix ca (#7394)
 - locale: fix nl (#7471)
