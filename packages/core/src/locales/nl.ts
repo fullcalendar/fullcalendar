@@ -14,7 +14,7 @@ export default {
     month: 'Maand',
     week: 'Week',
     day: 'Dag',
-    list: 'Agenda',
+    list: 'Lijst',
   },
   allDayText: 'Hele dag',
   moreLinkText: 'extra',
