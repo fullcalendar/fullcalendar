@@ -26,6 +26,7 @@ export type ContentContainerProps<RenderProps> =
 
 export class ContentContainer<RenderProps> extends Component<ContentContainerProps<RenderProps>> {
   static contextType = RenderId
+  didMountMisfire?: boolean
   context: number
   el: HTMLElement
 
@@ -60,14 +61,22 @@ export class ContentContainer<RenderProps> extends Component<ContentContainerPro
 
     if (this.props.elRef) {
       setRef(this.props.elRef, el)
+
+      if (el && this.didMountMisfire) {
+        this.componentDidMount()
+      }
     }
   }
 
   componentDidMount(): void {
-    this.props.didMount?.({
-      ...this.props.renderProps,
-      el: this.el,
-    })
+    if (this.el) {
+      this.props.didMount?.({
+        ...this.props.renderProps,
+        el: this.el,
+      })
+    } else {
+      this.didMountMisfire = true
+    }
   }
 
   componentWillUnmount(): void {

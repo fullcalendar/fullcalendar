@@ -1,7 +1,8 @@
 
-v6.1.10 (2023-11-22)
+v6.1.10 (2023-11-28)
 --------------------
 
+- fix: Vue 3 background event with custom rendering, not receiving el in eventDidMount (#7524)
 - fix: font-icon elements should have role="img" (#7501)
 - locale: fix bg (#7493)
 - locale: fix ca (#7394)

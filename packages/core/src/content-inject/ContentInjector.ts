@@ -127,7 +127,10 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
   }
 
   private handleEl = (el: HTMLElement | null) => {
-    if (!hasCustomRenderingHandler(this.props.generatorName, this.context.options)) {
+    const { options } = this.context
+    const { generatorName } = this.props
+
+    if (!options.customRenderingReplaces || !hasCustomRenderingHandler(generatorName, options)) {
       this.updateElRef(el)
     }
   }
@@ -164,7 +167,9 @@ ContentInjector.addPropsEquality({
 // Util
 
 /*
-Does UI-framework provide custom way of rendering?
+Does UI-framework provide custom way of rendering that does not use Preact VDOM
+AND does the calendar's options define custom rendering?
+AKA. Should we NOT render the default content?
 */
 export function hasCustomRenderingHandler(
   generatorName: string | undefined,
