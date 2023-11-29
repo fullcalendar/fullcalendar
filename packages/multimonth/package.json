@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/multimonth",
-  "version": "6.1.9",
+  "version": "6.1.10",
   "title": "FullCalendar Multi-Month Plugin",
   "description": "Display a sequence or grid of multiple months",
   "keywords": [
@@ -8,13 +8,13 @@
   ],
   "homepage": "https://fullcalendar.io/docs/multimonth-grid",
   "dependencies": {
-    "@fullcalendar/daygrid": "~6.1.9"
+    "@fullcalendar/daygrid": "~6.1.10"
   },
   "peerDependencies": {
-    "@fullcalendar/core": "~6.1.9"
+    "@fullcalendar/core": "~6.1.10"
   },
   "devDependencies": {
-    "@fullcalendar/core": "~6.1.9",
+    "@fullcalendar/core": "~6.1.10",
     "@fullcalendar/standard-scripts": "*"
   },
   "scripts": {
