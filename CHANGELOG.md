@@ -2,6 +2,7 @@
 v6.1.10 (2023-11-28)
 --------------------
 
+- feature: Angular version 17 support (#7525)
 - fix: Vue 3 background event with custom rendering, not receiving el in eventDidMount (#7524)
 - fix: font-icon elements should have role="img" (#7501)
 - locale: fix bg (#7493)
