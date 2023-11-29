@@ -58,7 +58,7 @@ export class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
             className={buttonClasses.join(' ')}
             onClick={buttonClick}
           >
-            {buttonText || (buttonIcon ? <span className={buttonIcon} role='img' /> : '')}
+            {buttonText || (buttonIcon ? <span className={buttonIcon} role="img" /> : '')}
           </button>,
         )
       }
