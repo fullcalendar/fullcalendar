@@ -22,6 +22,8 @@ import { HitDragging } from '../interactions/HitDragging.js'
 import { buildDatePointApiWithContext } from '../utils.js'
 
 export type DragMetaGenerator = DragMetaInput | ((el: HTMLElement) => DragMetaInput)
+export type DragEventStart = ((el: HTMLElement) => void)
+export type DragEventEnd = (() => void)
 
 export interface ExternalDropApi extends DatePointApi {
   draggedEl: HTMLElement
@@ -39,9 +41,11 @@ export class ExternalElementDragging {
   receivingContext: CalendarContext | null = null
   droppableEvent: EventTuple | null = null // will exist for all drags, even if create:false
   suppliedDragMeta: DragMetaGenerator | null = null
+  suppliedDragEventStart: DragEventStart | null = null
+  suppliedDragEventEnd: DragEventEnd | null = null
   dragMeta: DragMeta | null = null
 
-  constructor(dragging: ElementDragging, suppliedDragMeta?: DragMetaGenerator) {
+  constructor(dragging: ElementDragging, suppliedDragMeta?: DragMetaGenerator, suppliedDragEventStart?: DragEventStart, suppliedDragEventEnd?: DragEventEnd) {
     let hitDragging = this.hitDragging = new HitDragging(dragging, interactionSettingsStore)
     hitDragging.requireInitial = false // will start outside of a component
     hitDragging.emitter.on('dragstart', this.handleDragStart)
@@ -49,6 +53,8 @@ export class ExternalElementDragging {
     hitDragging.emitter.on('dragend', this.handleDragEnd)
 
     this.suppliedDragMeta = suppliedDragMeta
+    this.suppliedDragEventStart = suppliedDragEventStart ?? null
+    this.suppliedDragEventEnd = suppliedDragEventEnd ?? null
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
@@ -117,6 +123,9 @@ export class ExternalElementDragging {
       this.receivingContext = receivingContext
       this.droppableEvent = droppableEvent
     }
+    if(this.suppliedDragEventStart !== null){
+      this.suppliedDragEventStart(this.hitDragging.dragging.mirror.getMirrorEl())
+    }
   }
 
   handleDragEnd = (pev: PointerDragEvent) => {
@@ -173,6 +182,9 @@ export class ExternalElementDragging {
 
     this.receivingContext = null
     this.droppableEvent = null
+    if(this.suppliedDragEventEnd !== null){
+      this.suppliedDragEventEnd()
+    }
   }
 
   displayDrag(nextContext: CalendarContext | null, state: EventInteractionState) {
