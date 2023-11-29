@@ -123,7 +123,7 @@ export class ExternalElementDragging {
       this.receivingContext = receivingContext
       this.droppableEvent = droppableEvent
     }
-    if(this.suppliedDragEventStart !== null){
+    if(this.suppliedDragEventStart !== null) {
       this.suppliedDragEventStart(this.hitDragging.dragging.mirror.getMirrorEl())
     }
   }
@@ -182,7 +182,7 @@ export class ExternalElementDragging {
 
     this.receivingContext = null
     this.droppableEvent = null
-    if(this.suppliedDragEventEnd !== null){
+    if(this.suppliedDragEventEnd !== null) {
       this.suppliedDragEventEnd()
     }
   }
