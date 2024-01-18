@@ -26,6 +26,7 @@
     "@fullcalendar/standard-scripts": "*"
   },
   "scripts": {
+	"postinstall": "standard-scripts postinstall",
     "lint": "standard-scripts lint",
     "build": "standard-scripts build",
     "dev": "standard-scripts dev",
