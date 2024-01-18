@@ -19,6 +19,28 @@
         center: 'title',
         right: 'dayGridMonth,timeGridWeek,timeGridDay'
       },
+	  datesSet: function(dateInfo) {
+      // Add slide effect here
+      const view = document.querySelector('.fc-daygrid-day-frame');
+      
+      document.querySelector('.fc-button-prev').addEventListener('click', () => {
+        view.classList.add('slide-exit-active');
+        view.addEventListener('transitionend', () => {
+          view.classList.remove('slide-exit-active');
+          view.classList.add('slide-enter');
+          setTimeout(() => view.classList.remove('slide-enter'), 300);
+        }, { once: true });
+      });
+
+      document.querySelector('.fc-button-next').addEventListener('click', () => {
+        view.classList.add('slide-enter-active');
+        view.addEventListener('transitionend', () => {
+          view.classList.remove('slide-enter-active');
+          view.classList.add('slide-exit');
+          setTimeout(() => view.classList.remove('slide-exit'), 300);
+        }, { once: true });
+      });
+    },
       navLinks: true, // can click day/week names to navigate views
       editable: true,
       selectable: true,
@@ -99,6 +121,25 @@
     max-width: 1100px;
     margin: 0 auto;
   }
+
+  /* CSS for slide effect */
+.slide-enter {
+  transform: translateX(-100%);
+}
+
+.slide-enter-active {
+  transform: translateX(0);
+  transition: transform 0.3s ease-in-out;
+}
+
+.slide-exit {
+  transform: translateX(0);
+}
+
+.slide-exit-active {
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+}
 
 </style>
 </head>
