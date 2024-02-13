@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "@fullcalendar/standard-tests",
+  "name": "@fullcalendar-tests/standard",
   "version": "0.0.0",
   "dependencies": {
     "@fullcalendar/bootstrap": "~6.1.10",
@@ -23,7 +23,7 @@
     "xhr-mock": "^2.5.1"
   },
   "devDependencies": {
-    "@fullcalendar/standard-scripts": "*",
+    "@fullcalendar-scripts/standard": "*",
     "@types/jasmine": "^3.3.12",
     "@types/jasmine-jquery": "^1.5.33",
     "@types/jquery": "^3.3.29",
@@ -39,7 +39,7 @@
   },
   "type": "module",
   "tsConfig": {
-    "extends": "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
+    "extends": "@fullcalendar-scripts/standard/config/tsconfig.browser.json",
     "compilerOptions": {
       "types": [
         "jasmine",

@@ -7,7 +7,7 @@
     "preact": "~10.12.1"
   },
   "devDependencies": {
-    "@fullcalendar/standard-scripts": "*",
+    "@fullcalendar-scripts/standard": "*",
     "globby": "^13.1.2",
     "handlebars": "^4.1.2"
   },
@@ -18,7 +18,7 @@
   },
   "type": "module",
   "tsConfig": {
-    "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
+    "extends": "@fullcalendar-scripts/standard/config/tsconfig.browser.json",
     "compilerOptions": {
       "rootDir": "./src",
       "outDir": "./dist/.tsout"
@@ -29,11 +29,19 @@
   },
   "buildConfig": {
     "exports": {
-      ".": { "iife": true },
+      ".": {
+        "iife": true
+      },
       "./preact": {},
       "./internal": {},
-      "./locales-all": { "iife": true, "generator": "./scripts/generate-locales-all.js" },
-      "./locales/*": { "iife": true, "iifeGenerator": "./scripts/generate-locale-iife.js" }
+      "./locales-all": {
+        "iife": true,
+        "generator": "./scripts/generate-locales-all.js"
+      },
+      "./locales/*": {
+        "iife": true,
+        "iifeGenerator": "./scripts/generate-locale-iife.js"
+      }
     },
     "iifeGlobals": {
       ".": "FullCalendar",

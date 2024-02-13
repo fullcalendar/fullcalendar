@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@fullcalendar/core": "~6.1.10",
-    "@fullcalendar/standard-scripts": "*",
+    "@fullcalendar-scripts/standard": "*",
     "luxon": "^1.12.1"
   },
   "scripts": {
@@ -25,7 +25,7 @@
   },
   "type": "module",
   "tsConfig": {
-    "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
+    "extends": "@fullcalendar-scripts/standard/config/tsconfig.browser.json",
     "compilerOptions": {
       "rootDir": "./src",
       "outDir": "./dist/.tsout"
@@ -36,7 +36,9 @@
   },
   "buildConfig": {
     "exports": {
-      ".": { "iife": true }
+      ".": {
+        "iife": true
+      }
     },
     "iifeGlobals": {
       ".": "FullCalendar.Luxon",

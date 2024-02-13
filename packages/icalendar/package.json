@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@fullcalendar/core": "~6.1.10",
-    "@fullcalendar/standard-scripts": "*",
+    "@fullcalendar-scripts/standard": "*",
     "ical.js": "^1.4.0"
   },
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "type": "module",
   "tsConfig": {
-    "extends":  "@fullcalendar/standard-scripts/config/tsconfig.browser.json",
+    "extends": "@fullcalendar-scripts/standard/config/tsconfig.browser.json",
     "compilerOptions": {
       "rootDir": "./src",
       "outDir": "./dist/.tsout"
@@ -35,7 +35,9 @@
   },
   "buildConfig": {
     "exports": {
-      ".": { "iife": true }
+      ".": {
+        "iife": true
+      }
     },
     "iifeGlobals": {
       ".": "FullCalendar.ICalendar",
