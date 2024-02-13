@@ -8,7 +8,6 @@ export async function ensureFileDir(path: string): Promise<any> {
 export async function readJson(path: string): Promise<any> {
   const srcJson = await readFile(path, 'utf8')
   const srcMeta = JSON.parse(srcJson)
-
   return srcMeta
 }
 

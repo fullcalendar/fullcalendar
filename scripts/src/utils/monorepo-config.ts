@@ -1,4 +1,4 @@
-import { join as joinPaths } from 'path'
+import { join as joinPaths, basename } from 'path'
 import { MonorepoStruct } from './monorepo-struct.js'
 
 export function getArchiveRootDirs(monorepoStruct: MonorepoStruct): string[] {
@@ -24,6 +24,13 @@ export function refineFilterArgs(args: string[], monorepoStruct: MonorepoStruct)
     const filterSubtrees: string[] = monorepoConfig.filterSubtrees || ['.']
 
     args = args.concat(filterSubtrees.map((subdir) => `--filter=${subdir}/**`))
+  }
+
+  // HACK
+  // In the ROOT monorepo?
+  // Exclude the 'standard' monorepo because will double-tread
+  if (basename(process.cwd()) === 'fullcalendar-workspace') {
+    args.push('--filter=!@fullcalendar-monorepos/standard')
   }
 
   return args

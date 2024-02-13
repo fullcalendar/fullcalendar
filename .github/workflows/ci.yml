@@ -1,8 +1,3 @@
-
-#
-# NOTE: keep this synced with standard repo's config
-#
-
 name: CI
 on:
   push:
@@ -26,12 +21,12 @@ jobs:
       - name: Setup PNPM
         uses: pnpm/action-setup@v2.2.4
         with:
-          version: 7.14.0
+          version: 8.6.3
 
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16.18.0
+          node-version: 18.13.0
           cache: 'pnpm'
 
       - name: Setup Turbo cache
@@ -50,6 +45,5 @@ jobs:
       - name: Build
         run: pnpm run build
 
-      # TODO: solve flaky tests
       # - name: Test
       #   run: pnpm run test

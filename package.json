@@ -2,7 +2,7 @@
   "private": true,
   "name": "@fullcalendar-monorepos/standard",
   "description": "Full-sized drag & drop event calendar in JavaScript",
-  "version": "0.0.0",
+  "version": "6.1.10",
   "keywords": [
     "calendar",
     "event",
@@ -23,8 +23,9 @@
   },
   "copyright": "2023 Adam Shaw",
   "devDependencies": {
-    "@fullcalendar/standard-scripts": "*"
+    "@fullcalendar-scripts/standard": "*"
   },
+  "type": "module",
   "scripts": {
     "postinstall": "standard-scripts postinstall",
     "lint": "standard-scripts lint",
@@ -35,16 +36,10 @@
     "clean": "standard-scripts clean",
     "ci": "pnpm run lint && pnpm run build && pnpm run test"
   },
-  "type": "module",
   "engines": {
     "pnpm": ">=7.9.5"
   },
   "pnpm": {
-    "peerDependencyRules": {
-      "allowAny": [
-        "postcss"
-      ]
-    },
     "patchedDependencies": {
       "jasmine-jquery@2.1.1": "scripts/patches/jasmine-jquery@2.1.1.patch"
     }

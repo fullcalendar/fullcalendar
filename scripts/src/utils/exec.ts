@@ -6,6 +6,7 @@ import {
   ChildProcess,
   ExecOptions,
   StdioOptions,
+  SpawnOptions,
 } from 'child_process'
 
 const exec = promisify(execCb)
@@ -28,14 +29,14 @@ export function execCapture(
 
 export function execLive(
   command: string | string[],
-  options: ExecOptions = {},
+  options: SpawnOptions = {},
 ): Promise<void> {
   return execWithStdio(command, options, 'inherit')
 }
 
 export function execSilent(
   command: string | string[],
-  options: ExecOptions = {},
+  options: SpawnOptions = {},
 ): Promise<void> {
   return execWithStdio(command, options, 'ignore')
 }
@@ -43,7 +44,7 @@ export function execSilent(
 // TODO: just return the childProcess
 export function spawnLive(
   command: string | string[],
-  options: ExecOptions = {},
+  options: SpawnOptions = {},
 ): () => void {
   const child = spawnWithStdio(command, options, 'inherit')
   return () => {
@@ -54,7 +55,7 @@ export function spawnLive(
 // TODO: just return the childProcess
 export function spawnSilent(
   command: string | string[],
-  options: ExecOptions = {},
+  options: SpawnOptions = {},
 ): () => void {
   const child = spawnWithStdio(command, options, 'ignore')
   return () => {
@@ -64,7 +65,7 @@ export function spawnSilent(
 
 function execWithStdio(
   command: string | string[],
-  options: ExecOptions,
+  options: SpawnOptions,
   stdio: StdioOptions,
 ): Promise<void> {
   const childProcess = spawnWithStdio(command, options, stdio)
@@ -82,7 +83,7 @@ function execWithStdio(
 
 function spawnWithStdio(
   command: string | string[],
-  options: ExecOptions,
+  options: SpawnOptions,
   stdio: StdioOptions,
 ): ChildProcess {
   let commandPath: string
