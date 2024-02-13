@@ -1,4 +1,3 @@
-
 # FullCalendar
 
 Full-sized drag & drop calendar in JavaScript
