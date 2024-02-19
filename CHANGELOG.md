@@ -1,3 +1,7 @@
+## unreleased
+
+- fix: fc-event-past className not attached to events that end midnight before today (#6120, #6486)
+
 ## 6.1.10 (2023-11-28)
 
 - feature: Angular version 17 support (#7525)

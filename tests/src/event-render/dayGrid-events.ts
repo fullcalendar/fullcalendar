@@ -585,4 +585,21 @@ describe('dayGrid advanced event rendering', () => {
     let visibleEventEls = filterVisibleEls(eventEls)
     expect(anyElsIntersect(visibleEventEls)).toBe(false)
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/6486
+  it('renders events starting yesterday, ending at midnight, as "past"', () => {
+    let calendar = initCalendar({
+      initialView: 'dayGridMonth',
+      initialDate: '2023-04-09', // "today"
+      now: '2023-04-09', // "today"
+      events: [{
+        start: '2023-04-08', // yesterday
+        allDay: true,
+      }]
+    })
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEls = dayGridWrapper.getEventEls()
+
+    expect(eventEls[0]).toHaveClass('fc-event-past')
+  })
 })

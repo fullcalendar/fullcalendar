@@ -277,7 +277,7 @@ export function getSegMeta(seg: Seg, todayRange: DateRange, nowDate?: DateMarker
   let segRange = seg.eventRange.range
 
   return {
-    isPast: segRange.end < (nowDate || todayRange.start),
+    isPast: segRange.end <= (nowDate || todayRange.start),
     isFuture: segRange.start >= (nowDate || todayRange.end),
     isToday: todayRange && rangeContainsMarker(todayRange, segRange.start),
   }
