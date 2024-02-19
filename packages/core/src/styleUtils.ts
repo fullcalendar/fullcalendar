@@ -10,7 +10,10 @@ export function injectStyles(styleText: string): void {
 }
 
 export function ensureElHasStyles(el: HTMLElement): void {
-  if (el.isConnected) {
+  if (
+    el.isConnected && // sometimes true if SSR system simulates DOM
+    el.getRootNode // sometimes undefined if SSR system simulates DOM
+  ) {
     registerStylesRoot(el.getRootNode() as ParentNode)
   }
 }

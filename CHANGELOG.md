@@ -4,6 +4,8 @@
 - fix: possible infinite recursion with dayGrid, dayMaxEventRows, and many hidden event rows (#7462)
 - React/Vue/Angular connectors and @fullcalendar/adaptive:
   - fix: eventContent custom content not rendering within print-mode (#7419)
+- Angular
+  - fix: Angular 17 SRR error with el.getRootNode (#7550)
 
 ## 6.1.10 (2023-11-28)
 
