@@ -1,6 +1,7 @@
 ## unreleased
 
 - fix: fc-event-past className not attached to events that end midnight before today (#6120, #6486)
+- fix: possible infinite recursion with dayGrid, dayMaxEventRows, and many hidden event rows (#7462)
 - React/Vue/Angular connectors and @fullcalendar/adaptive:
   - fix: eventContent custom content not rendering within print-mode (#7419)
 

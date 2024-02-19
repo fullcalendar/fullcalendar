@@ -602,4 +602,75 @@ describe('dayGrid advanced event rendering', () => {
 
     expect(eventEls[0]).toHaveClass('fc-event-past')
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/7462
+  it('Cannot infinitely recurse with dayMaxEventRows and many hidden event rows', () => {
+    initCalendar({
+      initialView: 'dayGridMonth',
+      initialDate: '2023-09-01',
+      dayMaxEventRows: 6,
+      events: [
+        {
+          start: '2023-09-28T00:00:00',
+          end: '2023-10-01T00:00:00'
+        },
+        {
+          start: '2023-09-26T00:00:00',
+          end: '2023-09-27T00:00:00'
+        },
+        {
+          start: '2023-09-20T17:00:00',
+          end: '2023-09-27T17:00:00'
+        },
+        {
+          start: '2023-09-21T16:00:00',
+          end: '2023-09-25T14:00:00'
+        },
+        {
+          start: '2023-09-21T16:00:00',
+          end: '2023-09-25T11:00:00'
+        },
+        {
+          start: '2023-09-28T10:00:00',
+          end: '2023-09-28T15:00:00'
+        },
+        {
+          start: '2023-09-27T08:00:00',
+          end: '2023-10-04T18:00:00'
+        },
+        {
+          start: '2023-09-20T13:00:00',
+          end: '2023-09-29T12:00:00'
+        },
+        {
+          start: '2023-09-20T12:00:00',
+          end: '2023-09-29T12:00:00'
+        },
+        {
+          start: '2023-09-27T11:00:00',
+          end: '2023-09-28T18:00:00'
+        },
+        {
+          start: '2023-03-29T23:00:00',
+          end: '2024-03-29T22:00:00'
+        },
+        {
+          start: '2023-09-25T02:00:00',
+          end: '2023-09-29T12:00:00'
+        },
+        {
+          start: '2023-09-22T14:00:00',
+          end: '2023-09-29T12:00:00'
+        },
+        {
+          start: '2023-09-22T14:00:00',
+          end: '2023-09-28T12:00:00'
+        },
+        {
+          start: '2023-09-19T13:00:00',
+          end: '2023-09-30T13:00:00'
+        }
+      ]
+    })
+  })
 })

@@ -278,10 +278,16 @@ class DayGridSegHierarchy extends SegHierarchy {
     const { entriesByLevel, forceHidden } = this
     const { touchingEntry, touchingLevel, touchingLateral } = insertion
 
+    // the entry that the new insertion is touching must be hidden
     if (this.hiddenConsumes && touchingEntry) {
       const touchingEntryId = buildEntryKey(touchingEntry)
-      // if not already hidden
-      if (!forceHidden[touchingEntryId]) {
+
+      // touching-entry already hidden?
+      if (forceHidden[touchingEntryId]) {
+        // the current-entry must be hidden with no opportunity to reslice
+        hiddenEntries.push(entry)
+        return
+      } else {
         if (this.allowReslicing) {
           const placeholderEntry: SegEntry = { // placeholder of the "more" link
             ...touchingEntry,
@@ -298,6 +304,7 @@ class DayGridSegHierarchy extends SegHierarchy {
       }
     }
 
+    // will try to reslice...
     return super.handleInvalidInsertion(insertion, entry, hiddenEntries)
   }
 }
