@@ -14,6 +14,11 @@
   - fix: eventContent custom content not rendering within print-mode (#7419)
 - Angular
   - fix: Angular 17 SRR error with el.getRootNode (#7550)
+- React
+  - fix: events incorrectly positioned w/ React strict-mode (#7574)
+    - TODO: possibly fixed these too?
+      - https://github.com/fullcalendar/fullcalendar/issues/7389
+      - https://github.com/fullcalendar/fullcalendar/issues/7400
 
 ## 6.1.10 (2023-11-28)
 
