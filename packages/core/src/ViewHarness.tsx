@@ -4,7 +4,7 @@ import { CssDimValue } from './scrollgrid/util.js'
 
 export interface ViewHarnessProps {
   elRef?: Ref<HTMLDivElement>
-  labeledById: string
+  labeledById?: string
   liquid?: boolean
   height?: CssDimValue
   aspectRatio?: number

@@ -17,4 +17,15 @@ describe('toolbar rendering', () => {
     expect(todayButtonEl.getAttribute('type')).toBe('button')
     expect(prevButtonEl.getAttribute('type')).toBe('button')
   })
+
+  it('if disabled, won\'t put aria-labelledby on view container', () => {
+    let calendar = initCalendar({
+      headerToolbar: false,
+    })
+
+    const calendarWrapper = new CalendarWrapper(calendar)
+    const viewContainerEl = calendarWrapper.getViewContainerEl()
+
+    expect(viewContainerEl).not.toHaveAttr('aria-labelledby')
+  })
 })

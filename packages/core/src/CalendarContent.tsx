@@ -93,7 +93,7 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
 
     let viewLabelId = (toolbarConfig.header && toolbarConfig.header.hasTitle)
       ? this.state.viewLabelId
-      : ''
+      : undefined
 
     return (
       <ViewContextType.Provider value={viewContext}>

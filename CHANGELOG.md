@@ -2,6 +2,7 @@
 
 - Core
   - fix: fc-event-past className not attached to events that end midnight before today (#6120, #6486)
+  - fix: aria-labelledby on view container should not exist when headerToolbar:false (#6884)
 - DayGrid
   - fix: possible infinite recursion with dayGrid, dayMaxEventRows, and many hidden event rows (#7462)
 - DayGrid/MultiMonth
