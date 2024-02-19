@@ -1,8 +1,16 @@
 ## unreleased
 
-- fix: fc-event-past className not attached to events that end midnight before today (#6120, #6486)
-- fix: possible infinite recursion with dayGrid, dayMaxEventRows, and many hidden event rows (#7462)
-- React/Vue/Angular connectors and @fullcalendar/adaptive:
+- Core
+  - fix: fc-event-past className not attached to events that end midnight before today (#6120, #6486)
+- DayGrid
+  - fix: possible infinite recursion with dayGrid, dayMaxEventRows, and many hidden event rows (#7462)
+- DayGrid/MultiMonth
+  - fix: incorrectly put events under +more link (#7002)
+    - TODO: possibly fixed these too?
+      - https://github.com/fullcalendar/fullcalendar/issues/6608
+      - https://github.com/fullcalendar/fullcalendar/issues/6900
+      - https://github.com/fullcalendar/fullcalendar/issues/7002
+- React/Vue/Angular connectors and @fullcalendar/adaptive
   - fix: eventContent custom content not rendering within print-mode (#7419)
 - Angular
   - fix: Angular 17 SRR error with el.getRootNode (#7550)

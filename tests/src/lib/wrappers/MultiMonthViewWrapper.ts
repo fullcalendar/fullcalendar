@@ -1,6 +1,7 @@
 import { Calendar } from '@fullcalendar/core'
 import { findElements } from '@fullcalendar/core/internal'
 import { ViewWrapper } from './ViewWrapper.js'
+import { DayGridWrapper } from './DayGridWrapper.js'
 
 export class MultiMonthViewWrapper extends ViewWrapper {
   constructor(calendar: Calendar) {
@@ -15,6 +16,11 @@ export class MultiMonthViewWrapper extends ViewWrapper {
       title: (monthEl.querySelector('.fc-multimonth-title') as HTMLElement).innerText,
       columnCnt: monthEl.querySelectorAll('th').length,
     }))
+  }
+
+  getDayGrid(i) {
+    const dayGridEls = findElements(this.el, '.fc-multimonth-daygrid')
+    return new DayGridWrapper(dayGridEls[i])
   }
 
   getEventEls() { // FG events

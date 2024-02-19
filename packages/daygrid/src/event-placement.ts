@@ -42,7 +42,9 @@ export function computeFgSegPlacement(
     let segUid = segs[segEntry.index].eventRange.instance.instanceId +
       ':' + segEntry.span.start +
       ':' + (segEntry.span.end - 1)
-    return segHeights[segUid]
+
+    // if setHeight is undefined, consider it height-less for now until dom requeried for height
+    return segHeights[segUid] || 0
   })
   hierarchy.allowReslicing = true
   hierarchy.strictOrder = strictOrder
