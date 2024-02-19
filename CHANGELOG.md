@@ -1,6 +1,8 @@
 ## unreleased
 
 - fix: fc-event-past className not attached to events that end midnight before today (#6120, #6486)
+- React/Vue/Angular connectors and @fullcalendar/adaptive:
+  - fix: eventContent custom content not rendering within print-mode (#7419)
 
 ## 6.1.10 (2023-11-28)
 

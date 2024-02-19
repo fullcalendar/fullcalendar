@@ -1,4 +1,4 @@
-import { ComponentChildren } from './preact.js'
+import { ComponentChildren, flushSync } from './preact.js'
 import { BaseComponent } from './vdom-util.js'
 import { CssDimValue } from './scrollgrid/util.js'
 import { CalendarOptions, CalendarListeners } from './options.js'
@@ -57,10 +57,14 @@ export class CalendarRoot extends BaseComponent<CalendarRootProps, CalendarRootS
   }
 
   handleBeforePrint = () => {
-    this.setState({ forPrint: true })
+    flushSync(() => {
+      this.setState({ forPrint: true })
+    })
   }
 
   handleAfterPrint = () => {
-    this.setState({ forPrint: false })
+    flushSync(() => {
+      this.setState({ forPrint: false })
+    })
   }
 }
