@@ -12,15 +12,11 @@
 
 ### React
 
-- fix: events incorrectly positioned w/ React strict-mode (#7574, #7389, #7400)
+- fix: possible +more link numbers incorrect (#7573, #6608, #6900)
 
 ### Angular
 
 - fix: Angular 17 SRR error with el.getRootNode (#7550)
-
-### React/Vue/Angular Connectors and Adaptive plugin
-
-- fix: eventContent custom content not rendering within print-mode (#7419)
 
 ## 6.1.10 (2023-11-28)
 
