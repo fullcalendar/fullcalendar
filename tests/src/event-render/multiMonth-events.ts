@@ -1,5 +1,5 @@
-import { filterVisibleEls } from "../lib/dom-misc.js"
-import { MultiMonthViewWrapper } from "../lib/wrappers/MultiMonthViewWrapper.js"
+import { filterVisibleEls } from '../lib/dom-misc.js'
+import { MultiMonthViewWrapper } from '../lib/wrappers/MultiMonthViewWrapper.js'
 
 describe('multi-month-view event rendering', () => {
   // https://github.com/fullcalendar/fullcalendar/issues/7573
@@ -17,18 +17,18 @@ describe('multi-month-view event rendering', () => {
         {
           title: 'event 1',
           start: '2024-01-15',
-          end: '2024-01-20'
+          end: '2024-01-20',
         },
         {
           title: 'event 2',
           start: '2024-01-15',
-          end: '2024-01-20'
+          end: '2024-01-20',
         },
         {
           title: 'event 3',
-          start: '2024-01-15'
-        }
-      ]
+          start: '2024-01-15',
+        },
+      ],
     }, calendarEl)
 
     const viewWrapper = new MultiMonthViewWrapper(calendar)

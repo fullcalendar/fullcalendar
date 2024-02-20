@@ -1,4 +1,4 @@
-import { ListViewWrapper } from "../lib/wrappers/ListViewWrapper.js"
+import { ListViewWrapper } from '../lib/wrappers/ListViewWrapper.js'
 
 describe('list-view event rendering', () => {
   // https://github.com/fullcalendar/fullcalendar/issues/6486
@@ -10,7 +10,7 @@ describe('list-view event rendering', () => {
       events: [{
         start: '2023-04-08', // yesterday
         allDay: true,
-      }]
+      }],
     })
     let wrapper = new ListViewWrapper(calendar)
     let eventEls = wrapper.getEventEls()
