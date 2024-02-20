@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/icalendar",
-  "version": "6.1.10",
+  "version": "6.1.11",
   "title": "FullCalendar iCalendar Plugin",
   "description": "Display events from a public iCalendar feed",
   "keywords": [
@@ -9,11 +9,11 @@
   ],
   "homepage": "https://fullcalendar.io/docs/icalendar",
   "peerDependencies": {
-    "@fullcalendar/core": "~6.1.10",
+    "@fullcalendar/core": "~6.1.11",
     "ical.js": "^1.4.0"
   },
   "devDependencies": {
-    "@fullcalendar/core": "~6.1.10",
+    "@fullcalendar/core": "~6.1.11",
     "@fullcalendar-scripts/standard": "*",
     "ical.js": "^1.4.0"
   },
