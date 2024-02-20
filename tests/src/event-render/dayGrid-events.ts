@@ -673,4 +673,29 @@ describe('dayGrid advanced event rendering', () => {
       ]
     })
   })
+
+  it('will limit events to dayMaxEventRows:1', () => {
+    const calendar = initCalendar({
+      initialDate: '2021-10-31',
+      dayMaxEventRows: 1,
+      events: [
+        { title: 'A', start:'2021-10-31', end:'2021-11-02' },
+        { title: 'B', start:'2021-10-29', end:'2021-11-02' },
+        { title: 'C', start:'2021-10-28 12:00:00', end:'2021-10-31 12:00:00' }
+      ]
+    })
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let visibleEventEls = filterVisibleEls(dayGridWrapper.getEventEls())
+    let moreEls = dayGridWrapper.getMoreEls()
+    let allEls = [...visibleEventEls, ...moreEls]
+    let offsetTopHash = {}
+
+    for (let el of allEls) {
+      offsetTopHash[Math.round(el.getBoundingClientRect().top)] = true
+    }
+
+    // two weeks, two distinct lines of events (one per week)
+    expect(Object.keys(offsetTopHash).length).toBe(2)
+  })
 })

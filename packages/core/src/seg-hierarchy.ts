@@ -42,9 +42,9 @@ export class SegHierarchy {
   stackCnts: { [entryId: string]: number } = {} // TODO: use better technique!?
 
   constructor(
-    private getEntryThickness = (entry: SegEntry) => {
-      // should return an integer
-      return entry.thickness!
+    private getEntryThickness = (entry: SegEntry): number => {
+      // if no thickness known, assume 1 (if 0, so small it always fits)
+      return entry.thickness || 1
     },
   ) {}
 
@@ -58,15 +58,14 @@ export class SegHierarchy {
     return hiddenEntries
   }
 
-  insertEntry(entry: SegEntry, hiddenEntries: SegEntry[]): number {
+  insertEntry(entry: SegEntry, hiddenEntries: SegEntry[]): void {
     let insertion = this.findInsertion(entry)
 
     if (this.isInsertionValid(insertion, entry)) {
       this.insertEntryAt(entry, insertion)
-      return 1
+    } else {
+      this.handleInvalidInsertion(insertion, entry, hiddenEntries)
     }
-
-    return this.handleInvalidInsertion(insertion, entry, hiddenEntries)
   }
 
   isInsertionValid(insertion: SegInsertion, entry: SegEntry): boolean {
@@ -74,49 +73,42 @@ export class SegHierarchy {
       (this.maxStackCnt === -1 || insertion.stackCnt < this.maxStackCnt)
   }
 
-  // returns number of new entries inserted
-  handleInvalidInsertion(insertion: SegInsertion, entry: SegEntry, hiddenEntries: SegEntry[]): number {
+  handleInvalidInsertion(insertion: SegInsertion, entry: SegEntry, hiddenEntries: SegEntry[]): void {
     if (this.allowReslicing && insertion.touchingEntry) {
-      return this.splitEntry(entry, insertion.touchingEntry, hiddenEntries)
-    }
+      const hiddenEntry = {
+        ...entry,
+        span: intersectSpans(entry.span, insertion.touchingEntry.span),
+      }
 
-    hiddenEntries.push(entry)
-    return 0
+      hiddenEntries.push(hiddenEntry)
+      this.splitEntry(entry, insertion.touchingEntry, hiddenEntries)
+    } else {
+      hiddenEntries.push(entry)
+    }
   }
 
-  splitEntry(entry: SegEntry, barrier: SegEntry, hiddenEntries: SegEntry[]): number {
-    let partCnt = 0
-    let splitHiddenEntries: SegEntry[] = []
+  /*
+  Does NOT add what hit the `barrier` into hiddenEntries. Should already be done.
+  */
+  splitEntry(entry: SegEntry, barrier: SegEntry, hiddenEntries: SegEntry[]): void {
     let entrySpan = entry.span
     let barrierSpan = barrier.span
 
     if (entrySpan.start < barrierSpan.start) {
-      partCnt += this.insertEntry({
+      this.insertEntry({
         index: entry.index,
         thickness: entry.thickness,
         span: { start: entrySpan.start, end: barrierSpan.start },
-      }, splitHiddenEntries)
+      }, hiddenEntries)
     }
 
     if (entrySpan.end > barrierSpan.end) {
-      partCnt += this.insertEntry({
+      this.insertEntry({
         index: entry.index,
         thickness: entry.thickness,
         span: { start: barrierSpan.end, end: entrySpan.end },
-      }, splitHiddenEntries)
+      }, hiddenEntries)
     }
-
-    if (partCnt) {
-      hiddenEntries.push({
-        index: entry.index,
-        thickness: entry.thickness,
-        span: intersectSpans(barrierSpan, entrySpan), // guaranteed to intersect
-      }, ...splitHiddenEntries)
-      return partCnt
-    }
-
-    hiddenEntries.push(entry)
-    return 0
   }
 
   insertEntryAt(entry: SegEntry, insertion: SegInsertion): void {
@@ -134,6 +126,9 @@ export class SegHierarchy {
     this.stackCnts[buildEntryKey(entry)] = insertion.stackCnt
   }
 
+  /*
+  does not care about limits
+  */
   findInsertion(newEntry: SegEntry): SegInsertion {
     let { levelCoords, entriesByLevel, strictOrder, stackCnts } = this
     let levelCnt = levelCoords.length
@@ -144,7 +139,7 @@ export class SegHierarchy {
     let stackCnt = 0
 
     for (let trackingLevel = 0; trackingLevel < levelCnt; trackingLevel += 1) {
-      let trackingCoord = levelCoords[trackingLevel]
+      const trackingCoord = levelCoords[trackingLevel]
 
       // if the current level is past the placed entry, we have found a good empty space and can stop.
       // if strictOrder, keep finding more lateral intersections.
