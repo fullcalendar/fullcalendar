@@ -1,47 +1,7 @@
 {
-  "private": true,
-  "name": "@fullcalendar-monorepos/standard",
-  "description": "Full-sized drag & drop event calendar in JavaScript",
-  "version": "6.1.11",
-  "keywords": [
-    "calendar",
-    "event",
-    "full-sized",
-    "fullcalendar"
-  ],
-  "homepage": "https://fullcalendar.io",
-  "bugs": "https://fullcalendar.io/reporting-bugs",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fullcalendar/fullcalendar.git"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Adam Shaw",
-    "email": "arshaw@arshaw.com",
-    "url": "http://arshaw.com/"
-  },
-  "copyright": "2023 Adam Shaw",
-  "devDependencies": {
-    "@fullcalendar-scripts/standard": "*"
-  },
-  "type": "module",
-  "scripts": {
-    "postinstall": "standard-scripts postinstall",
-    "lint": "standard-scripts lint",
-    "build": "standard-scripts build",
-    "dev": "standard-scripts dev",
-    "test": "standard-scripts test",
-    "test:dev": "standard-scripts test --dev",
-    "clean": "standard-scripts clean",
-    "ci": "pnpm run lint && pnpm run build && pnpm run test"
-  },
-  "engines": {
-    "pnpm": ">=7.9.5"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "jasmine-jquery@2.1.1": "scripts/patches/jasmine-jquery@2.1.1.patch"
-    }
+  "dependencies": {
+    "@fullcalendar/core": "^6.1.11",
+    "@fullcalendar/daygrid": "^6.1.11",
+    "@fullcalendar/interaction": "^6.1.11"
   }
 }
