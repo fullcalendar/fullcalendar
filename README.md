@@ -1,73 +1,57 @@
-# FullCalendar
-
-Full-sized drag & drop calendar in JavaScript
-
-- [Project Website](https://fullcalendar.io/)
-- [Documentation](https://fullcalendar.io/docs)
-- [Changelog](CHANGELOG.md)
-- [Support](https://fullcalendar.io/support)
-- [License](LICENSE.md)
-- [Roadmap](https://fullcalendar.io/roadmap)
-
-Connectors:
-
-- [React](https://github.com/fullcalendar/fullcalendar-react)
-- [Angular](https://github.com/fullcalendar/fullcalendar-angular)
-- [Vue 3](https://github.com/fullcalendar/fullcalendar-vue) |
-  [2](https://github.com/fullcalendar/fullcalendar-vue2)
-
-## Bundle
-
-The [FullCalendar Standard Bundle](bundle) is easier to install than individual plugins, though filesize will be larger. It works well with a CDN.
+# FullCalenderGuide
+A simple tutorial guide to add  a calendar to you web applications and perform CRUD operations such as add event,delete event and reschedule event using PHP.
+## Table of Contents
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
 ## Installation
+1.Install the Fullcalender core package and any plugins :
+Note:install the core package in the same directory as your project file.<br>
 
-Install the FullCalendar core package and any plugins you plan to use:
+`npm install @fullcalendar/core @fullcalendar/interaction @fullcalendar/daygrid`
 
-```sh
-npm install @fullcalendar/core @fullcalendar/interaction @fullcalendar/daygrid
-```
 
 ## Usage
+1.Install XAMPP server and follow the instructions to setup.<br>
+2.Create a new repository and clone it into the htdocs folder under the XAMMP Directory.<br>
+3.create an index.php file.<br>
+4.within the PHP tags <?php ... ?>; include the code bases below.<br>
 
-Instantiate a Calendar with plugins and options:
+a. Initialzie the javascript library from the package downloaded.<br> <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
 
-```js
-import { Calendar } from '@fullcalendar/core'
-import interactionPlugin from '@fullcalendar/interaction'
-import dayGridPlugin from '@fullcalendar/daygrid'
+b. Write the javascript script to load the DOM content and render the calender content.
+``` javascript
+    <script>
 
-const calendarEl = document.getElementById('calendar')
-const calendar = new Calendar(calendarEl, {
-  plugins: [
-    interactionPlugin,
-    dayGridPlugin
-  ],
-  initialView: 'timeGridWeek',
-  editable: true,
-  events: [
-    { title: 'Meeting', start: new Date() }
-  ]
-})
+      document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar')
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth'
+        })
+        calendar.render()
+      })
+      
 
-calendar.render()
+    </script>
 ```
-
-## Development
-
-You must install this repo with [PNPM](https://pnpm.io/):
+c. Create a div with an id of "calender" as specified in the DOM Loading Script.
+``` html
+        <div id='calendar'></div>
 
 ```
-pnpm install
-```
+5.Run your code and the calender should be displayed on the screen.
 
-Available scripts (via `pnpm run <script>`):
+## PHP CRUD Operations
+1. Open your open your browser and navigate to http://localhost/phpmyadmin/ <br>
+2. Create a new database called "Events".<br>
+3. Paste the SQL provided in the Events.sql file to create the required tables.<br>
+4. Setup your files to match the PHP files provided.<br>
+5. Once all steps are followed you should be able to add,delete and update an event.
 
-- `build` - build production-ready dist files
-- `dev` - build & watch development dist files
-- `test` - test headlessly
-- `test:dev` - test interactively
-- `lint`
-- `clean`
-
-[Info about contributing code &raquo;](CONTRIBUTING.md)
+## Features
+1.Dynamic calender view.<br>
+2.Calender CRUD operations.
