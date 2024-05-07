@@ -8,7 +8,7 @@ export default {
   },
   prevText: 'Dříve',
   nextText: 'Později',
-  todayText: 'Nyní',
+  todayText: 'Dnes',
   yearText: 'Rok',
   monthText: 'Měsíc',
   weekTextLong: 'Týden',
