@@ -9,7 +9,7 @@ export default {
   buttonText: {
     prev: 'Dříve',
     next: 'Později',
-    today: 'Nyní',
+    today: 'Dnes',
     year: 'Rok',
     month: 'Měsíc',
     week: 'Týden',
