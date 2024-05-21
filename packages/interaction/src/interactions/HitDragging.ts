@@ -186,6 +186,16 @@ export class HitDragging {
               // make sure the hit is within activeRange, meaning it's not a dead cell
               rangeContainsRange(hit.dateProfile.activeRange, hit.dateSpan.range)
             ) &&
+            // Ensure the component we are querying for the hit is accessibly my the pointer
+            // Prevents obscured calendars (ex: under a modal dialog) from accepting hit
+            // https://github.com/fullcalendar/fullcalendar/issues/5026
+            offsetTracker.el.contains(
+              document.elementFromPoint(
+                // add-back origins to get coordinate relative to top-left of window viewport
+                positionLeft + originLeft - window.scrollX,
+                positionTop + originTop - window.scrollY,
+              )
+            ) &&
             (!bestHit || hit.layer > bestHit.layer)
           ) {
             hit.componentId = id

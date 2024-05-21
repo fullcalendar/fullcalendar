@@ -124,6 +124,7 @@ export class ElementMirror {
       // would use preventSelection(), but that prevents selectstart, causing problems.
       mirrorEl.style.userSelect = 'none'
       mirrorEl.style.webkitUserSelect = 'none'
+      mirrorEl.style.pointerEvents = 'none'
 
       mirrorEl.classList.add('fc-event-dragging')
 

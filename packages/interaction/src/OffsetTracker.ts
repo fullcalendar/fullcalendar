@@ -16,7 +16,7 @@ export class OffsetTracker { // ElementOffsetTracker
   scrollCaches: ElementScrollGeomCache[]
   origRect: Rect
 
-  constructor(el: HTMLElement) {
+  constructor(public el: HTMLElement) {
     this.origRect = computeRect(el)
 
     // will work fine for divs that have overflow:hidden
