@@ -197,6 +197,7 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
         border: '5px solid red',
         borderRadius: '5px',
         margin: '-5px 0 0 -5px',
+        pointerEvents: 'none',
       })
       .appendTo('body')
   }
