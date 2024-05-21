@@ -179,6 +179,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
         mutation = computeEventMutation(
           initialHit,
           hit,
+          this.eventRange.instance.range.start,
           receivingContext.getCurrentData().pluginHooks.eventDragMutationMassagers,
         )
 
@@ -437,6 +438,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 function computeEventMutation(
   hit0: Hit,
   hit1: Hit,
+  eventInstanceStart: Date,
   massagers: eventDragMutationMassager[],
 ): EventMutation {
   let dateSpan0 = hit0.dateSpan
@@ -453,6 +455,10 @@ function computeEventMutation(
       // means date1 is already start-of-day,
       // but date0 needs to be converted
       date0 = startOfDay(date0)
+    } else {
+      // Moving from allDate->timed
+      // Doesn't matter where on the event the drag began, mutate the event's start-date to date1
+      date0 = eventInstanceStart
     }
   }
 
