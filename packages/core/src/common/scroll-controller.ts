@@ -91,19 +91,19 @@ export class ElementScrollController extends ScrollController {
 
 export class WindowScrollController extends ScrollController {
   getScrollTop() {
-    return window.pageYOffset
+    return window.scrollY
   }
 
   getScrollLeft() {
-    return window.pageXOffset
+    return window.scrollX
   }
 
   setScrollTop(n: number) {
-    window.scroll(window.pageXOffset, n)
+    window.scroll(window.scrollX, n)
   }
 
   setScrollLeft(n: number) {
-    window.scroll(n, window.pageYOffset)
+    window.scroll(n, window.scrollY)
   }
 
   getScrollWidth() {

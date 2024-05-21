@@ -209,15 +209,15 @@ export class PointerDragging {
     if (this.shouldWatchScroll) {
       this.prevPageX = (ev as any).pageX
       this.prevPageY = (ev as any).pageY
-      this.prevScrollX = window.pageXOffset
-      this.prevScrollY = window.pageYOffset
+      this.prevScrollX = window.scrollX
+      this.prevScrollY = window.scrollY
     }
   }
 
   handleScroll = (ev: UIEvent) => {
     if (!this.shouldIgnoreMove) {
-      let pageX = (window.pageXOffset - this.prevScrollX) + this.prevPageX
-      let pageY = (window.pageYOffset - this.prevScrollY) + this.prevPageY
+      let pageX = (window.scrollX - this.prevScrollX) + this.prevPageX
+      let pageY = (window.scrollY - this.prevScrollY) + this.prevPageY
 
       this.emitter.trigger('pointermove', {
         origEvent: ev,

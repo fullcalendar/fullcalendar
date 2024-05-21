@@ -23,16 +23,16 @@ export class ElementMirror {
   start(sourceEl: HTMLElement, pageX: number, pageY: number) {
     this.sourceEl = sourceEl
     this.sourceElRect = this.sourceEl.getBoundingClientRect()
-    this.origScreenX = pageX - window.pageXOffset
-    this.origScreenY = pageY - window.pageYOffset
+    this.origScreenX = pageX - window.scrollX
+    this.origScreenY = pageY - window.scrollY
     this.deltaX = 0
     this.deltaY = 0
     this.updateElPosition()
   }
 
   handleMove(pageX: number, pageY: number) {
-    this.deltaX = (pageX - window.pageXOffset) - this.origScreenX!
-    this.deltaY = (pageY - window.pageYOffset) - this.origScreenY!
+    this.deltaX = (pageX - window.scrollX) - this.origScreenX!
+    this.deltaY = (pageY - window.scrollY) - this.origScreenY!
     this.updateElPosition()
   }
 
