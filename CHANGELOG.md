@@ -1,3 +1,17 @@
+## 6.1.12 (2024-5-21)
+
+### General
+
+- fix: don't allow event drag-n-drop on obscured calendars (#5026)
+
+### TimeGrid
+
+- fix: when moving event from all-day -> timed, use literal mouse position for event drop (#7533)
+
+### Timeline
+
+- fix: timeline rtl initial scroll on Chrome (#7335)
+
 ## 6.1.11 (2024-02-19)
 
 ### General
