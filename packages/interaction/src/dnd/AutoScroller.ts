@@ -171,6 +171,10 @@ export class AutoScroller {
           bestSide = { scrollCache, name: 'bottom', distance: bottomDist }
         }
 
+        /*
+        TODO: fix broken RTL scrolling. canScrollLeft always returning false
+        https://github.com/fullcalendar/fullcalendar/issues/4837
+        */
         if (
           leftDist <= edgeThreshold && this.everMovedLeft && scrollCache.canScrollLeft() &&
           (!bestSide || bestSide.distance > leftDist)
