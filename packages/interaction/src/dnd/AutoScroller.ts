@@ -206,6 +206,10 @@ export class AutoScroller {
       if (typeof query === 'object') {
         els.push(query)
       } else {
+        /*
+        TODO: in the future, always have auto-scroll happen on element where current Hit came from
+        Ticket: https://github.com/fullcalendar/fullcalendar/issues/4593
+        */
         els.push(...Array.prototype.slice.call(
           (scrollStartEl.getRootNode() as ParentNode).querySelectorAll(query),
         ))
