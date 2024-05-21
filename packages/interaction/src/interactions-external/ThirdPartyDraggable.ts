@@ -43,7 +43,11 @@ export class ThirdPartyDraggable {
       dragging.mirrorSelector = settings.mirrorSelector
     }
 
-    new ExternalElementDragging(dragging, settings.eventData) // eslint-disable-line no-new
+    let externalDragging = new ExternalElementDragging(dragging, settings.eventData)
+
+    // The hit-detection system requires that the dnd-mirror-element be pointer-events:none,
+    // but this can't be guaranteed for third-party draggables, so disable
+    externalDragging.hitDragging.disablePointCheck = true
   }
 
   destroy() {

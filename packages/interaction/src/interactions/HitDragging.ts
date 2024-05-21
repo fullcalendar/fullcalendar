@@ -32,6 +32,7 @@ export class HitDragging {
   // options that can be set by caller
   useSubjectCenter: boolean = false
   requireInitial: boolean = true // if doesn't start out on a hit, won't emit any events
+  disablePointCheck: boolean = false
 
   // internal state
   offsetTrackers: { [componentUid: string]: OffsetTracker }
@@ -189,11 +190,14 @@ export class HitDragging {
             // Ensure the component we are querying for the hit is accessibly my the pointer
             // Prevents obscured calendars (ex: under a modal dialog) from accepting hit
             // https://github.com/fullcalendar/fullcalendar/issues/5026
-            offsetTracker.el.contains(
-              document.elementFromPoint(
-                // add-back origins to get coordinate relative to top-left of window viewport
-                positionLeft + originLeft - window.scrollX,
-                positionTop + originTop - window.scrollY,
+            (
+              this.disablePointCheck ||
+              offsetTracker.el.contains(
+                document.elementFromPoint(
+                  // add-back origins to get coordinate relative to top-left of window viewport
+                  positionLeft + originLeft - window.scrollX,
+                  positionTop + originTop - window.scrollY,
+                )
               )
             ) &&
             (!bestHit || hit.layer > bestHit.layer)
