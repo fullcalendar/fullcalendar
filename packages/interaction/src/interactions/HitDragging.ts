@@ -197,7 +197,7 @@ export class HitDragging {
                   // add-back origins to get coordinate relative to top-left of window viewport
                   positionLeft + originLeft - window.scrollX,
                   positionTop + originTop - window.scrollY,
-                )
+                ),
               )
             ) &&
             (!bestHit || hit.layer > bestHit.layer)
