@@ -454,7 +454,7 @@ function computeEventMutation(
     if (dateSpan1.allDay) {
       // means date1 is already start-of-day,
       // but date0 needs to be converted
-      date0 = startOfDay(date0)
+      date0 = startOfDay(eventInstanceStart)
     } else {
       // Moving from allDate->timed
       // Doesn't matter where on the event the drag began, mutate the event's start-date to date1
