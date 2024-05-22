@@ -1,4 +1,14 @@
-## 6.1.12 (2024-5-21)
+## 6.1.13 (2024-05-22)
+
+### TimeGrid
+
+- follow-up fix to #7533 that improves event-dragging from timed to all-day
+
+### Timeline
+
+- follow-up fix to #7335 that sidesteps issues with dynamically loaded fonts
+
+## 6.1.12 (2024-05-21)
 
 ### General
 
