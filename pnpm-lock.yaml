@@ -399,46 +399,46 @@ importers:
   tests:
     dependencies:
       '@fullcalendar/bootstrap':
-        specifier: ~6.1.10
+        specifier: workspace:*
         version: link:../packages/bootstrap4/dist
       '@fullcalendar/core':
-        specifier: ~6.1.10
+        specifier: workspace:*
         version: link:../packages/core/dist
       '@fullcalendar/daygrid':
-        specifier: ~6.1.10
+        specifier: workspace:*
         version: link:../packages/daygrid/dist
       '@fullcalendar/google-calendar':
-        specifier: ~6.1.10
+        specifier: workspace:*
         version: link:../packages/google-calendar/dist
       '@fullcalendar/icalendar':
-        specifier: ~6.1.10
+        specifier: workspace:*
         version: link:../packages/icalendar/dist
       '@fullcalendar/interaction':
-        specifier: ~6.1.10
+        specifier: workspace:*
         version: link:../packages/interaction/dist
       '@fullcalendar/list':
-        specifier: ~6.1.10
+        specifier: workspace:*
         version: link:../packages/list/dist
       '@fullcalendar/luxon3':
-        specifier: ~6.1.10
+        specifier: workspace:*
         version: link:../packages/luxon3/dist
       '@fullcalendar/moment':
-        specifier: ~6.1.10
+        specifier: workspace:*
         version: link:../packages/moment/dist
       '@fullcalendar/moment-timezone':
-        specifier: ~6.1.10
+        specifier: workspace:*
         version: link:../packages/moment-timezone/dist
       '@fullcalendar/multimonth':
-        specifier: ~6.1.10
+        specifier: workspace:*
         version: link:../packages/multimonth/dist
       '@fullcalendar/rrule':
-        specifier: ~6.1.10
+        specifier: workspace:*
         version: link:../packages/rrule/dist
       '@fullcalendar/timegrid':
-        specifier: ~6.1.10
+        specifier: workspace:*
         version: link:../packages/timegrid/dist
       fullcalendar:
-        specifier: ~6.1.10
+        specifier: workspace:*
         version: link:../bundle/dist
       luxon:
         specifier: ^2.0.0
@@ -3048,6 +3048,7 @@ packages:
 
   /inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
     dependencies:
       once: 1.4.0
       wrappy: 1.0.2
