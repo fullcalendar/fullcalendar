@@ -1,3 +1,14 @@
+
+## 6.1.14 (2024-06-04)
+
+### React
+
+- React 19 support
+
+### Angular
+
+- Angular 18 support (#7682)
+
 ## 6.1.13 (2024-05-22)
 
 ### TimeGrid
