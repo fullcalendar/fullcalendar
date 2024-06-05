@@ -20,22 +20,22 @@ importers:
   bundle:
     dependencies:
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../packages/core/dist
       '@fullcalendar/daygrid':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../packages/daygrid/dist
       '@fullcalendar/interaction':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../packages/interaction/dist
       '@fullcalendar/list':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../packages/list/dist
       '@fullcalendar/multimonth':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../packages/multimonth/dist
       '@fullcalendar/timegrid':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../packages/timegrid/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -49,7 +49,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -59,7 +59,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -86,7 +86,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -96,7 +96,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -106,7 +106,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
       ical.js:
         specifier: ^1.4.0
@@ -119,7 +119,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -129,7 +129,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -139,7 +139,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
       luxon:
         specifier: ^1.12.1
@@ -152,7 +152,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
       '@types/luxon':
         specifier: ^2.0.9
@@ -168,7 +168,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
       '@types/luxon':
         specifier: ^3.3.0
@@ -184,7 +184,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
       moment:
         specifier: ^2.29.1
@@ -197,7 +197,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
       moment-timezone:
         specifier: ^0.5.40
@@ -207,14 +207,14 @@ importers:
   packages/multimonth:
     dependencies:
       '@fullcalendar/daygrid':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../daygrid/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -224,7 +224,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
       rrule:
         specifier: ^2.6.0
@@ -234,14 +234,14 @@ importers:
   packages/timegrid:
     dependencies:
       '@fullcalendar/daygrid':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../daygrid/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -251,7 +251,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.13
+        specifier: ~6.1.14
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -869,7 +869,7 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@types/estree': 1.0.0
+      '@types/estree': 1.0.5
       estree-walker: 2.0.2
       picomatch: 2.3.1
       rollup: 2.79.1
@@ -905,22 +905,22 @@ packages:
   /@types/cross-spawn@6.0.2:
     resolution: {integrity: sha512-KuwNhp3eza+Rhu8IFI5HUXRP0LIhqH5cAjubUvGXXthh4YYBuP2ntwEX+Cz8GJoZUHlKo247wPWOfA9LYEq4cw==}
     dependencies:
-      '@types/node': 18.16.5
+      '@types/node': 20.11.20
     dev: true
 
   /@types/estree@0.0.39:
     resolution: {integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==}
     dev: true
 
-  /@types/estree@1.0.0:
-    resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==}
+  /@types/estree@1.0.5:
+    resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
     dev: true
 
   /@types/glob@8.0.0:
     resolution: {integrity: sha512-l6NQsDDyQUVeoTynNpC9uRvCUint/gSUXQA2euwmTuWGvPY5LSDUu6tkCtJB2SvGQlJQzLaKqcGZP4//7EDveA==}
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 18.16.5
+      '@types/node': 20.11.20
     dev: true
 
   /@types/jasmine-jquery@1.5.34:
@@ -944,14 +944,14 @@ packages:
     resolution: {integrity: sha512-FhpRzf927MNQdRZP0J5DLIdTXhjLYzeUTmLAu69mnVksLH9CJY3IuSeEgbKUki7GQZm0WqDkGzyxju2EZGD2wA==}
     dev: true
 
-  /@types/json-schema@7.0.11:
-    resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
+  /@types/json-schema@7.0.15:
+    resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
     dev: true
 
   /@types/karma@6.3.3:
     resolution: {integrity: sha512-nRMec4mTCt+tkpRqh5/pAxmnjzEgAaalIq7mdfLFH88gSRC8+bxejLiSjHMMT/vHIhJHqg4GPIGCnCFbwvDRww==}
     dependencies:
-      '@types/node': 18.16.5
+      '@types/node': 20.11.20
       log4js: 6.7.0
     transitivePeerDependencies:
       - supports-color
@@ -973,18 +973,24 @@ packages:
     resolution: {integrity: sha512-jh6m0QUhIRcZpNv7Z/rpN+ZWXOicUUQbSoWks7Htkbb9IjFQj4kzcX/xFCkjstCj5flMsN8FiSvt+q+Tcs4Llg==}
     dev: true
 
-  /@types/node@18.16.5:
-    resolution: {integrity: sha512-seOA34WMo9KB+UA78qaJoCO20RJzZGVXQ5Sh6FWu0g/hfT44nKXnej3/tCQl7FL97idFpBhisLYCTB50S0EirA==}
+  /@types/node@20.11.20:
+    resolution: {integrity: sha512-7/rR21OS+fq8IyHTgtLkDK949uzsa6n8BkziAKtPVpugIkO6D+/ooXMvzXxDnZrmtXVfjb1bKQafYpb8s89LOg==}
+    dependencies:
+      undici-types: 5.26.5
     dev: true
 
   /@types/resolve@1.17.1:
     resolution: {integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw==}
     dependencies:
-      '@types/node': 18.16.5
+      '@types/node': 20.11.20
     dev: true
 
   /@types/semver@7.3.13:
     resolution: {integrity: sha512-21cFJr9z3g5dW8B0CVI9g2O9beqaThGQ6ZFBqHfwhzLDKUxaqTIy3vnfah/UPkfOiF2pLq+tGz+W8RyCskuslw==}
+    dev: true
+
+  /@types/semver@7.5.6:
+    resolution: {integrity: sha512-dn1l8LaMea/IjDoHNd9J52uBbInB796CDffS6VdIxvqYCPSG0V0DzHp76GpaWnlhg88uYyPbXCDIowa86ybd5A==}
     dev: true
 
   /@types/sizzle@2.3.3:
@@ -1098,8 +1104,8 @@ packages:
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
     dependencies:
-      '@types/json-schema': 7.0.11
-      '@types/semver': 7.3.13
+      '@types/json-schema': 7.0.15
+      '@types/semver': 7.5.6
       '@typescript-eslint/scope-manager': 5.44.0
       '@typescript-eslint/types': 5.44.0
       '@typescript-eslint/typescript-estree': 5.44.0(typescript@4.9.3)
@@ -1134,14 +1140,6 @@ packages:
       acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
     dependencies:
       acorn: 8.11.3
-    dev: true
-
-  /acorn-jsx@5.3.2(acorn@8.8.1):
-    resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
-    peerDependencies:
-      acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
-    dependencies:
-      acorn: 8.8.1
     dev: true
 
   /acorn@8.11.3:
@@ -1478,7 +1476,7 @@ packages:
     resolution: {integrity: sha512-CBHJJdDmgjl3daYjN5Cp5kbTf1mUhZoS+beLklHIvkOWscs83YAhLlF3Wsh/lciQYAcbBJgTOD44VtG31ZM4Hw==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     dependencies:
-      caniuse-lite: 1.0.30001565
+      caniuse-lite: 1.0.30001627
       electron-to-chromium: 1.4.595
       node-releases: 2.0.13
       update-browserslist-db: 1.0.13(browserslist@4.21.4)
@@ -1562,10 +1560,6 @@ packages:
 
   /caniuse-lite@1.0.30001434:
     resolution: {integrity: sha512-aOBHrLmTQw//WFa2rcF1If9fa3ypkC1wzqqiKHgfdrXTWcU8C4gKVZT77eQAPWN1APys3+uQ0Df07rKauXGEYA==}
-    dev: true
-
-  /caniuse-lite@1.0.30001565:
-    resolution: {integrity: sha512-xrE//a3O7TP0vaJ8ikzkD2c2NgcVUvsEe2IvFTntV4Yd1Z9FVzh+gW+enX96L0psrbaFMcVcH2l90xNuGDWc8w==}
     dev: true
 
   /caniuse-lite@1.0.30001627:
@@ -2132,7 +2126,7 @@ packages:
     dependencies:
       '@types/cookie': 0.4.1
       '@types/cors': 2.8.12
-      '@types/node': 18.16.5
+      '@types/node': 20.11.20
       accepts: 1.3.8
       base64id: 2.0.0
       cookie: 0.4.2
@@ -2593,8 +2587,8 @@ packages:
     resolution: {integrity: sha512-XwctdmTO6SIvCzd9810yyNzIrOrqNYV9Koizx4C/mRhf9uq0o4yHoCEU/670pOxOL/MSraektvSAji79kX90Vg==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dependencies:
-      acorn: 8.8.1
-      acorn-jsx: 5.3.2(acorn@8.8.1)
+      acorn: 8.11.3
+      acorn-jsx: 5.3.2(acorn@8.11.3)
       eslint-visitor-keys: 3.4.3
     dev: true
 
@@ -3473,7 +3467,7 @@ packages:
   /is-reference@1.2.1:
     resolution: {integrity: sha512-U82MsXXiFIrjCK4otLT+o2NA2Cd2g5MLoOVXUZjIOhLurrRxpEXzI8O0KZHr3IjLvlAH1kTPYSuqer5T9ZVBKQ==}
     dependencies:
-      '@types/estree': 1.0.0
+      '@types/estree': 1.0.5
     dev: true
 
   /is-regex@1.1.4:
@@ -3618,7 +3612,7 @@ packages:
     engines: {node: '>=4.0'}
     dependencies:
       array-includes: 3.1.8
-      object.assign: 4.1.4
+      object.assign: 4.1.5
     dev: true
 
   /karma-chrome-launcher@3.1.1:
@@ -4092,16 +4086,6 @@ packages:
       isobject: 3.0.1
     dev: true
 
-  /object.assign@4.1.4:
-    resolution: {integrity: sha512-1mxKf0e58bvyjSCtKYY4sRe9itRk3PJpquJOjeIkz885CczcI4IvJJDLPS72oowuSh+pBxUFROpX+TU++hxhZQ==}
-    engines: {node: '>= 0.4'}
-    dependencies:
-      call-bind: 1.0.7
-      define-properties: 1.2.1
-      has-symbols: 1.0.3
-      object-keys: 1.1.1
-    dev: true
-
   /object.assign@4.1.5:
     resolution: {integrity: sha512-byy+U7gp+FVwmyzKPYhW2h5l3crpmGsxl7X2s8y43IgxvG4g3QZ6CffDtsNQy1WsmZpQbO+ybo0AlW7TY6DcBQ==}
     engines: {node: '>= 0.4'}
@@ -4182,7 +4166,7 @@ packages:
       levn: 0.4.1
       prelude-ls: 1.2.1
       type-check: 0.4.0
-      word-wrap: 1.2.3
+      word-wrap: 1.2.5
     dev: true
 
   /p-finally@1.0.0:
@@ -5683,6 +5667,10 @@ packages:
       which-boxed-primitive: 1.0.2
     dev: true
 
+  /undici-types@5.26.5:
+    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+    dev: true
+
   /union-value@1.0.1:
     resolution: {integrity: sha512-tJfXmxMeWYnczCVs7XAEvIV7ieppALdyepWMkHkwciRpZraG/xwT+s2JN8+pr1+8jCRf80FFzvr+MpQeeoF4Xg==}
     engines: {node: '>=0.10.0'}
@@ -5827,8 +5815,8 @@ packages:
       isexe: 2.0.0
     dev: true
 
-  /word-wrap@1.2.3:
-    resolution: {integrity: sha512-Hz/mrNwitNRh/HUAtM/VT/5VH+ygD6DV7mYKZAtHOrbs8U7lvPS6xf7EJKMF0uW1KJCl0H701g3ZGus+muE5vQ==}
+  /word-wrap@1.2.5:
+    resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
     engines: {node: '>=0.10.0'}
     dev: true
 
