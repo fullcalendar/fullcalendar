@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@fullcalendar-tests/standard",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "dependencies": {
     "@fullcalendar/bootstrap": "workspace:*",
     "@fullcalendar/core": "workspace:*",
