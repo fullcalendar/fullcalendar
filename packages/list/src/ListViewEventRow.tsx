@@ -39,12 +39,13 @@ export class ListViewEventRow extends BaseComponent<ListViewEventRowProps> {
           seg.eventRange.def.url && 'fc-event-forced-url',
         ]}
         defaultGenerator={() => renderEventInnerContent(seg, context) /* weird */}
+        extraCellGenerator={() => renderEventExtraCell(seg, context) }
         seg={seg}
         timeText=""
         disableDragging={true}
         disableResizing={true}
       >
-        {(InnerContent, eventContentArg) => (
+        {(InnerContent, eventContentArg,_not_used, ExtraCell) => (
           <Fragment>
             {buildTimeContent(seg, timeFormat, context, timeHeaderId, dateHeaderId)}
             <td aria-hidden className="fc-list-event-graphic">
@@ -59,6 +60,10 @@ export class ListViewEventRow extends BaseComponent<ListViewEventRowProps> {
               elTag="td"
               elClasses={['fc-list-event-title']}
               elAttrs={{ headers: `${eventHeaderId} ${dateHeaderId}` }}
+            />
+            <ExtraCell
+            elTag="td"
+            elClasses={['fc-list-event-extra-cell']}
             />
           </Fragment>
         )}
@@ -75,6 +80,20 @@ function renderEventInnerContent(seg: Seg, context: ViewContext) {
       {seg.eventRange.def.title}
     </a>
   )
+}
+
+function renderEventExtraCell(seg: Seg, context: ViewContext) {
+    const retrieveElementFromSeg = (seg: Seg) => {
+        return undefined;
+    };
+    const element: HTMLElement = retrieveElementFromSeg(seg)
+    let interactiveAttrs = getSegAnchorAttrs(seg, context)
+    for (let key in interactiveAttrs) {
+        element.setAttribute(key, interactiveAttrs[key])
+    }
+    return (
+        element
+    )
 }
 
 function buildTimeContent(
