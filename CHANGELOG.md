@@ -1,5 +1,15 @@
 
-See WIP
+## 6.1.15 (2024-07-12)
+
+### General
+
+- fix: dragScroll does not work on multiMonth view (#7324)
+- fix: clicking on nowIndicator line ignores the event behind (#6801)
+- fix: dates not selectable in Shadow DOM since v6.1.12 (#7685)
+
+### React
+
+- fix: adaptive print version shows events with custom eventContent with zero height (#7419)
 
 ## 6.1.14 (2024-06-04)
 
