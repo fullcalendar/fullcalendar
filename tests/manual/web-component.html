@@ -24,6 +24,21 @@
   }
 
 </style>
+<script>
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const el = document.querySelector('full-calendar')
+    const api = el.getApi()
+
+    api.on('dateClick', (info) => {
+      console.log('dateClick', info)
+    })
+    api.on('select', (info) => {
+      console.log('selected', info)
+    })
+  })
+
+</script>
 </head>
 <body>
 

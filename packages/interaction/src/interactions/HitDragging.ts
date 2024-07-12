@@ -193,7 +193,7 @@ export class HitDragging {
             (
               this.disablePointCheck ||
               offsetTracker.el.contains(
-                document.elementFromPoint(
+                (offsetTracker.el.getRootNode() as unknown as DocumentOrShadowRoot).elementFromPoint(
                   // add-back origins to get coordinate relative to top-left of window viewport
                   positionLeft + originLeft - window.scrollX,
                   positionTop + originTop - window.scrollY,
