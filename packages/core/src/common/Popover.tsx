@@ -118,14 +118,15 @@ export class Popover extends BaseComponent<PopoverProps> {
       let popoverLeft = isRtl ? alignmentRect.right - popoverDims.width : alignmentRect.left
 
       // constrain
+      let origin = rootEl.offsetParent.getBoundingClientRect()
+      
       popoverTop = Math.max(popoverTop, PADDING_FROM_VIEWPORT)
-      popoverLeft = Math.min(popoverLeft, document.documentElement.clientWidth - PADDING_FROM_VIEWPORT - popoverDims.width)
+      popoverLeft = Math.min(popoverLeft, origin.width + origin.left - popoverDims.width)
       popoverLeft = Math.max(popoverLeft, PADDING_FROM_VIEWPORT)
 
-      let origin = rootEl.offsetParent.getBoundingClientRect()
       applyStyle(rootEl, {
         top: popoverTop - origin.top,
-        left: popoverLeft - origin.left,
+        left: popoverLeft - origin.left + rootEl.offsetParent.scrollLeft,
       })
     }
   }
