@@ -1,8 +1,8 @@
 {
   "private": true,
-  "name": "@fullcalendar-monorepos/standard",
+  "name": "@arc/fullcalendar",
   "description": "Full-sized drag & drop event calendar in JavaScript",
-  "version": "6.1.15",
+  "version": "1.0.1",
   "keywords": [
     "calendar",
     "event",
