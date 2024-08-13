@@ -7,6 +7,7 @@ const API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'
 interface GCalMeta {
   googleCalendarId: string
   googleCalendarApiKey?: string
+  googleCalendarAccessToken?: string
   googleCalendarApiBase?: string,
   extraParams?: Dictionary | (() => Dictionary)
 }
@@ -24,6 +25,7 @@ export const eventSourceDef: EventSourceDef<GCalMeta> = {
       return {
         googleCalendarId,
         googleCalendarApiKey: refined.googleCalendarApiKey,
+        googleCalendarAccessToken: refined.googleCalendarAccessToken,
         googleCalendarApiBase: refined.googleCalendarApiBase,
         extraParams: refined.extraParams,
       }
@@ -36,10 +38,11 @@ export const eventSourceDef: EventSourceDef<GCalMeta> = {
     let { dateEnv, options } = arg.context
     let meta: GCalMeta = arg.eventSource.meta
     let apiKey = meta.googleCalendarApiKey || options.googleCalendarApiKey
+    let accessToken = meta.googleCalendarAccessToken || options.googleCalendarAccessToken
 
-    if (!apiKey) {
+    if (!apiKey && !accessToken) {
       errorCallback(
-        new Error('Specify a googleCalendarApiKey. See https://fullcalendar.io/docs/google-calendar'),
+        new Error('Specify a googleCalendarApiKey or googleCalendarAccessToken. See https://fullcalendar.io/docs/google-calendar'),
       )
     } else {
       let url = buildUrl(meta)
@@ -51,6 +54,7 @@ export const eventSourceDef: EventSourceDef<GCalMeta> = {
       let requestParams = buildRequestParams(
         arg.range,
         apiKey,
+        accessToken,
         extraParamsObj,
         dateEnv,
       )
@@ -106,7 +110,7 @@ function buildUrl(meta) {
   return apiBase + '/' + encodeURIComponent(meta.googleCalendarId) + '/events'
 }
 
-function buildRequestParams(range, apiKey: string, extraParams: Dictionary, dateEnv: DateEnv) {
+function buildRequestParams(range, apiKey: string | undefined, accessToken: string | undefined, extraParams: Dictionary, dateEnv: DateEnv) {
   let params
   let startStr
   let endStr
@@ -125,11 +129,18 @@ function buildRequestParams(range, apiKey: string, extraParams: Dictionary, date
 
   params = {
     ...(extraParams || {}),
-    key: apiKey,
     timeMin: startStr,
     timeMax: endStr,
     singleEvents: true,
     maxResults: 9999,
+  }
+
+  if (apiKey) {
+    params.key = apiKey
+  }
+
+  if (accessToken) {
+    params.access_token = accessToken
   }
 
   if (dateEnv.timeZone !== 'local') {
