@@ -227,13 +227,19 @@ export class TimeCol extends BaseComponent<TimeColProps> {
     let { props, context } = this
     let segVCoords = computeSegVCoords(segs, props.date, props.slatCoords, context.options.eventMinHeight) // don't assume all populated
 
-    let children = segVCoords.map((vcoords, i) => {
-      let seg = segs[i]
+    let { eventMaxStack, eventOrderStrict } = this.context.options
+    let { segPlacements } = computeFgSegPlacements(segs, segVCoords, eventOrderStrict, eventMaxStack)
+
+    let children = segPlacements.map((segPlacement) => {
+      let { seg, rect } = segPlacement
+      let vStyle = computeSegVStyle(rect && rect.span)
+      let hStyle = rect ? this.computeSegHStyle(rect) : { left: 0, right: 0 }
+
       return (
         <div
           key={buildEventRangeKey(seg.eventRange)}
           className="fc-timegrid-bg-harness"
-          style={computeSegVStyle(vcoords)}
+          style={{...vStyle, ...hStyle}}
         >
           {fillType === 'bg-event' ?
             <BgEvent seg={seg} {...getSegMeta(seg, props.todayRange, props.nowDate)} /> :
