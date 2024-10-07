@@ -44,6 +44,9 @@ export default {
     },
   },
   viewHint(buttonText) {
+    if(buttonText === "Terminübersicht") {
+        return buttonText;
+    }
     // → Tagesansicht, Wochenansicht, Monatsansicht, Jahresansicht
     const glue = buttonText === 'Woche' ? 'n' : buttonText === 'Monat' ? 's' : 'es'
     return buttonText + glue + 'ansicht'
