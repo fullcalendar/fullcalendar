@@ -1,6 +1,7 @@
 
 ## unreleased
 
+- FIX: German and Austrian German list-view hint read "Terminübersichtesansicht" (#7788)
 - FIX: Czech today button said "now" instead of "today" (#7674)
 - FIX: Korean navigation, year, list-view, and more-link translations (#8037)
 - FIX: Farsi empty-calendar and more-link text, year navigation, and accessibility hints (#8033, #7546)

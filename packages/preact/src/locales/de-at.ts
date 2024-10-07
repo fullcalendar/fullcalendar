@@ -5,6 +5,13 @@ function affix(unitText: string): string {
     unitText === 'Jahr' ? 's' : ''
 }
 
+const viewHints = {
+  Tag: 'Tagesansicht',
+  Woche: 'Wochenansicht',
+  Monat: 'Monatsansicht',
+  Jahr: 'Jahresansicht',
+}
+
 export default {
   code: 'de-at',
   week: {
@@ -39,9 +46,8 @@ export default {
     return `Diese${affix(unitText)} ${unitText}`
   },
   viewHint(unitText) {
-    // → Tagesansicht, Wochenansicht, Monatsansicht, Jahresansicht
-    const glue = unitText === 'Woche' ? 'n' : unitText === 'Monat' ? 's' : 'es'
-    return unitText + glue + 'ansicht'
+    // other button text, like Terminübersicht, already names the view
+    return viewHints[unitText] || unitText
   },
   navLinkHint: 'Gehe zu $0',
   moreLinkHint(eventCnt: number) {
