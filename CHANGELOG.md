@@ -1,19 +1,9 @@
 
-TODO: update docs for example project references:
-  react -> react18
-  react-cjs -> react18-cjs
-  react-debug -> react18-debug
-  react-lazy -> react18-lazy
-  react-mobx-typescript -> react18-mobx-typescript
-  react-redux -> react18-redux
-  react-scheduler -> react18-scheduler
-  react-typescript -> react18-typescript
-  jest-react -> react18-jest
-  ionic-angular -> angular15-ionic
-  next -> next12
-  next-scheduler -> next12-scheduler
-  next13-app-scheduler -> next13-scheduler
-  DELETED nuxt (nuxt2)
+### 6.1.16 (2024-12-04)
+
+### Angular
+
+- Angular 19 support (#7824)
 
 ## 6.1.15 (2024-07-12)
 
