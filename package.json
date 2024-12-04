@@ -37,7 +37,7 @@
     "ci": "pnpm run lint && pnpm run build && pnpm run test"
   },
   "engines": {
-    "pnpm": ">=7.9.5"
+    "pnpm": ">=9.5.0"
   },
   "pnpm": {
     "patchedDependencies": {

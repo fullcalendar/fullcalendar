@@ -21,7 +21,7 @@ jobs:
       - name: Setup PNPM
         uses: pnpm/action-setup@v2.4.1
         with:
-          version: 8.6.3
+          version: 9.14.4
 
       - name: Setup Node
         uses: actions/setup-node@v3
