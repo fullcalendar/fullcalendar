@@ -151,17 +151,21 @@ function gcalItemToRawEventDef(item, gcalTimezone) {
     url = injectQsComponent(url, 'ctz=' + gcalTimezone)
   }
 
+  const { id, summary, start, end, location, description, attachments, extendedProperties, ...remainingProps } = item;
+
   return {
-    id: item.id,
-    title: item.summary,
-    start: item.start.dateTime || item.start.date, // try timed. will fall back to all-day
-    end: item.end.dateTime || item.end.date, // same
-    url,
-    location: item.location,
-    description: item.description,
-    attachments: item.attachments || [],
-    extendedProps: (item.extendedProperties || {}).shared || {},
-  }
+      id: item.id,
+      title: item.summary,
+      start: item.start.dateTime || item.start.date,
+      end: item.end.dateTime || item.end.date,
+      url,
+      location: item.location,
+      description: item.description,
+      attachments: item.attachments || [],
+      extendedProps: {
+          ...(item.extendedProperties || {}).shared || {},
+          ...remainingProps
+      }
 }
 
 // Injects a string like "arg=value" into the querystring of a URL
