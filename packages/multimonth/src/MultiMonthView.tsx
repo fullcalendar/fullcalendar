@@ -66,6 +66,9 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
       (monthTableWidth != null && monthTableWidth < 400) ?
         'fc-multimonth-compact' :
         '',
+      props.isHeightAuto ?
+        '' :
+        'fc-scroller', // for AutoScroller
     ]
 
     return (

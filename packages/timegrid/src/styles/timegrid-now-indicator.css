@@ -1,5 +1,9 @@
 
 .fc {
+  & .fc-timegrid-now-indicator-line,
+  & .fc-timegrid-now-indicator-arrow {
+    pointer-events: none;
+  }
 
   // line
 

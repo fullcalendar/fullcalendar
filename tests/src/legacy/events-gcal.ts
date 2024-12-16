@@ -17,8 +17,8 @@ describe('Google Calendar plugin', () => {
   const HOLIDAY_CALENDAR_ID = 'en.usa#holiday@group.v.calendar.google.com'
 
   // Google sometimes stops returning old events. Will need to update this sometimes.
-  const DEFAULT_MONTH = '2023-05'
-  const NUM_EVENTS = 5 // number of holidays
+  const DEFAULT_MONTH = '2025-05'
+  const NUM_EVENTS = 3 // number of holidays
 
   pushOptions({
     plugins: [googleCalendarPlugin, dayGridPlugin],
