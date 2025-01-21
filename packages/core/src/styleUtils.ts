@@ -21,7 +21,7 @@ export function ensureElHasStyles(el: HTMLElement): void {
 function registerStylesRoot(rootNode: ParentNode): void {
   let styleEl: HTMLStyleElement = styleEls.get(rootNode)
 
-  if (!styleEl || !styleEl.isConnected) {
+  if (!styleEl || !styleEl.isConnected || !styleEl.sheet.cssRules.length) {
     styleEl = rootNode.querySelector('style[data-fullcalendar]')
 
     if (!styleEl) {
