@@ -1,5 +1,5 @@
 import { EventInput } from '@fullcalendar/core'
-import { EventSourceDef, DateRange, addDays } from '@fullcalendar/core/internal'
+import { EventSourceDef, DateRange, addDays, Dictionary } from '@fullcalendar/core/internal'
 import * as ICAL from 'ical.js'
 import { IcalExpander } from './ical-expander/IcalExpander.js'
 
@@ -55,7 +55,7 @@ export const eventSourceDef: EventSourceDef<ICalFeedMeta> = {
     internalState.iCalExpanderPromise.then(
       (iCalExpander) => {
         successCallback({
-          rawEvents: expandICalEvents(iCalExpander, arg.range),
+          rawEvents: expandICalEvents(iCalExpander, arg.range, arg.eventSource.extendedProps),
           response: internalState.response,
         })
       },
@@ -64,7 +64,7 @@ export const eventSourceDef: EventSourceDef<ICalFeedMeta> = {
   },
 }
 
-function expandICalEvents(iCalExpander: IcalExpander, range: DateRange): EventInput[] {
+function expandICalEvents(iCalExpander: IcalExpander, range: DateRange, extendedProps: Dictionary): EventInput[] {
   // expand the range. because our `range` is timeZone-agnostic UTC
   // or maybe because ical.js always produces dates in local time? i forget
   let rangeStart = addDays(range.start, -1)
@@ -79,7 +79,7 @@ function expandICalEvents(iCalExpander: IcalExpander, range: DateRange): EventIn
   // single events
   for (let iCalEvent of iCalRes.events) {
     expanded.push({
-      ...buildNonDateProps(iCalEvent),
+      ...buildNonDateProps(iCalEvent, extendedProps),
       start: iCalEvent.startDate.toString(),
       end: (specifiesEnd(iCalEvent) && iCalEvent.endDate)
         ? iCalEvent.endDate.toString()
@@ -91,7 +91,7 @@ function expandICalEvents(iCalExpander: IcalExpander, range: DateRange): EventIn
   for (let iCalOccurence of iCalRes.occurrences) {
     let iCalEvent = iCalOccurence.item
     expanded.push({
-      ...buildNonDateProps(iCalEvent),
+      ...buildNonDateProps(iCalEvent, extendedProps),
       start: iCalOccurence.startDate.toString(),
       end: (specifiesEnd(iCalEvent) && iCalOccurence.endDate)
         ? iCalOccurence.endDate.toString()
@@ -102,11 +102,28 @@ function expandICalEvents(iCalExpander: IcalExpander, range: DateRange): EventIn
   return expanded
 }
 
-function buildNonDateProps(iCalEvent: ICAL.Event): EventInput {
+function getMetaDataObjects(iCalEvent: ICAL.Event) {
+  const properties = iCalEvent.component.getAllProperties()
+
+  const metaDataObjects = properties
+    .filter(prop => prop.name.startsWith('x-'))
+    .reduce((acc, prop) => {
+      acc[prop.name] = prop.getFirstValue()
+      return acc
+    }, {})
+
+  return metaDataObjects
+}
+
+function buildNonDateProps(iCalEvent: ICAL.Event, extendedProps: Dictionary): EventInput {
+  const metaData = getMetaDataObjects(iCalEvent)
+
   return {
     title: iCalEvent.summary,
     url: extractEventUrl(iCalEvent),
     extendedProps: {
+      ...metaData,
+      ...extendedProps,
       location: iCalEvent.location,
       organizer: iCalEvent.organizer,
       description: iCalEvent.description,
@@ -123,3 +140,4 @@ function specifiesEnd(iCalEvent: ICAL.Event) {
   return Boolean(iCalEvent.component.getFirstProperty('dtend')) ||
     Boolean(iCalEvent.component.getFirstProperty('duration'))
 }
+  
