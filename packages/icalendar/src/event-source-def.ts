@@ -102,11 +102,27 @@ function expandICalEvents(iCalExpander: IcalExpander, range: DateRange): EventIn
   return expanded
 }
 
+function getMetaDataObjects(iCalEvent: ICAL.Event) {
+  const properties = iCalEvent.component.getAllProperties()
+
+  const metaDataObjects = properties
+    .filter(prop => prop.name.startsWith('x-'))
+    .reduce((acc, prop) => {
+      acc[prop.name] = prop.getFirstValue()
+      return acc
+    }, {})
+
+  return metaDataObjects
+}
+
 function buildNonDateProps(iCalEvent: ICAL.Event): EventInput {
+  const metaData = getMetaDataObjects(iCalEvent)
+
   return {
     title: iCalEvent.summary,
     url: extractEventUrl(iCalEvent),
     extendedProps: {
+      ...metaData,
       location: iCalEvent.location,
       organizer: iCalEvent.organizer,
       description: iCalEvent.description,
@@ -123,3 +139,4 @@ function specifiesEnd(iCalEvent: ICAL.Event) {
   return Boolean(iCalEvent.component.getFirstProperty('dtend')) ||
     Boolean(iCalEvent.component.getFirstProperty('duration'))
 }
+
