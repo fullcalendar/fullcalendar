@@ -2,6 +2,7 @@ import { CalendarImpl } from './api/CalendarImpl.js'
 import { ViewImpl } from './api/ViewImpl.js'
 import { Theme } from './theme/Theme.js'
 import { DateEnv } from './datelib/env.js'
+import { DateMarker } from './datelib/marker.js'
 import { PluginHooks } from './plugin-system-struct.js'
 import { createContext, Context } from './preact.js'
 import { ScrollResponder, ScrollRequestHandler } from './ScrollResponder.js'
@@ -43,6 +44,8 @@ export function buildViewContext(
   viewOptions: ViewOptionsRefined,
   dateProfileGenerator: DateProfileGenerator,
   dateEnv: DateEnv,
+  initialNowDate: DateMarker,
+  initialNowQueriedMs: number,
   theme: Theme,
   pluginHooks: PluginHooks,
   dispatch: (action: Action) => void,
@@ -54,6 +57,8 @@ export function buildViewContext(
 ): ViewContext {
   return {
     dateEnv,
+    initialNowDate,
+    initialNowQueriedMs,
     options: viewOptions,
     pluginHooks,
     emitter,

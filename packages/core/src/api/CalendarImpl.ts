@@ -6,7 +6,6 @@ import { parseEvent } from '../structs/event-parse.js'
 import { eventTupleToStore } from '../structs/event-store.js'
 import { ViewSpec } from '../structs/view-spec.js'
 import { PointerDragEvent } from '../interactions/pointer.js'
-import { getNow } from '../reducers/current-date.js'
 import { triggerDateSelect, triggerDateUnselect } from '../calendar-utils.js'
 import { hashValuesToArray } from '../util/object.js'
 import { CalendarDataManager } from '../reducers/CalendarDataManager.js'
@@ -27,6 +26,7 @@ import {
   EventSourceInput,
   EventInput,
 } from './structs.js'
+import { getNowDate } from '../reducers/current-date.js'
 
 export class CalendarImpl implements CalendarApi {
   currentDataManager?: CalendarDataManager // will be set by CalendarDataManager
@@ -217,7 +217,7 @@ export class CalendarImpl implements CalendarApi {
     this.unselect()
     this.dispatch({
       type: 'CHANGE_DATE',
-      dateMarker: getNow(state.calendarOptions.now, state.dateEnv),
+      dateMarker: getNowDate(state),
     })
   }
 

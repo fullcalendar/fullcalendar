@@ -3,7 +3,8 @@ import { memoize, memoizeObjArg } from '../util/memoize.js'
 import { Action } from './Action.js'
 import { buildBuildPluginHooks } from '../plugin-system.js'
 import { PluginHooks } from '../plugin-system-struct.js'
-import { DateEnv } from '../datelib/env.js'
+import { DateEnv, DateInput } from '../datelib/env.js'
+import { DateMarker } from '../datelib/marker.js'
 import { CalendarImpl } from '../api/CalendarImpl.js'
 import { StandardTheme } from '../theme/StandardTheme.js'
 import { EventSourceHash } from '../structs/event-source.js'
@@ -75,6 +76,9 @@ export class CalendarDataManager {
   private parseContextBusinessHours = memoizeObjArg(parseContextBusinessHours)
   private buildTitle = memoize(buildTitle)
 
+  private initialNowDate: DateMarker
+  private initialNowQueriedMs: number
+
   public emitter = new Emitter<CalendarListeners>()
   private actionRunner = new TaskRunner(this._handleAction.bind(this), this.updateData.bind(this))
   private props: CalendarDataManagerProps
@@ -104,6 +108,9 @@ export class CalendarDataManager {
       props.calendarApi,
     )
 
+    this.initialNowDate = getNow(optionsData.calendarOptions.now, optionsData.dateEnv)
+    this.initialNowQueriedMs = new Date().valueOf()
+
     let currentViewType = optionsData.calendarOptions.initialView || optionsData.pluginHooks.initialView
     let currentViewData = this.computeCurrentViewData(
       currentViewType,
@@ -118,14 +125,9 @@ export class CalendarDataManager {
     this.emitter.setThisContext(props.calendarApi)
     this.emitter.setOptions(currentViewData.options)
 
-    let currentDate = getInitialDate(optionsData.calendarOptions, optionsData.dateEnv)
-    let dateProfile = currentViewData.dateProfileGenerator.build(currentDate)
-
-    if (!rangeContainsMarker(dateProfile.activeRange, currentDate)) {
-      currentDate = dateProfile.currentRange.start
-    }
-
     let calendarContext: CalendarContext = {
+      initialNowDate: this.initialNowDate,
+      initialNowQueriedMs: this.initialNowQueriedMs,
       dateEnv: optionsData.dateEnv,
       options: optionsData.calendarOptions,
       pluginHooks: optionsData.pluginHooks,
@@ -133,6 +135,13 @@ export class CalendarDataManager {
       dispatch: this.dispatch,
       emitter: this.emitter,
       getCurrentData: this.getCurrentData,
+    }
+
+    let currentDate = getInitialDate(calendarContext)
+    let dateProfile = currentViewData.dateProfileGenerator.build(currentDate)
+
+    if (!rangeContainsMarker(dateProfile.activeRange, currentDate)) {
+      currentDate = dateProfile.currentRange.start
     }
 
     // needs to be after setThisContext
@@ -222,6 +231,8 @@ export class CalendarDataManager {
     emitter.setOptions(currentViewData.options)
 
     let calendarContext: CalendarContext = {
+      initialNowDate: this.initialNowDate,
+      initialNowQueriedMs: this.initialNowQueriedMs,
       dateEnv: optionsData.dateEnv,
       options: optionsData.calendarOptions,
       pluginHooks: optionsData.pluginHooks,
@@ -318,6 +329,8 @@ export class CalendarDataManager {
     )
 
     let data: CalendarData = this.data = {
+      initialNowDate: this.initialNowDate,
+      initialNowQueriedMs: this.initialNowQueriedMs,
       viewTitle: this.buildTitle(state.dateProfile, currentViewData.options, optionsData.dateEnv),
       calendarApi: props.calendarApi,
       dispatch: this.dispatch,
@@ -500,6 +513,8 @@ export class CalendarDataManager {
 
     let dateProfileGenerator = this.buildDateProfileGenerator({
       dateProfileGeneratorClass: viewSpec.optionDefaults.dateProfileGeneratorClass as any,
+      initialNowDate: this.initialNowDate,
+      initialNowQueriedMs: this.initialNowQueriedMs,
       duration: viewSpec.duration,
       durationUnit: viewSpec.durationUnit,
       usesMinMaxTime: viewSpec.optionDefaults.usesMinMaxTime as any,
@@ -590,6 +605,18 @@ export class CalendarDataManager {
       extra,
     }
   }
+}
+
+function getNow(nowInput: DateInput | (() => DateInput), dateEnv: DateEnv) {
+  if (typeof nowInput === 'function') {
+    nowInput = nowInput()
+  }
+
+  if (nowInput == null) {
+    return dateEnv.createNowMarker()
+  }
+
+  return dateEnv.createMarker(nowInput)
 }
 
 function buildDateEnv(

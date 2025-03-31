@@ -20,11 +20,11 @@ import {
 import { DateComponent } from './component/DateComponent.js'
 import { EventClicking } from './interactions/EventClicking.js'
 import { EventHovering } from './interactions/EventHovering.js'
-import { getNow } from './reducers/current-date.js'
 import { CalendarInteraction } from './calendar-utils.js'
 import { DelayedRunner } from './util/DelayedRunner.js'
 import { PureComponent } from './vdom-util.js'
 import { getUniqueDomId } from './util/dom-manip.js'
+import { NowTimer } from './NowTimer.js'
 
 export interface CalendarContentProps extends CalendarData {
   forPrint: boolean
@@ -52,15 +52,6 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
     let { props } = this
     let { toolbarConfig, options } = props
 
-    let toolbarProps = this.buildToolbarProps(
-      props.viewSpec,
-      props.dateProfile,
-      props.dateProfileGenerator,
-      props.currentDate,
-      getNow(props.options.now, props.dateEnv), // TODO: use NowTimer????
-      props.viewTitle,
-    )
-
     let viewVGrow = false
     let viewHeight: string | number = ''
     let viewAspectRatio: number | undefined
@@ -81,6 +72,8 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
       props.options,
       props.dateProfileGenerator,
       props.dateEnv,
+      props.initialNowDate,
+      props.initialNowQueriedMs,
       props.theme,
       props.pluginHooks,
       props.dispatch,
@@ -97,33 +90,50 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
 
     return (
       <ViewContextType.Provider value={viewContext}>
-        {toolbarConfig.header && (
-          <Toolbar
-            ref={this.headerRef}
-            extraClassName="fc-header-toolbar"
-            model={toolbarConfig.header}
-            titleId={viewLabelId}
-            {...toolbarProps}
-          />
-        )}
-        <ViewHarness
-          liquid={viewVGrow}
-          height={viewHeight}
-          aspectRatio={viewAspectRatio}
-          labeledById={viewLabelId}
-        >
-          {this.renderView(props)}
-          {this.buildAppendContent()}
-        </ViewHarness>
-        {toolbarConfig.footer && (
-          <Toolbar
-            ref={this.footerRef}
-            extraClassName="fc-footer-toolbar"
-            model={toolbarConfig.footer}
-            titleId=""
-            {...toolbarProps}
-          />
-        )}
+        <NowTimer unit='day'>
+          {(nowDate: DateMarker) => {
+            let toolbarProps = this.buildToolbarProps(
+              props.viewSpec,
+              props.dateProfile,
+              props.dateProfileGenerator,
+              props.currentDate,
+              nowDate,
+              props.viewTitle,
+            )
+
+            return (
+              <Fragment>
+                {toolbarConfig.header && (
+                  <Toolbar
+                    ref={this.headerRef}
+                    extraClassName="fc-header-toolbar"
+                    model={toolbarConfig.header}
+                    titleId={viewLabelId}
+                    {...toolbarProps}
+                  />
+                )}
+                <ViewHarness
+                  liquid={viewVGrow}
+                  height={viewHeight}
+                  aspectRatio={viewAspectRatio}
+                  labeledById={viewLabelId}
+                >
+                  {this.renderView(props)}
+                  {this.buildAppendContent()}
+                </ViewHarness>
+                {toolbarConfig.footer && (
+                  <Toolbar
+                    ref={this.footerRef}
+                    extraClassName="fc-footer-toolbar"
+                    model={toolbarConfig.footer}
+                    titleId=""
+                    {...toolbarProps}
+                  />
+                )}
+              </Fragment>
+            )
+          }}
+        </NowTimer>
       </ViewContextType.Provider>
     )
   }

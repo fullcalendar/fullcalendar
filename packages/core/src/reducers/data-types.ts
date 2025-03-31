@@ -55,6 +55,8 @@ type CalendarDataBase = CalendarOptionsData & CalendarCurrentViewData & Calendar
 // needs to be an interface so we can ambient-extend
 // is a superset of CalendarContext
 export interface CalendarData extends CalendarDataBase {
+  initialNowDate: DateMarker
+  initialNowQueriedMs: number
   viewTitle: string // based on current date
   calendarApi: CalendarImpl // TODO: try to remove this
   dispatch: (action: Action) => void

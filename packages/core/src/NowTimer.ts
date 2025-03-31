@@ -1,9 +1,9 @@
-import { DateMarker, addMs, startOfDay, addDays } from './datelib/marker.js'
+import { DateMarker, startOfDay, addDays } from './datelib/marker.js'
 import { createDuration } from './datelib/duration.js'
 import { ViewContext, ViewContextType } from './ViewContext.js'
 import { ComponentChildren, Component } from './preact.js'
 import { DateRange } from './datelib/date-range.js'
-import { getNow } from './reducers/current-date.js'
+import { getNowDate } from './reducers/current-date.js'
 
 export interface NowTimerProps {
   unit: string // TODO: add type of unit
@@ -18,17 +18,11 @@ interface NowTimerState {
 export class NowTimer extends Component<NowTimerProps, NowTimerState> {
   static contextType: any = ViewContextType
   context: ViewContext // do this for all components that use the context!!!
-  initialNowDate: DateMarker
-  initialNowQueriedMs: number
   timeoutId: any
 
   constructor(props: NowTimerProps, context: ViewContext) {
     super(props, context)
-
-    this.initialNowDate = getNow(context.options.now, context.dateEnv)
-    this.initialNowQueriedMs = new Date().valueOf()
-
-    this.state = this.computeTiming().currentState
+    this.state = this.computeTiming().state
   }
 
   render() {
@@ -38,6 +32,9 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
 
   componentDidMount() {
     this.setTimeout()
+
+    // fired tab becomes visible after being hidden
+    document.addEventListener('visibilitychange', this.handleVisibilityChange)
   }
 
   componentDidUpdate(prevProps: NowTimerProps) {
@@ -49,11 +46,12 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
 
   componentWillUnmount() {
     this.clearTimeout()
+    document.removeEventListener('visibilitychange', this.handleVisibilityChange)
   }
 
   private computeTiming() {
     let { props, context } = this
-    let unroundedNow = addMs(this.initialNowDate, new Date().valueOf() - this.initialNowQueriedMs)
+    let unroundedNow = getNowDate(context)
     let currentUnitStart = context.dateEnv.startOf(unroundedNow, props.unit)
     let nextUnitStart = context.dateEnv.add(currentUnitStart, createDuration(1, props.unit))
     let waitMs = nextUnitStart.valueOf() - unroundedNow.valueOf()
@@ -63,17 +61,18 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
     waitMs = Math.min(1000 * 60 * 60 * 24, waitMs)
 
     return {
-      currentState: { nowDate: currentUnitStart, todayRange: buildDayRange(currentUnitStart) } as NowTimerState,
-      nextState: { nowDate: nextUnitStart, todayRange: buildDayRange(nextUnitStart) } as NowTimerState,
+      state: { nowDate: currentUnitStart, todayRange: buildDayRange(currentUnitStart) } as NowTimerState,
       waitMs,
     }
   }
 
-  private setTimeout() {
-    let { nextState, waitMs } = this.computeTiming()
+  private setTimeout(timing = this.computeTiming()) {
+    let { waitMs } = timing
 
+    // NOTE: timeout could take longer than expected if tab sleeps,
+    // which is why we listen to 'visibilitychange'
     this.timeoutId = setTimeout(() => {
-      this.setState(nextState, () => {
+      this.setState(this.computeTiming().state, () => {
         this.setTimeout()
       })
     }, waitMs)
@@ -82,6 +81,23 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
   private clearTimeout() {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId)
+    }
+  }
+
+  private refreshTimeout() {
+    let timing = this.computeTiming()
+
+    if (timing.state.todayRange.start.valueOf() !== this.state.todayRange.start.valueOf()) {
+      this.setState(timing.state)
+    }
+
+    this.clearTimeout()
+    this.setTimeout(timing)
+  }
+
+  private handleVisibilityChange = () => {
+    if (!document.hidden) {
+      this.refreshTimeout()
     }
   }
 }

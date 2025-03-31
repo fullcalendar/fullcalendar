@@ -12,8 +12,8 @@ import {
 } from './datelib/date-range.js'
 import { DateEnv, DateInput } from './datelib/env.js'
 import { computeVisibleDayRange } from './util/date.js'
-import { getNow } from './reducers/current-date.js'
 import { CalendarImpl } from './api/CalendarImpl.js'
+import { getNowDate } from './reducers/current-date.js'
 
 export interface DateProfile {
   currentDate: DateMarker
@@ -31,6 +31,8 @@ export interface DateProfile {
 
 export interface DateProfileGeneratorProps extends DateProfileOptions {
   dateProfileGeneratorClass: DateProfileGeneratorClass // not used by DateProfileGenerator itself
+  initialNowDate: DateMarker
+  initialNowQueriedMs: number
   duration: Duration
   durationUnit: string
   usesMinMaxTime: boolean
@@ -63,7 +65,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
   isHiddenDayHash: boolean[]
 
   constructor(protected props: DateProfileGeneratorProps) {
-    this.nowDate = getNow(props.nowInput, props.dateEnv)
+    this.nowDate = getNowDate(props)
     this.initHiddenDays()
   }
 
