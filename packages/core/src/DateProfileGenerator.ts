@@ -10,10 +10,10 @@ import {
   parseRange,
   DateRangeInput,
 } from './datelib/date-range.js'
-import { DateEnv, DateInput } from './datelib/env.js'
+import { DateEnv } from './datelib/env.js'
 import { computeVisibleDayRange } from './util/date.js'
 import { CalendarImpl } from './api/CalendarImpl.js'
-import { getNowDate } from './reducers/current-date.js'
+import { CalendarNowManager } from './reducers/CalendarNowManager.js'
 
 export interface DateProfile {
   currentDate: DateMarker
@@ -31,8 +31,7 @@ export interface DateProfile {
 
 export interface DateProfileGeneratorProps extends DateProfileOptions {
   dateProfileGeneratorClass: DateProfileGeneratorClass // not used by DateProfileGenerator itself
-  initialNowDate: DateMarker
-  initialNowQueriedMs: number
+  nowManager: CalendarNowManager
   duration: Duration
   durationUnit: string
   usesMinMaxTime: boolean
@@ -49,7 +48,6 @@ export interface DateProfileOptions {
   dateIncrement?: Duration
   hiddenDays?: number[]
   weekends?: boolean
-  nowInput?: DateInput | (() => DateInput)
   validRangeInput?: DateRangeInput | ((this: CalendarImpl, nowDate: Date) => DateRangeInput)
   visibleRangeInput?: DateRangeInput | ((this: CalendarImpl, nowDate: Date) => DateRangeInput)
   fixedWeekCount?: boolean
@@ -60,12 +58,9 @@ export type DateProfileGeneratorClass = {
 }
 
 export class DateProfileGenerator { // only publicly used for isHiddenDay :(
-  nowDate: DateMarker
-
   isHiddenDayHash: boolean[]
 
   constructor(protected props: DateProfileGeneratorProps) {
-    this.nowDate = getNowDate(props)
     this.initHiddenDays()
   }
 
@@ -185,7 +180,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
   buildValidRange(): OpenDateRange {
     let input = this.props.validRangeInput
     let simpleInput = typeof input === 'function'
-      ? input.call(this.props.calendarApi, this.nowDate)
+      ? input.call(this.props.calendarApi, this.props.dateEnv.toDate(this.props.nowManager.getDateMarker()))
       : input
 
     return this.refineRange(simpleInput) ||

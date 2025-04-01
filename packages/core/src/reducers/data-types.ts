@@ -14,6 +14,7 @@ import { EventStore } from '../structs/event-store.js'
 import { DateSpan } from '../structs/date-span.js'
 import { EventInteractionState } from '../interactions/event-interaction-state.js'
 import { CalendarOptionsRefined, ViewOptionsRefined, CalendarOptions, CalendarListeners } from '../options.js'
+import { CalendarNowManager } from './CalendarNowManager.js'
 
 export interface CalendarDataManagerState {
   dynamicOptionOverrides: CalendarOptions
@@ -55,8 +56,7 @@ type CalendarDataBase = CalendarOptionsData & CalendarCurrentViewData & Calendar
 // needs to be an interface so we can ambient-extend
 // is a superset of CalendarContext
 export interface CalendarData extends CalendarDataBase {
-  initialNowDate: DateMarker
-  initialNowQueriedMs: number
+  nowManager: CalendarNowManager
   viewTitle: string // based on current date
   calendarApi: CalendarImpl // TODO: try to remove this
   dispatch: (action: Action) => void

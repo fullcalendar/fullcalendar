@@ -3,7 +3,6 @@ import { createDuration } from './datelib/duration.js'
 import { ViewContext, ViewContextType } from './ViewContext.js'
 import { ComponentChildren, Component } from './preact.js'
 import { DateRange } from './datelib/date-range.js'
-import { getNowDate } from './reducers/current-date.js'
 
 export interface NowTimerProps {
   unit: string // TODO: add type of unit
@@ -11,7 +10,7 @@ export interface NowTimerProps {
 }
 
 interface NowTimerState {
-  nowDate: DateMarker
+  nowDate: DateMarker // aligned to start of unit
   todayRange: DateRange
 }
 
@@ -32,7 +31,7 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
 
   componentDidMount() {
     this.setTimeout()
-
+    this.context.nowManager.addResetListener(this.handleRefresh)
     // fired tab becomes visible after being hidden
     document.addEventListener('visibilitychange', this.handleVisibilityChange)
   }
@@ -46,12 +45,13 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
 
   componentWillUnmount() {
     this.clearTimeout()
+    this.context.nowManager.removeResetListener(this.handleRefresh)
     document.removeEventListener('visibilitychange', this.handleVisibilityChange)
   }
 
   private computeTiming() {
     let { props, context } = this
-    let unroundedNow = getNowDate(context)
+    let unroundedNow = context.nowManager.getDateMarker()
     let currentUnitStart = context.dateEnv.startOf(unroundedNow, props.unit)
     let nextUnitStart = context.dateEnv.add(currentUnitStart, createDuration(1, props.unit))
     let waitMs = nextUnitStart.valueOf() - unroundedNow.valueOf()
@@ -84,10 +84,10 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
     }
   }
 
-  private refreshTimeout() {
+  private handleRefresh = () => {
     let timing = this.computeTiming()
 
-    if (timing.state.todayRange.start.valueOf() !== this.state.todayRange.start.valueOf()) {
+    if (timing.state.nowDate.valueOf() !== this.state.nowDate.valueOf()) {
       this.setState(timing.state)
     }
 
@@ -97,7 +97,7 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
 
   private handleVisibilityChange = () => {
     if (!document.hidden) {
-      this.refreshTimeout()
+      this.handleRefresh()
     }
   }
 }

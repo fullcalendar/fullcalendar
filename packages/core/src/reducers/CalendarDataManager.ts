@@ -3,8 +3,7 @@ import { memoize, memoizeObjArg } from '../util/memoize.js'
 import { Action } from './Action.js'
 import { buildBuildPluginHooks } from '../plugin-system.js'
 import { PluginHooks } from '../plugin-system-struct.js'
-import { DateEnv, DateInput } from '../datelib/env.js'
-import { DateMarker } from '../datelib/marker.js'
+import { DateEnv } from '../datelib/env.js'
 import { CalendarImpl } from '../api/CalendarImpl.js'
 import { StandardTheme } from '../theme/StandardTheme.js'
 import { EventSourceHash } from '../structs/event-source.js'
@@ -42,6 +41,7 @@ import { CalendarContext } from '../CalendarContext.js'
 import { CalendarDataManagerState, CalendarOptionsData, CalendarCurrentViewData, CalendarData } from './data-types.js'
 import { TaskRunner } from '../util/TaskRunner.js'
 import { buildTitle } from './title-formatting.js'
+import { CalendarNowManager } from './CalendarNowManager.js'
 
 export interface CalendarDataManagerProps {
   optionOverrides: CalendarOptions
@@ -76,8 +76,7 @@ export class CalendarDataManager {
   private parseContextBusinessHours = memoizeObjArg(parseContextBusinessHours)
   private buildTitle = memoize(buildTitle)
 
-  private initialNowDate: DateMarker
-  private initialNowQueriedMs: number
+  private nowManager = new CalendarNowManager()
 
   public emitter = new Emitter<CalendarListeners>()
   private actionRunner = new TaskRunner(this._handleAction.bind(this), this.updateData.bind(this))
@@ -100,6 +99,7 @@ export class CalendarDataManager {
   constructor(props: CalendarDataManagerProps) {
     this.props = props
     this.actionRunner.pause()
+    this.nowManager = new CalendarNowManager()
 
     let dynamicOptionOverrides: CalendarOptions = {}
     let optionsData = this.computeOptionsData(
@@ -107,9 +107,6 @@ export class CalendarDataManager {
       dynamicOptionOverrides,
       props.calendarApi,
     )
-
-    this.initialNowDate = getNow(optionsData.calendarOptions.now, optionsData.dateEnv)
-    this.initialNowQueriedMs = new Date().valueOf()
 
     let currentViewType = optionsData.calendarOptions.initialView || optionsData.pluginHooks.initialView
     let currentViewData = this.computeCurrentViewData(
@@ -126,8 +123,7 @@ export class CalendarDataManager {
     this.emitter.setOptions(currentViewData.options)
 
     let calendarContext: CalendarContext = {
-      initialNowDate: this.initialNowDate,
-      initialNowQueriedMs: this.initialNowQueriedMs,
+      nowManager: this.nowManager,
       dateEnv: optionsData.dateEnv,
       options: optionsData.calendarOptions,
       pluginHooks: optionsData.pluginHooks,
@@ -137,7 +133,11 @@ export class CalendarDataManager {
       getCurrentData: this.getCurrentData,
     }
 
-    let currentDate = getInitialDate(calendarContext)
+    let currentDate = getInitialDate(
+      optionsData.calendarOptions,
+      optionsData.dateEnv,
+      this.nowManager,
+    )
     let dateProfile = currentViewData.dateProfileGenerator.build(currentDate)
 
     if (!rangeContainsMarker(dateProfile.activeRange, currentDate)) {
@@ -231,8 +231,7 @@ export class CalendarDataManager {
     emitter.setOptions(currentViewData.options)
 
     let calendarContext: CalendarContext = {
-      initialNowDate: this.initialNowDate,
-      initialNowQueriedMs: this.initialNowQueriedMs,
+      nowManager: this.nowManager,
       dateEnv: optionsData.dateEnv,
       options: optionsData.calendarOptions,
       pluginHooks: optionsData.pluginHooks,
@@ -329,8 +328,7 @@ export class CalendarDataManager {
     )
 
     let data: CalendarData = this.data = {
-      initialNowDate: this.initialNowDate,
-      initialNowQueriedMs: this.initialNowQueriedMs,
+      nowManager: this.nowManager,
       viewTitle: this.buildTitle(state.dateProfile, currentViewData.options, optionsData.dateEnv),
       calendarApi: props.calendarApi,
       dispatch: this.dispatch,
@@ -511,10 +509,11 @@ export class CalendarDataManager {
 
     warnUnknownOptions(extra)
 
+    this.nowManager.handleInput(optionsData.dateEnv, refinedOptions.now)
+
     let dateProfileGenerator = this.buildDateProfileGenerator({
       dateProfileGeneratorClass: viewSpec.optionDefaults.dateProfileGeneratorClass as any,
-      initialNowDate: this.initialNowDate,
-      initialNowQueriedMs: this.initialNowQueriedMs,
+      nowManager: this.nowManager,
       duration: viewSpec.duration,
       durationUnit: viewSpec.durationUnit,
       usesMinMaxTime: viewSpec.optionDefaults.usesMinMaxTime as any,
@@ -528,7 +527,6 @@ export class CalendarDataManager {
       dateIncrement: refinedOptions.dateIncrement,
       hiddenDays: refinedOptions.hiddenDays,
       weekends: refinedOptions.weekends,
-      nowInput: refinedOptions.now,
       validRangeInput: refinedOptions.validRange,
       visibleRangeInput: refinedOptions.visibleRange,
       fixedWeekCount: refinedOptions.fixedWeekCount,
@@ -605,18 +603,6 @@ export class CalendarDataManager {
       extra,
     }
   }
-}
-
-function getNow(nowInput: DateInput | (() => DateInput), dateEnv: DateEnv) {
-  if (typeof nowInput === 'function') {
-    nowInput = nowInput()
-  }
-
-  if (nowInput == null) {
-    return dateEnv.createNowMarker()
-  }
-
-  return dateEnv.createMarker(nowInput)
 }
 
 function buildDateEnv(

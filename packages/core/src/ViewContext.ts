@@ -2,7 +2,6 @@ import { CalendarImpl } from './api/CalendarImpl.js'
 import { ViewImpl } from './api/ViewImpl.js'
 import { Theme } from './theme/Theme.js'
 import { DateEnv } from './datelib/env.js'
-import { DateMarker } from './datelib/marker.js'
 import { PluginHooks } from './plugin-system-struct.js'
 import { createContext, Context } from './preact.js'
 import { ScrollResponder, ScrollRequestHandler } from './ScrollResponder.js'
@@ -16,6 +15,7 @@ import { DateComponent } from './component/DateComponent.js'
 import { CalendarContext } from './CalendarContext.js'
 import { createDuration } from './datelib/duration.js'
 import { ViewOptionsRefined, CalendarListeners } from './options.js'
+import { CalendarNowManager } from './reducers/CalendarNowManager.js'
 
 export const ViewContextType: Context<any> = createContext<ViewContext>({} as any) // for Components
 export type ResizeHandler = (force: boolean) => void
@@ -44,8 +44,7 @@ export function buildViewContext(
   viewOptions: ViewOptionsRefined,
   dateProfileGenerator: DateProfileGenerator,
   dateEnv: DateEnv,
-  initialNowDate: DateMarker,
-  initialNowQueriedMs: number,
+  nowManager: CalendarNowManager,
   theme: Theme,
   pluginHooks: PluginHooks,
   dispatch: (action: Action) => void,
@@ -57,8 +56,7 @@ export function buildViewContext(
 ): ViewContext {
   return {
     dateEnv,
-    initialNowDate,
-    initialNowQueriedMs,
+    nowManager,
     options: viewOptions,
     pluginHooks,
     emitter,

@@ -1,6 +1,8 @@
-import { DateMarker, addMs } from '../datelib/marker.js'
+import { DateMarker } from '../datelib/marker.js'
 import { Action } from './Action.js'
-import { CalendarContext } from '../CalendarContext.js'
+import { CalendarOptionsRefined } from '../options.js'
+import { DateEnv } from '../datelib/env.js'
+import { CalendarNowManager } from './CalendarNowManager.js'
 
 export function reduceCurrentDate(currentDate: DateMarker, action: Action) {
   switch (action.type) {
@@ -12,20 +14,18 @@ export function reduceCurrentDate(currentDate: DateMarker, action: Action) {
 }
 
 // should be initialized once and stay constant
-export function getInitialDate(context: CalendarContext): DateMarker {
-  let initialDateInput = context.options.initialDate
+// this will change too
+export function getInitialDate(
+  options: CalendarOptionsRefined,
+  dateEnv: DateEnv,
+  nowManager: CalendarNowManager,
+): DateMarker {
+  let initialDateInput = options.initialDate
 
   // compute the initial ambig-timezone date
   if (initialDateInput != null) {
-    return context.dateEnv.createMarker(initialDateInput)
+    return dateEnv.createMarker(initialDateInput)
   }
 
-  return getNowDate(context)
-}
-
-export function getNowDate(context: {
-  initialNowDate: DateMarker,
-  initialNowQueriedMs: number,
-}): DateMarker {
-  return addMs(context.initialNowDate, new Date().valueOf() - context.initialNowQueriedMs)
+  return nowManager.getDateMarker()
 }

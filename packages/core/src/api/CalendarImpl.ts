@@ -26,7 +26,6 @@ import {
   EventSourceInput,
   EventInput,
 } from './structs.js'
-import { getNowDate } from '../reducers/current-date.js'
 
 export class CalendarImpl implements CalendarApi {
   currentDataManager?: CalendarDataManager // will be set by CalendarDataManager
@@ -217,7 +216,7 @@ export class CalendarImpl implements CalendarApi {
     this.unselect()
     this.dispatch({
       type: 'CHANGE_DATE',
-      dateMarker: getNowDate(state),
+      dateMarker: state.nowManager.getDateMarker(),
     })
   }
 
