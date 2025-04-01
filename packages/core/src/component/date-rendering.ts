@@ -15,7 +15,7 @@ export interface DateMeta {
 export function getDateMeta(date: DateMarker, todayRange?: DateRange, nowDate?: DateMarker, dateProfile?: DateProfile): DateMeta {
   return {
     dow: date.getUTCDay(),
-    isDisabled: Boolean(dateProfile && !rangeContainsMarker(dateProfile.activeRange, date)),
+    isDisabled: Boolean(dateProfile && (!dateProfile.activeRange || !rangeContainsMarker(dateProfile.activeRange, date))),
     isOther: Boolean(dateProfile && !rangeContainsMarker(dateProfile.currentRange, date)),
     isToday: Boolean(todayRange && rangeContainsMarker(todayRange, date)),
     isPast: Boolean(nowDate ? (date < nowDate) : todayRange ? (date < todayRange.start) : false),

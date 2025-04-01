@@ -126,4 +126,20 @@ describe('multimonth view', () => {
     const viewWrapper = new MultiMonthViewWrapper(calendar)
     expect(viewWrapper.el.querySelectorAll('.fc-daygrid-month-start').length).toBe(0)
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/7287
+  it('renders with validRange', () => {
+    const calendar = initCalendar({
+      initialDate: '2023-06-01',
+      initialView: 'multiMonthYear',
+      validRange: {
+        start: '2023-04-01',
+        end: '2023-09-01'
+      },
+    })
+
+    // will be rendered, but many days will be greyed out as disabled
+    expect(calendar.view.currentStart).toEqualDate('2023-01-01')
+    expect(calendar.view.currentEnd).toEqualDate('2024-01-01')
+  })
 })
