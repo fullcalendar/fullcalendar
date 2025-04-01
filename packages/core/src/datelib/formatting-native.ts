@@ -8,10 +8,6 @@ import { memoize } from '../util/memoize.js'
 
 const EXTENDED_SETTINGS_AND_SEVERITIES = {
   week: 3,
-  separator: 0, // 0 = not applicable
-  omitZeroMinute: 0,
-  meridiem: 0, // like am/pm
-  omitCommas: 0,
 }
 
 const STANDARD_DATE_PROP_SEVERITIES = {
@@ -43,30 +39,30 @@ export interface NativeFormatterOptions extends Intl.DateTimeFormatOptions {
 export class NativeFormatter implements DateFormatter {
   standardDateProps: any
   extendedSettings: any
-  severity: number
+  smallestUnitNum: number
   private buildFormattingFunc: typeof buildFormattingFunc // caching for efficiency with same date env
 
   constructor(formatSettings: NativeFormatterOptions) {
     let standardDateProps: any = {}
     let extendedSettings: any = {}
-    let severity = 0
+    let smallestUnitNum = 9 // the smallest unit in the formatter (9 is a sentinel, beyond max)
 
     for (let name in formatSettings) {
       if (name in EXTENDED_SETTINGS_AND_SEVERITIES) {
         extendedSettings[name] = formatSettings[name]
-        severity = Math.max(EXTENDED_SETTINGS_AND_SEVERITIES[name], severity)
+        smallestUnitNum = Math.min(EXTENDED_SETTINGS_AND_SEVERITIES[name], smallestUnitNum)
       } else {
         standardDateProps[name] = formatSettings[name]
 
         if (name in STANDARD_DATE_PROP_SEVERITIES) { // TODO: what about hour12? no severity
-          severity = Math.max(STANDARD_DATE_PROP_SEVERITIES[name], severity)
+          smallestUnitNum = Math.min(STANDARD_DATE_PROP_SEVERITIES[name], smallestUnitNum)
         }
       }
     }
 
     this.standardDateProps = standardDateProps
     this.extendedSettings = extendedSettings
-    this.severity = severity
+    this.smallestUnitNum = smallestUnitNum
 
     this.buildFormattingFunc = memoize(buildFormattingFunc)
   }
@@ -115,8 +111,8 @@ export class NativeFormatter implements DateFormatter {
     return full0 + separator + full1
   }
 
-  getLargestUnit() {
-    switch (this.severity) {
+  getSmallestUnit() {
+    switch (this.smallestUnitNum) {
       case 7:
       case 6:
       case 5:
