@@ -8,6 +8,10 @@ import { memoize } from '../util/memoize.js'
 
 const EXTENDED_SETTINGS_AND_SEVERITIES = {
   week: 3,
+  separator: 9, // 9 = not applicable
+  omitZeroMinute: 9,
+  meridiem: 9, // like am/pm
+  omitCommas: 9,
 }
 
 const STANDARD_DATE_PROP_SEVERITIES = {
@@ -50,7 +54,11 @@ export class NativeFormatter implements DateFormatter {
     for (let name in formatSettings) {
       if (name in EXTENDED_SETTINGS_AND_SEVERITIES) {
         extendedSettings[name] = formatSettings[name]
-        smallestUnitNum = Math.min(EXTENDED_SETTINGS_AND_SEVERITIES[name], smallestUnitNum)
+
+        const severity = EXTENDED_SETTINGS_AND_SEVERITIES[name]
+        if (severity < 9) {
+          smallestUnitNum = Math.min(EXTENDED_SETTINGS_AND_SEVERITIES[name], smallestUnitNum)
+        }
       } else {
         standardDateProps[name] = formatSettings[name]
 
