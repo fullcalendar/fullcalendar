@@ -61,18 +61,13 @@ describe('validRange', () => {
     })
 
     describe('when validRange is a function', () => {
-      let nowInput = '2017-06-09T06:00:00'
-
       it('receives the nowDate, timezoneless', () => {
         let validRangeSpy = spyOnCalendarCallback('validRange', (date) => {
           expect(date instanceof Date).toBe(true)
-          expect(date).toEqualDate(nowInput + 'Z')
+          expect(date).toEqualNow()
         })
 
-        initCalendar({
-          now: nowInput,
-        })
-
+        initCalendar()
         expect(validRangeSpy).toHaveBeenCalled()
       })
 
