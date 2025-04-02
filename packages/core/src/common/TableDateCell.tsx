@@ -1,6 +1,6 @@
 import { DateRange } from '../datelib/date-range.js'
 import { getDayClassNames, getDateMeta } from '../component/date-rendering.js'
-import { DateMarker } from '../datelib/marker.js'
+import { addMs, DateMarker } from '../datelib/marker.js'
 import { createElement } from '../preact.js'
 import { DateFormatter } from '../datelib/DateFormatter.js'
 import { formatDayString } from '../datelib/formatting-utils.js'
@@ -42,8 +42,15 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> {
       ? buildNavLinkAttrs(this.context, date)
       : {}
 
+    let publicDate = dateEnv.toDate(date)
+    // workaround for Luxon (and maybe moment) returning prior-days when start-of-day
+    // in DST gap: https://github.com/fullcalendar/fullcalendar/issues/7633
+    if (dateEnv.namedTimeZoneImpl) {
+      publicDate = addMs(publicDate, 3600000) // add an hour
+    }
+
     let renderProps: DayHeaderContentArg = {
-      date: dateEnv.toDate(date),
+      date: publicDate,
       view: viewApi,
       ...props.extraRenderProps,
       text,

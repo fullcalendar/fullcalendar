@@ -220,4 +220,22 @@ describe('luxon plugin', () => {
       expect(Math.abs(nowIndicatorY1 - nowIndicatorY0)).toBeGreaterThan(100)
     })
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/7633
+  describe('date headers', () => {
+    it('don\'t fall into DST', () => {
+      const dayNumbers = []
+      initCalendar({
+        timeZone: 'Asia/Beirut',
+        initialView: 'timeGridWeek',
+        initialDate: '2024-03-31',
+        firstDay: 3,
+        dayHeaderContent(arg) {
+          dayNumbers.push(toLuxonDateTime(arg.date, arg.view.calendar).day)
+          return true // render default
+        },
+      })
+      expect(dayNumbers).toEqual([27, 28, 29, 30, 31, 1, 2])
+    })
+  })
 })
