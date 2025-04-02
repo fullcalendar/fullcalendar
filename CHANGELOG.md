@@ -1,4 +1,19 @@
 
+### 6.1.17 (2025-04-01)
+
+- fix: recurring event start/end time not updated when timezone changed  (#5273)
+- fix: nowIndicator not updated when timezone changed (#5753)
+- fix: nowIndicator lags after returning to suspended tab (#7806)
+- fix: "today" date does not update after current time crosses midnight (#3783)
+- fix: day header 1 day behind with Luxon & timezone with midnight DST (#7633)
+- fix: in timeline, incorrect navLink for granularities other than day/week (#4931)
+- fix: validRange in multiMonth view does not render all the days (#7287)
+
+### Angular
+
+- feature: Accept TempateRef for `resourceAreaColumns.cellContent` (#7894), thx @gongAll
+
+
 ### 6.1.16 (2024-12-04)
 
 ### Angular
