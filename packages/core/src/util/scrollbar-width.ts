@@ -19,6 +19,7 @@ function computeScrollbarWidths(): ScrollbarWidths {
   el.style.position = 'absolute'
   el.style.top = '-9999px'
   el.style.left = '-9999px'
+  el.className= 'fc-scroller'
   document.body.appendChild(el)
   let res = computeScrollbarWidthsForEl(el)
   document.body.removeChild(el)
