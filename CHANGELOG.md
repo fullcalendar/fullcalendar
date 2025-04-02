@@ -1,5 +1,5 @@
 
-### 6.1.17 (2025-04-01)
+## 6.1.17 (2025-04-01)
 
 - fix: recurring event start/end time not updated when timezone changed  (#5273)
 - fix: nowIndicator not updated when timezone changed (#5753)
@@ -13,8 +13,7 @@
 
 - feature: Accept TempateRef for `resourceAreaColumns.cellContent` (#7894), thx @gongAll
 
-
-### 6.1.16 (2024-12-04)
+## 6.1.16 (2024-12-04)
 
 ### Angular
 
