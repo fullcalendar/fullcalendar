@@ -26,7 +26,7 @@ export class CalendarNowManager {
         this.nowAnchorDate = dateEnv.toDate(
           nowInput
             ? dateEnv.createMarker(nowInput)
-            : dateEnv.createNowMarker()
+            : dateEnv.createNowMarker(),
         )
         this.nowAnchorQueried = Date.now()
       }
@@ -45,9 +45,9 @@ export class CalendarNowManager {
   getDateMarker(): DateMarker {
     return this.nowAnchorDate
       ? this.dateEnv.timestampToMarker(
-          this.nowAnchorDate.valueOf() +
-          (Date.now() - this.nowAnchorQueried),
-        )
+        this.nowAnchorDate.valueOf() +
+        (Date.now() - this.nowAnchorQueried),
+      )
       : this.dateEnv.createMarker(this.nowFn!())
   }
 

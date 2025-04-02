@@ -134,7 +134,7 @@ describe('multimonth view', () => {
       initialView: 'multiMonthYear',
       validRange: {
         start: '2023-04-01',
-        end: '2023-09-01'
+        end: '2023-09-01',
       },
     })
 

@@ -56,7 +56,7 @@ export const recurringType: RecurringType<EventRRuleData> = {
         // convert to epoch-milliseconds in original timezone
         eventRRuleData.dateEnv
           ? eventRRuleData.dateEnv.toDate(date)
-          : date // assumed Z, which doesn't need massaging for rrule
+          : date, // assumed Z, which doesn't need massaging for rrule
       )
     })
   },

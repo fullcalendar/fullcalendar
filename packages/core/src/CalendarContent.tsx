@@ -89,7 +89,7 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
 
     return (
       <ViewContextType.Provider value={viewContext}>
-        <NowTimer unit='day'>
+        <NowTimer unit="day">
           {(nowDate: DateMarker) => {
             let toolbarProps = this.buildToolbarProps(
               props.viewSpec,
