@@ -7,12 +7,16 @@ import {
   DateRange,
   DateMarker,
   parseMarker,
+  addDays,
 } from '@fullcalendar/core/internal'
 import { RRuleInputObject } from './event-refiners.js'
 
 interface EventRRuleData {
   rruleSet: rruleLib.RRuleSet
-  isTimeZoneSpecified: boolean
+
+  // if a timezone in dtstart (only Z allowed), it's implicitly stored in the rruleSet
+  // if NOT, we need to record the original timezone here
+  dateEnv?: DateEnv
 }
 
 export const recurringType: RecurringType<EventRRuleData> = {
@@ -22,7 +26,10 @@ export const recurringType: RecurringType<EventRRuleData> = {
 
       if (eventRRuleData) {
         return {
-          typeData: { rruleSet: eventRRuleData.rruleSet, isTimeZoneSpecified: eventRRuleData.isTimeZoneSpecified },
+          typeData: {
+            rruleSet: eventRRuleData.rruleSet,
+            dateEnv: eventRRuleData.isTimeZoneSpecified ? undefined : dateEnv,
+          },
           allDayGuess: !eventRRuleData.isTimeSpecified,
           duration: eventProps.duration,
         }
@@ -31,25 +38,27 @@ export const recurringType: RecurringType<EventRRuleData> = {
 
     return null
   },
-  expand(eventRRuleData: EventRRuleData, framingRange: DateRange, dateEnv: DateEnv): DateMarker[] {
-    let dates: DateMarker[]
-
-    if (eventRRuleData.isTimeZoneSpecified) {
-      dates = eventRRuleData.rruleSet.between(
-        dateEnv.toDate(framingRange.start), // rrule lib will treat as UTC-zoned
-        dateEnv.toDate(framingRange.end), // (same)
-        true, // inclusive (will give extra events at start, see https://github.com/jakubroztocil/rrule/issues/84)
-      ).map((date) => dateEnv.createMarker(date)) // convert UTC-zoned-date to locale datemarker
-    } else {
-      // when no timezone in given start/end, the rrule lib will assume UTC,
-      // which is same as our DateMarkers. no need to manipulate
-      dates = eventRRuleData.rruleSet.between(
-        framingRange.start,
-        framingRange.end,
-        true, // inclusive (will give extra events at start, see https://github.com/jakubroztocil/rrule/issues/84)
+  expand(
+    eventRRuleData: EventRRuleData,
+    framingRange: DateRange,
+    calendarDateEnv: DateEnv,
+  ): DateMarker[] {
+    return eventRRuleData.rruleSet.between(
+      // Add one-day leeway since rrule lib only operates in UTC,
+      // but the zoned variant of framingRange is not.
+      // Also overcomes this rrule bug:
+      // https://github.com/jakubroztocil/rrule/issues/84)
+      addDays(framingRange.start, -1),
+      addDays(framingRange.end, 1),
+    ).map((date) => {
+      // convert to plain-datetime
+      return calendarDateEnv.createMarker(
+        // convert to epoch-milliseconds in original timezone
+        eventRRuleData.dateEnv
+          ? eventRRuleData.dateEnv.toDate(date)
+          : date // assumed Z, which doesn't need massaging for rrule
       )
-    }
-    return dates
+    })
   },
 }
 

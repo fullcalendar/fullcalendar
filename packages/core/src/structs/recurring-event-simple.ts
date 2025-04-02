@@ -19,6 +19,7 @@ interface SimpleRecurringData {
   endTime: Duration | null
   startRecur: DateMarker | null
   endRecur: DateMarker | null
+  dateEnv: DateEnv // DateEnv when the recurring definition was created
 }
 
 let recurring: RecurringType<SimpleRecurringData> = {
@@ -31,6 +32,7 @@ let recurring: RecurringType<SimpleRecurringData> = {
         endTime: refined.endTime || null,
         startRecur: refined.startRecur ? dateEnv.createMarker(refined.startRecur) : null,
         endRecur: refined.endRecur ? dateEnv.createMarker(refined.endRecur) : null,
+        dateEnv,
       }
 
       let duration: Duration
@@ -62,8 +64,9 @@ let recurring: RecurringType<SimpleRecurringData> = {
       return expandRanges(
         typeData.daysOfWeek,
         typeData.startTime,
-        clippedFramingRange,
+        typeData.dateEnv,
         dateEnv,
+        clippedFramingRange,
       )
     }
     return []
@@ -80,8 +83,9 @@ export const simpleRecurringEventsPlugin = createPlugin({
 function expandRanges(
   daysOfWeek: number[] | null,
   startTime: Duration | null,
+  eventDateEnv: DateEnv,
+  calendarDateEnv: DateEnv,
   framingRange: DateRange,
-  dateEnv: DateEnv,
 ): DateMarker[] {
   let dowHash: { [num: string]: true } | null = daysOfWeek ? arrayToHash(daysOfWeek) : null
   let dayMarker = startOfDay(framingRange.start)
@@ -94,12 +98,16 @@ function expandRanges(
     // if everyday, or this particular day-of-week
     if (!dowHash || dowHash[dayMarker.getUTCDay()]) {
       if (startTime) {
-        instanceStart = dateEnv.add(dayMarker, startTime)
+        instanceStart = calendarDateEnv.add(dayMarker, startTime)
       } else {
         instanceStart = dayMarker
       }
 
-      instanceStarts.push(instanceStart)
+      instanceStarts.push(
+        calendarDateEnv.createMarker(
+          eventDateEnv.toDate(instanceStart),
+        ),
+      )
     }
 
     dayMarker = addDays(dayMarker, 1)

@@ -564,7 +564,7 @@ describe('rrule plugin', () => {
         allDay: false,
         rrule: {
           freq: 'weekly',
-          dtstart: '2023-02-10T12:00:00', // assumed to be Asia/Chicago
+          dtstart: '2023-02-10T12:00:00', // assumed to be America/New_York
           until: '2023-02-11', // only one instance
         },
       }],
@@ -585,6 +585,15 @@ describe('rrule plugin', () => {
     expect(events[0].allDay).toBe(false)
     expect(events[0].start).toEqualDate('2023-02-10T17:00:00Z')
     expect(timeTexts.length).toBe(2)
+    expect(timeTexts[1]).toBe('11a')
+
+    // ensure bug doesn't occur when refetching (this happened)
+    calendar.next()
+    calendar.prev()
+    events = calendar.getEvents()
+    expect(events[0].allDay).toBe(false)
+    expect(events[0].start).toEqualDate('2023-02-10T17:00:00Z')
+    expect(timeTexts.length).toBe(3)
     expect(timeTexts[1]).toBe('11a')
   })
 

@@ -103,5 +103,12 @@ describe('recurring events', () => {
     expect(events[0].start).toEqualDate('2023-02-07T17:00:00Z')
     expect(timeTexts.length).toBe(2)
     expect(timeTexts[1]).toBe('11:00')
+
+    calendar.next() // renders next week's event
+    calendar.prev() // renders prev week's event
+    calendar.setOption('timeZone', 'America/Chicago')
+    expect(events[0].start).toEqualDate('2023-02-07T17:00:00Z')
+    expect(timeTexts.length).toBe(4)
+    expect(timeTexts[1]).toBe('11:00')
   })
 })
