@@ -66,14 +66,16 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
     }
   }
 
-  private setTimeout(timing = this.computeTiming()) {
-    let { waitMs } = timing
-
+  private setTimeout(waitMs: number = this.computeTiming().waitMs) {
     // NOTE: timeout could take longer than expected if tab sleeps,
     // which is why we listen to 'visibilitychange'
     this.timeoutId = setTimeout(() => {
-      this.setState(this.computeTiming().state, () => {
-        this.setTimeout()
+      // NOTE: timeout could also return *earlier* than expected, and we need to wait 2 ms more
+      // This is why use use same waitMs from computeTiming, so we don't skip an interval while
+      // .setState() is executing
+      const timing = this.computeTiming()
+      this.setState(timing.state, () => {
+        this.setTimeout(timing.waitMs)
       })
     }, waitMs)
   }
@@ -92,7 +94,7 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
     }
 
     this.clearTimeout()
-    this.setTimeout(timing)
+    this.setTimeout(timing.waitMs)
   }
 
   private handleVisibilityChange = () => {
