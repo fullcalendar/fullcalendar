@@ -45,14 +45,15 @@ export class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
           (!props.isNextEnabled && buttonName === 'next')
 
         let buttonClasses = [`fc-${buttonName}-button`, theme.getClass('button')]
+        const title = typeof buttonHint === 'function' ? buttonHint(props.navUnit) : buttonHint
         if (isPressed) {
           buttonClasses.push(theme.getClass('buttonActive'))
         }
-
         children.push(
           <button
             type="button"
-            title={typeof buttonHint === 'function' ? buttonHint(props.navUnit) : buttonHint}
+            title={title}
+            aria-label={title}
             disabled={isDisabled}
             aria-pressed={isPressed}
             className={buttonClasses.join(' ')}
