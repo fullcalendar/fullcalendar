@@ -33,22 +33,22 @@ export class EventImpl implements EventApi {
   /*
   TODO: make event struct more responsible for this
   */
-  setProp(name: string, val: any): void {
+  setProp(name: string, val: any, silent: boolean = false): void {
     if (name in EVENT_DATE_REFINERS) {
       console.warn('Could not set date-related prop \'name\'. Use one of the date-related methods instead.')
-    // TODO: make proper aliasing system?
+      // TODO: make proper aliasing system?
     } else if (name === 'id') {
       val = EVENT_NON_DATE_REFINERS[name](val)
 
       this.mutate({
         standardProps: { publicId: val }, // hardcoded internal name
-      })
+      }, silent)
     } else if (name in EVENT_NON_DATE_REFINERS) {
       val = EVENT_NON_DATE_REFINERS[name](val)
 
       this.mutate({
         standardProps: { [name]: val },
-      })
+      }, silent)
     } else if (name in EVENT_UI_REFINERS) {
       let ui = EVENT_UI_REFINERS[name](val)
 
@@ -62,16 +62,16 @@ export class EventImpl implements EventApi {
 
       this.mutate({
         standardProps: { ui },
-      })
+      }, silent)
     } else {
       console.warn(`Could not set prop '${name}'. Use setExtendedProp instead.`)
     }
   }
 
-  setExtendedProp(name: string, val: any): void {
+  setExtendedProp(name: string, val: any, silent: boolean = false): void {
     this.mutate({
       extendedProps: { [name]: val },
-    })
+    }, silent)
   }
 
   setStart(startInput: DateInput, options: { granularity?: string, maintainDuration?: boolean } = {}): void {
@@ -211,7 +211,7 @@ export class EventImpl implements EventApi {
     })
   }
 
-  mutate(mutation: EventMutation): void { // meant to be private. but plugins need access
+  mutate(mutation: EventMutation, silent: boolean = false): void { // meant to be private. but plugins need access
     let instance = this._instance
 
     if (instance) {
@@ -245,17 +245,19 @@ export class EventImpl implements EventApi {
         eventStore: relevantEvents,
       })
 
-      context.emitter.trigger('eventChange', {
-        oldEvent,
-        event: this,
-        relatedEvents: buildEventApis(relevantEvents, context, instance),
-        revert() {
-          context.dispatch({
-            type: 'RESET_EVENTS',
-            eventStore, // the ORIGINAL store
-          })
-        },
-      })
+      if (!silent) {
+        context.emitter.trigger('eventChange', {
+          oldEvent,
+          event: this,
+          relatedEvents: buildEventApis(relevantEvents, context, instance),
+          revert() {
+            context.dispatch({
+              type: 'RESET_EVENTS',
+              eventStore, // the ORIGINAL store
+            })
+          },
+        })
+      }
     }
   }
 
