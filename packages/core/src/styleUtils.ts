@@ -33,8 +33,10 @@ function registerStylesRoot(rootNode: ParentNode): void {
         styleEl.nonce = nonce
       }
 
-      const parentEl = rootNode === document ? document.head : rootNode
-      const insertBefore = rootNode === document
+      const isDocumentNode = (node: Node): node is Document => node.nodeName === '#document'
+
+      const parentEl =  isDocumentNode(rootNode) ? rootNode.head : rootNode
+      const insertBefore = isDocumentNode(rootNode)
         ? parentEl.querySelector('script,link[rel=stylesheet],link[as=style],style')
         : parentEl.firstChild
 
