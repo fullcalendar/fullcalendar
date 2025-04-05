@@ -597,6 +597,23 @@ describe('rrule plugin', () => {
     expect(timeTexts[1]).toBe('11a')
   })
 
+  // https://github.com/fullcalendar/fullcalendar/issues/6932
+  it('if the start date (DTSTART) includes a timezone (TZID) the time is recognized (does not default to all day)', () => {
+    initCalendar({
+      timeZone: 'Europe/Vienna',
+      initialDate: '2022-10-29',
+      events: [
+        {
+          rrule: 'DTSTART;TZID=Europe/Vienna:20221029T150000\nRRULE:FREQ=DAILY;COUNT=2',
+        },
+      ],
+    })
+    let events = getSortedEvents()
+    expect(events.length).toBe(2)
+    expect(events[0].start).toEqualDate('2022-10-29T15:00:00')
+    expect(events[1].start).toEqualDate('2022-10-30T15:00:00')
+  })
+
   // utils
 
   function buildLocalRRuleDateStr(inputStr) { // produces strings like '20200101123030'
