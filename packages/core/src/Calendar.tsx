@@ -22,6 +22,7 @@ export class Calendar extends CalendarImpl {
   private isRendered = false
   private currentClassNames: string[] = []
   private customContentRenderId = 0
+  private swipeAttached = false
 
   constructor(el: HTMLElement, optionOverrides: CalendarOptions = {}) {
     super()
@@ -49,6 +50,7 @@ export class Calendar extends CalendarImpl {
 
   private handleData = (data: CalendarData) => {
     this.currentData = data
+	this.handleSwipeForNext(data.calendarOptions.swipeForNext)
     this.renderRunner.request(data.calendarOptions.rerenderDelay)
   }
 
@@ -152,5 +154,37 @@ export class Calendar extends CalendarImpl {
 
   private setHeight(height: CssDimValue) {
     applyStyleProp(this.el, 'height', height)
+  }
+  
+  private handleSwipeForNext(swipeVal: number) {
+  // on first data load, wire up swipe-to-nav if requested
+    if (!this.swipeAttached) {
+      this.swipeAttached = true
+ 
+      // only if 1 (calendar only) or 2 (document-wide)
+      if (swipeVal === 1 || swipeVal === 2) {
+        const listener = (swipeVal === 2 ? document : this.el)
+        let startX = 0, startY = 0
+ 
+        listener.addEventListener('touchstart', (ev: TouchEvent) => {
+          startX = ev.touches[0].clientX
+          startY = ev.touches[0].clientY
+        }, { passive: true })
+ 
+        listener.addEventListener('touchend', (ev: TouchEvent) => {
+          const dx = ev.changedTouches[0].clientX - startX
+          const dy = ev.changedTouches[0].clientY - startY
+ 
+          // horizontal swipe only
+          if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { // The 50 value represents the width of the swipe deteted. Should we make it a constant / option ?
+            if (dx > 0) {
+              this.prev()
+            } else {
+              this.next()
+            }
+          }
+        }, { passive: true })
+      }
+    }
   }
 }
