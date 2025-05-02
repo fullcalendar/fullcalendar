@@ -157,34 +157,40 @@ export class Calendar extends CalendarImpl {
   }
   
   private handleSwipeForNext(swipeVal: number) {
-  // on first data load, wire up swipe-to-nav if requested
+    // on first data load, wire up swipe-to-nav if requested
     if (!this.swipeAttached) {
-      this.swipeAttached = true
- 
-      // only if 1 (calendar only) or 2 (document-wide)
-      if (swipeVal === 1 || swipeVal === 2) {
-        const listener = (swipeVal === 2 ? document : this.el)
-        let startX = 0, startY = 0
- 
-        listener.addEventListener('touchstart', (ev: TouchEvent) => {
-          startX = ev.touches[0].clientX
-          startY = ev.touches[0].clientY
-        }, { passive: true })
- 
-        listener.addEventListener('touchend', (ev: TouchEvent) => {
-          const dx = ev.changedTouches[0].clientX - startX
-          const dy = ev.changedTouches[0].clientY - startY
- 
-          // horizontal swipe only
-          if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { // The 50 value represents the width of the swipe deteted. Should we make it a constant / option ?
-            if (dx > 0) {
-              this.prev()
-            } else {
-              this.next()
-            }
-          }
-        }, { passive: true })
-      }
+	  // Skip swipe if this touch started on an event
+	  let skipSwipe = false;
+	  let touchStartX = 0;
+	  let touchStartY = 0;
+	  
+	  const listener = swipeVal === 1 ? this.el : document;
+	  listener.addEventListener('touchstart', (ev: TouchEvent) => {
+	    const target = ev.target as HTMLElement;
+	    if (target.closest('.fc-event')) {
+	  	  skipSwipe = true;
+	  	  return;
+	    }
+	    skipSwipe = false;
+	    touchStartX = ev.touches[0].clientX;
+	    touchStartY = ev.touches[0].clientY;
+	  }, { passive: true });
+	  
+	  listener.addEventListener('touchend', (ev: TouchEvent) => {
+	    if (skipSwipe) {
+	  	  skipSwipe = false; 
+	  	  return;
+	    }
+	    const dx = ev.changedTouches[0].clientX - touchStartX;
+	    const dy = ev.changedTouches[0].clientY - touchStartY;
+	  
+	    // horizontal swipe threshold
+	    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+	  	  dx > 0 ? this.prev() : this.next();
+	    }
+	  }, { passive: true });
+	  
+	  this.swipeAttached = true;
     }
   }
 }
