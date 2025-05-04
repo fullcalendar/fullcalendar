@@ -81,15 +81,14 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
     hitDragging.emitter.on('pointerup', this.handlePointerUp)
     hitDragging.emitter.on('dragend', this.handleDragEnd)
 
-    if (this.component.context.options.dragToEdges
-      && initialContext.calendarApi.getCurrentData().currentViewType === 'multiMonthYear') { // disabled on multiMonthYear view
+    if (this.component.context.options.dragToEdges) {
       let prevPx = 0
       let lastPx = 0
       ;(this.dragging.pointer as any).emitter.on(
         'pointermove',
         (pev: PointerDragEvent) => {
-          let dtemo = this.component.context.options.dragToEdgesMobileOnly;
-          let dtedo = this.component.context.options.dragToEdgesDesktopOnly;
+          let dtemo = this.component.context.options.dragToEdgesOnMobileOnly;
+          let dtedo = this.component.context.options.dragToEdgesOnDesktopOnly;
           if (!dtemo && !dtedo || dtemo && pev.isTouch || dtedo && !pev.isTouch) {
             const calendarEl = this.settings.el as HTMLElement
             const rect = calendarEl.getBoundingClientRect()
@@ -471,7 +470,8 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
   private requestEdgeNav(dir: 'prev'|'next') {
     let initialContext = this.component.context
-
+    // disabled on multiMonthYear view
+    if (this.component.context.calendarApi.getCurrentData().currentViewType === 'multiMonthYear') { return }
 	  if (this.edgeNavDir === dir) { return }
     this.clearEdgeNav(); // removes any old classes
     this.edgeNavDir = dir;
