@@ -67,7 +67,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
         {(InnerContent) => (
           <div className="fc-scrollgrid-sync-inner">
             <InnerContent
-              elTag="a"
+              elTag="span"
               elClasses={[
                 'fc-col-header-cell-cushion',
                 props.isSticky && 'fc-sticky',
