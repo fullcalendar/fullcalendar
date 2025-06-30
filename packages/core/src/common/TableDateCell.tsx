@@ -79,7 +79,7 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> {
           <div className="fc-scrollgrid-sync-inner">
             {!dayMeta.isDisabled && (
               <InnerContainer
-                elTag="a"
+                elTag="span"
                 elAttrs={navLinkAttrs}
                 elClasses={[
                   'fc-col-header-cell-cushion',
