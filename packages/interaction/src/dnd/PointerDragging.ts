@@ -103,9 +103,11 @@ export class PointerDragging {
 
       if (!this.shouldIgnoreMove) {
         document.addEventListener('mousemove', this.handleMouseMove)
+        document.addEventListener('dragover', this.handleMouseMove)
       }
 
       document.addEventListener('mouseup', this.handleMouseUp)
+      document.addEventListener('dragend', this.handleMouseUp)
     }
   }
 
@@ -117,7 +119,9 @@ export class PointerDragging {
 
   handleMouseUp = (ev: MouseEvent) => {
     document.removeEventListener('mousemove', this.handleMouseMove)
+    document.removeEventListener('dragover', this.handleMouseMove)
     document.removeEventListener('mouseup', this.handleMouseUp)
+    document.removeEventListener('dragend', this.handleMouseUp)
 
     this.emitter.trigger('pointerup', this.createEventFromMouse(ev))
 
