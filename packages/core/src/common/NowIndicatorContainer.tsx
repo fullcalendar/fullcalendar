@@ -35,6 +35,7 @@ export const NowIndicatorContainer = (props: NowIndicatorContainerProps) => (
           elRef={props.elRef}
           elTag={props.elTag || 'div'}
           elAttrs={props.elAttrs}
+          elClasses={props.elClasses}
           elStyle={props.elStyle}
           renderProps={renderProps}
           generatorName="nowIndicatorContent"
