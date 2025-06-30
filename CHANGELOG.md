@@ -1,5 +1,5 @@
 
-## 6.1.18
+## 6.1.18 (2025-06-29)
 
 - fix: Optimize custom content-injection rerendering performance (#3003, #7650)
   (Especially important for event rerendering with `eventContent`)
