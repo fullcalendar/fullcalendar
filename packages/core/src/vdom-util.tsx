@@ -14,16 +14,16 @@ export abstract class PureComponent<Props=Dictionary, State=Dictionary> extends 
   propEquality: EqualityFuncs<Props>
   stateEquality: EqualityFuncs<State>
 
-  debug: boolean
+  // debug: boolean
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     const shouldUpdate =
-      !compareObjs(this.props, nextProps, this.propEquality, this.debug) ||
-      !compareObjs(this.state, nextState, this.stateEquality, this.debug)
+      !compareObjs(this.props, nextProps, this.propEquality /*, this.debug */) ||
+      !compareObjs(this.state, nextState, this.stateEquality /*, this.debug */)
 
-    if (this.debug && shouldUpdate) {
-      console.log('shouldUpdate!')
-    }
+    // if (this.debug && shouldUpdate) {
+    //   console.log('shouldUpdate!')
+    // }
 
     return shouldUpdate
   }

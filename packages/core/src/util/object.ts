@@ -176,19 +176,36 @@ export function compareObjs(
   oldProps,
   newProps,
   equalityFuncs: EqualityFuncs<any> = {},
-  debug = false,
+  // debug = false,
 ) {
   if (oldProps === newProps) {
     return true
   }
 
+  // if (debug) {
+  //   for (let key in newProps) {
+  //     if (key in oldProps && isObjValsEqual(oldProps[key], newProps[key], equalityFuncs[key])) {
+  //       // equal
+  //     } else {
+  //       if (debug) {
+  //         console.log('prop difference', key, oldProps[key], newProps[key])
+  //       }
+  //     }
+  //   }
+  //   // check for props that were omitted in the new
+  //   for (let key in oldProps) {
+  //     if (!(key in newProps)) {
+  //       if (debug) {
+  //         console.log('prop absent', key)
+  //       }
+  //     }
+  //   }
+  // }
+
   for (let key in newProps) {
     if (key in oldProps && isObjValsEqual(oldProps[key], newProps[key], equalityFuncs[key])) {
       // equal
     } else {
-      if (debug) {
-        console.log('prop difference', key, oldProps[key], newProps[key])
-      }
       return false
     }
   }
@@ -196,9 +213,6 @@ export function compareObjs(
   // check for props that were omitted in the new
   for (let key in oldProps) {
     if (!(key in newProps)) {
-      if (debug) {
-        console.log('prop absent', key)
-      }
       return false
     }
   }
