@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/daygrid",
-  "version": "6.1.17",
+  "version": "6.1.18",
   "title": "FullCalendar Day Grid Plugin",
   "description": "Display events on a month view or \"day grid\" view",
   "homepage": "https://fullcalendar.io/docs/month-view",
@@ -9,10 +9,10 @@
     "month-view"
   ],
   "peerDependencies": {
-    "@fullcalendar/core": "~6.1.17"
+    "@fullcalendar/core": "~6.1.18"
   },
   "devDependencies": {
-    "@fullcalendar/core": "~6.1.17",
+    "@fullcalendar/core": "~6.1.18",
     "@fullcalendar-scripts/standard": "*"
   },
   "scripts": {
