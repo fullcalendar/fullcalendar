@@ -1,4 +1,9 @@
 
+## TODO
+
+- fix: Optimize custom content-injection rerendering performance (#3003, #7650)
+  (Especially important for event rerendering with `eventContent`)
+
 ## 6.1.17 (2025-04-01)
 
 - fix: recurring event start/end time not updated when timezone changed  (#5273)
