@@ -5,6 +5,7 @@ import { DateFormatter } from '../datelib/DateFormatter.js'
 import { EventContainer } from './EventContainer.js'
 import { Seg } from '../component/DateComponent.js'
 import { ElRef } from '../content-inject/ContentInjector.js'
+import { isPropsEqual } from '../util/object.js'
 
 export interface StandardEventProps {
   elRef?: ElRef
@@ -71,6 +72,10 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
     )
   }
 }
+
+StandardEvent.addPropsEquality({
+  seg: isPropsEqual,
+})
 
 function renderInnerContent(innerProps: EventContentArg) {
   return (

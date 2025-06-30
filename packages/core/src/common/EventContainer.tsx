@@ -12,6 +12,10 @@ import {
 } from '../component/event-rendering.js'
 import { ContentContainer, InnerContainerFunc } from '../content-inject/ContentContainer.js'
 import { ElProps } from '../content-inject/ContentInjector.js'
+import { memoize } from '../util/memoize.js'
+import { ViewContext } from '../ViewContext.js'
+import { EventDef } from '../structs/event-def.js'
+import { EventInstance } from '../structs/event-instance.js'
 
 export interface MinimalEventProps {
   seg: Seg
@@ -33,6 +37,11 @@ export type EventContainerProps = ElProps & MinimalEventProps & {
 }
 
 export class EventContainer extends BaseComponent<EventContainerProps> {
+  // memo
+  private buildPublicEvent = memoize(
+    (context: ViewContext, eventDef: EventDef, eventInstance: EventInstance) => new EventImpl(context, eventDef, eventInstance)
+  )
+
   el: HTMLElement
 
   render() {
@@ -43,7 +52,7 @@ export class EventContainer extends BaseComponent<EventContainerProps> {
     const { ui } = eventRange
 
     const renderProps: EventContentArg = {
-      event: new EventImpl(context, eventRange.def, eventRange.instance),
+      event: this.buildPublicEvent(context, eventRange.def, eventRange.instance),
       view: context.viewApi,
       timeText: props.timeText,
       textColor: ui.textColor,
