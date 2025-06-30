@@ -38,7 +38,7 @@ export interface TableRowsProps {
 
 export class TableRows extends DateComponent<TableRowsProps> {
   private splitBusinessHourSegs = memoize(splitSegsByRow)
-  private splitBgEventSegs = memoize(splitSegsByRow)
+  private splitBgEventSegs = memoize(splitAllDaySegsByRow)
   private splitFgEventSegs = memoize(splitSegsByRow)
   private splitDateSelectionSegs = memoize(splitSegsByRow)
   private splitEventDrag = memoize(splitInteractionByRow)
@@ -84,7 +84,7 @@ export class TableRows extends DateComponent<TableRowsProps> {
               renderIntro={props.renderRowIntro}
               businessHourSegs={businessHourSegsByRow[row]}
               eventSelection={props.eventSelection}
-              bgEventSegs={bgEventSegsByRow[row].filter(isSegAllDay) /* hack */}
+              bgEventSegs={bgEventSegsByRow[row]}
               fgEventSegs={fgEventSegsByRow[row]}
               dateSelectionSegs={dateSelectionSegsByRow[row]}
               eventDrag={eventDragByRow[row]}
@@ -193,6 +193,10 @@ export class TableRows extends DateComponent<TableRowsProps> {
     let end = addDays(start, 1)
     return { start, end }
   }
+}
+
+function splitAllDaySegsByRow(segs: TableSeg[], rowCnt: number): TableSeg[][] {
+  return splitSegsByRow(segs.filter(isSegAllDay), rowCnt)
 }
 
 function isSegAllDay(seg: TableSeg) {
