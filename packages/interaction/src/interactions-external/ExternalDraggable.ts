@@ -1,9 +1,11 @@
 import { BASE_OPTION_DEFAULTS, PointerDragEvent } from '@fullcalendar/core/internal'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'
-import { ExternalElementDragging, DragMetaGenerator } from './ExternalElementDragging.js'
+import { ExternalElementDragging, DragMetaGenerator, DragEventStart, DragEventEnd } from './ExternalElementDragging.js'
 
 export interface ExternalDraggableSettings {
   eventData?: DragMetaGenerator
+  eventDragStart?: DragEventStart
+  eventDragEnd?: DragEventEnd
   itemSelector?: string
   minDistance?: number
   longPressDelay?: number
@@ -36,7 +38,7 @@ export class ExternalDraggable {
     dragging.emitter.on('pointerdown', this.handlePointerDown)
     dragging.emitter.on('dragstart', this.handleDragStart)
 
-    new ExternalElementDragging(dragging, settings.eventData) // eslint-disable-line no-new
+    new ExternalElementDragging(dragging, settings.eventData, settings.eventDragStart, settings.eventDragEnd) // eslint-disable-line no-new
   }
 
   handlePointerDown = (ev: PointerDragEvent) => {
