@@ -39,7 +39,7 @@ export type EventContainerProps = ElProps & MinimalEventProps & {
 export class EventContainer extends BaseComponent<EventContainerProps> {
   // memo
   private buildPublicEvent = memoize(
-    (context: ViewContext, eventDef: EventDef, eventInstance: EventInstance) => new EventImpl(context, eventDef, eventInstance)
+    (context: ViewContext, eventDef: EventDef, eventInstance: EventInstance) => new EventImpl(context, eventDef, eventInstance),
   )
 
   el: HTMLElement
