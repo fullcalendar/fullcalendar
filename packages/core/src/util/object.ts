@@ -172,7 +172,12 @@ export type EqualityFuncs<ObjType> = { // not really just a "func" anymore
   [K in keyof ObjType]?: EqualityThing<ObjType[K]>
 }
 
-export function compareObjs(oldProps, newProps, equalityFuncs: EqualityFuncs<any> = {}) {
+export function compareObjs(
+  oldProps,
+  newProps,
+  equalityFuncs: EqualityFuncs<any> = {},
+  debug = false,
+) {
   if (oldProps === newProps) {
     return true
   }
@@ -181,6 +186,9 @@ export function compareObjs(oldProps, newProps, equalityFuncs: EqualityFuncs<any
     if (key in oldProps && isObjValsEqual(oldProps[key], newProps[key], equalityFuncs[key])) {
       // equal
     } else {
+      if (debug) {
+        console.log('prop difference', key, oldProps[key], newProps[key])
+      }
       return false
     }
   }
@@ -188,6 +196,9 @@ export function compareObjs(oldProps, newProps, equalityFuncs: EqualityFuncs<any
   // check for props that were omitted in the new
   for (let key in oldProps) {
     if (!(key in newProps)) {
+      if (debug) {
+        console.log('prop absent', key)
+      }
       return false
     }
   }

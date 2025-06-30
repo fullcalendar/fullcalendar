@@ -2,7 +2,7 @@
 
 import { Component, Ref } from './preact.js'
 import { ViewContextType, ViewContext } from './ViewContext.js'
-import { compareObjs, EqualityFuncs, getUnequalProps } from './util/object.js'
+import { compareObjs, EqualityFuncs } from './util/object.js'
 import { Dictionary } from './options.js'
 
 export abstract class PureComponent<Props=Dictionary, State=Dictionary> extends Component<Props, State> {
@@ -17,13 +17,15 @@ export abstract class PureComponent<Props=Dictionary, State=Dictionary> extends 
   debug: boolean
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
-    if (this.debug) {
-      // eslint-disable-next-line no-console
-      console.log(getUnequalProps(nextProps, this.props), getUnequalProps(nextState, this.state))
+    const shouldUpdate =
+      !compareObjs(this.props, nextProps, this.propEquality, this.debug) ||
+      !compareObjs(this.state, nextState, this.stateEquality, this.debug)
+
+    if (this.debug && shouldUpdate) {
+      console.log('shouldUpdate!')
     }
 
-    return !compareObjs(this.props, nextProps, this.propEquality) ||
-      !compareObjs(this.state, nextState, this.stateEquality)
+    return shouldUpdate
   }
 
   // HACK for freakin' React StrictMode
