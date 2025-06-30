@@ -29,8 +29,8 @@ export interface EventApi {
   classNames: string[]
   extendedProps: Dictionary
 
-  setProp(name: string, val: any): void
-  setExtendedProp(name: string, val: any): void
+  setProp(name: string, val: any, silent?: boolean): void
+  setExtendedProp(name: string, val: any,silent?: boolean): void
   setStart(startInput: DateInput, options?: { granularity?: string, maintainDuration?: boolean }): void
   setEnd(endInput: DateInput | null, options?: { granularity?: string }): void
   setDates(startInput: DateInput, endInput: DateInput | null, options?: { allDay?: boolean, granularity?: string }): void
