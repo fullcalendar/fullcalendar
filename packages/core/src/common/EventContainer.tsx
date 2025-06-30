@@ -1,5 +1,5 @@
 import { ComponentChild, createElement } from '../preact.js'
-import { BaseComponent } from '../vdom-util.js'
+import { BaseComponent, setRef } from '../vdom-util.js'
 import { Seg } from '../component/DateComponent.js'
 import { EventImpl } from '../api/EventImpl.js'
 import {
@@ -74,13 +74,15 @@ export class EventContainer extends BaseComponent<EventContainerProps> {
 
     return (
       <ContentContainer
-        {...props /* contains children */}
         elRef={this.handleEl}
+        elTag={props.elTag}
+        elAttrs={props.elAttrs}
         elClasses={[
           ...getEventClassNames(renderProps),
           ...seg.eventRange.ui.classNames,
           ...(props.elClasses || []),
         ]}
+        elStyle={props.elStyle}
         renderProps={renderProps}
         generatorName="eventContent"
         customGenerator={options.eventContent}
@@ -88,12 +90,14 @@ export class EventContainer extends BaseComponent<EventContainerProps> {
         classNameGenerator={options.eventClassNames}
         didMount={options.eventDidMount}
         willUnmount={options.eventWillUnmount}
-      />
+      >{props.children}</ContentContainer>
     )
   }
 
   handleEl = (el: HTMLElement | null) => {
     this.el = el
+
+    setRef(this.props.elRef, el)
 
     if (el) {
       setElSeg(el, this.props.seg)

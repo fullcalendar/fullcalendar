@@ -32,15 +32,17 @@ export const NowIndicatorContainer = (props: NowIndicatorContainerProps) => (
 
       return (
         <ContentContainer
-          {...props /* includes children */}
+          elRef={props.elRef}
           elTag={props.elTag || 'div'}
+          elAttrs={props.elAttrs}
+          elStyle={props.elStyle}
           renderProps={renderProps}
           generatorName="nowIndicatorContent"
           customGenerator={options.nowIndicatorContent}
           classNameGenerator={options.nowIndicatorClassNames}
           didMount={options.nowIndicatorDidMount}
           willUnmount={options.nowIndicatorWillUnmount}
-        />
+        >{props.children}</ContentContainer>
       )
     }}
   </ViewContextType.Consumer>

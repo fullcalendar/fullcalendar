@@ -25,12 +25,14 @@ export class ViewContainer extends BaseComponent<ViewContainerProps> {
 
     return (
       <ContentContainer
-        {...props}
+        elRef={props.elRef}
         elTag={props.elTag || 'div'}
+        elAttrs={props.elAttrs}
         elClasses={[
           ...buildViewClassNames(props.viewSpec),
           ...(props.elClasses || []),
         ]}
+        elStyle={props.elStyle}
         renderProps={renderProps}
         classNameGenerator={options.viewClassNames}
         generatorName={undefined}

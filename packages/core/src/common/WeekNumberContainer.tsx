@@ -32,7 +32,11 @@ export const WeekNumberContainer = (props: WeekNumberContainerProps) => (
 
       return (
         <ContentContainer // why isn't WeekNumberContentArg being auto-detected?
-          {...props /* includes children */}
+          elRef={props.elRef}
+          elTag={props.elTag}
+          elAttrs={props.elAttrs}
+          elClasses={props.elClasses}
+          elStyle={props.elStyle}
           renderProps={renderProps}
           generatorName="weekNumberContent"
           customGenerator={options.weekNumberContent}
@@ -40,7 +44,7 @@ export const WeekNumberContainer = (props: WeekNumberContainerProps) => (
           classNameGenerator={options.weekNumberClassNames}
           didMount={options.weekNumberDidMount}
           willUnmount={options.weekNumberWillUnmount}
-        />
+        >{props.children}</ContentContainer>
       )
     }}
   </ViewContextType.Consumer>

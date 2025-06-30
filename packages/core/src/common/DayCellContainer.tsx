@@ -57,15 +57,17 @@ export class DayCellContainer extends BaseComponent<DayCellContainerProps> {
 
     return (
       <ContentContainer
-        {...props /* includes children */}
-        elClasses={[
-          ...getDayClassNames(renderProps, context.theme),
-          ...(props.elClasses || []),
-        ]}
+        elRef={props.elRef}
+        elTag={props.elTag}
         elAttrs={{
           ...props.elAttrs,
           ...(renderProps.isDisabled ? {} : { 'data-date': formatDayString(props.date) }),
         }}
+        elClasses={[
+          ...getDayClassNames(renderProps, context.theme),
+          ...(props.elClasses || []),
+        ]}
+        elStyle={props.elStyle}
         renderProps={renderProps}
         generatorName="dayCellContent"
         customGenerator={options.dayCellContent}
@@ -76,7 +78,7 @@ export class DayCellContainer extends BaseComponent<DayCellContainerProps> {
         }
         didMount={options.dayCellDidMount}
         willUnmount={options.dayCellWillUnmount}
-      />
+      >{props.children}</ContentContainer>
     )
   }
 }
