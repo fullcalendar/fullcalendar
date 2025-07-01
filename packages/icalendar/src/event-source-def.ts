@@ -106,6 +106,7 @@ function buildNonDateProps(iCalEvent: ICAL.Event): EventInput {
   return {
     title: iCalEvent.summary,
     url: extractEventUrl(iCalEvent),
+    color: iCalEvent.color,
     extendedProps: {
       location: iCalEvent.location,
       organizer: iCalEvent.organizer,
