@@ -22,6 +22,7 @@ export class Calendar extends CalendarImpl {
   private isRendered = false
   private currentClassNames: string[] = []
   private customContentRenderId = 0
+  private swipeAttached = false
 
   constructor(el: HTMLElement, optionOverrides: CalendarOptions = {}) {
     super()
@@ -49,6 +50,7 @@ export class Calendar extends CalendarImpl {
 
   private handleData = (data: CalendarData) => {
     this.currentData = data
+	this.handleSwipeForNext(data.calendarOptions.swipeForNext)
     this.renderRunner.request(data.calendarOptions.rerenderDelay)
   }
 
@@ -152,5 +154,43 @@ export class Calendar extends CalendarImpl {
 
   private setHeight(height: CssDimValue) {
     applyStyleProp(this.el, 'height', height)
+  }
+  
+  private handleSwipeForNext(swipeVal: number) {
+    // on first data load, wire up swipe-to-nav if requested
+    if (!this.swipeAttached) {
+	  // Skip swipe if this touch started on an event
+	  let skipSwipe = false;
+	  let touchStartX = 0;
+	  let touchStartY = 0;
+	  
+	  const listener = swipeVal === 1 ? this.el : document;
+	  listener.addEventListener('touchstart', (ev: TouchEvent) => {
+	    const target = ev.target as HTMLElement;
+	    if (target.closest('.fc-event')) {
+	  	  skipSwipe = true;
+	  	  return;
+	    }
+	    skipSwipe = false;
+	    touchStartX = ev.touches[0].clientX;
+	    touchStartY = ev.touches[0].clientY;
+	  }, { passive: true });
+	  
+	  listener.addEventListener('touchend', (ev: TouchEvent) => {
+	    if (skipSwipe) {
+	  	  skipSwipe = false; 
+	  	  return;
+	    }
+	    const dx = ev.changedTouches[0].clientX - touchStartX;
+	    const dy = ev.changedTouches[0].clientY - touchStartY;
+	  
+	    // horizontal swipe threshold
+	    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+	  	  dx > 0 ? this.prev() : this.next();
+	    }
+	  }, { passive: true });
+	  
+	  this.swipeAttached = true;
+    }
   }
 }

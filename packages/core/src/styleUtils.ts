@@ -58,8 +58,16 @@ function appendStylesTo(styleEl: HTMLStyleElement, styleText: string): void {
 
   styleText.split('}').forEach((styleStr, i) => {
     styleStr = styleStr.trim()
-    if (styleStr) {
-      sheet.insertRule(styleStr + '}', ruleCnt + i)
+    if (!styleStr) {
+      return
+    }
+ 
+    // Determine target index, but never exceed current sheet length
+    const targetIndex = Math.min(ruleCnt + i, sheet.cssRules.length)
+    try {
+      sheet.insertRule(styleStr + '}', targetIndex)
+    } catch (e) {
+      // If there's still an error (malformed rule, etc.), skip it silently
     }
   })
 }

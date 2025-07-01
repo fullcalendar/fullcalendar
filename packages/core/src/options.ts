@@ -116,6 +116,11 @@ export const BASE_OPTION_REFINERS = {
   themeSystem: String as Identity<'standard' | string>,
   dragRevertDuration: Number,
   dragScroll: Boolean,
+  dragToEdges: Boolean,
+  dragToEdgesFlashTitle: Boolean,
+  dragToEdgesShowSideBars: Boolean,
+  dragToEdgesOnMobileOnly: Boolean,
+  dragToEdgesOnDesktopOnly: Boolean,
   allDayMaintainDuration: Boolean,
   unselectAuto: Boolean,
   dropAccept: identity as Identity<string | ((this: CalendarApi, draggable: any) => boolean)>, // TODO: type draggable
@@ -125,6 +130,7 @@ export const BASE_OPTION_REFINERS = {
   handleWindowResize: Boolean,
   windowResizeDelay: Number,
   longPressDelay: Number,
+  swipeForNext: Number,
   eventDragMinDistance: Number,
   expandRows: Boolean,
   height: identity as Identity<CssDimValue>,
@@ -295,6 +301,11 @@ export const BASE_OPTION_DEFAULTS = {
   themeSystem: 'standard',
   dragRevertDuration: 500,
   dragScroll: true,
+  dragToEdges: false,
+  dragToEdgesFlashTitle: true,
+  dragToEdgesShowSideBars: true,
+  dragToEdgesOnMobileOnly: false,
+  dragToEdgesOnDesktopOnly: false,
   allDayMaintainDuration: false,
   unselectAuto: true,
   dropAccept: '*',
@@ -303,6 +314,7 @@ export const BASE_OPTION_DEFAULTS = {
   handleWindowResize: true,
   windowResizeDelay: 100, // milliseconds before an updateSize happens
   longPressDelay: 1000,
+  swipeForNext: 0, // swipe navigation: 0=off (default), 1 or true=calendar-area only, 2=document-wide
   eventDragMinDistance: 5, // only applies to mouse
   expandRows: false,
   navLinks: false,

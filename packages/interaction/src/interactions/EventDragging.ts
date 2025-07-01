@@ -56,8 +56,15 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
   validMutation: EventMutation | null = null
   mutatedRelevantEvents: EventStore | null = null
 
+  edgeNavTimeoutId: number | null = null
+  edgeNavDir: 'prev' | 'next' | null = null
+  autoNavMargin = 60    // px threshold
+  autoNavDelay = 500    // ms delay
+  settings: InteractionSettings
+
   constructor(settings: InteractionSettings) {
     super(settings)
+	this.settings = settings
     let { component } = this
     let { options } = component.context
 
@@ -73,6 +80,33 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
     hitDragging.emitter.on('hitupdate', this.handleHitUpdate)
     hitDragging.emitter.on('pointerup', this.handlePointerUp)
     hitDragging.emitter.on('dragend', this.handleDragEnd)
+
+    if (this.component.context.options.dragToEdges) {
+      let prevPx = 0
+      let lastPx = 0
+      ;(this.dragging.pointer as any).emitter.on(
+        'pointermove',
+        (pev: PointerDragEvent) => {
+          let dtemo = this.component.context.options.dragToEdgesOnMobileOnly;
+          let dtedo = this.component.context.options.dragToEdgesOnDesktopOnly;
+          if (!dtemo && !dtedo || dtemo && pev.isTouch || dtedo && !pev.isTouch) {
+            const calendarEl = this.settings.el as HTMLElement
+            const rect = calendarEl.getBoundingClientRect()
+            prevPx = lastPx
+            lastPx = pev.pageX
+            const delta = lastPx - prevPx
+
+            if (lastPx < rect.left + this.autoNavMargin && delta <= 0) {
+              this.requestEdgeNav('prev')
+            } else if (lastPx > rect.right - this.autoNavMargin && delta >= 0) {
+              this.requestEdgeNav('next')
+            } else {
+              this.clearEdgeNav()
+            }
+          }
+        },
+      )
+    }
   }
 
   destroy() {
@@ -432,6 +466,56 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
     this.receivingContext = null
     this.validMutation = null
     this.mutatedRelevantEvents = null
+  }
+
+  private requestEdgeNav(dir: 'prev'|'next') {
+    let initialContext = this.component.context
+    // disabled on multiMonthYear view
+    if (this.component.context.calendarApi.getCurrentData().currentViewType === 'multiMonthYear') { return }
+	  if (this.edgeNavDir === dir) { return }
+    this.clearEdgeNav(); // removes any old classes
+    this.edgeNavDir = dir;
+    const rootEl = this.settings.el as HTMLElement;
+
+    if (this.component.context.options.dragToEdgesShowSideBars){
+      rootEl.classList.add(`fc-edge-nav-${dir}`, 'active');
+    }
+
+    this.edgeNavTimeoutId = window.setTimeout(() => {
+      const calApi = initialContext.calendarApi
+      dir === 'prev' ? calApi.prev() : calApi.next();
+
+      if (this.component.context.options.dragToEdgesFlashTitle) {
+        // flash the title
+        const calendarRoot = rootEl.closest('.fc') as HTMLElement | null;
+        if (!calendarRoot) {
+          return null;
+        }
+        const titleEl = calendarRoot.querySelector<HTMLElement>('.fc-toolbar-title');
+        if (titleEl) {
+          titleEl.classList.add('fc-flash-title');
+          // remove the class once animation ends
+          titleEl.addEventListener('animationend', () => {
+            titleEl.classList.remove('fc-flash-title');
+          }, { once: true });
+        }
+      }
+
+      // rebind dragging
+      ;((this.dragging as any).pointer as any).setContainerEl(rootEl);
+
+      this.clearEdgeNav(); // this will also remove the classes
+    }, this.autoNavDelay);
+  }
+
+  private clearEdgeNav() {
+    if (this.edgeNavTimeoutId) {
+      clearTimeout(this.edgeNavTimeoutId);
+      this.edgeNavTimeoutId = null;
+    }
+    const rootEl = this.settings.el as HTMLElement;
+    rootEl.classList.remove('fc-edge-nav-prev', 'fc-edge-nav-next', 'active');
+    this.edgeNavDir = null;
   }
 }
 

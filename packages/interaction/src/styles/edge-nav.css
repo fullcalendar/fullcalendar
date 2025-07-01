@@ -1,0 +1,53 @@
+.fc-edge-nav-prev::before,
+.fc-edge-nav-next::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #007bff;                /* solid blue line */
+  box-shadow: inset 4px 0 12px rgba(0,0,255,0.3); /* growing inner glow */
+  transition: opacity 150ms ease-in;  /* fade in/out */
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.fc-edge-nav-prev::before {
+  left: 0;
+}
+.fc-edge-nav-next::after {
+  right: 0;
+}
+
+/* when active, fade the indicator in */
+.fc-edge-nav-prev.active::before,
+.fc-edge-nav-next.active::after {
+  opacity: 1;
+}
+
+/* flash the toolbar title text, then fade back */
+@keyframes fc-flash-title {
+  from {
+    color: gold;                          /* gold fill */
+    /* thin black outline: WebKit stroke + fallback text‐shadow */
+    -webkit-text-stroke: 0.5px black;
+    text-shadow:
+      1px  1px 0 black,
+     -1px  1px 0 black,
+      1px -1px 0 black,
+     -1px -1px 0 black;
+  }
+  to {
+    /* fade back to whatever was there before */
+    color: inherit;
+    -webkit-text-stroke: 0;
+    text-shadow: none;
+  }
+}
+
+.fc-flash-title {
+  /* run the animation once, lasting 1s */
+  animation: fc-flash-title 1s ease-in-out forwards;
+}
+
