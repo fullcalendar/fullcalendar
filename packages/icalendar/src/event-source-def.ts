@@ -105,18 +105,55 @@ function expandICalEvents(iCalExpander: IcalExpander, range: DateRange): EventIn
 function buildNonDateProps(iCalEvent: ICAL.Event): EventInput {
   return {
     title: iCalEvent.summary,
-    url: extractEventUrl(iCalEvent),
+    url: extractEventPropertyValues(iCalEvent, 'url')[0][0], // 2D array of values per property.
     extendedProps: {
+      // The following iCalendar properties MUST NOT occur more than
+      // once as per section 3.6.1 of RFC 5545.
       location: iCalEvent.location,
       organizer: iCalEvent.organizer,
       description: iCalEvent.description,
+      uid: extractEventPropertyValues(iCalEvent, 'uid')[0][0],
+      status: extractEventPropertyValues(iCalEvent, 'status')[0][0],
+      geo: extractEventPropertyValues(iCalEvent, 'geo')[0][0],
+      priority: extractEventPropertyValues(iCalEvent, 'priority')[0][0],
+      sequence: extractEventPropertyValues(iCalEvent, 'sequence')[0][0],
+      timeTransparency: extractEventPropertyValues(iCalEvent, 'transp')[0][0],
+      recurrenceId: extractEventPropertyValues(iCalEvent, 'recurrence-id')[0][0],
+      // Known as `class` in the spec, but renamed here for clarity.
+      classification: extractEventPropertyValues(iCalEvent, 'class')[0][0],
+
+      // These single-occurrence fields are date-time related, so are
+      // ommitted from this function.
+      //created: extractEventPropertyValues(iCalEvent, 'created')[0],
+      //lastModified: extractEventPropertyValues(iCalEvent, 'last-modified')[0],
+
+      // The following OPTIONAL iCalendar properties MAY occur more
+      // than once as per section 3.6.1 of RFC 5545.
+      attachments: extractEventPropertyValues(iCalEvent, 'attach'),
+      attendees: extractEventPropertyValues(iCalEvent, 'attendee'),
+      categories: extractEventPropertyValues(iCalEvent, 'categories'),
+      comments: extractEventPropertyValues(iCalEvent, 'comment'),
+      contacts: extractEventPropertyValues(iCalEvent, 'contact'),
+      relatedTo: extractEventPropertyValues(iCalEvent, 'related-to'),
+
+      // This is almost certainly never going to be seen, but...?
+      requestStatuses: extractEventPropertyValues(iCalEvent, 'request-status'),
+
+      // These potentially multi-occurrence fields are date-time
+      // related, so are ommitted from this function.
+      //exceptionDateTimes: extractEventPropertyValues(iCalEvent, 'exdate'),
+
     },
   }
 }
 
-function extractEventUrl(iCalEvent: ICAL.Event): string {
-  let urlProp = iCalEvent.component.getFirstProperty('url')
-  return urlProp ? urlProp.getFirstValue() : ''
+/**
+ * Attempts to get the value(s) of `property` from an iCalender event.
+ */
+function extractEventPropertyValues(iCalEvent: ICAL.event, propertyName: string): Array<string> {
+    return iCalEvent.component.hasProperty(propertyName)
+        ? iCalEvent.component.getAllProperties(propertyName).map( (p) => p.getValues() )
+        : ['']
 }
 
 function specifiesEnd(iCalEvent: ICAL.Event) {
