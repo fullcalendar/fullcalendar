@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/google-calendar",
-  "version": "6.1.18",
+  "version": "6.1.19",
   "title": "FullCalendar Google Calendar Plugin",
   "description": "Display events from a public Google Calendar feed",
   "homepage": "https://fullcalendar.io/docs/google-calendar",
@@ -8,10 +8,10 @@
     "google-calendar"
   ],
   "peerDependencies": {
-    "@fullcalendar/core": "~6.1.18"
+    "@fullcalendar/core": "~6.1.19"
   },
   "devDependencies": {
-    "@fullcalendar/core": "~6.1.18",
+    "@fullcalendar/core": "~6.1.19",
     "@fullcalendar-scripts/standard": "*"
   },
   "scripts": {
