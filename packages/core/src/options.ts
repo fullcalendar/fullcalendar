@@ -100,6 +100,7 @@ export const BASE_OPTION_REFINERS = {
   viewWillUnmount: identity as Identity<WillUnmountHandler<ViewMountArg>>,
 
   nowIndicator: Boolean,
+  nowIndicatorSnap: identity as Identity<boolean | 'auto'>,
   nowIndicatorClassNames: identity as Identity<ClassNamesGenerator<NowIndicatorContentArg>>,
   nowIndicatorContent: identity as Identity<CustomContentGenerator<NowIndicatorContentArg>>,
   nowIndicatorDidMount: identity as Identity<DidMountHandler<NowIndicatorMountArg>>,
@@ -311,6 +312,7 @@ export const BASE_OPTION_DEFAULTS = {
   eventMinWidth: 30,
   eventShortHeight: 30,
   monthStartFormat: { month: 'long', day: 'numeric' },
+  nowIndicatorSnap: 'auto',
 }
 
 export type BaseOptionsRefined = DefaultedRefinedOptions<

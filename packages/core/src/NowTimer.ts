@@ -6,6 +6,7 @@ import { DateRange } from './datelib/date-range.js'
 
 export interface NowTimerProps {
   unit: string // TODO: add type of unit
+  unitValue?: number // solely for nowIndicator:auto
   children: (now: DateMarker, todayRange: DateRange) => ComponentChildren
 }
 
@@ -52,16 +53,34 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
   private computeTiming() {
     let { props, context } = this
     let unroundedNow = context.nowManager.getDateMarker()
-    let currentUnitStart = context.dateEnv.startOf(unroundedNow, props.unit)
-    let nextUnitStart = context.dateEnv.add(currentUnitStart, createDuration(1, props.unit))
-    let waitMs = nextUnitStart.valueOf() - unroundedNow.valueOf()
+    let { nowIndicatorSnap } = context.options
+
+    if (nowIndicatorSnap === 'auto') {
+      nowIndicatorSnap =
+        // large unit?
+        /year|month|week|day/.test(props.unit) ||
+        // if slotDuration 30 mins for example, would NOT appear to snap (legacy behavior)
+        (props.unitValue || 1) === 1
+    }
+
+    let nowDate: DateMarker
+    let waitMs: number
+
+    if (nowIndicatorSnap) {
+      nowDate = context.dateEnv.startOf(unroundedNow, props.unit) // aka currentUnitStart
+      let nextUnitStart = context.dateEnv.add(nowDate, createDuration(1, props.unit))
+      waitMs = nextUnitStart.valueOf() - unroundedNow.valueOf()
+    } else {
+      nowDate = unroundedNow
+      waitMs = 1000 * 60 // 1 minute
+    }
 
     // there is a max setTimeout ms value (https://stackoverflow.com/a/3468650/96342)
     // ensure no longer than a day
     waitMs = Math.min(1000 * 60 * 60 * 24, waitMs)
 
     return {
-      state: { nowDate: currentUnitStart, todayRange: buildDayRange(currentUnitStart) } as NowTimerState,
+      state: { nowDate, todayRange: buildDayRange(nowDate) } as NowTimerState,
       waitMs,
     }
   }
