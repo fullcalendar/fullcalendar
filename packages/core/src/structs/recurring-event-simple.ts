@@ -92,6 +92,17 @@ function expandRanges(
   let endMarker = framingRange.end
   let instanceStarts: DateMarker[] = []
 
+  // https://github.com/fullcalendar/fullcalendar/issues/7934
+  if (startTime) {
+    if (startTime.milliseconds < 0) {
+      // possible for next-day to have negative business hours that go into current day
+      endMarker = addDays(endMarker, 1)
+    } else if (startTime.milliseconds >= 1000 * 60 * 60 * 24) {
+      // possible for prev-day to have >24hr business hours that go into current day
+      dayMarker = addDays(dayMarker, -1)
+    }
+  }
+
   while (dayMarker < endMarker) {
     let instanceStart
 
