@@ -1,4 +1,11 @@
 
+## 6.1.19 (2025-08-08)
+
+- feature: Angular 20 support (#7946)
+- feature: setting to control how nowIndicator displays in all-day slots (#6175)
+  (`nowIndicatorSnap`. use `false` to ensure time-granularity always)
+- fix: allow business hours that START past midnight (#7934)
+
 ## 6.1.18 (2025-06-29)
 
 - fix: Optimize custom content-injection rerendering performance (#3003, #7650)
