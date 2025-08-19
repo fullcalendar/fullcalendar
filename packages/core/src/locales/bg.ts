@@ -21,4 +21,28 @@ export default {
     return '+още ' + n
   },
   noEventsText: 'Няма събития за показване',
+  buttonHints: {
+    prev(buttonText) {
+      return `Предишен ${affix(buttonText)} ${buttonText}`
+    },
+    next(buttonText) {
+      return `Следващ ${affix(buttonText)} ${buttonText}`
+    },
+    today(buttonText) {
+      // → Днес, тази седмица, този месец, тази година
+      if (buttonText === 'Tag') {
+        return 'Днес'
+      }
+      return `Това ${affix(buttonText)} ${buttonText}`
+    },
+  },
+  navLinkHint: 'Отидете на $0',
+  moreLinkHint(eventCnt: number) {
+    return 'Покажи ' + (eventCnt === 1 ?
+      'друго събитие' :
+      eventCnt + ' по-нататъшни събития')
+  },
+  closeHint: 'Близо',
+  timeHint: 'Време',
+  eventHint: 'Събитие',
 } as LocaleInput
