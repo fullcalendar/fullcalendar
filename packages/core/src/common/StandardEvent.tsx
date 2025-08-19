@@ -51,6 +51,7 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
         }}
         elAttrs={getSegAnchorAttrs(seg, context)}
         defaultGenerator={renderInnerContent}
+        extraCellGenerator={renderExtraCell}
         timeText={timeText}
       >
         {(InnerContent, eventContentArg) => (

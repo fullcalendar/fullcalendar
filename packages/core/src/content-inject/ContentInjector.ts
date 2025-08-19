@@ -26,6 +26,7 @@ export interface ContentGeneratorProps<RenderProps> {
   generatorName: string | undefined // for informing UI-framework if `customGenerator` is undefined
   customGenerator?: CustomContentGenerator<RenderProps>
   defaultGenerator?: (renderProps: RenderProps) => ComponentChild
+  extraCellGenerator?: (renderProps: RenderProps) => ComponentChild
 }
 
 export type ContentInjectorProps<RenderProps> =
