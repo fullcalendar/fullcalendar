@@ -289,23 +289,34 @@ function formatWeekNumber(
 ): string {
   let parts = []
 
-  if (display === 'long') {
-    parts.push(weekTextLong)
-  } else if (display === 'short' || display === 'narrow') {
-    parts.push(weekText)
+  // decide use formatter or not
+  if (weekText.indexOf("{}") < 0) {
+    // simple case
+    if (display === 'long') {
+      parts.push(weekTextLong)
+    } else if (display === 'short' || display === 'narrow') {
+      parts.push(weekText)
+    }
+  
+    if (display === 'long' || display === 'short') {
+      parts.push(' ')
+    }
+  
+    parts.push(locale.simpleNumberFormat.format(num))
+  
+    if (locale.options.direction === 'rtl') { // TODO: use control characters instead?
+      parts.reverse()
+    }  
+    return parts.join('')
+  } else {
+    // if we find "{}" template in weekText or weekTextLong, replace it with the week number.
+    const dispNum = locale.simpleNumberFormat.format(num)
+    if (display === 'long') {
+      return weekTextLong.replace("{}", dispNum)
+    } else if (display === 'short' || display === 'narrow') {
+      return weekText.replace("{}", dispNum)
+    }
   }
-
-  if (display === 'long' || display === 'short') {
-    parts.push(' ')
-  }
-
-  parts.push(locale.simpleNumberFormat.format(num))
-
-  if (locale.options.direction === 'rtl') { // TODO: use control characters instead?
-    parts.reverse()
-  }
-
-  return parts.join('')
 }
 
 // Range Formatting Utils

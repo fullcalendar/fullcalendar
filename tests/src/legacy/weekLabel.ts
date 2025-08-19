@@ -39,6 +39,14 @@ describe('weekText', () => { // TODO: rename file
         })
         expectWeekNumberTitle(calendar, 'YO')
       })
+
+      it('renders correctly when customized and given format string', () => {
+        let calendar = initCalendar({
+          direction: 'ltr',
+          weekText: '第{}週',
+        })
+        expectWeekNumberTitle(calendar, '第週')
+      })
     })
 
     function expectWeekNumberTitle(calendar, title) {
