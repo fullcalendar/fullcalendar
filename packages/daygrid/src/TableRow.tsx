@@ -1,31 +1,31 @@
-import { CssDimValue } from '@fullcalendar/core'
+import {CssDimValue} from '@fullcalendar/core'
 import {
-  EventSegUiInteractionState,
+  BgEvent,
+  buildEventRangeKey,
   DateComponent,
+  DateProfile,
+  DateRange,
+  DayTableCell,
+  EventSegUiInteractionState,
+  getSegMeta,
+  isPropsEqual,
   PositionCache,
   RefMap,
-  DateRange,
-  getSegMeta,
-  DateProfile,
-  BgEvent,
   renderFill,
-  isPropsEqual,
-  buildEventRangeKey,
   sortEventSegs,
-  DayTableCell,
 } from '@fullcalendar/core/internal'
+import {createElement, createRef, Fragment, VNode,} from '@fullcalendar/core/preact'
+import {splitSegsByFirstCol, TableSeg} from './TableSeg.js'
+import {TableCell} from './TableCell.js'
+import {TableListItemEvent} from './TableListItemEvent.js'
+import {TableBlockEvent} from './TableBlockEvent.js'
 import {
-  VNode,
-  createElement,
-  Fragment,
-  createRef,
-} from '@fullcalendar/core/preact'
-import { TableSeg, splitSegsByFirstCol } from './TableSeg.js'
-import { TableCell } from './TableCell.js'
-import { TableListItemEvent } from './TableListItemEvent.js'
-import { TableBlockEvent } from './TableBlockEvent.js'
-import { computeFgSegPlacement, generateSegKey, generateSegUid, TableSegPlacement } from './event-placement.js'
-import { hasListItemDisplay } from './event-rendering.js'
+  computeFgSegPlacement,
+  generateSegKey,
+  generateSegUid,
+  TableSegPlacement
+} from './event-placement.js'
+import {hasListItemDisplay} from './event-rendering.js'
 
 // TODO: attach to window resize?
 
@@ -95,6 +95,18 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
       (props.eventResize && props.eventResize.affectedInstances) ||
       {}
 
+    // Collect multi-day events for overlay button rendering
+    const multiDayEvents: { seg: TableSeg, placement: TableSegPlacement }[] = []
+    for (let col = 0; col < props.cells.length; col++) {
+      let placements = props.forPrint ? singleColPlacements[col] : multiColPlacements[col]
+      for (let placement of placements) {
+        let { seg } = placement
+        if (placement.isAbsolute && placement.isVisible && seg.firstCol < seg.lastCol) {
+          multiDayEvents.push({ seg, placement })
+        }
+      }
+    }
+
     return (
       <tr ref={this.rootElRef} role="row">
         {props.renderIntro && props.renderIntro()}
@@ -115,6 +127,21 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
             Boolean(props.eventResize),
             false, // date-selecting (because mirror is never drawn for date selection)
           )
+
+          // Add accessibility overlay buttons for multi-day events that continue into this cell
+          if (state.framePositions && !props.eventDrag && !props.eventResize) {
+            for (const { seg, placement } of multiDayEvents) {
+              const isVisible = placement.isVisible && !isForcedInvisible[seg.eventRange.instance.instanceId]
+
+              // Check if this cell is a continuation cell for this multi-day event
+              if (isVisible && col > seg.firstCol && col <= seg.lastCol) {
+                const overlayButton = this.renderMultidaySpanOverlayButton(seg, placement, col)
+                if (overlayButton) {
+                  normalFgNodes = [overlayButton, ...normalFgNodes];
+                }
+              }
+            }
+          }
 
           return (
             <TableCell
@@ -245,6 +272,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
         known bug: events that are force to be list-item but span multiple days still take up space in later columns
         todo: in print view, for multi-day events, don't display title within non-start/end segs
         */
+        // Render the main event harness
         nodes.push(
           <div
             className={'fc-daygrid-event-harness' + (isAbsolute ? ' fc-daygrid-event-harness-abs' : '')}
@@ -284,6 +312,47 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
     return nodes
   }
+
+  renderMultidaySpanOverlayButton(
+    seg: TableSeg,
+    placement: TableSegPlacement,
+    colIndex: number
+  ): VNode | null {
+    return (
+      <div
+        className="fc-daygrid-event-overlay"
+        key={`${generateSegKey(seg)}-overlay-${colIndex}`}
+        style={{
+          position: 'absolute',
+          top: placement.absoluteTop,
+          left: 0,
+          right: 0,
+          zIndex: 6,
+          pointerEvents: 'none',
+        }}
+      >
+        <button
+          className="fc-daygrid-event-overlay-btn fc-event"
+          type="button"
+          tabIndex={0}
+          ref={(el) => {
+            if (el) {
+              // Attach the segment data to the button so EventClicking can find it
+              this.setElSeg(el, seg)
+            }
+          }}
+        >
+          <span>{seg.eventRange.def.title}</span>
+        </button>
+      </div>
+    )
+  }
+
+  // Attach segment data to DOM element for event handling
+  private setElSeg(el: HTMLElement, seg: TableSeg): void {
+    (el as any).fcSeg = seg
+  }
+
 
   renderFillSegs(segs: TableSeg[], fillType: string): VNode {
     let { isRtl } = this.context

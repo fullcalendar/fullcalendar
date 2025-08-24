@@ -14,6 +14,10 @@
       selectable: true,
       businessHours: true,
       dayMaxEvents: true, // allow "more" link when too many events
+      eventClick: function(arg) {
+        // Show event details in a popup
+        alert(JSON.stringify(arg.event, null, 2));
+      },
       events: [
         {
           title: 'All Day Event',
@@ -37,7 +41,7 @@
         {
           title: 'Conference',
           start: '2023-01-11',
-          end: '2023-01-13'
+          end: '2023-01-14'
         },
         {
           title: 'Meeting',

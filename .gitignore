@@ -9,3 +9,5 @@ dist
 
 # Monorepo
 .turbo
+
+.idea
