@@ -79,8 +79,10 @@ $daygrid-event-inner-margin: 3px;
 
 .fc-daygrid-event-overlay {
   position: absolute;
-  pointer-events: auto;
-  z-index: 1;
+  left: 0;
+  right: 0;
+  z-index: 6;
+  pointer-events: none;
 }
 
 .fc-daygrid-event-overlay-btn {
@@ -94,24 +96,12 @@ $daygrid-event-inner-margin: 3px;
   text-align: start;
 
   & span {
-    visibility: hidden;
+    opacity: 0;
+    font-size: 0;
   }
 
   &:focus-visible span {
-    visibility: visible;
+    opacity: 1;
+    font-size: 12px;
   }
-}
-
-/* Screen reader only text*/
-
-.sr-only {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
 }

@@ -1,11 +1,13 @@
-import {CssDimValue} from '@fullcalendar/core'
+import {CssDimValue, EventContentArg} from '@fullcalendar/core'
 import {
   BgEvent,
+  buildEventAccessibilityLabel,
   buildEventRangeKey,
   DateComponent,
   DateProfile,
   DateRange,
   DayTableCell,
+  EventImpl,
   EventSegUiInteractionState,
   getSegMeta,
   isPropsEqual,
@@ -135,7 +137,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
               // Check if this cell is a continuation cell for this multi-day event
               if (isVisible && col > seg.firstCol && col <= seg.lastCol) {
-                const overlayButton = this.renderMultidaySpanOverlayButton(seg, placement, col)
+                const overlayButton = this.renderMultidayOverlayButton(seg, placement, col)
                 if (overlayButton) {
                   normalFgNodes = [overlayButton, ...normalFgNodes];
                 }
@@ -313,23 +315,46 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
     return nodes
   }
 
-  renderMultidaySpanOverlayButton(
+  renderMultidayOverlayButton(
     seg: TableSeg,
     placement: TableSegPlacement,
     colIndex: number
   ): VNode | null {
+    const { eventRange } = seg
+    const { def } = eventRange
+
+    // Use the existing getSegMeta utility to get proper event metadata
+    const segMeta = getSegMeta(seg, this.props.todayRange)
+
+    // Create a minimal EventContentArg for the accessibility callback
+    // This reuses the existing EventImpl creation pattern from EventContainer
+    const eventContentArg: EventContentArg = {
+      event: new EventImpl(this.context, def, eventRange.instance),
+      view: this.context.viewApi,
+      timeText: '', // Overlay buttons don't show time
+      backgroundColor: eventRange.ui.backgroundColor,
+      borderColor: eventRange.ui.borderColor,
+      textColor: eventRange.ui.textColor,
+      isDraggable: false,
+      isStartResizable: false,
+      isEndResizable: false,
+      isMirror: false,
+      isStart: colIndex === seg.firstCol,
+      isEnd: colIndex === seg.lastCol,
+      ...segMeta,
+      isSelected: false,
+      isDragging: false,
+      isResizing: false,
+    }
+
+    // Get accessibility label and add continuation context
+    const accessibilityLabel = buildEventAccessibilityLabel(eventContentArg, this.context)
+
     return (
       <div
         className="fc-daygrid-event-overlay"
         key={`${generateSegKey(seg)}-overlay-${colIndex}`}
-        style={{
-          position: 'absolute',
-          top: placement.absoluteTop,
-          left: 0,
-          right: 0,
-          zIndex: 6,
-          pointerEvents: 'none',
-        }}
+        style={{ top: placement.absoluteTop }}
       >
         <button
           className="fc-daygrid-event-overlay-btn fc-event"
@@ -337,12 +362,16 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
           tabIndex={0}
           ref={(el) => {
             if (el) {
-              // Attach the segment data to the button so EventClicking can find it
               this.setElSeg(el, seg)
             }
           }}
         >
-          <span>{seg.eventRange.def.title}</span>
+          {accessibilityLabel && (
+            <span className="fc-visually-hidden">{accessibilityLabel}</span>
+          )}
+          <span aria-hidden={accessibilityLabel ? "true" : undefined}>
+            {def.title}
+          </span>
         </button>
       </div>
     )

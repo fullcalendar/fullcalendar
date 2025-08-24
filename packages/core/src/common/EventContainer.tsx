@@ -1,4 +1,4 @@
-import { ComponentChild, createElement } from '../preact.js'
+import { ComponentChild, createElement, Fragment } from '../preact.js'
 import { BaseComponent, setRef } from '../vdom-util.js'
 import { Seg } from '../component/DateComponent.js'
 import { EventImpl } from '../api/EventImpl.js'
@@ -9,6 +9,7 @@ import {
   EventContentArg,
   getEventClassNames,
   setElSeg,
+  buildEventAccessibilityLabel,
 } from '../component/event-rendering.js'
 import { ContentContainer, InnerContainerFunc } from '../content-inject/ContentContainer.js'
 import { ElProps } from '../content-inject/ContentInjector.js'
@@ -43,6 +44,24 @@ export class EventContainer extends BaseComponent<EventContainerProps> {
   )
 
   el: HTMLElement
+
+  // Enhanced content generator for accessibility labels
+  private enhancedContentGenerator = (renderProps: EventContentArg) => {
+    const accessibilityLabel = buildEventAccessibilityLabel(renderProps, this.context)
+    const { options } = this.context
+
+    // Get the original content (either custom or default)
+    const originalContent = options.eventContent
+      ? options.eventContent
+      : this.props.defaultGenerator(renderProps)
+
+    return (
+      <Fragment>
+        <span className="fc-visually-hidden">{accessibilityLabel}</span>
+        <span aria-hidden="true" style={{ display: "flex", alignItems: "center" }}>{originalContent}</span>
+      </Fragment>
+    )
+  }
 
   render() {
     const { props, context } = this
@@ -85,7 +104,7 @@ export class EventContainer extends BaseComponent<EventContainerProps> {
         elStyle={props.elStyle}
         renderProps={renderProps}
         generatorName="eventContent"
-        customGenerator={options.eventContent}
+        customGenerator={context.options.eventAccessibilityLabel ? this.enhancedContentGenerator : options.eventContent}
         defaultGenerator={props.defaultGenerator}
         classNameGenerator={options.eventClassNames}
         didMount={options.eventDidMount}

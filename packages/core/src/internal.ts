@@ -189,6 +189,7 @@ export { DaySeriesModel } from './common/DaySeriesModel.js'
 
 export type { EventInteractionState } from './interactions/event-interaction-state.js'
 export {
+  buildEventAccessibilityLabel,
   sliceEventStore, hasBgRendering, getElSeg,
   buildSegTimeText,
   sortEventSegs,

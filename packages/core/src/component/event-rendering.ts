@@ -340,6 +340,18 @@ export function buildEventRangeKey(eventRange: EventRenderRange) {
   // inverse-background events don't have specific instances. TODO: better solution
 }
 
+export function buildEventAccessibilityLabel(eventContentArg: EventContentArg, context: ViewContext): string | null {
+  const { options } = context
+
+  // Use custom callback if provided
+  if (options.eventAccessibilityLabel) {
+    return options.eventAccessibilityLabel(eventContentArg)
+  }
+
+  // Return null if no custom callback - indicates no enhancement needed
+  return null
+}
+
 export function getSegAnchorAttrs(seg: Seg, context: ViewContext) {
   let { def, instance } = seg.eventRange
   let { url } = def

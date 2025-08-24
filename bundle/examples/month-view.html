@@ -18,6 +18,36 @@
         // Show event details in a popup
         alert(JSON.stringify(arg.event, null, 2));
       },
+
+      eventAccessibilityLabel: function(arg) {
+        const event = arg.event;
+        const startDate = event.start;
+        const timeText = arg.timeText;
+        const allDay = event.allDay;
+
+        let description = event.title;
+
+        if (timeText) {
+          description += ' at ' + timeText;
+        }
+
+        if (startDate) {
+          const dateStr = startDate.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          description += ' on ' + dateStr;
+        }
+
+        if (allDay) {
+          description += ' - all day';
+        }
+
+        return description;
+      },
+
       events: [
         {
           title: 'All Day Event',

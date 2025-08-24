@@ -161,6 +161,7 @@ export const BASE_OPTION_REFINERS = {
   eventColor: String,
   eventClassNames: identity as Identity<ClassNamesGenerator<EventContentArg>>,
   eventContent: identity as Identity<CustomContentGenerator<EventContentArg>>,
+  eventAccessibilityLabel: identity as Identity<(arg: EventContentArg) => string>,
   eventDidMount: identity as Identity<DidMountHandler<EventMountArg>>,
   eventWillUnmount: identity as Identity<WillUnmountHandler<EventMountArg>>,
 
