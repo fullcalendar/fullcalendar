@@ -1,4 +1,4 @@
-import { intersectRanges, DateRange, Slicer } from '@fullcalendar/core/internal'
+import { intersectRanges, DateRange, Slicer } from '@teamdiverst/fullcalendar-core/internal'
 import { TimeColsSeg } from './TimeColsSeg.js'
 
 export class DayTimeColsSlicer extends Slicer<TimeColsSeg, [DateRange[]]> {

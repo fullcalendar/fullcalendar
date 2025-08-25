@@ -1,4 +1,4 @@
-import { VerboseFormattingArg } from '@fullcalendar/core/internal'
+import { VerboseFormattingArg } from '@teamdiverst/fullcalendar-core/internal'
 import { convertToMoment } from './convert.js'
 
 export function formatWithCmdStr(cmdStr: string, arg: VerboseFormattingArg): string {

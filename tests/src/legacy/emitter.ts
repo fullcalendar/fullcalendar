@@ -1,4 +1,4 @@
-import { Emitter } from '@fullcalendar/core/internal'
+import { Emitter } from '@teamdiverst/fullcalendar-core/internal'
 
 describe('emitter', () => {
   it('calls a handler', () => {

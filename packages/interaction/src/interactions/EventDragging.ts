@@ -5,7 +5,7 @@ import {
   EventAddArg,
   EventRemoveArg,
   EventRenderRange,
-} from '@fullcalendar/core'
+} from '@teamdiverst/fullcalendar-core'
 import {
   DateComponent, Seg,
   PointerDragEvent, Hit,
@@ -23,7 +23,7 @@ import {
   buildEventApis,
   isInteractionValid,
   EventImpl,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import { HitDragging, isHitsEqual } from './HitDragging.js'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'
 import { buildDatePointApiWithContext } from '../utils.js'

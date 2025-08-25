@@ -1,4 +1,4 @@
-import { ViewApi, EventRenderRange } from '@fullcalendar/core'
+import { ViewApi, EventRenderRange } from '@teamdiverst/fullcalendar-core'
 import {
   ViewProps,
   Scroller,
@@ -22,12 +22,12 @@ import {
   getUniqueDomId,
   formatDayString,
   ContentContainer,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import {
   ComponentChild,
   createElement,
   VNode,
-} from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/preact'
 import { ListViewHeaderRow } from './ListViewHeaderRow.js'
 import { ListViewEventRow } from './ListViewEventRow.js'
 

@@ -1,6 +1,6 @@
-import { CalendarApi, Duration } from '@fullcalendar/core'
+import { CalendarApi, Duration } from '@teamdiverst/fullcalendar-core'
 import { DateTime as LuxonDateTime, Duration as LuxonDuration } from 'luxon'
-import { CalendarImpl } from '@fullcalendar/core/internal'
+import { CalendarImpl } from '@teamdiverst/fullcalendar-core/internal'
 
 export function toLuxonDateTime(date: Date, calendar: CalendarApi): LuxonDateTime {
   if (!(calendar instanceof CalendarImpl)) {

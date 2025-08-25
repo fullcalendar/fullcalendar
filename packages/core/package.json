@@ -1,5 +1,5 @@
 {
-  "name": "@fullcalendar/core",
+  "name": "@teamdiverst/fullcalendar-core",
   "version": "6.1.19",
   "title": "FullCalendar Core",
   "description": "FullCalendar core package for rendering a calendar",

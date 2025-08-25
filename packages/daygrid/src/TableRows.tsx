@@ -11,8 +11,8 @@ import {
   DateProfile,
   Hit,
   DayTableCell,
-} from '@fullcalendar/core/internal'
-import { VNode, createElement, Fragment } from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/internal'
+import { VNode, createElement, Fragment } from '@teamdiverst/fullcalendar-core/preact'
 import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg.js'
 import { TableRow } from './TableRow.js'
 

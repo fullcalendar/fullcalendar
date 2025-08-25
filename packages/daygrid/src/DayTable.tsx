@@ -1,4 +1,4 @@
-import { Duration, CssDimValue } from '@fullcalendar/core'
+import { Duration, CssDimValue } from '@teamdiverst/fullcalendar-core'
 import {
   EventStore,
   EventUiHash,
@@ -8,13 +8,13 @@ import {
   DateComponent,
   ViewContext,
   DateProfile,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import {
   createElement,
   createRef,
   VNode,
   RefObject,
-} from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/preact'
 import { Table } from './Table.js'
 import { DayTableSlicer } from './DayTableSlicer.js'
 

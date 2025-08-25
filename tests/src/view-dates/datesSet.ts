@@ -1,5 +1,5 @@
-import { Calendar } from '@fullcalendar/core'
-import dayGridPlugin from '@fullcalendar/daygrid'
+import { Calendar } from '@teamdiverst/fullcalendar-core'
+import dayGridPlugin from '@teamdiverst/fullcalendar-daygrid'
 
 describe('datesSet', () => {
   pushOptions({

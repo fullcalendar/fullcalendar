@@ -1,4 +1,4 @@
-import { globalPlugins } from '@fullcalendar/core'
+import { globalPlugins } from '@teamdiverst/fullcalendar-core'
 import plugin from './index.js'
 
 globalPlugins.push(plugin)

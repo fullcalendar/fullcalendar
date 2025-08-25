@@ -1,5 +1,5 @@
-import { Calendar } from '@fullcalendar/core'
-import { findElements } from '@fullcalendar/core/internal'
+import { Calendar } from '@teamdiverst/fullcalendar-core'
+import { findElements } from '@teamdiverst/fullcalendar-core/internal'
 import { ViewWrapper } from './ViewWrapper.js'
 import { formatIsoDay } from '../datelib-utils.js'
 

@@ -1,14 +1,14 @@
-import { CssDimValue } from '@fullcalendar/core'
+import { CssDimValue } from '@teamdiverst/fullcalendar-core'
 import {
   DateMarker, BaseComponent, EventSegUiInteractionState, Seg, getSegMeta,
   DateRange, DayCellContainer, NowIndicatorContainer, BgEvent, renderFill, buildIsoString, computeEarliestSegStart,
   DateProfile, buildEventRangeKey, sortEventSegs, memoize, SegEntryGroup, SegEntry, Dictionary, SegSpan, hasCustomDayCellContent,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import {
   createElement,
   Fragment,
   Ref,
-} from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/preact'
 import { TimeColMoreLink } from './TimeColMoreLink.js'
 import { TimeColsSeg } from './TimeColsSeg.js'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'

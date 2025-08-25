@@ -1,4 +1,4 @@
-import { createPlugin, PluginDef } from '@fullcalendar/core'
+import { createPlugin, PluginDef } from '@teamdiverst/fullcalendar-core'
 import { DateClicking } from './interactions/DateClicking.js'
 import { DateSelecting } from './interactions/DateSelecting.js'
 import { EventDragging } from './interactions/EventDragging.js'

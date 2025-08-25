@@ -1,4 +1,4 @@
-import { createPlugin, PluginDef } from '@fullcalendar/core'
+import { createPlugin, PluginDef } from '@teamdiverst/fullcalendar-core'
 import { ListView } from './ListView.js'
 import { OPTION_REFINERS } from './option-refiners.js'
 import './ambient.js'

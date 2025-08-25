@@ -8,7 +8,7 @@ Display events from a public [Google Calendar feed](https://support.google.com/c
 Install the FullCalendar core package, the Google Calendar plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
 
 ```sh
-npm install @fullcalendar/core @fullcalendar/google-calendar @fullcalendar/daygrid
+npm install @teamdiverst/fullcalendar-core @teamdiverst/fullcalendar-google-calendar @teamdiverst/fullcalendar-daygrid
 ```
 
 ## Usage
@@ -16,9 +16,9 @@ npm install @fullcalendar/core @fullcalendar/google-calendar @fullcalendar/daygr
 Instantiate a Calendar with the necessary plugin:
 
 ```js
-import { Calendar } from '@fullcalendar/core'
-import googleCalendarPlugin from '@fullcalendar/google-calendar'
-import dayGridPlugin from '@fullcalendar/daygrid'
+import { Calendar } from '@teamdiverst/fullcalendar-core'
+import googleCalendarPlugin from '@teamdiverst/fullcalendar-google-calendar'
+import dayGridPlugin from '@teamdiverst/fullcalendar-daygrid'
 
 const calendarEl = document.getElementById('calendar')
 const calendar = new Calendar(calendarEl, {

@@ -4,7 +4,7 @@ import {
   DateRange,
   DateEnv,
   addDays,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 
 export class TableDateProfileGenerator extends DateProfileGenerator {
   // Computes the date range that will be rendered

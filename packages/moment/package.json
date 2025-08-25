@@ -1,5 +1,5 @@
 {
-  "name": "@fullcalendar/moment",
+  "name": "@teamdiverst/fullcalendar-moment",
   "version": "6.1.19",
   "title": "FullCalendar Moment Plugin",
   "description": "Enhanced date formatting and conversion with Moment",
@@ -8,11 +8,11 @@
   ],
   "homepage": "https://fullcalendar.io/docs/moment-plugin",
   "peerDependencies": {
-    "@fullcalendar/core": "~6.1.19",
+    "@teamdiverst/fullcalendar-core": "~6.1.19",
     "moment": "^2.29.1"
   },
   "devDependencies": {
-    "@fullcalendar/core": "~6.1.19",
+    "@teamdiverst/fullcalendar-core": "~6.1.19",
     "@fullcalendar-scripts/standard": "*",
     "moment": "^2.29.1"
   },

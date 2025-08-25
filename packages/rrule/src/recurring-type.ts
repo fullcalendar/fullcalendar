@@ -1,5 +1,5 @@
 import * as rruleLib from 'rrule' // see https://github.com/jakubroztocil/rrule/issues/548
-import { DateInput } from '@fullcalendar/core'
+import { DateInput } from '@teamdiverst/fullcalendar-core'
 import {
   RecurringType,
   EventRefined,
@@ -8,7 +8,7 @@ import {
   DateMarker,
   parseMarker,
   addDays,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import { RRuleInputObject } from './event-refiners.js'
 
 interface EventRRuleData {

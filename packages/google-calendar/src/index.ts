@@ -1,4 +1,4 @@
-import { createPlugin, PluginDef } from '@fullcalendar/core'
+import { createPlugin, PluginDef } from '@teamdiverst/fullcalendar-core'
 import { eventSourceDef } from './event-source-def.js'
 import { OPTION_REFINERS } from './options-refiners.js'
 import { EVENT_SOURCE_REFINERS } from './event-source-refiners.js'

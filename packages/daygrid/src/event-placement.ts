@@ -1,4 +1,4 @@
-import { EventRenderRange } from '@fullcalendar/core'
+import { EventRenderRange } from '@teamdiverst/fullcalendar-core'
 import {
   SegHierarchy,
   SegRect,
@@ -9,7 +9,7 @@ import {
   addDays,
   DayTableCell,
   intersectSpans,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import { TableSeg } from './TableSeg.js'
 
 export interface TableSegPlacement {

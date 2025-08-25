@@ -1,5 +1,5 @@
-import { EventDropArg } from '@fullcalendar/core'
-import { identity, Identity } from '@fullcalendar/core/internal'
+import { EventDropArg } from '@teamdiverst/fullcalendar-core'
+import { identity, Identity } from '@teamdiverst/fullcalendar-core/internal'
 import {
   DateClickArg,
   EventDragStartArg, EventDragStopArg,

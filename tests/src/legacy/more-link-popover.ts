@@ -1,4 +1,4 @@
-import { EventInput } from '@fullcalendar/core'
+import { EventInput } from '@teamdiverst/fullcalendar-core'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'

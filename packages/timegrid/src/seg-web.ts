@@ -7,7 +7,7 @@ import {
   binarySearch,
   SegEntryGroup,
   groupIntersectingEntries,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 
 interface SegNode extends SegEntry {
   nextLevelNodes: SegNode[] // with highest-pressure first

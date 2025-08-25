@@ -1,4 +1,4 @@
-import arLocale from '@fullcalendar/core/locales/ar'
+import arLocale from '@teamdiverst/fullcalendar-core/locales/ar'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 
 describe('direction', () => {

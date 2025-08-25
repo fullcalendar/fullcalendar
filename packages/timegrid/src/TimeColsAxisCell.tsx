@@ -1,15 +1,15 @@
 import {
   SlotLabelContentArg,
-} from '@fullcalendar/core'
+} from '@teamdiverst/fullcalendar-core'
 import {
   ViewContext,
   createFormatter,
   ViewContextType,
   ContentContainer,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import {
   createElement,
-} from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/preact'
 import { TimeSlatMeta } from './time-slat-meta.js'
 
 const DEFAULT_SLAT_LABEL_FORMAT = createFormatter({

@@ -1,6 +1,6 @@
-import { Calendar } from '@fullcalendar/core'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import interactionPlugin from '@fullcalendar/interaction'
+import { Calendar } from '@teamdiverst/fullcalendar-core'
+import dayGridPlugin from '@teamdiverst/fullcalendar-daygrid'
+import interactionPlugin from '@teamdiverst/fullcalendar-interaction'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 

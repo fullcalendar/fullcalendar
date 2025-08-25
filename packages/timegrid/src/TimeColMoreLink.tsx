@@ -1,9 +1,9 @@
-import { MoreLinkContentArg, CssDimValue } from '@fullcalendar/core'
+import { MoreLinkContentArg, CssDimValue } from '@teamdiverst/fullcalendar-core'
 import {
   MoreLinkContainer, BaseComponent,
   Dictionary, DateProfile, DateRange, DateMarker, EventSegUiInteractionState,
-} from '@fullcalendar/core/internal'
-import { createElement } from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/internal'
+import { createElement } from '@teamdiverst/fullcalendar-core/preact'
 import { renderPlainFgSegs } from './TimeCol.js'
 import { TimeColsSeg } from './TimeColsSeg.js'
 

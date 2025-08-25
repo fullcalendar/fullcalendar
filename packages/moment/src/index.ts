@@ -1,4 +1,4 @@
-import { createPlugin, PluginDef } from '@fullcalendar/core'
+import { createPlugin, PluginDef } from '@teamdiverst/fullcalendar-core'
 import { formatWithCmdStr } from './format.js'
 
 export default createPlugin({

@@ -1,6 +1,6 @@
-import { CssDimValue } from '@fullcalendar/core'
-import { DateComponent, formatIsoMonthStr, formatDayString, DateProfile } from '@fullcalendar/core/internal'
-import { VNode, RefObject, createElement, createRef } from '@fullcalendar/core/preact'
+import { CssDimValue } from '@teamdiverst/fullcalendar-core'
+import { DateComponent, formatIsoMonthStr, formatDayString, DateProfile } from '@teamdiverst/fullcalendar-core/internal'
+import { VNode, RefObject, createElement, createRef } from '@teamdiverst/fullcalendar-core/preact'
 import { TableRows, TableRowsProps } from './TableRows.js'
 
 export interface TableProps extends TableRowsProps {

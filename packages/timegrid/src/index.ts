@@ -1,4 +1,4 @@
-import { createPlugin, PluginDef } from '@fullcalendar/core'
+import { createPlugin, PluginDef } from '@teamdiverst/fullcalendar-core'
 import { DayTimeColsView } from './DayTimeColsView.js'
 import { OPTION_REFINERS } from './options-refiners.js'
 import './ambient.js'

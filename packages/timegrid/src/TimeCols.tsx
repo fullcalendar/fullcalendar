@@ -1,4 +1,4 @@
-import { Duration, CssDimValue } from '@fullcalendar/core'
+import { Duration, CssDimValue } from '@teamdiverst/fullcalendar-core'
 import {
   addDurations,
   multiplyDuration,
@@ -14,11 +14,11 @@ import {
   DayTableCell,
   Hit,
   DateComponent,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import {
   createElement,
   VNode,
-} from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/preact'
 import { TimeColsSlats } from './TimeColsSlats.js'
 import { TimeSlatMeta } from './time-slat-meta.js'
 import { TimeColsContent } from './TimeColsContent.js'

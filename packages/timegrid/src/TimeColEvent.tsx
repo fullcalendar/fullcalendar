@@ -1,5 +1,5 @@
-import { StandardEvent, BaseComponent, MinimalEventProps, createFormatter } from '@fullcalendar/core/internal'
-import { createElement } from '@fullcalendar/core/preact'
+import { StandardEvent, BaseComponent, MinimalEventProps, createFormatter } from '@teamdiverst/fullcalendar-core/internal'
+import { createElement } from '@teamdiverst/fullcalendar-core/preact'
 
 const DEFAULT_TIME_FORMAT = createFormatter({
   hour: 'numeric',

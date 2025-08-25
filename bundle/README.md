@@ -5,12 +5,12 @@ Easily render a full-sized drag & drop calendar with a combination of standard p
 
 This `fullcalendar` package bundles these plugins:
 
-- [@fullcalendar/core](https://github.com/fullcalendar/fullcalendar/tree/main/packages/core)
-- [@fullcalendar/interaction](https://github.com/fullcalendar/fullcalendar/tree/main/packages/interaction)
-- [@fullcalendar/daygrid](https://github.com/fullcalendar/fullcalendar/tree/main/packages/daygrid)
-- [@fullcalendar/timegrid](https://github.com/fullcalendar/fullcalendar/tree/main/packages/timegrid)
-- [@fullcalendar/list](https://github.com/fullcalendar/fullcalendar/tree/main/packages/list)
-- [@fullcalendar/multimonth](https://github.com/fullcalendar/fullcalendar/tree/main/packages/multimonth)
+- [@teamdiverst/fullcalendar-core](https://github.com/fullcalendar/fullcalendar/tree/main/packages/core)
+- [@teamdiverst/fullcalendar-interaction](https://github.com/fullcalendar/fullcalendar/tree/main/packages/interaction)
+- [@teamdiverst/fullcalendar-daygrid](https://github.com/fullcalendar/fullcalendar/tree/main/packages/daygrid)
+- [@teamdiverst/fullcalendar-timegrid](https://github.com/fullcalendar/fullcalendar/tree/main/packages/timegrid)
+- [@teamdiverst/fullcalendar-list](https://github.com/fullcalendar/fullcalendar/tree/main/packages/list)
+- [@teamdiverst/fullcalendar-multimonth](https://github.com/fullcalendar/fullcalendar/tree/main/packages/multimonth)
 
 ## Usage with CDN or ZIP archive
 

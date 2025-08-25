@@ -1,5 +1,5 @@
-import { Calendar } from '@fullcalendar/core'
-import timeGridPlugin from '@fullcalendar/timegrid'
+import { Calendar } from '@teamdiverst/fullcalendar-core'
+import timeGridPlugin from '@teamdiverst/fullcalendar-timegrid'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 

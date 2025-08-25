@@ -11,13 +11,13 @@ import {
   getStickyFooterScrollbar,
   ChunkConfigRowContent,
   Dictionary,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import {
   VNode,
   createElement,
   createRef,
   RefObject,
-} from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/preact'
 
 /* An abstract class for the daygrid views, as well as month view. Renders one or more rows of day cells.
 ----------------------------------------------------------------------------------------------------------------------*/

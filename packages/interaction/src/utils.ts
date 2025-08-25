@@ -1,5 +1,5 @@
-import { ViewApi, EventApi, DatePointApi } from '@fullcalendar/core'
-import { DateSpan, CalendarContext, DateEnv } from '@fullcalendar/core/internal'
+import { ViewApi, EventApi, DatePointApi } from '@teamdiverst/fullcalendar-core'
+import { DateSpan, CalendarContext, DateEnv } from '@teamdiverst/fullcalendar-core/internal'
 
 export interface DropArg extends DatePointApi {
   draggedEl: HTMLElement

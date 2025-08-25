@@ -1,12 +1,12 @@
-import { EventContentArg } from '@fullcalendar/core'
+import { EventContentArg } from '@teamdiverst/fullcalendar-core'
 import {
   BaseComponent,
   Seg,
   buildSegTimeText,
   EventContainer,
   getSegAnchorAttrs,
-} from '@fullcalendar/core/internal'
-import { createElement, Fragment } from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/internal'
+import { createElement, Fragment } from '@teamdiverst/fullcalendar-core/preact'
 import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering.js'
 
 export interface DotTableEventProps {

@@ -1,5 +1,5 @@
 import { DateTime as LuxonDateTime } from 'luxon'
-import { NamedTimeZoneImpl } from '@fullcalendar/core/internal'
+import { NamedTimeZoneImpl } from '@teamdiverst/fullcalendar-core/internal'
 import { arrayToLuxon, luxonToArray } from './convert.js'
 
 export class LuxonNamedTimeZone extends NamedTimeZoneImpl {

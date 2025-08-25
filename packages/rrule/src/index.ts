@@ -1,4 +1,4 @@
-import { createPlugin, PluginDef } from '@fullcalendar/core'
+import { createPlugin, PluginDef } from '@teamdiverst/fullcalendar-core'
 import { recurringType } from './recurring-type.js'
 import { RRULE_EVENT_REFINERS } from './event-refiners.js'
 import './ambient.js'

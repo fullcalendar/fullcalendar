@@ -1,4 +1,4 @@
-import {CssDimValue, EventContentArg} from '@fullcalendar/core'
+import {CssDimValue, EventContentArg} from '@teamdiverst/fullcalendar-core'
 import {
   BgEvent,
   buildEventAccessibilityLabel,
@@ -15,8 +15,8 @@ import {
   RefMap,
   renderFill,
   sortEventSegs,
-} from '@fullcalendar/core/internal'
-import {createElement, createRef, Fragment, VNode,} from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/internal'
+import {createElement, createRef, Fragment, VNode,} from '@teamdiverst/fullcalendar-core/preact'
 import {splitSegsByFirstCol, TableSeg} from './TableSeg.js'
 import {TableCell} from './TableCell.js'
 import {TableListItemEvent} from './TableListItemEvent.js'

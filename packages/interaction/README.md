@@ -8,7 +8,7 @@ Calendar functionality for event drag-n-drop, event resizing, date clicking, and
 Install the FullCalendar core package, the interaction plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
 
 ```sh
-npm install @fullcalendar/core @fullcalendar/interaction @fullcalendar/daygrid
+npm install @teamdiverst/fullcalendar-core @teamdiverst/fullcalendar-interaction @teamdiverst/fullcalendar-daygrid
 ```
 
 ## Usage
@@ -16,9 +16,9 @@ npm install @fullcalendar/core @fullcalendar/interaction @fullcalendar/daygrid
 Instantiate a Calendar with the necessary plugins and options:
 
 ```js
-import { Calendar } from '@fullcalendar/core'
-import interactionPlugin from '@fullcalendar/interaction'
-import dayGridPlugin from '@fullcalendar/daygrid'
+import { Calendar } from '@teamdiverst/fullcalendar-core'
+import interactionPlugin from '@teamdiverst/fullcalendar-interaction'
+import dayGridPlugin from '@teamdiverst/fullcalendar-daygrid'
 
 const calendarEl = document.getElementById('calendar')
 const calendar = new Calendar(calendarEl, {

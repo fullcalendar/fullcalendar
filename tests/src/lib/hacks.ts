@@ -1,4 +1,4 @@
-import { config } from '@fullcalendar/core/internal'
+import { config } from '@teamdiverst/fullcalendar-core/internal'
 
 beforeEach(() => {
   // On real devices, when a click-like touch interaction happens, there is a preiod of time where mouse events

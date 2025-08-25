@@ -8,8 +8,8 @@ import {
   DateRange,
   EventSegUiInteractionState,
   getSegMeta,
-} from '@fullcalendar/core/internal'
-import { createElement, RefObject, Fragment } from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/internal'
+import { createElement, RefObject, Fragment } from '@teamdiverst/fullcalendar-core/preact'
 import { TableSegPlacement } from './event-placement.js'
 import { hasListItemDisplay } from './event-rendering.js'
 import { TableBlockEvent } from './TableBlockEvent.js'

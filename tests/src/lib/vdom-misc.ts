@@ -1,4 +1,4 @@
-import { render, createElement, flushSync } from '@fullcalendar/core/preact'
+import { render, createElement, flushSync } from '@teamdiverst/fullcalendar-core/preact'
 import { ListenerCounter } from './ListenerCounter.js'
 
 let standardElListenerCount

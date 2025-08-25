@@ -1,6 +1,6 @@
-import dayGridPlugin from '@fullcalendar/daygrid'
-import rrulePlugin from '@fullcalendar/rrule'
-import luxonPlugin from '@fullcalendar/luxon3'
+import dayGridPlugin from '@teamdiverst/fullcalendar-daygrid'
+import rrulePlugin from '@teamdiverst/fullcalendar-rrule'
+import luxonPlugin from '@teamdiverst/fullcalendar-luxon3'
 import { parseUtcDate, parseLocalDate } from '../lib/date-parsing.js'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 

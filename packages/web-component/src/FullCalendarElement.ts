@@ -1,4 +1,4 @@
-import { Calendar, CalendarApi, CalendarOptions } from '@fullcalendar/core'
+import { Calendar, CalendarApi, CalendarOptions } from '@teamdiverst/fullcalendar-core'
 
 export class FullCalendarElement extends HTMLElement {
   _calendar: Calendar | null = null

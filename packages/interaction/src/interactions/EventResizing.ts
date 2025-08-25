@@ -4,7 +4,7 @@ import {
   EventChangeArg,
   EventRenderRange,
   Duration,
-} from '@fullcalendar/core'
+} from '@teamdiverst/fullcalendar-core'
 import {
   Seg, Hit,
   EventMutation, applyMutationToEventStore,
@@ -18,7 +18,7 @@ import {
   EventInteractionState,
   Interaction, InteractionSettings, interactionSettingsToStore, buildEventApis, isInteractionValid,
   EventImpl,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import { HitDragging, isHitsEqual } from './HitDragging.js'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'
 

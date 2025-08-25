@@ -1,4 +1,4 @@
-import enGbLocale from '@fullcalendar/core/locales/en-gb'
+import enGbLocale from '@teamdiverst/fullcalendar-core/locales/en-gb'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 
 describe('slotLabelFormat', () => {

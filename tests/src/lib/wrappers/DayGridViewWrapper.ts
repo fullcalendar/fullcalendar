@@ -1,4 +1,4 @@
-import { Calendar } from '@fullcalendar/core'
+import { Calendar } from '@teamdiverst/fullcalendar-core'
 import { ViewWrapper } from './ViewWrapper.js'
 import { DayGridWrapper } from './DayGridWrapper.js'
 import { DayHeaderWrapper } from './DayHeaderWrapper.js'

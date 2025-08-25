@@ -1,5 +1,5 @@
 import moment from 'moment-timezone'
-import { NamedTimeZoneImpl } from '@fullcalendar/core/internal'
+import { NamedTimeZoneImpl } from '@teamdiverst/fullcalendar-core/internal'
 
 export class MomentNamedTimeZone extends NamedTimeZoneImpl {
   offsetForArray(a: number[]): number {

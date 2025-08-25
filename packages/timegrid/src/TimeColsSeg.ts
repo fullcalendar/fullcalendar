@@ -1,4 +1,4 @@
-import { DateMarker, Seg, EventSegUiInteractionState } from '@fullcalendar/core/internal'
+import { DateMarker, Seg, EventSegUiInteractionState } from '@teamdiverst/fullcalendar-core/internal'
 
 // JUST A DATA STRUCTURE, not a component
 

@@ -8,7 +8,7 @@ Display events on a calendar view that looks like a bulleted list
 Install the necessary packages:
 
 ```sh
-npm install @fullcalendar/core @fullcalendar/list
+npm install @teamdiverst/fullcalendar-core @teamdiverst/fullcalendar-list
 ```
 
 ## Usage
@@ -16,8 +16,8 @@ npm install @fullcalendar/core @fullcalendar/list
 Instantiate a Calendar with the necessary plugin:
 
 ```js
-import { Calendar } from '@fullcalendar/core'
-import listPlugin from '@fullcalendar/list'
+import { Calendar } from '@teamdiverst/fullcalendar-core'
+import listPlugin from '@teamdiverst/fullcalendar-list'
 
 const calendarEl = document.getElementById('calendar')
 const calendar = new Calendar(calendarEl, {

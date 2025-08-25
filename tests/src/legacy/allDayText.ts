@@ -1,4 +1,4 @@
-import ptBrLocale from '@fullcalendar/core/locales/pt-br'
+import ptBrLocale from '@teamdiverst/fullcalendar-core/locales/pt-br'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'
 
 describe('allDayText', () => {

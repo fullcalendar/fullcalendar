@@ -8,7 +8,7 @@ Display multiple months, in a grid or vertical stack
 Install the necessary packages:
 
 ```sh
-npm install @fullcalendar/core @fullcalendar/multimonth
+npm install @teamdiverst/fullcalendar-core @teamdiverst/fullcalendar-multimonth
 ```
 
 ## Usage
@@ -16,8 +16,8 @@ npm install @fullcalendar/core @fullcalendar/multimonth
 Instantiate a Calendar with the necessary plugin:
 
 ```js
-import { Calendar } from '@fullcalendar/core'
-import multiMonthPlugin from '@fullcalendar/multimonth'
+import { Calendar } from '@teamdiverst/fullcalendar-core'
+import multiMonthPlugin from '@teamdiverst/fullcalendar-multimonth'
 
 const calendarEl = document.getElementById('calendar')
 const calendar = new Calendar(calendarEl, {

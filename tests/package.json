@@ -3,19 +3,19 @@
   "name": "@fullcalendar-tests/standard",
   "version": "0.0.2",
   "dependencies": {
-    "@fullcalendar/bootstrap": "workspace:*",
-    "@fullcalendar/core": "workspace:*",
-    "@fullcalendar/daygrid": "workspace:*",
-    "@fullcalendar/google-calendar": "workspace:*",
-    "@fullcalendar/icalendar": "workspace:*",
-    "@fullcalendar/interaction": "workspace:*",
-    "@fullcalendar/list": "workspace:*",
-    "@fullcalendar/luxon3": "workspace:*",
-    "@fullcalendar/moment": "workspace:*",
-    "@fullcalendar/moment-timezone": "workspace:*",
-    "@fullcalendar/multimonth": "workspace:*",
-    "@fullcalendar/rrule": "workspace:*",
-    "@fullcalendar/timegrid": "workspace:*",
+    "@teamdiverst/fullcalendar-bootstrap": "workspace:*",
+    "@teamdiverst/fullcalendar-core": "workspace:*",
+    "@teamdiverst/fullcalendar-daygrid": "workspace:*",
+    "@teamdiverst/fullcalendar-google-calendar": "workspace:*",
+    "@teamdiverst/fullcalendar-icalendar": "workspace:*",
+    "@teamdiverst/fullcalendar-interaction": "workspace:*",
+    "@teamdiverst/fullcalendar-list": "workspace:*",
+    "@teamdiverst/fullcalendar-luxon3": "workspace:*",
+    "@teamdiverst/fullcalendar-moment": "workspace:*",
+    "@teamdiverst/fullcalendar-moment-timezone": "workspace:*",
+    "@teamdiverst/fullcalendar-multimonth": "workspace:*",
+    "@teamdiverst/fullcalendar-rrule": "workspace:*",
+    "@teamdiverst/fullcalendar-timegrid": "workspace:*",
     "fullcalendar": "workspace:*",
     "luxon": "^2.0.0",
     "moment": "^2.29.1",
@@ -73,31 +73,31 @@
       },
       "pkg:global:locale": {
         "files": [
-          "./node_modules/@fullcalendar/core/index.global.js",
-          "./node_modules/@fullcalendar/core/locales/ar.global.js",
-          "./node_modules/@fullcalendar/daygrid/index.global.js",
+          "./node_modules/@teamdiverst/fullcalendar-core/index.global.js",
+          "./node_modules/@teamdiverst/fullcalendar-core/locales/ar.global.js",
+          "./node_modules/@teamdiverst/fullcalendar-daygrid/index.global.js",
           "./src/global-locale.js"
         ]
       },
       "pkg:global:locales-all": {
         "files": [
-          "./node_modules/@fullcalendar/core/index.global.js",
-          "./node_modules/@fullcalendar/core/locales-all.global.js",
-          "./node_modules/@fullcalendar/daygrid/index.global.js",
+          "./node_modules/@teamdiverst/fullcalendar-core/index.global.js",
+          "./node_modules/@teamdiverst/fullcalendar-core/locales-all.global.js",
+          "./node_modules/@teamdiverst/fullcalendar-daygrid/index.global.js",
           "./src/global-locales-all.js"
         ]
       },
       "bundle:global:locale": {
         "files": [
           "./node_modules/fullcalendar/index.global.js",
-          "./node_modules/@fullcalendar/core/locales/ar.global.js",
+          "./node_modules/@teamdiverst/fullcalendar-core/locales/ar.global.js",
           "./src/global-locale.js"
         ]
       },
       "bundle:global:locales-all": {
         "files": [
           "./node_modules/fullcalendar/index.global.js",
-          "./node_modules/@fullcalendar/core/locales-all.global.js",
+          "./node_modules/@teamdiverst/fullcalendar-core/locales-all.global.js",
           "./src/global-locales-all.js"
         ]
       }

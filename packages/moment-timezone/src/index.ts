@@ -1,4 +1,4 @@
-import { createPlugin, PluginDef } from '@fullcalendar/core'
+import { createPlugin, PluginDef } from '@teamdiverst/fullcalendar-core'
 import { MomentNamedTimeZone } from './MomentNamedTimeZone.js'
 
 export default createPlugin({

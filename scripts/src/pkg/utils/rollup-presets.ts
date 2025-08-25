@@ -337,9 +337,9 @@ function buildNormalJsPlugins(pkgBundleStruct: PkgBundleStruct): Plugin[] {
     }),
     cssPlugin({
       inject: {
-        importId: pkgJson.name === '@fullcalendar/core' ?
+        importId: pkgJson.name === '@teamdiverst/fullcalendar-core' ?
           joinPaths(pkgDir, transpiledSubdir, 'styleUtils' + transpiledExtension) :
-          '@fullcalendar/core/internal',
+          '@teamdiverst/fullcalendar-core/internal',
         importProp: 'injectStyles',
       },
     }),

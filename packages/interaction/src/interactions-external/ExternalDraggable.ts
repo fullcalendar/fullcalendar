@@ -1,4 +1,4 @@
-import { BASE_OPTION_DEFAULTS, PointerDragEvent } from '@fullcalendar/core/internal'
+import { BASE_OPTION_DEFAULTS, PointerDragEvent } from '@teamdiverst/fullcalendar-core/internal'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'
 import { ExternalElementDragging, DragMetaGenerator } from './ExternalElementDragging.js'
 

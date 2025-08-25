@@ -3,7 +3,7 @@
 
 [Bootstrap 4](https://getbootstrap.com/docs/4.6/getting-started/introduction/) theme for [FullCalendar](https://fullcalendar.io)
 
-> For [Bootstrap 5](https://getbootstrap.com/), use the [@fullcalendar/bootstrap5](https://github.com/fullcalendar/fullcalendar/tree/main/packages/bootstrap5) package
+> For [Bootstrap 5](https://getbootstrap.com/), use the [@teamdiverst/fullcalendar-bootstrap5](https://github.com/fullcalendar/fullcalendar/tree/main/packages/bootstrap5) package
 
 ## Installation
 
@@ -16,7 +16,7 @@ npm install bootstrap@4 @fortawesome/fontawesome-free
 Then, install the FullCalendar core package, the Bootstrap plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
 
 ```sh
-npm install @fullcalendar/core @fullcalendar/bootstrap @fullcalendar/daygrid
+npm install @teamdiverst/fullcalendar-core @teamdiverst/fullcalendar-bootstrap @teamdiverst/fullcalendar-daygrid
 ```
 
 ## Usage
@@ -24,9 +24,9 @@ npm install @fullcalendar/core @fullcalendar/bootstrap @fullcalendar/daygrid
 Instantiate a Calendar with the necessary plugins and options:
 
 ```js
-import { Calendar } from '@fullcalendar/core'
-import bootstrapPlugin from '@fullcalendar/bootstrap'
-import dayGridPlugin from '@fullcalendar/daygrid'
+import { Calendar } from '@teamdiverst/fullcalendar-core'
+import bootstrapPlugin from '@teamdiverst/fullcalendar-bootstrap'
+import dayGridPlugin from '@teamdiverst/fullcalendar-daygrid'
 
 // import third-party stylesheets directly from your JS
 import 'bootstrap/dist/css/bootstrap.css'

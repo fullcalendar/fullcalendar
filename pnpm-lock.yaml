@@ -19,22 +19,22 @@ importers:
 
   bundle:
     dependencies:
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../packages/core/dist
-      '@fullcalendar/daygrid':
+      '@teamdiverst/fullcalendar-daygrid':
         specifier: ~6.1.19
         version: link:../packages/daygrid/dist
-      '@fullcalendar/interaction':
+      '@teamdiverst/fullcalendar-interaction':
         specifier: ~6.1.19
         version: link:../packages/interaction/dist
-      '@fullcalendar/list':
+      '@teamdiverst/fullcalendar-list':
         specifier: ~6.1.19
         version: link:../packages/list/dist
-      '@fullcalendar/multimonth':
+      '@teamdiverst/fullcalendar-multimonth':
         specifier: ~6.1.19
         version: link:../packages/multimonth/dist
-      '@fullcalendar/timegrid':
+      '@teamdiverst/fullcalendar-timegrid':
         specifier: ~6.1.19
         version: link:../packages/timegrid/dist
     devDependencies:
@@ -48,7 +48,7 @@ importers:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
     publishDirectory: ./dist
@@ -58,7 +58,7 @@ importers:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
     publishDirectory: ./dist
@@ -85,7 +85,7 @@ importers:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
     publishDirectory: ./dist
@@ -95,7 +95,7 @@ importers:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
     publishDirectory: ./dist
@@ -105,7 +105,7 @@ importers:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
       ical.js:
@@ -118,7 +118,7 @@ importers:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
     publishDirectory: ./dist
@@ -128,7 +128,7 @@ importers:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
     publishDirectory: ./dist
@@ -138,7 +138,7 @@ importers:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
       luxon:
@@ -151,7 +151,7 @@ importers:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
       '@types/luxon':
@@ -167,7 +167,7 @@ importers:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
       '@types/luxon':
@@ -183,7 +183,7 @@ importers:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
       moment:
@@ -196,7 +196,7 @@ importers:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
       moment-timezone:
@@ -206,14 +206,14 @@ importers:
 
   packages/multimonth:
     dependencies:
-      '@fullcalendar/daygrid':
+      '@teamdiverst/fullcalendar-daygrid':
         specifier: ~6.1.19
         version: link:../daygrid/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
     publishDirectory: ./dist
@@ -223,7 +223,7 @@ importers:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
       rrule:
@@ -233,14 +233,14 @@ importers:
 
   packages/timegrid:
     dependencies:
-      '@fullcalendar/daygrid':
+      '@teamdiverst/fullcalendar-daygrid':
         specifier: ~6.1.19
         version: link:../daygrid/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
     publishDirectory: ./dist
@@ -250,7 +250,7 @@ importers:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: ~6.1.19
         version: link:../core/dist
     publishDirectory: ./dist
@@ -398,43 +398,43 @@ importers:
 
   tests:
     dependencies:
-      '@fullcalendar/bootstrap':
+      '@teamdiverst/fullcalendar-bootstrap':
         specifier: workspace:*
         version: link:../packages/bootstrap4/dist
-      '@fullcalendar/core':
+      '@teamdiverst/fullcalendar-core':
         specifier: workspace:*
         version: link:../packages/core/dist
-      '@fullcalendar/daygrid':
+      '@teamdiverst/fullcalendar-daygrid':
         specifier: workspace:*
         version: link:../packages/daygrid/dist
-      '@fullcalendar/google-calendar':
+      '@teamdiverst/fullcalendar-google-calendar':
         specifier: workspace:*
         version: link:../packages/google-calendar/dist
-      '@fullcalendar/icalendar':
+      '@teamdiverst/fullcalendar-icalendar':
         specifier: workspace:*
         version: link:../packages/icalendar/dist
-      '@fullcalendar/interaction':
+      '@teamdiverst/fullcalendar-interaction':
         specifier: workspace:*
         version: link:../packages/interaction/dist
-      '@fullcalendar/list':
+      '@teamdiverst/fullcalendar-list':
         specifier: workspace:*
         version: link:../packages/list/dist
-      '@fullcalendar/luxon3':
+      '@teamdiverst/fullcalendar-luxon3':
         specifier: workspace:*
         version: link:../packages/luxon3/dist
-      '@fullcalendar/moment':
+      '@teamdiverst/fullcalendar-moment':
         specifier: workspace:*
         version: link:../packages/moment/dist
-      '@fullcalendar/moment-timezone':
+      '@teamdiverst/fullcalendar-moment-timezone':
         specifier: workspace:*
         version: link:../packages/moment-timezone/dist
-      '@fullcalendar/multimonth':
+      '@teamdiverst/fullcalendar-multimonth':
         specifier: workspace:*
         version: link:../packages/multimonth/dist
-      '@fullcalendar/rrule':
+      '@teamdiverst/fullcalendar-rrule':
         specifier: workspace:*
         version: link:../packages/rrule/dist
-      '@fullcalendar/timegrid':
+      '@teamdiverst/fullcalendar-timegrid':
         specifier: workspace:*
         version: link:../packages/timegrid/dist
       fullcalendar:

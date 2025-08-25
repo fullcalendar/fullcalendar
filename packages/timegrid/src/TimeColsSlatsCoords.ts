@@ -1,4 +1,4 @@
-import { Duration } from '@fullcalendar/core'
+import { Duration } from '@teamdiverst/fullcalendar-core'
 import {
   PositionCache,
   DateMarker,
@@ -7,7 +7,7 @@ import {
   asRoughMs,
   DateProfile,
   rangeContainsMarker,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 
 export class TimeColsSlatsCoords {
   constructor(

@@ -13,9 +13,9 @@ import {
   isPropsEqual,
   DateProfileGenerator,
   formatIsoMonthStr,
-} from '@fullcalendar/core/internal'
-import { buildDayTableRenderRange } from '@fullcalendar/daygrid/internal'
-import { createElement, createRef } from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/internal'
+import { buildDayTableRenderRange } from '@teamdiverst/fullcalendar-daygrid/internal'
+import { createElement, createRef } from '@teamdiverst/fullcalendar-core/preact'
 import { SingleMonth } from './SingleMonth.js'
 
 interface MultiMonthViewState {

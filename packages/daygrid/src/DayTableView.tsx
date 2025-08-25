@@ -6,8 +6,8 @@ import {
   DaySeriesModel,
   DayTableModel,
   ChunkContentCallbackArgs,
-} from '@fullcalendar/core/internal'
-import { createElement, createRef } from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/internal'
+import { createElement, createRef } from '@teamdiverst/fullcalendar-core/preact'
 import { TableView } from './TableView.js'
 import { DayTable } from './DayTable.js'
 

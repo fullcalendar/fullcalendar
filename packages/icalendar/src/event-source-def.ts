@@ -1,5 +1,5 @@
-import { EventInput } from '@fullcalendar/core'
-import { EventSourceDef, DateRange, addDays } from '@fullcalendar/core/internal'
+import { EventInput } from '@teamdiverst/fullcalendar-core'
+import { EventSourceDef, DateRange, addDays } from '@teamdiverst/fullcalendar-core/internal'
 import * as ICAL from 'ical.js'
 import { IcalExpander } from './ical-expander/IcalExpander.js'
 

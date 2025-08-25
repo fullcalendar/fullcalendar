@@ -1,4 +1,4 @@
-import { CssDimValue, AllDayContentArg } from '@fullcalendar/core'
+import { CssDimValue, AllDayContentArg } from '@teamdiverst/fullcalendar-core'
 import {
   diffDays,
   SimpleScrollGridSection,
@@ -18,14 +18,14 @@ import {
   DateMarker,
   NowIndicatorContainer,
   ContentContainer,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import {
   createElement,
   createRef,
   VNode,
   RefObject,
   ComponentChild,
-} from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/preact'
 import { AllDaySplitter } from './AllDaySplitter.js'
 import { TimeSlatMeta } from './time-slat-meta.js'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'

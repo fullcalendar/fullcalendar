@@ -14,7 +14,7 @@ npm install ical.js
 Then, install the FullCalendar core package, the iCalendar plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
 
 ```sh
-npm install @fullcalendar/core @fullcalendar/icalendar @fullcalendar/daygrid
+npm install @teamdiverst/fullcalendar-core @teamdiverst/fullcalendar-icalendar @teamdiverst/fullcalendar-daygrid
 ```
 
 ## Usage
@@ -22,9 +22,9 @@ npm install @fullcalendar/core @fullcalendar/icalendar @fullcalendar/daygrid
 Instantiate a Calendar with the necessary plugins and options:
 
 ```js
-import { Calendar } from '@fullcalendar/core'
-import iCalendarPlugin from '@fullcalendar/icalendar'
-import dayGridPlugin from '@fullcalendar/daygrid'
+import { Calendar } from '@teamdiverst/fullcalendar-core'
+import iCalendarPlugin from '@teamdiverst/fullcalendar-icalendar'
+import dayGridPlugin from '@teamdiverst/fullcalendar-daygrid'
 
 const calendarEl = document.getElementById('calendar')
 const calendar = new Calendar(calendarEl, {

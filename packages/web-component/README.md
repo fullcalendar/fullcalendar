@@ -10,21 +10,21 @@ Install the core package, the web-component package, and any plugins you plan to
 
 ```sh
 npm install --save \
-  @fullcalendar/core \
-  @fullcalendar/web-component \
-  @fullcalendar/daygrid
+  @teamdiverst/fullcalendar-core \
+  @teamdiverst/fullcalendar-web-component \
+  @teamdiverst/fullcalendar-daygrid
 ```
 
 Then, either register the element globally under its default tag name of `<full-calendar />`:
 
 ```js
-import '@fullcalendar/web-component/global'
+import '@teamdiverst/fullcalendar-web-component/global'
 ```
 
 Or, customize the tag name:
 
 ```js
-import { FullCalendarElement } from '@fullcalendar/web-component'
+import { FullCalendarElement } from '@teamdiverst/fullcalendar-web-component'
 
 customElements.define('some-calendar-tag', FullCalendarElement);
 ```
@@ -38,9 +38,9 @@ Include script tags for the core package, the web-component package, and any plu
 <html>
 <head>
 <meta charset='utf-8' />
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core/index.global.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/web-component/index.global.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid/index.global.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@teamdiverst/fullcalendar-core/index.global.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@teamdiverst/fullcalendar-web-component/index.global.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@teamdiverst/fullcalendar-daygrid/index.global.min.js'></script>
 </head>
 <body>
 

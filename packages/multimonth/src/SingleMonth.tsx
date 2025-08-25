@@ -1,7 +1,7 @@
-import { CssDimValue } from '@fullcalendar/core'
-import { DateComponent, DayHeader, ViewProps, memoize, DateFormatter, getUniqueDomId } from '@fullcalendar/core/internal'
-import { TableRows, buildDayTableModel, DayTableSlicer } from '@fullcalendar/daygrid/internal'
-import { createElement, Ref } from '@fullcalendar/core/preact'
+import { CssDimValue } from '@teamdiverst/fullcalendar-core'
+import { DateComponent, DayHeader, ViewProps, memoize, DateFormatter, getUniqueDomId } from '@teamdiverst/fullcalendar-core/internal'
+import { TableRows, buildDayTableModel, DayTableSlicer } from '@teamdiverst/fullcalendar-daygrid/internal'
+import { createElement, Ref } from '@teamdiverst/fullcalendar-core/preact'
 
 export interface SingleMonthProps extends ViewProps {
   elRef?: Ref<HTMLDivElement>

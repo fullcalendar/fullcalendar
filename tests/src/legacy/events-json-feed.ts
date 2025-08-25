@@ -1,5 +1,5 @@
 import fetchMock from 'fetch-mock'
-import { JsonRequestError } from '@fullcalendar/core'
+import { JsonRequestError } from '@teamdiverst/fullcalendar-core'
 import { formatIsoTimeZoneOffset } from '../lib/datelib-utils.js'
 
 describe('events as a json feed', () => {

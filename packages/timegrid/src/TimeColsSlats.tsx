@@ -1,15 +1,15 @@
-import { CssDimValue } from '@fullcalendar/core'
+import { CssDimValue } from '@teamdiverst/fullcalendar-core'
 import {
   BaseComponent,
   RefMap,
   PositionCache,
   DateProfile,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import {
   createElement,
   VNode,
   createRef,
-} from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/preact'
 import { TimeSlatMeta } from './time-slat-meta.js'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
 import { TimeColsSlatsBody } from './TimeColsSlatsBody.js'

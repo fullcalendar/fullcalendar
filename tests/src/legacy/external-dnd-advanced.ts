@@ -1,4 +1,4 @@
-import { ThirdPartyDraggable } from '@fullcalendar/interaction'
+import { ThirdPartyDraggable } from '@teamdiverst/fullcalendar-interaction'
 import { testEventDrag } from '../lib/dnd-resize-utils.js'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 

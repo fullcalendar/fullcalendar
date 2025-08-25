@@ -1,5 +1,5 @@
-import { JsonRequestError } from '@fullcalendar/core'
-import { EventSourceDef, addDays, DateEnv, requestJson, Dictionary } from '@fullcalendar/core/internal'
+import { JsonRequestError } from '@teamdiverst/fullcalendar-core'
+import { EventSourceDef, addDays, DateEnv, requestJson, Dictionary } from '@teamdiverst/fullcalendar-core/internal'
 
 // TODO: expose somehow
 const API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'

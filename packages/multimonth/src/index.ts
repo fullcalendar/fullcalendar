@@ -1,5 +1,5 @@
-import { createPlugin, PluginDef } from '@fullcalendar/core'
-import { TableDateProfileGenerator } from '@fullcalendar/daygrid/internal'
+import { createPlugin, PluginDef } from '@teamdiverst/fullcalendar-core'
+import { TableDateProfileGenerator } from '@teamdiverst/fullcalendar-daygrid/internal'
 import { MultiMonthView } from './MultiMonthView.js'
 import { OPTION_REFINERS } from './options-refiners.js'
 import './ambient.js'

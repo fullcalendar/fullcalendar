@@ -1,4 +1,4 @@
-import { CssDimValue, DayCellContentArg } from '@fullcalendar/core'
+import { CssDimValue, DayCellContentArg } from '@teamdiverst/fullcalendar-core'
 import {
   DateMarker,
   DateComponent,
@@ -15,7 +15,7 @@ import {
   hasCustomDayCellContent,
   addMs,
   DateEnv,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import {
   Ref,
   ComponentChildren,
@@ -23,7 +23,7 @@ import {
   createRef,
   ComponentChild,
   Fragment,
-} from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/preact'
 import { TableCellMoreLink } from './TableCellMoreLink.js'
 import { TableSegPlacement } from './event-placement.js'
 

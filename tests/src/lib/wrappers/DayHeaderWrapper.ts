@@ -1,4 +1,4 @@
-import { findElements } from '@fullcalendar/core/internal'
+import { findElements } from '@teamdiverst/fullcalendar-core/internal'
 import { parseIsoAsUtc, formatIsoDay } from '../datelib-utils.js'
 import { parseUtcDate } from '../date-parsing.js'
 import { CalendarWrapper } from './CalendarWrapper.js'

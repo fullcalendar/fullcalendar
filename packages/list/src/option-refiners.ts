@@ -1,4 +1,4 @@
-import { ClassNamesGenerator, FormatterInput } from '@fullcalendar/core'
+import { ClassNamesGenerator, FormatterInput } from '@teamdiverst/fullcalendar-core'
 import {
   identity,
   Identity,
@@ -7,7 +7,7 @@ import {
   WillUnmountHandler,
   createFormatter,
   DateFormatter,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import {
   NoEventsContentArg,
   NoEventsMountArg,

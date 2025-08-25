@@ -1,15 +1,15 @@
-import { AllDayContentArg } from '@fullcalendar/core'
+import { AllDayContentArg } from '@teamdiverst/fullcalendar-core'
 import {
   MinimalEventProps, BaseComponent, ViewContext,
   Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter,
   getSegAnchorAttrs, EventContainer, ContentContainer,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import {
   createElement,
   ComponentChildren,
   Fragment,
   ComponentChild,
-} from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/preact'
 
 const DEFAULT_TIME_FORMAT = createFormatter({
   hour: 'numeric',

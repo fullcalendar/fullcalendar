@@ -1,4 +1,4 @@
-import { CssDimValue } from '@fullcalendar/core'
+import { CssDimValue } from '@teamdiverst/fullcalendar-core'
 import {
   BaseComponent,
   EventSegUiInteractionState,
@@ -10,12 +10,12 @@ import {
   NowIndicatorContainer,
   DateProfile,
   DayTableCell,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import {
   createElement,
   createRef,
   VNode,
-} from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/preact'
 import { TimeColsSeg, splitSegsByCol, splitInteractionByCol } from './TimeColsSeg.js'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords.js'
 import { TimeCol } from './TimeCol.js'

@@ -1,4 +1,4 @@
-import { ViewApi, DatePointApi } from '@fullcalendar/core'
+import { ViewApi, DatePointApi } from '@teamdiverst/fullcalendar-core'
 import {
   Hit,
   interactionSettingsStore,
@@ -17,7 +17,7 @@ import {
   getDefaultEventEnd,
   refineEventDef,
   EventImpl,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import { HitDragging } from '../interactions/HitDragging.js'
 import { buildDatePointApiWithContext } from '../utils.js'
 

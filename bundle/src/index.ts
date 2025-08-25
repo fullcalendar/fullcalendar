@@ -1,9 +1,9 @@
-import { globalPlugins } from '@fullcalendar/core'
-import interactionPlugin from '@fullcalendar/interaction'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import listPlugin from '@fullcalendar/list'
-import multiMonthPlugin from '@fullcalendar/multimonth'
+import { globalPlugins } from '@teamdiverst/fullcalendar-core'
+import interactionPlugin from '@teamdiverst/fullcalendar-interaction'
+import dayGridPlugin from '@teamdiverst/fullcalendar-daygrid'
+import timeGridPlugin from '@teamdiverst/fullcalendar-timegrid'
+import listPlugin from '@teamdiverst/fullcalendar-list'
+import multiMonthPlugin from '@teamdiverst/fullcalendar-multimonth'
 
 globalPlugins.push(
   interactionPlugin,
@@ -13,5 +13,5 @@ globalPlugins.push(
   multiMonthPlugin,
 )
 
-export * from '@fullcalendar/core'
-export * from '@fullcalendar/interaction' // for Draggable
+export * from '@teamdiverst/fullcalendar-core'
+export * from '@teamdiverst/fullcalendar-interaction' // for Draggable

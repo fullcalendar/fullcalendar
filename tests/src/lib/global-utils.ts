@@ -1,5 +1,5 @@
-import { Calendar, CalendarOptions } from '@fullcalendar/core'
-import { createPlugin } from '@fullcalendar/core'
+import { Calendar, CalendarOptions } from '@teamdiverst/fullcalendar-core'
+import { createPlugin } from '@teamdiverst/fullcalendar-core'
 import { parseLocalDate, parseUtcDate } from './date-parsing.js'
 
 // Other Important Global Stuff

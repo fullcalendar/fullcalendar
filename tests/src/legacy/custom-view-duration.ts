@@ -1,5 +1,5 @@
-import frLocale from '@fullcalendar/core/locales/fr'
-import { createPlugin } from '@fullcalendar/core'
+import frLocale from '@teamdiverst/fullcalendar-core/locales/fr'
+import { createPlugin } from '@teamdiverst/fullcalendar-core'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper.js'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper.js'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper.js'

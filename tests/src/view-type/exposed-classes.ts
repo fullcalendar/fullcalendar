@@ -1,6 +1,6 @@
-import { DayGridView, DayTable } from '@fullcalendar/daygrid/internal'
-import { ListView } from '@fullcalendar/list/internal'
-import { DayTimeColsView, DayTimeCols } from '@fullcalendar/timegrid/internal'
+import { DayGridView, DayTable } from '@teamdiverst/fullcalendar-daygrid/internal'
+import { ListView } from '@teamdiverst/fullcalendar-list/internal'
+import { DayTimeColsView, DayTimeCols } from '@teamdiverst/fullcalendar-timegrid/internal'
 
 describe('internal View/Grid classes', () => {
   it('are exposed', () => {

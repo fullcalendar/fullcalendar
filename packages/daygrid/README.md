@@ -8,7 +8,7 @@ Display events on a [month view](https://fullcalendar.io/docs/month-view) or ["d
 Install the necessary packages:
 
 ```sh
-npm install @fullcalendar/core @fullcalendar/daygrid
+npm install @teamdiverst/fullcalendar-core @teamdiverst/fullcalendar-daygrid
 ```
 
 ## Usage
@@ -16,8 +16,8 @@ npm install @fullcalendar/core @fullcalendar/daygrid
 Instantiate a Calendar with the necessary plugin:
 
 ```js
-import { Calendar } from '@fullcalendar/core'
-import dayGridPlugin from '@fullcalendar/daygrid'
+import { Calendar } from '@teamdiverst/fullcalendar-core'
+import dayGridPlugin from '@teamdiverst/fullcalendar-daygrid'
 
 const calendarEl = document.getElementById('calendar')
 const calendar = new Calendar(calendarEl, {

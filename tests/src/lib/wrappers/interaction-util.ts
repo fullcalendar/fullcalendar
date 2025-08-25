@@ -1,4 +1,4 @@
-import { Calendar } from '@fullcalendar/core'
+import { Calendar } from '@teamdiverst/fullcalendar-core'
 
 export function waitEventDrag(calendar: Calendar, dragging: Promise<any>) {
   return new Promise<any>((resolve) => {

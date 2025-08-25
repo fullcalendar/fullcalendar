@@ -1,4 +1,4 @@
-import { Theme } from '@fullcalendar/core/internal'
+import { Theme } from '@teamdiverst/fullcalendar-core/internal'
 
 class BootstrapTheme extends Theme {
 }

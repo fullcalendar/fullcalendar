@@ -1,7 +1,7 @@
-import { ViewApi, DatePointApi } from '@fullcalendar/core'
+import { ViewApi, DatePointApi } from '@teamdiverst/fullcalendar-core'
 import {
   PointerDragEvent, Interaction, InteractionSettings, interactionSettingsToStore,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging.js'
 import { HitDragging, isHitsEqual } from './HitDragging.js'
 import { buildDatePointApiWithContext } from '../utils.js'

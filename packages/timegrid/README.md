@@ -8,7 +8,7 @@ Display events on time slots
 Install the necessary packages:
 
 ```sh
-npm install @fullcalendar/core @fullcalendar/timegrid
+npm install @teamdiverst/fullcalendar-core @teamdiverst/fullcalendar-timegrid
 ```
 
 ## Usage
@@ -16,8 +16,8 @@ npm install @fullcalendar/core @fullcalendar/timegrid
 Instantiate a Calendar with the necessary plugin:
 
 ```js
-import { Calendar } from '@fullcalendar/core'
-import timeGridPlugin from '@fullcalendar/timegrid'
+import { Calendar } from '@teamdiverst/fullcalendar-core'
+import timeGridPlugin from '@teamdiverst/fullcalendar-timegrid'
 
 const calendarEl = document.getElementById('calendar')
 const calendar = new Calendar(calendarEl, {

@@ -14,7 +14,7 @@ npm install luxon@3
 Then, install the FullCalendar core package, the Luxon plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
 
 ```sh
-npm install @fullcalendar/core @fullcalendar/luxon3 @fullcalendar/daygrid
+npm install @teamdiverst/fullcalendar-core @teamdiverst/fullcalendar-luxon3 @teamdiverst/fullcalendar-daygrid
 ```
 
 ## Usage
@@ -22,9 +22,9 @@ npm install @fullcalendar/core @fullcalendar/luxon3 @fullcalendar/daygrid
 Instantiate a Calendar with the necessary plugin:
 
 ```js
-import { Calendar } from '@fullcalendar/core'
-import luxon3Plugin from '@fullcalendar/luxon3'
-import dayGridPlugin from '@fullcalendar/daygrid'
+import { Calendar } from '@teamdiverst/fullcalendar-core'
+import luxon3Plugin from '@teamdiverst/fullcalendar-luxon3'
+import dayGridPlugin from '@teamdiverst/fullcalendar-daygrid'
 
 const calendarEl = document.getElementById('calendar')
 const calendar = new Calendar(calendarEl, {

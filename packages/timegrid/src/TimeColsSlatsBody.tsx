@@ -1,14 +1,14 @@
 import {
   SlotLaneContentArg,
-} from '@fullcalendar/core'
+} from '@teamdiverst/fullcalendar-core'
 import {
   BaseComponent,
   ContentContainer,
   RefMap,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import {
   createElement,
-} from '@fullcalendar/core/preact'
+} from '@teamdiverst/fullcalendar-core/preact'
 import { TimeColsAxisCell } from './TimeColsAxisCell.js'
 import { TimeSlatMeta } from './time-slat-meta.js'
 

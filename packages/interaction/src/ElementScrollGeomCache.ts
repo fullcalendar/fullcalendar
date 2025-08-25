@@ -1,4 +1,4 @@
-import { computeInnerRect, ElementScrollController } from '@fullcalendar/core/internal'
+import { computeInnerRect, ElementScrollController } from '@teamdiverst/fullcalendar-core/internal'
 import { ScrollGeomCache } from './ScrollGeomCache.js'
 
 export class ElementScrollGeomCache extends ScrollGeomCache {

@@ -1,6 +1,6 @@
 import moment from 'moment'
-import { CalendarApi, Duration } from '@fullcalendar/core'
-import { CalendarImpl } from '@fullcalendar/core/internal'
+import { CalendarApi, Duration } from '@teamdiverst/fullcalendar-core'
+import { CalendarImpl } from '@teamdiverst/fullcalendar-core/internal'
 
 export function toMoment(date: Date, calendar: CalendarApi): moment.Moment {
   if (!(calendar instanceof CalendarImpl)) {

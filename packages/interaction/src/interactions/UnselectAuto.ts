@@ -1,10 +1,10 @@
-import { DateSelectionApi } from '@fullcalendar/core'
+import { DateSelectionApi } from '@teamdiverst/fullcalendar-core'
 import {
   PointerDragEvent,
   elementClosest,
   CalendarContext,
   getEventTargetViaRoot,
-} from '@fullcalendar/core/internal'
+} from '@teamdiverst/fullcalendar-core/internal'
 import { PointerDragging } from '../dnd/PointerDragging.js'
 import { EventDragging } from './EventDragging.js'
 
