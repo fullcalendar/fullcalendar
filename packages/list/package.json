@@ -42,8 +42,15 @@
       "./internal": "FullCalendar.List.Internal"
     }
   },
+  "private": true,
   "publishConfig": {
     "directory": "./dist",
-    "linkDirectory": true
+    "linkDirectory": true,
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TeamDiverst/fullcalendar.git"
   }
 }

@@ -1,0 +1,67 @@
+name: Build and Publish NPM Packages
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Registry
+        env:
+          PACKAGE_AUTH_TOKEN: ${{ secrets.PACKAGE_AUTH_TOKEN }}
+        run: |
+          pnpm config set @teamdiverst:registry https://npm.pkg.github.com
+          pnpm config set @TeamDiverst:registry https://npm.pkg.github.com
+          pnpm config set //npm.pkg.github.com/:_authToken $PACKAGE_AUTH_TOKEN
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: |
+          # Build the packages we use
+          cd packages/core && pnpm run build
+          cd ../daygrid && pnpm run build
+          cd ../timegrid && pnpm run build
+          cd ../list && pnpm run build
+          cd ../interaction && pnpm run build
+
+      - name: Publish core package
+        working-directory: packages/core
+        run: pnpm publish --no-git-checks --access=restricted --report-summary
+
+      - name: Publish daygrid package
+        working-directory: packages/daygrid
+        run: pnpm publish --no-git-checks --access=restricted --report-summary
+
+      - name: Publish timegrid package
+        working-directory: packages/timegrid
+        run: pnpm publish --no-git-checks --access=restricted --report-summary
+
+      - name: Publish list package
+        working-directory: packages/list
+        run: pnpm publish --no-git-checks --access=restricted --report-summary
+
+      - name: Publish interaction package
+        working-directory: packages/interaction
+        run: pnpm publish --no-git-checks --access=restricted --report-summary
