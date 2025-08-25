@@ -83,25 +83,31 @@ $daygrid-event-inner-margin: 3px;
   right: 0;
   z-index: 6;
   pointer-events: none;
+  overflow: hidden;
 }
 
 .fc-daygrid-event-overlay-btn {
-  width: 100%;
-  height: 100%;
   padding: 1px;
   margin: 0;
   background: transparent;
   border: none;
   color: white;
   text-align: start;
+  white-space: nowrap;
+  /* hide by default */
+  width: auto;
+  height: auto;
+  background: none;
+  opacity: 0;
+  font-size: 0;
+  clip: rect(0, 0, 0, 0);
 
-  & span {
-    opacity: 0;
-    font-size: 0;
-  }
-
-  &:focus-visible span {
+  &:focus-visible {
+    width: 100%;
+    height: 100%;
+    background-color: var(--fc-event-bg-color);
     opacity: 1;
     font-size: 12px;
+    clip: auto;
   }
 }
