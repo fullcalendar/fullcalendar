@@ -25,6 +25,8 @@ import { DelayedRunner } from './util/DelayedRunner.js'
 import { PureComponent } from './vdom-util.js'
 import { getUniqueDomId } from './util/dom-manip.js'
 import { NowTimer } from './NowTimer.js'
+import { initResourceRowHighlighting } from './common/resourceRowHighlighting.js'
+import { initEnhancedTodayHighlighting } from './common/enhancedTodayHighlighting.js'
 
 export interface CalendarContentProps extends CalendarData {
   forPrint: boolean
@@ -149,6 +151,8 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
     for (let propName in propSetHandlers) {
       propSetHandlers[propName](props[propName], props)
     }
+
+    this.initTimelineEnhancements(props)
   }
 
   componentDidUpdate(prevProps: CalendarContentProps) {
@@ -159,6 +163,11 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
       if (props[propName] !== prevProps[propName]) {
         propSetHandlers[propName](props[propName], props)
       }
+    }
+
+    if (props.options.resourceRowHighlighting !== prevProps.options.resourceRowHighlighting ||
+        props.options.enhancedTodayHighlighting !== prevProps.options.enhancedTodayHighlighting) {
+      this.initTimelineEnhancements(props)
     }
   }
 
@@ -263,6 +272,33 @@ export class CalendarContent extends PureComponent<CalendarContentProps> {
       ev.target === window // avoid jqui events
     ) {
       this.resizeRunner.request(options.windowResizeDelay)
+    }
+  }
+
+  initTimelineEnhancements = (props: CalendarContentProps) => {
+    const context = this.buildViewContext(
+      props.viewSpec,
+      props.viewApi,
+      props.options,
+      props.dateProfileGenerator,
+      props.dateEnv,
+      props.nowManager,
+      props.theme,
+      props.pluginHooks,
+      props.dispatch,
+      props.getCurrentData,
+      props.emitter,
+      props.calendarApi,
+      this.registerInteractiveComponent,
+      this.unregisterInteractiveComponent,
+    )
+
+    if (props.options.resourceRowHighlighting) {
+      initResourceRowHighlighting(context, { enabled: true })
+    }
+
+    if (props.options.enhancedTodayHighlighting) {
+      initEnhancedTodayHighlighting(context, { enabled: true })
     }
   }
 }
