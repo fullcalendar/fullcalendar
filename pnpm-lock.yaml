@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   jasmine-jquery@2.1.1:
-    hash: ii5vcd4rtfy5ngsgq7effin6p4
+    hash: 67897d46cf39c5f967a51ffdefb9218080e44eded878a866b057bd84e8703db7
     path: scripts/patches/jasmine-jquery@2.1.1.patch
 
 importers:
@@ -20,22 +20,22 @@ importers:
   bundle:
     dependencies:
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../packages/core/dist
       '@fullcalendar/daygrid':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../packages/daygrid/dist
       '@fullcalendar/interaction':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../packages/interaction/dist
       '@fullcalendar/list':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../packages/list/dist
       '@fullcalendar/multimonth':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../packages/multimonth/dist
       '@fullcalendar/timegrid':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../packages/timegrid/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -49,7 +49,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -59,7 +59,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -86,7 +86,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -96,7 +96,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -106,7 +106,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
       ical.js:
         specifier: ^1.4.0
@@ -119,7 +119,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -129,7 +129,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -139,7 +139,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
       luxon:
         specifier: ^1.12.1
@@ -152,7 +152,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
       '@types/luxon':
         specifier: ^2.0.9
@@ -168,7 +168,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
       '@types/luxon':
         specifier: ^3.3.0
@@ -184,7 +184,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
       moment:
         specifier: ^2.29.1
@@ -197,7 +197,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
       moment-timezone:
         specifier: ^0.5.40
@@ -207,14 +207,14 @@ importers:
   packages/multimonth:
     dependencies:
       '@fullcalendar/daygrid':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../daygrid/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -224,7 +224,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
       rrule:
         specifier: ^2.6.0
@@ -234,14 +234,14 @@ importers:
   packages/timegrid:
     dependencies:
       '@fullcalendar/daygrid':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../daygrid/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -251,7 +251,7 @@ importers:
         specifier: '*'
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: ~6.1.19
+        specifier: ~6.1.20
         version: link:../core/dist
     publishDirectory: ./dist
 
@@ -334,7 +334,7 @@ importers:
         version: 4.7.8
       jasmine-jquery:
         specifier: ^2.1.1
-        version: 2.1.1(patch_hash=ii5vcd4rtfy5ngsgq7effin6p4)
+        version: 2.1.1(patch_hash=67897d46cf39c5f967a51ffdefb9218080e44eded878a866b057bd84e8703db7)
       jquery:
         specifier: ^3.4.0
         version: 3.7.1
@@ -611,23 +611,12 @@ packages:
   '@jridgewell/gen-mapping@0.3.12':
     resolution: {integrity: sha512-OuLGC46TjB5BbN1dH8JULVVZY4WTdkF7tV9Ys6wLL1rubZnCMstOhNHueU5bLCrnRuDhKPDM4g6sw4Bel5Gzqg==}
 
-  '@jridgewell/gen-mapping@0.3.5':
-    resolution: {integrity: sha512-IzL8ZoEDIBRWEzlCcRhOaCupYyN5gdIK+Q6fbFdPDg6HqX6jpkItn7DFIpW9LQzXG6Df9sA7+OKnq0qlz/GaQg==}
-    engines: {node: '>=6.0.0'}
-
   '@jridgewell/resolve-uri@3.1.2':
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
     engines: {node: '>=6.0.0'}
 
-  '@jridgewell/set-array@1.2.1':
-    resolution: {integrity: sha512-R8gLRTZeyp03ymzP/6Lil/28tGeGEzhx1q2k703KGWRAI1VdvPIXdG70VJc2pAMw3NA6JKL5hhFu1sJX0Mnn/A==}
-    engines: {node: '>=6.0.0'}
-
   '@jridgewell/sourcemap-codec@1.5.0':
     resolution: {integrity: sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ==}
-
-  '@jridgewell/trace-mapping@0.3.25':
-    resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
   '@jridgewell/trace-mapping@0.3.29':
     resolution: {integrity: sha512-uw6guiW/gcAGPDhLmd77/6lW8QLeiV5RUTsAX46Db6oLhGaVj4lhnPwb184s1bkc8kdVg/+h988dro8GRDpmYQ==}
@@ -3448,8 +3437,8 @@ snapshots:
 
   '@ampproject/remapping@2.3.0':
     dependencies:
-      '@jridgewell/gen-mapping': 0.3.5
-      '@jridgewell/trace-mapping': 0.3.25
+      '@jridgewell/gen-mapping': 0.3.12
+      '@jridgewell/trace-mapping': 0.3.29
 
   '@babel/code-frame@7.26.2':
     dependencies:
@@ -3615,22 +3604,9 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
       '@jridgewell/trace-mapping': 0.3.29
 
-  '@jridgewell/gen-mapping@0.3.5':
-    dependencies:
-      '@jridgewell/set-array': 1.2.1
-      '@jridgewell/sourcemap-codec': 1.5.0
-      '@jridgewell/trace-mapping': 0.3.29
-
   '@jridgewell/resolve-uri@3.1.2': {}
 
-  '@jridgewell/set-array@1.2.1': {}
-
   '@jridgewell/sourcemap-codec@1.5.0': {}
-
-  '@jridgewell/trace-mapping@0.3.25':
-    dependencies:
-      '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.0
 
   '@jridgewell/trace-mapping@0.3.29':
     dependencies:
@@ -5354,7 +5330,7 @@ snapshots:
 
   jasmine-core@3.8.0: {}
 
-  jasmine-jquery@2.1.1(patch_hash=ii5vcd4rtfy5ngsgq7effin6p4): {}
+  jasmine-jquery@2.1.1(patch_hash=67897d46cf39c5f967a51ffdefb9218080e44eded878a866b057bd84e8703db7): {}
 
   jquery-simulate@1.0.2: {}
 
