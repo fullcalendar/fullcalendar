@@ -1,4 +1,8 @@
 
+## 6.1.20 (2025-12-22)
+
+- feature: Angular 21 support (#8015)
+
 ## 6.1.19 (2025-08-08)
 
 - feature: Angular 20 support (#7946)
