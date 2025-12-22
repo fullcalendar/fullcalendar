@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/moment-timezone",
-  "version": "6.1.19",
+  "version": "6.1.20",
   "title": "FullCalendar Moment Timezone Plugin",
   "description": "Enhanced named time zone functionality with Moment Timezone",
   "keywords": [
@@ -10,11 +10,11 @@
   ],
   "homepage": "https://fullcalendar.io/docs/moment-timezone-plugin",
   "peerDependencies": {
-    "@fullcalendar/core": "~6.1.19",
+    "@fullcalendar/core": "~6.1.20",
     "moment-timezone": "^0.5.40"
   },
   "devDependencies": {
-    "@fullcalendar/core": "~6.1.19",
+    "@fullcalendar/core": "~6.1.20",
     "@fullcalendar-scripts/standard": "*",
     "moment-timezone": "^0.5.40"
   },
