@@ -27,6 +27,19 @@ export class DateClicking extends Interaction {
     this.dragging = new FeaturefulElementDragging(settings.el)
     this.dragging.autoScroller.isEnabled = false
 
+    settings.el.addEventListener('contextmenu', (ev) => {
+      const pev = {
+        origEvent: ev,
+        isTouch: false,
+        subjectEl: ev.currentTarget,
+        pageX: ev.pageX,
+        pageY: ev.pageY,
+        deltaX: 0,
+        deltaY: 0,
+      } as PointerDragEvent
+      this.handleRightClick(pev)
+    })
+
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, interactionSettingsToStore(settings))
     hitDragging.emitter.on('pointerdown', this.handlePointerDown)
     hitDragging.emitter.on('dragend', this.handleDragEnd)
@@ -44,6 +57,22 @@ export class DateClicking extends Interaction {
     dragging.setIgnoreMove(
       !this.component.isValidDateDownEl(downEl),
     )
+  }
+
+  handleRightClick = (pev: PointerDragEvent) => {
+    let { component } = this
+
+    this.hitDragging.prepareHits()
+    this.hitDragging.processFirstCoord(pev)
+    let { initialHit } = this.hitDragging
+    let { context } = component
+    let arg: DateClickArg = {
+      ...buildDatePointApiWithContext(initialHit.dateSpan, context),
+      dayEl: initialHit.dayEl,
+      jsEvent: pev.origEvent as MouseEvent,
+      view: context.viewApi || context.calendarApi.view,
+    }
+    context.emitter.trigger('dateClick', arg)
   }
 
   // won't even fire if moving was ignored
