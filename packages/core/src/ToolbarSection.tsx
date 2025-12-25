@@ -2,6 +2,8 @@ import { createElement, VNode } from './preact.js'
 import { BaseComponent } from './vdom-util.js'
 import { ToolbarWidget } from './toolbar-struct.js'
 
+export type ToolbarSectionPosition = 'start' | 'center' | 'end';
+
 export interface ToolbarContent {
   title: string
   titleId: string
@@ -10,6 +12,7 @@ export interface ToolbarContent {
   isTodayEnabled: boolean
   isPrevEnabled: boolean
   isNextEnabled: boolean
+  position: ToolbarSectionPosition
 }
 
 export interface ToolbarSectionProps extends ToolbarContent {
@@ -67,7 +70,7 @@ export class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
     if (children.length > 1) {
       let groupClassName = (isOnlyButtons && theme.getClass('buttonGroup')) || ''
 
-      return createElement('div', { className: groupClassName }, ...children)
+      return createElement('div', { className: `fc-button-group-${props.position} ${groupClassName}` }, ...children)
     }
     return children[0]
   }
