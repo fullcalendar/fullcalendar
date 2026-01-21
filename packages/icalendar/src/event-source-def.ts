@@ -102,27 +102,31 @@ function expandICalEvents(iCalExpander: IcalExpander, range: DateRange): EventIn
   return expanded
 }
 
-function getMetaDataObjects(iCalEvent: ICAL.Event) {
+/**
+ * Extracts non-standard properties (X- prefixed) from an iCalendar event.
+ * @see https://icalendar.org/iCalendar-RFC-5545/3-8-8-2-non-standard-properties.html
+ */
+function getNonStandardProperties(iCalEvent: ICAL.Event) {
   const properties = iCalEvent.component.getAllProperties()
 
-  const metaDataObjects = properties
+  const nonStandardProperties = properties
     .filter(prop => prop.name.startsWith('x-'))
     .reduce((acc, prop) => {
       acc[prop.name] = prop.getFirstValue()
       return acc
     }, {})
 
-  return metaDataObjects
+  return nonStandardProperties
 }
 
 function buildNonDateProps(iCalEvent: ICAL.Event): EventInput {
-  const metaData = getMetaDataObjects(iCalEvent)
+  const nonStandardProperties = getNonStandardProperties(iCalEvent)
 
   return {
     title: iCalEvent.summary,
     url: extractEventUrl(iCalEvent),
     extendedProps: {
-      ...metaData,
+      ...nonStandardProperties,
       location: iCalEvent.location,
       organizer: iCalEvent.organizer,
       description: iCalEvent.description,
