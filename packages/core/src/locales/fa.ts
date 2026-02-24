@@ -18,9 +18,10 @@ export default {
     list: 'برنامه',
   },
   weekText: 'هف',
+  weekTextLong: 'هفته',
   allDayText: 'تمام روز',
   moreLinkText(n) {
-    return 'بیش از ' + n
+    return "+" + n + " بیشتر"
   },
   noEventsText: 'هیچ رویدادی به نمایش',
 } as LocaleInput
