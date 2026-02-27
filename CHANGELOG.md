@@ -1,6 +1,7 @@
 
 ## unreleased
 
+- FIX: Korean navigation, year, list-view, and more-link translations (#8037)
 - FIX: Farsi empty-calendar and more-link text, year navigation, and accessibility hints (#8033, #7546)
 - FIX: Norwegian Nynorsk empty-calendar text and accessibility hints (#8083, #6050)
 - FIX: Unable to drag events in DayGrid views when using React 18 Strict Mode (#8119)
