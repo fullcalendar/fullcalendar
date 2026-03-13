@@ -282,11 +282,21 @@ function injectTzoStr(s: string, tzoStr: string): string {
 
 function formatWeekNumber(
   num: number,
-  weekText: string,
-  weekTextLong: string,
+  weekText: string | ((num: number) => string),
+  weekTextLong: string | ((num: number) => string),
   locale: Locale,
   display?: 'numeric' | 'narrow' | 'short' | 'long',
 ): string {
+  let numStr = locale.simpleNumberFormat.format(num)
+  let text = display === 'long' ? weekTextLong : weekText
+
+  if (typeof text === 'function') {
+    if (display !== 'numeric' && display != null) {
+      return text(num)
+    }
+    return numStr
+  }
+
   let parts = []
 
   if (display === 'long') {
@@ -299,7 +309,7 @@ function formatWeekNumber(
     parts.push(' ')
   }
 
-  parts.push(locale.simpleNumberFormat.format(num))
+  parts.push(numStr)
 
   if (locale.options.direction === 'rtl') { // TODO: use control characters instead?
     parts.reverse()
