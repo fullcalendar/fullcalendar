@@ -12,7 +12,7 @@ export default {
     day: '일',
     list: '일정목록',
   },
-  weekText: '주',
+  weekText(n) { return n + '주차' },
   allDayText: '종일',
   moreLinkText: '개',
   noEventsText: '일정이 없습니다',
