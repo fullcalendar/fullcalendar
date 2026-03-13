@@ -12,7 +12,7 @@ export default {
     day: '天',
     list: '活動列表',
   },
-  weekText: '週',
+  weekText(n) { return '第' + n + '週' },
   allDayText: '整天',
   moreLinkText: '顯示更多',
   noEventsText: '沒有任何活動',
