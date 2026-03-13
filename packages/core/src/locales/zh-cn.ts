@@ -17,7 +17,7 @@ export default {
     day: '日',
     list: '日程',
   },
-  weekText: '周',
+  weekText(n) { return '第' + n + '周' },
   allDayText: '全天',
   moreLinkText(n) {
     return '另外 ' + n + ' 个'
