@@ -72,7 +72,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     let { dateEnv } = this.props
 
     let prevDate = dateEnv.subtract(
-      dateEnv.startOf(currentDate, currentDateProfile.currentRangeUnit), // important for start-of-month
+      this.buildNavAnchor(currentDate, currentDateProfile),
       currentDateProfile.dateIncrement,
     )
 
@@ -84,11 +84,21 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     let { dateEnv } = this.props
 
     let nextDate = dateEnv.add(
-      dateEnv.startOf(currentDate, currentDateProfile.currentRangeUnit), // important for start-of-month
+      this.buildNavAnchor(currentDate, currentDateProfile),
       currentDateProfile.dateIncrement,
     )
 
     return this.build(nextDate, 1, forceToValid)
+  }
+
+  buildNavAnchor(currentDate: DateMarker, currentDateProfile: DateProfile): DateMarker {
+    let { dateEnv, visibleRangeInput } = this.props
+
+    if (typeof visibleRangeInput === 'function') {
+      return currentDate
+    }
+
+    return dateEnv.startOf(currentDate, currentDateProfile.currentRangeUnit) // important for start-of-month
   }
 
   // Builds a structure holding dates/ranges for rendering around the given date.
@@ -346,7 +356,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
   // Compute the duration value that should be added/substracted to the current date
   // when a prev/next operation happens.
   buildDateIncrement(fallback): Duration {
-    let { dateIncrement } = this.props
+    let { dateIncrement, visibleRangeInput } = this.props
     let customAlignment
 
     if (dateIncrement) {
@@ -355,6 +365,10 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
 
     if ((customAlignment = this.props.dateAlignment)) {
       return createDuration(1, customAlignment)
+    }
+
+    if (typeof visibleRangeInput === 'function') {
+      return createDuration({ days: 1 })
     }
 
     if (fallback) {

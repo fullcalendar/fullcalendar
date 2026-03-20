@@ -255,7 +255,7 @@ export class CalendarDataManager {
       action.type === 'NEXT' || // "
       !rangeContainsMarker(dateProfile.currentRange, currentDate)
     ) {
-      currentDate = dateProfile.currentRange.start
+      currentDate = dateProfile.currentDate
     }
 
     let eventSources = reduceEventSources(state.eventSources, action, dateProfile, calendarContext)

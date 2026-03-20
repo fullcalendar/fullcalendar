@@ -128,6 +128,86 @@ describe('visibleRange', () => {
         expectActiveRange('2017-06-07', '2017-06-10')
       })
 
+      it('can navigate a rolling three day window one day at a time', () => {
+        initCalendar({
+          timeZone: 'UTC',
+          initialDate: initialDateInput,
+          visibleRange(date) {
+            let dayStart = startOfUtcDay(date)
+
+            return {
+              start: addUtcDays(dayStart, -1),
+              end: addUtcDays(dayStart, 2),
+            }
+          },
+        })
+
+        expectActiveRange('2017-06-07', '2017-06-10')
+
+        currentCalendar.next()
+        expectActiveRange('2017-06-08', '2017-06-11')
+
+        currentCalendar.next()
+        expectActiveRange('2017-06-09', '2017-06-12')
+
+        currentCalendar.prev()
+        expectActiveRange('2017-06-08', '2017-06-11')
+      })
+
+      it('can navigate a custom three day timeGrid view one day at a time', () => {
+        initCalendar({
+          timeZone: 'UTC',
+          initialDate: initialDateInput,
+          initialView: 'timeGridThreeDay',
+          views: {
+            timeGridThreeDay: {
+              type: 'timeGrid',
+              duration: { days: 3 },
+            },
+          },
+          visibleRange(date) {
+            let dayStart = startOfUtcDay(date)
+
+            return {
+              start: dayStart,
+              end: addUtcDays(dayStart, 3),
+            }
+          },
+        })
+
+        expectActiveRange('2017-06-08', '2017-06-11')
+
+        currentCalendar.next()
+        expectActiveRange('2017-06-09', '2017-06-12')
+
+        currentCalendar.next()
+        expectActiveRange('2017-06-10', '2017-06-13')
+
+        currentCalendar.prev()
+        expectActiveRange('2017-06-09', '2017-06-12')
+      })
+
+      it('preserves timed visibleRange length while navigating', () => {
+        initCalendar({
+          timeZone: 'UTC',
+          initialDate: initialDateInput,
+          visibleRange(date) {
+            return {
+              start: addUtcDays(date, -1),
+              end: addUtcDays(date, 2),
+            }
+          },
+        })
+
+        expectActiveRange('2017-06-07', '2017-06-11')
+
+        currentCalendar.next()
+        expectActiveRange('2017-06-08', '2017-06-12')
+
+        currentCalendar.next()
+        expectActiveRange('2017-06-09', '2017-06-13')
+      })
+
       // https://github.com/fullcalendar/fullcalendar/issues/4517
       it('can emit and timed UTC range that will be rounded', () => {
         initCalendar({
@@ -143,7 +223,7 @@ describe('visibleRange', () => {
         })
         expectActiveRange('2017-06-07', '2017-06-11')
         currentCalendar.prev()
-        expectActiveRange('2017-06-04', '2017-06-07') // second computation will round down the end
+        expectActiveRange('2017-06-04', '2017-06-08')
       })
     })
 
