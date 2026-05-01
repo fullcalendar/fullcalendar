@@ -1,6 +1,7 @@
 
 ## unreleased
 
+- FEATURE: Tajik locale, available as `tg` (#8066)
 - FEATURE: Belarusian locale, available as `be` (#7839)
 - FIX: German and Austrian German list-view hint read "Terminübersichtesansicht" (#7788)
 - FIX: Czech today button said "now" instead of "today" (#7674)
