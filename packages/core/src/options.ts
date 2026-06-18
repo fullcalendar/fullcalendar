@@ -359,10 +359,12 @@ export type CalendarListeners = Required<CalendarListenersLoose> // much more co
 // calendar-specific options
 // -------------------------
 
+export type ViewIds = 'dayGridMonth' | 'timeGridWeek' | 'timeGridDay' | 'listDay' | 'listWeek' | 'listMonth' | 'listYear' | 'dayGridDay' | 'dayGridWeek' | 'timelineDay' | 'timelineWeek' | 'timelineMonth' | 'timelineYear'
+
 export const CALENDAR_OPTION_REFINERS = { // does not include base nor calendar listeners
   buttonText: identity as Identity<ButtonTextCompoundInput>,
   buttonHints: identity as Identity<ButtonHintCompoundInput>,
-  views: identity as Identity<{ [viewId: string]: ViewOptions }>,
+  views: identity as Identity<{ [viewId: string | ViewIds]: ViewOptions }>,
   plugins: identity as Identity<PluginDef[]>,
   initialEvents: identity as Identity<EventSourceInput>,
   events: identity as Identity<EventSourceInput>,
