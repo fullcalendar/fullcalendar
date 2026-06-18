@@ -45,13 +45,24 @@ export class PointerDragging {
     this.containerEl = containerEl
     this.emitter = new Emitter()
     containerEl.addEventListener('mousedown', this.handleMouseDown as EventListener)
-    containerEl.addEventListener('touchstart', this.handleTouchStart as EventListener, { passive: true })
+    containerEl.addEventListener('touchstart', this.handleTouchStart as EventListener)
     listenerCreated()
   }
+  
+  setContainerEl(containerEl: EventTarget) {
+   // detach old listeners (optional, you can skip this if GC’ing the old element)
+   this.containerEl.removeEventListener('mousedown', this.handleMouseDown as EventListener)
+   this.containerEl.removeEventListener('touchstart', this.handleTouchStart as EventListener)
+ 
+   // rebind
+   this.containerEl = containerEl
+   containerEl.addEventListener('mousedown', this.handleMouseDown as EventListener)
+   containerEl.addEventListener('touchstart', this.handleTouchStart as EventListener)
+ }
 
   destroy() {
     this.containerEl.removeEventListener('mousedown', this.handleMouseDown as EventListener)
-    this.containerEl.removeEventListener('touchstart', this.handleTouchStart as EventListener, { passive: true } as AddEventListenerOptions)
+    this.containerEl.removeEventListener('touchstart', this.handleTouchStart as EventListener)
     listenerDestroyed()
   }
 
