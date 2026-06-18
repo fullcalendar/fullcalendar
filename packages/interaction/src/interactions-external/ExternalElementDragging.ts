@@ -79,7 +79,7 @@ export class ExternalElementDragging {
     if (hit) {
       receivingContext = hit.context
 
-      if (this.canDropElOnCalendar(ev.subjectEl as HTMLElement, receivingContext)) {
+      if (this.canDropElOnCalendar(ev.subjectEl as HTMLElement, receivingContext) && receivingContext.options.droppable) {
         droppableEvent = computeEventForDateSpan(
           hit.dateSpan,
           this.dragMeta!,
