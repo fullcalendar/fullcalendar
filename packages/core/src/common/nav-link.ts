@@ -33,9 +33,10 @@ export function buildNavLinkAttrs(
         calendarApi.zoomTo(dateMarker, viewType)
       }
     }
-
+    const title = formatWithOrdinals(options.navLinkHint, [dateStr, zonedDate], dateStr)
     return {
-      title: formatWithOrdinals(options.navLinkHint, [dateStr, zonedDate], dateStr),
+      title,
+      'aria-label': title,
       'data-navlink': '', // for legacy selectors. TODO: use className?
       ...(isTabbable
         ? createAriaClickAttrs(handleInteraction)
