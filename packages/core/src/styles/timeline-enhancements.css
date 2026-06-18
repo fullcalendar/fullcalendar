@@ -1,0 +1,18 @@
+.fc-resource-hover {
+  background-color: rgba(255, 255, 0, 0.3) !important;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 0, 0.5);
+  z-index: 10;
+  position: relative;
+}
+
+.fc-timeline-slot-hover {
+  background-color: rgba(255, 255, 0, 0.15) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 0, 0.3);
+  z-index: 5;
+  position: relative;
+}
+
+.fc-timeline-slot-today-enhanced {
+  background-color: rgba(0, 195, 221, 0.1) !important;
+  border-left: 3px solid #00C3DD !important;
+}
