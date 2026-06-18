@@ -2,7 +2,6 @@ import { ComponentChild, createElement } from '../preact.js'
 import { DateMarker } from '../datelib/marker.js'
 import { DateRange } from '../datelib/date-range.js'
 import { getDateMeta, DateMeta, getDayClassNames } from '../component/date-rendering.js'
-import { createFormatter } from '../datelib/formatting.js'
 import { DateFormatter } from '../datelib/DateFormatter.js'
 import { formatDayString } from '../datelib/formatting-utils.js'
 import { MountArg } from './render-hook.js'
@@ -34,8 +33,6 @@ export interface DayCellContainerProps extends Partial<ElProps> {
   defaultGenerator?: (renderProps: DayCellContentArg) => ComponentChild
   children?: InnerContainerFunc<DayCellContentArg>
 }
-
-const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 
 export class DayCellContainer extends BaseComponent<DayCellContainerProps> {
   refineRenderProps = memoizeObjArg(refineRenderProps)
@@ -105,7 +102,9 @@ function refineRenderProps(raw: DayCellRenderPropsInput): DayCellContentArg {
   let { date, dateEnv, dateProfile, isMonthStart } = raw
   let dayMeta = getDateMeta(date, raw.todayRange, null, dateProfile)
   let dayNumberText = raw.showDayNumber ? (
-    dateEnv.format(date, isMonthStart ? raw.monthStartFormat : DAY_NUM_FORMAT)
+    isMonthStart
+      ? dateEnv.format(date, raw.monthStartFormat)
+      : dateEnv.locale.simpleNumberFormat.format(dateEnv.getDay(date))
   ) : ''
 
   return {
