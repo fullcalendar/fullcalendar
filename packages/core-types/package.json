@@ -1,0 +1,34 @@
+{
+  "name": "@fullcalendar/core",
+  "version": "7.0.0-rc.3",
+  "title": "FullCalendar Core Types",
+  "description": "FullCalendar core types package",
+  "peerDependencies": {
+    "@full-ui/headless-calendar": "workspace:7.0.0-rc.3",
+    "temporal-polyfill": "^0.3.2"
+  },
+  "devDependencies": {
+    "@fullcalendar-scripts/standard": "workspace:*",
+    "@full-ui/headless-calendar": "workspace:7.0.0-rc.3",
+    "temporal-polyfill": "^0.3.2"
+  },
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean"
+  },
+  "type": "module",
+  "buildConfig": {
+    "exports": {
+      ".": {
+        "format": "module"
+      },
+      "./protected-api": {
+        "format": "module"
+      }
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
+  }
+}

@@ -1,0 +1,980 @@
+.root-reset {
+  font-size: 16px;
+  line-height: 1.5;
+  --fc-forma-border-style: solid;
+}
+
+.button-reset {
+  appearance: button;
+  font: inherit;
+  font-feature-settings: inherit;
+  font-variation-settings: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  opacity: 1;
+  background-color: #0000;
+  border-radius: 0;
+  margin: 0;
+  border: 0;
+  padding: 0
+}
+
+.link-reset {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+.pointer-events-none {
+  pointer-events: none
+}
+
+.absolute {
+  position: absolute
+}
+
+.relative {
+  position: relative
+}
+
+.inset-x-0 {
+  inset-inline: 0
+}
+
+.inset-y-0 {
+  inset-block: 0
+}
+
+.-start-2 {
+  inset-inline-start: -8px
+}
+
+.-end-1 {
+  inset-inline-end: -4px
+}
+
+.end-0 {
+  inset-inline-end: 0
+}
+
+.end-1 {
+  inset-inline-end: 4px
+}
+
+.end-\[-3px\] {
+  inset-inline-end: -3px
+}
+
+.-top-1 {
+  top: -4px
+}
+
+.top-0 {
+  top: 0
+}
+
+.top-0\.5 {
+  top: 2px
+}
+
+.top-1 {
+  top: 4px
+}
+
+.top-1\/2 {
+  top: 50%
+}
+
+.-bottom-1 {
+  bottom: -4px
+}
+
+.left-1\/2 {
+  left: 50%
+}
+
+.-m-\[6px\] {
+  margin: -6px
+}
+
+.-m-px {
+  margin: -1px
+}
+
+.m-1 {
+  margin: 4px
+}
+
+.m-2 {
+  margin: 8px
+}
+
+.m-4 {
+  margin: 16px
+}
+
+.mx-0\.5 {
+  margin-inline: 2px
+}
+
+.mx-px {
+  margin-inline: 1px
+}
+
+.my-0\.5 {
+  margin-block: 2px
+}
+
+.my-1 {
+  margin-block: 4px
+}
+
+.my-px {
+  margin-block: 1px
+}
+
+.ms-0\.5 {
+  margin-inline-start: 2px
+}
+
+.ms-1 {
+  margin-inline-start: 4px
+}
+
+.ms-px {
+  margin-inline-start: 1px
+}
+
+.-me-1\.5 {
+  margin-inline-end: -6px
+}
+
+.me-0\.5 {
+  margin-inline-end: 2px
+}
+
+.me-1 {
+  margin-inline-end: 4px
+}
+
+.me-\[2\.5\%\] {
+  margin-inline-end: 2.5%
+}
+
+.me-px {
+  margin-inline-end: 1px
+}
+
+.-mt-1 {
+  margin-top: -4px
+}
+
+.mb-px {
+  margin-bottom: 1px
+}
+
+.-ml-1 {
+  margin-left: -4px
+}
+
+.block {
+  display: block
+}
+
+.flex {
+  display: flex
+}
+
+.grid {
+  display: grid
+}
+
+.hidden {
+  display: none
+}
+
+.size-0 {
+  width: 0;
+  height: 0
+}
+
+.size-2 {
+  width: 8px;
+  height: 8px
+}
+
+.size-4 {
+  width: 16px;
+  height: 16px
+}
+
+.size-5 {
+  width: 20px;
+  height: 20px
+}
+
+.h-2 {
+  height: 8px
+}
+
+.h-2\.5 {
+  height: 10px
+}
+
+.h-5 {
+  height: 20px
+}
+
+.h-6 {
+  height: 24px
+}
+
+.min-h-0\.5 {
+  min-height: 2px
+}
+
+.min-h-4 {
+  min-height: 16px
+}
+
+.min-h-px {
+  min-height: 1px
+}
+
+.w-1\/2 {
+  width: 50%
+}
+
+.w-1\/4 {
+  width: 25%
+}
+
+.w-2 {
+  width: 8px
+}
+
+.w-5 {
+  width: 20px
+}
+
+.w-6 {
+  width: 24px
+}
+
+.w-\[5px\] {
+  width: 5px
+}
+
+.max-w-40 {
+  max-width: 160px
+}
+
+.min-w-0 {
+  min-width: 0
+}
+
+.min-w-55 {
+  min-width: 220px
+}
+
+.shrink-0 {
+  flex-shrink: 0
+}
+
+.shrink-1 {
+  flex-shrink: 1
+}
+
+.shrink-100 {
+  flex-shrink: 100
+}
+
+.grow {
+  flex-grow: 1
+}
+
+.-rotate-45 {
+  rotate: -45deg
+}
+
+.-rotate-90 {
+  rotate: -90deg
+}
+
+.rotate-45 {
+  rotate: 45deg
+}
+
+.rotate-90 {
+  rotate: 90deg
+}
+
+.rotate-180 {
+  rotate: 180deg
+}
+
+.flex-col {
+  flex-direction: column
+}
+
+.flex-row {
+  flex-direction: row
+}
+
+.flex-wrap {
+  flex-wrap: wrap
+}
+
+.items-center {
+  align-items: center
+}
+
+.items-end {
+  align-items: flex-end
+}
+
+.items-start {
+  align-items: flex-start
+}
+
+.justify-between {
+  justify-content: space-between
+}
+
+.justify-center {
+  justify-content: center
+}
+
+.justify-end {
+  justify-content: flex-end
+}
+
+.gap-1 {
+  gap: 4px
+}
+
+.gap-2 {
+  gap: 8px
+}
+
+.gap-3 {
+  gap: 12px
+}
+
+.gap-4 {
+  gap: 16px
+}
+
+.self-start {
+  align-self: flex-start
+}
+
+.overflow-hidden {
+  overflow: hidden
+}
+
+.rounded-full {
+  border-radius: 3.40282e38px
+}
+
+.rounded-sm {
+  border-radius: 4px
+}
+
+.rounded-s-sm {
+  border-start-start-radius: 4px;
+  border-end-start-radius: 4px
+}
+
+.rounded-e-sm {
+  border-start-end-radius: 4px;
+  border-end-end-radius: 4px
+}
+
+.rounded-t-sm {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px
+}
+
+.rounded-b-sm {
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px
+}
+
+.border,
+.border-1 {
+  border-style: var(--fc-forma-border-style);
+  border-width: 1px
+}
+
+.border-4 {
+  border-style: var(--fc-forma-border-style);
+  border-width: 4px
+}
+
+.border-6 {
+  border-style: var(--fc-forma-border-style);
+  border-width: 6px
+}
+
+.border-x {
+  border-inline-style: var(--fc-forma-border-style);
+  border-inline-width: 1px
+}
+
+.border-s-1 {
+  border-inline-start-style: var(--fc-forma-border-style);
+  border-inline-start-width: 1px
+}
+
+.border-s-4 {
+  border-inline-start-style: var(--fc-forma-border-style);
+  border-inline-start-width: 4px
+}
+
+.border-s-6 {
+  border-inline-start-style: var(--fc-forma-border-style);
+  border-inline-start-width: 6px
+}
+
+.border-e,
+.border-e-1 {
+  border-inline-end-style: var(--fc-forma-border-style);
+  border-inline-end-width: 1px
+}
+
+.border-t,
+.border-t-1 {
+  border-top-style: var(--fc-forma-border-style);
+  border-top-width: 1px
+}
+
+.border-t-4 {
+  border-top-style: var(--fc-forma-border-style);
+  border-top-width: 4px
+}
+
+.border-b {
+  border-bottom-style: var(--fc-forma-border-style);
+  border-bottom-width: 1px
+}
+
+.border-dotted {
+  --fc-forma-border-style: dotted;
+  border-style: dotted
+}
+
+.border-\(--fc-event-color\) {
+  border-color: var(--fc-event-color)
+}
+
+.border-\(--fc-forma-border\) {
+  border-color: var(--fc-forma-border)
+}
+
+.border-\(--fc-forma-muted-foreground\) {
+  border-color: var(--fc-forma-muted-foreground)
+}
+
+.border-\(--fc-forma-primary\) {
+  border-color: var(--fc-forma-primary)
+}
+
+.border-\(--fc-forma-strong-border\) {
+  border-color: var(--fc-forma-strong-border)
+}
+
+.border-transparent {
+  border-color: #0000
+}
+
+.bg-\(--fc-forma-background\) {
+  background-color: var(--fc-forma-background)
+}
+
+.bg-\(--fc-forma-faint\) {
+  background-color: var(--fc-forma-faint)
+}
+
+.bg-\(--fc-forma-highlight\) {
+  background-color: var(--fc-forma-highlight)
+}
+
+.bg-\(--fc-forma-muted\) {
+  background-color: var(--fc-forma-muted)
+}
+
+.bg-\(--fc-forma-primary\) {
+  background-color: var(--fc-forma-primary)
+}
+
+@media not print {
+  @supports (color:color-mix(in lab, red, red)) {
+    .not-print\:bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_15\%\,transparent\)\] {
+      background-color: color-mix(in oklab, var(--fc-event-color)15%, transparent)
+    }
+  }
+  @supports not (color:color-mix(in lab, red, red)) {
+    .not-print\:bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_15\%\,transparent\)\] {
+      position: relative;
+      isolation: isolate
+    }
+    .not-print\:bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_15\%\,transparent\)\]:before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: var(--fc-event-color);
+      opacity: 0.15;
+      z-index: -1
+    }
+  }
+}
+
+.bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_20\%\,var\(--fc-forma-background\)\)\] {
+  background-color: var(--fc-event-color);
+  color: var(--fc-event-contrast-color)
+}
+
+@supports (color:color-mix(in lab, red, red)) {
+  .bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_20\%\,var\(--fc-forma-background\)\)\] {
+    background-color: color-mix(in oklab, var(--fc-event-color)20%, var(--fc-forma-background));
+    color: inherit
+  }
+}
+
+.bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_30\%\,var\(--fc-forma-background\)\)\] {
+  background-color: var(--fc-event-color);
+  color: var(--fc-event-contrast-color)
+}
+
+@supports (color:color-mix(in lab, red, red)) {
+  .bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_30\%\,var\(--fc-forma-background\)\)\] {
+    background-color: color-mix(in oklab, var(--fc-event-color)30%, var(--fc-forma-background));
+    color: inherit
+  }
+}
+
+.p-0\.5 {
+  padding: 2px
+}
+
+.p-1 {
+  padding: 4px
+}
+
+.p-2 {
+  padding: 8px
+}
+
+.p-3 {
+  padding: 12px
+}
+
+.p-4 {
+  padding: 16px
+}
+
+.p-px {
+  padding: 1px
+}
+
+.px-0\.5 {
+  padding-inline: 2px
+}
+
+.px-1 {
+  padding-inline: 4px
+}
+
+.px-2 {
+  padding-inline: 8px
+}
+
+.px-3 {
+  padding-inline: 12px
+}
+
+.py-0\.5 {
+  padding-block: 2px
+}
+
+.py-1 {
+  padding-block: 4px
+}
+
+.py-1\.5 {
+  padding-block: 6px
+}
+
+.py-2 {
+  padding-block: 8px
+}
+
+.py-15 {
+  padding-block: 60px
+}
+
+.py-\[0\.1875rem\] {
+  padding-block: 3px
+}
+
+.py-px {
+  padding-block: 1px
+}
+
+.ps-0\.5 {
+  padding-inline-start: 2px
+}
+
+.ps-1 {
+  padding-inline-start: 4px
+}
+
+.pt-0\.5 {
+  padding-top: 2px
+}
+
+.pt-1 {
+  padding-top: 4px
+}
+
+.pb-4 {
+  padding-bottom: 16px
+}
+
+.text-end {
+  text-align: end
+}
+
+.text-\[0\.6875rem\]\/\[1\.090909\] {
+  font-size: 11px;
+  line-height: 1.09091
+}
+
+.text-lg {
+  font-size: 18px;
+  line-height: calc(1.75/1.125)
+}
+
+.text-base {
+  font-size: 16px;
+  line-height: calc(1.5/1)
+}
+
+.text-sm {
+  font-size: 14px;
+  line-height: calc(1.25/.875)
+}
+
+.text-xl {
+  font-size: 20px;
+  line-height: calc(1.75/1.25)
+}
+
+.text-xs {
+  font-size: 12px;
+  line-height: calc(1/.75)
+}
+
+.font-bold {
+  font-weight: 700
+}
+
+.font-medium {
+  font-weight: 500
+}
+
+.font-semibold {
+  font-weight: 600
+}
+
+.text-ellipsis {
+  text-overflow: ellipsis
+}
+
+.whitespace-nowrap {
+  white-space: nowrap
+}
+
+.whitespace-pre {
+  white-space: pre
+}
+
+.text-\(--fc-forma-foreground\) {
+  color: var(--fc-forma-foreground)
+}
+
+.text-\(--fc-forma-faint-foreground\) {
+  color: var(--fc-forma-faint-foreground)
+}
+
+.text-\(--fc-forma-muted-foreground\) {
+  color: var(--fc-forma-muted-foreground)
+}
+
+.text-\(--fc-forma-primary-foreground\) {
+  color: var(--fc-forma-primary-foreground)
+}
+
+.italic {
+  font-style: italic
+}
+
+.opacity-50 {
+  opacity: .5
+}
+
+.opacity-75 {
+  opacity: .75
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a
+}
+
+.shadow-md {
+  box-shadow: 0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a
+}
+
+.shadow-xs {
+  box-shadow: 0 1px 2px 0 #0000000d
+}
+
+.ring {
+  box-shadow: 0 0 0 1px var(--fc-forma-ring-color, currentcolor)
+}
+
+.ring-2 {
+  box-shadow: 0 0 0 2px var(--fc-forma-ring-color, currentcolor)
+}
+
+.ring-\(--fc-forma-background\) {
+  --fc-forma-ring-color: var(--fc-forma-background)
+}
+
+.outline {
+  outline-style: solid;
+  outline-width: 1px
+}
+
+.outline-2 {
+  outline-style: solid;
+  outline-width: 2px
+}
+
+.-outline-offset-1 {
+  outline-offset: -1px
+}
+
+.-outline-offset-2 {
+  outline-offset: -2px
+}
+
+.outline-offset-2 {
+  outline-offset: 2px
+}
+
+.outline-\(--fc-forma-primary\) {
+  outline-color: var(--fc-forma-primary)
+}
+
+.\[background\:linear-gradient\(var\(--fc-forma-strong\)\,var\(--fc-forma-strong\)\)_var\(--fc-forma-background\)\] {
+  background: linear-gradient(var(--fc-forma-strong), var(--fc-forma-strong))var(--fc-forma-background)
+}
+
+.not-last\:border-b:not(:last-child) {
+  border-bottom-style: var(--fc-forma-border-style);
+  border-bottom-width: 1px
+}
+
+@media not print {
+  .not-print\:py-px {
+    padding-block: 1px
+  }
+
+  .not-print\:pe-px {
+    padding-inline-end: 1px
+  }
+
+  .not-print\:pt-px {
+    padding-top: 1px
+  }
+
+  .not-print\:pb-px {
+    padding-bottom: 1px
+  }
+}
+
+@media (hover:hover) {
+  .group-hover\:block:is(:where(.group):hover *) {
+    display: block
+  }
+
+  .group-hover\:text-\(--fc-forma-primary\):is(:where(.group):hover *) {
+    color: var(--fc-forma-primary)
+  }
+
+  .group-hover\:underline:is(:where(.group):hover *) {
+    text-decoration-line: underline
+  }
+}
+
+.group-focus-visible\:text-\(--fc-forma-primary\):is(:where(.group):focus-visible *) {
+  color: var(--fc-forma-primary)
+}
+
+@media (hover:hover) {
+  .hover\:border-\(--fc-forma-strong-border\):hover {
+    border-color: var(--fc-forma-strong-border)
+  }
+
+  .hover\:bg-\(--fc-forma-muted\):hover {
+    background-color: var(--fc-forma-muted)
+  }
+
+  .hover\:bg-\(--fc-forma-primary-over\):hover {
+    background-color: var(--fc-forma-primary-over)
+  }
+
+  .hover\:bg-\(--fc-forma-strong\):hover {
+    background-color: var(--fc-forma-strong)
+  }
+
+  .hover\:bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_25\%\,var\(--fc-forma-background\)\)\]:hover {
+    background-color: var(--fc-event-color)
+  }
+
+  @supports (color:color-mix(in lab, red, red)) {
+    .hover\:bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_25\%\,var\(--fc-forma-background\)\)\]:hover {
+      background-color: color-mix(in oklab, var(--fc-event-color)25%, var(--fc-forma-background))
+    }
+  }
+
+  .hover\:bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_35\%\,var\(--fc-forma-background\)\)\]:hover {
+    background-color: var(--fc-event-color)
+  }
+
+  @supports (color:color-mix(in lab, red, red)) {
+    .hover\:bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_35\%\,var\(--fc-forma-background\)\)\]:hover {
+      background-color: color-mix(in oklab, var(--fc-event-color)35%, var(--fc-forma-background))
+    }
+  }
+
+  .hover\:underline:hover {
+    text-decoration-line: underline
+  }
+
+  .hover\:\[background\:linear-gradient\(var\(--fc-forma-stronger\)\,var\(--fc-forma-stronger\)\)_var\(--fc-forma-background\)\]:hover {
+    background: linear-gradient(var(--fc-forma-stronger), var(--fc-forma-stronger))var(--fc-forma-background)
+  }
+}
+
+.focus-visible\:bg-\(--fc-forma-muted\):focus-visible {
+  background-color: var(--fc-forma-muted)
+}
+
+.focus-visible\:bg-\(--fc-forma-primary-over\):focus-visible {
+  background-color: var(--fc-forma-primary-over)
+}
+
+.focus-visible\:outline-2:focus-visible {
+  outline-style: solid;
+  outline-width: 2px
+}
+
+.active\:bg-\(--fc-forma-primary-down\):active {
+  background-color: var(--fc-forma-primary-down)
+}
+
+.active\:bg-\(--fc-forma-strong\):active {
+  background-color: var(--fc-forma-strong)
+}
+
+.active\:bg-\(--fc-forma-stronger\):active {
+  background-color: var(--fc-forma-stronger)
+}
+
+.active\:bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_30\%\,var\(--fc-forma-background\)\)\]:active {
+  background-color: var(--fc-event-color)
+}
+
+@supports (color:color-mix(in lab, red, red)) {
+  .active\:bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_30\%\,var\(--fc-forma-background\)\)\]:active {
+    background-color: color-mix(in oklab, var(--fc-event-color)30%, var(--fc-forma-background))
+  }
+}
+
+.active\:bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_40\%\,var\(--fc-forma-background\)\)\]:active {
+  background-color: var(--fc-event-color)
+}
+
+@supports (color:color-mix(in lab, red, red)) {
+  .active\:bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_40\%\,var\(--fc-forma-background\)\)\]:active {
+    background-color: color-mix(in oklab, var(--fc-event-color)40%, var(--fc-forma-background))
+  }
+}
+
+.active\:\[background\:linear-gradient\(var\(--fc-forma-strongest\)\,var\(--fc-forma-strongest\)\)_var\(--fc-forma-background\)\]:active {
+  background: linear-gradient(var(--fc-forma-strongest), var(--fc-forma-strongest))var(--fc-forma-background)
+}
+
+@media print {
+  .print\:border-y {
+    border-block-style: var(--fc-forma-border-style);
+    border-block-width: 1px
+  }
+
+  .print\:border-e {
+    border-inline-end-style: var(--fc-forma-border-style);
+    border-inline-end-width: 1px
+  }
+
+  .print\:border-t {
+    border-top-style: var(--fc-forma-border-style);
+    border-top-width: 1px
+  }
+
+  .print\:border-b {
+    border-bottom-style: var(--fc-forma-border-style);
+    border-bottom-width: 1px
+  }
+
+  .print\:border-1 {
+    border-width: 1px
+  }
+
+  .print\:border-\(--fc-event-color\) {
+    border-color: var(--fc-event-color)
+  }
+
+  .print\:border-black {
+    border-color: #000
+  }
+
+  .print\:bg-white {
+    background-color: #fff
+  }
+}
+
+[dir=rtl] .\[\[dir\=rtl\]_\&\]\:-rotate-45 {
+  rotate: -45deg
+}
+
+[dir=rtl] .\[\[dir\=rtl\]_\&\]\:-rotate-90 {
+  rotate: -90deg
+}
+
+[dir=rtl] .\[\[dir\=rtl\]_\&\]\:rotate-0 {
+  rotate: none
+}
+
+[dir=rtl] .\[\[dir\=rtl\]_\&\]\:rotate-45 {
+  rotate: 45deg
+}
+
+[dir=rtl] .\[\[dir\=rtl\]_\&\]\:rotate-90 {
+  rotate: 90deg
+}
+
+[dir=rtl] .\[\[dir\=rtl\]_\&\]\:rotate-180 {
+  rotate: 180deg
+}

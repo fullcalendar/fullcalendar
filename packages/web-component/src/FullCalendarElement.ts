@@ -1,8 +1,21 @@
-import { Calendar, CalendarApi, CalendarOptions } from '@fullcalendar/core'
+import { Calendar } from 'fullcalendar/public-components'
+import { CalendarApi, CalendarOptions, PluginInput } from 'fullcalendar/public-api'
 
 export class FullCalendarElement extends HTMLElement {
   _calendar: Calendar | null = null
   _options: CalendarOptions | null = null
+  _forcedPlugins: PluginInput[] | null = null
+
+  constructor() {
+    super()
+    this.attachShadow({ mode: 'open' })
+
+    if ((globalThis as any).__applyFullCalendarStyles) {
+      (globalThis as any).__applyFullCalendarStyles(this.shadowRoot)
+    } else {
+      throw new Error('FullCalendar styles for Shadow DOM must be included via .styles.js')
+    }
+  }
 
   connectedCallback() {
     this._handleOptionsStr(this.getAttribute('options'))
@@ -39,23 +52,21 @@ export class FullCalendarElement extends HTMLElement {
 
   _handleOptions(options: CalendarOptions | null): void {
     if (options) {
+      if (this._forcedPlugins) {
+        options = {
+          ...options,
+          plugins: [
+            ...this._forcedPlugins,
+            ...(options.plugins || []),
+          ],
+        }
+      }
       if (this._calendar) {
         this._calendar.resetOptions(options)
       } else {
-        let root: ShadowRoot | HTMLElement
-
-        if (this.hasAttribute('shadow')) {
-          this.attachShadow({ mode: 'open' })
-          root = this.shadowRoot
-        } else {
-          // eslint-disable-next-line @typescript-eslint/no-this-alias
-          root = this
-        }
-
-        root.innerHTML = '<div></div>'
-        let calendarEl = root.querySelector('div')
-
-        let calendar = new Calendar(calendarEl, options)
+        const calendarEl = document.createElement('div')
+        this.shadowRoot.appendChild(calendarEl)
+        const calendar = new Calendar(calendarEl, options)
         calendar.render()
         this._calendar = calendar
       }

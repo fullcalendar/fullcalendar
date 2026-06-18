@@ -1,9 +1,0 @@
-
-.fc {
-
-  & .fc-col-header-cell-cushion {
-    display: inline-block; // x-browser for when sticky (when multi-tier header)
-    padding: 2px 4px;
-  }
-
-}

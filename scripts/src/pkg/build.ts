@@ -1,12 +1,12 @@
 import { join as joinPaths } from 'path'
 import { copyFile, rm, writeFile } from 'fs/promises'
 import { globby } from 'globby'
-import { writeDistPkgJson } from './json.js'
-import { analyzePkg, PkgAnalysis } from '../utils/pkg-analysis.js'
-import { ScriptContext } from '../utils/script-runner.js'
-import { writeBundles } from './bundle.js'
-import { compileTs, writeTsconfigs } from '../utils/monorepo-ts.js'
-import { MonorepoStruct } from '../utils/monorepo-struct.js'
+import { writeDistPkgJson } from './json.ts'
+import { analyzePkg, type PkgAnalysis } from '../utils/pkg-analysis.ts'
+import { type ScriptContext } from '../utils/script-runner.ts'
+import { writeBundles } from './bundle.ts'
+import { compileTs } from '../utils/monorepo-ts.ts'
+import { type MonorepoStruct } from '../utils/monorepo-struct.ts'
 
 const tscArtifacts = [
   '.tsout',
@@ -33,7 +33,6 @@ export async function buildPkg(pkgDir: string, monorepoStruct: MonorepoStruct, i
   const { isTests } = pkgAnalysis
 
   await deleteBuiltFiles(pkgDir)
-  await writeTsconfigs(monorepoStruct, pkgDir)
 
   if (!isTests) {
     await writeDistPkgJson(pkgDir, pkgJson, isDev)
@@ -43,7 +42,7 @@ export async function buildPkg(pkgDir: string, monorepoStruct: MonorepoStruct, i
   await compileTs(pkgDir)
 
   await Promise.all([
-    writeBundles(pkgDir, pkgJson, monorepoStruct, isDev),
+    writeBundles(pkgDir, pkgJson, isDev),
     !isTests && writeDistNpmIgnore(pkgDir),
     !isTests && writeDistReadme(pkgDir), // needs dist folder
     !isTests && writeDistLicense(pkgAnalysis), // needs dist folder
@@ -66,7 +65,9 @@ export async function writeDistReadme(pkgDir: string): Promise<void> {
 
 export async function writeDistLicense(pkgAnalysis: PkgAnalysis): Promise<void> {
   await copyFile(
-    joinPaths(pkgAnalysis.metaRootDir, 'LICENSE.md'),
+    pkgAnalysis.isPublicMui
+      ? joinPaths(pkgAnalysis.pkgDir, 'LICENSE.md')
+      : joinPaths(pkgAnalysis.metaRootDir, 'LICENSE.md'),
     joinPaths(pkgAnalysis.pkgDir, 'dist', 'LICENSE.md'),
   )
 }

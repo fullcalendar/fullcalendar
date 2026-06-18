@@ -22,10 +22,10 @@ The [FullCalendar Standard Bundle](bundle) is easier to install than individual 
 
 ## Installation
 
-Install the FullCalendar core package and any plugins you plan to use:
+Install the FullCalendar vanilla-JS package:
 
 ```sh
-npm install @fullcalendar/core @fullcalendar/interaction @fullcalendar/daygrid
+npm install fullcalendar
 ```
 
 ## Usage
@@ -33,15 +33,21 @@ npm install @fullcalendar/core @fullcalendar/interaction @fullcalendar/daygrid
 Instantiate a Calendar with plugins and options:
 
 ```js
-import { Calendar } from '@fullcalendar/core'
-import interactionPlugin from '@fullcalendar/interaction'
-import dayGridPlugin from '@fullcalendar/daygrid'
+import { Calendar } from 'fullcalendar'
+import classicThemePlugin from 'fullcalendar/themes/classic'
+import dayGridPlugin from 'fullcalendar/daygrid'
+import interactionPlugin from 'fullcalendar/interaction'
+
+import 'fullcalendar/skeleton.css'
+import 'fullcalendar/themes/classic/theme.css'
+import 'fullcalendar/themes/classic/palette.css'
 
 const calendarEl = document.getElementById('calendar')
 const calendar = new Calendar(calendarEl, {
   plugins: [
-    interactionPlugin,
-    dayGridPlugin
+    classicThemePlugin,
+    dayGridPlugin,
+    interactionPlugin
   ],
   initialView: 'timeGridWeek',
   editable: true,

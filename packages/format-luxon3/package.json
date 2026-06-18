@@ -1,0 +1,55 @@
+{
+  "name": "@fullcalendar/format-luxon3",
+  "version": "7.0.0-rc.3",
+  "title": "FullCalendar Luxon 3 Date-Formatting Plugin",
+  "description": "Enhanced date formatting with Luxon 3",
+  "keywords": [
+    "luxon",
+    "luxon3",
+    "timezone"
+  ],
+  "homepage": "https://fullcalendar.io/docs/luxon",
+  "dependencies": {
+    "@full-ui/headless-calendar": "workspace:7.0.0-rc.3",
+    "@fullcalendar/core": "workspace:7.0.0-rc.3"
+  },
+  "peerDependencies": {
+    "luxon": "^3.0.0",
+    "temporal-polyfill": "^0.3.2"
+  },
+  "devDependencies": {
+    "@fullcalendar-scripts/standard": "workspace:*",
+    "@types/luxon": "^3.3.0",
+    "luxon": "^3.0.0",
+    "temporal-polyfill": "^0.3.2"
+  },
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint ."
+  },
+  "type": "module",
+  "buildConfig": {
+    "globalConfig": {
+      "externalPkgs": [
+        "luxon"
+      ],
+      "externalGlobals": {
+        "luxon": "luxon"
+      }
+    },
+    "exports": {
+      ".": {
+        "format": "module"
+      },
+      "./global": {
+        "format": "global",
+        "primary": true
+      }
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
+  }
+}

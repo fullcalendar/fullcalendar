@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/icalendar",
-  "version": "6.1.21",
+  "version": "7.0.0-rc.3",
   "title": "FullCalendar iCalendar Plugin",
   "description": "Display events from a public iCalendar feed",
   "keywords": [
@@ -8,14 +8,18 @@
     "ics"
   ],
   "homepage": "https://fullcalendar.io/docs/icalendar",
+  "dependencies": {
+    "@full-ui/headless-calendar": "workspace:7.0.0-rc.3",
+    "@fullcalendar/core": "workspace:7.0.0-rc.3"
+  },
   "peerDependencies": {
-    "@fullcalendar/core": "~6.1.21",
-    "ical.js": "^1.4.0"
+    "ical.js": "^2.0.0",
+    "temporal-polyfill": "^0.3.2"
   },
   "devDependencies": {
-    "@fullcalendar/core": "~6.1.21",
-    "@fullcalendar-scripts/standard": "*",
-    "ical.js": "^1.4.0"
+    "@fullcalendar-scripts/standard": "workspace:*",
+    "ical.js": "^2.0.0",
+    "temporal-polyfill": "^0.3.2"
   },
   "scripts": {
     "build": "standard-scripts pkg:build",
@@ -23,25 +27,23 @@
     "lint": "eslint ."
   },
   "type": "module",
-  "tsConfig": {
-    "extends": "@fullcalendar-scripts/standard/config/tsconfig.browser.json",
-    "compilerOptions": {
-      "rootDir": "./src",
-      "outDir": "./dist/.tsout"
-    },
-    "include": [
-      "./src/**/*"
-    ]
-  },
   "buildConfig": {
-    "exports": {
-      ".": {
-        "iife": true
+    "globalConfig": {
+      "externalPkgs": [
+        "ical.js"
+      ],
+      "externalGlobals": {
+        "ical.js": "ICAL"
       }
     },
-    "iifeGlobals": {
-      ".": "FullCalendar.ICalendar",
-      "ical.js": "ICAL"
+    "exports": {
+      ".": {
+        "format": "module"
+      },
+      "./global": {
+        "format": "global",
+        "primary": true
+      }
     }
   },
   "publishConfig": {

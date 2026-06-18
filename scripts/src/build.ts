@@ -1,12 +1,10 @@
-import { ScriptContext } from './utils/script-runner.js'
-import { writeMonorepoArchives } from './archive.js'
-import { runTurboTasks } from './utils/turbo.js'
-import { refineFilterArgs } from './utils/monorepo-config.js'
+import { type ScriptContext } from './utils/script-runner.ts'
+import { runTurboTasks } from './utils/turbo.ts'
+import { refineFilterArgs } from './utils/monorepo-config.ts'
 
 export default async function(this: ScriptContext, ...args: string[]) {
   const monorepoDir = this.cwd
   const { monorepoStruct } = this
 
   await runTurboTasks(monorepoDir, ['build', ...refineFilterArgs(args, monorepoStruct)])
-  await writeMonorepoArchives(monorepoStruct)
 }

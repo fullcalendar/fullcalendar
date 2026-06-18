@@ -1,0 +1,236 @@
+{
+  "name": "fullcalendar",
+  "version": "7.0.0-rc.3",
+  "title": "FullCalendar (Vanilla JS)",
+  "description": "FullCalendar Vanilla JS package for rendering a calendar",
+  "dependencies": {
+    "@full-ui/headless-calendar": "workspace:7.0.0-rc.3",
+    "@fullcalendar/core": "workspace:7.0.0-rc.3",
+    "preact": "^10.29.0"
+  },
+  "peerDependencies": {
+    "temporal-polyfill": "^0.3.2"
+  },
+  "devDependencies": {
+    "@types/archiver": "^5.3.4",
+    "@fullcalendar/preact": "workspace:7.0.0-rc.3",
+    "@fullcalendar-scripts/standard": "workspace:*",
+    "archiver": "^7.0.1",
+    "globby": "^13.1.2",
+    "handlebars": "^4.1.2",
+    "temporal-polyfill": "^0.3.2"
+  },
+  "scripts": {
+    "archive": "node ./scripts/archive.ts",
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint ."
+  },
+  "type": "module",
+  "buildConfig": {
+    "importRemaps": {
+      "react": "preact/compat",
+      "react/jsx-runtime": "preact/jsx-runtime",
+      "react-dom": "preact/compat",
+      "react-dom/client": "preact/compat/client"
+    },
+    "globalConfig": {
+      "primaryGlobal": "FullCalendar",
+      "sharedProp": "Shared"
+    },
+    "exports": {
+      ".": {
+        "format": "module"
+      },
+      "./all": {
+        "format": "module"
+      },
+      "./all.global": {
+        "format": "global",
+        "primary": true
+      },
+      "./skeleton.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/skeleton.css"
+      },
+      "./public-components": {
+        "format": "module"
+      },
+      "./public-api": {
+        "format": "module"
+      },
+      "./protected-api": {
+        "format": "module"
+      },
+      "./protected-styles": {
+        "format": "module"
+      },
+      "./preact": {
+        "format": "module"
+      },
+      "./locales-all": {
+        "format": "module",
+        "generator": "./scripts/generate-locales-all.ts"
+      },
+      "./locales-all.global": {
+        "format": "global",
+        "generator": "./scripts/generate-locales-all-global.ts"
+      },
+      "./locales/*": {
+        "format": "module",
+        "generator": "./scripts/generate-locales.ts",
+        "types": "locales/locale"
+      },
+      "./locales/*.global": {
+        "format": "global",
+        "generator": "./scripts/generate-locales-global.ts"
+      },
+      "./interaction": {
+        "format": "module"
+      },
+      "./daygrid": {
+        "format": "module"
+      },
+      "./timegrid": {
+        "format": "module"
+      },
+      "./multimonth": {
+        "format": "module"
+      },
+      "./list": {
+        "format": "module"
+      },
+      "./themes/classic": {
+        "format": "module",
+        "src": "themes/classic/index"
+      },
+      "./themes/classic/global": {
+        "format": "global"
+      },
+      "./themes/classic/theme.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/classic/theme.css"
+      },
+      "./themes/classic/palette.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/classic/palette.css"
+      },
+      "./themes/monarch": {
+        "format": "module",
+        "src": "themes/monarch/index"
+      },
+      "./themes/monarch/global": {
+        "format": "global"
+      },
+      "./themes/monarch/theme.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/monarch/theme.css"
+      },
+      "./themes/monarch/palettes/blue.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/monarch/palettes/blue.css"
+      },
+      "./themes/monarch/palettes/green.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/monarch/palettes/green.css"
+      },
+      "./themes/monarch/palettes/purple.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/monarch/palettes/purple.css"
+      },
+      "./themes/monarch/palettes/red.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/monarch/palettes/red.css"
+      },
+      "./themes/monarch/palettes/yellow.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/monarch/palettes/yellow.css"
+      },
+      "./themes/breezy": {
+        "format": "module",
+        "src": "themes/breezy/index"
+      },
+      "./themes/breezy/global": {
+        "format": "global"
+      },
+      "./themes/breezy/theme.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/breezy/theme.css"
+      },
+      "./themes/breezy/palettes/amber.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/breezy/palettes/amber.css"
+      },
+      "./themes/breezy/palettes/emerald.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/breezy/palettes/emerald.css"
+      },
+      "./themes/breezy/palettes/indigo.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/breezy/palettes/indigo.css"
+      },
+      "./themes/breezy/palettes/rose.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/breezy/palettes/rose.css"
+      },
+      "./themes/forma": {
+        "format": "module",
+        "src": "themes/forma/index"
+      },
+      "./themes/forma/global": {
+        "format": "global"
+      },
+      "./themes/forma/theme.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/forma/theme.css"
+      },
+      "./themes/forma/palettes/blue.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/forma/palettes/blue.css"
+      },
+      "./themes/forma/palettes/green.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/forma/palettes/green.css"
+      },
+      "./themes/forma/palettes/purple.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/forma/palettes/purple.css"
+      },
+      "./themes/forma/palettes/red.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/forma/palettes/red.css"
+      },
+      "./themes/pulse": {
+        "format": "module",
+        "src": "themes/pulse/index"
+      },
+      "./themes/pulse/global": {
+        "format": "global"
+      },
+      "./themes/pulse/theme.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/pulse/theme.css"
+      },
+      "./themes/pulse/palettes/blue.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/pulse/palettes/blue.css"
+      },
+      "./themes/pulse/palettes/green.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/pulse/palettes/green.css"
+      },
+      "./themes/pulse/palettes/purple.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/pulse/palettes/purple.css"
+      },
+      "./themes/pulse/palettes/red.css": {
+        "format": "css",
+        "import": "@fullcalendar/preact/themes/pulse/palettes/red.css"
+      }
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
+  }
+}

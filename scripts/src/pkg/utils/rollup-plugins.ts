@@ -5,10 +5,14 @@ import {
   sep as pathSep,
   isAbsolute,
 } from 'path'
-import { Plugin } from 'rollup'
-import { execLive } from '../../utils/exec.js'
-import { strsToProps } from '../../utils/lang.js'
-import { standardScriptsDir } from '../../utils/script-runner.js'
+import { readFile, writeFile } from 'fs/promises'
+import { existsSync, statSync } from 'fs'
+import { createRequire } from 'module'
+import { type Plugin } from 'rollup'
+import Terser, { type MinifyOptions as TerserOptions } from 'terser'
+import cssnano from 'cssnano'
+import { standardScriptsDir } from '../../utils/script-runner.ts'
+import { type CopyOperation } from './bundle-struct.ts'
 
 // Generated Content
 // -------------------------------------------------------------------------------------------------
@@ -30,34 +34,105 @@ export function generatedContentPlugin(contentMap: { [path: string]: string }): 
   }
 }
 
-// Externalize certain paths
+// Remap Imports
 // -------------------------------------------------------------------------------------------------
 
-export interface ExteralizePathsOptions {
-  paths: string[]
-  extensions?: ExtensionInput
+export interface RemapImportsOptions {
+  mappings: { [oldImport: string]: string }
+  forceExternal?: boolean
+  debug?: boolean
 }
 
-export function externalizePathsPlugin(options: ExteralizePathsOptions): Plugin {
-  const pathMap = strsToProps(options.paths)
-  const extensionMap = options.extensions && normalizeExtensionMap(options.extensions)
+/**
+ * Finds a matching remap for an import ID.
+ * Supports exact matches and single-wildcard patterns (e.g., "react/*" -> "preact/*").
+ * Exact matches take precedence over wildcard matches.
+ */
+export function findRemapMatch(
+  importId: string,
+  mappings: Record<string, string>,
+): string | undefined {
+  // First: check for exact match (highest priority)
+  if (mappings[importId] !== undefined) {
+    return mappings[importId]
+  }
 
+  // Second: check wildcard patterns
+  const wildcardPatterns = Object.keys(mappings).filter(p => p.includes('*'))
+
+  for (const pattern of wildcardPatterns) {
+    const wildcardIndex = pattern.indexOf('*')
+    const prefix = pattern.substring(0, wildcardIndex)
+    const suffix = pattern.substring(wildcardIndex + 1)
+
+    if (importId.startsWith(prefix) && (!suffix || importId.endsWith(suffix))) {
+      const captureStart = prefix.length
+      const captureEnd = suffix ? importId.length - suffix.length : importId.length
+
+      if (captureStart <= captureEnd) {
+        const captured = importId.substring(captureStart, captureEnd)
+        return mappings[pattern].replace('*', captured)
+      }
+    }
+  }
+
+  return undefined
+}
+
+export function remapImportsPlugin(
+  { mappings, forceExternal, debug }: RemapImportsOptions,
+): Plugin {
   return {
-    name: 'externalize-paths',
-    resolveId(importId, importerPath) {
-      let importPath = computeImportPath(importId, importerPath)
+    name: 'remap-imports',
+    async resolveId(importId, importer, options) {
+      const newId = findRemapMatch(importId, mappings)
 
-      if (importPath && pathMap[importPath]) {
-        if (extensionMap) {
-          importPath = findAndReplaceExtensions(importPath, extensionMap)
+      if (newId !== undefined) {
+        if (debug) {
+          console.log(`Remapped import: "${importId}" -> "${newId}"`)
         }
-
-        if (importPath) {
-          // return absolute is possible via makeAbsoluteExternalsRelative
-          return { id: importPath, external: true }
+        if (forceExternal) {
+          return { id: newId, external: true }
         }
+        // Continue resolution with the new ID
+        // skipSelf: true prevents infinite recursion
+        const resolved = await this.resolve(newId, importer, { ...options, skipSelf: true })
+        // If nothing resolved it, mark as external
+        return resolved ?? { id: newId, external: true }
       }
     },
+  }
+}
+
+/*
+Workaround for rollup-plugin-dts always making non-filepath imports external.
+Must go before dts plugin in plugins list
+*/
+export interface ResolveExternalForDtsOptions {
+  debug?: boolean
+}
+
+export function resolveExternalForDts(
+  { debug }: ResolveExternalForDtsOptions = {},
+): Plugin {
+  return {
+    name: 'resolve-external-for-dts',
+    resolveId(importId, importer) {
+      if (!isImportRelative(importId) && !isImportAbsolute(importId)) {
+        // Create a require function relative to the importer (or cwd if no importer)
+        const requireFn = createRequire(importer || import.meta.url)
+        let resolved = requireFn.resolve(importId)
+
+        // HACK: avoid CSS modules
+        if (!/\.module\.css\.js$/.test(resolved)) {
+          resolved = resolved.replace(/\.js$/, '.d.ts')
+          if (debug) {
+            console.log('mapped', importId, '->', resolved)
+          }
+          return resolved
+        }
+      }
+    }
   }
 }
 
@@ -67,11 +142,11 @@ export function externalizePathsPlugin(options: ExteralizePathsOptions): Plugin 
 export interface ExternalizePkgsOptions {
   pkgNames: string[],
   moduleSideEffects?: boolean
-  forceExtension?: string
+  debug?: true
 }
 
 export function externalizePkgsPlugin(
-  { pkgNames, moduleSideEffects, forceExtension }: ExternalizePkgsOptions,
+  { pkgNames, moduleSideEffects, debug }: ExternalizePkgsOptions,
 ): Plugin {
   return {
     name: 'externalize-pkgs',
@@ -79,16 +154,15 @@ export function externalizePkgsPlugin(
       if (!isImportRelative(importId)) {
         for (const pkgName of pkgNames) {
           if (importId === pkgName || importId.startsWith(pkgName + '/')) {
-            if (forceExtension) {
-              if (importId === pkgName) {
-                importId += '/index' + forceExtension
-              } else {
-                importId += forceExtension
-              }
+            if (debug && !isAbsolute(importId)) {
+              console.log('DID externalize', importId)
             }
-
             return { id: importId, external: true, moduleSideEffects }
           }
+        }
+
+        if (debug && !isAbsolute(importId)) {
+          console.log('did NOT externalize', importId)
         }
       }
     },
@@ -110,6 +184,32 @@ export function externalizeExtensionsPlugin(extensionsInput: ExtensionInput): Pl
         return { id: newImportId, external: true }
       }
     },
+  }
+}
+
+// CSS Module Types
+// -------------------------------------------------------------------------------------------------
+
+export function cssModuleTypesPlugin(): Plugin {
+  return {
+    name: 'css-module-types',
+    resolveId(importId) {
+      // Check if this is a CSS module import
+      if (importId.endsWith('.module.css')) {
+        // Return a virtual module ID with .d.ts extension so DTS plugin processes it
+        return '\0css-module:' + importId + '.d.ts'
+      }
+    },
+    load(id) {
+      // Check if this is our virtual CSS module
+      if (id.startsWith('\0css-module:') && id.endsWith('.d.ts')) {
+        // Return a synthetic type definition
+        return {
+          code: 'declare const styles: Record<string, string>;\nexport default styles;',
+          map: null
+        }
+      }
+    }
   }
 }
 
@@ -142,114 +242,105 @@ export function rerootPlugin(options: RerootOptions): Plugin {
   }
 }
 
-// Simple Global-Name Dot Assignment
+// Copy Files
 // -------------------------------------------------------------------------------------------------
 
-export function simpleDotAssignment(): Plugin {
+export interface CopyFilesOptions {
+  srcToDest: CopyOperation[]
+}
+
+export function copyFilesPlugin(options: CopyFilesOptions): Plugin {
   return {
-    name: 'simple-dot-assignment',
-    outputOptions(outputOptions) {
-      const { name } = outputOptions
-
-      if (name && name.includes('.')) {
-        return {
-          ...outputOptions,
-          name: encodeDotName(name),
+    name: 'copy-files',
+    buildStart() {
+      for (const { src } of options.srcToDest) {
+        this.addWatchFile(src)
+      }
+    },
+    async generateBundle() {
+      for (const { src, dest, transform } of options.srcToDest) {
+        let source: string | Buffer = await readFile(src)
+        if (transform) {
+          source = await transform(source.toString())
         }
-      }
-    },
-    renderChunk(code, chunk, outputOptions) {
-      const { name } = outputOptions
-
-      if (name && isEncodedDotName(name)) {
-        return replaceDotAssignments(code)
+        this.emitFile({
+          type: 'asset',
+          fileName: dest,
+          source,
+        })
       }
     },
   }
-}
-
-function encodeDotName(dotName: string): string {
-  return '__dot_name_' + dotName.replaceAll('.', '_') + '__'
-}
-
-function isEncodedDotName(name: string): boolean {
-  return name.startsWith('__dot_name_')
-}
-
-function replaceDotAssignments(code: string): string {
-  let replaced = false
-
-  code = code.replace(/var __dot_name_(\w+)__ =/, (whole, dotName) => {
-    replaced = true
-    return dotName.replaceAll('_', '.') + ' ='
-  })
-
-  if (!replaced) {
-    throw new Error('Error transforming dot assignment')
-  }
-
-  return code
 }
 
 // Minify
 // -------------------------------------------------------------------------------------------------
 
-export function minifySeparatelyPlugin(): Plugin {
-  return {
-    name: 'minify-separately',
-    async writeBundle(options, bundles) {
-      const { file, dir } = options
+let terserOptions: TerserOptions | undefined
 
-      if (file) {
-        await minifySeparately(resolvePath(file))
-      } else if (dir) {
-        await Promise.all(
-          Object.keys(bundles).map((bundlePath) => {
-            return minifySeparately(resolvePath(joinPaths(dir, bundlePath)))
-          }),
-        )
-      } else {
-        this.error('For minification, must specify dir or file output option')
-      }
-    },
+async function getTerserOptions(): Promise<TerserOptions> {
+  if (!terserOptions) {
+    const configPath = joinPaths(standardScriptsDir, 'config/terser.json')
+    terserOptions = JSON.parse(await readFile(configPath, 'utf8'))
   }
+  return terserOptions!
 }
 
-async function minifySeparately(path: string): Promise<void> {
-  const pathMatch = path.match(/^(.*)(\.[cm]?js)$/)
-
-  if (!pathMatch) {
-    throw new Error('Invalid extension for minification')
+export async function minifyJs(jsText: string): Promise<string> {
+  const options = await getTerserOptions()
+  const result = Terser.minify(jsText, options)
+  if (result.code === undefined) {
+    throw new Error('Terser minification failed')
   }
+  return result.code
+}
 
-  return execLive([
-    joinPaths(standardScriptsDir, 'node_modules/.bin/terser'),
-    '--config-file', 'config/terser.json',
-    '--output', pathMatch[1] + '.min' + pathMatch[2],
-    '--', path,
-  ], {
-    cwd: standardScriptsDir,
-  })
+export async function minifyCss(cssText: string): Promise<string> {
+  const result = await cssnano({
+    preset: ['default', {
+      calc: false,
+    }],
+  }).process(cssText)
+  return result.css
 }
 
 // .d.ts
 // -------------------------------------------------------------------------------------------------
 
+export interface MassageDtsOptions {
+  mappings: Record<string, string>
+  debug?: boolean
+}
+
 /*
 Workarounds rollup-plugin-dts
 */
-export function massageDtsPlugin(): Plugin {
+export function massageDtsPlugin({ mappings, debug }: MassageDtsOptions): Plugin {
   return {
     name: 'massage-dts',
     renderChunk(code) {
       // force all import statements (especially auto-generated chunks) to have a .js extension
       // TODO: file a bug. code splitting w/ es2016 modules
-      code = code.replace(/(} from ['"])([^'"]*)(['"])/g, (whole, start, importId, end) => {
+      code = code.replace(/((?:} from|import) ['"])([^'"]*)(['"])/g, (whole, start, importId, end) => {
         if (
           importId.startsWith('./') && // relative ID
           !importId.endsWith('.js')
         ) {
           return start + importId + '.js' + end
+        }
+        return whole
+      })
+
+      // rollup-plugin-dts does run its "declare module" statements through module resolution,
+      // so we find another way to support the remapping
+      code = code.replace(/(declare module ['"])([^'"]*)(['"])/g, (whole, start, importId, end) => {
+        const newId = findRemapMatch(importId, mappings)
+
+        if (newId !== undefined) {
+          if (debug) {
+            console.log('remap', importId, '->', newId)
+          }
+          return start + newId + end
         }
         return whole
       })
@@ -308,4 +399,8 @@ function computeImportPath(importId: string, importerPath: string | undefined): 
 
 function isImportRelative(importId: string): boolean {
   return importId.startsWith('./') || importId.startsWith('../')
+}
+
+function isImportAbsolute(importId: string): boolean {
+  return importId.startsWith('/')
 }

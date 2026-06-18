@@ -9,10 +9,7 @@ This package provides a FullCalendar [Web Component](https://developer.mozilla.o
 Install the core package, the web-component package, and any plugins you plan to use:
 
 ```sh
-npm install --save \
-  @fullcalendar/core \
-  @fullcalendar/web-component \
-  @fullcalendar/daygrid
+npm install --save @fullcalendar/web-component
 ```
 
 Then, either register the element globally under its default tag name of `<full-calendar />`:
@@ -31,26 +28,25 @@ customElements.define('some-calendar-tag', FullCalendarElement);
 
 ## Installing via CDN
 
-Include script tags for the core package, the web-component package, and any plugins you plan to use:
-
 ```html
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset='utf-8' />
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core/index.global.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/web-component/index.global.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid/index.global.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/web-component/global.min.js'></script>
 </head>
 <body>
 
-  <full-calendar shadow options='{
-    "headerToolbar": {
-      "left": "prev,next today",
-      "center": "title",
-      "right": "dayGridMonth,dayGridWeek,dayGridDay"
-    }
-  }' />
+  <full-calendar
+    shadow
+    options='{
+      "headerToolbar": {
+        "left": "prev,next today",
+        "center": "title",
+        "right": "dayGridMonth,dayGridWeek,dayGridDay"
+      }
+    }'
+  />
 
 </body>
 </html>

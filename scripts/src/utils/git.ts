@@ -1,5 +1,5 @@
 import { dirname } from 'path'
-import { SpawnError, execSilent, execLive } from './exec.js'
+import { SpawnError, execSilent, execLive } from './exec.ts'
 
 export function assumeUnchanged(path: string, toggle = true): Promise<void> {
   return execSilent([

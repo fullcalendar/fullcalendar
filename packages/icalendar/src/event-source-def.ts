@@ -1,9 +1,8 @@
-import { EventInput } from '@fullcalendar/core'
-import { EventSourceDef, DateRange, addDays } from '@fullcalendar/core/internal'
-import * as ICAL from 'ical.js'
-import { IcalExpander } from './ical-expander/IcalExpander.js'
+import { DateRange, addDays } from '@full-ui/headless-calendar'
+import ICAL from 'ical.js'
+import { IcalExpander } from './ical-expander/IcalExpander'
 
-interface ICalFeedMeta {
+export interface ICalFeedMeta {
   url: string
   format: 'ics', // for EventSourceApi
   internalState?: InternalState // HACK. TODO: use classes in future
@@ -14,9 +13,11 @@ interface InternalState {
   response: Response | null
 }
 
-export const eventSourceDef: EventSourceDef<ICalFeedMeta> = {
+type EventInput = any // TODO
 
-  parseMeta(refined) {
+export const eventSourceDef = {
+
+  parseMeta(refined: { url: string, format: string }) {
     if (refined.url && refined.format === 'ics') {
       return {
         url: refined.url,
@@ -26,7 +27,17 @@ export const eventSourceDef: EventSourceDef<ICalFeedMeta> = {
     return null
   },
 
-  fetch(arg, successCallback, errorCallback) {
+  fetch(
+    arg: {
+      isRefetch: boolean
+      range: DateRange
+      eventSource: {
+        meta: ICalFeedMeta
+      }
+    },
+    successCallback, // any
+    errorCallback, // any
+  ) {
     let meta: ICalFeedMeta = arg.eventSource.meta
     let { internalState } = meta
 
@@ -116,7 +127,7 @@ function buildNonDateProps(iCalEvent: ICAL.Event): EventInput {
 
 function extractEventUrl(iCalEvent: ICAL.Event): string {
   let urlProp = iCalEvent.component.getFirstProperty('url')
-  return urlProp ? urlProp.getFirstValue() : ''
+  return urlProp ? urlProp.getFirstValue() as string : ''
 }
 
 function specifiesEnd(iCalEvent: ICAL.Event) {

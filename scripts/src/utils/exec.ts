@@ -3,10 +3,10 @@ import {
   exec as execCb,
   execFile as execFileCb,
   spawn,
-  ChildProcess,
-  ExecOptions,
-  StdioOptions,
-  SpawnOptions,
+  type ChildProcess,
+  type ExecOptions,
+  type StdioOptions,
+  type SpawnOptions,
 } from 'child_process'
 
 const exec = promisify(execCb)
@@ -110,10 +110,15 @@ function spawnWithStdio(
 }
 
 export class SpawnError extends Error {
+  command: string | string[]
+  exitCode: number | null
+
   constructor(
-    public command: string | string[],
-    public exitCode: number | null,
+    command: string | string[],
+    exitCode: number | null,
   ) {
     super(`Exited ${JSON.stringify(command)} with error code ${exitCode}`)
+    this.command = command
+    this.exitCode = exitCode
   }
 }

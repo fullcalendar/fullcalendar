@@ -1,15 +1,16 @@
-import { writeDistPkgJsons } from './json.js'
-import { deleteBuiltFiles } from './pkg/build.js'
-import { watchBundles } from './pkg/bundle.js'
+import { writeDistPkgJsons } from './json.ts'
+import { deleteBuiltFiles } from './pkg/build.ts'
+import { watchBundles } from './pkg/bundle.ts'
+import { resolveBuildConfig, type PkgJsonBuildConfig } from './pkg/utils/bundle-struct.ts'
 import {
-  MonorepoStruct,
-  PkgStruct,
+  type MonorepoStruct,
+  type PkgStruct,
   traverseMonorepo,
   watchMonorepo,
-} from './utils/monorepo-struct.js'
-import { watchTs, writeTsconfigs } from './utils/monorepo-ts.js'
-import { untilSigInt } from './utils/process.js'
-import { ScriptContext } from './utils/script-runner.js'
+} from './utils/monorepo-struct.ts'
+import { watchTs } from './utils/monorepo-ts.ts'
+import { untilSigInt } from './utils/process.ts'
+import { type ScriptContext } from './utils/script-runner.ts'
 
 // TODO: if error with rollup, kill typescript, and vice-versa
 
@@ -29,7 +30,6 @@ export default async function(this: ScriptContext) {
       }
     })
 
-    await writeTsconfigs(monorepoStruct)
     await writeDistPkgJsons(monorepoStruct, true) // isDev=true
 
     // tsc needs tsconfig.json and package.json from above
@@ -37,9 +37,10 @@ export default async function(this: ScriptContext) {
 
     const stopPkgs = await traverseMonorepo(monorepoStruct, async (pkgStruct: PkgStruct) => {
       const { pkgDir, pkgJson } = pkgStruct
+      const buildConfig = await resolveBuildConfig(pkgDir, pkgJson.buildConfig)
 
-      if (pkgJson.buildConfig) {
-        return watchBundles(pkgDir, pkgJson, monorepoStruct, true) // isDev=true
+      if (buildConfig && !buildConfig.disableWatch) {
+        return watchBundles(pkgDir, pkgJson, true) // isDev=true
       }
     })
 

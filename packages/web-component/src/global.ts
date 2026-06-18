@@ -1,17 +1,7 @@
-import { FullCalendarElement } from './FullCalendarElement.js'
+import { FullCalendarElement } from './FullCalendarElement'
+import './global-types'
 
-type FullCalendarElementType = typeof FullCalendarElement
-
-declare global {
-  // (extensions to globalThis must use `var`)
-  // eslint-disable-next-line no-var
-  var FullCalendarElement: FullCalendarElementType
-
-  interface HTMLElementTagNameMap {
-    'full-calendar': FullCalendarElement
-  }
-}
+// this is an ESM module, NOT an IIFE file
 
 globalThis.FullCalendarElement = FullCalendarElement
-
 customElements.define('full-calendar', FullCalendarElement)

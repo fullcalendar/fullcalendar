@@ -1,17 +1,15 @@
 import * as rruleLib from 'rrule' // see https://github.com/jakubroztocil/rrule/issues/548
-import { DateInput } from '@fullcalendar/core'
 import {
-  RecurringType,
-  EventRefined,
+  DateInput,
   DateEnv,
   DateRange,
   DateMarker,
   parseMarker,
   addDays,
-} from '@fullcalendar/core/internal'
-import { RRuleInputObject } from './event-refiners.js'
+} from '@full-ui/headless-calendar'
+import { RRuleInputObject } from './event-refiners'
 
-interface EventRRuleData {
+export interface EventRRuleData {
   rruleSet: rruleLib.RRuleSet
 
   // if a timezone in dtstart (only Z allowed), it's implicitly stored in the rruleSet
@@ -19,8 +17,8 @@ interface EventRRuleData {
   dateEnv?: DateEnv
 }
 
-export const recurringType: RecurringType<EventRRuleData> = {
-  parse(eventProps: EventRefined, dateEnv: DateEnv) {
+export const recurringType = {
+  parse(eventProps: any, dateEnv: DateEnv) {
     if (eventProps.rrule != null) {
       let eventRRuleData = parseEventRRule(eventProps, dateEnv)
 
@@ -62,7 +60,7 @@ export const recurringType: RecurringType<EventRRuleData> = {
   },
 }
 
-function parseEventRRule(eventProps: EventRefined, dateEnv: DateEnv) {
+function parseEventRRule(eventProps: any, dateEnv: DateEnv) {
   let rruleSet: rruleLib.RRuleSet
   let isTimeSpecified = false
   let isTimeZoneSpecified = false

@@ -1,13 +1,15 @@
-import { OPTION_REFINERS } from './options-refiners.js'
-import { EVENT_SOURCE_REFINERS } from './event-source-refiners.js'
+import {} from '@fullcalendar/core/protected-api'
+import {
+  GoogleCalendarOptions,
+  GoogleCalendarOptionsRefined,
+  GoogleCalendarEventSourceOptions,
+  GoogleCalendarEventSourceOptionsRefined,
+} from './options'
 
-type ExtraOptionRefiners = typeof OPTION_REFINERS
-type ExtraEventSourceRefiners = typeof EVENT_SOURCE_REFINERS
+declare module '@fullcalendar/core/protected-api' {
+  interface BaseOptions extends GoogleCalendarOptions {}
+  interface BaseOptionsRefined extends GoogleCalendarOptionsRefined {}
 
-declare module '@fullcalendar/core/internal' {
-  interface BaseOptionRefiners extends ExtraOptionRefiners {}
-}
-
-declare module '@fullcalendar/core/internal' {
-  interface EventSourceRefiners extends ExtraEventSourceRefiners {}
+  interface EventSourceOptions extends GoogleCalendarEventSourceOptions {}
+  interface EventSourceOptionsRefined extends GoogleCalendarEventSourceOptionsRefined {}
 }

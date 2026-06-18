@@ -1,7 +1,0 @@
-
-@import '../../core/src/styles/mixins';
-@import './styles/vars';
-
-@import './styles/list';
-@import './styles/list-table';
-@import './styles/list-event';

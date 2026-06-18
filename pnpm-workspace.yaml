@@ -3,3 +3,4 @@ packages:
   - ./tests
   - ./bundle
   - ./packages/*
+  - ./theming/*

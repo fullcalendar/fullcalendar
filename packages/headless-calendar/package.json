@@ -1,0 +1,39 @@
+{
+  "name": "@full-ui/headless-calendar",
+  "version": "7.0.0-rc.3",
+  "keywords": [
+    "headless",
+    "calendar",
+    "event"
+  ],
+  "title": "Headless Calendar Library",
+  "description": "Headless calendar library by the makers of FullCalendar",
+  "peerDependencies": {
+    "temporal-polyfill": "^0.3.2"
+  },
+  "devDependencies": {
+    "@fullcalendar-scripts/standard": "workspace:*",
+    "temporal-polyfill": "^0.3.2",
+    "typescript": "^4.8.2",
+    "vitest": "^4.0.16"
+  },
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:dev": "vitest"
+  },
+  "type": "module",
+  "buildConfig": {
+    "exports": {
+      ".": {
+        "format": "module"
+      }
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
+  }
+}

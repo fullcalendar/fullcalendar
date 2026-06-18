@@ -1,0 +1,29 @@
+{
+  "name": "@fullcalendar/angular",
+  "version": "7.0.0-rc.3",
+  "title": "FullCalendar Angular Component",
+  "description": "The official Angular component for FullCalendar",
+  "keywords": [
+    "calendar",
+    "event",
+    "full-sized",
+    "fullcalendar",
+    "angular"
+  ],
+  "homepage": "https://fullcalendar.io/docs/angular",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fullcalendar/fullcalendar-angular.git"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "peerDependencies": {
+    "@angular/common": "16 - 22",
+    "@angular/core": "16 - 22",
+    "fullcalendar": "workspace:7.0.0-rc.3",
+    "temporal-polyfill": "^0.3.2"
+  },
+  "sideEffects": false
+}

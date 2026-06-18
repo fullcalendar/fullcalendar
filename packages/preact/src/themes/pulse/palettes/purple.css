@@ -1,0 +1,91 @@
+
+:root {
+  /* primary */
+  --fc-pulse-primary: #ad46ff;
+  --fc-pulse-primary-over: #b55fff;
+  --fc-pulse-primary-down: #bd74ff;
+  --fc-pulse-primary-foreground: #fff;
+
+  /* secondary */
+  --fc-pulse-secondary: var(--fc-pulse-background);
+  --fc-pulse-secondary-over: var(--fc-pulse-faint);
+  --fc-pulse-secondary-down: var(--fc-pulse-muted);
+  --fc-pulse-secondary-foreground: var(--fc-pulse-foreground);
+  --fc-pulse-secondary-icon: var(--fc-pulse-faint-foreground);
+  --fc-pulse-secondary-icon-over: var(--fc-pulse-muted-foreground);
+
+  /* tertiary */
+  --fc-pulse-tertiary: var(--fc-pulse-primary);
+  --fc-pulse-tertiary-over: #b55fff;
+  --fc-pulse-tertiary-down: #bd74ff;
+  --fc-pulse-tertiary-foreground: var(--fc-pulse-primary-foreground);
+
+  /* calendar content */
+  --fc-pulse-event: #430575;
+  --fc-pulse-event-contrast: #fff;
+  --fc-pulse-background-event: #a855f7;
+  --fc-pulse-highlight: #ec48991A;
+  --fc-pulse-now: #ef4444;
+
+  /* controls */
+  --fc-pulse-unselected: var(--fc-pulse-muted);
+  --fc-pulse-unselected-foreground: var(--fc-pulse-foreground);
+  --fc-pulse-selected: var(--fc-pulse-background);
+  --fc-pulse-selected-foreground: var(--fc-pulse-foreground);
+
+  /* neutral backgrounds */
+  --fc-pulse-background: #fff;
+  --fc-pulse-faint: #00000008;
+  --fc-pulse-muted: #00000012;
+  --fc-pulse-strong: #0000001F;
+  --fc-pulse-stronger: #00000029;
+  --fc-pulse-strongest: #00000033;
+
+  /* neutral foregrounds */
+  --fc-pulse-foreground: #232d3e;
+  --fc-pulse-faint-foreground: #9ca3af;
+  --fc-pulse-muted-foreground: #545c6c;
+
+  /* neutral borders */
+  --fc-pulse-border: #e5e7eb;
+  --fc-pulse-strong-border: #d5d5d6;
+}
+
+@media not print {
+  [data-color-scheme=dark] {
+    /* secondary */
+    --fc-pulse-secondary: var(--fc-pulse-muted);
+    --fc-pulse-secondary-over: var(--fc-pulse-strong);
+    --fc-pulse-secondary-down: var(--fc-pulse-stronger);
+    --fc-pulse-secondary-foreground: var(--fc-pulse-foreground);
+    --fc-pulse-secondary-icon: var(--fc-pulse-muted-foreground);
+    --fc-pulse-secondary-icon-over: var(--fc-pulse-foreground);
+
+    /* calendar content */
+    --fc-pulse-highlight: #f472b61A;
+
+    /* controls */
+    --fc-pulse-unselected: var(--fc-pulse-muted);
+    --fc-pulse-unselected-foreground: var(--fc-pulse-foreground);
+    --fc-pulse-selected: var(--fc-pulse-strong);
+    --fc-pulse-selected-foreground: var(--fc-pulse-foreground);
+
+    /* neutral backgrounds */
+    --fc-pulse-background: #030712;
+    --fc-pulse-faint: #ffffff08;
+    --fc-pulse-muted: #ffffff12;
+    --fc-pulse-strong: #ffffff1F;
+    --fc-pulse-stronger: #ffffff29;
+    --fc-pulse-strongest: #ffffff33;
+
+    /* neutral foregrounds */
+    --fc-pulse-foreground: #d6dee8;
+    --fc-pulse-faint-foreground: #8897ab;
+    --fc-pulse-muted-foreground: #b5c1d0;
+
+    /* neutral borders */
+    --fc-pulse-border: #1a202c;
+    --fc-pulse-strong-border: #374257;
+  }
+}
+
