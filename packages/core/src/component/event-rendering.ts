@@ -224,7 +224,7 @@ export function computeSegDraggable(seg: Seg, context: ViewContext) {
 }
 
 export function computeSegStartResizable(seg: Seg, context: ViewContext) {
-  return seg.isStart && seg.eventRange.ui.durationEditable && context.options.eventResizableFromStart
+  return seg.isStart && seg.eventRange.ui.durationEditable && (seg.eventRange.ui.startEditable ?? context.options.eventResizableFromStart)
 }
 
 export function computeSegEndResizable(seg: Seg, context: ViewContext) {
