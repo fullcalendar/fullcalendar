@@ -12,7 +12,7 @@ export default {
     day: '日',
     list: '予定リスト',
   },
-  weekText: '週',
+  weekText: '第{}週',
   allDayText: '終日',
   moreLinkText(n) {
     return '他 ' + n + ' 件'
