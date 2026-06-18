@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@fullcalendar-scripts/standard",
-  "version": "0.0.1-beta.1",
+  "version": "0.0.0",
   "dependencies": {
     "estree-walker": "^3.0.3",
     "magic-string": "^0.30.21",
