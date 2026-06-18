@@ -38,8 +38,8 @@ export interface DateFormattingContext {
   locale: Locale,
   calendarSystem: CalendarSystem
   computeWeekNumber: (d: DateMarker) => number
-  weekText: string
-  weekTextLong: string
+  weekText: string | ((num: number) => string)
+  weekTextLong: string | ((num: number) => string)
   cmdFormatter?: CmdFormatterFunc
   defaultSeparator: string
 }

@@ -22,8 +22,8 @@ export interface DateEnvSettings {
   locale: Locale
   weekNumberCalculation?: WeekNumberCalculation
   firstDay?: number, // will override what the locale wants
-  weekText?: string,
-  weekTextLong?: string
+  weekText?: string | ((num: number) => string),
+  weekTextLong?: string | ((num: number) => string)
   cmdFormatter?: CmdFormatterFunc
   defaultSeparator?: string
 }
@@ -46,8 +46,8 @@ export class DateEnv {
   weekDow: number // which day begins the week
   weekDoy: number // which day must be within the year, for computing the first week number
   weekNumberFunc: any
-  weekText: string // DON'T LIKE how options are confused with local
-  weekTextLong: string
+  weekText: string | ((num: number) => string) // DON'T LIKE how options are confused with local
+  weekTextLong: string | ((num: number) => string)
   cmdFormatter?: CmdFormatterFunc
   defaultSeparator: string
 
