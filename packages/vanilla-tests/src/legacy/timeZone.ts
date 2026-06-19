@@ -1,7 +1,7 @@
-import * as PlainDateFns from 'temporal-polyfill/fns/plaindate'
-import * as PlainDateTimeFns from 'temporal-polyfill/fns/plaindatetime'
-import * as InstantFns from 'temporal-polyfill/fns/instant'
-import * as ZonedDateTimeFns from 'temporal-polyfill/fns/zoneddatetime'
+import * as PlainDateFns from 'temporal-polyfill/fns/PlainDate'
+import * as PlainDateTimeFns from 'temporal-polyfill/fns/PlainDateTime'
+import * as InstantFns from 'temporal-polyfill/fns/Instant'
+import * as ZonedDateTimeFns from 'temporal-polyfill/fns/ZonedDateTime'
 
 describe('timeZone', () => {
   // NOTE: Only deals with the processing of *received* events.

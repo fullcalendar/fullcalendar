@@ -1,6 +1,6 @@
-import * as PlainDateFns from 'temporal-polyfill/fns/plaindate'
-import * as PlainDateTimeFns from 'temporal-polyfill/fns/plaindatetime'
-import * as ZonedDateTimeFns from 'temporal-polyfill/fns/zoneddatetime'
+import * as PlainDateFns from 'temporal-polyfill/fns/PlainDate'
+import * as PlainDateTimeFns from 'temporal-polyfill/fns/PlainDateTime'
+import * as ZonedDateTimeFns from 'temporal-polyfill/fns/ZonedDateTime'
 
 export function plainAndZoneToString(dateStr: string, timeZone: string): string {
   return ZonedDateTimeFns.toString(

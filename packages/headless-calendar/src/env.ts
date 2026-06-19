@@ -1,6 +1,6 @@
-import * as ZonedDateTimeFns from 'temporal-polyfill/fns/zoneddatetime'
-import * as PlainDateTimeFns from 'temporal-polyfill/fns/plaindatetime'
-import * as InstantFns from 'temporal-polyfill/fns/instant'
+import * as ZonedDateTimeFns from 'temporal-polyfill/fns/ZonedDateTime'
+import * as PlainDateTimeFns from 'temporal-polyfill/fns/PlainDateTime'
+import * as InstantFns from 'temporal-polyfill/fns/Instant'
 import {
   DateMarker, addMs,
   diffHours, diffMinutes, diffSeconds, diffWholeWeeks, diffWholeDays,

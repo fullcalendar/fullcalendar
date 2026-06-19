@@ -23,7 +23,7 @@
     "@angular/common": "16 - 22",
     "@angular/core": "16 - 22",
     "fullcalendar": "workspace:7.0.0-rc.3",
-    "temporal-polyfill": "^0.3.2"
+    "temporal-polyfill": "^1.0.1"
   },
   "sideEffects": false
 }

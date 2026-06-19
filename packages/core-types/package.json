@@ -5,12 +5,12 @@
   "description": "FullCalendar core types package",
   "peerDependencies": {
     "@full-ui/headless-calendar": "workspace:7.0.0-rc.3",
-    "temporal-polyfill": "^0.3.2"
+    "temporal-polyfill": "^1.0.1"
   },
   "devDependencies": {
     "@fullcalendar-scripts/standard": "workspace:*",
     "@full-ui/headless-calendar": "workspace:7.0.0-rc.3",
-    "temporal-polyfill": "^0.3.2"
+    "temporal-polyfill": "^1.0.1"
   },
   "scripts": {
     "build": "standard-scripts pkg:build",

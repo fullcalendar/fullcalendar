@@ -10,7 +10,7 @@
   "peerDependencies": {
     "react": "^17 || ^18 || ^19",
     "react-dom": "^17 || ^18 || ^19",
-    "temporal-polyfill": "^0.3.2"
+    "temporal-polyfill": "^1.0.1"
   },
   "devDependencies": {
     "@fullcalendar-scripts/standard": "workspace:*",
@@ -22,7 +22,7 @@
     "jsdom": "^27.4.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "temporal-polyfill": "^0.3.2",
+    "temporal-polyfill": "^1.0.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.16"
   },
