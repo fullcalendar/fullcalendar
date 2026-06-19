@@ -36,9 +36,11 @@
         "format": "module"
       },
       "./all": {
-        "format": "module"
+        "format": "module",
+        "dist": "all/index"
       },
-      "./all.global": {
+      "./all/global": {
+        "src": "all.global",
         "format": "global",
         "primary": true
       },
@@ -63,18 +65,20 @@
       },
       "./locales-all": {
         "format": "module",
-        "generator": "./scripts/generate-locales-all.ts"
+        "generator": "./scripts/generate-locales-all.ts",
+        "dist": "locales-all/index"
       },
-      "./locales-all.global": {
+      "./locales-all/global": {
         "format": "global",
         "generator": "./scripts/generate-locales-all-global.ts"
       },
       "./locales/*": {
         "format": "module",
         "generator": "./scripts/generate-locales.ts",
-        "types": "locales/locale"
+        "types": "locales/locale",
+        "dist": "locales/*/index"
       },
-      "./locales/*.global": {
+      "./locales/*/global": {
         "format": "global",
         "generator": "./scripts/generate-locales-global.ts"
       },

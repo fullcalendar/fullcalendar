@@ -44,15 +44,15 @@
       },
       "global:locale": {
         "files": [
-          "./node_modules/fullcalendar/all.global.js",
-          "./node_modules/fullcalendar/locales/ar.global.js",
+          "./node_modules/fullcalendar/all/global.js",
+          "./node_modules/fullcalendar/locales/ar/global.js",
           "./src/global-locale.js"
         ]
       },
       "global:locales-all": {
         "files": [
-          "./node_modules/fullcalendar/all.global.js",
-          "./node_modules/fullcalendar/locales-all.global.js",
+          "./node_modules/fullcalendar/all/global.js",
+          "./node_modules/fullcalendar/locales-all/global.js",
           "./src/global-locales-all.js"
         ]
       }

@@ -19,8 +19,8 @@ const packageJsonPath = joinPaths(thisPkgDir, 'package.json')
 const licensePath = joinPaths(thisPkgDir, '..', '..', 'LICENSE.md')
 
 const archivePatterns = [
-  'dist/all.global.js',
-  'dist/locales-all.global.js',
+  'dist/all/global.js',
+  'dist/locales-all/global.js',
   'dist/skeleton.css',
   'dist/locales/*.global.js',
   'dist/themes/*/global.js',
@@ -32,12 +32,12 @@ const archivePatterns = [
 
 // Keys and values are posix-relative paths within the archive
 const fileRenames: Record<string, string> = {
-  'dist/all.global.js': 'dist/fullcalendar.global.js',
+  'dist/all/global.js': 'dist/fullcalendar.global.js',
 }
 
 // Applied to all examples/**/*.html files
 const htmlReplacements: [from: string, to: string][] = [
-  ['../dist/all.global.js', '../dist/fullcalendar.global.js'],
+  ['../dist/all/global.js', '../dist/fullcalendar.global.js'],
 ]
 
 export default async function archiveVanillaZip() {
