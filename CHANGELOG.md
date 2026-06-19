@@ -1,12 +1,20 @@
 
 ## v7.0.0
 
-Since other v7 pre-releases:
+### Changes since v6
+
+Lots!
+
+### Changes since v7 pre-releases
 
 - FEATURE: Angular 22 support ([#8074](https://github.com/fullcalendar/fullcalendar/issues/8074))
 - FIX: Resource timeline rows keep a stale height after their events are removed ([#8078](https://github.com/fullcalendar/fullcalendar/issues/8078))
 - FIX: With showNonCurrentDates, events on first or last week of month disappear upon navigation ([#8077](https://github.com/fullcalendar/fullcalendar/issues/8077))
 - FIX: With virtualization, resource invisible after adding resource manually ([#8072](https://github.com/fullcalendar/fullcalendar/issues/8072))
+- BREAKING: Some CDN URLs changed:
+  - /all.global.js -> /all/global.js
+  - /locales-all.global.js -> /locales-all/global.js
+  - /locales/es.global.js -> /locales/es/global.js (and other locales)
 
 
 ## v7.0.0-rc.3
