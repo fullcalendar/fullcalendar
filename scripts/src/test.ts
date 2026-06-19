@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { ScriptContext } from './utils/script-runner.ts'
+import { type ScriptContext } from './utils/script-runner.ts'
 import { execLive } from './utils/exec.ts'
 
 export default async function(this: ScriptContext, ...args: string[]) {
