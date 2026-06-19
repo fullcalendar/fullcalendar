@@ -1,7 +1,7 @@
 import * as PlainDateFns from 'temporal-polyfill/fns/PlainDate'
 import * as PlainDateTimeFns from 'temporal-polyfill/fns/PlainDateTime'
 import * as InstantFns from 'temporal-polyfill/fns/Instant'
-import * as ZonedDateTimeFns from 'temporal-polyfill/fns/ZonedDateTime'
+import * as CalendarFns from 'temporal-polyfill/fns/Calendar'
 
 describe('timeZone', () => {
   // NOTE: Only deals with the processing of *received* events.
@@ -80,20 +80,24 @@ describe('timeZone', () => {
     expect(allDayEvent.allDay).toEqual(true)
     expect(allDayEvent.start).toEqualDate(
       new Date(
-        ZonedDateTimeFns.epochMilliseconds(PlainDateFns.toZonedDateTime(PlainDateFns.fromString('2014-05-02'), timeZone)),
+        PlainDateFns.toZonedDateTime(
+          PlainDateFns.fromString('2014-05-02', CalendarFns.getBasic),
+          timeZone,
+        ).epochMilliseconds
       )
     )
     expect(timedEvent.allDay).toEqual(false)
     expect(timedEvent.start).toEqualDate(
       new Date(
-        ZonedDateTimeFns.epochMilliseconds(PlainDateTimeFns.toZonedDateTime(PlainDateTimeFns.fromString('2014-05-10T12:00:00'), timeZone)),
+        PlainDateTimeFns.toZonedDateTime(
+          PlainDateTimeFns.fromString('2014-05-10T12:00:00', CalendarFns.getBasic),
+          timeZone,
+        ).epochMilliseconds
       )
     )
     expect(zonedEvent.allDay).toEqual(false)
     expect(zonedEvent.start).toEqualDate(
-      new Date(
-        InstantFns.epochMilliseconds(InstantFns.fromString('2014-05-10T14:00:00+11:00')),
-      )
+      new Date(InstantFns.fromString('2014-05-10T14:00:00+11:00').epochMilliseconds)
     )
   }
 
