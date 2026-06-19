@@ -400,19 +400,20 @@ export class DateEnv {
       return new Date(ms)
     }
 
-    const zdtFields = ZonedDateTimeFns.getFields(
-      InstantFns.toZonedDateTimeISO(InstantFns.fromEpochMilliseconds(ms), this.timeZone),
+    const zdt = InstantFns.toZonedDateTimeISO(
+      InstantFns.fromEpochMilliseconds(ms),
+      this.timeZone,
     )
 
     return new Date( // a "Date Marker", which is like PlainDateTime
       Date.UTC(
-        zdtFields.year,
-        zdtFields.month - 1,
-        zdtFields.day,
-        zdtFields.hour,
-        zdtFields.minute,
-        zdtFields.second,
-        zdtFields.millisecond,
+        zdt.year,
+        zdt.month - 1,
+        zdt.day,
+        zdt.hour,
+        zdt.minute,
+        zdt.second,
+        zdt.millisecond,
       ),
     )
   }
@@ -452,20 +453,18 @@ export class DateEnv {
     }
 
     return new Date(
-      ZonedDateTimeFns.epochMilliseconds(
-        PlainDateTimeFns.toZonedDateTime(
-          PlainDateTimeFns.create(
-            m.getUTCFullYear(),
-            m.getUTCMonth() + 1,
-            m.getUTCDate(),
-            m.getUTCHours(),
-            m.getUTCMinutes(),
-            m.getUTCSeconds(),
-            m.getUTCMilliseconds(),
-          ),
-          this.timeZone,
+      PlainDateTimeFns.toZonedDateTime(
+        PlainDateTimeFns.create(
+          m.getUTCFullYear(),
+          m.getUTCMonth() + 1,
+          m.getUTCDate(),
+          m.getUTCHours(),
+          m.getUTCMinutes(),
+          m.getUTCSeconds(),
+          m.getUTCMilliseconds(),
         ),
-      ),
+        this.timeZone,
+      ).epochMilliseconds,
     )
   }
 }
