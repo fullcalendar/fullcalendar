@@ -43,6 +43,7 @@ export interface EntryConfig {
   format: 'module' | 'global' | 'css' | 'css-as-js'
   types?: string // relative to src dir, no leading "./", no extension
   src?: string // relative to src dir, no loeading "./", no extension
+  dist?: string // relative to dist dir, no leading "./", no extension
   import?: string
   generator?: string
   sideEffects?: boolean
@@ -296,6 +297,42 @@ export function entryStructsToContentMap(
   return contentMap
 }
 
+export function buildEntryDistAlias(
+  entryAlias: string,
+  entryGlob: string,
+  entryConfig: EntryConfig,
+): string {
+  if (!entryConfig.dist) {
+    return entryAlias
+  }
+
+  const distAlias = removeDotSlash(entryConfig.dist)
+
+  if (!entryGlob.includes('*')) {
+    return distAlias
+  }
+
+  const entryGlobAlias = removeDotSlash(entryGlob)
+  const wildcardValue = extractWildcardValue(entryAlias, entryGlobAlias)
+
+  return distAlias.replace('*', wildcardValue)
+}
+
+function extractWildcardValue(entryAlias: string, entryGlobAlias: string): string {
+  const wildcardIndex = entryGlobAlias.indexOf('*')
+  const prefix = entryGlobAlias.substring(0, wildcardIndex)
+  const suffix = entryGlobAlias.substring(wildcardIndex + 1)
+
+  if (
+    entryAlias.startsWith(prefix) &&
+    entryAlias.endsWith(suffix)
+  ) {
+    return entryAlias.substring(prefix.length, entryAlias.length - suffix.length)
+  }
+
+  throw new Error(`Entry '${entryAlias}' does not match glob '${entryGlobAlias}'`)
+}
+
 // External Packages
 // -------------------------------------------------------------------------------------------------
 
@@ -308,7 +345,7 @@ export function computeModuleExternalPkgs(pkgBundleStruct: PkgBundleStruct): str
       ...pkgJson.dependencies,
       ...pkgJson.peerDependencies,
       ...pkgJson.optionalDependencies,
-    })
+    }),
   ]
 }
 

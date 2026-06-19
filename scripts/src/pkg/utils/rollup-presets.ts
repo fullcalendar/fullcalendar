@@ -17,15 +17,16 @@ import { analyzePkg } from '../../utils/pkg-analysis.ts'
 import { readPkgJson } from '../../utils/pkg-json.ts'
 import { standardScriptsDir } from '../../utils/script-runner.ts'
 import {
+  buildEntryDistAlias,
   computeGlobalExternalPkgs,
   computeModuleExternalPkgs,
   entryStructsToContentMap,
   type PkgGlobalConfig,
-  type PkgBundleStruct
+  type PkgBundleStruct,
 } from './bundle-struct.ts'
 import {
   assetExtensions,
-  esmExtension
+  esmExtension,
 } from './config.ts'
 import { HashGenerator } from './hash-generator.ts'
 import transformClassNamesPlugin from './rollup-plugins-theming.ts'
@@ -70,7 +71,7 @@ export function buildModuleOptions(
         if (warning.code !== 'CIRCULAR_DEPENDENCY') {
           console.error(`${pkgBundleStruct.pkgDir}(esm): ${warning}`)
         }
-      }
+      },
     }
   }
 }
@@ -131,7 +132,9 @@ function buildModuleInput(pkgBundleStruct: PkgBundleStruct): InputMap {
     const entryConfig = entryConfigMap[entryStruct.entryGlob]
 
     if (entryConfig.format === 'module') {
-      inputMap[entryAlias] = entryStruct.entrySrcPath
+      const distAlias = buildEntryDistAlias(entryAlias, entryStruct.entryGlob, entryConfig)
+
+      inputMap[distAlias] = entryStruct.entrySrcPath
     }
   }
 
@@ -147,7 +150,9 @@ function buildGlobalInput(pkgBundleStruct: PkgBundleStruct): InputMap {
     const entryConfig = entryConfigMap[entryStruct.entryGlob]
 
     if (entryConfig.format === 'global') {
-      inputMap[entryAlias] = entryStruct.entrySrcPath
+      const distAlias = buildEntryDistAlias(entryAlias, entryStruct.entryGlob, entryConfig)
+
+      inputMap[distAlias] = entryStruct.entrySrcPath
     }
   }
 
@@ -166,10 +171,16 @@ function buildDtsInput(pkgBundleStruct: PkgBundleStruct): InputMap {
       if (entryConfig.format === 'module') {
         // HACK: will execute many times per-file
         // HACK: don't hardcode tsout dir
-        inputMap[entryConfig.types] = joinPaths(pkgBundleStruct.pkgDir, 'dist/.tsout', entryConfig.types + '.d.ts')
+        const dtsAlias = entryConfig.dist
+          ? buildEntryDistAlias(entryAlias, entryStruct.entryGlob, entryConfig)
+          : entryConfig.types
+
+        inputMap[dtsAlias] = joinPaths(pkgBundleStruct.pkgDir, 'dist/.tsout', entryConfig.types + '.d.ts')
       }
     } else if (entryConfig.format === 'module') {
-      inputMap[entryAlias] = entryStruct.entrySrcBase + '.d.ts'
+      const distAlias = buildEntryDistAlias(entryAlias, entryStruct.entryGlob, entryConfig)
+
+      inputMap[distAlias] = entryStruct.entrySrcBase + '.d.ts'
     }
   }
 
@@ -264,10 +275,10 @@ function buildModulePlugins(
     (/^@fullcalendar\/p?react$/.test(pkgJson.name) || isPublicMui) &&
       transformClassNamesPlugin(!isDev, isPublicMui), // must go after copying
     ...buildJsPlugins(
-        pkgBundleStruct,
-        isDev,
-        pkgBundleStruct.moduleConfig?.cssExtract || '',
-      ),
+      pkgBundleStruct,
+      isDev,
+      pkgBundleStruct.moduleConfig?.cssExtract || '',
+    ),
     sourcemaps && sourcemapsPlugin(), // source map *loading*
   ].filter(Boolean) as Plugin[]
 }
@@ -282,7 +293,7 @@ async function buildGlobalPlugins(
 
   // HACK. path to other package
   const jasmineUtilsFile = resolvePath(
-    joinPaths(__dirname, '../../../../packages/vanilla-tests/dist/.tsout/lib/global-utils.js')
+    joinPaths(__dirname, '../../../../packages/vanilla-tests/dist/.tsout/lib/global-utils.js'),
   )
 
   return [
@@ -314,14 +325,14 @@ async function buildGlobalPlugins(
       pkgNames: computeGlobalExternalPkgs(pkgBundleStruct),
     }),
     generatedContentPlugin(
-      entryStructsToContentMap(entryStructMap)
+      entryStructsToContentMap(entryStructMap),
     ),
     transformClassNamesPlugin(!isDev, isPublicMui),
     ...buildJsPlugins(
-        pkgBundleStruct,
-        isDev,
-        pkgBundleStruct.globalConfig?.cssExtract || '',
-      ),
+      pkgBundleStruct,
+      isDev,
+      pkgBundleStruct.globalConfig?.cssExtract || '',
+    ),
     sourcemaps && sourcemapsPlugin(), // source map *loading*
   ].filter(Boolean) as Plugin[]
 }
@@ -403,7 +414,7 @@ function buildNormalJsPlugins(
         'process.env.NODE_ENV': JSON.stringify(
           isDev
             ? 'development'
-            : 'production'
+            : 'production',
         ),
       },
     }),
@@ -444,10 +455,12 @@ function buildGlobalSplitOptions(pkgBundleStruct: PkgBundleStruct): IifeSplitOpt
     const entryConfig = entryConfigMap[entryStruct.entryGlob]
 
     if (entryConfig.format === 'global') {
+      const distAlias = buildEntryDistAlias(entryAlias, entryStruct.entryGlob, entryConfig)
+
       if (entryConfig.primary) {
-        primaryAlias = entryAlias
+        primaryAlias = distAlias
       } else if (entryConfig.secondaryProp) {
-        secondaryProps[entryAlias] = entryConfig.secondaryProp
+        secondaryProps[distAlias] = entryConfig.secondaryProp
       }
     }
   }

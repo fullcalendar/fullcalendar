@@ -4,7 +4,7 @@ import { analyzePkg } from '../utils/pkg-analysis.ts'
 import { readPkgJson, writePkgJson } from '../utils/pkg-json.ts'
 import { type ScriptContext } from '../utils/script-runner.ts'
 import { esmExtension, iifeExtension } from './utils/config.ts'
-import { resolveBuildConfig, type PkgJsonBuildConfig } from './utils/bundle-struct.ts'
+import { buildEntryDistAlias, resolveBuildConfig, type PkgJsonBuildConfig } from './utils/bundle-struct.ts'
 
 const cdnFields = [
   'unpkg',
@@ -58,16 +58,25 @@ export async function writeDistPkgJson(
   for (const entryName in entryConfigMap) {
     const entryConfig = entryConfigMap[entryName]
     const entrySubpath = entryName === '.' ? './index' : entryName
+    const entryAlias = entryName.replace(/^\.\/?/, '') || 'index'
+    const entryDistAlias = buildEntryDistAlias(entryAlias, entryName, entryConfig)
+    const entryDistSubpath = `./${entryDistAlias}`
 
     if (entryConfig.format === 'module') {
-      const esmPath = entrySubpath + esmExtension
+      const esmPath = entryDistSubpath + esmExtension
 
       const typesPath =
-        (isDev && entryConfig.src)
-          ? typesRoot + '/' + entryConfig.src + '.d.ts'
-          : entryConfig.types
-            ? typesRoot + '/' + entryConfig.types + '.d.ts'
-            : entrySubpath.replace(/^\./, typesRoot) + '.d.ts'
+        isDev
+          ? entryConfig.src
+            ? typesRoot + '/' + entryConfig.src + '.d.ts'
+            : entryConfig.types
+              ? typesRoot + '/' + entryConfig.types + '.d.ts'
+              : entrySubpath.replace(/^\./, typesRoot) + '.d.ts'
+          : entryConfig.dist
+            ? typesRoot + '/' + entryDistAlias + '.d.ts'
+            : entryConfig.types
+              ? typesRoot + '/' + entryConfig.types + '.d.ts'
+              : entrySubpath.replace(/^\./, typesRoot) + '.d.ts'
 
       exportsMap[entryName] = {
         types: typesPath,
@@ -78,13 +87,13 @@ export async function writeDistPkgJson(
         sideEffects.push(esmPath)
       }
     } else if (entryConfig.format === 'global') {
-      sideEffects.push(entrySubpath + iifeExtension)
+      sideEffects.push(entryDistSubpath + iifeExtension)
     } else if (entryConfig.format === 'css') {
       exportsMap[entryName] = entryName
       anyCss = true
     } else if (entryConfig.format === 'css-as-js') {
-      exportsMap[entryName] = entryName + iifeExtension
-      sideEffects.push(entrySubpath + iifeExtension)
+      exportsMap[entryName] = entryDistSubpath + iifeExtension
+      sideEffects.push(entryDistSubpath + iifeExtension)
     }
   }
 
@@ -105,11 +114,11 @@ export async function writeDistPkgJson(
     ...(
       firstCdnPath
         ? cdnFields.reduce(
-            (props, cdnField) => Object.assign(props, {
-              [cdnField]: firstCdnPath,
-            }),
-            {},
-          )
+          (props, cdnField) => Object.assign(props, {
+            [cdnField]: firstCdnPath,
+          }),
+          {},
+        )
         : {}
     ),
     exports: exportsMap,

@@ -106,7 +106,8 @@
       },
       "./themes/classic": {
         "format": "module",
-        "src": "themes/classic/index"
+        "src": "themes/classic/index",
+        "dist": "themes/classic/index"
       },
       "./themes/classic/global": {
         "format": "global"
@@ -121,7 +122,8 @@
       },
       "./themes/monarch": {
         "format": "module",
-        "src": "themes/monarch/index"
+        "src": "themes/monarch/index",
+        "dist": "themes/monarch/index"
       },
       "./themes/monarch/global": {
         "format": "global"
@@ -152,7 +154,8 @@
       },
       "./themes/breezy": {
         "format": "module",
-        "src": "themes/breezy/index"
+        "src": "themes/breezy/index",
+        "dist": "themes/breezy/index"
       },
       "./themes/breezy/global": {
         "format": "global"
@@ -179,7 +182,8 @@
       },
       "./themes/forma": {
         "format": "module",
-        "src": "themes/forma/index"
+        "src": "themes/forma/index",
+        "dist": "themes/forma/index"
       },
       "./themes/forma/global": {
         "format": "global"
@@ -206,7 +210,8 @@
       },
       "./themes/pulse": {
         "format": "module",
-        "src": "themes/pulse/index"
+        "src": "themes/pulse/index",
+        "dist": "themes/pulse/index"
       },
       "./themes/pulse/global": {
         "format": "global"

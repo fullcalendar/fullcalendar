@@ -84,7 +84,8 @@
       },
       "./themes/classic": {
         "format": "module",
-        "src": "themes/classic/index"
+        "src": "themes/classic/index",
+        "dist": "themes/classic/index"
       },
       "./themes/classic/theme.css": {
         "format": "css"
@@ -94,7 +95,8 @@
       },
       "./themes/monarch": {
         "format": "module",
-        "src": "themes/monarch/index"
+        "src": "themes/monarch/index",
+        "dist": "themes/monarch/index"
       },
       "./themes/monarch/theme.css": {
         "format": "css"
@@ -116,7 +118,8 @@
       },
       "./themes/breezy": {
         "format": "module",
-        "src": "themes/breezy/index"
+        "src": "themes/breezy/index",
+        "dist": "themes/breezy/index"
       },
       "./themes/breezy/theme.css": {
         "format": "css"
@@ -135,7 +138,8 @@
       },
       "./themes/forma": {
         "format": "module",
-        "src": "themes/forma/index"
+        "src": "themes/forma/index",
+        "dist": "themes/forma/index"
       },
       "./themes/forma/theme.css": {
         "format": "css"
@@ -154,7 +158,8 @@
       },
       "./themes/pulse": {
         "format": "module",
-        "src": "themes/pulse/index"
+        "src": "themes/pulse/index",
+        "dist": "themes/pulse/index"
       },
       "./themes/pulse/theme.css": {
         "format": "css"
