@@ -3,7 +3,12 @@
 
 ### Changes since v6
 
-Lots!
+Lots! 🎉
+
+- 📋 [Full Changelog](https://v7.fullcalendar.io/changelog)
+- 📚 [V7 Docs](https://v7.fullcalendar.io/)
+- 🎨 [Theme system justification](https://github.com/fullcalendar/fullcalendar/issues/7907)
+- 🛝 [Theme playground](https://themes.fullcalendar.io)
 
 ### Changes since v7 pre-releases
 
