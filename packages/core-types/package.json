@@ -1,15 +1,15 @@
 {
   "name": "@fullcalendar/core",
-  "version": "7.0.0-rc.3",
+  "version": "7.0.0",
   "title": "FullCalendar Core Types",
   "description": "FullCalendar core types package",
   "peerDependencies": {
-    "@full-ui/headless-calendar": "workspace:7.0.0-rc.3",
+    "@full-ui/headless-calendar": "workspace:7.0.0",
     "temporal-polyfill": "^1.0.1"
   },
   "devDependencies": {
     "@fullcalendar-scripts/standard": "workspace:*",
-    "@full-ui/headless-calendar": "workspace:7.0.0-rc.3",
+    "@full-ui/headless-calendar": "workspace:7.0.0",
     "temporal-polyfill": "^1.0.1"
   },
   "scripts": {
