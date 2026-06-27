@@ -1,4 +1,568 @@
 
+## v7.0.0
+
+### Changes since v6
+
+Lots! 🎉
+
+- 📋 [Full Changelog](https://v7.fullcalendar.io/changelog)
+- 📚 [V7 Docs](https://v7.fullcalendar.io/)
+- 🎨 [Theme system justification](https://github.com/fullcalendar/fullcalendar/issues/7907)
+- 🛝 [Theme playground](https://themes.fullcalendar.io)
+
+### Changes since v7 pre-releases
+
+- FEATURE: Angular 22 support ([#8074](https://github.com/fullcalendar/fullcalendar/issues/8074))
+- FIX: Resource timeline rows keep a stale height after their events are removed ([#8078](https://github.com/fullcalendar/fullcalendar/issues/8078))
+- FIX: With showNonCurrentDates, events on first or last week of month disappear upon navigation ([#8077](https://github.com/fullcalendar/fullcalendar/issues/8077))
+- FIX: With virtualization, resource invisible after adding resource manually ([#8072](https://github.com/fullcalendar/fullcalendar/issues/8072))
+- BREAKING: Need `temporal-polyfill@^1.0.1` as `peerDependency`
+- BREAKING: Some CDN URLs changed:
+  - /all.global.js -> /all/global.js
+  - /locales-all.global.js -> /locales-all/global.js
+  - /locales/es.global.js -> /locales/es/global.js (and other locales)
+
+
+## v7.0.0-rc.3
+
+- FIX: In React, event flicker after event drag-n-drop
+- FIX: In React/Preact, expose the CalendarRef type
+- FIX: In TimeGrid view, when snapDuration smaller than slotDuration, incorrect date-selection coordinates
+- FIX: With custom slotHeaderFormats, navLinks sometimes disabled ([#8064](https://github.com/fullcalendar/fullcalendar/issues/8064))
+- FIX: For Shadcn/MUI toolbars, or users of CalendarController, button hints wrong for certain locales
+- FEATURE: Warn on unknown options
+- FEATURE: Warn on invalid class-name inputs
+- BREAKING: Renamed a few things for consistency. Apologies. Please update any forked themes.
+  - Renamed info-prop `.multiMonthColumnCount` to `.multiMonthColumns`
+  - Renamed type `MountData` to `MountInfo`
+  - Reverted rename from `weekTextLong` to `weekText`. Use `weekTextLong`.
+  - Reverted some renames for view-specific options:
+    - Reverted `views{}.viewClass`. Use `views{}.class/className`.
+    - Reverted `views{}.viewContent`. Use `views{}.content`.
+    - Reverted `views{}.viewDidMount`. Use `views{}.didMount`.
+    - Reverted `views{}.viewWillUnmount`. Use `views{}.willUnmount`.
+
+
+## v7.0.0-rc.2
+
+- FIX: full-height calendar inside flexed/gridded parent results in infinite loop/endless width ([#8051](https://github.com/fullcalendar/fullcalendar/issues/8051))
+- FIX: virtualization & scrolling: Slot header is not rendering properly ([#8052](https://github.com/fullcalendar/fullcalendar/issues/8052))
+- FIX: virtualization: Now indicator not shown ([#8053](https://github.com/fullcalendar/fullcalendar/issues/8053))
+- FIX: virtualization: scrollLeft JS action will not render timeline ([#8054](https://github.com/fullcalendar/fullcalendar/issues/8054))
+- FIX: Event color not changing when changed via Event::setProp ([#8064](https://github.com/fullcalendar/fullcalendar/issues/8064))
+- FIX: Classic theme timeline event arrows appearing unnecessarily ([#8055](https://github.com/fullcalendar/fullcalendar/issues/8055))
+- FIX: slotMinWidth takes precedence over natural min-width created by header cell inner-text ([#7910](https://github.com/fullcalendar/fullcalendar/issues/7910))
+- FIX: more stable useId shim for React 17
+- FIX: revealed TableDisplayInfo/TableHeaderInfo/TableBodyInfo types for tableClass/tableHeaderClass/tableBodyClass
+- FIX: reduced vertical padding on Classic theme timeline header cells
+
+
+## v7.0.0-rc.1
+
+### Changes from v6
+
+- FEATURE: `omitTrailing` option added to Intl date formatting objects
+- FEATURE: `eventPrintLayout` setting for controlling TimeGrid print behavior
+- BREAKING: `stickyHeaderDates` renamed to `tableHeaderSticky`
+- BREAKING: `stickyFooterScrollbar` renamed to `footerScrollbarSticky`
+- BREAKING: `listDaySideFormat` renamed to `listDayAltFormat`
+- BREAKING: `dayPopoverFormat` renamed to `popoverFormat`
+- BREAKING: Custom view `.classNames` replaced by `.viewClass`; `.content`/`.didMount`/`.willUnmount` prefixed with `view`
+- BREAKING: `weekText` renamed to `weekTextShort`; `weekTextLong` renamed to `weekText`
+- BREAKING: `nonBusinessClass` renamed to `nonBusinessHoursClass`
+- BREAKING: `titleRangeSeparator` removed — range separator now determined by Intl API
+- BREAKING: `defaultRangeSeparator` removed — range separator now determined by Intl API
+- BREAKING: `.updateSize()` method removed — sizing is now automatic
+- BREAKING: `eventClass`, `eventContent`, `eventDidMount`, `eventWillUnmount` no longer apply to background events (use `backgroundEventClass` etc. to restore)
+- BREAKING: `tableHeaderSticky` (formerly `stickyHeaderDates`) no longer applies to list-view day-headers — those are now unconditionally sticky
+- BREAKING: `validRange` callback now receives start-of-day of "now" (stable), not the exact `now` timestamp
+- BREAKING: Date range formatting uses Intl and output has subtle differences (e.g. `"10:00 – 11:00AM"` vs old `"10:00 AM – 11:00 AM"`)
+- BREAKING: All packages distributed as ESM only — no more CJS
+- BREAKING: The `fullcalendar` package no longer ships `.global.min.js` files (though JSDelivr still auto-minifies)
+- BREAKING: Render hook arg types renamed from `*Data` to `*Info` pattern (e.g. `EventDisplayData` → `EventDisplayInfo`, `ViewDisplayData` → `ViewDisplayInfo`, `DayHeaderData` → `DayHeaderInfo`, etc.)
+- FIX: `scrollTime` slightly off when switching from Timeline month to week view ([#5686](https://github.com/fullcalendar/fullcalendar/issues/5686))
+- FIX: Background events now print with 1px colored borders instead of white-out
+- FIX: Print-view limited to 1000 resources to prevent browser's print dialog from crashing
+
+### Changes from the v7 Betas
+
+- BREAKING: The render-hook callbacks argument types renamed from `*Data` -> `*Info` (ex: `ListDayData` -> `ListDayInfo`)
+- BREAKING: `fillerClass` setting's `inHeader` info prop renamed to `inTableHeader`.
+- BREAKING: `buttonGroup*` settings' `inSelectionGroup` info prop renamed to `hasSelection`
+- BREAKING: `button*` settings' `inGroup` info prop removed. Use boolean check on `buttonGroup` object prop instead
+- BREAKING: `button*` settings' `inSelectGroup` info prop removed. Use `buttonGroup?.hasSelection` instead
+- BREAKING: renamed Breezy theme palette file from honey.css -> amber.css
+- BREAKING: `singleMonth*` and `singleMonthHeader*` settings' `colCount` info prop renamed to `multiMonthColumnCount`
+- BREAKING: `viewClass` info props `isFirst`/`isLast` removed (expressed DOM sibling relationship). Test for `.options.headerToolbar/footerToolbar` instead.
+- BREAKING: `updateSize` was originally retained to force *synchronous* sizing adjustment, but now removed
+- FIX: ResizeObserver loop error w/ height:auto ([#7929](https://github.com/fullcalendar/fullcalendar/issues/7929))
+- FIX: day headers disappear on every other week ([#8041](https://github.com/fullcalendar/fullcalendar/issues/8041))
+- FIX: virtualization & dragging: Event is not at same position of mouse pointer ([#8048](https://github.com/fullcalendar/fullcalendar/issues/8048))
+- FIX: slotMinWidth has no effect in v7 ([#7910](https://github.com/fullcalendar/fullcalendar/issues/7910))
+- FIX: navLinks on day labels in timeline views cannot be disabled in v7 ([#7911](https://github.com/fullcalendar/fullcalendar/issues/7911))
+- FIX: date-formatting with "today" circle looks strange with some locales (trailing ".") ([#8020](https://github.com/fullcalendar/fullcalendar/issues/8020))
+- FIX: some stock themes incorrectly inheriting browser-default `<a>` tag color and underline
+- FIX: CSS fallbacks for browsers that don't suppport `color-mix`
+- FIX: stock themes font size defined with pixel units, more predictable
+- FIX: colorScheme='dark' on per-component level had lots of visual glitches
+- FIX: scheduler bundles accidentally omitted "adaptive" plugin (aka print plugin)
+- FIX: adaptive plugin, after print dialog, would be stuck in print-mode
+- FIX: broken styling in `@fullcalendar/angular/skeleton.css` (mismatch w/ HTML structure)
+- FIX: more-link badly positioned with disabled cells in day-row
+- FIX: more-link *popover* poorly positioned when opened
+- FIX: React drag-n-drop double event ghost
+- FIX: when displayEventTime:false, all-day list-view events still show "All-day"
+- FIX: now-indicator arrow in classic should have been clipped if past slotMaxTime
+- FIX: weird double-border at top of timeline views
+- FIX: print problems via window.print()
+
+
+## v7.0.0-beta.8
+
+- FEATURE: `colorScheme` prop on component
+- FEATURE: `resourceCell*` hooks now receive `.field` in data
+- FEATURE: new Classic theme CSS variables:
+  - `--fc-classic-button`
+  - `--fc-classic-button-border`
+  - `--fc-classic-button-strong`
+  - `--fc-classic-button-strong-border`
+  - `--fc-classic-button-outline`
+  - `--fc-classic-button-foreground`
+  - `--fc-classic-background-event-opacity`
+  - `--fc-classic-background-event-foreground-opacity`
+  - `--fc-classic-small-dot-width`
+  - `--fc-classic-large-dot-width`
+
+
+## v7.0.0-beta.7
+
+### React (`@fullcalendar/react`)
+
+- FEATURE: React connector is no longer just a connector with internal **P**react rendering. `@fullcalendar/react` is now fully implemented in React, including working SSR and StrictMode.
+- FEATURE: `@fullcalendar/core` removed as peer dependency
+- BREAKING: `temporal-polyfill` added as peer dependency (more info below)
+- BREAKING: Many packages restructured into `@fullcalendar/react` and `@fullcalendar/react-scheduler` (new)
+  - `@fullcalendar/interaction` -> `@fullcalendar/react/interaction`
+  - `@fullcalendar/daygrid` -> `@fullcalendar/react/daygrid`
+  - `@fullcalendar/timegrid` -> `@fullcalendar/react/timegrid`
+  - `@fullcalendar/list` -> `@fullcalendar/react/list`
+  - `@fullcalendar/multimonth` -> `@fullcalendar/react/multimonth`
+  - `@fullcalendar/theme-monarch` -> `@fullcalendar/react/themes/monarch`
+  - `@fullcalendar/theme-forma` -> `@fullcalendar/react/themes/forma`
+  - `@fullcalendar/theme-breezy` -> `@fullcalendar/react/themes/breezy`
+  - `@fullcalendar/theme-pulse` -> `@fullcalendar/react/themes/pulse`
+  - `@fullcalendar/theme-classic` -> `@fullcalendar/react/themes/classic`
+  - `@fullcalendar/resource` -> `@fullcalendar/react-scheduler`
+  - `@fullcalendar/adaptive` -> `@fullcalendar/react-scheduler/adaptive`
+  - `@fullcalendar/scrollgrid` -> `@fullcalendar/react-scheduler/scrollgrid`
+  - `@fullcalendar/timeline` -> `@fullcalendar/react-scheduler/timeline`
+  - `@fullcalendar/resource-timeline` -> `@fullcalendar/react-scheduler/resource-timeline`
+  - `@fullcalendar/resource-timegrid` -> `@fullcalendar/react-scheduler/resource-timegrid`
+
+### Preact
+
+- FEATURE: FullCalendar implemented natively with [Preact](https://preactjs.com/) and finally exposed as packages: `@fullcalendar/preact` and `@fullcalendar/preact-scheduler`
+
+### Vue 3 (`@fullcalendar/vue3`)
+
+- FEATURE: `@fullcalendar/core` removed as peer dependency
+- BREAKING: `temporal-polyfill` added as peer dependency (more info below)
+- BREAKING: Many packages restructured into `@fullcalendar/vue3` and `@fullcalendar/vue3-scheduler` (new)
+  - `@fullcalendar/interaction` -> `@fullcalendar/vue3/interaction`
+  - `@fullcalendar/daygrid` -> `@fullcalendar/vue3/daygrid`
+  - `@fullcalendar/timegrid` -> `@fullcalendar/vue3/timegrid`
+  - `@fullcalendar/list` -> `@fullcalendar/vue3/list`
+  - `@fullcalendar/multimonth` -> `@fullcalendar/vue3/multimonth`
+  - `@fullcalendar/theme-monarch` -> `@fullcalendar/vue3/themes/monarch`
+  - `@fullcalendar/theme-forma` -> `@fullcalendar/vue3/themes/forma`
+  - `@fullcalendar/theme-breezy` -> `@fullcalendar/vue3/themes/breezy`
+  - `@fullcalendar/theme-pulse` -> `@fullcalendar/vue3/themes/pulse`
+  - `@fullcalendar/theme-classic` -> `@fullcalendar/vue3/themes/classic`
+  - `@fullcalendar/resource` -> `@fullcalendar/vue3-scheduler`
+  - `@fullcalendar/adaptive` -> `@fullcalendar/vue3-scheduler/adaptive`
+  - `@fullcalendar/scrollgrid` -> `@fullcalendar/vue3-scheduler/scrollgrid`
+  - `@fullcalendar/timeline` -> `@fullcalendar/vue3-scheduler/timeline`
+  - `@fullcalendar/resource-timeline` -> `@fullcalendar/vue3-scheduler/resource-timeline`
+  - `@fullcalendar/resource-timegrid` -> `@fullcalendar/vue3-scheduler/resource-timegrid`
+
+### Angular (`@fullcalendar/angular`)
+
+- FIX: Restored Angular support for v7
+- BREAKING: Vanilla JS peer dependency renamed from `@fullcalendar/core` to `fullcalendar`
+- BREAKING: `temporal-polyfill` added as peer dependency (more info below)
+- BREAKING: Many packages restructured into `@fullcalendar/angular` and `@fullcalendar/angular-scheduler` (new)
+  - `@fullcalendar/interaction` -> `@fullcalendar/angular/interaction`
+  - `@fullcalendar/daygrid` -> `@fullcalendar/angular/daygrid`
+  - `@fullcalendar/timegrid` -> `@fullcalendar/angular/timegrid`
+  - `@fullcalendar/list` -> `@fullcalendar/angular/list`
+  - `@fullcalendar/multimonth` -> `@fullcalendar/angular/multimonth`
+  - `@fullcalendar/theme-monarch` -> `@fullcalendar/angular/themes/monarch`
+  - `@fullcalendar/theme-forma` -> `@fullcalendar/angular/themes/forma`
+  - `@fullcalendar/theme-breezy` -> `@fullcalendar/angular/themes/breezy`
+  - `@fullcalendar/theme-pulse` -> `@fullcalendar/angular/themes/pulse`
+  - `@fullcalendar/theme-classic` -> `@fullcalendar/angular/themes/classic`
+  - `@fullcalendar/resource` -> `@fullcalendar/angular-scheduler`
+  - `@fullcalendar/adaptive` -> `@fullcalendar/angular-scheduler/adaptive`
+  - `@fullcalendar/scrollgrid` -> `@fullcalendar/angular-scheduler/scrollgrid`
+  - `@fullcalendar/timeline` -> `@fullcalendar/angular-scheduler/timeline`
+  - `@fullcalendar/resource-timeline` -> `@fullcalendar/angular-scheduler/resource-timeline`
+  - `@fullcalendar/resource-timegrid` -> `@fullcalendar/angular-scheduler/resource-timegrid`
+
+### Vanilla JS (previously `@fullcalendar/core`)
+
+- BREAKING: renamed to `fullcalendar`
+- BREAKING: `temporal-polyfill` added as peer dependency (more info below)
+- BREAKING: Many packages restructured into `fullcalendar` and `fullcalendar-scheduler` (repurposed)
+  - `@fullcalendar/interaction` -> `fullcalendar/interaction`
+  - `@fullcalendar/daygrid` -> `fullcalendar/daygrid`
+  - `@fullcalendar/timegrid` -> `fullcalendar/timegrid`
+  - `@fullcalendar/list` -> `fullcalendar/list`
+  - `@fullcalendar/multimonth` -> `fullcalendar/multimonth`
+  - `@fullcalendar/theme-monarch` -> `fullcalendar/themes/monarch`
+  - `@fullcalendar/theme-forma` -> `fullcalendar/themes/forma`
+  - `@fullcalendar/theme-breezy` -> `fullcalendar/themes/breezy`
+  - `@fullcalendar/theme-pulse` -> `fullcalendar/themes/pulse`
+  - `@fullcalendar/theme-classic` -> `fullcalendar/themes/classic`
+  - `@fullcalendar/resource` -> `fullcalendar-scheduler`
+  - `@fullcalendar/adaptive` -> `fullcalendar-scheduler/adaptive`
+  - `@fullcalendar/scrollgrid` -> `fullcalendar-scheduler/scrollgrid`
+  - `@fullcalendar/timeline` -> `fullcalendar-scheduler/timeline`
+  - `@fullcalendar/resource-timeline` -> `fullcalendar-scheduler/resource-timeline`
+  - `@fullcalendar/resource-timegrid` -> `fullcalendar-scheduler/resource-timegrid`
+
+### Web Component (`@fullcalendar/web-component`)
+
+- FEATURE: `@fullcalendar/core` removed as peer dependency
+- BREAKING: `temporal-polyfill` added as peer dependency (more info below)
+- BREAKING: Many packages restructured into `@fullcalendar/web-component` and `@fullcalendar/web-component-scheduler` (new)
+  - `@fullcalendar/interaction` -> `@fullcalendar/web-component/interaction`
+  - `@fullcalendar/daygrid` -> `@fullcalendar/web-component/daygrid`
+  - `@fullcalendar/timegrid` -> `@fullcalendar/web-component/timegrid`
+  - `@fullcalendar/list` -> `@fullcalendar/web-component/list`
+  - `@fullcalendar/multimonth` -> `@fullcalendar/web-component/multimonth`
+  - `@fullcalendar/theme-monarch` -> `@fullcalendar/web-component/themes/monarch`
+  - `@fullcalendar/theme-forma` -> `@fullcalendar/web-component/themes/forma`
+  - `@fullcalendar/theme-breezy` -> `@fullcalendar/web-component/themes/breezy`
+  - `@fullcalendar/theme-pulse` -> `@fullcalendar/web-component/themes/pulse`
+  - `@fullcalendar/theme-classic` -> `@fullcalendar/web-component/themes/classic`
+  - `@fullcalendar/resource` -> `@fullcalendar/web-component-scheduler`
+  - `@fullcalendar/adaptive` -> `@fullcalendar/web-component-scheduler/adaptive`
+  - `@fullcalendar/scrollgrid` -> `@fullcalendar/web-component-scheduler/scrollgrid`
+  - `@fullcalendar/timeline` -> `@fullcalendar/web-component-scheduler/timeline`
+  - `@fullcalendar/resource-timeline` -> `@fullcalendar/web-component-scheduler/resource-timeline`
+  - `@fullcalendar/resource-timegrid` -> `@fullcalendar/web-component-scheduler/resource-timegrid`
+
+### `temporal-polyfill` Peer Dependency
+
+The [temporal-polyfill](https://www.npmjs.com/package/temporal-polyfill) package is now a peer dependency of all the FullCalendar packages. This means you are required to install it.
+
+The "Temporal" [built-in browser API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal) is coming to all modern browsers, and this package is a polyfill for it, which means it allows you to use it before it's officially supported.
+
+FullCalendar **DOES NOT INSTALL IT GLOBALLY** but instead uses it internally. For v7, FullCalendar uses the [tree-shakeable API](https://github.com/fullcalendar/temporal-polyfill?tab=readme-ov-file#tree-shakable-api), meaning the code-size impact will be minimal and there will be no side-effects.
+
+Though FullCalendar does not install the polyfill globally, you are welcome to do so for your projects:
+
+```ts
+import 'temporal-polyfill/global'
+```
+
+### Moment / Moment Timezone
+
+- BREAKING: moment package removed (`@fullcalendar/moment`)
+  - Date formatting-string functionality moved to `@fullcalendar/format-moment` plugin
+  - Date conversion utilities (`toMoment` and `toMomentDuration`) removed
+- BREAKING: moment-timezone support removed (`@fullcalendar/moment-timezone`) because time zone resolution is now built-in to FullCalendar via the `temporal-polyfill` peer dependency.
+
+### Luxon
+
+- BREAKING: Luxon 1 package removed (`@fullcalendar/luxon`)
+- BREAKING: Luxon 2 package removed (`@fullcalendar/luxon2`)
+- BREAKING: Luxon 3 package removed (`@fullcalendar/luxon3`)
+  - Date formatting-string functionality moved to `@fullcalendar/format-luxon3` plugin
+  - Date conversion utilities (`toLuxonDateTime` and `toLuxonDuration`) removed
+  - Luxon time zone support removed because time zone resolution is now built-in to FullCalendar via the `temporal-polyfill` peer dependency.
+
+### Bootstrap Theme
+
+- BREAKING: Bootstrap 4 theme support removed (`@fullcalendar/bootstrap4`)
+- BREAKING: Bootstrap 5 theme support removed (`@fullcalendar/bootstrap5`)
+
+## v7.0.0-beta.6
+
+- Virtual rendering for all axes in resource-timeline views ([#5673](https://github.com/fullcalendar/fullcalendar/issues/5673), [#6478](https://github.com/fullcalendar/fullcalendar/issues/6478))
+  - Must set `virtualization: true`
+- Restored Vue 3 support
+
+## v7.0.0-beta.5
+
+This is a long awaited release showcasing the new theme system. Links:
+
+- [Installation Guide](https://github.com/fullcalendar/fullcalendar-docs/blob/v7/INSTALL-GUIDE.md)
+- [Justification &amp; progress tracker](https://github.com/fullcalendar/fullcalendar/issues/7907)
+- [Theme playground](https://v7-dev.fc-v7-theme-preview.pages.dev/)
+
+## v7.0.0-rc.0
+
+(changes from v7.0.0-beta.4 -> v7.0.0-rc.0)
+
+### :watch: Performance
+
+- Fixed unnecessary event rendering and calling of `eventContent` when unrelated events change ([#3003](https://github.com/fullcalendar/fullcalendar/issues/3003), [#7650](https://github.com/fullcalendar/fullcalendar/issues/7650))
+
+### :sparkles: Features
+
+- Improve Bootstrap 5 theme color mode, use of semantic color vars ([#7465](https://github.com/fullcalendar/fullcalendar/issues/7465)) (added in v7.0.0-beta.3, documented here)
+
+### :white_check_mark::rewind: Resolved Regressions
+
+- Day cells do not expand to fit events in dayGridYear ([#7852](https://github.com/fullcalendar/fullcalendar/issues/7852))
+- `height:auto` causes ResizeObserver warning in Safari ([#7861](https://github.com/fullcalendar/fullcalendar/issues/7861))
+- Resource-TimeGrid event dragging/resizing, "select" event doesn't persist
+
+### :beetle: Bugfixes
+
+- The `moreLinkClick` date is always UTC, not adjusted by timezone plugins ([#7314](https://github.com/fullcalendar/fullcalendar/issues/7314))
+- TimeGrid "all-day" text is better aligned, better split across multiple lines
+
+### :warning: Breaking Changes
+
+- Removed Angular 12 support
+- The `moreLinkClick` date will be adjusted to a timezone plugin's offset, no longer unconditionally UTC
+- Newlines in `allDayText` will be displayed as line breaks in TimeGrid
+- Users of `@fullcalendar/icalendar` must upgrade their `ical.js` peerDependency to v2 ([#7734](https://github.com/fullcalendar/fullcalendar/issues/7734))
+- The `weekNumbers:true` setting no longer displays week numbers in certain cases:
+  - `resourceTimeGridDay` view, because x-axis header cell alongside resource names is reserved for a future label
+  - `dayGridDay` view, `dayGridWeek` view, or any dayGrid-based view with only one row
+- Minor markup-related changes
+  - Removed `data-navlink` attribute in favor of `fc-navlink` className
+  - Using `role=link` instead of `<a>` to avoid accidentally inheriting styles
+  - In `resourceDayGrid`-based views, and `resourceTimeGrid`-based views
+    - When `datesAboveResources:true`, the header resource below the header dates have `data-date` attributes
+    - When `datesAboveResources:false`, the header dates below the header resources have `data-resource-id` attributes
+
+### :scroll: License Change to Premium Packages
+
+While the STANDARD FullCalendar packages have been, and always will be, licensed under the permissive MIT license, the PREMIUM packages have more complex licensing:
+
+| Application Type | Company Type   | v6 Premium License
+| ---------------- | -------------- | ------------------
+| Closed-source    | For-profit     | Custom commercial license
+| Closed-source    | Not-for-profit | Creative Commons non-commercial license
+| Open-source      | For-profit     | GPLv3 copyleft license
+| Open-source      | Not-for-profit | GPLv3 copyleft license
+
+In v7, [AGPLv3](https://www.gnu.org/licenses/agpl-3.0.en.html) is replacing GPLv3 as the copyleft license used for open-source projects. If your project's frontend and backend are open-source and AGPLv3-compliant, use the following license key:
+
+```js
+schedulerLicenseKey: 'AGPL-My-Frontend-And-Backend-Are-Open-Source'
+```
+
+We've discovered a few instances of for-profit companies using FullCalendar Premium in closed-source projects, claiming to be GPLv3-compliant via the [SaaS loophole](https://www.mend.io/blog/the-saas-loophole-in-gpl-open-source-licenses/). By switching to AGPLv3, we are closing this loophole and forcing such companies to either purchase a commercial license or stay on v6.
+
+If you are the author of a GPL'd SaaS project that uses FullCalendar Premium and are concerned that you cannot upgrade to v7 due to the license change, please consider the benefits of switching to AGPLv3 yourself.
+
+## v7.0.0-beta.4
+
+### :accessibility: Accessibility
+
+- Better table semantics for screen readers ([#6641](https://github.com/fullcalendar/fullcalendar/issues/6641), [#7656](https://github.com/fullcalendar/fullcalendar/issues/7656), [#7455](https://github.com/fullcalendar/fullcalendar/issues/7455))
+- List-view weekday navLinks should not have aria-hidden ([#7645](https://github.com/fullcalendar/fullcalendar/issues/7645))
+- Add aria-current="date" for "today" highlight ([#7502](https://github.com/fullcalendar/fullcalendar/issues/7502))
+- Use aria-label instead of title attribute ([#7584](https://github.com/fullcalendar/fullcalendar/issues/7584))
+- Aria improvement for view-switcher within toolbar ([#7809](https://github.com/fullcalendar/fullcalendar/issues/7809), [#6522](https://github.com/fullcalendar/fullcalendar/issues/6522))
+- Customizable heading hierarchy level via `headingLevel` ([#6972](https://github.com/fullcalendar/fullcalendar/issues/6972))
+- Improve MultiMonth title hierarchy via role=list ([#7537](https://github.com/fullcalendar/fullcalendar/issues/7537))
+- Improve +more link popover-like aria attributes ([#7567](https://github.com/fullcalendar/fullcalendar/issues/7567))
+- Improve navLink aria attributes, give role=link ([#7567](https://github.com/fullcalendar/fullcalendar/issues/7567))
+- Give role=button to clickable event elements w/o urls ([#7567](https://github.com/fullcalendar/fullcalendar/issues/7567))
+- Tabbable popover close button ([#7157](https://github.com/fullcalendar/fullcalendar/issues/7157))
+- Navigate popover items with keyboard ([#6624](https://github.com/fullcalendar/fullcalendar/issues/6624))
+- Disabled day cells have broken ARIA references ([#7379](https://github.com/fullcalendar/fullcalendar/issues/7379))
+- Move aria-label/labelledby away from invalid elements to cells ([#7566](https://github.com/fullcalendar/fullcalendar/issues/7566))
+
+### :beetle: Bugfixes
+
+- Resource-Timeline scrolls down when it shouldn't, attempting to preserve scroll state ([#4443](https://github.com/fullcalendar/fullcalendar/issues/4443))
+- Certain date/time text should be text-selectable ([#5628](https://github.com/fullcalendar/fullcalendar/issues/5628))
+
+### :warning: Breaking Changes
+
+- For headerToolbar/footerToolbar for RTL calendars, elements within toolbar sections now span right-to-left
+- Disabled days (via `validRange`) now display text in TimeGrid and DayGrid header cells. Still no content within body cells.
+- Week-numbers no longer shown when only one DayGrid row
+
+### :white_check_mark::rewind: Resolved Regressions
+
+- Fixed Next 14 error "navigator is not defined" ([#7802](https://github.com/fullcalendar/fullcalendar/issues/7802))
+- Fixed week-numbers being displayed when `weekNumbers: false`
+
+## v7.0.0-beta.3 (2024-12-18)
+
+:speaker: **Update!** This beta release brings improved print-view, accessibility, and fixed regressions. We apologize for the delayed release, the DOM restructuring turned out to be much more extensive than originally anticipated, and print-view was particulary pesky. The next beta will focus on restoring and improving accessibility ([see tickets](https://github.com/fullcalendar/fullcalendar/issues?q=is%3Aopen+is%3Aissue+milestone%3Av7+label%3AAccessibility)). After that, three things remain: code-cleanup, restoring 100% test coverage, and improving performance. The next beta is expected *Jan 3rd*, the v7 release candidate is expected *Jan 17th*, and the final v7 release is expected *Feb 14th*, though these dates are just approximations and may change.
+
+### :sparkles: Features
+
+- List-view DOM refactor, no more table markup
+- If `resourceAreaWidth` or `resourceAreaColumns.width` specified as percentage, will persist as percentage after user-resize
+- Improve Bootstrap 5 theme color mode, use of semantic color vars ([#7465](https://github.com/fullcalendar/fullcalendar/issues/7465))
+
+### :printer: Printing
+
+- DayGrid
+  - Event titles should not repeat each day ([#6657](https://github.com/fullcalendar/fullcalendar/issues/6657))
+- TimeGrid
+  - First page blank when multiple pages ([#7007](https://github.com/fullcalendar/fullcalendar/issues/7007))
+  - Last event cut-off when multiple pages ([#7673](https://github.com/fullcalendar/fullcalendar/issues/7673))
+  - Show all time slot lines ([#5465](https://github.com/fullcalendar/fullcalendar/issues/5465))
+    - NOTE: Impossible to achieve multi-page breaking in Firefox, so falls back to flat list of events without slot lines
+- Timeline
+  - Show all time slot lines ([#6636](https://github.com/fullcalendar/fullcalendar/issues/6636), [#6802](https://github.com/fullcalendar/fullcalendar/issues/6802))
+- Resource-Timeline
+  - Resource rows no longer break across pages
+  - Resource-area columns shrink-to-fit based on percentage, saving more space for timeline
+
+### :accessibility: Accessibility
+
+- Non-editable events should not be rendered as anchor tags ([#7675](https://github.com/fullcalendar/fullcalendar/issues/7675))
+
+### :warning: Breaking Changes
+
+- The `multiMonthMinWidth` pixel value now *includes* the padding within each month tile
+- TimeGrid overlapping events that previously spanned full column width now have a right margin. This was an accidental regression from v5 -> v6, and the v5 behavior is restored ([#6569](https://github.com/fullcalendar/fullcalendar/issues/6569))
+
+### :white_check_mark::rewind: Resolved Regressions
+
+- DayGrid events, occasional incorrect stacking
+- TimeGrid time-axis is not text-selectable ([#7781](https://github.com/fullcalendar/fullcalendar/issues/7781))
+- Timeline now-indicator div covering events ([#7798](https://github.com/fullcalendar/fullcalendar/issues/7798))
+- List-view time-text, occasional wrong time-text for multiday events
+- Space in header to accommodate scrollbars needs better styling ([#7780](https://github.com/fullcalendar/fullcalendar/issues/7780))
+- Error with Next.js 14, "ResizeObserver is not defined" ([#7802](https://github.com/fullcalendar/fullcalendar/issues/7802))
+- Minimum browser support, which was temporarily raised in 7.0.0-beta.0 to ~2020 minimum, has been lowered to ~2018 minimum because a `ResizeObserver` ponyfill has been implemented. Exact minimum versions will be determined just prior to final v7 release.
+
+## 7.0.0-beta.2 (2024-10-09)
+
+### :white_check_mark::rewind: Resolved Regressions
+
+- restored Angular support
+
+## 7.0.0-beta.1 (2024-10-09)
+
+### :white_check_mark::rewind: Resolved Regressions
+
+- dayGridYear no longer scrolls to current month initially ([#7787](https://github.com/fullcalendar/fullcalendar/issues/7787))
+- scrollgrid plugin not included for resource-timeline ([#7783](https://github.com/fullcalendar/fullcalendar/issues/7783))
+- error: coordRes is not iterable ([#7784](https://github.com/fullcalendar/fullcalendar/issues/7784))
+
+## 7.0.0-beta.0 (2024-10-01)
+
+This is a beta release for the upcoming v7. It includes a complete refactor of the HTML/CSS to allow for increased performance, better accessibility, and to serve as a foundation for advanced features in *future* releases such as virtual rendering and infinite scrolling.
+
+v7 has very few breaking changes. However, If you've written custom CSS that overrides any of FullCalendar's default styles, there's a chance your CSS will need to be updated. We will release an upgrade guide specifically for how to upgrade CSS statements as soon as all v7 classNames become stable. In the meantime, it's recommended to simply disable your custom CSS.
+
+```sh
+# Installation options:
+
+# A) use NPM and append the @beta tag to all packages:
+npm install @fullcalendar/core@beta @fullcalendar/daygrid@beta
+
+# B) download the .ZIP archives at the footer of this release
+```
+
+Please test things out! and report bugs on the [issue tracker](https://github.com/fullcalendar/fullcalendar/issues).
+
+You can find the source code at the [v7-dev branch in the fullcalendar-workspace repo](https://github.com/fullcalendar/fullcalendar-workspace/tree/v7-dev).
+
+### :sparkles: Features
+
+- More streamlined HTML skeleton and more flexbox-based CSS (as opposed to table-based)
+- No longer a need to call `.updateSize()` after the page's dimensions have been programmatically changed. All sizing/positioning of events and views will stay updated automatically. Related to the "resizing" bugfixes below.
+- In Resource Timeline view, `resourceAreaHeaderContent` above columns now stays fixed during horizontal scrolling ([#7779](https://github.com/fullcalendar/fullcalendar/issues/7779))
+
+### :watch: Performance
+
+- DayGrid/TimeGrid rendering 2x performance gain ([#7677](https://github.com/fullcalendar/fullcalendar/issues/7677))
+- MultiMonth performance gain, solving "Forced reflow while executing JavaScript took <#> ms" violation ([#7209](https://github.com/fullcalendar/fullcalendar/issues/7209)) <!-- manually verified -->
+- Likely less layout thrashing ([#4906](https://github.com/fullcalendar/fullcalendar/issues/4906)), awaiting confirmation <!-- could not recreate -->
+- Likely less flickering during event rerendering for React connector ([#7488](https://github.com/fullcalendar/fullcalendar/issues/7488)), awaiting confirmation <!-- could not recreate -->
+
+Performance is expected to improve between now and the v7 official release. Profiling will eventually be conducted.
+
+### :beetle: Bugfixes
+
+- Responsiveness
+  - "More" button (events) on smartphones not working properly ([#2991](https://github.com/fullcalendar/fullcalendar/issues/2991)) <!-- no repro, not sure if fixed in past version, but definitely fixed now) -->
+  - Toolbar CSS is more robust on smaller screens and more customizable for desired responsive behavior ([#4638](https://github.com/fullcalendar/fullcalendar/issues/4638))
+- Accessibility
+  - No `role` attributes on td/th/tr elements inside a table element ([#7568](https://github.com/fullcalendar/fullcalendar/issues/7568))
+  - Event time order different than DOM order, bad for tabbing ([#6943](https://github.com/fullcalendar/fullcalendar/issues/6943))
+- Resizing
+  - Layout does not resize to new container width after browser resizing ([#6407](https://github.com/fullcalendar/fullcalendar/issues/6407)) <!-- too hard to recreate... definitely fixed -->
+  - Resource rows don't adjust height to fit resourceLaneContent ([#6103](https://github.com/fullcalendar/fullcalendar/issues/6103))
+  - Resource rows don't render with correct height ([#6082](https://github.com/fullcalendar/fullcalendar/issues/6082)) <!-- no good reproduction - ask them to do it -->
+  - Dynamic calendar width doesn't adjust ([#5507](https://github.com/fullcalendar/fullcalendar/issues/5507)) <!-- no repro available -->
+  - Adjust calendar sizing when scrollbar width changes (or (de)activated) ([#5561](https://github.com/fullcalendar/fullcalendar/issues/5561)) <!-- tested manually w/ system settings -->
+  - Day number in day cells are hidden by vertical scrollbar ([#6798](https://github.com/fullcalendar/fullcalendar/issues/6798))
+- Scrollbars
+  - Don't show MacOS/iOS hovering scrollbars in timeline header/left ([#5180](https://github.com/fullcalendar/fullcalendar/issues/5180))
+  - Disable hovering scrollbars in header/resourceArea ([#6894](https://github.com/fullcalendar/fullcalendar/issues/6894))
+  - Unnecessary scrollbars in day headers ([#6047](https://github.com/fullcalendar/fullcalendar/issues/6047))
+- List View sticky headers lack bottom border ([#7778](https://github.com/fullcalendar/fullcalendar/issues/7778))
+- Vertical Resource views with no resources shows blank resource row ([#7377](https://github.com/fullcalendar/fullcalendar/issues/7377))
+- DayGrid view
+  - Better dayGrid height row height, height:auto, and +more link behavior ([#6033](https://github.com/fullcalendar/fullcalendar/issues/6033)) <!-- ^^^ repro in other issue vvv -->
+  - Day cells are not always equal height with calendar height set to auto ([#5762](https://github.com/fullcalendar/fullcalendar/issues/5762))
+  - Events not rendered when container is resized ([#7555](https://github.com/fullcalendar/fullcalendar/issues/7555)) <!-- can't produce - ask them -->
+  - Events overflow below day cell with dayMaxEvents:true and showNonCurrentDates:false ([#6749](https://github.com/fullcalendar/fullcalendar/issues/6749)) <!-- updated original repro: https://codepen.io/arshaw/pen/NWQGQLN?editors=0110 -->
+  - Events times are cutoff with eventDisplay: "block" when there is not enough space for the title ([#6457](https://github.com/fullcalendar/fullcalendar/issues/6457))
+  - Compressed space between events in dayGrid when month-start title ([#7184](https://github.com/fullcalendar/fullcalendar/issues/7184))
+
+### :warning: Breaking Changes
+
+- Some custom CSS will need to be rewritten (upgrade guide coming soon)
+- `.updateSize()` method deprecated
+- `windowResize` event no longer fires
+- `windowResizeDelay` setting removed
+- `handleWindowResize` callback removed
+- FullCalendar-internal exports
+  - `DayTable` from `'@fullcalendar/daygrid/internal'` removed
+  - `DayTableView` from `'@fullcalendar/daygrid/internal'` renamed to `DayGridView`
+  - `DayTimeCols` from `'@fullcalendar/timegrid/internal'` removed
+  - `DayTimeColsView` from `'@fullcalendar/timegrid/internal'` renamed to `TimeGridView`
+
+### :rewind: Temporary Regressions
+
+These will be addressed before v7 official release. No need to report bugs related to these.
+
+- **Accessibility** - almost all `role` and `aria-*` attributes have been stripped out
+- **Print mode** - very broken
+- **Angular support** - not working and not yet released, caused by [this Preact issue](https://github.com/preactjs/preact/issues/4023)
+- **Minimum browser support** - because `ResizeObserver` is now used internally, and because newer ES syntax is used in places, the minimum supported browsers have been temporarily raised. However ponyfills and transpiling will come to the rescue before official release. Temporary minimum versions:
+  - Safari: Sept 2020
+  - Firefox: July 2020
+  - Chrome: Aug 2020
+  - Edge: Aug 2020
+- **List view** - currently still leverages `<table>`, but will be refactored away soon
+- **Other bugs**
+  - The space to accommodate scrollbars needs better styling ([#7780](https://github.com/fullcalendar/fullcalendar/issues/7780))
+  - TimeGrid time-axis isn't text-selectable ([#7781](https://github.com/fullcalendar/fullcalendar/issues/7781))
+
+### :vertical_traffic_light: Not Yet Implemented
+
+These will be addressed before v7 official release:
+
+- All remaining `a11y-*` in the v7 milestone of the [GitHub Project](https://github.com/orgs/fullcalendar/projects/1/views/2)
+- Event titles repeated each day in print ([#6657](https://github.com/fullcalendar/fullcalendar/issues/6657))
+- Upgrade to peerDep ical.js v2 ([#7734](https://github.com/fullcalendar/fullcalendar/issues/7734))
+- `moreLinkClick` date is not adjusted for moment timezone ([#7314](https://github.com/fullcalendar/fullcalendar/issues/7314))
+- resource open/close animation ([#4844](https://github.com/fullcalendar/fullcalendar/issues/4844))
+
+### :fast_forward: Features Postponed Until v7.1
+
+Unfortunately we didn't have time to do these but will implement them in a follow-up minor release:
+
+- Improve resource timeline performance with virtual rendering ([#5673](https://github.com/fullcalendar/fullcalendar/issues/5673))
+
 ## 6.1.20 (2025-12-22)
 
 - feature: Angular 21 support (#8015)

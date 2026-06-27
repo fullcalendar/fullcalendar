@@ -1,9 +1,10 @@
 import { join as joinPaths, relative as relativizePath } from 'path'
 import { mkdir } from 'fs/promises'
-import { analyzePkg } from '../utils/pkg-analysis.js'
-import { readPkgJson, writePkgJson } from '../utils/pkg-json.js'
-import { ScriptContext } from '../utils/script-runner.js'
-import { cjsExtension, esmExtension, iifeSubextension } from './utils/config.js'
+import { analyzePkg } from '../utils/pkg-analysis.ts'
+import { readPkgJson, writePkgJson } from '../utils/pkg-json.ts'
+import { type ScriptContext } from '../utils/script-runner.ts'
+import { esmExtension, iifeExtension } from './utils/config.ts'
+import { buildEntryDistAlias, resolveBuildConfig, type PkgJsonBuildConfig } from './utils/bundle-struct.ts'
 
 const cdnFields = [
   'unpkg',
@@ -26,8 +27,7 @@ export async function writeDistPkgJson(
   pkgJson: any,
   isDev: boolean,
 ): Promise<void> {
-  const { buildConfig } = pkgJson
-
+  const buildConfig = await resolveBuildConfig(pkgDir, pkgJson.buildConfig)
   if (!buildConfig) {
     throw new Error('Can only generate dist package.json for a buildConfig')
   }
@@ -36,38 +36,90 @@ export async function writeDistPkgJson(
   const basePkgJson = await readPkgJson(pkgAnalysis.metaRootDir)
   const typesRoot = isDev ? './.tsout' : '.' // TODO: make config var for .tsout?
 
-  const entryConfigMap = buildConfig.exports
+  const entryConfigMap = buildConfig.exports || {}
   const exportsMap: any = {
     './package.json': './package.json',
   }
 
+  let cssExtract = buildConfig.moduleConfig?.cssExtract
+  if (cssExtract) {
+    exportsMap[`./${cssExtract}`] = `./${cssExtract}`
+  }
+
+  cssExtract = buildConfig.globalConfig?.cssExtract
+  if (cssExtract) {
+    exportsMap[`./${cssExtract}`] = `./${cssExtract}`
+  }
+
+  const sideEffects: string[] = []
+  let firstCdnPath: string | undefined
+  let anyCss = false
+
   for (const entryName in entryConfigMap) {
+    const entryConfig = entryConfigMap[entryName]
     const entrySubpath = entryName === '.' ? './index' : entryName
+    const entryAlias = entryName.replace(/^\.\/?/, '') || 'index'
+    const entryDistAlias = buildEntryDistAlias(entryAlias, entryName, entryConfig)
+    const entryDistSubpath = `./${entryDistAlias}`
 
-    // inter-package imports use explicit extensions to avoid format confusion
-    exportsMap[entrySubpath + cjsExtension] = entrySubpath + cjsExtension
-    exportsMap[entrySubpath + esmExtension] = entrySubpath + esmExtension
+    if (entryConfig.format === 'module') {
+      const esmPath = entryDistSubpath + esmExtension
 
-    exportsMap[entryName] = {
-      types: entrySubpath.replace(/^\./, typesRoot) + '.d.ts', // tsc likes this first
-      require: entrySubpath + cjsExtension,
-      import: entrySubpath + esmExtension,
+      const typesPath =
+        isDev
+          ? entryConfig.src
+            ? typesRoot + '/' + entryConfig.src + '.d.ts'
+            : entryConfig.types
+              ? typesRoot + '/' + entryConfig.types + '.d.ts'
+              : entrySubpath.replace(/^\./, typesRoot) + '.d.ts'
+          : entryConfig.dist
+            ? typesRoot + '/' + entryDistAlias + '.d.ts'
+            : entryConfig.types
+              ? typesRoot + '/' + entryConfig.types + '.d.ts'
+              : entrySubpath.replace(/^\./, typesRoot) + '.d.ts'
+
+      exportsMap[entryName] = {
+        types: typesPath,
+        default: esmPath,
+      }
+
+      if (entryConfig.sideEffects) {
+        sideEffects.push(esmPath)
+      }
+    } else if (entryConfig.format === 'global') {
+      sideEffects.push(entryDistSubpath + iifeExtension)
+    } else if (entryConfig.format === 'css') {
+      exportsMap[entryName] = entryName
+      anyCss = true
+    } else if (entryConfig.format === 'css-as-js') {
+      exportsMap[entryName] = entryDistSubpath + iifeExtension
+      sideEffects.push(entryDistSubpath + iifeExtension)
     }
+  }
+
+  if (anyCss) {
+    sideEffects.push('**/*.css')
   }
 
   const finalPkgJson = {
     ...pkgJson, // hack to prefer key order of original file
     ...basePkgJson,
     ...pkgJson, // overrides base
-    keywords: (basePkgJson.keywords || []).concat(pkgJson.keywords || []),
+    keywords:
+      pkgJson.name.startsWith('@full-ui/') // HACK
+        ? (pkgJson.keywords || basePkgJson.keywords || []) // don't merge
+        : (basePkgJson.keywords || []).concat(pkgJson.keywords || []),
     types: `${typesRoot}/index.d.ts`,
-    main: './index' + cjsExtension,
-    module: './index' + esmExtension,
-    ...cdnFields.reduce(
-      (props, cdnField) => Object.assign(props, {
-        [cdnField]: './index' + iifeSubextension + '.min.js',
-      }),
-      {},
+    main: './index' + esmExtension,
+    ...(
+      firstCdnPath
+        ? cdnFields.reduce(
+          (props, cdnField) => Object.assign(props, {
+            [cdnField]: firstCdnPath,
+          }),
+          {},
+        )
+        : {}
     ),
     exports: exportsMap,
   }
@@ -86,12 +138,8 @@ export async function writeDistPkgJson(
     finalPkgJson.typesVersions = { '*': typeVersionsEntryMap }
   }
 
-  if (
-    pkgJson.sideEffects === undefined &&
-    !pkgAnalysis.isTests &&
-    !pkgAnalysis.isBundle
-  ) {
-    finalPkgJson.sideEffects = false
+  if (pkgJson.sideEffects === undefined) {
+    finalPkgJson.sideEffects = !sideEffects.length ? false : sideEffects
   }
 
   finalPkgJson.repository.directory =

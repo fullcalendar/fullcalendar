@@ -1,6 +1,6 @@
 import { join as joinPaths } from 'path'
-import { execLive } from './exec.js'
-import { standardScriptsDir } from './script-runner.js'
+import { execLive } from './exec.ts'
+import { standardScriptsDir } from './script-runner.ts'
 
 export function runTurboTasks(monorepoDir: string, turboRunArgs: string[]): Promise<void> {
   return execLive([

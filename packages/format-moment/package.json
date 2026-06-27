@@ -1,0 +1,52 @@
+{
+  "name": "@fullcalendar/format-moment",
+  "version": "7.0.0",
+  "title": "FullCalendar Moment Date-Formatting Plugin",
+  "description": "Enhanced date formatting with Moment",
+  "keywords": [
+    "moment"
+  ],
+  "homepage": "https://fullcalendar.io/docs/moment-plugin",
+  "dependencies": {
+    "@full-ui/headless-calendar": "workspace:7.0.0",
+    "@fullcalendar/core": "workspace:7.0.0"
+  },
+  "peerDependencies": {
+    "moment": "^2.29.1",
+    "temporal-polyfill": "^1.0.1"
+  },
+  "devDependencies": {
+    "@fullcalendar-scripts/standard": "workspace:*",
+    "moment": "^2.29.1",
+    "temporal-polyfill": "^1.0.1"
+  },
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint ."
+  },
+  "type": "module",
+  "buildConfig": {
+    "globalConfig": {
+      "externalPkgs": [
+        "moment"
+      ],
+      "externalGlobals": {
+        "moment": "moment"
+      }
+    },
+    "exports": {
+      ".": {
+        "format": "module"
+      },
+      "./global": {
+        "format": "global",
+        "primary": true
+      }
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
+  }
+}

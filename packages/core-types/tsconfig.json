@@ -1,0 +1,11 @@
+{
+  "extends": "@fullcalendar-scripts/standard/config/tsconfig.browser.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist/.tsout"
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "references": []
+}

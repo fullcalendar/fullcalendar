@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+
+<link rel='stylesheet' href='../../../vanilla/dist/skeleton.css' />
+<link rel='stylesheet' href='../../../vanilla/dist/themes/classic/theme.css' />
+<link rel='stylesheet' href='../../../vanilla/dist/themes/classic/palette.css' />
+
+<script src='../../../vanilla/dist/all/global.js'></script>
+<script src='../../../vanilla/dist/themes/classic/global.js'></script>
+<script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      headerToolbar: {
+        start: 'title',
+        end: 'today prev,next',
+      },
+      timeZone: 'UTC',
+      height: 'auto',
+      events: 'https://fullcalendar.io/demo-events.json?overload-day'
+    });
+
+    calendar.render();
+  });
+
+</script>
+<style>
+
+  body {
+    margin: 40px 10px;
+    padding: 0;
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 14px;
+  }
+
+  #calendar {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+</style>
+</head>
+<body>
+
+  <div id='calendar'></div>
+
+</body>
+</html>

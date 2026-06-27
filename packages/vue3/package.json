@@ -1,0 +1,211 @@
+{
+  "name": "@fullcalendar/vue3",
+  "version": "7.0.0",
+  "title": "FullCalendar Vue 3 Component",
+  "description": "The official Vue 3 component for FullCalendar",
+  "keywords": [
+    "calendar",
+    "event",
+    "full-sized",
+    "fullcalendar",
+    "vue",
+    "vue3"
+  ],
+  "homepage": "https://fullcalendar.io/docs/vue",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fullcalendar/fullcalendar-vue.git"
+  },
+  "dependencies": {
+    "@full-ui/headless-calendar": "workspace:7.0.0",
+    "@fullcalendar/core": "workspace:7.0.0",
+    "preact": "^10.29.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.11",
+    "temporal-polyfill": "^1.0.1"
+  },
+  "devDependencies": {
+    "@fullcalendar-scripts/standard": "workspace:*",
+    "fullcalendar": "workspace:7.0.0",
+    "@vitejs/plugin-vue": "^6.0.3",
+    "@vitest/browser-playwright": "^4.0.18",
+    "@vue/test-utils": "^2.4.6",
+    "globby": "^13.1.2",
+    "handlebars": "^4.1.2",
+    "playwright": "^1.58.1",
+    "temporal-polyfill": "^1.0.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18",
+    "vue": "^3.5.27",
+    "vue-i18n": "^11.2.8"
+  },
+  "scripts": {
+    "build": "standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:dev": "vitest",
+    "typecheck": "tsc -p tsconfig.tests.json"
+  },
+  "type": "module",
+  "buildConfig": {
+    "exports": {
+      ".": {
+        "format": "module"
+      },
+      "./all": {
+        "format": "module"
+      },
+      "./skeleton.css": {
+        "format": "css",
+        "import": "fullcalendar/skeleton.css"
+      },
+      "./public-api": {
+        "format": "module"
+      },
+      "./protected-api": {
+        "format": "module"
+      },
+      "./protected-styles": {
+        "format": "module"
+      },
+      "./locales-all": {
+        "format": "module",
+        "generator": "./scripts/generate-locales-all.ts"
+      },
+      "./locales/*": {
+        "format": "module",
+        "generator": "./scripts/generate-locales.ts",
+        "types": "locales/locale"
+      },
+      "./interaction": {
+        "format": "module"
+      },
+      "./daygrid": {
+        "format": "module"
+      },
+      "./timegrid": {
+        "format": "module"
+      },
+      "./multimonth": {
+        "format": "module"
+      },
+      "./list": {
+        "format": "module"
+      },
+      "./themes/classic": {
+        "format": "module"
+      },
+      "./themes/classic/theme.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/classic/theme.css"
+      },
+      "./themes/classic/palette.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/classic/palette.css"
+      },
+      "./themes/monarch": {
+        "format": "module"
+      },
+      "./themes/monarch/theme.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/monarch/theme.css"
+      },
+      "./themes/monarch/palettes/blue.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/monarch/palettes/blue.css"
+      },
+      "./themes/monarch/palettes/green.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/monarch/palettes/green.css"
+      },
+      "./themes/monarch/palettes/purple.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/monarch/palettes/purple.css"
+      },
+      "./themes/monarch/palettes/red.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/monarch/palettes/red.css"
+      },
+      "./themes/monarch/palettes/yellow.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/monarch/palettes/yellow.css"
+      },
+      "./themes/breezy": {
+        "format": "module"
+      },
+      "./themes/breezy/theme.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/breezy/theme.css"
+      },
+      "./themes/breezy/palettes/amber.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/breezy/palettes/amber.css"
+      },
+      "./themes/breezy/palettes/emerald.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/breezy/palettes/emerald.css"
+      },
+      "./themes/breezy/palettes/indigo.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/breezy/palettes/indigo.css"
+      },
+      "./themes/breezy/palettes/rose.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/breezy/palettes/rose.css"
+      },
+      "./themes/forma": {
+        "format": "module"
+      },
+      "./themes/forma/theme.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/forma/theme.css"
+      },
+      "./themes/forma/palettes/blue.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/forma/palettes/blue.css"
+      },
+      "./themes/forma/palettes/green.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/forma/palettes/green.css"
+      },
+      "./themes/forma/palettes/purple.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/forma/palettes/purple.css"
+      },
+      "./themes/forma/palettes/red.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/forma/palettes/red.css"
+      },
+      "./themes/pulse": {
+        "format": "module"
+      },
+      "./themes/pulse/theme.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/pulse/theme.css"
+      },
+      "./themes/pulse/palettes/blue.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/pulse/palettes/blue.css"
+      },
+      "./themes/pulse/palettes/green.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/pulse/palettes/green.css"
+      },
+      "./themes/pulse/palettes/purple.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/pulse/palettes/purple.css"
+      },
+      "./themes/pulse/palettes/red.css": {
+        "format": "css",
+        "import": "fullcalendar/themes/pulse/palettes/red.css"
+      }
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
+  }
+}

@@ -1,18 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es2015",
-    "module": "es2015",
-    "moduleResolution": "node16",
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "allowJs": true,
     "lib": [
-      "es2015",
+      "es2021",
       "dom"
     ],
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "noUnusedLocals": true,
-    "noImplicitUseStrict": true,
     "resolveJsonModule": true,
-    "jsx": "react",
-    "jsxFactory": "createElement",
     "strictBindCallApply": true,
     "skipLibCheck": true,
     "sourceMap": true,

@@ -1,14 +1,13 @@
 import { basename } from 'path'
 import { watch } from 'chokidar'
-import { rollup, watch as rollupWatch, RollupOptions, OutputOptions } from 'rollup'
-import { MonorepoStruct } from '../utils/monorepo-struct.js'
-import { buildPkgBundleStruct, PkgBundleStruct } from './utils/bundle-struct.js'
-import { analyzePkg } from '../utils/pkg-analysis.js'
-import { buildEsmOptions, buildCjsOptions, buildIifeOptions, buildDtsOptions } from './utils/rollup-presets.js'
-import { arrayify, continuousAsync } from '../utils/lang.js'
-import { ScriptContext } from '../utils/script-runner.js'
-import { untilSigInt } from '../utils/process.js'
-import { pkgLog } from '../utils/log.js'
+import { rollup, watch as rollupWatch, type RollupOptions, type OutputOptions, type RollupWatchOptions } from 'rollup'
+import { buildPkgBundleStruct, type PkgBundleStruct } from './utils/bundle-struct.ts'
+import { analyzePkg } from '../utils/pkg-analysis.ts'
+import { buildModuleOptions, buildGlobalOptions, buildDtsOptions } from './utils/rollup-presets.ts'
+import { arrayify, continuousAsync } from '../utils/lang.ts'
+import { type ScriptContext } from '../utils/script-runner.ts'
+import { untilSigInt } from '../utils/process.ts'
+import { pkgLog } from '../utils/log.ts'
 
 export default async function(this: ScriptContext, ...args: string[]) {
   const { monorepoStruct } = this
@@ -19,9 +18,9 @@ export default async function(this: ScriptContext, ...args: string[]) {
   const isDev = args.includes('--dev')
 
   if (!isWatch) {
-    await writeBundles(pkgDir, pkgJson, monorepoStruct, isDev)
+    await writeBundles(pkgDir, pkgJson, isDev)
   } else {
-    const stopWatch = await watchBundles(pkgDir, pkgJson, monorepoStruct, isDev)
+    const stopWatch = await watchBundles(pkgDir, pkgJson, isDev)
 
     await untilSigInt()
     stopWatch()
@@ -31,11 +30,28 @@ export default async function(this: ScriptContext, ...args: string[]) {
 export async function writeBundles(
   pkgDir: string,
   pkgJson: any,
-  monorepoStruct: MonorepoStruct,
   isDev: boolean,
 ): Promise<void> {
   const pkgBundleStruct = await buildPkgBundleStruct(pkgDir, pkgJson)
-  const optionsObjs = await buildRollupOptionObjs(pkgBundleStruct, monorepoStruct, isDev)
+  const { isTests } = analyzePkg(pkgBundleStruct.pkgDir)
+  const moduleEnabled = !isTests
+  const dtsEnabled = !isDev && !isTests
+
+  const optionsObjs = [
+    moduleEnabled &&
+      buildModuleOptions(
+        pkgBundleStruct,
+        isDev,
+        /* sourcemaps = */ isDev || isTests || Boolean(process.env.SOURCEMAPS),
+      ),
+    pkgBundleStruct.globalConfig &&
+      await buildGlobalOptions(
+        pkgBundleStruct,
+        isDev,
+        /* sourcemaps = */ isDev || isTests || Boolean(process.env.SOURCEMAPS),
+      ),
+    dtsEnabled && buildDtsOptions(pkgBundleStruct, isDev)
+  ].filter(Boolean) as RollupOptions[]
 
   await Promise.all(
     optionsObjs.map(async (options) => {
@@ -52,13 +68,34 @@ export async function writeBundles(
 export async function watchBundles(
   pkgDir: string,
   pkgJson: any,
-  monorepoStruct: MonorepoStruct,
   isDev: boolean,
 ): Promise<() => void> {
   return continuousAsync(async (rerun: any) => {
     const pkgName = pkgJson.name
     const pkgBundleStruct = await buildPkgBundleStruct(pkgDir, pkgJson)
-    const optionsObjs = await buildRollupOptionObjs(pkgBundleStruct, monorepoStruct, isDev)
+    const { isTests } = analyzePkg(pkgBundleStruct.pkgDir)
+    const moduleEnabled = !isTests
+    const dtsEnabled = !isDev && !isTests
+
+    const optionsObjs = [
+      moduleEnabled &&
+        buildModuleOptions(
+          pkgBundleStruct,
+          isDev,
+          /* sourcemaps = */ isDev || isTests,
+        ),
+      pkgBundleStruct.globalConfig &&
+        await buildGlobalOptions(
+          pkgBundleStruct,
+          isDev,
+          /* sourcemaps = */ isDev || isTests,
+        ),
+      dtsEnabled && buildDtsOptions(pkgBundleStruct, isDev),
+    ].filter(Boolean) as RollupWatchOptions[]
+
+    if (!optionsObjs.length) {
+      return () => {}
+    }
 
     const rollupWatcher = rollupWatch(optionsObjs)
     await new Promise<void>((resolve) => {
@@ -88,29 +125,6 @@ export async function watchBundles(
       fileWatcher.close()
     }
   })
-}
-
-async function buildRollupOptionObjs(
-  pkgBundleStruct: PkgBundleStruct,
-  monorepoStruct: MonorepoStruct,
-  isDev: boolean,
-): Promise<RollupOptions[]> {
-  const { isBundle, isTests } = analyzePkg(pkgBundleStruct.pkgDir)
-
-  const esm = !isTests
-  const cjs = !isDev && !isTests
-  const moduleSourcemap = isDev || isTests
-  const iife = true // !isDev || isBundle || isTests
-  const iifeMinify = !isDev && !isTests
-  const iifeSourcemap = (isBundle && isDev) || isTests
-  const dts = !isDev && !isTests
-
-  return [
-    ...(esm ? [buildEsmOptions(pkgBundleStruct, monorepoStruct, moduleSourcemap)] : []),
-    ...(cjs ? [buildCjsOptions(pkgBundleStruct, monorepoStruct, moduleSourcemap)] : []),
-    ...(iife ? await buildIifeOptions(pkgBundleStruct, monorepoStruct, iifeMinify, iifeSourcemap) : []),
-    ...(dts ? [buildDtsOptions(pkgBundleStruct)] : []),
-  ]
 }
 
 function formatWriteMessage(input: any, outputPaths: string[]): string {

@@ -1,5 +1,5 @@
 import { join as joinPaths } from 'path'
-import { readJson, writeJson } from './fs.js'
+import { readJson, writeJson } from './fs.ts'
 
 export function readPkgJson(pkgDir: string): Promise<any> {
   return readJson(getPkgJsonPath(pkgDir))

@@ -5,10 +5,10 @@ Display events from a public [Google Calendar feed](https://support.google.com/c
 
 ## Installation
 
-Install the FullCalendar core package, the Google Calendar plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
+Install the FullCalendar vanilla-JS package, the Google Calendar plugin, and any other plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
 
 ```sh
-npm install @fullcalendar/core @fullcalendar/google-calendar @fullcalendar/daygrid
+npm install fullcalendar @fullcalendar/google-calendar temporal-polyfill
 ```
 
 ## Usage
@@ -16,15 +16,21 @@ npm install @fullcalendar/core @fullcalendar/google-calendar @fullcalendar/daygr
 Instantiate a Calendar with the necessary plugin:
 
 ```js
-import { Calendar } from '@fullcalendar/core'
+import { Calendar } from 'fullcalendar'
+import classicThemePlugin from 'fullcalendar/themes/classic'
+import dayGridPlugin from 'fullcalendar/daygrid'
 import googleCalendarPlugin from '@fullcalendar/google-calendar'
-import dayGridPlugin from '@fullcalendar/daygrid'
+
+import 'fullcalendar/skeleton.css'
+import 'fullcalendar/themes/classic/theme.css'
+import 'fullcalendar/themes/classic/palette.css'
 
 const calendarEl = document.getElementById('calendar')
 const calendar = new Calendar(calendarEl, {
   plugins: [
     googleCalendarPlugin,
-    dayGridPlugin
+    dayGridPlugin,
+    classicThemePlugin
   ],
   initialView: 'dayGridMonth',
   events: {

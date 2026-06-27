@@ -1,6 +1,0 @@
-
-@import '../../core/src/styles/mixins';
-@import './styles/vars';
-
-@import './styles/daygrid';
-@import './styles/daygrid-event';

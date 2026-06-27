@@ -1,6 +1,6 @@
 import chalk from 'chalk'
-import { ScriptContext } from './utils/script-runner.js'
-import { execLive } from './utils/exec.js'
+import { type ScriptContext } from './utils/script-runner.ts'
+import { execLive } from './utils/exec.ts'
 
 export default async function(this: ScriptContext, ...args: string[]) {
   const isDev = args.includes('--dev')

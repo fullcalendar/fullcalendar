@@ -1,23 +1,54 @@
 import { join as joinPaths } from 'path'
+import { readFile } from 'fs/promises'
+import { createRequire } from 'module'
 import { globby } from 'globby'
-import { MonorepoStruct, computeLocalDepDirs } from '../../utils/monorepo-struct.js'
-import { filterProps } from '../../utils/lang.js'
-import { pkgLog } from '../../utils/log.js'
-import { srcExtensions, transpiledSubdir, transpiledExtension, srcIifeSubextension } from './config.js'
+import handlebars from 'handlebars'
+import { pkgLog } from '../../utils/log.ts'
+import { srcExtensions, transpiledSubdir, transpiledExtension, esmExtension } from './config.ts'
+import { standardScriptsDir } from '../../utils/script-runner.ts'
+import { minifyCss, minifyJs } from './rollup-plugins.ts'
 
 export interface PkgBundleStruct {
   pkgDir: string,
   pkgJson: any
   entryConfigMap: EntryConfigMap
   entryStructMap: { [entryAlias: string]: EntryStruct } // entryAlias like "index"
-  iifeGlobalsMap: IifeGlobalsMap
-  miscWatchPaths: string[]
+  copySrcToDest: CopyOperation[]
+  miscWatchPaths: string[] // not CSS
+  moduleConfig?: PkgModuleConfig
+  globalConfig?: PkgGlobalConfig
+  importRemaps?: Record<string, string>
+}
+
+export interface CopyOperation {
+  src: string // absolute path
+  transform?: (srcStr: string) => string | Promise<string>
+  dest: string // relative to pkg's dist dir
+}
+
+export interface PkgModuleConfig {
+  cssExtract?: string
+  externalPkgs?: string[] // needed anymore; we always use deps/peerDeps no?
+}
+
+export interface PkgGlobalConfig {
+  primaryGlobal: string
+  sharedProp: string
+  externalPkgs?: string[]
+  externalGlobals?: Record<string, string>
+  cssExtract?: string
 }
 
 export interface EntryConfig {
+  format: 'module' | 'global' | 'css' | 'css-as-js'
+  types?: string // relative to src dir, no leading "./", no extension
+  src?: string // relative to src dir, no loeading "./", no extension
+  dist?: string // relative to dist dir, no leading "./", no extension
+  import?: string
   generator?: string
-  iifeGenerator?: string
-  iife?: boolean
+  sideEffects?: boolean
+  primary?: boolean // for iifeSplit
+  secondaryProp?: string // for iifeSplit
 }
 
 export interface EntryStruct {
@@ -29,45 +60,111 @@ export interface EntryStruct {
 
 export interface PkgJsonBuildConfig {
   exports?: EntryConfigMap
-  iifeGlobals?: IifeGlobalsMap
+  moduleConfig?: PkgModuleConfig
+  globalConfig?: PkgGlobalConfig
+  importRemaps?: Record<string, string>
+  disableWatch?: boolean
 }
 
 export type EntryConfigMap = { [entryGlob: string]: EntryConfig }
 export type EntryStructMap = { [entryAlias: string]: EntryStruct }
-export type IifeGlobalsMap = { [importPath: string]: string }
+export type GlobalVarMap = { [importPath: string]: string }
 
 export type GeneratorFunc = (
   config: { pkgDir: string, entryGlob: string, log: (message: string) => void }
 ) => (string | { [entryName: string]: string })
 
-export type IifeGeneratorFunc = (
-  config: { pkgDir: string, entryAlias: string, log: (message: string) => void }
-) => string
-
 export type WatchPathsFunc = (pkgDir: string) => string[]
+
+export async function resolveBuildConfig(
+  pkgDir: string,
+  buildConfigOrPath: string | PkgJsonBuildConfig | undefined,
+): Promise<PkgJsonBuildConfig | undefined> {
+  if (buildConfigOrPath === undefined) {
+    return undefined
+  }
+  if (typeof buildConfigOrPath === 'object') {
+    return buildConfigOrPath
+  }
+  // It's a string path
+  const configPath = joinPaths(pkgDir, buildConfigOrPath)
+  if (buildConfigOrPath.endsWith('.json')) {
+    const content = await readFile(configPath, 'utf8')
+    return JSON.parse(content)
+  }
+  if (buildConfigOrPath.endsWith('.js')) {
+    const module = await import(configPath)
+    return module.default
+  }
+  throw new Error(`buildConfig path must end in .json or .js: ${buildConfigOrPath}`)
+}
 
 export async function buildPkgBundleStruct(
   pkgDir: string,
   pkgJson: any,
 ): Promise<PkgBundleStruct> {
-  const buildConfig: PkgJsonBuildConfig = pkgJson.buildConfig || {}
+  const buildConfig = await resolveBuildConfig(pkgDir, pkgJson.buildConfig) || {}
   const entryConfigMap: EntryConfigMap = buildConfig.exports || {}
   const entryStructMap: { [entryAlias: string]: EntryStruct } = {}
-  const iifeGlobalsMap: IifeGlobalsMap = buildConfig.iifeGlobals || {}
+  const copySrcToDest: CopyOperation[] = []
   const miscWatchPaths: string[] = []
 
   await Promise.all(
     Object.keys(entryConfigMap).map(async (entryGlob) => {
       const entryConfig = entryConfigMap[entryGlob]
-      const newEntryStructMap = entryConfig.generator ?
-        await generateEntryStructMap(pkgDir, pkgJson, entryGlob, entryConfig.generator, miscWatchPaths) :
-        await unglobEntryStructMap(pkgDir, entryGlob)
+      const isCssAsJs = entryConfig.format === 'css-as-js'
 
-      Object.assign(entryStructMap, newEntryStructMap)
+      if (entryConfig.format === 'css' || isCssAsJs) {
+        if (entryGlob.includes('*')) {
+          throw new Error('CSS copying does not support glob')
+        }
+
+        let srcPath: string
+
+        if (entryConfig.import) {
+          const require = createRequire(joinPaths(pkgDir, 'package.json'))
+          srcPath = require.resolve(entryConfig.import)
+        } else {
+          srcPath = joinPaths(pkgDir, 'src', entryConfig.src || entryGlob)
+        }
+
+        if (isCssAsJs) {
+          copySrcToDest.push({
+            src: srcPath,
+            transform: async (cssText) => {
+              let jsText = await wrapCssAsJs(cssText)
+              jsText = await minifyJs(jsText)
+              return jsText
+            },
+            dest: removeDotSlash(entryGlob) + esmExtension,
+          })
+        } else {
+          copySrcToDest.push({
+            src: srcPath,
+            dest: removeDotSlash(entryGlob),
+          })
+        }
+      } else {
+        const newEntryStructMap = entryConfig.generator ?
+          await generateEntryStructMap(pkgDir, pkgJson, entryGlob, entryConfig.generator, miscWatchPaths) :
+          await unglobEntryStructMap(pkgDir, entryGlob, entryConfig.src)
+
+        Object.assign(entryStructMap, newEntryStructMap)
+      }
     }),
   )
 
-  return { pkgDir, pkgJson, entryConfigMap, entryStructMap, iifeGlobalsMap, miscWatchPaths }
+  return {
+    pkgDir,
+    pkgJson,
+    entryConfigMap,
+    entryStructMap,
+    copySrcToDest,
+    miscWatchPaths,
+    moduleConfig: buildConfig.moduleConfig,
+    globalConfig: buildConfig.globalConfig,
+    importRemaps: buildConfig.importRemaps,
+  }
 }
 
 // Source-File Entrypoints
@@ -76,10 +173,12 @@ export async function buildPkgBundleStruct(
 async function unglobEntryStructMap(
   pkgDir: string,
   entryGlob: string,
+  maybeSrcAlias: string | undefined,
 ): Promise<EntryStructMap> {
+  const srcGlob = maybeSrcAlias ? `./${maybeSrcAlias}` : entryGlob
   const entryStructMap: EntryStructMap = {}
   const massagedGlob =
-    (entryGlob === '.' ? 'index' : removeDotSlash(entryGlob)) +
+    (srcGlob === '.' ? 'index' : removeDotSlash(srcGlob)) +
     '{' + srcExtensions.join(',') + '}'
 
   const transpiledDir = joinPaths(pkgDir, transpiledSubdir)
@@ -93,9 +192,18 @@ async function unglobEntryStructMap(
   for (const srcPath of srcPaths) {
     for (const srcExtension of srcExtensions) {
       if (srcPath.endsWith(srcExtension)) {
-        const entryAlias = srcPath.substring(0, srcPath.length - srcExtension.length)
-        const entrySrcBase = joinPaths(transpiledDir, entryAlias)
+        const entrySrcAlias = srcPath.substring(0, srcPath.length - srcExtension.length)
+        const entrySrcBase = joinPaths(transpiledDir, entrySrcAlias)
         const entrySrcPath = entrySrcBase + transpiledExtension
+        let entryAlias = entrySrcAlias
+
+        if (maybeSrcAlias) {
+          if (entryGlob.includes('*')) {
+            throw new Error('Cannot remap glob entrypoints to other src files just yet')
+          } else {
+            entryAlias = entryGlob.replace(/^\.\//, '')
+          }
+        }
 
         entryStructMap[entryAlias] = { entryGlob, entrySrcPath, entrySrcBase }
       }
@@ -131,12 +239,12 @@ async function generateEntryStructMap(
 
   if (typeof generatorRes === 'string') {
     if (entryGlob.includes('*')) {
-      throw new Error('Generator string output can\'t have blob entrypoint name')
+      throw new Error('Generator string output can\'t have glob entrypoint name')
     }
 
-    const entrySrcBase = joinPaths(transpiledDir, entryGlob)
+    const entryAlias = entryGlob === '.' ? 'index' : removeDotSlash(entryGlob)
+    const entrySrcBase = joinPaths(transpiledDir, entryAlias)
     const entrySrcPath = entrySrcBase + transpiledExtension
-    const entryAlias = removeDotSlash(entryGlob)
 
     entryStructMap[entryAlias] = {
       entryGlob,
@@ -145,8 +253,8 @@ async function generateEntryStructMap(
       content: generatorRes,
     }
   } else if (typeof generatorRes === 'object') {
-    if (entryGlob.includes('*')) {
-      throw new Error('Generator object output must have blob entrypoint name')
+    if (!entryGlob.includes('*')) {
+      throw new Error('Generator object output must have glob entrypoint name')
     }
 
     for (const key in generatorRes) {
@@ -189,193 +297,83 @@ export function entryStructsToContentMap(
   return contentMap
 }
 
-export async function generateIifeContent(
-  pkgBundleStruct: PkgBundleStruct,
-): Promise<{ [path: string]: string }> {
-  const { pkgDir, entryConfigMap, entryStructMap } = pkgBundleStruct
-  const contentMap: { [path: string]: string } = {}
-
-  for (const entryAlias in entryStructMap) {
-    const entryStruct = entryStructMap[entryAlias]
-    const entryConfig = entryConfigMap[entryStruct.entryGlob]
-    const { iifeGenerator } = entryConfig
-
-    if (iifeGenerator) {
-      const iifeGeneratorPath = joinPaths(pkgDir, iifeGenerator)
-      const iifeGeneratorExports = await import(iifeGeneratorPath)
-      const iifeGeneratorFunc: IifeGeneratorFunc = iifeGeneratorExports.default
-
-      if (typeof iifeGeneratorFunc !== 'function') {
-        throw new Error('iifeGenerator must have a default function export')
-      }
-
-      const iifeGeneratorConfig = {
-        pkgDir,
-        entryAlias,
-        log: pkgLog.bind(undefined, pkgBundleStruct.pkgJson.name),
-      }
-      const iifeGeneratorRes = await iifeGeneratorFunc(iifeGeneratorConfig)
-
-      if (typeof iifeGeneratorRes !== 'string') {
-        throw new Error('iifeGenerator must return a string')
-      }
-
-      const transpiledDir = joinPaths(pkgDir, transpiledSubdir)
-      const transpiledPath = joinPaths(transpiledDir, entryAlias) +
-        srcIifeSubextension + transpiledExtension
-
-      contentMap[transpiledPath] = iifeGeneratorRes
-
-      pkgBundleStruct.miscWatchPaths.push( // HACK: modify passed-in struct
-        iifeGeneratorPath,
-        ...(iifeGeneratorExports.getWatchPaths ?
-          iifeGeneratorExports.getWatchPaths(iifeGeneratorConfig) :
-          []),
-      )
-    }
+export function buildEntryDistAlias(
+  entryAlias: string,
+  entryGlob: string,
+  entryConfig: EntryConfig,
+): string {
+  if (!entryConfig.dist) {
+    return entryAlias
   }
 
-  return contentMap
+  const distAlias = removeDotSlash(entryConfig.dist)
+
+  if (!entryGlob.includes('*')) {
+    return distAlias
+  }
+
+  const entryGlobAlias = removeDotSlash(entryGlob)
+  const wildcardValue = extractWildcardValue(entryAlias, entryGlobAlias)
+
+  return distAlias.replace('*', wildcardValue)
+}
+
+function extractWildcardValue(entryAlias: string, entryGlobAlias: string): string {
+  const wildcardIndex = entryGlobAlias.indexOf('*')
+  const prefix = entryGlobAlias.substring(0, wildcardIndex)
+  const suffix = entryGlobAlias.substring(wildcardIndex + 1)
+
+  if (
+    entryAlias.startsWith(prefix) &&
+    entryAlias.endsWith(suffix)
+  ) {
+    return entryAlias.substring(prefix.length, entryAlias.length - suffix.length)
+  }
+
+  throw new Error(`Entry '${entryAlias}' does not match glob '${entryGlobAlias}'`)
 }
 
 // External Packages
 // -------------------------------------------------------------------------------------------------
 
-export function computeExternalPkgs(pkgBundleStruct: PkgBundleStruct): string[] {
+export function computeModuleExternalPkgs(pkgBundleStruct: PkgBundleStruct): string[] {
   const { pkgJson } = pkgBundleStruct
 
-  return Object.keys({
-    ...pkgJson.dependencies,
-    ...pkgJson.peerDependencies,
-    ...pkgJson.optionalDependencies,
-  })
+  return [
+    ...(pkgBundleStruct.moduleConfig?.externalPkgs || []),
+    ...Object.keys({
+      ...pkgJson.dependencies,
+      ...pkgJson.peerDependencies,
+      ...pkgJson.optionalDependencies,
+    }),
+  ]
 }
 
-/*
-For IIFE, some third-party packages are bundled
-*/
-export function computeIifeExternalPkgs(pkgBundleStruct: PkgBundleStruct): string[] {
-  const { iifeGlobalsMap } = pkgBundleStruct
-
-  return computeExternalPkgs(pkgBundleStruct)
-    .filter((pkgName) => (
-      iifeGlobalsMap[pkgName] !== '' &&
-      iifeGlobalsMap['*'] !== ''
-    ))
+export function computeGlobalExternalPkgs(pkgBundleStruct: PkgBundleStruct): string[] {
+  return pkgBundleStruct.globalConfig?.externalPkgs || []
 }
 
-export function splitPkgNames(
-  pkgNames: string[],
-  monorepoStruct: MonorepoStruct,
-): { ourPkgNames: string[], theirPkgNames: string[] } {
-  const ourPkgNames: string[] = []
-  const theirPkgNames: string[] = []
-
-  for (let pkgName of pkgNames) {
-    if (monorepoStruct.pkgNameToDir[pkgName]) {
-      ourPkgNames.push(pkgName)
-    } else {
-      theirPkgNames.push(pkgName)
-    }
-  }
-
-  return { ourPkgNames, theirPkgNames }
-}
-
-// External File Paths
+// CSS-AS-JS
 // -------------------------------------------------------------------------------------------------
 
-export function computeOwnExternalPaths(pkgBundleStruct: PkgBundleStruct): string[] {
-  return Object.values(pkgBundleStruct.entryStructMap)
-    .map((entryStruct) => entryStruct.entrySrcPath)
+async function wrapCssAsJs(cssText: string): Promise<string> {
+  const template = await getCssWrapTemplate()
+  cssText = await minifyCss(cssText)
+  return template({ cssTextAsJson: JSON.stringify(cssText) })
 }
 
-export function computeOwnIifeExternalPaths(
-  currentEntryStruct: EntryStruct,
-  pkgBundleStruct: PkgBundleStruct,
-): string[] {
-  const { entryStructMap, iifeGlobalsMap } = pkgBundleStruct
-  const currentGlobalName = iifeGlobalsMap[currentEntryStruct.entryGlob]
+type HandlebarsTemplate = ReturnType<typeof handlebars.compile>
 
-  const iifeEntryStructMap = filterProps(entryStructMap, (entryStruct) => {
-    const globalName = iifeGlobalsMap[entryStruct.entryGlob]
+let _cssWrapTemplate: HandlebarsTemplate
 
-    return Boolean(
-      // not the current entrypoint
-      entryStruct.entryGlob !== currentEntryStruct.entryGlob &&
-      // has a global variable
-      globalName &&
-      // not nested within current global variable
-      (!currentGlobalName || !globalName.startsWith(currentGlobalName + '.')),
-    )
-  })
-
-  return Object.values(iifeEntryStructMap)
-    .map((entryStruct) => entryStruct.entrySrcPath)
+async function getCssWrapTemplate(): Promise<HandlebarsTemplate> {
+  return _cssWrapTemplate || (_cssWrapTemplate = await buildCssWrapTemplate())
 }
 
-// IIFE Browser Globals
-// -------------------------------------------------------------------------------------------------
-
-export function computeIifeGlobals(
-  pkgBundleStruct: PkgBundleStruct,
-  monorepoStruct: MonorepoStruct,
-): IifeGlobalsMap {
-  const allGlobalsMap: IifeGlobalsMap = {}
-
-  const { pkgJson, entryStructMap, iifeGlobalsMap } = pkgBundleStruct
-  const pkgName = pkgJson.name
-
-  // scan the package's own unglobbed entrypoints
-  for (const entryAlias in entryStructMap) {
-    const { entrySrcPath, entryGlob } = entryStructMap[entryAlias]
-    const globalName = iifeGlobalsMap[entryGlob]
-
-    if (globalName) {
-      const fullImportId = entryGlob === '.' ?
-        pkgName :
-        pkgName + '/' + entryAlias
-
-      allGlobalsMap[fullImportId] = globalName
-      allGlobalsMap[entrySrcPath] = globalName // add file path too
-    }
-  }
-
-  // scan the package's external dependencies
-  // TODO: scan dependencies of dependencies (or just do a global scan)
-  for (const importId in iifeGlobalsMap) {
-    const globalName = iifeGlobalsMap[importId]
-
-    if (globalName) {
-      if (importId !== '.' && !importId.startsWith('./')) {
-        allGlobalsMap[importId] = globalName
-      }
-    }
-  }
-
-  const depDirs = computeLocalDepDirs(monorepoStruct, pkgJson)
-  const depPkgJsons = depDirs.map((depDir) => monorepoStruct.pkgDirToJson[depDir])
-
-  // scan the package's dependencies that live in the monorepo
-  for (const depPkgJson of depPkgJsons) {
-    const depPkgName = depPkgJson.name
-    const depBuildConfig: PkgJsonBuildConfig = depPkgJson.buildConfig || {}
-    const depIifeGlobalsMap = depBuildConfig.iifeGlobals || {}
-
-    for (const importId in depIifeGlobalsMap) {
-      const globalName = depIifeGlobalsMap[importId]
-
-      if (globalName) {
-        if (importId === '.') {
-          allGlobalsMap[depPkgName] = globalName
-        } else if (importId.startsWith('./')) {
-          allGlobalsMap[depPkgName + importId.substring(1)] = globalName
-        }
-      }
-    }
-  }
-
-  return allGlobalsMap
+async function buildCssWrapTemplate(): Promise<HandlebarsTemplate> {
+  const templatePath = joinPaths(standardScriptsDir, 'config/inject-css.tpl')
+  const templateText = await readFile(templatePath, 'utf8')
+  return handlebars.compile(templateText)
 }
 
 // Utils

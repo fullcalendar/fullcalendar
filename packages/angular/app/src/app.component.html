@@ -1,0 +1,11 @@
+<button (click)="updateHeader()" id="updateHeader">Update header</button>
+<button (click)="updateEvents()" id="updateEvents">Update events</button>
+<full-calendar
+  *ngIf="calendarOptions"
+  #fullcalendar
+  [options]="calendarOptions"
+>
+  <ng-template #eventContent let-arg>
+    <b>{{ arg.event.title }}</b> - {{ arg.event.start.getDate() }}
+  </ng-template>
+</full-calendar>

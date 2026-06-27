@@ -1,0 +1,185 @@
+{
+  "name": "@fullcalendar/react",
+  "version": "7.0.0",
+  "title": "FullCalendar React",
+  "description": "FullCalendar React package for rendering a calendar",
+  "dependencies": {
+    "@full-ui/headless-calendar": "workspace:7.0.0",
+    "@fullcalendar/core": "workspace:7.0.0"
+  },
+  "peerDependencies": {
+    "react": "^17 || ^18 || ^19",
+    "react-dom": "^17 || ^18 || ^19",
+    "temporal-polyfill": "^1.0.1"
+  },
+  "devDependencies": {
+    "@fullcalendar-scripts/standard": "workspace:*",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.9",
+    "@types/react-dom": "^19.2.3",
+    "globby": "^13.1.2",
+    "handlebars": "^4.1.2",
+    "jsdom": "^27.4.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "temporal-polyfill": "^1.0.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.16"
+  },
+  "scripts": {
+    "build": "pnpm run src:generate && standard-scripts pkg:build",
+    "clean": "standard-scripts pkg:clean && pnpm run src:clean",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:dev": "vitest",
+    "typecheck": "tsc -p tsconfig.tests.json",
+    "src:generate": "./scripts/src-generate.sh",
+    "src:clean": "rm -rf src"
+  },
+  "type": "module",
+  "buildConfig": {
+    "moduleConfig": {
+      "cssExtract": "skeleton.css"
+    },
+    "exports": {
+      ".": {
+        "format": "module"
+      },
+      "./all": {
+        "format": "module"
+      },
+      "./public-components": {
+        "format": "module"
+      },
+      "./public-api": {
+        "format": "module"
+      },
+      "./protected-api": {
+        "format": "module"
+      },
+      "./protected-styles": {
+        "format": "module"
+      },
+      "./locales-all": {
+        "format": "module",
+        "generator": "./scripts/generate-locales-all.ts"
+      },
+      "./locales/*": {
+        "format": "module"
+      },
+      "./interaction": {
+        "format": "module"
+      },
+      "./daygrid": {
+        "format": "module"
+      },
+      "./timegrid": {
+        "format": "module"
+      },
+      "./multimonth": {
+        "format": "module"
+      },
+      "./list": {
+        "format": "module"
+      },
+      "./themes/classic": {
+        "format": "module",
+        "src": "themes/classic/index",
+        "dist": "themes/classic/index"
+      },
+      "./themes/classic/theme.css": {
+        "format": "css"
+      },
+      "./themes/classic/palette.css": {
+        "format": "css"
+      },
+      "./themes/monarch": {
+        "format": "module",
+        "src": "themes/monarch/index",
+        "dist": "themes/monarch/index"
+      },
+      "./themes/monarch/theme.css": {
+        "format": "css"
+      },
+      "./themes/monarch/palettes/blue.css": {
+        "format": "css"
+      },
+      "./themes/monarch/palettes/green.css": {
+        "format": "css"
+      },
+      "./themes/monarch/palettes/purple.css": {
+        "format": "css"
+      },
+      "./themes/monarch/palettes/red.css": {
+        "format": "css"
+      },
+      "./themes/monarch/palettes/yellow.css": {
+        "format": "css"
+      },
+      "./themes/breezy": {
+        "format": "module",
+        "src": "themes/breezy/index",
+        "dist": "themes/breezy/index"
+      },
+      "./themes/breezy/theme.css": {
+        "format": "css"
+      },
+      "./themes/breezy/palettes/amber.css": {
+        "format": "css"
+      },
+      "./themes/breezy/palettes/emerald.css": {
+        "format": "css"
+      },
+      "./themes/breezy/palettes/indigo.css": {
+        "format": "css"
+      },
+      "./themes/breezy/palettes/rose.css": {
+        "format": "css"
+      },
+      "./themes/forma": {
+        "format": "module",
+        "src": "themes/forma/index",
+        "dist": "themes/forma/index"
+      },
+      "./themes/forma/theme.css": {
+        "format": "css"
+      },
+      "./themes/forma/palettes/blue.css": {
+        "format": "css"
+      },
+      "./themes/forma/palettes/green.css": {
+        "format": "css"
+      },
+      "./themes/forma/palettes/purple.css": {
+        "format": "css"
+      },
+      "./themes/forma/palettes/red.css": {
+        "format": "css"
+      },
+      "./themes/pulse": {
+        "format": "module",
+        "src": "themes/pulse/index",
+        "dist": "themes/pulse/index"
+      },
+      "./themes/pulse/theme.css": {
+        "format": "css"
+      },
+      "./themes/pulse/palettes/blue.css": {
+        "format": "css"
+      },
+      "./themes/pulse/palettes/green.css": {
+        "format": "css"
+      },
+      "./themes/pulse/palettes/purple.css": {
+        "format": "css"
+      },
+      "./themes/pulse/palettes/red.css": {
+        "format": "css"
+      }
+    }
+  },
+  "publishConfig": {
+    "directory": "./dist",
+    "linkDirectory": true
+  }
+}

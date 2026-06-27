@@ -1,18 +1,22 @@
 {
   "name": "@fullcalendar/google-calendar",
-  "version": "6.1.20",
+  "version": "7.0.0",
   "title": "FullCalendar Google Calendar Plugin",
   "description": "Display events from a public Google Calendar feed",
   "homepage": "https://fullcalendar.io/docs/google-calendar",
   "keywords": [
     "google-calendar"
   ],
+  "dependencies": {
+    "@full-ui/headless-calendar": "workspace:7.0.0",
+    "@fullcalendar/core": "workspace:7.0.0"
+  },
   "peerDependencies": {
-    "@fullcalendar/core": "~6.1.20"
+    "temporal-polyfill": "^1.0.1"
   },
   "devDependencies": {
-    "@fullcalendar/core": "~6.1.20",
-    "@fullcalendar-scripts/standard": "*"
+    "@fullcalendar-scripts/standard": "workspace:*",
+    "temporal-polyfill": "^1.0.1"
   },
   "scripts": {
     "build": "standard-scripts pkg:build",
@@ -20,24 +24,17 @@
     "lint": "eslint ."
   },
   "type": "module",
-  "tsConfig": {
-    "extends": "@fullcalendar-scripts/standard/config/tsconfig.browser.json",
-    "compilerOptions": {
-      "rootDir": "./src",
-      "outDir": "./dist/.tsout"
-    },
-    "include": [
-      "./src/**/*"
-    ]
-  },
   "buildConfig": {
+    "globalConfig": {
+    },
     "exports": {
       ".": {
-        "iife": true
+        "format": "module"
+      },
+      "./global": {
+        "format": "global",
+        "primary": true
       }
-    },
-    "iifeGlobals": {
-      ".": "FullCalendar.GoogleCalendar"
     }
   },
   "publishConfig": {

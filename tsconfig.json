@@ -1,0 +1,41 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "packages/preact"
+    },
+    {
+      "path": "packages/react"
+    },
+    {
+      "path": "packages/vanilla"
+    },
+    {
+      "path": "packages/vanilla-w-react"
+    },
+    {
+      "path": "packages/vanilla-tests"
+    },
+    {
+      "path": "packages/web-component"
+    },
+    {
+      "path": "packages/google-calendar"
+    },
+    {
+      "path": "packages/headless-calendar"
+    },
+    {
+      "path": "packages/icalendar"
+    },
+    {
+      "path": "packages/luxon3"
+    },
+    {
+      "path": "packages/moment"
+    },
+    {
+      "path": "packages/rrule"
+    }
+  ]
+}

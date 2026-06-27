@@ -2,7 +2,7 @@
   "private": true,
   "name": "@fullcalendar-monorepos/standard",
   "description": "Full-sized drag & drop event calendar in JavaScript",
-  "version": "6.1.20",
+  "version": "7.0.0",
   "keywords": [
     "calendar",
     "event",
@@ -21,9 +21,9 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
-  "copyright": "2024 Adam Shaw",
+  "copyright": "2026 Adam Shaw",
   "devDependencies": {
-    "@fullcalendar-scripts/standard": "*"
+    "@fullcalendar-scripts/standard": "workspace:*"
   },
   "type": "module",
   "scripts": {
@@ -37,7 +37,7 @@
     "ci": "pnpm run lint && pnpm run build && pnpm run test"
   },
   "engines": {
-    "pnpm": ">=9.5.0"
+    "pnpm": ">=10.15.0"
   },
   "pnpm": {
     "patchedDependencies": {

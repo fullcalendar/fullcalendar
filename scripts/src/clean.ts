@@ -1,10 +1,9 @@
 import { join as joinPaths } from 'path'
 import { rm } from 'fs/promises'
-import { ScriptContext } from './utils/script-runner.js'
-import { deleteMonorepoArchives } from './archive.js'
-import { runTurboTasks } from './utils/turbo.js'
-import { MonorepoStruct, traverseMonorepoGreedy } from './utils/monorepo-struct.js'
-import { cleanPkg } from './pkg/clean.js'
+import { type ScriptContext } from './utils/script-runner.ts'
+import { runTurboTasks } from './utils/turbo.ts'
+import { type MonorepoStruct, traverseMonorepoGreedy } from './utils/monorepo-struct.ts'
+import { cleanPkg } from './pkg/clean.ts'
 
 export default async function(this: ScriptContext, ...args: string[]) {
   const { monorepoStruct } = this
@@ -13,9 +12,7 @@ export default async function(this: ScriptContext, ...args: string[]) {
 
   await Promise.all([
     deleteRootDist(monorepoDir),
-    deleteRootTsconfig(monorepoDir),
     deleteGlobalTurboCache(monorepoDir),
-    deleteMonorepoArchives(monorepoStruct),
     isAll ?
       runTurboTasks(monorepoDir, ['clean']) :
       cleanPkgsDirectly(monorepoStruct),
@@ -26,13 +23,6 @@ export default async function(this: ScriptContext, ...args: string[]) {
 function deleteRootDist(monorepoDir: string): Promise<void> {
   return rm(
     joinPaths(monorepoDir, 'dist'),
-    { force: true },
-  )
-}
-
-function deleteRootTsconfig(monorepoDir: string): Promise<void> {
-  return rm(
-    joinPaths(monorepoDir, 'tsconfig.json'),
     { force: true },
   )
 }
@@ -49,8 +39,8 @@ function cleanPkgsDirectly(monorepoStruct: MonorepoStruct): Promise<void> {
     const { pkgJson } = pkgStruct
 
     if (
-      pkgJson.buildConfig ||
-      pkgJson.tsConfig
+      (pkgJson.buildConfig || pkgJson.tsConfig) &&
+      pkgJson.name !== '@fullcalendar-scripts/standard' // HACK. self
     ) {
       return cleanPkg(pkgStruct.pkgDir)
     }

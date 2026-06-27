@@ -1,16 +1,4 @@
-import { join as joinPaths } from 'path'
-import { MonorepoStruct } from './monorepo-struct.js'
-
-export function getArchiveRootDirs(monorepoStruct: MonorepoStruct): string[] {
-  const { monorepoDir, monorepoPkgJson } = monorepoStruct
-  const archiveSubtrees: string[] | undefined = monorepoPkgJson.monorepoConfig?.archiveSubtrees
-
-  if (archiveSubtrees) {
-    return archiveSubtrees.map((subdir) => joinPaths(monorepoDir, subdir))
-  } else {
-    return [monorepoDir]
-  }
-}
+import { type MonorepoStruct } from './monorepo-struct.ts'
 
 export function refineFilterArgs(args: string[], monorepoStruct: MonorepoStruct): string[] {
   const isAllIndex = args.indexOf('--all')

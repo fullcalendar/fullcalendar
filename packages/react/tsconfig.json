@@ -1,0 +1,19 @@
+{
+  "extends": "@fullcalendar-scripts/standard/config/tsconfig.browser.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "rootDir": "./src",
+    "outDir": "./dist/.tsout"
+  },
+  "include": [
+    "./src/global-types.d.ts",
+    "./src/styles.module.css",
+    "./src/**/*"
+  ],
+  "references": [
+    {
+      "path": "../headless-calendar"
+    }
+  ]
+}

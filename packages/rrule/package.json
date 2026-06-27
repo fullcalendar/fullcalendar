@@ -1,20 +1,24 @@
 {
   "name": "@fullcalendar/rrule",
-  "version": "6.1.20",
+  "version": "7.0.0",
   "title": "FullCalendar RRule Plugin",
   "description": "Recurring events with RRule",
   "keywords": [
     "rrule"
   ],
   "homepage": "https://fullcalendar.io/docs/rrule-plugin",
+  "dependencies": {
+    "@full-ui/headless-calendar": "workspace:7.0.0",
+    "@fullcalendar/core": "workspace:7.0.0"
+  },
   "peerDependencies": {
-    "@fullcalendar/core": "~6.1.20",
-    "rrule": "^2.6.0"
+    "rrule": "^2.6.0",
+    "temporal-polyfill": "^1.0.1"
   },
   "devDependencies": {
-    "@fullcalendar/core": "~6.1.20",
-    "@fullcalendar-scripts/standard": "*",
-    "rrule": "^2.6.0"
+    "@fullcalendar-scripts/standard": "workspace:*",
+    "rrule": "^2.6.0",
+    "temporal-polyfill": "^1.0.1"
   },
   "scripts": {
     "build": "standard-scripts pkg:build",
@@ -22,25 +26,23 @@
     "lint": "eslint ."
   },
   "type": "module",
-  "tsConfig": {
-    "extends": "@fullcalendar-scripts/standard/config/tsconfig.browser.json",
-    "compilerOptions": {
-      "rootDir": "./src",
-      "outDir": "./dist/.tsout"
-    },
-    "include": [
-      "./src/**/*"
-    ]
-  },
   "buildConfig": {
-    "exports": {
-      ".": {
-        "iife": true
+    "globalConfig": {
+      "externalPkgs": [
+        "rrule"
+      ],
+      "externalGlobals": {
+        "rrule": "rrule"
       }
     },
-    "iifeGlobals": {
-      ".": "FullCalendar.RRule",
-      "rrule": "rrule"
+    "exports": {
+      ".": {
+        "format": "module"
+      },
+      "./global": {
+        "format": "global",
+        "primary": true
+      }
     }
   },
   "publishConfig": {
