@@ -53,6 +53,9 @@ export interface PluginInput {
   elementDraggingImpl?: ElementDraggingClass
   optionChangeHandlers?: OptionChangeHandlerMap
   scrollerSyncerClass?: ScrollerSyncerClass
+  // NOTE: the LWC wrapper (standard/packages/lwc-calendar) reads these key
+  // names off global-bundle plugin objects (recursing through `deps`) to
+  // derive its redispatched DOM events. Restructuring silently breaks it.
   listenerRefiners?: GenericListenerRefiners
   optionRefiners?: GenericRefiners
   optionDefaults?: CalendarOptions
