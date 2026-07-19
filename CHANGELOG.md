@@ -1,4 +1,11 @@
 
+## v7.0.1
+
+- Better screen reader experience for users of Resource Timeline view
+- `printMaxRows` setting to control print-rendering cutoff for Resource Timeline view
+- Salesforce LWC component (beta), zip files on each release (#6196)
+
+
 ## v7.0.0
 
 ### Changes since v6
