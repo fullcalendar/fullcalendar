@@ -53,7 +53,8 @@
       },
       "./skeleton.css": {
         "format": "css",
-        "import": "@fullcalendar/preact/skeleton.css"
+        "import": "@fullcalendar/preact/skeleton.css",
+        "primary": true
       },
       "./public-components": {
         "format": "module"

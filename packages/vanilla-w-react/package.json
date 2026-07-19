@@ -46,7 +46,8 @@
       },
       "./skeleton.css": {
         "format": "css",
-        "import": "@fullcalendar/react/skeleton.css"
+        "import": "@fullcalendar/react/skeleton.css",
+        "primary": true
       },
       "./public-components": {
         "format": "module"

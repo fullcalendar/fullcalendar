@@ -60,7 +60,8 @@
       },
       "./skeleton.css": {
         "format": "css",
-        "import": "fullcalendar/skeleton.css"
+        "import": "fullcalendar/skeleton.css",
+        "primary": true
       },
       "./public-api": {
         "format": "module"
