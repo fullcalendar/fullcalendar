@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/lwc",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "private": true,
   "title": "FullCalendar LWC",
   "description": "Salesforce Lightning Web Component wrapper for FullCalendar",
@@ -14,7 +14,7 @@
     "smoke:deploy": "cd dist && sf project deploy start --source-dir force-app --target-org fullcalendar-dev"
   },
   "dependencies": {
-    "fullcalendar": "workspace:7.0.0"
+    "fullcalendar": "workspace:7.0.1"
   },
   "devDependencies": {
     "@lwc/eslint-plugin-lwc": "^3.3.0",
