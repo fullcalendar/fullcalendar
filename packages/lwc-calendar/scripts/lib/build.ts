@@ -49,6 +49,7 @@ type BuildContext = {
   componentDescription: string
 }
 
+// Static-resource directories deploy as zip archives.
 export const resourceMetaXmlText = `<?xml version="1.0" encoding="UTF-8"?>
 <StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
   <cacheControl>Private</cacheControl>
