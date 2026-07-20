@@ -34,7 +34,6 @@
     "@angular/platform-browser-dynamic": "^16.2.0",
     "@angular/router": "^16.2.0",
     "fullcalendar": "workspace:7.0.1",
-    "fullcalendar-scheduler": "workspace:7.0.1",
     "@types/jasmine": "~4.3.0",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",

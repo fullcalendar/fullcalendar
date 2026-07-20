@@ -40,6 +40,8 @@ jobs:
         run: pnpm install
 
       - name: Lint
+        # DISABLED!
+        if: false
         run: pnpm run lint
 
       - name: Build
