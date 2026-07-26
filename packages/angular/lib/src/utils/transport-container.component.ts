@@ -8,11 +8,8 @@ import {
   ElementRef,
   OnChanges,
   AfterViewInit,
-  OnDestroy,
   SimpleChanges
 } from '@angular/core';
-
-const dummyContainer = typeof document !== 'undefined' ? document.createDocumentFragment() : null;
 
 @Component({
   selector: 'transport-container',
@@ -20,88 +17,29 @@ const dummyContainer = typeof document !== 'undefined' ? document.createDocument
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.Default
 })
-export class TransportContainerComponent implements OnChanges, AfterViewInit, OnDestroy {
-  @Input() inPlaceOf!: HTMLElement; // required
-  @Input() reportEl!: (el: HTMLElement | null) => void; // required
-  @Input() tag!: string; // required
-  @Input() attrs?: Record<string, unknown>;
-  @Input() className?: string;
-  @Input() style?: Record<string, unknown>;
+export class TransportContainerComponent implements OnChanges, AfterViewInit {
+  @Input() containerEl!: HTMLElement; // required
   @Input() template!: TemplateRef<any>; // required
   @Input() renderProps?: any;
 
-  @ViewChild('rootEl') rootElRef?: ElementRef;
+  @ViewChild('wrapperEl') wrapperElRef?: ElementRef;
 
   ngAfterViewInit() {
-    const rootEl: Element = this.rootElRef?.nativeElement; // assumed defined
-
-    replaceEl(rootEl, this.inPlaceOf);
-    applyElAttrs(rootEl, undefined, this.attrs);
-
-    // insurance for if Preact recreates and reroots inPlaceOf element
-    this.inPlaceOf.style.display = 'none';
-
-    this.reportEl(rootEl as HTMLElement);
+    this.attachWrapperEl();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    const rootEl: Element | undefined = this.rootElRef?.nativeElement;
-
-    // ngOnChanges is called before ngAfterViewInit (and before DOM initializes)
-    // so make sure rootEl is defined before doing anything
-    if (rootEl) {
-      // If the ContentContainer's tagName changed, it will create a new DOM element in its
-      // original place. Detect this and re-replace.
-      if (this.inPlaceOf.parentNode !== dummyContainer) {
-        replaceEl(rootEl, this.inPlaceOf);
-        applyElAttrs(rootEl, undefined, this.attrs);
-        this.reportEl(rootEl as HTMLElement);
-      } else {
-        const elAttrsChange = changes['attrs'];
-
-        if (elAttrsChange) {
-          applyElAttrs(rootEl, elAttrsChange.previousValue, elAttrsChange.currentValue);
-        }
-      }
+    if (changes['containerEl'] && this.wrapperElRef) {
+      this.attachWrapperEl();
     }
   }
 
-  // invoked BEFORE component removed from DOM
-  ngOnDestroy() {
-    if (
-      // protect against Preact recreating and rerooting inPlaceOf element
-      this.inPlaceOf.parentNode === dummyContainer &&
-      dummyContainer
-    ) {
-      dummyContainer.removeChild(this.inPlaceOf);
+  // Keep Preact's container in place and move only Angular's boxless wrapper into it.
+  private attachWrapperEl() {
+    const wrapperEl: Element | undefined = this.wrapperElRef?.nativeElement;
+
+    if (wrapperEl && wrapperEl.parentNode !== this.containerEl) {
+      this.containerEl.appendChild(wrapperEl);
     }
-
-    this.reportEl(null);
-  }
-}
-
-function replaceEl(subject: Element, inPlaceOf: Element): void {
-  inPlaceOf.parentNode?.insertBefore(subject, inPlaceOf.nextSibling);
-
-  if (dummyContainer) {
-    dummyContainer.appendChild(inPlaceOf);
-  }
-}
-
-function applyElAttrs(
-  el: Element,
-  previousAttrs: Record<string, any> = {},
-  currentAttrs: Record<string, any> = {}
-): void {
-  // these are called "attributes" but they manipulate DOM node *properties*
-
-  for (const attrName in previousAttrs) {
-    if (!(attrName in currentAttrs)) {
-      (el as any)[attrName] = null;
-    }
-  }
-
-  for (const attrName in currentAttrs) {
-    (el as any)[attrName] = currentAttrs[attrName];
   }
 }

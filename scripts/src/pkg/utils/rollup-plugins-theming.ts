@@ -5,14 +5,23 @@ import selectorParser from 'postcss-selector-parser'
 import { type TransformPluginContext, type OutputBundle, type OutputAsset } from 'rollup'
 import { HashGenerator } from './hash-generator.ts'
 
-export default function transformClassNamesPlugin(minify: boolean, isPublicMui: boolean) {
+interface StandaloneTheme {
+  name: string
+  pkgDir: string
+}
+
+export default function transformClassNamesPlugin(
+  minify: boolean,
+  isPublicMui: boolean,
+  standaloneTheme?: StandaloneTheme,
+) {
   return {
     name: 'transform-classnames',
 
     // for JS
     // must be aware of source file
     transform(this: TransformPluginContext, code: string, id: string) {
-      const themeName = getThemeName(id, isPublicMui)
+      const themeName = getThemeName(id, isPublicMui, standaloneTheme)
       if (themeName) {
         // console.log('MATCH', { themeName, id })
         if (id.endsWith('.js')) {
@@ -32,7 +41,7 @@ export default function transformClassNamesPlugin(minify: boolean, isPublicMui: 
       for (const [fileName, chunkOrAsset] of Object.entries(bundle)) {
         if (fileName.endsWith('.css') && chunkOrAsset.type === 'asset') {
           const asset = chunkOrAsset as OutputAsset
-          const themeName = getThemeName(fileName, isPublicMui)
+          const themeName = getThemeName(fileName, isPublicMui, standaloneTheme)
           if (themeName) {
             // console.log('MATCH', { themeName, fileName })
             const cssText =
@@ -50,7 +59,11 @@ export default function transformClassNamesPlugin(minify: boolean, isPublicMui: 
   }
 }
 
-function getThemeName(pathId: string, isPublicMui: boolean): string | undefined {
+function getThemeName(
+  pathId: string,
+  isPublicMui: boolean,
+  standaloneTheme?: StandaloneTheme,
+): string | undefined {
   if (isPublicMui) {
     // JS (in tsout)
     let match = pathId.match(/\/ui\-mui\/dist\/\.tsout\/([A-Za-z]+)\//) // brittle
@@ -68,6 +81,19 @@ function getThemeName(pathId: string, isPublicMui: boolean): string | undefined 
     const match = pathId.match(/themes\/([A-Za-z]+)\//) // brittle
     if (match) {
       return match[1]
+    }
+  }
+
+  if (standaloneTheme) {
+    if (
+      pathId.endsWith('.js') &&
+      pathId.startsWith(`${standaloneTheme.pkgDir}/dist/.tsout/`)
+    ) {
+      return standaloneTheme.name
+    }
+
+    if (pathId === 'theme.css') {
+      return standaloneTheme.name
     }
   }
 }
@@ -124,16 +150,32 @@ function transformJsString(themeName: string, isPublicMui: boolean, minify: bool
 }
 
 function transformPotentialClassName(themeName: string, isPublicMui: boolean, minify: boolean, potentialClassName: string): string {
+  if (themeName === 'bootstrap5' && bootstrap5ClassNames[potentialClassName]) {
+    return potentialClassName
+  }
   if (isClassName(potentialClassName)) {
     return transformClassName(themeName, isPublicMui, minify, potentialClassName)
   }
   return potentialClassName
 }
 
+const bootstrap5ClassNames: { [key: string]: 1 } = {
+  'bg-body': 1,
+  'bg-body-secondary': 1,
+  'bg-body-tertiary': 1,
+  'bg-info': 1,
+  'bg-warning': 1,
+  'border-primary': 1,
+  'text-body': 1,
+  'text-body-secondary': 1,
+  'text-body-tertiary': 1,
+}
+
 const exactClassNames: { [key: string]: 1 } = {
   'root-reset': 1,
   'button-reset': 1,
   'link-reset': 1,
+  'sticky': 1,
 }
 
 const tailwindClassNamePrefixes: { [key: string]: 1 } = {
@@ -184,6 +226,8 @@ const tailwindClassNamePrefixes: { [key: string]: 1 } = {
   left: 1,
   right: 1,
   pointer: 1, // for pointer-events
+  inline: 1,
+  scale: 1,
 }
 
 function isClassName(s: string): boolean {

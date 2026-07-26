@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html data-bs-theme='light'>
+<head>
+<meta charset='utf-8' />
+
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css' />
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css' />
+<link rel='stylesheet' href='../../vanilla/dist/skeleton.css' />
+<link rel='stylesheet' href='../../bootstrap5/dist/theme.css' />
+
+<script src='../../vanilla/dist/all/global.js'></script>
+<script src='../../bootstrap5/dist/global.js'></script>
+<script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var darkModeToggle = document.querySelector('#dark-mode-toggle input');
+    var calendarEl = document.getElementById('calendar');
+
+    darkModeToggle.addEventListener('change', function() {
+      document.documentElement.setAttribute('data-bs-theme', this.checked ? 'dark' : 'light');
+    });
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialDate: '2023-01-12',
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        left: 'prevYear,prev,next,nextYear today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,listWeek,multiMonthYear'
+      },
+      navLinks: true,
+      editable: true,
+      selectable: true,
+      nowIndicator: true,
+      dayMaxEvents: true,
+      events: [
+        { title: 'All Day Event', start: '2023-01-01' },
+        { title: 'Long Event', start: '2023-01-07', end: '2023-01-10' },
+        { groupId: 999, title: 'Repeating Event', start: '2023-01-09T16:00:00' },
+        { groupId: 999, title: 'Repeating Event', start: '2023-01-16T16:00:00' },
+        { title: 'Conference', start: '2023-01-11', end: '2023-01-13' },
+        { title: 'Meeting', start: '2023-01-12T10:30:00', end: '2023-01-12T12:30:00' },
+        { title: 'Lunch', start: '2023-01-12T12:00:00' },
+        { title: 'Meeting', start: '2023-01-12T14:30:00' },
+        { title: 'Happy Hour', start: '2023-01-12T17:30:00' },
+        { title: 'Dinner', start: '2023-01-12T20:00:00' },
+        { title: 'Birthday Party', start: '2023-01-13T07:00:00' },
+        { title: 'Click for Google', url: 'http://google.com/', start: '2023-01-28' }
+      ]
+    });
+
+    calendar.render();
+  });
+
+</script>
+<style>
+
+  body {
+    margin: 40px 10px;
+  }
+
+  #dark-mode-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  #calendar {
+    margin: 0 auto;
+    max-width: 1200px;
+  }
+
+</style>
+</head>
+<body>
+
+  <label id='dark-mode-toggle'>
+    Dark mode
+    <input type='checkbox' />
+  </label>
+
+  <div id='calendar'></div>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>FullCalendar Demo</masterLabel>
+    <description>Example FullCalendar configuration for Lightning App Builder</description>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage,lightning__HomePage">
+            <property
+                name="theme"
+                type="String"
+                label="Theme"
+                default="forma"
+                datasource="{{THEME_DATASOURCE}}"
+            />
+            <property
+                name="locale"
+                type="String"
+                label="Locale"
+                default="en"
+                datasource="{{LOCALE_DATASOURCE}}"
+            />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

@@ -24,12 +24,7 @@ import { deepEqual } from './utils/fast-deep-equal';
   template: `
     <offscreen-fragment>
       <transport-container *ngFor="let customRendering of customRenderings; trackBy:trackCustomRendering"
-        [inPlaceOf]="customRendering.containerEl"
-        [reportEl]="customRendering.reportNewContainerEl"
-        [tag]="customRendering.tag"
-        [attrs]="customRendering.attrs"
-        [className]="customRendering.className"
-        [style]="customRendering.style"
+        [containerEl]="customRendering.containerEl"
         [template]="customRendering.generatorMeta"
         [renderProps]="customRendering.renderProps"
       ></transport-container>
@@ -227,7 +222,6 @@ export class FullCalendarComponent implements AfterViewInit, DoCheck, AfterConte
     return {
       handleCustomRendering: this.handleCustomRendering,
       customRenderingMetaMap: this as unknown as { [templateName: string]: TemplateRef<any> },
-      customRenderingReplaces: true,
     };
   }
 

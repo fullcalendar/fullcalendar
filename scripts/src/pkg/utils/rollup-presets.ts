@@ -272,8 +272,15 @@ function buildModulePlugins(
     copyFilesPlugin({
       srcToDest: pkgBundleStruct.copySrcToDest,
     }),
-    (/^@fullcalendar\/p?react$/.test(pkgJson.name) || isPublicMui) &&
-      transformClassNamesPlugin(!isDev, isPublicMui), // must go after copying
+    (/^@fullcalendar\/p?react$/.test(pkgJson.name) || isPublicMui || pkgBundleStruct.themeName) &&
+      transformClassNamesPlugin(
+        !isDev,
+        isPublicMui,
+        pkgBundleStruct.themeName && {
+          name: pkgBundleStruct.themeName,
+          pkgDir,
+        },
+      ), // must go after copying
     ...buildJsPlugins(
       pkgBundleStruct,
       isDev,
@@ -327,7 +334,14 @@ async function buildGlobalPlugins(
     generatedContentPlugin(
       entryStructsToContentMap(entryStructMap),
     ),
-    transformClassNamesPlugin(!isDev, isPublicMui),
+    transformClassNamesPlugin(
+      !isDev,
+      isPublicMui,
+      pkgBundleStruct.themeName && {
+        name: pkgBundleStruct.themeName,
+        pkgDir,
+      },
+    ),
     ...buildJsPlugins(
       pkgBundleStruct,
       isDev,

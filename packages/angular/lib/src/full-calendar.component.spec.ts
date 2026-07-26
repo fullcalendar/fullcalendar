@@ -291,6 +291,71 @@ describe('HostComponentWithTemplate', () => {
   })
 })
 
+// Regression test for an Angular-rendered event spanning adjacent view ranges.
+// https://github.com/fullcalendar/fullcalendar/issues/8085
+
+@Component({
+  template: `
+    <full-calendar #calendar [options]="calendarOptions">
+      <ng-template #eventContent let-arg>
+        <b>{{ arg.timeText }}</b>
+        <i>{{ arg.event.title }}</i>
+      </ng-template>
+    </full-calendar>
+  `
+})
+class DayGridWeekCrossRangeEventHostComponent {
+  calendarOptions: CalendarOptions = {
+    plugins: [classicThemePlugin, dayGridPlugin],
+    initialView: 'dayGridWeek',
+    initialDate: '2024-06-10',
+    firstDay: 1,
+    events: [
+      {
+        id: 'before',
+        title: 'Starts before visible range',
+        start: '2024-06-09T20:00:00',
+        end: '2024-06-10T05:00:00',
+      },
+    ],
+    eventClass: 'cross-range-event',
+  };
+
+  @ViewChild('calendar') calendarComponent?: FullCalendarComponent;
+}
+
+describe('with dayGridWeek event spanning adjacent view ranges', () => {
+  let component: DayGridWeekCrossRangeEventHostComponent;
+  let fixture: ComponentFixture<DayGridWeekCrossRangeEventHostComponent>;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [FullCalendarModule],
+      declarations: [DayGridWeekCrossRangeEventHostComponent]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(DayGridWeekCrossRangeEventHostComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('custom-renders after navigating to the previous range and back', () => {
+    const calendar = component.calendarComponent!.getApi();
+
+    expect(fixture.nativeElement.querySelector('.cross-range-event b')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.cross-range-event i').textContent)
+      .toBe('Starts before visible range');
+
+    calendar.prev();
+    expect(fixture.nativeElement.querySelector('.cross-range-event i')).toBeTruthy();
+
+    calendar.next();
+    expect(fixture.nativeElement.querySelector('.cross-range-event b')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.cross-range-event i').textContent)
+      .toBe('Starts before visible range');
+  });
+})
+
 // some tests need a wrapper component with DEEP COMPARISON
 
 @Component({
@@ -406,7 +471,7 @@ class CrapComponent {
   @ViewChild('calendar') calendarComponent?: FullCalendarComponent;
 
   calendarOptions: CalendarOptions = {
-    plugins: [listPlugin],
+    plugins: [classicThemePlugin, listPlugin],
     headerToolbar: this.defaultHeaderToolbar,
     initialView: 'listWeek',
     events: [buildEvent()] as any,
@@ -448,7 +513,7 @@ describe('with list-view, customContent, and state mutation in datesSet', () => 
 })
 class MonthComponent {
   calendarOptions: CalendarOptions = {
-    plugins: [dayGridPlugin],
+    plugins: [classicThemePlugin, dayGridPlugin],
     initialView: 'dayGridMonth',
     dayCellTopClass: 'my-day-cell-top',
     dayCellTopContent(info) {
@@ -495,7 +560,7 @@ describe('dayGridMonth view dot-event elements, custom content, and eventDidMoun
   })
   class MonthComponent2 {
     calendarOptions: CalendarOptions = {
-      plugins: [dayGridPlugin],
+      plugins: [classicThemePlugin, dayGridPlugin],
       initialDate: '2023-03-20',
       events: [
         { start: '2023-03-20T00:12:00', allDay: false }
@@ -552,7 +617,7 @@ describe(`during foreground custom event rendering`, async () => {
   })
   class MonthComponent3 {
     calendarOptions: CalendarOptions = {
-      plugins: [dayGridPlugin],
+      plugins: [classicThemePlugin, dayGridPlugin],
       initialDate: '2023-03-20',
       events: [
         {
@@ -604,7 +669,7 @@ describe(`during background custom event rendering`, async () => {
   })
   class MonthComponent3 {
     calendarOptions: CalendarOptions = {
-      plugins: [dayGridPlugin],
+      plugins: [classicThemePlugin, dayGridPlugin],
       initialDate: '2023-03-20',
       events: [
         {

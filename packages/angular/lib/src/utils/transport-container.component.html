@@ -1,32 +1,6 @@
-<ng-template [ngIf]="tag == 'div'">
-  <div #rootEl [ngClass]="className || ''" [ngStyle]="style || null">
-    <ng-container
-      [ngTemplateOutlet]="template"
-      [ngTemplateOutletContext]="{ $implicit: renderProps }"
-    ></ng-container>
-  </div>
-</ng-template>
-<ng-template [ngIf]="tag == 'span'">
-  <span #rootEl [ngClass]="className || ''" [ngStyle]="style || null">
-    <ng-container
-      [ngTemplateOutlet]="template"
-      [ngTemplateOutletContext]="{ $implicit: renderProps }"
-    ></ng-container>
-  </span>
-</ng-template>
-<ng-template [ngIf]="tag == 'a'">
-  <a #rootEl [ngClass]="className || ''" [ngStyle]="style || null">
-    <ng-container
-      [ngTemplateOutlet]="template"
-      [ngTemplateOutletContext]="{ $implicit: renderProps }"
-    ></ng-container>
-  </a>
-</ng-template>
-<ng-template [ngIf]="tag == 'button'">
-  <button #rootEl [ngClass]="className || ''" [ngStyle]="style || null">
-    <ng-container
-      [ngTemplateOutlet]="template"
-      [ngTemplateOutletContext]="{ $implicit: renderProps }"
-    ></ng-container>
-  </button>
-</ng-template>
+<div #wrapperEl style="display: contents">
+  <ng-container
+    [ngTemplateOutlet]="template"
+    [ngTemplateOutletContext]="{ $implicit: renderProps }"
+  ></ng-container>
+</div>

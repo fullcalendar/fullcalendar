@@ -1,14 +1,11 @@
 import { Store } from './Store'
-import { ElProps } from './ContentInjector'
 
 export type CustomRenderingHandler<RenderProps> = (customRender: CustomRendering<RenderProps>) => void
 
-export interface CustomRendering<RenderProps> extends ElProps {
+export interface CustomRendering<RenderProps> {
   id: string // TODO: need this? Map can be responsible for storing key?
   isActive: boolean
   containerEl: HTMLElement
-  reportNewContainerEl: (el: HTMLElement | null) => void
-  generatorName: string
   generatorMeta: any // could be as simple as boolean
   renderProps: RenderProps
 }

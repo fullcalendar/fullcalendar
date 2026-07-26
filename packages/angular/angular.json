@@ -31,6 +31,11 @@
             "polyfills": [
               "zone.js",
               "zone.js/testing"
+            ],
+            "styles": [
+              "./dist/lib/skeleton.css",
+              "./dist/lib/themes/classic/theme.css",
+              "./dist/lib/themes/classic/palette.css"
             ]
           }
         }

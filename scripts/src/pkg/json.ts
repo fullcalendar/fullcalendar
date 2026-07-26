@@ -40,19 +40,24 @@ export async function writeDistPkgJson(
   const exportsMap: any = {
     './package.json': './package.json',
   }
+  let primaryStylePath: string | undefined
 
   let cssExtract = buildConfig.moduleConfig?.cssExtract
   if (cssExtract) {
-    exportsMap[`./${cssExtract}`] = `./${cssExtract}`
+    const cssPath = `./${cssExtract}`
+    exportsMap[cssPath] = cssPath
+    primaryStylePath = cssPath
   }
 
   cssExtract = buildConfig.globalConfig?.cssExtract
   if (cssExtract) {
-    exportsMap[`./${cssExtract}`] = `./${cssExtract}`
+    const cssPath = `./${cssExtract}`
+    exportsMap[cssPath] = cssPath
+    primaryStylePath ||= cssPath
   }
 
   const sideEffects: string[] = []
-  let firstCdnPath: string | undefined
+  let primaryGlobalPath: string | undefined
   let anyCss = false
 
   for (const entryName in entryConfigMap) {
@@ -87,9 +92,18 @@ export async function writeDistPkgJson(
         sideEffects.push(esmPath)
       }
     } else if (entryConfig.format === 'global') {
-      sideEffects.push(entryDistSubpath + iifeExtension)
+      const globalPath = entryDistSubpath + iifeExtension
+      sideEffects.push(globalPath)
+
+      if (entryConfig.primary) {
+        primaryGlobalPath = globalPath
+      }
     } else if (entryConfig.format === 'css') {
       exportsMap[entryName] = entryName
+
+      if (entryConfig.primary) {
+        primaryStylePath = entryName
+      }
       anyCss = true
     } else if (entryConfig.format === 'css-as-js') {
       exportsMap[entryName] = entryDistSubpath + iifeExtension
@@ -111,11 +125,12 @@ export async function writeDistPkgJson(
         : (basePkgJson.keywords || []).concat(pkgJson.keywords || []),
     types: `${typesRoot}/index.d.ts`,
     main: './index' + esmExtension,
+    ...(primaryStylePath ? { style: primaryStylePath } : {}),
     ...(
-      firstCdnPath
+      primaryGlobalPath
         ? cdnFields.reduce(
           (props, cdnField) => Object.assign(props, {
-            [cdnField]: firstCdnPath,
+            [cdnField]: primaryGlobalPath,
           }),
           {},
         )

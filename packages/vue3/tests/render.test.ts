@@ -2,9 +2,9 @@ import { test, expect } from 'vitest'
 import { nextTick, ref, reactive, computed, h, onMounted, onBeforeUnmount, onUnmounted, defineAsyncComponent } from 'vue'
 import { createI18n } from 'vue-i18n'
 import { mount } from '@vue/test-utils'
-import FullCalendar, { type CalendarOptions } from '../dist'
-import classicThemePlugin from '../dist/themes/classic'
-import dayGridPlugin from '../dist/daygrid'
+import FullCalendar, { type CalendarOptions } from '../dist/index.js'
+import classicThemePlugin from '../dist/themes/classic.js'
+import dayGridPlugin from '../dist/daygrid.js'
 
 const INITIAL_DATE = '2019-05-15'
 const DEFAULT_OPTIONS = {
@@ -148,15 +148,15 @@ test('should expose an API', async () => {
 
 const COMPONENT_FOR_API = {
   setup(_props, { expose }) {
-    const fullCalendar = ref<any>(null)
+    const fullCalendar = ref<InstanceType<typeof FullCalendar> | null>(null)
 
     function gotoDate(newDate: Date) {
-      let calendarApi = fullCalendar.value.getApi()
+      let calendarApi = fullCalendar.value!.getApi()
       calendarApi.gotoDate(newDate)
     }
 
     function getDate() {
-      let calendarApi = fullCalendar.value.getApi()
+      let calendarApi = fullCalendar.value!.getApi()
       return calendarApi.getDate()
     }
 

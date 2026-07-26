@@ -18,6 +18,7 @@ export interface PkgBundleStruct {
   moduleConfig?: PkgModuleConfig
   globalConfig?: PkgGlobalConfig
   importRemaps?: Record<string, string>
+  themeName?: string
 }
 
 export interface CopyOperation {
@@ -47,7 +48,7 @@ export interface EntryConfig {
   import?: string
   generator?: string
   sideEffects?: boolean
-  primary?: boolean // for iifeSplit
+  primary?: boolean // primary entry for its format; global entries also drive iifeSplit
   secondaryProp?: string // for iifeSplit
 }
 
@@ -63,6 +64,7 @@ export interface PkgJsonBuildConfig {
   moduleConfig?: PkgModuleConfig
   globalConfig?: PkgGlobalConfig
   importRemaps?: Record<string, string>
+  themeName?: string
   disableWatch?: boolean
 }
 
@@ -164,6 +166,7 @@ export async function buildPkgBundleStruct(
     moduleConfig: buildConfig.moduleConfig,
     globalConfig: buildConfig.globalConfig,
     importRemaps: buildConfig.importRemaps,
+    themeName: buildConfig.themeName,
   }
 }
 

@@ -1,4 +1,18 @@
 
+## v7.0.2
+
+- FEATURE: Restored Bootstrap 5 support (originally omitted from v7) (#8040)
+- FIX: Vue 3 types for template ref for `getApi` (#8086)
+- FIX: Angular DOM-insertion JS error with `#eventContent` (#8085)
+
+
+## v7.0.1
+
+- Better screen reader experience for users of Resource Timeline view
+- `printMaxRows` setting to control print-rendering cutoff for Resource Timeline view
+- Salesforce LWC component (beta), zip files on each release (#6196)
+
+
 ## v7.0.0
 
 ### Changes since v6

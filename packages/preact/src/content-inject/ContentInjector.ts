@@ -121,10 +121,9 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
         handleCustomRendering({
           id: this.id,
           isActive,
-          containerEl: this.el,
-          reportNewContainerEl: this.updateElRef, // front-end framework tells us about new container els
+          containerEl: this.el!,
           generatorMeta,
-          ...props,
+          renderProps: props.renderProps,
         })
       }
     }
@@ -133,15 +132,6 @@ export class ContentInjector<RenderProps> extends BaseComponent<ContentInjectorP
   private handleEl = (el: HTMLElement | null) => {
     this.el = el
 
-    const { options } = this.context
-    const { generatorName } = this.props
-
-    if (!options.customRenderingReplaces || !hasCustomRenderingHandler(generatorName, options)) {
-      this.updateElRef(el)
-    }
-  }
-
-  private updateElRef = (el: HTMLElement | null) => {
     if (this.props.elRef) {
       setRef(this.props.elRef, el)
     }

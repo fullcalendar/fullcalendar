@@ -1,7 +1,14 @@
 import { PropType, defineComponent, h, Fragment, Teleport, VNode, toRaw, ref, watch, onMounted, onBeforeUpdate, onBeforeUnmount, useSlots, useAttrs } from 'vue'
+import type { DefineComponent } from 'vue'
 import { Calendar, CalendarOptions } from 'fullcalendar'
 import { CustomRenderingStore, CustomRendering } from 'fullcalendar/protected-api'
 import { OPTION_IS_COMPLEX } from './options'
+
+// This would be easier with `defineExpose()` in a Vue SFC, but this plain
+// TypeScript component must declare its public bindings explicitly.
+interface FullCalendarPublicBindings {
+  getApi(): Calendar
+}
 
 const FullCalendar = defineComponent({
   inheritAttrs: false,
@@ -118,7 +125,10 @@ const FullCalendar = defineComponent({
       ])
     }
   },
-})
+}) as DefineComponent<
+  { options?: CalendarOptions },
+  FullCalendarPublicBindings
+>
 
 export default FullCalendar
 
