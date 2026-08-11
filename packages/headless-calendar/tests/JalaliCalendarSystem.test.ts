@@ -164,6 +164,31 @@ describe('jalali calendar system', () => {
     )
   })
 
+  it('starts the week on the locale day, whatever the jalali day is', () => {
+    // the first of aban 1405 is a friday, so its week began the saturday before
+    expect(env.startOfWeek(utcDay('2026-10-23'))).toEqual(utcDay('2026-10-17'))
+
+    // nowruz 1405 is itself a saturday
+    expect(env.startOfWeek(utcDay('2026-03-21'))).toEqual(utcDay('2026-03-21'))
+
+    // a week that reaches back over the start of the jalali year
+    expect(env.startOfWeek(utcDay('2026-03-24'))).toEqual(utcDay('2026-03-21'))
+    expect(env.startOfWeek(utcDay('2026-03-20'))).toEqual(utcDay('2026-03-14'))
+  })
+
+  it('reaches back to the week that holds the first of the month', () => {
+    // this is how a month grid finds its first row. every month has to fit inside one
+    // that starts on the locale's first weekday, or the grid would cut the month short
+    for (const isoDay of MONTH_STARTS_1405) {
+      const monthStart = utcDay(isoDay)
+      const gridStart = env.startOfWeek(monthStart)
+
+      expect(gridStart.getUTCDay()).toBe(faLocale.week.dow)
+      expect(gridStart.valueOf()).toBeLessThanOrEqual(monthStart.valueOf())
+      expect(Math.round(diffDays(gridStart, monthStart))).toBeLessThan(7)
+    }
+  })
+
   it('formats in the calendar system instead of the locale default', () => {
     const formatter = new NativeDateFormatter({
       year: 'numeric',
