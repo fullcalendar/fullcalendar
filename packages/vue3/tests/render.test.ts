@@ -129,11 +129,7 @@ test('handles multiple prop changes, including event reset', async () => {
   expect(wrapper.findAll('.my-event').length).toBe(2)
   expect(wrapper.find('.my-weekend').exists()).toBe(false)
   expect(viewMountCnt).toBe(0)
-
-  /*
-  NOTE: Vue's options-prop update currently causes two content renders for each event.
-  */
-  expect(eventRenderCnt).toBe(4)
+  expect(eventRenderCnt).toBe(2)
 })
 
 test('should expose an API', async () => {
