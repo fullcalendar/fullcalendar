@@ -1,4 +1,4 @@
-import { strictModeFactor, vdomExtraRenders } from 'fullcalendar/protected-api'
+import { strictModeFactor } from 'fullcalendar/protected-api'
 import classicThemePlugin from 'fullcalendar/themes/classic' // need both
 import themeForTestsPlugin from '../lib/theme-for-tests' // "
 import dayGridPlugin from 'fullcalendar/daygrid'
@@ -589,8 +589,8 @@ describe('rrule plugin', () => {
     events = calendar.getEvents()
     expect(events[0].allDay).toBe(false)
     expect(events[0].start).toEqualDate('2023-02-10T17:00:00Z')
-    expect(timeTexts.length).toBe(2 * strictModeFactor + vdomExtraRenders)
-    expect(timeTexts[1 * strictModeFactor + vdomExtraRenders]).toBe('11a')
+    expect(timeTexts.length).toBe(2 * strictModeFactor)
+    expect(timeTexts[1 * strictModeFactor]).toBe('11a')
 
     // ensure bug doesn't occur when refetching (this happened)
     calendar.next()
@@ -600,8 +600,8 @@ describe('rrule plugin', () => {
     events = calendar.getEvents()
     expect(events[0].allDay).toBe(false)
     expect(events[0].start).toEqualDate('2023-02-10T17:00:00Z')
-    expect(timeTexts.length).toBe(3 * strictModeFactor + vdomExtraRenders)
-    expect(timeTexts[1 * strictModeFactor + vdomExtraRenders]).toBe('11a')
+    expect(timeTexts.length).toBe(3 * strictModeFactor)
+    expect(timeTexts[1 * strictModeFactor]).toBe('11a')
   })
 
   // utils

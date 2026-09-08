@@ -1,15 +1,9 @@
 import { DateTime as LuxonDateTime } from 'luxon'
 
-export function arrayToLuxon(arr: number[], timeZone: string, locale?: string): LuxonDateTime {
-  return LuxonDateTime.fromObject({
-    year: arr[0],
-    month: arr[1] + 1, // convert 0-based to 1-based
-    day: arr[2],
-    hour: arr[3],
-    minute: arr[4],
-    second: arr[5],
-    millisecond: arr[6],
-  }, {
+// constructing from the exact instant (rather than wall-clock fields) keeps Luxon from
+// independently choosing an occurrence for wall-clocks repeated during a DST fold
+export function instantToLuxon(instantMs: number, timeZone: string, locale?: string): LuxonDateTime {
+  return LuxonDateTime.fromMillis(instantMs, {
     locale,
     zone: timeZone,
   })

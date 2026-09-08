@@ -2,7 +2,7 @@ import { Duration, DateMarker, DateRange, addDurations, multiplyDuration, wholeD
 import { joinClassNames } from '../../util/html'
 import { DateComponent, EventSegUiInteractionState } from '../../component/DateComponent'
 import { DateProfile } from '../../DateProfileGenerator'
-import { DayTableCell } from '../../common/DayTableModel'
+import { DayTableCell } from '../../daygrid/DayTableModel'
 import { EventRangeProps } from '../../component-util/event-rendering'
 import { Hit } from '../../interactions/hit'
 import { isPropsEqualShallow } from '../../util/object'
@@ -15,6 +15,7 @@ import { TimeGridCol } from './TimeGridCol'
 export interface TimeGridColsProps {
   dateProfile: DateProfile
   nowDate: DateMarker
+  nowMs?: number
   todayRange: DateRange
   cells: DayTableCell[]
   slatCnt: number
@@ -61,6 +62,7 @@ export class TimeGridCols extends DateComponent<TimeGridColsProps> { // TODO: re
             key={cell.key}
             dateProfile={props.dateProfile}
             nowDate={props.nowDate}
+            nowMs={props.nowMs}
             todayRange={props.todayRange}
             date={cell.date}
             isMajor={cell.isMajor}

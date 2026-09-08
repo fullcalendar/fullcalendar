@@ -23,7 +23,9 @@ export function formatDate(dateInput: DateInput, options: FormatDateOptions = {}
     return ''
   }
 
-  return joinDateTimeFormatParts(dateEnv.formatToParts(dateMeta.marker, formatter))
+  return joinDateTimeFormatParts(dateEnv.formatToParts(dateMeta.marker, formatter, {
+    instantMs: dateMeta.instantMs,
+  }))
 }
 
 export function formatRange(
@@ -43,6 +45,8 @@ export function formatRange(
   return joinDateTimeFormatParts(
     dateEnv.formatRangeToParts(startMeta.marker, endMeta.marker, formatter, {
       isEndExclusive: options.isEndExclusive,
+      startInstantMs: startMeta.instantMs,
+      endInstantMs: endMeta.instantMs,
     }),
   )
 }

@@ -131,7 +131,7 @@ test('handles multiple prop changes, including event reset', async () => {
   expect(viewMountCnt).toBe(0)
 
   /*
-  NOTE: we wish this was only 2 rerenders, but likely 4 because of same bug addressed by vdomExtraRenders
+  NOTE: Vue's options-prop update currently causes two content renders for each event.
   */
   expect(eventRenderCnt).toBe(4)
 })

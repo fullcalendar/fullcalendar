@@ -1,10 +1,11 @@
 import { joinClassNames } from '../../util/html'
 import { EventSegUiInteractionState, DateComponent } from '../../component/DateComponent'
 import { memoize } from '../../util/memoize'
+import { watchHeight } from '../../component-util/resize-observer'
 import { addDays, DateRange } from '@full-ui/headless-calendar'
 import { DateProfile } from '../../DateProfileGenerator'
 import { Hit } from '../../interactions/hit'
-import { DayTableCell, DayGridRange } from '../../common/DayTableModel'
+import { DayTableCell, DayGridRange } from '../DayTableModel'
 import { RefMap } from '../../util/RefMap'
 import { getIsHeightAuto } from '../../scrollgrid/util'
 import { EventRangeProps } from '../../component-util/event-rendering'
@@ -13,12 +14,15 @@ import { splitSegsByRow, splitInteractionByRow } from '../TableSeg'
 import { DayGridRow } from './DayGridRow'
 import { computeColFromPosition, computeRowFromPosition, getCellEl, getRowEl } from './util'
 import classNames from '../../styles.module.css'
+import { MoreLinkTrigger } from '../../common/MoreLinkContainer'
+import { resolveDayGridPlacementMode } from '../seg-placement-adapter'
 
 export interface DayGridRowsProps {
   dateProfile: DateProfile
   todayRange: DateRange
   cellRows: DayTableCell[][]
   forPrint: boolean
+  tableMode?: boolean // real table markup, unlike print-rendered TimeGrid all-day rows
   isHitComboAllowed?: (hit0: Hit, hit1: Hit) => boolean
   className?: string
 
@@ -36,7 +40,7 @@ export interface DayGridRowsProps {
   eventSelection: string
 
   // dimensions
-  colWidth?: number
+  colWidth?: number // enforced only by fixed/pannable layouts
   width?: number | string // a CSS value
   visibleWidth?: number // for row min-height
   cellIsNarrow: boolean
@@ -46,9 +50,16 @@ export interface DayGridRowsProps {
   rowHeightRefMap?: RefMap<string, number>
 }
 
-export class DayGridRows extends DateComponent<DayGridRowsProps> {
+interface DayGridRowsState {
+  moreLinkHeight?: number
+}
+
+export class DayGridRows extends DateComponent<DayGridRowsProps, DayGridRowsState> {
+  state: DayGridRowsState = {}
+
   // ref
-  private rootEl: HTMLDivElement
+  private rootEl: HTMLElement
+  private disconnectMoreLinkHeight?: () => void
 
   // memo
   private splitBusinessHourSegs = memoize(splitSegsByRow)
@@ -59,6 +70,7 @@ export class DayGridRows extends DateComponent<DayGridRowsProps> {
   private splitEventResize = memoize(splitInteractionByRow)
 
   // internal
+  private _isUnmounting: boolean
   private rowHeightRefMap = new RefMap<string, number>((height, key) => {
     // HACKy way of syncing RefMap results with prop
     const { rowHeightRefMap } = this.props
@@ -68,9 +80,9 @@ export class DayGridRows extends DateComponent<DayGridRowsProps> {
   })
 
   render() {
-    let { props, context, rowHeightRefMap } = this
+    let { props, state, context, rowHeightRefMap } = this
     let { options } = context
-    let { cellRows } = props
+    let { cellRows, tableMode } = props
     let rowCount = cellRows.length
 
     // Will cause rows to not be reused across months
@@ -93,62 +105,96 @@ export class DayGridRows extends DateComponent<DayGridRowsProps> {
       options,
     )
 
+    const needsMoreLinkProbe = !props.forPrint && resolveDayGridPlacementMode(
+      props.dayMaxEvents,
+      props.dayMaxEventRows,
+    ) === 'auto'
+    const RowsTag = tableMode ? 'tbody' : 'div'
+
     return (
-      <div
-        role='rowgroup'
-        className={joinClassNames(
-          props.className,
-          // HACK for Safari. Can't do break-inside:avoid with flexbox items, likely b/c it's not standard:
-          // https://stackoverflow.com/a/60256345
-          !props.forPrint && classNames.flexCol,
-        )}
-        style={{ width: props.width }}
-        ref={this.handleRootEl}
-      >
-        {cellRows.map((cells, row) => (
-          <DayGridRow
-            key={firstCellKey + ':' + cells[0].key}
-            role='row'
-            dateProfile={props.dateProfile}
-            todayRange={props.todayRange}
-            cells={cells}
-            cellIsNarrow={props.cellIsNarrow}
-            cellIsMicro={props.cellIsMicro}
-            showDayNumbers={rowCount > 1}
-            showWeekNumbers={rowCount > 1 && options.weekNumbers}
-            forPrint={props.forPrint}
+      <>
+        <RowsTag
+          role="rowgroup"
+          className={joinClassNames(
+            props.className,
+            // HACK for Safari. Can't do break-inside:avoid with flexbox items, likely b/c it's not standard:
+            // https://stackoverflow.com/a/60256345
+            !tableMode && !props.forPrint && classNames.flexCol,
+          )}
+          style={tableMode ? undefined : { width: props.width }}
+          ref={this.handleRootEl}
+        >
+          {cellRows.map((cells, row) => (
+            <DayGridRow
+              key={firstCellKey + ':' + cells[0].key}
+              role="row"
+              dateProfile={props.dateProfile}
+              todayRange={props.todayRange}
+              cells={cells}
+              cellIsNarrow={props.cellIsNarrow}
+              cellIsMicro={props.cellIsMicro}
+              showDayNumbers={rowCount > 1}
+              showWeekNumbers={rowCount > 1 && options.weekNumbers}
+              forPrint={props.forPrint}
+              tableMode={tableMode}
+              borderBottom={row < rowCount - 1}
 
-            // if not auto-height, distribute height of container somewhat evently to rows
-            className={joinClassNames(
-              rowHeightsRedistribute && classNames.grow,
-              rowCount > 1 && classNames.breakInsideAvoid, // don't avoid breaks for single tall row
-              row < rowCount - 1 ? classNames.borderOnlyB : classNames.borderNone,
-            )}
+              // if not auto-height, distribute height of container somewhat evently to rows
+              className={rowHeightsRedistribute ? classNames.grow : undefined}
 
-            // content
-            fgEventSegs={fgEventSegsByRow[row]}
-            bgEventSegs={bgEventSegsByRow[row]}
-            businessHourSegs={businessHourSegsByRow[row]}
-            dateSelectionSegs={dateSelectionSegsByRow[row]}
-            eventSelection={props.eventSelection}
-            eventDrag={eventDragByRow[row]}
-            eventResize={eventResizeByRow[row]}
-            dayMaxEvents={props.dayMaxEvents}
-            dayMaxEventRows={props.dayMaxEventRows}
+              // content
+              fgEventSegs={fgEventSegsByRow[row]}
+              bgEventSegs={bgEventSegsByRow[row]}
+              businessHourSegs={businessHourSegsByRow[row]}
+              dateSelectionSegs={dateSelectionSegsByRow[row]}
+              eventSelection={props.eventSelection}
+              eventDrag={eventDragByRow[row]}
+              eventResize={eventResizeByRow[row]}
+              dayMaxEvents={props.dayMaxEvents}
+              dayMaxEventRows={props.dayMaxEventRows}
 
-            // dimensions
-            colWidth={props.colWidth}
-            basis={rowBasis}
+              // dimensions
+              colWidth={props.colWidth}
+              basis={rowBasis}
+              moreLinkHeight={state.moreLinkHeight}
 
-            // refs
-            heightRef={rowHeightRefMap.createRef(cells[0].key)}
+              // refs
+              heightRef={rowHeightRefMap.createRef(cells[0].key)}
+            />
+          ))}
+        </RowsTag>
+        {/* Intrinsic width: row more-link height must not depend on text wrapping. */}
+        {needsMoreLinkProbe && (
+          <MoreLinkTrigger
+            num={1}
+            display='row'
+            isNarrow={props.cellIsNarrow}
+            isMicro={props.cellIsMicro}
+            elRef={this.handleMoreLinkEl}
+            className={classNames.offscreen}
+            attrs={{
+              'aria-hidden': true,
+              inert: '',
+            }}
           />
-        ))}
-      </div>
+        )}
+      </>
     )
   }
 
-  handleRootEl = (rootEl: HTMLDivElement) => {
+  private handleMoreLinkEl = (el: HTMLElement | null) => {
+    this.disconnectMoreLinkHeight?.()
+    this.disconnectMoreLinkHeight = undefined
+
+    if (el) {
+      this.disconnectMoreLinkHeight = watchHeight(el, (height) => {
+        if (this._isUnmounting) return
+        this.setState({ moreLinkHeight: height })
+      })
+    }
+  }
+
+  handleRootEl = (rootEl: HTMLElement) => {
     this.rootEl = rootEl
 
     if (rootEl) {
@@ -159,6 +205,15 @@ export class DayGridRows extends DateComponent<DayGridRowsProps> {
     } else {
       this.context.unregisterInteractiveComponent(this)
     }
+  }
+
+  componentDidMount(): void {
+    this._isUnmounting = false
+  }
+
+  componentWillUnmount(): void {
+    this._isUnmounting = true
+    this.disconnectMoreLinkHeight?.()
   }
 
   // Hit System
@@ -173,7 +228,7 @@ export class DayGridRows extends DateComponent<DayGridRowsProps> {
       elWidth,
       props.colWidth,
       colCount,
-      isRtl
+      isRtl,
     )
     const { row, top, bottom } = computeRowFromPosition(
       positionTop,

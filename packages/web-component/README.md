@@ -1,74 +1,65 @@
 
 # FullCalendar Web Component
 
-This package provides a FullCalendar [Web Component](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) (aka "Custom Element").
+FullCalendar [Web Component](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) package for rendering a calendar
 
-
-## Installing via NPM
-
-Install the core package, the web-component package, and any plugins you plan to use:
+## Installation
 
 ```sh
-npm install --save @fullcalendar/web-component
+npm install @fullcalendar/web-component temporal-polyfill
 ```
 
-Then, either register the element globally under its default tag name of `<full-calendar />`:
+## Usage
+
+Render a `FullCalendar` component with [options](https://fullcalendar.io/docs#toc), including one or more plugins:
 
 ```js
+// globally installs the <full-calendar> tag
 import '@fullcalendar/web-component/global'
-```
 
-Or, customize the tag name:
+// plugins
+import themePlugin from '@fullcalendar/web-component/themes/monarch' // YOUR THEME
+import dayGridPlugin from '@fullcalendar/web-component/daygrid'
 
-```js
-import { FullCalendarElement } from '@fullcalendar/web-component'
+// stylesheets
+import '@fullcalendar/web-component/skeleton.styles' // ALWAYS NEED SKELETON
+import '@fullcalendar/web-component/themes/monarch/theme.styles' // YOUR THEME
+import '@fullcalendar/web-component/themes/monarch/palettes/purple.css' // YOUR THEME'S PALETTE
 
-customElements.define('some-calendar-tag', FullCalendarElement);
-```
-
-## Installing via CDN
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset='utf-8' />
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/web-component/global.min.js'></script>
-</head>
-<body>
-
-  <full-calendar
-    shadow
-    options='{
-      "headerToolbar": {
-        "left": "prev,next today",
-        "center": "title",
-        "right": "dayGridMonth,dayGridWeek,dayGridDay"
-      }
-    }'
-  />
-
-</body>
-</html>
-```
-
-
-## Options
-
-The full-calendar element accepts a single `options` attribute. It must be a valid JSON string.
-
-The `shadow` attribute is necessary for rendering the calendar within its own shadow DOM (added in v6.1.0). This is recommended.
-
-It is possible to set an `options` *property* on the DOM element. This property is a real JavaScript object, not merely a JSON string.
-
-```js
+// initialize with options and plugins
 const fullCalendarElement = document.querySelector('full-calendar')
-
 fullCalendarElement.options = {
-  headerToolbar: {
-    left: 'prev,next today',
-    center: 'title',
-    right: 'dayGridMonth,dayGridWeek,dayGridDay'
-  }
+  plugins: [themePlugin, dayGridPlugin],
+  initialView: 'dayGridMonth',
+  weekends: false,
+  events: [
+    { title: 'Meeting', start: new Date() }
+  ]
 }
 ```
+
+Please note, `skeleton.styles` and `theme.styles` are JS, and yes they do inject CSS. This is required for the web component’s shadow DOM.
+
+Then, in your HTML:
+
+```html
+<full-calendar></full-calendar>
+```
+
+## Plugins
+
+| Import                                    | Provides                                     |
+| ----------------------------------------- | -------------------------------------------- |
+| `@fullcalendar/web-component/daygrid`     | `dayGridDay`/`Week`/`Month`/`Year` views     |
+| `@fullcalendar/web-component/timegrid`    | `timeGridDay`/`Week` views                   |
+| `@fullcalendar/web-component/list`        | `listDay`/`Week`/`Month`/`Year` views        |
+| `@fullcalendar/web-component/multimonth`  | `multiMonthYear` view                        |
+| `@fullcalendar/web-component/interaction` | dragging, resizing, and date/event selection |
+
+Themes are plugins too. `@fullcalendar/web-component/themes/classic`, `/monarch`, `/breezy`, `/forma`, and `/pulse` are available, each paired with a `theme.styles` module and a palette stylesheet.
+
+## Links
+
+- [Web Component Documentation](https://fullcalendar.io/docs/web-component)
+- [Web Component Scheduler Documentation](https://fullcalendar.io/docs/web-component#fullcalendar-premium)
+- [Options Reference](https://fullcalendar.io/docs#toc)

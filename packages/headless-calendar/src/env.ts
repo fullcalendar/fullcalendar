@@ -15,6 +15,7 @@ import {
   CmdDateFormatterFunc,
   DateTimeFormatPartWithWeek,
   DateTimeRangeFormatPartWithWeek,
+  ZonedInstant,
 } from './formatting-interface'
 import { buildIsoString } from './formatting-utils'
 import { parse } from './parsing'
@@ -38,6 +39,10 @@ export type DateInput = Date | string | number | number[]
 export interface DateMarkerMeta {
   marker: DateMarker
   isTimeUnspecified: boolean
+  // the exact epoch instant, present only when the input unambiguously expressed one
+  // (ISO string with offset, Date object, epoch ms). Civil strings/arrays leave it undefined.
+  // when present, always agrees with marker: timestampToMarker(instantMs) === marker
+  instantMs?: number
 }
 
 export class DateEnv {
@@ -97,14 +102,17 @@ export class DateEnv {
     }
 
     let marker = null
+    let instantMs: number | undefined
 
     if (typeof input === 'number') {
       marker = this.timestampToMarker(input)
+      instantMs = input
     } else if (input instanceof Date) {
       input = input.valueOf()
 
       if (!isNaN(input)) {
         marker = this.timestampToMarker(input)
+        instantMs = input
       }
     } else if (Array.isArray(input)) {
       marker = arrayToUtcDate(input)
@@ -114,22 +122,24 @@ export class DateEnv {
       return null
     }
 
-    return { marker, isTimeUnspecified: false }
+    return { marker, isTimeUnspecified: false, instantMs }
   }
 
-  parse(s: string) {
+  parse(s: string): DateMarkerMeta | null {
     let parts = parse(s)
     if (parts === null) {
       return null
     }
 
     let { marker } = parts
+    let instantMs: number | undefined
 
     if (parts.timeZoneOffset !== null) {
-      marker = this.timestampToMarker(marker.valueOf() - parts.timeZoneOffset * 60 * 1000)
+      instantMs = marker.valueOf() - parts.timeZoneOffset * 60 * 1000
+      marker = this.timestampToMarker(instantMs)
     }
 
-    return { marker, isTimeUnspecified: parts.isTimeUnspecified }
+    return { marker, isTimeUnspecified: parts.isTimeUnspecified, instantMs }
   }
 
   // Accessors
@@ -346,12 +356,10 @@ export class DateEnv {
   formatToParts(
     marker: DateMarker,
     formatter: DateFormatter,
+    dateOptions: { instantMs?: number } = {},
   ): DateTimeFormatPartWithWeek[] {
     return formatter.formatToParts(
-      {
-        marker,
-        timeZoneOffset: this.offsetForMarker(marker),
-      },
+      this.toZonedInstant(marker, dateOptions.instantMs),
       this,
     )
   }
@@ -360,23 +368,37 @@ export class DateEnv {
     start: DateMarker,
     end: DateMarker,
     formatter: DateFormatter,
-    dateOptions: { isEndExclusive?: boolean } = {},
+    dateOptions: {
+      isEndExclusive?: boolean
+      startInstantMs?: number
+      endInstantMs?: number
+    } = {},
   ): DateTimeRangeFormatPartWithWeek[] {
+    let { endInstantMs } = dateOptions
+
     if (dateOptions.isEndExclusive) {
       end = addMs(end, -1)
+      if (endInstantMs != null) {
+        endInstantMs -= 1
+      }
     }
 
     return formatter.formatRangeToParts(
-      {
-        marker: start,
-        timeZoneOffset: this.offsetForMarker(start),
-      },
-      {
-        marker: end,
-        timeZoneOffset: this.offsetForMarker(end),
-      },
+      this.toZonedInstant(start, dateOptions.startInstantMs),
+      this.toZonedInstant(end, endInstantMs),
       this,
     )
+  }
+
+  // pairs a wall-clock marker with its real epoch instant (first occurrence when the
+  // wall-clock is ambiguous), unless an exact instant is supplied. the marker is
+  // re-derived from the instant so the pair always agrees, even when the given marker
+  // was nonexistent (DST gap) or expressed in a different offset's reading
+  private toZonedInstant(marker: DateMarker, instantMs?: number): ZonedInstant {
+    if (instantMs == null) {
+      instantMs = this.toDate(marker).valueOf()
+    }
+    return { marker: this.timestampToMarker(instantMs), instantMs }
   }
 
   /*

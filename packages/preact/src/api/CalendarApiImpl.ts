@@ -254,11 +254,13 @@ export class CalendarApiImpl implements CalendarApi {
 
   formatDate(d: DateInput, formatter: FormatterInput): string {
     let { dateEnv } = this.getCurrentData()
+    let dateMeta = dateEnv.createMarkerMeta(d)
 
     return joinDateTimeFormatParts(
       dateEnv.formatToParts(
-        dateEnv.createMarker(d),
+        dateMeta.marker,
         createFormatter(formatter),
+        { instantMs: dateMeta.instantMs },
       ),
     )
   }
@@ -266,13 +268,19 @@ export class CalendarApiImpl implements CalendarApi {
   // `settings` is for formatter AND isEndExclusive
   formatRange(d0: DateInput, d1: DateInput, settings: any): string { // TODO: settings type
     let { dateEnv } = this.getCurrentData()
+    let startMeta = dateEnv.createMarkerMeta(d0)
+    let endMeta = dateEnv.createMarkerMeta(d1)
 
     return joinDateTimeFormatParts(
       dateEnv.formatRangeToParts(
-        dateEnv.createMarker(d0),
-        dateEnv.createMarker(d1),
+        startMeta.marker,
+        endMeta.marker,
         createFormatter(settings),
-        settings,
+        {
+          isEndExclusive: settings.isEndExclusive,
+          startInstantMs: startMeta.instantMs,
+          endInstantMs: endMeta.instantMs,
+        },
       ),
     )
   }

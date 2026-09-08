@@ -1,11 +1,9 @@
 
 # FullCalendar Angular Component
 
-The official [Angular](https://angular.io/) Component for [FullCalendar](https://fullcalendar.io)
+FullCalendar Angular package for rendering a calendar
 
 ## Installation
-
-Install the Angular connector, the core package, and any plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
 
 ```sh
 npm install @fullcalendar/angular fullcalendar temporal-polyfill
@@ -13,55 +11,52 @@ npm install @fullcalendar/angular fullcalendar temporal-polyfill
 
 ## Usage
 
-First, connect `FullCalendarModule` to your app module:
+In one of your app's component files:
 
-```js
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { FullCalendarModule } from '@fullcalendar/angular';
-import { AppComponent } from './app.component';
-
-@NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    FullCalendarModule // register FullCalendar with your app
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
-export class AppModule { }
-```
-
-Then, use the `full-calendar` component, supplying an [options](https://fullcalendar.io/docs#toc) object:
-
-```js
-import { Component } from '@angular/core';
-import { CalendarOptions } from '@fullcalendar/angular';
-import dayGridPlugin from '@fullcalendar/angular/daygrid';
+```ts
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { RouterOutlet } from "@angular/router";
+import { FullCalendarModule, CalendarOptions } from "@fullcalendar/angular";
+import themePlugin from "@fullcalendar/angular/themes/monarch"; // YOUR THEME
+import dayGridPlugin from "@fullcalendar/angular/daygrid";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: `
-    <div>
-      <h1>Demo App</h1>
-      <full-calendar [options]="calendarOptions"></full-calendar>
-    </div>
-  `,
-  styleUrls: ['./app.component.scss']
+  selector: "app-root",
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, FullCalendarModule],
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
 })
 export class AppComponent {
   calendarOptions: CalendarOptions = {
-    plugins: [dayGridPlugin],
-    initialView: 'dayGridMonth',
-    weekends: false,
-    events: [
-      { title: 'Meeting', start: new Date() }
-    ]
+    initialView: "dayGridMonth",
+    plugins: [themePlugin, dayGridPlugin],
   };
 }
+```
+
+Then, add the following stylesheets to your `angular.json`:
+
+```diff
+  {
+    "projects": {        // ...
+      "my-project": {    // ...
+        "architect": {   // ...
+          "build": {     // ...
+            "options": { // ...
+              "styles": [
++               "@fullcalendar/angular/skeleton.css", // ALWAYS NEED SKELETON
++               "@fullcalendar/angular/themes/monarch/theme.css", // YOUR THEME
++               "@fullcalendar/angular/themes/monarch/palettes/purple.css", // YOUR THEME'S PALETTE
+                "src/styles.css"
+              ]
+```
+
+Then, in your component's template file, you have access to the `<full-calendar>` tag. You must pass your options into this declaration!
+
+```html
+<full-calendar [options]="calendarOptions"></full-calendar>
 ```
 
 You can even supply nested templates:
@@ -69,38 +64,31 @@ You can even supply nested templates:
 ```html
 <full-calendar [options]="calendarOptions">
   <ng-template #eventContent let-arg>
-    <b>{{arg.timeText}}</b>
-    <i>{{arg.event.title}}</i>
+    <b>{{ arg.timeText }}</b>
+    <i>{{ arg.event.title }}</i>
   </ng-template>
 </full-calendar>
 ```
 
-## Supported Angular Versions
+## Plugins
 
-`@fullcalendar/angular` version 7 supports Angular 16 - 22
+| Import                              | Provides                                     |
+| ----------------------------------- | -------------------------------------------- |
+| `@fullcalendar/angular/daygrid`     | `dayGridDay`/`Week`/`Month`/`Year` views     |
+| `@fullcalendar/angular/timegrid`    | `timeGridDay`/`Week` views                   |
+| `@fullcalendar/angular/list`        | `listDay`/`Week`/`Month`/`Year` views        |
+| `@fullcalendar/angular/multimonth`  | `multiMonthYear` view                        |
+| `@fullcalendar/angular/interaction` | dragging, resizing, and date/event selection |
+
+Themes are plugins too. `@fullcalendar/angular/themes/classic`, `/monarch`, `/breezy`, `/forma`, and `/pulse` are available, each paired with a `theme.css` and a palette stylesheet.
 
 ## Links
 
-- [Documentation](https://fullcalendar.io/docs/angular)
-- [Example Project](https://github.com/fullcalendar/fullcalendar-examples/tree/main/angular15)
+- [Angular Documentation](https://fullcalendar.io/docs/angular)
+- [Angular Scheduler Documentation](https://fullcalendar.io/docs/angular#fullcalendar-premium)
+- [Angular Example Project](https://github.com/fullcalendar/fullcalendar-examples/tree/main/angular22)
+- [Options Reference](https://fullcalendar.io/docs#toc)
 
 ## History
 
 This project is built and maintained by [irustm](https://github.com/irustm) in partnership with the maintainers of FullCalendar. The project was originally called `ng-fullcalendar` which can still be [found on NPM](https://www.npmjs.com/package/ng-fullcalendar).
-
-## Development
-
-You must install this repo with [PNPM](https://pnpm.io/):
-
-```
-pnpm install
-```
-
-Available scripts (via `pnpm run <script>`):
-
-- `build` - build production-ready dist files
-- `watch` - build & watch development dist files
-- `start` - run a simple example application
-- `test` - test headlessly
-- `test:dev` - test interactively
-- `clean`

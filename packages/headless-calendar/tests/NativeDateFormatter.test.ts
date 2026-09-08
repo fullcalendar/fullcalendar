@@ -1,8 +1,10 @@
 /// <reference types="vitest/globals" />
 
 import type { Locale } from '../src/locale'
-import type { ZonedMarker } from '../src/zoned-marker'
-import type { DateFormattingContext as FormattingContextNew } from '../src/formatting-interface'
+import type {
+  DateFormattingContext as FormattingContextNew,
+  ZonedInstant,
+} from '../src/formatting-interface'
 import { NativeDateFormatter as NativeDateFormatterNew } from '../src/formatting-native'
 import { joinDateTimeFormatParts } from '../src/formatting-utils'
 
@@ -38,13 +40,19 @@ function makeContext(
   }
 }
 
-function makeMarker(isoString: string, tzOffsetMinutes: number): ZonedMarker {
-  return { marker: new Date(isoString), timeZoneOffset: tzOffsetMinutes }
+/*
+The marker is the wall-clock reading (UTC-field encoding) and instantMs is the real
+epoch instant, tzOffsetMinutes apart. Pair with a context whose timeZone actually has
+that offset at that instant, since Intl derives all output from instantMs + zone.
+*/
+function makeMarker(isoString: string, tzOffsetMinutes: number): ZonedInstant {
+  const marker = new Date(isoString)
+  return { marker, instantMs: marker.valueOf() - tzOffsetMinutes * 60000 }
 }
 
 function formatParts(
   formatter: NativeDateFormatterNew,
-  marker: ZonedMarker,
+  marker: ZonedInstant,
   context: FormattingContextNew,
 ) {
   return joinDateTimeFormatParts(formatter.formatToParts(marker, context))
@@ -52,8 +60,8 @@ function formatParts(
 
 function formatRangeParts(
   formatter: NativeDateFormatterNew,
-  start: ZonedMarker,
-  end: ZonedMarker,
+  start: ZonedInstant,
+  end: ZonedInstant,
   context: FormattingContextNew,
 ) {
   return joinDateTimeFormatParts(formatter.formatRangeToParts(start, end, context))
@@ -110,13 +118,12 @@ describe('NativeDateFormatter', () => {
       expect(parts.some((p) => p.type === 'minute')).toBe(true)
     })
 
-    it("downgrades timeZoneName:'long' to 'short' (proven by offset injection activating)", () => {
-      // If the downgrade did NOT happen, injectableTz would be undefined and no offset
-      // injection would occur — we'd get a long tz name like "Coordinated Universal Time".
-      // Seeing "GMT+5" proves both the downgrade and the injection worked.
+    it("renders timeZoneName:'long' as a short offset (migration normalization to 'shortOffset')", () => {
+      // If the normalization did NOT happen, we'd get a long tz name like
+      // "Pakistan Standard Time". Seeing "GMT+5" proves it worked.
       const fmt = new NativeDateFormatterNew({ timeZoneName: 'long' })
       const marker = makeMarker('2024-01-15T14:30:00Z', 300)
-      const parts = fmt.formatToParts(marker, makeContext('en-US'))
+      const parts = fmt.formatToParts(marker, makeContext('en-US', { timeZone: 'Asia/Karachi' }))
       expect(parts.find((p) => p.type === 'timeZoneName')?.value).toBe('GMT+5')
     })
 
@@ -236,26 +243,18 @@ describe('NativeDateFormatter', () => {
   // timezone-only shortcut ({ timeZoneName: 'short' } alone, no other props)
   // ==========================================================================
   describe('timezone-only shortcut', () => {
-    it('returns a single timeZoneName part with the formatted offset', () => {
+    it('returns a single timeZoneName part with the zone-derived offset', () => {
       const fmt = new NativeDateFormatterNew({ timeZoneName: 'short' })
       const marker = makeMarker('2024-01-15T14:30:00Z', 300) // UTC+5
-      const parts = fmt.formatToParts(marker, makeContext('en-US'))
+      const parts = fmt.formatToParts(marker, makeContext('en-US', { timeZone: 'Asia/Karachi' }))
       expect(parts).toHaveLength(1)
       expect(parts[0]).toEqual({ type: 'timeZoneName', value: 'GMT+5' })
     })
 
-    it('returns "GMT+0" when timeZoneOffset is null (formatTimeZoneOffset does not special-case null)', () => {
-      const fmt = new NativeDateFormatterNew({ timeZoneName: 'short' })
-      const marker = { marker: new Date('2024-01-15T14:30:00Z'), timeZoneOffset: null as any }
-      const parts = fmt.formatToParts(marker, makeContext('en-US'))
-      expect(parts).toHaveLength(1)
-      expect(parts[0]).toEqual({ type: 'timeZoneName', value: 'GMT+0' })
-    })
-
-    it('activates for timeZoneName:"long" because it is normalized to the short timezone fast path', () => {
+    it('activates for timeZoneName:"long" because it is normalized to the shortOffset fast path', () => {
       const fmt = new NativeDateFormatterNew({ timeZoneName: 'long' })
       const marker = makeMarker('2024-01-15T14:30:00Z', 300)
-      const parts = fmt.formatToParts(marker, makeContext('en-US'))
+      const parts = fmt.formatToParts(marker, makeContext('en-US', { timeZone: 'Asia/Karachi' }))
       expect(parts).toHaveLength(1)
       expect(parts[0]).toEqual({ type: 'timeZoneName', value: 'GMT+5' })
     })
@@ -266,13 +265,24 @@ describe('NativeDateFormatter', () => {
       expect(parts.length).toBeGreaterThan(1)
     })
 
-    it('formatRangeToParts with timezone-only uses start marker only', () => {
+    it('formatRangeToParts with timezone-only and equal offsets uses start instant only', () => {
       const fmt = new NativeDateFormatterNew({ timeZoneName: 'short' })
-      const start = makeMarker('2024-01-15T09:00:00Z', 300)
-      const end = makeMarker('2024-01-15T17:00:00Z', -300)
-      const parts = fmt.formatRangeToParts(start, end, makeContext('en-US'))
-      const result = joinDateTimeFormatParts(parts)
-      expect(result).toBe('GMT+5') // start's offset, not end's
+      const ctx = makeContext('en-US', { timeZone: 'America/New_York' })
+      const start = makeMarker('2024-01-15T09:00:00Z', -300) // EST, GMT-5
+      const end = makeMarker('2024-01-15T17:00:00Z', -300) // EST, GMT-5
+      const parts = fmt.formatRangeToParts(start, end, ctx)
+      expect(joinDateTimeFormatParts(parts)).toBe('GMT-5')
+    })
+
+    it('formatRangeToParts with timezone-only uses start instant only, even across offsets', () => {
+      // a zone-name-only formatter cannot express two offsets through Intl range output
+      // (ICU drops zone names from interval patterns), so the range is labeled by its start
+      const fmt = new NativeDateFormatterNew({ timeZoneName: 'short' })
+      const ctx = makeContext('en-US', { timeZone: 'America/New_York' })
+      const start = makeMarker('2024-01-15T09:00:00Z', -300) // EST, GMT-5
+      const end = makeMarker('2024-07-15T17:00:00Z', -240) // EDT, GMT-4
+      const parts = fmt.formatRangeToParts(start, end, ctx)
+      expect(joinDateTimeFormatParts(parts)).toBe('GMT-5')
     })
   })
 
@@ -293,7 +303,7 @@ describe('NativeDateFormatter', () => {
       const result = formatParts(
         makePrettyDateTimeFormatter(),
         makeMarker('2018-06-08T00:00:00Z', 300),
-        makeContext('en-US'),
+        makeContext('en-US', { timeZone: 'Asia/Karachi' }),
       ).replace(' at ', ' ')
       expect(result).toBe('Friday June 8 2018 12:00AM GMT+5')
     })
@@ -522,42 +532,32 @@ describe('NativeDateFormatter', () => {
   })
 
   // ==========================================================================
-  // timeZoneName injection
+  // timeZoneName rendering (Intl-derived from the real zone, offset style)
   // ==========================================================================
-  describe('timeZoneName injection', () => {
+  describe('timeZoneName rendering', () => {
     const fmt = new NativeDateFormatterNew({ timeZoneName: 'short' })
-    const ctx = makeContext('en-US')
 
-    it('replaces Intl UTC timezone value with formatted positive offset', () => {
+    it('renders a positive-offset zone as "GMT+5"', () => {
       const marker = makeMarker('2024-01-15T14:30:00Z', 300) // UTC+5
-      const parts = fmt.formatToParts(marker, ctx)
+      const parts = fmt.formatToParts(marker, makeContext('en-US', { timeZone: 'Asia/Karachi' }))
       expect(parts.find((p) => p.type === 'timeZoneName')?.value).toBe('GMT+5')
     })
 
-    it('formats zero offset as "GMT+0"', () => {
-      const parts = fmt.formatToParts(MON_1430, ctx)
+    it('renders the UTC zone as "GMT+0"', () => {
+      const parts = fmt.formatToParts(MON_1430, makeContext('en-US'))
       expect(parts.find((p) => p.type === 'timeZoneName')?.value).toBe('GMT+0')
     })
 
-    it('formats negative offset as "GMT-5"', () => {
-      const marker = makeMarker('2024-01-15T14:30:00Z', -300) // UTC-5
-      const parts = fmt.formatToParts(marker, ctx)
+    it('renders a negative-offset zone as "GMT-5"', () => {
+      const marker = makeMarker('2024-01-15T14:30:00Z', -300) // UTC-5 (EST)
+      const parts = fmt.formatToParts(marker, makeContext('en-US', { timeZone: 'America/New_York' }))
       expect(parts.find((p) => p.type === 'timeZoneName')?.value).toBe('GMT-5')
     })
 
-    it('formats offset with sub-hour minutes as "GMT+5:30"', () => {
+    it('renders a sub-hour offset zone as "GMT+5:30"', () => {
       const marker = makeMarker('2024-01-15T14:30:00Z', 330) // UTC+5:30 (IST)
-      const parts = fmt.formatToParts(marker, ctx)
+      const parts = fmt.formatToParts(marker, makeContext('en-US', { timeZone: 'Asia/Kolkata' }))
       expect(parts.find((p) => p.type === 'timeZoneName')?.value).toBe('GMT+5:30')
-    })
-
-    it('uses "UTC" when timeZoneOffset is null (postProcessParts injection path)', () => {
-      // This uses { timeZoneName:'short', hour:'numeric' } so it goes through postProcessParts,
-      // which has the explicit null → 'UTC' conversion. The timezone-only shortcut path does not.
-      const fmtWithHour = new NativeDateFormatterNew({ timeZoneName: 'short', hour: 'numeric' })
-      const marker = { marker: new Date('2024-01-15T14:30:00Z'), timeZoneOffset: null as any }
-      const parts = fmtWithHour.formatToParts(marker, ctx)
-      expect(parts.find((p) => p.type === 'timeZoneName')?.value).toBe('UTC')
     })
   })
 
@@ -734,12 +734,38 @@ describe('NativeDateFormatter', () => {
       expect(withCommas.some((p) => p.type === 'literal' && p.value === ', ')).toBe(true)
     })
 
-    it('timeZoneName injection works in range output', () => {
+    it('omits timeZoneName from equal-offset range output (ICU interval patterns exclude zone names)', () => {
       const fmt = new NativeDateFormatterNew({ hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })
       const start = makeMarker('2024-01-15T09:00:00Z', 300) // UTC+5
       const end = makeMarker('2024-01-15T17:00:00Z', 300)
-      const parts = fmt.formatRangeToParts(start, end, makeContext('en-US'))
-      expect(parts).toContainEqual({ source: 'shared', type: 'timeZoneName', value: 'GMT+5' })
+      const parts = fmt.formatRangeToParts(start, end, makeContext('en-US', { timeZone: 'Asia/Karachi' }))
+      expect(joinDateTimeFormatParts(parts)).toContain('9:00')
+      expect(parts.find((p) => p.type === 'timeZoneName')).toBeUndefined()
+    })
+
+    it('collapses an equal-wall-clock fold event to Intl single-date output', () => {
+      // an equal-wall-clock fold event (1:30 EDT → 1:30 EST): the instants are real and
+      // distinct, but ICU's interval logic sees equal displayed fields and collapses.
+      // deliberate stance: Intl's rendering of truthful instants is authoritative
+      const fmt = new NativeDateFormatterNew({ hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })
+      const ctx = makeContext('en-US', { timeZone: 'America/New_York' })
+      const start = makeMarker('2024-11-03T01:30:00Z', -240) // EDT, instant 05:30Z
+      const end = makeMarker('2024-11-03T01:30:00Z', -300) // EST, instant 06:30Z
+      const parts = fmt.formatRangeToParts(start, end, ctx)
+      expect(joinDateTimeFormatParts(parts)).toBe('1:30AM GMT-4')
+    })
+
+    it('formats a DST fall-back fold range wall-clock-true, without throwing', () => {
+      // 1:30 AM EDT → 1:00 AM EST: real instants are ordered even though the civil
+      // wall-clock runs backward. Passing instants keeps Intl from ever seeing a
+      // reversed pair, so no RangeError and no spec-mandated collapse.
+      const fmt = new NativeDateFormatterNew({ hour: 'numeric', minute: '2-digit' })
+      const ctx = makeContext('en-US', { timeZone: 'America/New_York' })
+      const start = makeMarker('2024-11-03T01:30:00Z', -240) // instant 05:30Z
+      const end = makeMarker('2024-11-03T01:00:00Z', -300) // instant 06:00Z
+      const parts = fmt.formatRangeToParts(start, end, ctx)
+      const result = joinDateTimeFormatParts(parts)
+      expect(result.indexOf('1:30')).toBeLessThan(result.indexOf('1:00'))
     })
   })
 

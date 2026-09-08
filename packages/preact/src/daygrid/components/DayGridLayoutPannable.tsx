@@ -2,7 +2,7 @@ import { joinClassNames } from '../../util/html'
 import { BaseComponent, setRef } from '../../vdom-util'
 import { DateProfile } from '../../DateProfileGenerator'
 import { DateRange } from '@full-ui/headless-calendar'
-import { DayTableCell, DayGridRange } from '../../common/DayTableModel'
+import { DayTableCell, DayGridRange } from '../DayTableModel'
 import { EventSegUiInteractionState } from '../../component/DateComponent'
 import { Hit } from '../../interactions/hit'
 import { Scroller } from '../../scrollgrid/Scroller'
@@ -21,6 +21,7 @@ import { DayGridHeader } from './DayGridHeader'
 import { RowConfig } from '../header-tier'
 import classNames from '../../styles.module.css'
 import { computeViewBorderless } from '../../util/misc'
+import { DayGridLayoutPrint } from './DayGridLayoutPrint'
 
 export interface DayGridLayoutPannableProps {
   dateProfile: DateProfile
@@ -78,9 +79,35 @@ export class DayGridLayoutPannable extends BaseComponent<DayGridLayoutPannablePr
     const footerScrollbarSticky = !props.forPrint && getFooterScrollbarSticky(options)
 
     const colCount = props.cellRows[0].length
-    const [canvasWidth, colWidth] = computeColWidth(colCount, props.dayMinWidth, clientWidth)
-    const cellIsMicro = colWidth != null && colWidth <= dayMicroWidth
-    const cellIsNarrow = cellIsMicro || (colWidth != null && colWidth <= options.dayNarrowWidth)
+    const [canvasWidth, appliedColWidth] = computeColWidth(colCount, props.dayMinWidth, clientWidth)
+    const measuredColWidth = appliedColWidth ?? (clientWidth != null ? clientWidth / colCount : undefined)
+    const cellIsMicro = measuredColWidth != null && measuredColWidth <= dayMicroWidth
+    const cellIsNarrow = cellIsMicro || (measuredColWidth != null && measuredColWidth <= options.dayNarrowWidth)
+
+    if (props.forPrint) {
+      return (
+        <DayGridLayoutPrint
+          dateProfile={props.dateProfile}
+          todayRange={props.todayRange}
+          cellRows={props.cellRows}
+          headerTiers={props.headerTiers}
+          showHeader={Boolean(options.dayHeaders)}
+          fgEventSegs={props.fgEventSegs}
+          bgEventSegs={props.bgEventSegs}
+          businessHourSegs={props.businessHourSegs}
+          eventSelection={props.eventSelection}
+          dayMaxEventRows={options.dayMaxEventRows}
+          borderlessX={borderlessX}
+          borderlessTop={borderlessTop}
+          borderlessBottom={borderlessBottom}
+          multiMonthColumns={0}
+          visibleWidth={totalWidth}
+          cellIsNarrow={cellIsNarrow}
+          cellIsMicro={cellIsMicro}
+          rowHeightRefMap={props.rowHeightRefMap}
+        />
+      )
+    }
 
     return (
       <>
@@ -93,7 +120,7 @@ export class DayGridLayoutPannable extends BaseComponent<DayGridLayoutPannablePr
               borderlessBottom,
               multiMonthColumns: 0,
             }),
-            classNames.printHeader, // either flexCol or table-header-group
+            classNames.flexCol,
             tableHeaderSticky && classNames.tableHeaderSticky,
           )}>
             <Scroller
@@ -104,7 +131,7 @@ export class DayGridLayoutPannable extends BaseComponent<DayGridLayoutPannablePr
             >
               <DayGridHeader
                 headerTiers={props.headerTiers}
-                colWidth={colWidth}
+                colWidth={appliedColWidth}
                 viewportWidth={clientWidth}
                 width={canvasWidth}
                 cellIsNarrow={cellIsNarrow}
@@ -114,7 +141,8 @@ export class DayGridLayoutPannable extends BaseComponent<DayGridLayoutPannablePr
                 <div
                   className={joinClassNames(
                     generateClassName(options.fillerClass, { inTableHeader: true }),
-                    classNames.borderOnlyS,
+                    classNames.borderlessY,
+                    classNames.borderlessEnd,
                   )}
                   style={{ minWidth: endScrollbarWidth }}
                 />
@@ -171,7 +199,7 @@ export class DayGridLayoutPannable extends BaseComponent<DayGridLayoutPannablePr
             eventSelection={props.eventSelection}
 
             // dimensions
-            colWidth={colWidth}
+            colWidth={appliedColWidth}
             width={canvasWidth}
             visibleWidth={totalWidth}
             cellIsNarrow={cellIsNarrow}

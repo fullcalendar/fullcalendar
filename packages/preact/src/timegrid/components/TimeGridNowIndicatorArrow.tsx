@@ -19,11 +19,12 @@ export function TimeGridNowIndicatorArrow(props: TimeGridNowIndicatorArrowProps)
     <div
       // crop any overflow that the arrow/line might cause
       // TODO: just do this on the entire canvas within the scroller
-      className={joinClassNames(classNames.fill, classNames.crop)}
-      style={{
-        zIndex: 2, // inlined from $now-indicator-z
-        pointerEvents: 'none', // TODO: className
-      }}
+      className={joinClassNames(
+        classNames.fill,
+        classNames.crop,
+        classNames.pointerEventsNone,
+        classNames.z2,
+      )}
     >
       <NowIndicatorHeaderContainer
         className={classNames.abs}

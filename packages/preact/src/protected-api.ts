@@ -10,7 +10,8 @@ export {
 } from './options'
 
 export type { EventDef, EventDefHash } from './structs/event-def'
-export type { EventInstanceHash } from './structs/event-instance'
+export type { EventInstanceHash, EventInstanceRange, EventRangeEdge } from './structs/event-instance'
+export { buildValidInstanceRange, getRangeInstantStartMs, getRangeInstantEndMs } from './structs/event-instance'
 export type { EventRefined } from './structs/event-parse'
 export { parseBusinessHours } from './structs/business-hours'
 
@@ -65,7 +66,12 @@ export { combineEventUis, createEventUi } from './component-util/event-ui'
 export type { SplittableProps } from './component-util/event-splitting'
 export { Splitter } from './component-util/event-splitting'
 export { getDateMeta, DateMeta } from './component-util/date-rendering'
-export { watchSize, watchWidth, watchHeight, afterSize } from './component-util/resize-observer'
+export {
+  watchSize,
+  watchWidth,
+  watchHeight,
+  afterSize,
+} from './component-util/resize-observer'
 export { debounce } from './util/debounce'
 
 export { buildNavLinkAttrs } from './common/nav-link'
@@ -88,13 +94,32 @@ export type { ViewProps } from './component-util/View'
 export type { DateProfile } from './DateProfileGenerator'
 export { DateProfileGenerator, computeMajorUnit, isMajorUnit } from './DateProfileGenerator'
 export type { DateSpan } from './structs/date-span'
+export { getDateSpanInstantStartMs, getDateSpanInstantEndMs } from './structs/date-span'
 
+// Shared seg-placement engine. Only what premium Timeline consumes is exposed.
+export type {
+  HiddenSliceGroup,
+  Slice,
+  SourceSeg,
+} from './seg-placement/kernel'
 export {
-  SegHierarchy,
-  SegGroup,
-  groupIntersectingSegs,
-} from './seg-hierarchy'
-
+  DEFAULT_UNMEASURED_EVENT_THICKNESS,
+  buildLevelLimitedLayout,
+  computeLateralSpanBottom,
+  getSliceKey,
+  groupLaterallyIntersecting,
+  sortByAxisOrder,
+} from './seg-placement/kernel'
+export type {
+  PrintCandidatePlan,
+  PrintEventBand,
+  PrintMoreLinkBand,
+} from './seg-placement/print'
+export {
+  buildPrintEventBands,
+  planPrintDomCandidates,
+  buildPrintMoreLinkBand,
+} from './seg-placement/print'
 export type { PointerDragEvent } from './interactions/pointer'
 export type { Hit } from './interactions/hit'
 export { ElementDragging } from './interactions/ElementDragging'
@@ -112,12 +137,14 @@ export {
   sortEventSegs,
   getEventRangeMeta, buildEventRangeKey,
   EventRangeProps,
-  getEventKey,
   MinimalEventProps,
 } from './component-util/event-rendering'
 
-export type { DayTableCell, DayGridRange } from './common/DayTableModel'
-export { DayTableModel } from './common/DayTableModel'
+export type { DayTableCell, DayGridRange } from './daygrid/DayTableModel'
+export { DayTableModel } from './daygrid/DayTableModel'
+export { DaySeriesModel } from './common/DaySeriesModel'
+export type { DayCol, DayColSlotRange } from './common/day-cols'
+export { buildDayCols, buildDayColsFromSeries } from './common/day-cols'
 
 export { Scroller } from './scrollgrid/Scroller'
 
@@ -160,6 +187,7 @@ export { NowIndicatorDot } from './common/NowIndicatorDot'
 
 export { renderFill, BgEvent } from './common/bg-fill'
 export { MoreLinkContainer } from './common/MoreLinkContainer'
+export { MeasuredHeightHarness } from './common/MeasuredHeightHarness'
 
 export { ViewContainer } from './common/ViewContainer'
 
@@ -198,9 +226,8 @@ export { TimeGridRange, organizeSegsByCol, splitInteractionByCol } from './timeg
 export { DayTimeColsSlicer } from './timegrid/DayTimeColsSlicer'
 export { AllDaySplitter } from './timegrid/AllDaySplitter'
 export { TimeGridLayout } from './timegrid/components/TimeGridLayout'
-export { buildTimeColsModel, buildDayRanges } from './timegrid/components/util'
 
-export { DayTableSlicer } from './daygrid/DayTableSlicer'
+export { DayTableSlicer, DaySeriesSlicer } from './daygrid/DayTableSlicer'
 export {
   CellRenderConfig,
   CellDataConfig,

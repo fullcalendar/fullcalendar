@@ -22,6 +22,7 @@ const afterSizeCallbacks = new Set<() => void>()
 
 let isHandling = false
 let isStalling = false
+let isAcquiringImmediately = false
 
 export function afterSize(callback: () => void) {
   afterSizeCallbacks.add(callback)
@@ -39,8 +40,50 @@ export function afterSize(callback: () => void) {
 
 function flushAfterSize() {
   for (const flushedCallback of afterSizeCallbacks.values()) {
-    flushedCallback()
     afterSizeCallbacks.delete(flushedCallback)
+    flushedCallback()
+  }
+}
+
+/*
+Commits synchronously while switching every watcher registered during the
+commit to immediate acquisition: registration reads getBoundingClientRect()
+on the spot and fires the callback before returning, instead of waiting for
+the shared ResizeObserver's later delivery. This is the "measure now" path
+required when print-only DOM mounts during the native beforeprint task —
+observer delivery would arrive after the browser has already snapshotted.
+(gBCR reflects transforms while the observer's border-box does not; for
+print DOM that distinction is acceptable. Once components go functional, a
+`useElementSize`-style hook performs this same acquire-then-observe.)
+
+The afterSize work those callbacks (and any watcher deaths) queue
+accumulates and drains ONCE after the commit, not once per registration —
+so a commit mounting N measured wrappers costs one layout recomputation,
+not N. The drain runs in its own flushSync so handler state updates still
+settle within the calling task; additions made while draining are picked up
+by the same loop. Preact flushes mount lifecycles after the root diff, so
+the reads don't interleave with the commit's DOM writes.
+
+Adopt this bracket a la carte, only for commits whose entire mounted-watcher
+population tolerates a synchronous first report (currently: entering print
+mode). Ordinary watchSize callers everywhere else keep their async-first
+ResizeObserver semantics.
+*/
+export function flushSyncWithSizeBatching(callback: () => void): void {
+  const wasHandling = isHandling
+  isHandling = true
+  isAcquiringImmediately = true
+  try {
+    flushSync(callback)
+    if (!wasHandling) {
+      flushSync(() => {
+        flushAfterSize()
+        isHandling = false // before drain's own commit, so late afterSize calls schedule a flush
+      })
+    }
+  } finally {
+    isHandling = wasHandling
+    isAcquiringImmediately = false
   }
 }
 
@@ -99,7 +142,17 @@ export function watchSize(
   watchWidth = true,
   watchHeight = true,
 ): DisconnectSize {
-  configMap.set(el, { callback, watchWidth, watchHeight })
+  const config: SizeConfig = { callback, watchWidth, watchHeight }
+  configMap.set(el, config)
+
+  // within a flushSyncWithSizeBatching commit; see its comment.
+  // the stored dims dedupe the observer's later initial delivery.
+  if (isAcquiringImmediately) {
+    const { width, height } = el.getBoundingClientRect()
+    config.width = width
+    config.height = height
+    callback(width, height)
+  }
 
   // if statement is for jsdom and other shim environments that execute component effects, but
   // haven't implemented ResizeObserver. Reference: https://github.com/jsdom/jsdom/issues/3368

@@ -11,18 +11,10 @@ npm install @fullcalendar/preact temporal-polyfill
 
 ## Usage
 
-First, ensure there's a DOM element for your calendar to render into:
+Render a `FullCalendar` component with [options](https://fullcalendar.io/docs#toc), including one or more plugins:
 
-```html
-<body>
-  <div id='calendar'></div>
-</body>
-```
-
-Then, instantiate a Calendar object with [options](https://fullcalendar.io/docs#toc) and call its `render` method:
-
-```js
-import { Calendar } from '@fullcalendar/preact'
+```jsx
+import FullCalendar from '@fullcalendar/preact'
 import classicThemePlugin from '@fullcalendar/preact/themes/classic'
 import dayGridPlugin from '@fullcalendar/preact/daygrid'
 
@@ -30,19 +22,35 @@ import '@fullcalendar/preact/skeleton.css'
 import '@fullcalendar/preact/themes/classic/theme.css'
 import '@fullcalendar/preact/themes/classic/palette.css'
 
-const calendarEl = document.getElementById('calendar')
-const calendar = new Calendar(calendarEl, {
-  plugins: [
+<FullCalendar
+  plugins={[
     dayGridPlugin,
     classicThemePlugin,
     // any other plugins
-  ],
-  initialView: 'dayGridMonth',
-  weekends: false,
-  events: [
-    { title: 'Meeting', start: new Date() }
-  ]
-})
-
-calendar.render()
+  ]}
+  initialView='dayGridMonth'
+  weekends={false}
+  events={[
+    { title: 'Meeting', start: new Date() },
+  ]}
+/>
 ```
+
+## Plugins
+
+| Import                             | Provides                                     |
+| ---------------------------------- | -------------------------------------------- |
+| `@fullcalendar/preact/daygrid`     | `dayGridDay`/`Week`/`Month`/`Year` views     |
+| `@fullcalendar/preact/timegrid`    | `timeGridDay`/`Week` views                   |
+| `@fullcalendar/preact/list`        | `listDay`/`Week`/`Month`/`Year` views        |
+| `@fullcalendar/preact/multimonth`  | `multiMonthYear` view                        |
+| `@fullcalendar/preact/interaction` | dragging, resizing, and date/event selection |
+
+Themes are plugins too. `@fullcalendar/preact/themes/classic`, `/monarch`, `/breezy`, `/forma`, and `/pulse` are available, each paired with a `theme.css` and a palette stylesheet.
+
+## Links
+
+- [Preact Documentation](https://fullcalendar.io/docs/preact)
+- [Preact Scheduler Documentation](https://fullcalendar.io/docs/preact#fullcalendar-premium)
+- [Preact Example Project](https://github.com/fullcalendar/fullcalendar-examples/tree/main/preact)
+- [Options Reference](https://fullcalendar.io/docs#toc)

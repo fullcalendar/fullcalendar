@@ -1,3 +1,5 @@
+import { strictModeFactor } from 'fullcalendar/protected-api'
+
 it('daygrid view rerenders well', (done) => {
   let dayHeaderRenderCnt = 0
   let dayCellRenderCnt = 0
@@ -29,22 +31,22 @@ it('daygrid view rerenders well', (done) => {
     eventRenderCnt = 0
   }
 
-  expect(dayHeaderRenderCnt).toBe(7)
-  expect(dayCellRenderCnt).toBe(42)
-  expect(eventRenderCnt).toBe(1)
+  expect(dayHeaderRenderCnt).toBe(7 * strictModeFactor)
+  expect(dayCellRenderCnt).toBe(42 * strictModeFactor)
+  expect(eventRenderCnt).toBe(1 * strictModeFactor)
 
   resetCounts()
   calendar.next()
 
   expect(dayHeaderRenderCnt).toBe(0) // same day-of-week headers
-  expect(dayCellRenderCnt).toBe(42)
+  expect(dayCellRenderCnt).toBe(42 * strictModeFactor)
   expect(eventRenderCnt).toBe(0) // event will be out of view
 
   calendar.changeView('listWeek') // switch away
   resetCounts()
   calendar.changeView('dayGridMonth') // return to view
-  expect(dayHeaderRenderCnt).toBe(7)
-  expect(dayCellRenderCnt).toBe(42)
+  expect(dayHeaderRenderCnt).toBe(7 * strictModeFactor)
+  expect(dayCellRenderCnt).toBe(42 * strictModeFactor)
   expect(eventRenderCnt).toBe(0) // event still out of view
 
   resetCounts()

@@ -23,18 +23,23 @@ import {
 } from 'react'
 import { DayGridMoreLink } from './DayGridMoreLink'
 import { DayRowEventRange, DayRowEventRangePart } from '../TableSeg'
+import { DAY_GRID_CELL_CONTENT_Z_CLASS } from './z-index'
 
 export interface DayGridCellProps {
   dateProfile: DateProfile
   todayRange: DateRange
   date: DateMarker
   isMajor: boolean
+  isDisabled: boolean
   showDayNumber: boolean
   isNarrow: boolean
   isMicro: boolean
   borderStart: boolean
+  borderBottom?: boolean
+  tableMode?: boolean
 
   // content
+  fills: ReactNode
   segs: DayRowEventRangePart[] // for +more link popover content
   hiddenSegs: DayRowEventRange[] // "
   fgLiquidHeight: boolean
@@ -55,12 +60,12 @@ export interface DayGridCellProps {
 
   // refs
   headerHeightRef?: Ref<number>
-  mainHeightRef?: Ref<number> // will only fire if fgLiquidHeight
+  mainHeightRef?: Ref<number> // height of the area events and the +more link share
 }
 
 export class DayGridCell extends DateComponent<DayGridCellProps> {
   // memo
-  private getDateMeta = memoize(getDateMeta)
+  private getDateMeta = memoize(getDayGridCellDateMeta)
   private refineRenderProps = memoizeObjArg(refineRenderProps)
 
   // ref
@@ -74,20 +79,33 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
   render() {
     let { props, context } = this
     let { options, dateEnv } = context
+    const { tableMode } = props
 
     // TODO: memoize this
     const isMonthStart = props.showDayNumber &&
       shouldDisplayMonthStart(props.date, props.dateProfile.currentRange, dateEnv)
 
-    const dateMeta = this.getDateMeta(props.date, dateEnv, props.dateProfile, props.todayRange)
+    const dateMeta = this.getDateMeta(
+      props.date,
+      dateEnv,
+      props.dateProfile,
+      props.todayRange,
+      props.isDisabled,
+    )
 
     const baseClassName = joinClassNames(
-      props.borderStart ? classNames.borderOnlyS : classNames.borderNone,
-      props.width != null ? '' : classNames.liquid,
-      classNames.flexCol,
+      classNames.borderlessTop,
+      classNames.borderlessEnd,
+      !props.borderStart && classNames.borderlessStart,
+      !(tableMode && props.borderBottom) && classNames.borderlessBottom,
+      !tableMode && props.width == null && classNames.liquid,
+      !tableMode && classNames.flexCol,
+      classNames.rel,
       classNames.noMargin,
       classNames.noPadding,
     )
+    const CellTag = tableMode ? 'td' : 'div'
+    const cellStyle = tableMode ? undefined : { width: props.width }
 
     const hasNavLink = options.navLinks
     const renderProps = this.refineRenderProps({
@@ -108,7 +126,7 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
 
     if (dateMeta.isDisabled) {
       return (
-        <div
+        <CellTag
           role='gridcell'
           aria-disabled
           className={joinClassNames(
@@ -116,10 +134,10 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
             props.className,
             baseClassName,
           )}
-          style={{
-            width: props.width
-          }}
-        />
+          style={cellStyle}
+        >
+          {props.fills}
+        </CellTag>
       )
     }
 
@@ -127,7 +145,7 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
 
     return (
       <ContentContainer
-        tag="div"
+        tag={CellTag}
         elRef={this.rootElRef}
         className={joinClassNames(props.className, baseClassName)}
         attrs={{
@@ -137,9 +155,7 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
           ...(renderProps.isToday ? { 'aria-current': 'date' } : {}),
           'data-date': formatDayString(props.date),
         }}
-        style={{
-          width: props.width,
-        }}
+        style={cellStyle}
         renderProps={renderProps}
         generatorName="dayCellTopContent" // !!! for top
         customGenerator={options.dayCellTopContent /* !!! for top */}
@@ -150,12 +166,14 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
       >
         {(InnerContent) => (
           <>
+            {props.fills}
             <div
               className={joinClassNames(
                 classNames.rel, // puts it above bg-fills, which are positioned on TOP of this component :|
+                DAY_GRID_CELL_CONTENT_Z_CLASS,
                 generateClassName(options.dayCellTopClass, renderProps),
               )}
-              // TODO: prevent margins!? for measurements
+              // TODO: prevent margins/padding!?
             >
               {props.showDayNumber && (
                 <InnerContent // the dayCellTopContent
@@ -171,13 +189,19 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
             </div>
             <div
               className={joinClassNames(
-                classNames.flexCol,
-                props.fgLiquidHeight ? classNames.liquid : classNames.grow,
+                !tableMode && classNames.flexCol,
+                !tableMode && (
+                  props.fgLiquidHeight ? classNames.liquid : classNames.grow
+                ),
+                tableMode && classNames.printCellContentMinHeight,
               )}
               ref={this.handleBodyEl}
             >
               <div
-                className={generateClassName(options.dayCellInnerClass, renderProps)}
+                className={joinClassNames(
+                  classNames.rel, // origin for this cell's foreground event wrappers
+                  generateClassName(options.dayCellInnerClass, renderProps),
+                )}
                 style={{ minHeight: props.fgHeight }}
                 // TODO: prevent margins/padding!?
               >
@@ -207,6 +231,7 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
             <div
               className={joinClassNames(
                 classNames.rel, // puts it above bg-fills
+                DAY_GRID_CELL_CONTENT_Z_CLASS,
                 generateClassName(options.dayCellBottomClass, renderProps),
               )}
             />
@@ -220,17 +245,28 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
     if (this.disconnectBodyHeight) {
       this.disconnectBodyHeight()
       this.disconnectBodyHeight = undefined
+      this.headerHeight = undefined
       setRef(this.props.headerHeightRef, null)
       setRef(this.props.mainHeightRef, null)
     }
 
-    if (bodyEl) {
+    // Print cells don't need this screen-only measurement.
+    if (bodyEl && (this.props.headerHeightRef || this.props.mainHeightRef)) {
       // we want to fire on ANY size change, because we do more advanced stuff
       this.disconnectBodyHeight = watchSize(bodyEl, (_bodyWidth, bodyHeight) => {
-        if (this._isUnmounting) return
+        if (this._isUnmounting) {
+          return
+        }
         const { props } = this
+        const rootEl = this.rootElRef.current
+
+        // A queued resize can outlive the cell element.
+        if (!rootEl) {
+          return
+        }
+
         const mainRect = bodyEl.getBoundingClientRect()
-        const rootRect = this.rootElRef.current.getBoundingClientRect()
+        const rootRect = rootEl.getBoundingClientRect()
         const headerHeight = mainRect.top - rootRect.top
 
         if (!isDimsEqual(this.headerHeight, headerHeight)) {
@@ -238,9 +274,15 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
           setRef(props.headerHeightRef, headerHeight)
         }
 
-        if (props.fgLiquidHeight) {
-          setRef(props.mainHeightRef, bodyHeight)
-        }
+        /*
+        Reported in every mode, even though only a liquid cell's placement
+        consumes it. The body keeps the same element and the same observer when
+        `fgLiquidHeight` flips, and switching it between `grow` and `liquid`
+        need not change its height at all, so a mode-conditional report would
+        leave a newly liquid cell waiting for an unrelated resize before it
+        ever learned its own ceiling.
+        */
+        setRef(props.mainHeightRef, bodyHeight)
       })
     }
   }
@@ -256,6 +298,19 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
 
 // Utils
 // -------------------------------------------------------------------------------------------------
+
+function getDayGridCellDateMeta(
+  date: DateMarker,
+  dateEnv: DateEnv,
+  dateProfile: DateProfile,
+  todayRange: DateRange,
+  isDisabled: boolean,
+): DateMeta {
+  return {
+    ...getDateMeta(date, dateEnv, dateProfile, todayRange),
+    isDisabled,
+  }
+}
 
 function renderTopInner(props: DayCellInfo): ReactNode {
   return props.text || <>&nbsp;</> // TODO: DRY?

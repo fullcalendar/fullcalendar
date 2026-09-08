@@ -19,6 +19,7 @@ export interface DayGridHeaderRowProps<BaseRenderProps, RenderProps> extends Row
   rowIndex?: number // 0-based ... optional?... for aria only?
   rowLevel: number // 0 is closest to body, higher-up is ++
   borderBottom?: boolean
+  tableMode?: boolean
 }
 
 export class DayGridHeaderRow<BaseRenderProps extends { isDisabled: boolean }, RenderProps extends { text: string, isDisabled: boolean }> extends BaseComponent<DayGridHeaderRowProps<BaseRenderProps, RenderProps>> {
@@ -33,18 +34,23 @@ export class DayGridHeaderRow<BaseRenderProps extends { isDisabled: boolean }, R
 
   render() {
     const { props, context } = this
+    const { tableMode } = props
     const { options } = context
+    const RowTag = tableMode ? 'tr' : 'div'
 
     return (
-      <div
+      <RowTag
         role={props.role as any /* !!! */}
         aria-rowindex={props.rowIndex != null ? 1 + props.rowIndex : undefined}
         className={joinClassNames(
           options.dayHeaderRowClass,
           props.className,
-          classNames.flexRow,
-          classNames.contentBox,
-          props.borderBottom ? classNames.borderOnlyB : classNames.borderNone,
+          tableMode && classNames.borderless,
+          !tableMode && classNames.flexRow,
+          !tableMode && classNames.contentBox,
+          !tableMode && classNames.borderlessX,
+          !tableMode && classNames.borderlessTop,
+          (!tableMode && !props.borderBottom) && classNames.borderlessBottom,
         )}
         style={{
           height: props.height,
@@ -62,9 +68,11 @@ export class DayGridHeaderRow<BaseRenderProps extends { isDisabled: boolean }, R
             cellIsNarrow={props.cellIsNarrow}
             cellIsMicro={props.cellIsMicro}
             rowLevel={props.rowLevel}
+            tableMode={tableMode}
+            borderBottom={props.borderBottom}
           />
         ))}
-      </div>
+      </RowTag>
     )
   }
 

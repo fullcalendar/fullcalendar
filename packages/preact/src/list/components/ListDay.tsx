@@ -5,7 +5,6 @@ import type { DateMarker, DateRange } from '@full-ui/headless-calendar'
 import type { EventRangeProps } from '../../component-util/event-rendering'
 import { generateClassName } from '../../content-inject/ContentContainer'
 import { getDateMeta } from '../../component-util/date-rendering'
-import { getEventKey } from '../../component-util/event-rendering'
 import { getEventRangeMeta } from '../../component-util/event-rendering'
 import { memoize } from '../../util/memoize'
 import { sortEventSegs } from '../../component-util/event-rendering'
@@ -26,6 +25,7 @@ export interface ListSeg {
 export interface ListDayProps {
   dayDate: DateMarker
   nowDate: DateMarker
+  nowMs?: number
   todayRange: DateRange
   segs: (ListSeg & EventRangeProps)[]
   isFirst: boolean
@@ -77,7 +77,7 @@ export class ListDay extends BaseComponent<ListDayProps> {
           )}
         >
           {segs.map((seg, index) => {
-            const key = getEventKey(seg)
+            const key = seg.eventRange.instance.instanceId
             const isFirst = index === 0
             const isLast = index === segs.length - 1
 
@@ -95,7 +95,7 @@ export class ListDay extends BaseComponent<ListDayProps> {
                 isResizing={false}
                 isMirror={false}
                 isSelected={false}
-                {...getEventRangeMeta(seg.eventRange, todayRange, nowDate)}
+                {...getEventRangeMeta(seg.eventRange, todayRange, nowDate, props.nowMs)}
               />
             )
           })}

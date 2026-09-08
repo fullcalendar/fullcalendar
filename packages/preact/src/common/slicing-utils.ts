@@ -38,6 +38,28 @@ export abstract class Slicer<R, ExtraArgs extends any[] = []> {
   private sliceEventResize = memoize(this._sliceInteraction)
 
   abstract sliceRange(dateRange: DateRange, ...extraArgs: ExtraArgs): R[]
+  protected intersectDateSpan(dateSpan: DateSpan, activeRange: DateRange, ...extraArgs: ExtraArgs): DateSpan | null {
+    const activeDateSpanRange = intersectRanges(dateSpan.range, activeRange)
+
+    if (activeDateSpanRange) {
+      const slicedDateSpan = { ...dateSpan, range: activeDateSpanRange }
+
+      if (activeDateSpanRange.start.valueOf() !== dateSpan.range.start.valueOf()) {
+        delete slicedDateSpan.instantStartMs
+      }
+      if (activeDateSpanRange.end.valueOf() !== dateSpan.range.end.valueOf()) {
+        delete slicedDateSpan.instantEndMs
+      }
+
+      return slicedDateSpan
+    }
+
+    return null
+  }
+
+  protected sliceDateSpan(dateSpan: DateSpan, ...extraArgs: ExtraArgs): R[] {
+    return this.sliceRange(dateSpan.range, ...extraArgs)
+  }
   protected forceDayIfListItem = false // hack
 
   sliceProps(
@@ -166,13 +188,13 @@ export abstract class Slicer<R, ExtraArgs extends any[] = []> {
     }
 
     let activeRange = computeActiveRange(dateProfile, Boolean(nextDayThreshold))
-    let activeDateSpanRange = intersectRanges(dateSpan.range, activeRange)
+    let slicedDateSpan = this.intersectDateSpan(dateSpan, activeRange, ...extraArgs)
 
-    if (activeDateSpanRange) {
-      dateSpan = { ...dateSpan, range: activeDateSpanRange }
+    if (slicedDateSpan) {
+      dateSpan = slicedDateSpan
 
       let eventRange = fabricateEventRange(dateSpan, eventUiBases, context)
-      let segs = this.sliceRange(dateSpan.range, ...extraArgs)
+      let segs = this.sliceDateSpan(dateSpan, ...extraArgs)
 
       for (let seg of segs) {
         (seg as any).eventRange = eventRange

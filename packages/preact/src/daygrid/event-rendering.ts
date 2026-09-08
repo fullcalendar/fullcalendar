@@ -1,6 +1,6 @@
 import { createFormatter } from '../datelib/formatting'
 import { DateFormatter } from '@full-ui/headless-calendar'
-import { EventRangeProps } from '../component-util/event-rendering'
+import { EventRenderRange } from '../component-util/event-rendering'
 import { SlicedCoordRange } from '../coord-range'
 
 export const DEFAULT_TABLE_EVENT_TIME_FORMAT: DateFormatter = createFormatter({
@@ -10,14 +10,17 @@ export const DEFAULT_TABLE_EVENT_TIME_FORMAT: DateFormatter = createFormatter({
   meridiem: 'narrow',
 })
 
-export function hasListItemDisplay(seg: SlicedCoordRange & EventRangeProps) {
-  let { display } = seg.eventRange.ui
+export function hasListItemDisplay(
+  range: SlicedCoordRange,
+  eventRange: EventRenderRange,
+) {
+  let { display } = eventRange.ui
 
   return display === 'list-item' || (
     display === 'auto' &&
-    !seg.eventRange.def.allDay &&
-    (seg.end - seg.start) === 1 && // single-day
-    seg.isStart && // "
-    seg.isEnd // "
+    !eventRange.def.allDay &&
+    (range.end - range.start) === 1 && // single-day
+    range.isStart && // "
+    range.isEnd // "
   )
 }

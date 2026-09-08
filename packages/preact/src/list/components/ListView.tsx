@@ -125,7 +125,7 @@ export class ListView extends DateComponent<ViewProps> {
         )}
       >
         <NowTimer unit="day">
-          {(nowDate: DateMarker, todayRange: DateRange) => {
+          {(nowDate: DateMarker, todayRange: DateRange, nowMs: number) => {
             const dayNodes: ReactElement[] = []
             const populatedDayCount = segsByDay.reduce(
               (count, daySegs) => count + (daySegs ? 1 : 0),
@@ -147,6 +147,7 @@ export class ListView extends DateComponent<ViewProps> {
                     key={key}
                     dayDate={dayDate}
                     nowDate={nowDate}
+                    nowMs={nowMs}
                     todayRange={todayRange}
                     segs={daySegs}
                     isFirst={isFirst}

@@ -5,8 +5,8 @@ import {
   DateTimeRangeFormatPartWithWeek,
   VerboseFormattingData,
   createVerboseFormattingArg,
+  ZonedInstant,
 } from './formatting-interface'
-import { ZonedMarker } from './zoned-marker'
 
 export type FuncDateFormatterFunc = (info: VerboseFormattingData) => string
 
@@ -18,7 +18,7 @@ export class FuncDateFormatter implements DateFormatter {
   }
 
   formatToParts(
-    date: ZonedMarker,
+    date: ZonedInstant,
     context: DateFormattingContext,
   ): DateTimeFormatPartWithWeek[] {
     const str = this.func(createVerboseFormattingArg(date, null, context))
@@ -26,8 +26,8 @@ export class FuncDateFormatter implements DateFormatter {
   }
 
   formatRangeToParts(
-    start: ZonedMarker,
-    end: ZonedMarker,
+    start: ZonedInstant,
+    end: ZonedInstant,
     context: DateFormattingContext,
   ): DateTimeRangeFormatPartWithWeek[] {
     const str = this.func(createVerboseFormattingArg(start, end, context))

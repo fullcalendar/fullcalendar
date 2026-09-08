@@ -1,11 +1,9 @@
 
 # FullCalendar Vue 3 Component
 
-The official [Vue 3](https://vuejs.org/) component for [FullCalendar](https://fullcalendar.io)
+FullCalendar Vue package for rendering a calendar
 
 ## Installation
-
-Install the Vue 3 connector, the core package, and any plugins (like [daygrid](https://fullcalendar.io/docs/month-view)):
 
 ```sh
 npm install @fullcalendar/vue3 temporal-polyfill
@@ -13,7 +11,7 @@ npm install @fullcalendar/vue3 temporal-polyfill
 
 ## Usage
 
-Render a `FullCalendar` component, supplying an [options](https://fullcalendar.io/docs#toc) object:
+Render a `FullCalendar` component with [options](https://fullcalendar.io/docs#toc), including one or more plugins:
 
 ```vue
 <script>
@@ -64,23 +62,21 @@ You can even supply [named-slot](https://vuejs.org/guide/components/slots.html#n
 </template>
 ```
 
+## Plugins
+
+| Import                           | Provides                                     |
+| -------------------------------- | -------------------------------------------- |
+| `@fullcalendar/vue3/daygrid`     | `dayGridDay`/`Week`/`Month`/`Year` views     |
+| `@fullcalendar/vue3/timegrid`    | `timeGridDay`/`Week` views                   |
+| `@fullcalendar/vue3/list`        | `listDay`/`Week`/`Month`/`Year` views        |
+| `@fullcalendar/vue3/multimonth`  | `multiMonthYear` view                        |
+| `@fullcalendar/vue3/interaction` | dragging, resizing, and date/event selection |
+
+Themes are plugins too. `@fullcalendar/vue3/themes/classic`, `/monarch`, `/breezy`, `/forma`, and `/pulse` are available, each paired with a `theme.css` and a palette stylesheet.
+
 ## Links
 
-- [Documentation](https://fullcalendar.io/docs/vue)
-- [Example Project](https://github.com/fullcalendar/fullcalendar-examples/tree/main/vue3)
-
-## Development
-
-You must install this repo with [PNPM](https://pnpm.io/):
-
-```
-pnpm install
-```
-
-Available scripts (via `pnpm run <script>`):
-
-- `build` - build production-ready dist files
-- `dev` - build & watch development dist files
-- `test` - test headlessly
-- `test:dev` - test interactively
-- `clean`
+- [Vue Documentation](https://fullcalendar.io/docs/vue)
+- [Vue Scheduler Documentation](https://fullcalendar.io/docs/vue#fullcalendar-premium)
+- [Vue Example Project](https://github.com/fullcalendar/fullcalendar-examples/tree/main/vue3)
+- [Options Reference](https://fullcalendar.io/docs#toc)

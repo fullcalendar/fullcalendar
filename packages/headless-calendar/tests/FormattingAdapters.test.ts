@@ -2,10 +2,9 @@
 
 import { FuncDateFormatter } from '../src/formatting-func'
 import { CmdDateFormatter } from '../src/formatting-cmd'
-import type { DateFormattingContext } from '../src/formatting-interface'
+import type { DateFormattingContext, ZonedInstant } from '../src/formatting-interface'
 import { createCalendarSystem } from '../src/calendar-system'
 import type { Locale } from '../src/locale'
-import type { ZonedMarker } from '../src/zoned-marker'
 
 function makeLocale(code: string): Locale {
   return {
@@ -29,8 +28,9 @@ function makeContext(overrides: Partial<DateFormattingContext> = {}): DateFormat
   }
 }
 
-function makeMarker(isoString: string, timeZoneOffset = 0): ZonedMarker {
-  return { marker: new Date(isoString), timeZoneOffset }
+function makeMarker(isoString: string, timeZoneOffset = 0): ZonedInstant {
+  const marker = new Date(isoString)
+  return { marker, instantMs: marker.valueOf() - timeZoneOffset * 60000 }
 }
 
 describe('formatting adapters', () => {

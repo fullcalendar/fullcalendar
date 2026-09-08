@@ -11,6 +11,7 @@ import { generateClassName } from '../content-inject/ContentContainer'
 import { ContentContainer } from '../content-inject/ContentContainer'
 import { DayCellInfo, DayHeaderInfo } from '../api/structs'
 import classNames from '../styles.module.css'
+import { ROW_BORDER_WIDTH } from '../util/dimensions'
 import { joinClassNames } from '../util/html'
 import { applyStyle, computeElIsRtl, getAppendableRoot, getEventTargetViaRoot } from '../util/dom-manip'
 import { createAriaClickAttrs } from '../util/dom-event'
@@ -33,7 +34,6 @@ export interface MorePopoverProps {
 }
 
 const SPACE_FROM_VIEWPORT = 10
-const ROW_BORDER_WIDTH = 1
 
 export class MorePopover extends DateComponent<MorePopoverProps> {
   // memo
@@ -130,7 +130,8 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
           className={joinClassNames(
             generateClassName(options.dayHeaderClass, dayHeaderRenderProps),
             classNames.flexCol,
-            classNames.borderOnlyB,
+            classNames.borderlessX,
+            classNames.borderlessTop,
             align === 'center' ? classNames.alignCenter :
               align === 'end' ? classNames.alignEnd :
                 classNames.alignStart,
@@ -173,7 +174,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
           className={joinClassNames(
             generateClassName(options.dayCellClass, dayCellRenderProps),
             classNames.flexCol,
-            classNames.borderNone,
+            classNames.borderless,
           )}
         >
           <div className={generateClassName(options.dayCellInnerClass, dayCellRenderProps)}>

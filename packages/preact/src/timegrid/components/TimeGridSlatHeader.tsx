@@ -70,7 +70,9 @@ export class TimeGridSlatHeader extends BaseComponent<TimeGridSlatHeaderProps> {
       classNames.alignStart,
       classNames.noMargin,
       classNames.noPadding,
-      props.borderTop ? classNames.borderOnlyT : classNames.borderNone,
+      classNames.borderlessX,
+      classNames.borderlessBottom,
+      !props.borderTop && classNames.borderlessTop,
     )
 
     if (!props.isLabeled) {

@@ -1,6 +1,9 @@
 import { filterHash, mapHash } from '../util/object'
 import { EventDef } from '../structs/event-def'
-import { EventInstance, EventInstanceHash } from '../structs/event-instance'
+import {
+  buildEventInstanceRange, buildValidInstanceRange, EventInstance, EventInstanceHash,
+  getRangeInstantStartMs, getRangeInstantEndMs,
+} from '../structs/event-instance'
 import { EventInput } from '../structs/event-parse'
 import {
   EventStore,
@@ -12,7 +15,7 @@ import {
 } from '../structs/event-store'
 import { Action } from './Action'
 import { EventSourceHash, EventSource } from '../structs/event-source'
-import { DateRange, DateEnv } from '@full-ui/headless-calendar'
+import { DateRange, DateEnv, addMs } from '@full-ui/headless-calendar'
 import { DateProfile } from '../DateProfileGenerator'
 import { CalendarContext } from '../CalendarContext'
 import { expandRecurring } from '../structs/recurring-event'
@@ -192,12 +195,31 @@ export function rezoneEventStoreDates(eventStore: EventStore, oldDateEnv: DateEn
     if (def.allDay) {
       return instance // isn't dependent on timezone
     }
+
+    // markers are zone-dependent, instants are not. recompute markers FROM the exact
+    // instants when present (correctly re-resolves DST-fold identity in the new zone).
+    // buildValidInstanceRange re-expresses ranges the new zone's fold civilly compresses
+    let { instantStartMs, instantEndMs } = instance.range
+    let start = instantStartMs != null ?
+      newDateEnv.timestampToMarker(instantStartMs) :
+      newDateEnv.createMarker(oldDateEnv.toDate(instance.range.start))
+    let end = instantEndMs != null ?
+      newDateEnv.timestampToMarker(instantEndMs) :
+      newDateEnv.createMarker(oldDateEnv.toDate(instance.range.end))
+
     return {
       ...instance,
-      range: {
-        start: newDateEnv.createMarker(oldDateEnv.toDate(instance.range.start)),
-        end: newDateEnv.createMarker(oldDateEnv.toDate(instance.range.end)),
-      },
+      range: buildValidInstanceRange(
+        { marker: start, instantMs: instantStartMs },
+        { marker: end, instantMs: instantEndMs },
+        newDateEnv,
+      ) ?? buildEventInstanceRange(
+        // mixed exact/civil edges whose real order degenerated in the new zone (rare):
+        // keep the exact start, apply the old real duration civilly
+        start,
+        addMs(start, getRangeInstantEndMs(instance.range, oldDateEnv) - getRangeInstantStartMs(instance.range, oldDateEnv)),
+        instantStartMs,
+      ),
     }
   })
 

@@ -4,20 +4,26 @@ import { EventRangeProps } from '../../component-util/event-rendering'
 import { memoize } from '../../util/memoize'
 import { NowTimer } from '../../NowTimer'
 import { ViewProps } from '../../component-util/View'
+import { DateProfile, DateProfileGenerator } from '../../DateProfileGenerator'
+import { DaySeriesModel } from '../../common/DaySeriesModel'
+import { DayCol, buildDayColsFromSeries } from '../../common/day-cols'
 import { buildDateRowConfigs } from '../../daygrid/header-tier'
 import { createDayHeaderFormatter } from '../../daygrid/components/util'
-import { DayTableSlicer } from '../../daygrid/DayTableSlicer'
-import { AllDaySplitter } from "../AllDaySplitter"
-import { DayTimeColsSlicer } from "../DayTimeColsSlicer"
-import { organizeSegsByCol, splitInteractionByCol, TimeGridRange } from "../TimeColsSeg"
+import { DaySeriesSlicer } from '../../daygrid/DayTableSlicer'
+import { AllDaySplitter } from '../AllDaySplitter'
+import { DayTimeColsSlicer } from '../DayTimeColsSlicer'
+import { organizeSegsByCol, splitInteractionByCol, TimeGridRange } from '../TimeColsSeg'
 import { TimeGridLayout } from './TimeGridLayout'
-import { buildDayRanges, buildTimeColsModel } from "./util"
 
 export class TimeGridView extends DateComponent<ViewProps> {
   // memo
   private createDayHeaderFormatter = memoize(createDayHeaderFormatter)
-  private buildTimeColsModel = memoize(buildTimeColsModel)
-  private buildDayRanges = memoize(buildDayRanges)
+  private buildDaySeries = memoize((dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) => (
+    new DaySeriesModel(dateProfile.renderRange, dateProfileGenerator)
+  ))
+  private buildDayCols = memoize(buildDayColsFromSeries)
+  private extractColDates = memoize((cols: DayCol[]) => cols.map((col) => col.date))
+  private extractColRanges = memoize((cols: DayCol[]) => cols.map((col) => col.range))
   private buildDateRowConfigs = memoize(buildDateRowConfigs)
   private splitFgEventSegs = memoize(organizeSegsByCol<TimeGridRange & EventRangeProps>)
   private splitBgEventSegs = memoize(organizeSegsByCol<TimeGridRange & EventRangeProps>)
@@ -29,7 +35,7 @@ export class TimeGridView extends DateComponent<ViewProps> {
 
   // internal
   private allDaySplitter = new AllDaySplitter()
-  private dayTableSlicer = new DayTableSlicer()
+  private daySeriesSlicer = new DaySeriesSlicer()
   private dayTimeColsSlicer = new DayTimeColsSlicer()
 
   render() {
@@ -37,15 +43,20 @@ export class TimeGridView extends DateComponent<ViewProps> {
     const { dateProfile } = props
     const { options, dateProfileGenerator } = context
 
-    const dayTableModel = this.buildTimeColsModel(dateProfile, dateProfileGenerator, context.dateEnv)
-    const dayRanges = this.buildDayRanges(dayTableModel, dateProfile, context.dateEnv)
+    const daySeries = this.buildDaySeries(dateProfile, dateProfileGenerator)
+    const cols = this.buildDayCols(daySeries, context.dateEnv, {
+      slotRange: dateProfile,
+      activeRange: dateProfile.activeRange,
+    })
+    const colDates = this.extractColDates(cols)
+    const dayRanges = this.extractColRanges(cols)
     const splitProps = this.allDaySplitter.splitProps(props)
-    const allDayProps = this.dayTableSlicer.sliceProps(
+    const allDayProps = this.daySeriesSlicer.sliceProps(
       splitProps.allDay,
       dateProfile,
       options.nextDayThreshold,
       context,
-      dayTableModel,
+      daySeries,
     )
     const timedProps = this.dayTimeColsSlicer.sliceProps(
       splitProps.timed,
@@ -57,13 +68,13 @@ export class TimeGridView extends DateComponent<ViewProps> {
     const dayHeaderFormat = this.createDayHeaderFormatter(
       context.options.dayHeaderFormat,
       true, // datesRepDistinctDays
-      dayTableModel.colCount,
+      cols.length,
     )
 
     return (
       <NowTimer unit={options.nowIndicator ? 'minute' : 'day' /* hacky */}>
-        {(nowDate: DateMarker, todayRange: DateRange) => {
-          const colCount = dayTableModel.cellRows[0].length
+        {(nowDate: DateMarker, todayRange: DateRange, nowMs: number) => {
+          const colCount = cols.length
           const nowIndicatorSeg = !props.forPrint && options.nowIndicator &&
             this.dayTimeColsSlicer.sliceNowDate(nowDate, dateProfile, options.nextDayThreshold, context, dayRanges)
 
@@ -76,7 +87,7 @@ export class TimeGridView extends DateComponent<ViewProps> {
           const eventResizeByCol = this.splitEventResize(timedProps.eventResize, colCount)
 
           const headerTiers = this.buildDateRowConfigs(
-            dayTableModel.headerDates,
+            colDates,
             true, // datesRepDistinctDays
             props.dateProfile,
             todayRange,
@@ -91,8 +102,9 @@ export class TimeGridView extends DateComponent<ViewProps> {
 
               dateProfile={dateProfile}
               nowDate={nowDate}
+              nowMs={nowMs}
               todayRange={todayRange}
-              cells={dayTableModel.cellRows[0]}
+              cells={cols}
               forPrint={props.forPrint}
               className={props.className}
 

@@ -1,4 +1,4 @@
-import { strictModeFactor, vdomExtraRenders } from 'fullcalendar/protected-api'
+import { strictModeFactor } from 'fullcalendar/protected-api'
 import timeGridPlugin from 'fullcalendar/timegrid'
 import classicThemePlugin from 'fullcalendar/themes/classic' // need both
 import themeForTestsPlugin from '../lib/theme-for-tests' // "
@@ -31,8 +31,8 @@ describe('timeZone change', () => {
       calendar.setOption('timeZone', 'America/Chicago')
       await waitTimeout()
       expect(events[0 * strictModeFactor].start).toEqualDate('2023-02-07T17:00:00Z')
-      expect(timeTexts.length).toBe(2 * strictModeFactor + vdomExtraRenders)
-      expect(timeTexts[1 * strictModeFactor + vdomExtraRenders]).toBe('11:00')
+      expect(timeTexts.length).toBe(2 * strictModeFactor)
+      expect(timeTexts[1 * strictModeFactor]).toBe('11:00')
     })
   })
 })

@@ -1,4 +1,7 @@
 import { EventDef, EventDefHash } from '../structs/event-def'
+import {
+  buildEventInstanceRange, buildRangeEdgeOutput, EventInstanceRange,
+} from '../structs/event-instance'
 import { EventTuple } from '../structs/event-parse'
 import { EventStore } from '../structs/event-store'
 import {
@@ -28,18 +31,14 @@ export interface EventRenderRange extends EventTuple {
 
   // a transformed version of eventInstance.range
   // if view renders whole-days, `range` is all-day
-  // otherwise, `range` is timed
-  range: DateRange
+  // otherwise, `range` is timed (and may carry exact instants for unclipped edges)
+  range: EventInstanceRange
   isStart: boolean
   isEnd: boolean
 }
 
 export interface EventRangeProps {
   eventRange: EventRenderRange
-}
-
-export function getEventKey(seg: EventRangeProps): string {
-  return seg.eventRange.instance.instanceId
 }
 
 /*
@@ -94,7 +93,7 @@ export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHas
           def,
           ui,
           instance,
-          range: slicedRange,
+          range: buildSlicedEventRange(origRange, normalRange, slicedRange),
           isStart: normalRange.start && normalRange.start.valueOf() === slicedRange.start.valueOf(),
           isEnd: normalRange.end && normalRange.end.valueOf() === slicedRange.end.valueOf(),
         })
@@ -138,6 +137,28 @@ export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHas
   }
 
   return { bg: bgRanges, fg: fgRanges }
+}
+
+/*
+Carries instant fields from the original event range onto the sliced range, per-edge, only
+for edges that were not clipped by the framing range. Only applies when the range was not
+day-normalized (normalRange === origRange, i.e. timed events not subject to nextDayThreshold).
+*/
+function buildSlicedEventRange(
+  origRange: EventInstanceRange,
+  normalRange: DateRange,
+  slicedRange: DateRange,
+): EventInstanceRange {
+  if (normalRange !== origRange) {
+    return slicedRange
+  }
+
+  return buildEventInstanceRange(
+    slicedRange.start,
+    slicedRange.end,
+    slicedRange.start.valueOf() === origRange.start.valueOf() ? origRange.instantStartMs : undefined,
+    slicedRange.end.valueOf() === origRange.end.valueOf() ? origRange.instantEndMs : undefined,
+  )
 }
 
 export function hasBgRendering(def: EventDef) {
@@ -291,6 +312,9 @@ export function buildEventRangeTimeText(
 ): string {
   const { dateEnv, options } = context
   const { def } = eventRange
+  const { range } = eventRange.instance
+  const canonicalStart = buildRangeEdgeOutput(range.start, range.instantStartMs, dateEnv)
+  const canonicalEnd = buildRangeEdgeOutput(range.end, range.instantEndMs, dateEnv)
   let { displayEventTime, displayEventEnd } = options
 
   if (displayEventTime == null) { displayEventTime = defaultDisplayEventTime !== false }
@@ -301,39 +325,49 @@ export function buildEventRangeTimeText(
     slicedStart &&
     // if seg is the first seg, but start-date cut-off by slotMinTime, (technically isStart=false)
     // we still want to display the original start-time
-    startOfDay(slicedStart).valueOf() !== startOfDay(eventRange.instance.range.start).valueOf()
+    startOfDay(slicedStart).valueOf() !== startOfDay(canonicalStart.marker).valueOf()
   )
     ? slicedStart
-    : eventRange.instance.range.start
+    : canonicalStart.marker
 
   const endDate = (
     !isEnd &&
     slicedEnd &&
     // See above HACK, but for end-time
-    startOfDay(addMs(slicedEnd, -1)).valueOf() !== startOfDay(addMs(eventRange.instance.range.end, -1)).valueOf()
+    startOfDay(addMs(slicedEnd, -1)).valueOf() !== startOfDay(addMs(canonicalEnd.marker, -1)).valueOf()
   )
     ? slicedEnd
-    : eventRange.instance.range.end
+    : canonicalEnd.marker
+  const startInstantMs = startDate === canonicalStart.marker ? canonicalStart.date.valueOf() : undefined
+  const endInstantMs = endDate === canonicalEnd.marker ? canonicalEnd.date.valueOf() : undefined
 
   if (displayEventTime && !def.allDay) {
     if (displayEventEnd && (isStart || isEnd) && def.hasEnd) {
       // TODO: put this functionality in @full-ui/headless-calendar ?
+      const rangeParts = dateEnv.formatRangeToParts(startDate, endDate, timeFormat, {
+        startInstantMs,
+        endInstantMs,
+      })
+      const multiDaySeparator = detectMultiDayTimes(rangeParts)
       // NOTE: produces strings like '12:00pm - 1:00pm', without condensing dayPeriod,
       // but that's okay since it's technically a different dayPeriod on a different day
-      const rangeParts = dateEnv.formatRangeToParts(startDate, endDate, timeFormat)
-      const multiDaySeparator = detectMultiDayTimes(rangeParts)
-      //
       if (multiDaySeparator != null) {
-        return joinDateTimeFormatParts(dateEnv.formatToParts(startDate, timeFormat)) +
+        return joinDateTimeFormatParts(dateEnv.formatToParts(startDate, timeFormat, {
+          instantMs: startInstantMs,
+        })) +
           multiDaySeparator +
-          joinDateTimeFormatParts(dateEnv.formatToParts(endDate, timeFormat))
+          joinDateTimeFormatParts(dateEnv.formatToParts(endDate, timeFormat, {
+            instantMs: endInstantMs,
+          }))
       }
 
       return joinDateTimeFormatParts(rangeParts)
     }
 
     if (isStart) {
-      return joinDateTimeFormatParts(dateEnv.formatToParts(startDate, timeFormat))
+      return joinDateTimeFormatParts(dateEnv.formatToParts(startDate, timeFormat, {
+        instantMs: startInstantMs,
+      }))
     }
   }
 
@@ -361,12 +395,17 @@ export function getEventRangeMeta(
   eventRange: EventRenderRange,
   todayRange: DateRange,
   nowDate?: DateMarker,
+  nowMs?: number,
 ) {
   let segRange = eventRange.range
 
   return {
-    isPast: segRange.end <= (nowDate || todayRange.start),
-    isFuture: segRange.start >= (nowDate || todayRange.end),
+    isPast: segRange.instantEndMs != null && nowMs != null
+      ? segRange.instantEndMs <= nowMs
+      : segRange.end <= (nowDate || todayRange.start),
+    isFuture: segRange.instantStartMs != null && nowMs != null
+      ? segRange.instantStartMs >= nowMs
+      : segRange.start >= (nowDate || todayRange.end),
     isToday: todayRange && rangeContainsMarker(todayRange, segRange.start),
   }
 }

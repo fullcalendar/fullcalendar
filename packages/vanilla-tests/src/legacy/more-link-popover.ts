@@ -1,4 +1,5 @@
 import { EventInput } from 'fullcalendar'
+import { strictModeFactor } from 'fullcalendar/protected-api'
 import { waitTimeout } from '../lib/misc'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
@@ -502,25 +503,28 @@ describe('more-link popover', () => {
 
     let calendar = initCalendar(options)
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let gridEventCnt = dayGridWrapper.getEventEls().length
 
-    expect(options.eventDidMount.calls.count()).toBe(4)
-    expect(options.eventContent.calls.count()).toBe(4)
-    expect(options.eventWillUnmount.calls.count()).toBe(0)
+    expect(options.eventDidMount.calls.count()).toBe(gridEventCnt * strictModeFactor)
+    expect(options.eventContent.calls.count()).toBe(gridEventCnt * strictModeFactor)
+    expect(options.eventWillUnmount.calls.count()).toBe(gridEventCnt * (strictModeFactor - 1))
 
     resetCounts()
     await waitTimeout()
     dayGridWrapper.openMorePopover()
     await waitTimeout()
-    expect(options.eventDidMount.calls.count()).toBe(4)
-    expect(options.eventContent.calls.count()).toBe(4)
-    expect(options.eventWillUnmount.calls.count()).toBe(0)
+    let popoverEventCnt = dayGridWrapper.getMorePopoverEventEls().length
+
+    expect(options.eventDidMount.calls.count()).toBe(popoverEventCnt * strictModeFactor)
+    expect(options.eventContent.calls.count()).toBe(popoverEventCnt * strictModeFactor)
+    expect(options.eventWillUnmount.calls.count()).toBe(popoverEventCnt * (strictModeFactor - 1))
 
     resetCounts()
     dayGridWrapper.closeMorePopover()
     await waitTimeout()
     expect(options.eventDidMount.calls.count()).toBe(0)
     expect(options.eventContent.calls.count()).toBe(0)
-    expect(options.eventWillUnmount.calls.count()).toBe(4)
+    expect(options.eventWillUnmount.calls.count()).toBe(popoverEventCnt)
   })
 
   it('displays latest events after refetch', async () => {

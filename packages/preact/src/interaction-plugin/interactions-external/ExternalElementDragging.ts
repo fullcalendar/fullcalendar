@@ -4,7 +4,9 @@ import type { Hit } from '../../interactions/hit'
 import { interactionSettingsStore } from '../../interactions/interaction'
 import type { PointerDragEvent } from '../../interactions/pointer'
 import { parseEventDef } from '../../structs/event-parse'
-import { createEventInstance } from '../../structs/event-instance'
+import {
+  addDurationToEdge, buildEventInstanceRange, createEventInstance, EventRangeEdge,
+} from '../../structs/event-instance'
 import type { EventTuple } from '../../structs/event-parse'
 import { createEmptyEventStore, eventTupleToStore } from '../../structs/event-store'
 import { config } from '../../global-config'
@@ -16,7 +18,7 @@ import { enableCursor, disableCursor } from '../../util/misc'
 import { isInteractionValid } from '../../validation'
 import type { ElementDragging } from '../../interactions/ElementDragging'
 import type { CalendarContext } from '../../CalendarContext'
-import { getDefaultEventEnd } from '../../calendar-utils'
+import { getDefaultEventEndEdge } from '../../calendar-utils'
 import { refineEventDef } from '../../structs/event-parse'
 import { EventImpl } from '../../api/EventImpl'
 import classNames from '../../styles.module.css'
@@ -240,11 +242,21 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, context
     start = context.dateEnv.add(start, dragMeta.startTime)
   }
 
-  let end = dragMeta.duration ?
-    context.dateEnv.add(start, dragMeta.duration) :
-    getDefaultEventEnd(dateSpan.allDay, start, context)
+  // carry the drop span's exact instant when the start marker was used as-is
+  // (keeps identity during DST fall-back doubled slots)
+  let startEdge: EventRangeEdge = {
+    marker: start,
+    instantMs: !dateSpan.allDay ? dateSpan.instantStartMs : undefined,
+  }
 
-  let instance = createEventInstance(def.defId, { start, end })
+  // an exact start yields an exact derived end (real elapsed duration)
+  let endEdge = dragMeta.duration ?
+    addDurationToEdge(startEdge, dragMeta.duration, context.dateEnv) :
+    getDefaultEventEndEdge(dateSpan.allDay, startEdge, context)
+
+  let instance = createEventInstance(def.defId, buildEventInstanceRange(
+    startEdge.marker, endEdge.marker, startEdge.instantMs, endEdge.instantMs,
+  ))
 
   return { def, instance }
 }

@@ -511,6 +511,7 @@ export const BASE_OPTION_DEFAULTS = {
   unselectAuto: true,
   dropAccept: '*',
   eventOrder: 'start,-duration,allDay,title',
+  eventSlicing: true,
   eventPrintLayout: 'auto',
   popoverFormat: { month: 'long', day: 'numeric', year: 'numeric' },
   longPressDelay: 1000,

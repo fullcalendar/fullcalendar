@@ -1,4 +1,5 @@
 import { Calendar } from 'fullcalendar'
+import { strictModeFactor } from 'fullcalendar/protected-api'
 import classicThemePlugin from 'fullcalendar/themes/classic' // need both
 import themeForTestsPlugin from '../lib/theme-for-tests' // "
 import dayGridPlugin from 'fullcalendar/daygrid'
@@ -21,12 +22,12 @@ describe('datesSet', () => {
     let $calendarEl = $('<div>').appendTo('body')
     let calendar = new Calendar($calendarEl[0], options)
     calendar.render()
-    expect(fireCnt).toBe(1)
+    expect(fireCnt).toBe(1 * strictModeFactor)
     calendar.resetOptions({
       ...options,
       weekNumbers: true,
     })
-    expect(fireCnt).toBe(1)
+    expect(fireCnt).toBe(1 * strictModeFactor)
     calendar.destroy()
     $calendarEl.remove()
   })
@@ -48,12 +49,12 @@ describe('datesSet', () => {
     let $calendarEl = $('<div>').appendTo('body')
     let calendar = new Calendar($calendarEl[0], options)
     calendar.render()
-    expect(fireCnt).toBe(1)
+    expect(fireCnt).toBe(1 * strictModeFactor)
     calendar.resetOptions({
       ...options,
       headerToolbar: buildHeaderToolbar(),
     })
-    expect(fireCnt).toBe(1)
+    expect(fireCnt).toBe(1 * strictModeFactor)
     calendar.destroy()
     $calendarEl.remove()
   })
@@ -70,12 +71,12 @@ describe('datesSet', () => {
     let $calendarEl = $('<div>').appendTo('body')
     let calendar = new Calendar($calendarEl[0], options)
     calendar.render()
-    expect(fireCnt).toBe(1)
+    expect(fireCnt).toBe(1 * strictModeFactor)
     calendar.resetOptions({
       ...options,
       plugins: [classicThemePlugin, themeForTestsPlugin, dayGridPlugin],
     })
-    expect(fireCnt).toBe(1)
+    expect(fireCnt).toBe(1 * strictModeFactor)
     calendar.destroy()
     $calendarEl.remove()
   })

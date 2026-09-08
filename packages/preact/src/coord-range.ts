@@ -19,37 +19,9 @@ export interface SlicedCoordRange extends CoordRange {
   isEnd: boolean
 }
 
-export function doCoordRangesIntersect(r0: CoordRange, r1: CoordRange): boolean {
-  return r0.end > r1.start && r0.start < r1.end
-}
-
-export function intersectCoordRanges(
-  r0: SlicedCoordRange,
-  r1: CoordRange
-): SlicedCoordRange {
-  const start = Math.max(r0.start, r1.start)
-  const end = Math.min(r0.end, r1.end)
-
-  if (start < end) {
-    return {
-      start,
-      end,
-      isStart: r0.isStart && start === r0.start,
-      isEnd: r0.isEnd && end === r0.end,
-    }
-  }
-}
-
-export function joinCoordRanges(r0: CoordRange, r1: CoordRange): CoordRange {
-  return {
-    start: Math.min(r0.start, r1.start),
-    end: Math.max(r0.end, r1.end),
-  }
-}
-
-export function getCoordRangeEnd(r: CoordRange) {
-  return r.end
-}
+// NOTE: numeric span algebra (intersection, subtraction, unions, sorted
+// searches) lives in seg-placement/span-math.ts; CoordRange is structurally
+// identical to its LateralSpan.
 
 // { eventRange }
 // -------------------------------------------------------------------------------------------------

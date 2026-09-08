@@ -21,6 +21,8 @@ export interface DayGridHeaderCellProps<BaseRenderProps, RenderProps> {
   cellIsNarrow: boolean
   cellIsMicro: boolean
   rowLevel: number
+  tableMode?: boolean
+  borderBottom?: boolean
 }
 
 interface DayGridHeaderCellState {
@@ -39,10 +41,27 @@ export class DayGridHeaderCell<BaseRenderProps extends { isDisabled: boolean }, 
 
   render() {
     const { props, state, context } = this
-    const { renderConfig, dataConfig } = props
+    const { renderConfig, dataConfig, tableMode } = props
+    const colSpan = dataConfig.colSpan || 1
     const totalColWidth = props.colWidth != null
-      ? props.colWidth * (dataConfig.colSpan || 1)
+      ? props.colWidth * colSpan
       : undefined
+    const isLiquid = !tableMode && totalColWidth == null
+
+    /*
+    A liquid cell that spans multiple columns can't use the .liquid class, which gives every
+    cell an equal share regardless of colSpan. Instead, grow proportionally to the columns
+    covered. Like the body cells, use a zero basis so borders remain within the distributed
+    border-box width.
+    */
+    const isSpanning = isLiquid && colSpan > 1
+    const style = tableMode ? undefined : isSpanning ? {
+      flexGrow: colSpan,
+      flexBasis: 0,
+      minWidth: 0,
+    } : {
+      width: totalColWidth,
+    }
 
     // HACK
     const isDisabled = dataConfig.renderProps.isDisabled
@@ -72,7 +91,7 @@ export class DayGridHeaderCell<BaseRenderProps extends { isDisabled: boolean }, 
         ? alignInput({ level: props.rowLevel, inPopover: (dataConfig.renderProps as any).inPopover, isNarrow: props.cellIsNarrow })
         : alignInput
     const stickyInput = renderConfig.sticky
-    const isSticky =
+    const isSticky = !tableMode &&
       props.rowLevel > 0 &&
       stickyInput !== false && (
         // if center-aligned, and wants to be sticky, must be >75% viewport width,
@@ -98,29 +117,41 @@ export class DayGridHeaderCell<BaseRenderProps extends { isDisabled: boolean }, 
       }
     }
 
+    /*
+    In screen mode, alignment belongs on the outer flex cell so the inner element
+    remains shrink-wrapped for sticky positioning measurements. In table mode, the
+    <th> must remain a table cell, so alignment moves to its full-width inner flex
+    element. That width cannot support sticky positioning, which table mode disables.
+    */
+    const alignClassName = align === 'center' ? classNames.alignCenter :
+      align === 'end' ? classNames.alignEnd :
+        classNames.alignStart
+
+    const CellTag = tableMode ? 'th' : 'div'
+
     return (
       <ContentContainer
-        tag='div'
+        tag={CellTag}
         attrs={{
           role: 'columnheader',
           'aria-colspan': dataConfig.colSpan,
+          colSpan: tableMode ? colSpan : undefined,
           ...dataConfig.attrs,
         }}
         className={joinClassNames(
           dataConfig.className,
           classNames.noMargin,
           classNames.noPadding,
-          classNames.flexCol,
-          props.borderStart ? classNames.borderOnlyS : classNames.borderNone,
-          align === 'center' ? classNames.alignCenter :
-            align === 'end' ? classNames.alignEnd :
-              classNames.alignStart,
-          props.colWidth == null && classNames.liquid,
+          !tableMode && classNames.flexCol,
+          classNames.borderlessTop,
+          classNames.borderlessEnd,
+          !props.borderStart && classNames.borderlessStart,
+          !(tableMode && props.borderBottom) && classNames.borderlessBottom,
+          !tableMode && alignClassName,
+          isLiquid && !isSpanning && classNames.liquid,
           !isSticky && classNames.crop,
         )}
-        style={{
-          width: totalColWidth,
-        }}
+        style={style}
         renderProps={finalRenderProps}
         generatorName={renderConfig.generatorName}
         customGenerator={renderConfig.customGenerator}
@@ -140,6 +171,7 @@ export class DayGridHeaderCell<BaseRenderProps extends { isDisabled: boolean }, 
               classNames.flexCol,
               classNames.noShrink,
               classNames.whiteSpaceNoWrap,
+              tableMode && alignClassName,
               isSticky && classNames.sticky,
             )}
             style={{

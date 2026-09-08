@@ -1,6 +1,10 @@
 import { EventStore, filterEventStoreDefs } from './structs/event-store'
 import { DateSpan } from './structs/date-span'
-import { rangeContainsRange, rangesIntersect, DateRange, OpenDateRange } from '@full-ui/headless-calendar'
+import {
+  buildEventInstanceRange, EventInstanceRange,
+  instanceRangesIntersect, instanceRangeContainsRange,
+} from './structs/event-instance'
+import { rangeContainsRange, OpenDateRange } from '@full-ui/headless-calendar'
 import { EventImpl } from './api/EventImpl'
 import { compileEventUis } from './component-util/event-rendering'
 import { excludeInstances } from './reducers/eventStore'
@@ -117,8 +121,9 @@ function isInteractionPropsValid(state: SplittableProps, context: CalendarContex
     for (let otherInstanceId in otherInstances) {
       let otherInstance = otherInstances[otherInstanceId]
 
-      // intersect! evaluate
-      if (rangesIntersect(subjectRange, otherInstance.range)) {
+      // intersect! evaluate (exact-instant-aware: fold-compressed civil readings must
+      // not falsely collide across the two passes of a repeated hour)
+      if (instanceRangesIntersect(subjectRange, otherInstance.range, context.dateEnv)) {
         let otherOverlap = otherConfigs[otherInstance.defId].overlap
 
         // consider the other event's overlap. only do this if the subject event is a "real" event
@@ -181,7 +186,11 @@ function isDateSelectionPropsValid(state: SplittableProps, context: CalendarCont
   let relevantInstances = relevantEventStore.instances
 
   let selection = state.dateSelection
-  let selectionRange = selection.range
+  // carry the span's exact instants (stamped by instant-aware views) into range checks
+  let selectionRange = buildEventInstanceRange(
+    selection.range.start, selection.range.end,
+    selection.instantStartMs, selection.instantEndMs,
+  )
   let { selectionConfig } = context.getCurrentData()
 
   if (filterConfig) {
@@ -202,7 +211,7 @@ function isDateSelectionPropsValid(state: SplittableProps, context: CalendarCont
     let relevantInstance = relevantInstances[relevantInstanceId]
 
     // intersect! evaluate
-    if (rangesIntersect(selectionRange, relevantInstance.range)) {
+    if (instanceRangesIntersect(selectionRange, relevantInstance.range, context.dateEnv)) {
       if (selectionConfig.overlap === false) {
         return false
       }
@@ -236,7 +245,7 @@ function isDateSelectionPropsValid(state: SplittableProps, context: CalendarCont
 
 function allConstraintsPass(
   constraints: Constraint[],
-  subjectRange: DateRange,
+  subjectRange: EventInstanceRange,
   otherEventStore: EventStore,
   businessHoursUnexpanded: EventStore,
   context: CalendarContext,
@@ -245,6 +254,7 @@ function allConstraintsPass(
     if (!anyRangesContainRange(
       constraintToRanges(constraint, subjectRange, otherEventStore, businessHoursUnexpanded, context),
       subjectRange,
+      context,
     )) {
       return false
     }
@@ -255,7 +265,7 @@ function allConstraintsPass(
 
 function constraintToRanges(
   constraint: Constraint,
-  subjectRange: DateRange, // for expanding a recurring constraint, or expanding business hours
+  subjectRange: EventInstanceRange, // for expanding a recurring constraint, or expanding business hours
   otherEventStore: EventStore, // for if constraint is an even group ID
   businessHoursUnexpanded: EventStore, // for if constraint is 'businessHours'
   context: CalendarContext, // for expanding businesshours
@@ -282,9 +292,9 @@ function constraintToRanges(
 }
 
 // TODO: move to event-store file?
-function eventStoreToRanges(eventStore: EventStore): DateRange[] {
+function eventStoreToRanges(eventStore: EventStore): EventInstanceRange[] {
   let { instances } = eventStore
-  let ranges: DateRange[] = []
+  let ranges: EventInstanceRange[] = []
 
   for (let instanceId in instances) {
     ranges.push(instances[instanceId].range)
@@ -294,9 +304,13 @@ function eventStoreToRanges(eventStore: EventStore): DateRange[] {
 }
 
 // TODO: move to geom file?
-function anyRangesContainRange(outerRanges: DateRange[], innerRange: DateRange): boolean {
+function anyRangesContainRange(
+  outerRanges: OpenDateRange[],
+  innerRange: EventInstanceRange,
+  context: CalendarContext,
+): boolean {
   for (let outerRange of outerRanges) {
-    if (rangeContainsRange(outerRange, innerRange)) {
+    if (instanceRangeContainsRange(outerRange, innerRange, context.dateEnv)) {
       return true
     }
   }

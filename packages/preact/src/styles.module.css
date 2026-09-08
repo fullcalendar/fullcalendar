@@ -145,37 +145,8 @@ This will prevent all ancestors from customizing their box size unless they use 
 /* Border Utils */
 /* ------------------------------------------------------------------------------------------------- */
 
-/* TODO: break-out to x and y. don't have "only" all */
-/* TODO: instead of "border" utils, call them "borderless" to subtract? */
-
-.borderNone {
+.borderless {
   border: 0 !important;
-}
-
-.borderOnlyT {
-  border-left: 0 !important;
-  border-right: 0 !important;
-  border-bottom: 0 !important;
-}
-
-.borderOnlyB {
-  border-top: 0 !important;
-  border-left: 0 !important;
-  border-right: 0 !important;
-}
-
-.borderOnlyS,
-.borderOnlyE {
-  border-top: 0 !important;
-  border-bottom: 0 !important;
-}
-
-.borderOnlyS {
-  border-inline-end: 0 !important;
-}
-
-.borderOnlyE {
-  border-inline-start: 0 !important;
 }
 
 .borderlessX {
@@ -188,9 +159,20 @@ This will prevent all ancestors from customizing their box size unless they use 
   border-bottom: 0 !important;
 }
 
-/* for matching cell start-border, assumed to be 1px, which can't be guaranteed */
-.fakeBorderS {
-  border-inline-start: 1px solid transparent !important;
+.borderlessTop {
+  border-top: 0 !important;
+}
+
+.borderlessBottom {
+  border-bottom: 0 !important;
+}
+
+.borderlessStart {
+  border-inline-start: 0 !important;
+}
+
+.borderlessEnd {
+  border-inline-end: 0 !important;
 }
 
 /* Flexbox Utils */
@@ -230,13 +212,34 @@ TODO: use liquidX/Y elsewhere because frees up min other dimension; less collisi
   min-width: 0 !important;
 }
 
-/* Print-Safe Utils (media:screen ONLY) */
+/* Semantic Print Table */
 /* ------------------------------------------------------------------------------------------------- */
 
-.calendarScreenRoot .printRoot,
-.calendarScreenRoot .printHeader {
-  display: flex !important;
-  flex-direction: column !important;
+.printTable {
+  width: 100% !important;
+  table-layout: fixed !important;
+  border: 0 !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.printTable > thead {
+  /* Both properties are needed for cross-browser repeated headers across printed pages. */
+  break-inside: avoid !important;
+  page-break-inside: avoid !important;
+}
+
+.printTable > tbody {
+  /* Timeline print-layout hack (resource and non-resource): lets shared absolute backgrounds show through. */
+  background: transparent !important;
+}
+
+.printTable > thead > tr > th,
+.printTable > tbody > tr > th,
+.printTable > tbody > tr > td {
+  vertical-align: top !important;
+  font-weight: inherit;
+  text-align: inherit;
 }
 
 /* Table Utils */
@@ -244,6 +247,11 @@ TODO: use liquidX/Y elsewhere because frees up min other dimension; less collisi
 
 .noPadding {
   padding: 0 !important;
+}
+
+.noPaddingY {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 .noMargin {
@@ -275,6 +283,10 @@ TODO: use liquidX/Y elsewhere because frees up min other dimension; less collisi
   overflow-anchor: none;
 }
 
+.pointerEventsNone {
+  pointer-events: none !important;
+}
+
 .crop {
   overflow: hidden !important;
 }
@@ -299,6 +311,10 @@ which can't rely on dynamic height detection after print-flag activated.
 
 .start0 {
   inset-inline-start: 0 !important;
+}
+
+.end0 {
+  inset-inline-end: 0 !important;
 }
 
 .fill {
@@ -395,32 +411,20 @@ which can't rely on dynamic height detection after print-flag activated.
   height: 1px !important;
 }
 
-/* Print-Safe Utils */
+/* Print Utils */
 /* ------------------------------------------------------------------------------------------------- */
 
-.calendarPrintRoot .breakInsideAvoid {
+.breakInsideAvoid {
   break-inside: avoid !important;
+  page-break-inside: avoid !important;
 }
 
-.calendarPrintRoot .printRoot {
-  display: table !important;
-  table-layout: fixed !important;
-  width: 100% !important;
-  border-spacing: 0 !important;
-  border-collapse: separate !important;
+.printCellContentMinHeight {
+  min-height: 4em !important;
 }
 
-.calendarPrintRoot .printHeader {
-  display: table-header-group !important;
-  break-inside: avoid !important;
-  background: #fff !important;
-  z-index: 9999 !important;
-  position: relative !important;
-}
-
-.printSiblingRow {
-  /* min-height when multiple rows coexist, provides sane aspect-ratio for cells */
-  min-height: 6em !important;
+.flowRoot {
+  display: flow-root !important;
 }
 
 /* Z-index */
@@ -432,6 +436,30 @@ which can't rely on dynamic height detection after print-flag activated.
 
 .z1 {
   z-index: 1;
+}
+
+.z2 {
+  z-index: 2;
+}
+
+.z3 {
+  z-index: 3;
+}
+
+.z4 {
+  z-index: 4;
+}
+
+.z5 {
+  z-index: 5;
+}
+
+.z1000 {
+  z-index: 1000;
+}
+
+.z9999 {
+  z-index: 9999;
 }
 
 .focusZ2:focus-visible {

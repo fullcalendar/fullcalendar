@@ -2,7 +2,7 @@ import { Duration, DateMarker, DateRange } from '@full-ui/headless-calendar'
 import { ViewOptions } from '../../options'
 import { BaseComponent } from '../../vdom-util'
 import { DateProfile } from '../../DateProfileGenerator'
-import { DayTableCell } from '../../common/DayTableModel'
+import { DayTableCell } from '../../daygrid/DayTableModel'
 import { EventRangeProps } from '../../component-util/event-rendering'
 import { EventSegUiInteractionState } from '../../component/DateComponent'
 import { Hit } from '../../interactions/hit'
@@ -29,6 +29,7 @@ export interface TimeGridLayoutProps {
 
   dateProfile: DateProfile
   nowDate: DateMarker
+  nowMs?: number
   todayRange: DateRange
   cells: DayTableCell[]
   forPrint: boolean
@@ -103,11 +104,9 @@ export class TimeGridLayout extends BaseComponent<TimeGridLayoutProps> {
       dateEnv,
     )
     this.currentSlatCnt = slatMetas.length
-    const businessHourSegs = props.forPrint ? [] : props.businessHourSegs
     const dateSelectionSegs = props.forPrint ? [] : props.dateSelectionSegs
     const eventDrag = props.forPrint ? null : props.eventDrag
     const eventResize = props.forPrint ? null : props.eventResize
-    const businessHourSegsByCol = props.forPrint ? buildEmptySegCols(props.businessHourSegsByCol) : props.businessHourSegsByCol
     const dateSelectionSegsByCol = props.forPrint ? buildEmptySegCols(props.dateSelectionSegsByCol) : props.dateSelectionSegsByCol
     const eventDragByCol = props.forPrint ? buildEmptyInteractionCols(props.eventDragByCol) : props.eventDragByCol
     const eventResizeByCol = props.forPrint ? buildEmptyInteractionCols(props.eventResizeByCol) : props.eventResizeByCol
@@ -115,6 +114,7 @@ export class TimeGridLayout extends BaseComponent<TimeGridLayoutProps> {
     const commonLayoutProps = {
       dateProfile: dateProfile,
       nowDate: props.nowDate,
+      nowMs: props.nowMs,
       todayRange: props.todayRange,
       cells: props.cells,
       slatMetas,
@@ -127,7 +127,7 @@ export class TimeGridLayout extends BaseComponent<TimeGridLayoutProps> {
       // all-day content
       fgEventSegs: props.fgEventSegs,
       bgEventSegs: props.bgEventSegs,
-      businessHourSegs,
+      businessHourSegs: props.businessHourSegs,
       dateSelectionSegs,
       eventDrag,
       eventResize,
@@ -136,7 +136,7 @@ export class TimeGridLayout extends BaseComponent<TimeGridLayoutProps> {
       // timed content
       fgEventSegsByCol: props.fgEventSegsByCol,
       bgEventSegsByCol: props.bgEventSegsByCol,
-      businessHourSegsByCol,
+      businessHourSegsByCol: props.businessHourSegsByCol,
       nowIndicatorSegsByCol: props.nowIndicatorSegsByCol,
       dateSelectionSegsByCol,
       eventDragByCol,
@@ -170,7 +170,7 @@ export class TimeGridLayout extends BaseComponent<TimeGridLayoutProps> {
             borderlessBottom,
             multiMonthColumns: 0,
           }),
-          // we don't do classNames.printRoot/classNames.printHeader here because works poorly with print:
+          // We don't use the repeating-header print treatment here because it works poorly:
           // - Firefox >85ish CAN have flexboxes within it, but those cannot do absolute positioning
           // - Chrome works okay, but abs-positioned events cover the repeated header
           //   Also, there's weird padding on the last page at bottom of container, which matches

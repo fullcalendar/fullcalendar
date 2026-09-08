@@ -10,6 +10,7 @@ describe('named time zones', () => {
         initialView: 'timeGridDay',
         now: '2025-03-20T01:00:00',
         nowIndicator: true,
+        scrollTime: 0,
       })
       const timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 

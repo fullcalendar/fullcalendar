@@ -1,5 +1,5 @@
-import { DayGridRange } from '../common/DayTableModel'
-import { EventRangeProps, getEventKey } from '../component-util/event-rendering'
+import { DayGridRange } from './DayTableModel'
+import { EventRangeProps } from '../component-util/event-rendering'
 import { SlicedCoordRange } from '../coord-range'
 import { EventSegUiInteractionState } from '../component/DateComponent'
 
@@ -9,19 +9,11 @@ export type DayRowRange = SlicedCoordRange
 
 export type DayRowEventRange = DayRowRange & EventRangeProps
 
-export type DayRowEventRangePart = DayRowEventRange & {
-  isSlice?: boolean
-  standinFor?: DayRowEventRange
-}
+export type DayRowEventRangePart = DayRowEventRange
 
-/*
-We need really specific keys because RefMap::createRef() which is then given to heightRef
-unable to change key! As a result, we cannot reuse elements between normal/slice/standin types,
-but that's okay since they render quite differently
-*/
-export function getEventPartKey(seg: DayRowEventRangePart): string {
-  return getEventKey(seg) + ':' + seg.start +
-    (seg.standinFor ? ':standin' : seg.isSlice ? ':slice' : '')
+/** Identifies a DayGrid seg by event instance and start, remaining stable if its end changes. */
+export function getDayGridSegKey(seg: DayRowEventRangePart): string {
+  return `${seg.eventRange.instance.instanceId}:${seg.start}`
 }
 
 // DayGridRange utils (TODO: move)
@@ -66,18 +58,4 @@ export function splitInteractionByRow(
   }
 
   return byRow
-}
-
-export function sliceSegForCol<R extends SlicedCoordRange>(
-  seg: R,
-  col: number,
-): (R & { standinFor: R }) {
-  return {
-    ...seg,
-    start: col,
-    end: col + 1,
-    isStart: seg.isStart && seg.start === col,
-    isEnd: seg.isEnd && seg.end - 1 === col,
-    standinFor: seg,
-  }
 }

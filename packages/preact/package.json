@@ -1,11 +1,11 @@
 {
   "name": "@fullcalendar/preact",
-  "version": "7.0.2",
+  "version": "7.1.0",
   "title": "FullCalendar Preact",
   "description": "FullCalendar Preact package for rendering a calendar",
   "dependencies": {
-    "@full-ui/headless-calendar": "workspace:7.0.2",
-    "@fullcalendar/core": "workspace:7.0.2"
+    "@full-ui/headless-calendar": "workspace:7.1.0",
+    "@fullcalendar/core": "workspace:7.1.0"
   },
   "peerDependencies": {
     "preact": "^10.29.0",
@@ -15,13 +15,16 @@
     "@fullcalendar-scripts/standard": "workspace:*",
     "globby": "^13.1.2",
     "handlebars": "^4.1.2",
-    "preact": "^10.29.0",
-    "temporal-polyfill": "^1.0.1"
+    "preact": "^10.29.8",
+    "temporal-polyfill": "^1.0.1",
+    "vitest": "^4.0.16"
   },
   "scripts": {
     "build": "standard-scripts pkg:build",
     "clean": "standard-scripts pkg:clean",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:dev": "vitest"
   },
   "type": "module",
   "buildConfig": {

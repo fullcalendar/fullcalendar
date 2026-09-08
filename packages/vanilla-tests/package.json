@@ -6,7 +6,7 @@
     "luxon": "^2.0.0",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.40",
-    "preact": "^10.29.0",
+    "preact": "^10.29.8",
     "xhr-mock": "^2.5.1"
   },
   "devDependencies": {

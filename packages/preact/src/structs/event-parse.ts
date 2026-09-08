@@ -4,7 +4,10 @@ import { guid } from '../util/misc'
 import { parseRecurring } from './recurring-event'
 import { CalendarContext } from '../CalendarContext'
 import { EventDef } from './event-def'
-import { createEventInstance, EventInstance } from './event-instance'
+import {
+  addDurationToEdge, buildEventInstanceRange, buildValidInstanceRange,
+  createEventInstance, EventInstance, EventInstanceRange,
+} from './event-instance'
 import { EventSource } from './event-source'
 import { identity, Identity, Dictionary, refineProps, GenericRefiners } from '../options'
 import { EVENT_UI_REFINERS, createEventUi, EventUiInput, EventUiRefined } from '../component-util/event-ui'
@@ -197,36 +200,52 @@ function parseSingle(refined: EventRefined, defaultAllDay: boolean | null, conte
     startMarker = startOfDay(startMarker)
   }
 
+  // exact instants are stamped when the input expressed them (ISO with offset, Date,
+  // epoch ms) and the marker was used as-is. allDay truncation invalidates instants.
+  let startInstantMs = (!allDay && startMeta) ? startMeta.instantMs : undefined
+  let range: EventInstanceRange | null = null
+
   if (endMeta) {
-    endMarker = endMeta.marker
+    endMarker = allDay ? startOfDay(endMeta.marker) : endMeta.marker
 
-    if (allDay) {
-      endMarker = startOfDay(endMarker)
-    }
-
-    if (startMarker && endMarker <= startMarker) {
-      endMarker = null
+    if (!startMarker) { // open start (allowOpenRange)
+      range = buildEventInstanceRange(startMarker, endMarker, undefined, allDay ? undefined : endMeta.instantMs)
+    } else if (allDay) {
+      if (endMarker > startMarker) {
+        range = buildEventInstanceRange(startMarker, endMarker)
+      }
+    } else {
+      // rejects ends invalid in real time; real ranges that a DST fall-back fold civilly
+      // compresses keep their exact end, re-expressed in the start's offset reading
+      range = buildValidInstanceRange(
+        { marker: startMarker, instantMs: startInstantMs },
+        { marker: endMarker, instantMs: endMeta.instantMs },
+        context.dateEnv,
+      )
     }
   }
 
-  if (endMarker) {
+  if (range) {
     hasEnd = true
-  } else if (!allowOpenRange) {
+  } else if (allowOpenRange) {
+    range = buildEventInstanceRange(startMarker, null, startInstantMs)
+  } else {
     hasEnd = context.options.forceEventDuration || false
 
-    endMarker = context.dateEnv.add(
-      startMarker,
+    // exact starts get an exact derived end (real elapsed duration), so the end can't
+    // re-resolve to the wrong side of a DST fold
+    let endEdge = addDurationToEdge(
+      { marker: startMarker, instantMs: startInstantMs },
       allDay ?
         context.options.defaultAllDayEventDuration :
         context.options.defaultTimedEventDuration,
+      context.dateEnv,
     )
+
+    range = buildEventInstanceRange(startMarker, endEdge.marker, startInstantMs, endEdge.instantMs)
   }
 
-  return {
-    allDay,
-    hasEnd,
-    range: { start: startMarker, end: endMarker },
-  }
+  return { allDay, hasEnd, range }
 }
 
 function computeIsDefaultAllDay(eventSource: EventSource<any> | null, context: CalendarContext): boolean | null {

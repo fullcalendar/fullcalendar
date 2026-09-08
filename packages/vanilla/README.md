@@ -46,3 +46,21 @@ const calendar = new Calendar(calendarEl, {
 
 calendar.render()
 ```
+
+## Plugins
+
+| Import                     | Provides                                     |
+| -------------------------- | -------------------------------------------- |
+| `fullcalendar/daygrid`     | `dayGridDay`/`Week`/`Month`/`Year` views     |
+| `fullcalendar/timegrid`    | `timeGridDay`/`Week` views                   |
+| `fullcalendar/list`        | `listDay`/`Week`/`Month`/`Year` views        |
+| `fullcalendar/multimonth`  | `multiMonthYear` view                        |
+| `fullcalendar/interaction` | dragging, resizing, and date/event selection |
+
+Themes are plugins too. `fullcalendar/themes/classic`, `/monarch`, `/breezy`, `/forma`, and `/pulse` are available, each paired with a `theme.css` and a palette stylesheet.
+
+## Links
+
+- [Documentation](https://fullcalendar.io/docs/getting-started)
+- [Scheduler Documentation](https://fullcalendar.io/docs/premium)
+- [Options Reference](https://fullcalendar.io/docs#toc)

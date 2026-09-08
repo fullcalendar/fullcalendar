@@ -4,14 +4,15 @@ import type { EventChangeInfo } from '../../event-crud'
 import type { EventRenderRange } from '../../component-util/event-rendering'
 import type { Duration } from '@full-ui/headless-calendar'
 import type { Hit } from '../../interactions/hit'
+import { computeHitDelta } from '../../interactions/hit'
 import type { EventMutation } from '../../structs/event-mutation'
-import { applyMutationToEventStore } from '../../structs/event-mutation'
+import { addDeltaToRangeEdge, applyMutationToEventStore } from '../../structs/event-mutation'
+import type { EventInstanceRange } from '../../structs/event-instance'
+import { getRangeInstantStartMs, getRangeInstantEndMs } from '../../structs/event-instance'
 import type { PointerDragEvent } from '../../interactions/pointer'
 import type { EventStore } from '../../structs/event-store'
 import { getRelevantEvents, createEmptyEventStore } from '../../structs/event-store'
-import { diffDates } from '../../util/date'
 import { enableCursor, disableCursor } from '../../util/misc'
-import type { DateRange } from '@full-ui/headless-calendar'
 import { getElEventRange } from '../../component-util/event-rendering'
 import { createDuration } from '@full-ui/headless-calendar'
 import type { EventInteractionState } from '../../interactions/event-interaction-state'
@@ -249,24 +250,50 @@ function computeMutation(
   hit0: Hit,
   hit1: Hit,
   isFromStart: boolean,
-  instanceRange: DateRange,
+  instanceRange: EventInstanceRange,
 ): EventMutation | null {
-  let dateEnv = hit0.context.dateEnv
+  const { context } = hit0
   let date0 = hit0.dateSpan.range.start
   let date1 = hit1.dateSpan.range.start
+  const { delta, instantDeltaMs } = computeHitDelta(hit0, hit1, {
+    date0,
+    date1,
+    largeUnit: hit0.largeUnit,
+  })
 
-  let delta = diffDates(
-    date0, date1,
-    dateEnv,
-    hit0.largeUnit,
-  )
-
+  // validate with the SAME baseline the mutation will apply with (addDeltaToRangeEdge
+  // bases instant deltas off the edge's stored instant). on the exact path, real-time
+  // order is the truth — the mutation re-expresses fold-compressed civil markers itself
   if (isFromStart) {
-    if (dateEnv.add(instanceRange.start, delta) < instanceRange.end) {
-      return { startDelta: delta }
+    const newStart = addDeltaToRangeEdge(
+      instanceRange.start, instanceRange.instantStartMs, delta, instantDeltaMs ?? undefined, context,
+    )
+
+    if (
+      newStart.instantMs != null
+        ? newStart.instantMs < getRangeInstantEndMs(instanceRange, context.dateEnv)
+        : newStart.marker < instanceRange.end
+    ) {
+      return {
+        startDelta: delta,
+        ...(instantDeltaMs != null ? { instantStartDeltaMs: instantDeltaMs } : {}),
+      }
     }
-  } else if (dateEnv.add(instanceRange.end, delta) > instanceRange.start) {
-    return { endDelta: delta }
+  } else {
+    const newEnd = addDeltaToRangeEdge(
+      instanceRange.end, instanceRange.instantEndMs, delta, instantDeltaMs ?? undefined, context,
+    )
+
+    if (
+      newEnd.instantMs != null
+        ? newEnd.instantMs > getRangeInstantStartMs(instanceRange, context.dateEnv)
+        : newEnd.marker > instanceRange.start
+    ) {
+      return {
+        endDelta: delta,
+        ...(instantDeltaMs != null ? { instantEndDeltaMs: instantDeltaMs } : {}),
+      }
+    }
   }
 
   return null

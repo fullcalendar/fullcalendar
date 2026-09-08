@@ -1,4 +1,39 @@
 
+## v7.1.0
+
+### Event Rendering
+
+- PERF: DayGrid with large number of events, when `dayMaxEvents:true` (limited by natural row height), only a necessary *subset* of events will be DOM-inserted, not all
+  - BREAKING: As a result, a *subset* of events will be run through event render hooks like `eventContent`
+- DayGrid event slicing
+  - FEATURE: Better event packing, including smarter positioning decisions for fewer slices
+  - FEATURE: Related slices have more similar y-coordinates
+  - FIX: Events unnecessarily going to +more link when higher-level slot would accommodate
+- TimeGrid event positioning
+  - FIX: Events with custom ordering and `eventOrderStrict:true` can overlap with `slotEventOverlap: false` (#7914)
+  - FIX: Overlapping events can have tiny width when event content not visible (#7879)
+- FIX: In Timeline and TimeGrid, when custom `eventOrder`, DOM order respects start-time first, then `eventOrder`. Better for a11y and tabbing through events sequentially
+- FIX: React StrictMode: DayGrid events permanently invisible (#8088)
+
+### Resource Views
+
+- FIX: Timeline view, smoother virtualized fast scrolling, especially with trackpad and especially while scrolling *up* with irregular height resource rows
+- FIX: Timeline view, account for DST in timeslots (#7620)
+- FIX: Resource TimeGrid/DayGrid, `filterResourcesWithEvents` should exclude columns (#6149)
+
+### Print Rendering
+
+- FEATURE: Print renders business-hours for print-previews that enable it
+- FIX: Better page-wrapping of tall DayGrid rows with many events
+- FIX: Better page-wrapping of tall Resource-Timeline rows with many events
+- FIX: Events are not visible when we print using `window.print()` (#8097)
+
+### Misc
+
+- PERF: General improvements with option-changes. Users of `@fullcalendar/preact` must upgrade their `preact` peer dependency to >=10.29.8
+- FIX: Screen-reader improvement for Resource-Timeline timeline header text
+
+
 ## v7.0.2
 
 - FEATURE: Restored Bootstrap 5 support (originally omitted from v7) (#8040)

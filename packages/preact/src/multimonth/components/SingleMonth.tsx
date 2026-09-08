@@ -4,7 +4,7 @@ import { afterSize, watchHeight } from '../../component-util/resize-observer'
 import { buildNavLinkAttrs } from '../../common/nav-link'
 import { DateComponent } from '../../component/DateComponent'
 import { DateFormatter, DateRange, joinDateTimeFormatParts } from '@full-ui/headless-calendar'
-import { DayTableCell } from '../../common/DayTableModel'
+import { DayTableCell } from '../../daygrid/DayTableModel'
 import { generateClassName } from '../../content-inject/ContentContainer'
 import { memoize } from '../../util/memoize'
 import { RefMap } from '../../util/RefMap'
@@ -20,6 +20,7 @@ import { DayTableSlicer } from '../../daygrid/DayTableSlicer'
 import { DayGridHeaderRow } from '../../daygrid/components/DayGridHeaderRow'
 import { computeViewBorderless } from '../../util/misc'
 import { SingleMonthInfo, SingleMonthHeaderInfo } from '../structs'
+import { DayGridLayoutPrint } from '../../daygrid/components/DayGridLayoutPrint'
 
 export interface SingleMonthHeights {
   titleHeight: number
@@ -56,7 +57,6 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
 
   // ref
   private titleElRef = createRef<HTMLDivElement>()
-  private tableHeaderElRef = createRef<HTMLDivElement>()
   private rowHeightRefMap = new RefMap<string, number>(() => {
     afterSize(this.handleHeights)
   })
@@ -102,9 +102,9 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
     const isAspectRatio = !forPrint || props.hasLateralSiblings
 
     const cellColCnt = dayTableModel.cellRows[0].length
-    const colWidth = state.gridWidth != null ? state.gridWidth / cellColCnt : undefined
-    const cellIsMicro = colWidth != null && colWidth <= dayMicroWidth
-    const cellIsNarrow = cellIsMicro || (colWidth != null && colWidth <= options.dayNarrowWidth)
+    const measuredColWidth = state.gridWidth != null ? state.gridWidth / cellColCnt : undefined
+    const cellIsMicro = measuredColWidth != null && measuredColWidth <= dayMicroWidth
+    const cellIsNarrow = cellIsMicro || (measuredColWidth != null && measuredColWidth <= options.dayNarrowWidth)
 
     const rowHeightGuess = state.gridWidth != null
       ? (1 / options.aspectRatio) * state.gridWidth / 6
@@ -117,10 +117,11 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
     const titleStickyBottom = isTitleAndHeaderSticky && rowHeightGuess != null && state.tableHeaderHeight != null
       ? rowHeightGuess + state.tableHeaderHeight + 1
       : undefined
-    const businessHourSegs = forPrint ? [] : slicedProps.businessHourSegs
+    const businessHourSegs = slicedProps.businessHourSegs
     const dateSelectionSegs = forPrint ? [] : slicedProps.dateSelectionSegs
     const eventDrag = forPrint ? null : slicedProps.eventDrag
     const eventResize = forPrint ? null : slicedProps.eventResize
+    const tableMode = forPrint && !props.hasLateralSiblings
 
     const hasNavLink = options.navLinks && props.colCount > 1
     const headerRenderProps: SingleMonthHeaderInfo = {
@@ -160,6 +161,7 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
             className={joinClassNames(
               generateClassName(options.singleMonthHeaderClass, headerRenderProps),
               isTitleAndHeaderSticky && classNames.stickyT,
+              isTitleAndHeaderSticky && classNames.z3,
               classNames.flexCol,
             )}
             style={{
@@ -167,7 +169,6 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
               // because in Chrome, something about position:sticky on this title div
               // causes its bottom border to no be considered part of its mass,
               // and would get overlapped and hidden by the table-header div
-              zIndex: isTitleAndHeaderSticky ? 3 : undefined, // TODO: className?
               marginBottom: titleStickyBottom,
             }}
           >
@@ -181,101 +182,128 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
               {joinDateTimeFormatParts(dateEnv.formatToParts(monthStartDate, props.titleFormat))}
             </div>
           </div>
-          <div // the daygrid table
-            className={joinClassNames(
-              generateClassName(options.tableClass, {
-                borderlessX,
-                borderlessTop,
-                borderlessBottom,
-                multiMonthColumns: props.colCount || 0,
-              }),
-              classNames.flexCol,
-            )}
-            style={{
-              marginTop: titleStickyBottom != null ? -titleStickyBottom : undefined,
-            }}
-          >
-            <div
-              ref={this.tableHeaderElRef}
+          {tableMode ? (
+            <DayGridLayoutPrint
+              dateProfile={props.dateProfile}
+              todayRange={props.todayRange}
+              cellRows={dayTableModel.cellRows}
+              headerTiers={[rowConfig]}
+              showHeader
+              headerElRef={this.handleTableHeaderEl}
+              fgEventSegs={slicedProps.fgEventSegs}
+              bgEventSegs={slicedProps.bgEventSegs}
+              businessHourSegs={businessHourSegs}
+              eventSelection={slicedProps.eventSelection}
+              dayMaxEventRows
+              borderlessX={borderlessX}
+              borderlessTop={borderlessTop}
+              borderlessBottom={borderlessBottom}
+              multiMonthColumns={props.colCount || 0}
+              visibleWidth={state.gridWidth}
+              cellIsNarrow={cellIsNarrow}
+              cellIsMicro={cellIsMicro}
+              rowHeightRefMap={this.rowHeightRefMap}
+              style={{
+                marginTop: titleStickyBottom != null ? -titleStickyBottom : undefined,
+              }}
+            />
+          ) : (
+            <div // the daygrid table
               className={joinClassNames(
-                generateClassName(options.tableHeaderClass, {
-                  isSticky: isTitleAndHeaderSticky,
+                generateClassName(options.tableClass, {
                   borderlessX,
                   borderlessTop,
                   borderlessBottom,
                   multiMonthColumns: props.colCount || 0,
                 }),
                 classNames.flexCol,
-                isTitleAndHeaderSticky && classNames.sticky,
               )}
               style={{
-                zIndex: isTitleAndHeaderSticky ? 2 : undefined, // TODO: className?
-                top: isTitleAndHeaderSticky ? state.titleHeight : 0,
-                marginBottom: headerStickyBottom,
+                marginTop: titleStickyBottom != null ? -titleStickyBottom : undefined,
               }}
             >
-              <DayGridHeaderRow
-                {...rowConfig}
-                role='row'
-                borderBottom={false}
-                cellIsNarrow={cellIsNarrow}
-                cellIsMicro={cellIsMicro}
-                rowLevel={0}
-              />
               <div
-                className={generateClassName(options.dayHeaderDividerClass, {
-                  isSticky: isTitleAndHeaderSticky,
-                  multiMonthColumns: props.colCount || 0,
-                  options: { allDaySlot: Boolean(options.allDaySlot) },
-                })}
-              />
-            </div>
-            <div
-              className={joinClassNames(
-                generateClassName(options.tableBodyClass, {
-                  borderlessX,
-                  borderlessTop,
-                  borderlessBottom,
-                  multiMonthColumns: props.colCount || 0,
-                }),
-                classNames.flexCol,
-                isAspectRatio && classNames.rel,
-              )}
-              style={{
-                zIndex: isTitleAndHeaderSticky ? 1 : undefined, // TODO: className?
-                marginTop: headerStickyBottom != null ? -headerStickyBottom : undefined,
-                aspectRatio: isAspectRatio ? String(options.aspectRatio) : undefined,
-              }}
-            >
-              <DayGridRows
-                dateProfile={props.dateProfile}
-                todayRange={props.todayRange}
-                cellRows={dayTableModel.cellRows}
-                className={isAspectRatio ? classNames.fill : ''}
-                forPrint={forPrint && !props.hasLateralSiblings}
-                dayMaxEventRows={
-                  (forPrint && props.hasLateralSiblings)
-                    ? 1 // for side-by-side multimonths, limit to one row
-                    : true // otherwise, always do +more link, never expand rows
-                }
+                ref={this.handleTableHeaderEl}
+                className={joinClassNames(
+                  generateClassName(options.tableHeaderClass, {
+                    isSticky: isTitleAndHeaderSticky,
+                    borderlessX,
+                    borderlessTop,
+                    borderlessBottom,
+                    multiMonthColumns: props.colCount || 0,
+                  }),
+                  classNames.flexCol,
+                  isTitleAndHeaderSticky && classNames.sticky,
+                  isTitleAndHeaderSticky && classNames.z2,
+                )}
+                style={{
+                  top: isTitleAndHeaderSticky ? state.titleHeight : 0,
+                  marginBottom: headerStickyBottom,
+                }}
+              >
+                <DayGridHeaderRow
+                  {...rowConfig}
+                  role='row'
+                  borderBottom={false}
+                  cellIsNarrow={cellIsNarrow}
+                  cellIsMicro={cellIsMicro}
+                  rowLevel={0}
+                />
+                <div
+                  className={generateClassName(options.dayHeaderDividerClass, {
+                    isSticky: isTitleAndHeaderSticky,
+                    multiMonthColumns: props.colCount || 0,
+                    options: { allDaySlot: Boolean(options.allDaySlot) },
+                  })}
+                />
+              </div>
+              <div
+                className={joinClassNames(
+                  generateClassName(options.tableBodyClass, {
+                    borderlessX,
+                    borderlessTop,
+                    borderlessBottom,
+                    multiMonthColumns: props.colCount || 0,
+                  }),
+                  classNames.flexCol,
+                  isAspectRatio && classNames.rel,
+                  isTitleAndHeaderSticky && classNames.z1,
+                )}
+                style={{
+                  marginTop: headerStickyBottom != null ? -headerStickyBottom : undefined,
+                  aspectRatio: isAspectRatio ? String(options.aspectRatio) : undefined,
+                }}
+              >
+                <DayGridRows
+                  dateProfile={props.dateProfile}
+                  todayRange={props.todayRange}
+                  cellRows={dayTableModel.cellRows}
+                  className={isAspectRatio ? classNames.fill : ''}
+                  forPrint={forPrint && !props.hasLateralSiblings}
+                  dayMaxEventRows={
+                    (forPrint && props.hasLateralSiblings)
+                      ? 1 // for side-by-side multimonths, limit to one row
+                      : true // otherwise, always do +more link, never expand rows
+                  }
 
-                // content
-                fgEventSegs={slicedProps.fgEventSegs}
-                bgEventSegs={slicedProps.bgEventSegs}
-                businessHourSegs={businessHourSegs}
-                dateSelectionSegs={dateSelectionSegs}
-                eventDrag={eventDrag}
-                eventResize={eventResize}
-                eventSelection={slicedProps.eventSelection}
+                  // content
+                  fgEventSegs={slicedProps.fgEventSegs}
+                  bgEventSegs={slicedProps.bgEventSegs}
+                  businessHourSegs={businessHourSegs}
+                  dateSelectionSegs={dateSelectionSegs}
+                  eventDrag={eventDrag}
+                  eventResize={eventResize}
+                  eventSelection={slicedProps.eventSelection}
 
-                // dimensions
-                visibleWidth={state.gridWidth}
-                cellIsNarrow={cellIsNarrow}
-                cellIsMicro={cellIsMicro}
-                rowHeightRefMap={this.rowHeightRefMap}
-              />
+                  // dimensions
+                  visibleWidth={state.gridWidth}
+                  cellIsNarrow={cellIsNarrow}
+                  cellIsMicro={cellIsMicro}
+                  rowHeightRefMap={this.rowHeightRefMap}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     )
@@ -298,14 +326,22 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
   private tableHeaderHeight: number
   private titleHeight: number
 
+  private handleTableHeaderEl = (el: HTMLElement | null) => {
+    this.disconnectTableHeaderHeight?.()
+    this.disconnectTableHeaderHeight = undefined
+
+    if (el) {
+      this.disconnectTableHeaderHeight = watchHeight(el, (height) => {
+        this.setState({ tableHeaderHeight: this.tableHeaderHeight = height })
+        afterSize(this.handleHeights)
+      })
+    }
+  }
+
   componentDidMount(): void {
     this._isUnmounting = false
     this.disconnectTitleHeight = watchHeight(this.titleElRef.current, (height) => {
       this.setState({ titleHeight: this.titleHeight = height })
-      afterSize(this.handleHeights)
-    })
-    this.disconnectTableHeaderHeight = watchHeight(this.tableHeaderElRef.current, (height) => {
-      this.setState({ tableHeaderHeight: this.tableHeaderHeight = height })
       afterSize(this.handleHeights)
     })
   }
@@ -315,7 +351,7 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
 
     this._isUnmounting = true
     this.disconnectTitleHeight()
-    this.disconnectTableHeaderHeight()
+    this.disconnectTableHeaderHeight?.()
 
     options.singleMonthWillUnmount?.({
       el: this.rootEl,

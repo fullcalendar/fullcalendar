@@ -3,7 +3,7 @@ import { afterSize } from '../../component-util/resize-observer'
 import { BaseComponent, setRef } from '../../vdom-util'
 import { DateMarker, DateRange, rangeContainsMarker, startOfDay } from '@full-ui/headless-calendar'
 import { DateProfile } from '../../DateProfileGenerator'
-import { DayTableCell } from '../../common/DayTableModel'
+import { DayTableCell } from '../../daygrid/DayTableModel'
 import { EventRangeProps } from '../../component-util/event-rendering'
 import { EventSegUiInteractionState } from '../../component/DateComponent'
 import { generateClassName } from '../../content-inject/ContentContainer'
@@ -30,12 +30,13 @@ import { TimeGridSlatHeader } from "./TimeGridSlatHeader"
 import { TimeGridSlatLane } from "./TimeGridSlatLane"
 import { TimeGridWeekNumber } from "./TimeGridWeekNumber"
 import { computeSlatHeight } from './util'
-import { isBrowserPrintQuirky } from './TimeGridCol'
+import { computeTimeGridPrintMode } from '../print-mode'
 import { computeViewBorderless } from '../../util/misc'
 
 export interface TimeGridLayoutNormalProps {
   dateProfile: DateProfile
   nowDate: DateMarker
+  nowMs?: number
   todayRange: DateRange
   cells: DayTableCell[]
   slatMetas: TimeSlatMeta[],
@@ -138,12 +139,7 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
     const rowsNotExpanding = verticalScrolling && !options.expandRows &&
       state.clientHeight != null && state.clientHeight > totalSlatHeight
 
-    // TODO: DRY with getIsStack
-    const { eventPrintLayout } = options
-    const printStackEnabled = (
-      eventPrintLayout === 'stack' ||
-      (eventPrintLayout !== 'grid' /* aka 'auto' */ && isBrowserPrintQuirky)
-    )
+    const printStackEnabled = computeTimeGridPrintMode(forPrint, options.eventPrintLayout) === 'stack'
 
     const absPrint = forPrint && !printStackEnabled
     const simplePrint = forPrint && printStackEnabled
@@ -156,9 +152,9 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
     const forcedBodyHeight = absPrint ? totalSlatHeight : undefined
 
     const colCount = props.cells.length
-    const colWidth = clientWidth != null ? clientWidth / colCount : undefined
-    const cellIsMicro = colWidth != null && colWidth <= dayMicroWidth
-    const cellIsNarrow = cellIsMicro || (colWidth != null && colWidth <= options.dayNarrowWidth)
+    const measuredColWidth = clientWidth != null ? clientWidth / colCount : undefined
+    const cellIsMicro = measuredColWidth != null && measuredColWidth <= dayMicroWidth
+    const cellIsNarrow = cellIsMicro || (measuredColWidth != null && measuredColWidth <= options.dayNarrowWidth)
 
     return (
       <>
@@ -175,13 +171,11 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
                 borderlessBottom,
                 multiMonthColumns: 0,
               }),
-              // see note in TimeGridLayout about why we don't do classNames.printHeader
+              // See the note in TimeGridLayout about why print doesn't use repeating headers.
               classNames.flexCol,
               tableHeaderSticky && classNames.tableHeaderSticky,
+              classNames.z1,
             )}
-            style={{
-              zIndex: 1,
-            }}
           >
             {props.headerTiers.map((rowConfig, tierNum) => (
               <div
@@ -193,9 +187,9 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
                   className={joinClassNames(
                     options.dayHeaderRowClass,
                     classNames.flexRow,
-                    tierNum < props.headerTiers.length - 1
-                      ? classNames.borderOnlyB
-                      : classNames.borderNone
+                    classNames.borderlessX,
+                    classNames.borderlessTop,
+                    tierNum === props.headerTiers.length - 1 && classNames.borderlessBottom,
                   )}
                 >
                   {(options.weekNumbers && rowConfig.isDateRow) ? (
@@ -233,7 +227,8 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
                   <div
                     className={joinClassNames(
                       generateClassName(options.fillerClass, { inTableHeader: true }),
-                      classNames.borderOnlyS,
+                      classNames.borderlessY,
+                      classNames.borderlessEnd,
                     )}
                     style={{ minWidth: endScrollbarWidth }}
                   />
@@ -261,10 +256,8 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
             classNames.flexCol,
             verticalScrolling && classNames.liquid,
             classNames.isolate,
+            classNames.z0,
           )}
-          style={{
-            zIndex: 0,
-          }}
         >
           {/* ALL-DAY
           ---------------------------------------------------------------------------------------*/}
@@ -272,8 +265,7 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
             <>
               <div
                 role='row'
-                className={classNames.flexRow}
-                style={{ zIndex: 1 }}
+                className={joinClassNames(classNames.flexRow, classNames.z1)}
               >
                 <TimeGridAllDayHeader
                   width={axisWidth}
@@ -293,7 +285,7 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
                   showDayNumbers={false}
                   forPrint={forPrint}
                   isHitComboAllowed={props.isHitComboAllowed}
-                  className={joinClassNames(classNames.liquidX, classNames.borderNone)}
+                  className={joinClassNames(classNames.liquidX, classNames.borderless)}
                   cellIsNarrow={cellIsNarrow}
                   cellIsMicro={cellIsMicro}
                   // content
@@ -311,7 +303,8 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
                   <div
                     className={joinClassNames(
                       generateClassName(options.fillerClass, { inTableHeader: false }),
-                      classNames.borderOnlyS,
+                      classNames.borderlessY,
+                      classNames.borderlessEnd,
                     )}
                     style={{ minWidth: endScrollbarWidth }}
                   />
@@ -319,8 +312,7 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
               </div>
               {/* TODO: don't show div if no classname */}
               <div
-                className={joinClassNames(options.allDayDividerClass)}
-                style={{ zIndex: 2 }}
+                className={joinClassNames(options.allDayDividerClass, classNames.z2)}
               />
             </>
           )}
@@ -332,10 +324,8 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
               classNames.flexCol,
               classNames.rel, // for Ruler.fillStart
               verticalScrolling && classNames.liquid,
+              classNames.z0,
             )}
-            style={{
-              zIndex: 0,
-            }}
             ref={props.timeScrollerRef as any} // HACK
             clientWidthRef={this.handleClientWidth}
             clientHeightRef={this.handleClientHeight}
@@ -375,6 +365,7 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
                 <TimeGridCols
                   dateProfile={props.dateProfile}
                   nowDate={props.nowDate}
+                  nowMs={props.nowMs}
                   todayRange={props.todayRange}
                   cells={props.cells}
                   slatCnt={slatCnt}
@@ -459,7 +450,8 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
                     <div
                       className={joinClassNames(
                         generateClassName(options.fillerClass, { inTableHeader: false }),
-                        classNames.borderOnlyT,
+                        classNames.borderlessX,
+                        classNames.borderlessBottom,
                         classNames.liquid,
                       )}
                     />

@@ -2,7 +2,7 @@ import { joinClassNames } from '../../util/html'
 import { BaseComponent, setRef } from '../../vdom-util'
 import { DateMarker, DateRange, rangeContainsMarker, startOfDay } from '@full-ui/headless-calendar'
 import { DateProfile } from '../../DateProfileGenerator'
-import { DayTableCell } from '../../common/DayTableModel'
+import { DayTableCell } from '../../daygrid/DayTableModel'
 import { EventRangeProps } from '../../component-util/event-rendering'
 import { EventSegUiInteractionState } from '../../component/DateComponent'
 import { Hit } from '../../interactions/hit'
@@ -34,11 +34,12 @@ import { computeSlatHeight } from './util'
 import { TimeGridWeekNumber } from "./TimeGridWeekNumber"
 import { computeViewBorderless } from '../../util/misc'
 import { TimeGridAxisEmpty } from "./TimeGridAxisEmpty"
-import { isBrowserPrintQuirky } from "./TimeGridCol"
+import { computeTimeGridPrintMode } from '../print-mode'
 
 export interface TimeGridLayoutPannableProps {
   dateProfile: DateProfile
   nowDate: DateMarker
+  nowMs?: number
   todayRange: DateRange
   cells: DayTableCell[]
   slatMetas: TimeSlatMeta[]
@@ -154,20 +155,16 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
     const tableHeaderSticky = !forPrint && getTableHeaderSticky(options)
     const footerScrollbarSticky = !forPrint && getFooterScrollbarSticky(options)
 
-    // TODO: DRY with getIsStack
-    const { eventPrintLayout } = options
-    const printStackEnabled = (
-      eventPrintLayout === 'stack' ||
-      (eventPrintLayout !== 'grid' /* aka 'auto' */ && isBrowserPrintQuirky)
-    )
+    const printStackEnabled = computeTimeGridPrintMode(forPrint, options.eventPrintLayout) === 'stack'
 
     const absPrint = forPrint && !printStackEnabled
     const simplePrint = forPrint && printStackEnabled
 
     const colCount = props.cells.length
-    const [canvasWidth, colWidth] = computeColWidth(colCount, props.dayMinWidth, clientWidth)
-    const cellIsMicro = colWidth != null && colWidth <= dayMicroWidth
-    const cellIsNarrow = cellIsMicro || (colWidth != null && colWidth <= options.dayNarrowWidth)
+    const [canvasWidth, appliedColWidth] = computeColWidth(colCount, props.dayMinWidth, clientWidth)
+    const measuredColWidth = appliedColWidth ?? (clientWidth != null ? clientWidth / colCount : undefined)
+    const cellIsMicro = measuredColWidth != null && measuredColWidth <= dayMicroWidth
+    const cellIsNarrow = cellIsMicro || (measuredColWidth != null && measuredColWidth <= options.dayNarrowWidth)
 
     const slatCnt = props.slatMetas.length
     const [slatHeight, slatLiquidHeight] = computeSlatHeight( // TODO: memo?
@@ -208,13 +205,11 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
                 borderlessBottom,
                 multiMonthColumns: 0,
               }),
-              // see note in TimeGridLayout about why we don't do classNames.printHeader
+              // See the note in TimeGridLayout about why print doesn't use repeating headers.
               classNames.flexCol,
               tableHeaderSticky && classNames.tableHeaderSticky,
+              classNames.z1,
             )}
-            style={{
-              zIndex: 1,
-            }}
           >
             <div className={classNames.flexRow}>
               {/* HEADER / labels
@@ -233,9 +228,9 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
                       options.dayHeaderRowClass,
                       classNames.flexRow,
                       classNames.contentBox,
-                      tierNum < props.headerTiers.length - 1
-                        ? classNames.borderOnlyB
-                        : classNames.borderNone
+                      classNames.borderlessX,
+                      classNames.borderlessTop,
+                      tierNum === props.headerTiers.length - 1 && classNames.borderlessBottom,
                     )}
                     style={{
                       height: state.headerTierHeights[tierNum]
@@ -287,7 +282,7 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
                       rowIndex={tierNum}
                       borderBottom={tierNum < props.headerTiers.length - 1}
                       height={state.headerTierHeights[tierNum]}
-                      colWidth={colWidth}
+                      colWidth={appliedColWidth}
                       viewportWidth={clientWidth}
                       innerHeightRef={headerMainInnerHeightRefMap.createRef(tierNum)}
                       cellIsNarrow={cellIsNarrow}
@@ -300,7 +295,8 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
                   <div
                     className={joinClassNames(
                       generateClassName(options.fillerClass, { inTableHeader: true }),
-                      classNames.borderOnlyS,
+                      classNames.borderlessY,
+                      classNames.borderlessEnd,
                     )}
                     style={{ minWidth: endScrollbarWidth }}
                   />
@@ -328,18 +324,15 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
             classNames.flexCol,
             verticalScrolling && classNames.liquid,
             classNames.isolate,
+            classNames.z0,
           )}
-          style={{
-            zIndex: 0,
-          }}
         >
           {options.allDaySlot && (
             <>
               <div
                 role='row'
                 aria-rowindex={firstBodyRowIndex}
-                className={classNames.flexRow}
-                style={{ zIndex: 1 }}
+                className={joinClassNames(classNames.flexRow, classNames.z1)}
               >
                 {/* ALL-DAY / label
                 -----------------------------------------------------------------------------------*/}
@@ -374,7 +367,7 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
                       showDayNumbers={false}
                       forPrint={forPrint}
                       isHitComboAllowed={props.isHitComboAllowed}
-                      className={joinClassNames(classNames.borderNone, classNames.liquidX)}
+                      className={joinClassNames(classNames.borderless, classNames.liquidX)}
                       cellIsNarrow={cellIsNarrow}
                       cellIsMicro={cellIsMicro}
 
@@ -390,14 +383,15 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
                       dayMaxEventRows={props.dayMaxEventRows}
 
                       // dimensions
-                      colWidth={colWidth}
+                      colWidth={appliedColWidth}
                     />
                   </div>
                   {Boolean(endScrollbarWidth) && (
                     <div
                       className={joinClassNames(
                         generateClassName(options.fillerClass, { inTableHeader: false }),
-                        classNames.borderOnlyS,
+                        classNames.borderlessY,
+                        classNames.borderlessEnd,
                       )}
                       style={{ minWidth: endScrollbarWidth }}
                     />
@@ -406,8 +400,7 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
               </div>
               {/* TODO: don't show div if no classname */}
               <div
-                className={joinClassNames(options.allDayDividerClass)}
-                style={{ zIndex: 2 }}
+                className={joinClassNames(options.allDayDividerClass, classNames.z2)}
               />
             </>
           )}
@@ -418,10 +411,8 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
               classNames.flexRow,
               classNames.rel, // for Ruler.fillStart
               verticalScrolling && classNames.liquid,
+              classNames.z0,
             )}
-            style={{
-              zIndex: 0,
-            }}
           >
             {/* SLATS / labels (vertical scroller)
             ---------------------------------------------------------------------------------------*/}
@@ -483,7 +474,8 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
                       <div
                         className={joinClassNames(
                           generateClassName(options.fillerClass, { inTableHeader: false }),
-                          classNames.borderOnlyT,
+                          classNames.borderlessX,
+                          classNames.borderlessBottom,
                           rowsNotExpanding && classNames.liquid,
                         )}
                         style={{
@@ -534,6 +526,7 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
                   <TimeGridCols
                     dateProfile={props.dateProfile}
                     nowDate={props.nowDate}
+                    nowMs={props.nowMs}
                     todayRange={props.todayRange}
                     cells={props.cells}
                     slatCnt={slatCnt}
@@ -552,7 +545,7 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
                     eventSelection={props.eventSelection}
 
                     // dimensions
-                    colWidth={colWidth}
+                    colWidth={appliedColWidth}
                     slatHeight={slatHeight}
                     cellIsNarrow={cellIsNarrow}
                     cellIsMicro={cellIsMicro}
@@ -591,7 +584,8 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
                         <div
                           className={joinClassNames(
                             generateClassName(options.fillerClass, { inTableHeader: false }),
-                            classNames.borderOnlyT,
+                            classNames.borderlessX,
+                            classNames.borderlessBottom,
                             classNames.liquid,
                           )}
                         />

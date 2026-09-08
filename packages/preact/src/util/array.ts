@@ -3,6 +3,45 @@ import { valuesIdentical } from './misc'
 // TODO: new util arrayify?
 // Array.prototype.slice.call(
 
+export function flatArray<Item>(
+  items: readonly (Item | readonly Item[])[],
+): Item[] {
+  const res: Item[] = []
+
+  for (const item of items) {
+    if (Array.isArray(item)) {
+      for (const subItem of item) {
+        res.push(subItem)
+      }
+    } else {
+      res.push(item as Item)
+    }
+  }
+
+  return res
+}
+
+export function flatMapArray<Input, Output>(
+  inputs: readonly Input[],
+  mapFunc: (input: Input, index: number) => Output | readonly Output[],
+): Output[] {
+  const res: Output[] = []
+
+  for (let i = 0; i < inputs.length; i += 1) {
+    const output = mapFunc(inputs[i], i)
+
+    if (Array.isArray(output)) {
+      for (const subOutput of output) {
+        res.push(subOutput)
+      }
+    } else {
+      res.push(output as Output)
+    }
+  }
+
+  return res
+}
+
 export function removeMatching(array: any[], testFunc) {
   let removeCnt = 0
   let i = 0

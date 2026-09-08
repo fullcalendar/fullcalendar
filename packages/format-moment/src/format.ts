@@ -12,13 +12,13 @@ export function formatWithCmdStr(
 
   if (data.end) {
     let startMom = convertToMoment(
-      data.start.array,
+      data.start.instantMs,
       data.timeZone,
       data.start.timeZoneOffset,
       data.localeCodes[0],
     )
     let endMom = convertToMoment(
-      data.end.array,
+      data.end.instantMs,
       data.timeZone,
       data.end.timeZoneOffset,
       data.localeCodes[0],
@@ -32,7 +32,7 @@ export function formatWithCmdStr(
   }
 
   const mom = convertToMoment(
-    data.date.array,
+    data.date.instantMs,
     data.timeZone,
     data.date.timeZoneOffset,
     data.localeCodes[0],

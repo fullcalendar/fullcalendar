@@ -38,7 +38,9 @@ export class TimeGridSlatLane extends BaseComponent<TimeGridSlatLaneProps> {
           classNames.noMargin,
           classNames.noPadding,
           classNames.liquid,
-          props.borderTop ? classNames.borderOnlyT : classNames.borderNone,
+          classNames.borderlessX,
+          classNames.borderlessBottom,
+          !props.borderTop && classNames.borderlessTop,
         )}
         renderProps={renderProps}
         generatorName={undefined}

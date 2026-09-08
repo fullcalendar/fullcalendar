@@ -1,5 +1,5 @@
 import { VerboseFormattingData } from '@full-ui/headless-calendar'
-import { arrayToLuxon } from './convert'
+import { instantToLuxon } from './convert'
 
 // what Intl.DateTimeFormat::formatRangeToParts produces for en-US
 const DEFAULT_RANGE_SEPARATOR = ' – '
@@ -11,13 +11,13 @@ export function formatWithCmdStr(
   let cmd = parseCmdStr(cmdStr)
 
   if (data.end) {
-    let start = arrayToLuxon(
-      data.start.array,
+    let start = instantToLuxon(
+      data.start.instantMs,
       data.timeZone,
       data.localeCodes[0],
     )
-    let end = arrayToLuxon(
-      data.end.array,
+    let end = instantToLuxon(
+      data.end.instantMs,
       data.timeZone,
       data.localeCodes[0],
     )
@@ -29,8 +29,8 @@ export function formatWithCmdStr(
     )
   }
 
-  const lux = arrayToLuxon(
-    data.date.array,
+  const lux = instantToLuxon(
+    data.date.instantMs,
     data.timeZone,
     data.localeCodes[0],
   )

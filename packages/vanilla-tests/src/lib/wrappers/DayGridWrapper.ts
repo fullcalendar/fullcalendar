@@ -3,6 +3,11 @@ import { formatIsoDay } from '../datelib-utils'
 import { getRectCenter, intersectRects, addPoints, subtractPoints } from '../geom'
 import { CalendarWrapper } from './CalendarWrapper'
 
+// More-link measurement probes use real, dimensionful markup offscreen, so
+// ordinary visibility filtering retains them. Wrapper queries expose only the
+// actionable links; probes identify themselves as excluded from accessibility.
+const MORE_LINK_SELECTOR = '.fc-daygrid-more-link:not([aria-hidden="true"])'
+
 export class DayGridWrapper { // TODO: rename to DayGridBodyWrapper
   static EVENT_IS_START_CLASSNAME = 'fc-event-start'
   static EVENT_IS_END_CLASSNAME = 'fc-event-end'
@@ -70,11 +75,11 @@ export class DayGridWrapper { // TODO: rename to DayGridBodyWrapper
   }
 
   getMoreEl() {
-    return this.el.querySelector('.fc-daygrid-more-link')
+    return this.el.querySelector(MORE_LINK_SELECTOR)
   }
 
   getMoreEls() {
-    return findElements(this.el, '.fc-daygrid-more-link')
+    return findElements(this.el, MORE_LINK_SELECTOR)
   }
 
   getWeekNavLinkEls() {
@@ -105,7 +110,7 @@ export class DayGridWrapper { // TODO: rename to DayGridBodyWrapper
     if (index == null) {
       $(this.getMoreEl()).simulate('click')
     } else {
-      $(this.el.querySelectorAll('.fc-daygrid-more-link')[index]).simulate('click')
+      $(this.getMoreEls()[index]).simulate('click')
     }
   }
 

@@ -1,13 +1,10 @@
-import { CssDimValue } from '../../scrollgrid/util'
 import { DayHeaderInfo } from '../../render-hook-misc'
 import { computeMajorUnit } from '../../DateProfileGenerator'
 import { createFormatter } from '../../datelib/formatting'
 import { DateEnv, DateFormatter, DateMarker } from '@full-ui/headless-calendar'
 import { DateProfile, DateProfileGenerator } from '../../DateProfileGenerator'
 import { DaySeriesModel } from '../../common/DaySeriesModel'
-import { DayTableCell, DayTableModel } from '../../common/DayTableModel'
-import { fracToCssDim } from '../../util/html'
-import { SlicedCoordRange } from '../../coord-range'
+import { DayTableCell, DayTableModel } from '../DayTableModel'
 import type { ReactNode } from 'react'
 
 export function renderInner(renderProps: DayHeaderInfo): ReactNode {
@@ -25,12 +22,18 @@ export function buildDayTableModel(
 
   // Exclude 'day': when cells are themselves days, all would match and the boundary
   // distinction is meaningless (unlike timeline slots which can be sub-day).
-  return new DayTableModel(daySeries, breakOnWeeks, dateEnv, majorUnit !== 'day' ? majorUnit : undefined)
+  return new DayTableModel(
+    daySeries,
+    breakOnWeeks,
+    dateEnv,
+    majorUnit !== 'day' ? majorUnit : undefined,
+    dateProfile.activeRange,
+  )
 }
 
 export function computeColWidth(colCount: number, colMinWidth: number, viewportWidth: number | undefined): [
   canvasWidth: number | undefined, // does NOT include scrollbar gutter
-  colWidth: number | undefined,
+  appliedColWidth: number | undefined,
 ] {
   if (viewportWidth == null) {
     return [undefined, undefined]
@@ -77,32 +80,6 @@ export function computeTopFromDate(
   }
 
   return top
-}
-
-/*
-FYI, `width` is not dependable for aligning completely to farside
-*/
-export function computeHorizontalsFromSeg(
-  seg: SlicedCoordRange,
-  colWidth: number | undefined,
-  colCount: number,
-): {
-  insetInlineStart: CssDimValue | undefined,
-  insetInlineEnd: CssDimValue | undefined,
-} {
-  let fromStart: CssDimValue
-  let fromEnd: CssDimValue
-
-  if (colWidth != null) {
-    fromStart = seg.start * colWidth
-    fromEnd = (colCount - seg.end) * colWidth
-  } else {
-    const colWidthFrac = 1 / colCount
-    fromStart = fracToCssDim(seg.start * colWidthFrac)
-    fromEnd = fracToCssDim(1 - seg.end * colWidthFrac)
-  }
-
-  return { insetInlineStart: fromStart, insetInlineEnd: fromEnd }
 }
 
 export function computeColFromPosition(

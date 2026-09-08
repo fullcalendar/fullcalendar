@@ -1,4 +1,5 @@
 import { sliceEvents } from 'fullcalendar'
+import { strictModeFactor } from 'fullcalendar/protected-api'
 import classicThemePlugin from 'fullcalendar/themes/classic' // need both
 import themeForTestsPlugin from '../lib/theme-for-tests' // "
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
@@ -76,20 +77,20 @@ describe('custom view class', () => { // TODO: rename file
     expect(viewEl).toHaveClass('awesome-view')
     expect($(viewEl).find('.hello-world').length).toBe(1)
 
-    expect(CustomViewConfig.didMount.calls.count()).toBe(1)
-    expect(CustomViewConfig.content.calls.count()).toBe(1)
-    expect(CustomViewConfig.willUnmount.calls.count()).toBe(0)
+    expect(CustomViewConfig.didMount.calls.count()).toBe(1 * strictModeFactor)
+    expect(CustomViewConfig.content.calls.count()).toBe(1 * strictModeFactor)
+    expect(CustomViewConfig.willUnmount.calls.count()).toBe(strictModeFactor - 1)
 
     resetCounts()
     calendar.select('2014-12-25', '2014-01-01')
     expect(CustomViewConfig.didMount.calls.count()).toBe(0)
-    expect(CustomViewConfig.content.calls.count()).toBe(1)
+    expect(CustomViewConfig.content.calls.count()).toBe(1 * strictModeFactor)
     expect(CustomViewConfig.willUnmount.calls.count()).toBe(0)
 
     resetCounts()
     calendar.unselect()
     expect(CustomViewConfig.didMount.calls.count()).toBe(0)
-    expect(CustomViewConfig.content.calls.count()).toBe(1)
+    expect(CustomViewConfig.content.calls.count()).toBe(1 * strictModeFactor)
     expect(CustomViewConfig.willUnmount.calls.count()).toBe(0)
 
     resetCounts()

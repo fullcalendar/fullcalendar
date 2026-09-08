@@ -8,6 +8,3 @@ console.log(
   'You are using the FORCE_REACT=1 version of fullcalendar with StrictMode ' +
   (strictModeFactor > 1 ? 'ON' : 'OFF'),
 )
-
-// See note in other vdom-config
-export const vdomExtraRenders = 0

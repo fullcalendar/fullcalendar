@@ -10,6 +10,8 @@ import { StandardEvent } from '../../common/StandardEvent'
 import { type RefObject } from 'react'
 import { DEFAULT_TABLE_EVENT_TIME_FORMAT, hasListItemDisplay } from '../event-rendering'
 import { DayRowEventRange, DayRowEventRangePart } from '../TableSeg'
+import { DAY_GRID_CELL_CONTENT_Z_CLASS } from './z-index'
+import { joinClassNames } from '../../util/html'
 
 export interface DayGridMoreLinkProps {
   className?: string
@@ -35,7 +37,7 @@ export class DayGridMoreLink extends BaseComponent<DayGridMoreLinkProps> {
     return (
       <MoreLinkContainer
         display='row'
-        className={props.className}
+        className={joinClassNames(props.className, DAY_GRID_CELL_CONTENT_Z_CLASS)}
         isNarrow={props.isNarrow}
         isMicro={props.isMicro}
         dateProfile={props.dateProfile}
@@ -63,7 +65,7 @@ export class DayGridMoreLink extends BaseComponent<DayGridMoreLinkProps> {
                   }}
                 >
                   <StandardEvent
-                    display={hasListItemDisplay(seg) ? 'list-item' : 'row'}
+                    display={hasListItemDisplay(seg, eventRange) ? 'list-item' : 'row'}
                     eventRange={eventRange}
                     isStart={seg.isStart}
                     isEnd={seg.isEnd}

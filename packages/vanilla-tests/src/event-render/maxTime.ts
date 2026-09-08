@@ -31,7 +31,7 @@ describe('event rendering with slotMaxTime', () => { // TODO: rename file
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/4483
-  it('displays events on the last day', () => {
+  it('displays events on the last day', async () => {
     let calendar = initCalendar({
       initialView: 'dayGridWeek',
       slotMaxTime: '20:00',
@@ -39,6 +39,7 @@ describe('event rendering with slotMaxTime', () => { // TODO: rename file
         { start: '2017-03-19', end: '2017-03-26' },
       ],
     })
+    await waitTimeout()
 
     directionallyTestSeg(calendar, {
       firstCol: 0,

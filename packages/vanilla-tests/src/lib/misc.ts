@@ -34,6 +34,11 @@ export async function ignoreResizeObserverLoops(f: () => Promise<void>): Promise
 export const enUsSep = getRangeSeparatorForLocale('en-US')
 export const enGbSep = getRangeSeparatorForLocale('en-GB')
 
+// Intl output can use typographically different space characters across ICU versions.
+export function normalizeIntlWhitespace(s: string): string {
+  return s.replace(/[\u00A0\u2009\u202F]/g, ' ')
+}
+
 // Utils
 // -----
 

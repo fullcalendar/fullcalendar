@@ -62,11 +62,11 @@ describe('dayGrid advanced event rendering', () => {
       initialDate: '2020-09-01',
       dayMaxEventRows: 4,
       events: [
-        { start: '2020-08-30', end: '2020-09-04' },
-        { start: '2020-08-31', end: '2020-09-03' },
-        { start: '2020-09-01', end: '2020-09-04' },
-        { start: '2020-09-02', end: '2020-09-04' },
-        { start: '2020-09-02', end: '2020-09-04' },
+        { title: 'a', start: '2020-08-30', end: '2020-09-04' },
+        { title: 'b', start: '2020-08-31', end: '2020-09-03' },
+        { title: 'c', start: '2020-09-01', end: '2020-09-04' },
+        { title: 'd', start: '2020-09-02', end: '2020-09-04' },
+        { title: 'e', start: '2020-09-02', end: '2020-09-04' },
       ],
     })
     await waitTimeout()
@@ -76,14 +76,10 @@ describe('dayGrid advanced event rendering', () => {
     let visibleEventEls = filterVisibleEls(eventEls)
     let moreLinkEls = dayGridWrapper.getMoreEls()
 
-    expect(visibleEventEls.length).toBe(3)
-    expect(moreLinkEls.length).toBe(2)
+    expect(new Set(visibleEventEls.map((el) => $(el).text()))).toEqual(new Set(['a', 'b', 'c', 'd', 'e']))
+    expect(moreLinkEls.length).toBe(1)
+    expect(moreLinkEls[0].closest('[data-date]').getAttribute('data-date')).toBe('2020-09-02')
     expect(anyElsIntersect(visibleEventEls.concat(moreLinkEls))).toBe(false)
-
-    expect(Math.abs(
-      moreLinkEls[0].getBoundingClientRect().top -
-      moreLinkEls[1].getBoundingClientRect().top,
-    )).toBeLessThan(1)
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/5883
@@ -122,8 +118,9 @@ describe('dayGrid advanced event rendering', () => {
     let visibleEventEls = filterVisibleEls(eventEls)
     let moreLinkEls = dayGridWrapper.getMoreEls()
 
-    expect(visibleEventEls.length).toBe(2)
-    expect(moreLinkEls.length).toBe(3)
+    expect(new Set(visibleEventEls.map((el) => $(el).text()))).toEqual(new Set(['b1', 'b2', 'b3', 'b4']))
+    expect(moreLinkEls.length).toBe(1)
+    expect(moreLinkEls[0].closest('[data-date]').getAttribute('data-date')).toBe('2020-10-21')
     expect(anyElsIntersect(visibleEventEls.concat(moreLinkEls))).toBe(false)
   })
 
@@ -153,7 +150,7 @@ describe('dayGrid advanced event rendering', () => {
     expect(anyElsIntersect(eventEls)).toBe(false)
   })
 
-  it('renders single-day timed event as list-item', () => {
+  it('renders single-day timed event as list-item', async () => {
     let calendar = initCalendar({
       initialView: 'dayGridMonth',
       initialDate: '2020-05-01',
@@ -165,11 +162,13 @@ describe('dayGrid advanced event rendering', () => {
         },
       ],
     })
+    await waitTimeout()
 
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     let eventEl = dayGridWrapper.getEventEls()[0]
 
     expect(dayGridWrapper.isEventListItem(eventEl)).toBe(true)
+    expect(filterVisibleEls([eventEl]).length).toBe(1)
   })
 
   it('does not render multi-day event as list-item', () => {
@@ -250,16 +249,16 @@ describe('dayGrid advanced event rendering', () => {
     }, $container.find('div')[0])
 
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
-    await waitTimeout()
+    await waitTimeout(200)
     let origEventCnt = filterVisibleEls(dayGridWrapper.getEventEls()).length
 
     $container.css('height', SMALL_HEIGHT)
-    await waitTimeout()
+    await waitTimeout(200)
     let smallEventCnt = filterVisibleEls(dayGridWrapper.getEventEls()).length
     expect(smallEventCnt).not.toBe(origEventCnt)
 
     $container.css('height', LARGE_HEIGHT)
-    await waitTimeout()
+    await waitTimeout(200)
     let largeEventCnt = filterVisibleEls(dayGridWrapper.getEventEls()).length
     expect(largeEventCnt).toBe(origEventCnt)
 
@@ -518,14 +517,15 @@ describe('dayGrid advanced event rendering', () => {
     })
     await waitTimeout()
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
-    dayGridWrapper.openMorePopover(4) // on July 9th
+    let july9El = dayGridWrapper.getDayEl('2021-07-09')
+    $(july9El.querySelector('.fc-daygrid-more-link')).simulate('click')
     await waitTimeout()
     let eventEls = dayGridWrapper.getMorePopoverEventEls()
     expect(eventEls.length).toBe(9)
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/7447
-  it('Doesn\'t error or overlap event positions when white-space:normal', async () => {
+  it('Doesn\'t overlap white-space:normal events with dayMaxEvents:4', async () => {
     let calendar = initCalendar({
       initialView: 'dayGridWeek',
       initialDate: '2023-04-09',
@@ -589,12 +589,94 @@ describe('dayGrid advanced event rendering', () => {
         },
       ],
     })
-    await waitTimeout()
+    await waitTimeout(100)
 
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     let eventEls = dayGridWrapper.getEventEls()
     let visibleEventEls = filterVisibleEls(eventEls)
     expect(anyElsIntersect(visibleEventEls)).toBe(false)
+  })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/7447
+  it('Limits white-space:normal events to a constrained height with dayMaxEvents:true', async () => {
+    let calendar = initCalendar({
+      initialView: 'dayGridWeek',
+      initialDate: '2023-04-09',
+      height: 250,
+      dayMaxEvents: true,
+      eventContent() {
+        return {
+          html: '<div style="white-space: normal">' +
+            '<strong>AAAAAAAAAA</strong> <strong>BBBBBBBBB</strong></div>',
+        }
+      },
+      events: [
+        {
+          id: 'a',
+          start: '2023-04-14',
+          end: '2023-04-21',
+        },
+        {
+          id: 'b',
+          start: '2023-04-13',
+          end: '2023-04-22',
+        },
+        {
+          id: 'c',
+          start: '2023-04-06',
+          end: '2023-04-15',
+        },
+        {
+          id: 'd',
+          start: '2023-04-11',
+          end: '2023-04-14',
+        },
+        {
+          id: 'e',
+          start: '2023-04-14',
+          end: '2023-04-19',
+        },
+        {
+          id: 'f',
+          start: '2023-04-13',
+          end: '2023-04-19',
+        },
+        {
+          id: 'g',
+          start: '2023-04-05',
+          end: '2023-04-14',
+        },
+        {
+          id: 'h',
+          start: '2023-04-06',
+          end: '2023-04-15',
+        },
+        {
+          id: 'i',
+          start: '2023-04-13',
+          end: '2023-04-15',
+        },
+        {
+          id: 'j',
+          start: '2023-04-12',
+          end: '2023-04-15',
+        },
+      ],
+    })
+    await waitTimeout(200)
+
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let eventEls = dayGridWrapper.getEventEls()
+    let visibleEventEls = filterVisibleEls(eventEls)
+    let moreLinkEls = dayGridWrapper.getMoreEls()
+    let rowBottom = dayGridWrapper.getRowEl(0).getBoundingClientRect().bottom
+
+    // the row is too short for all events, so the limit must actually bind
+    expect(moreLinkEls.length).toBeGreaterThan(0)
+    expect(anyElsIntersect(visibleEventEls)).toBe(false)
+    for (const eventEl of visibleEventEls) {
+      expect(eventEl.getBoundingClientRect().bottom).toBeLessThanOrEqual(rowBottom + 1)
+    }
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/6486
@@ -721,10 +803,10 @@ describe('dayGrid advanced event rendering', () => {
     it('renders asynchronous events without accidentally hiding on prev/next', async () => {
       const EVENTS = [
         { // on a day that in next month becomes disabled
-          "url": "http:\/\/google.com\/",
-          "title": "Click for Google",
-          "start": "2026-06-28"
-        }
+          'url': 'http://google.com/',
+          'title': 'Click for Google',
+          'start': '2026-06-28',
+        },
       ]
       const calendar = initCalendar({
         initialDate: '2026-06-17',
@@ -732,7 +814,7 @@ describe('dayGrid advanced event rendering', () => {
           setTimeout(() => {
             success(EVENTS)
           }, 100)
-        }
+        },
       })
       await waitTimeout(200)
 

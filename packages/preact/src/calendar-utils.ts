@@ -4,6 +4,7 @@ import { CalendarContext } from './CalendarContext'
 import { ViewApi } from './api/ViewApi'
 import { ViewImpl } from './api/ViewImpl'
 import { DateMarker, startOfDay } from '@full-ui/headless-calendar'
+import { addDurationToEdge, EventRangeEdge } from './structs/event-instance'
 
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement
@@ -76,4 +77,14 @@ export function getDefaultEventEnd(allDay: boolean, marker: DateMarker, context:
   }
 
   return end
+}
+
+// like getDefaultEventEnd, but edge-based: an exact start yields an exact derived end
+// (real elapsed duration), so the end can't re-resolve to the wrong side of a DST fold
+export function getDefaultEventEndEdge(allDay: boolean, start: EventRangeEdge, context: CalendarContext): EventRangeEdge {
+  if (allDay) {
+    return { marker: getDefaultEventEnd(true, start.marker, context) }
+  }
+
+  return addDurationToEdge(start, context.options.defaultTimedEventDuration, context.dateEnv)
 }

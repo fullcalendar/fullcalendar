@@ -1,12 +1,11 @@
 import { Locale } from './locale'
-import { ZonedMarker } from './zoned-marker'
 import {
   DateFormatter,
   DateTimeFormatPartWithWeek,
   DateTimeRangeFormatPartWithWeek,
   DateFormattingContext,
+  ZonedInstant,
 } from './formatting-interface'
-import { formatTimeZoneOffset } from './formatting-utils'
 
 export interface NativeDateFormatterOptions extends Intl.DateTimeFormatOptions {
   /*
@@ -93,12 +92,14 @@ export class NativeDateFormatter implements DateFormatter {
       }
     }
 
-    if (standardOptions.timeZoneName === 'long') {
-      standardOptions.timeZoneName = 'short'
+    // all zone-name requests render as offsets ("GMT-4") for now, matching the historical
+    // synthesized style. flipping to real zone names ("EDT") is a deliberate future change
+    if (standardOptions.timeZoneName) {
+      standardOptions.timeZoneName = 'shortOffset'
     }
 
     this.timeZoneOnly = Object.keys(standardOptions).length === 1 &&
-      standardOptions.timeZoneName === 'short'
+      Boolean(standardOptions.timeZoneName)
 
     this.weekOnly = Boolean(!Object.keys(standardOptions).length && extendedOptions.week)
 
@@ -118,22 +119,19 @@ export class NativeDateFormatter implements DateFormatter {
       ) {
         delete extendedOptions.omitZeroMinute
       }
-
-      standardOptions.timeZone = 'UTC'
     }
 
     this.standardOptions = standardOptions
     this.extendedOptions = extendedOptions
   }
 
-  formatToParts(date: ZonedMarker, context: DateFormattingContext): DateTimeFormatPartWithWeek[] {
-    const { standardOptions, extendedOptions } = this
+  formatToParts(date: ZonedInstant, context: DateFormattingContext): DateTimeFormatPartWithWeek[] {
+    const { extendedOptions } = this
 
     if (this.timeZoneOnly) {
-      return [{
-        type: 'timeZoneName',
-        value: formatTimeZoneOffset(date.timeZoneOffset),
-      }]
+      return this.getFormats(context).normalFormat
+        .formatToParts(date.instantMs)
+        .filter((part) => part.type === 'timeZoneName')
     }
 
     if (this.weekOnly) {
@@ -150,16 +148,16 @@ export class NativeDateFormatter implements DateFormatter {
     const format = (zeroFormat && !date.marker.getUTCMinutes())
       ? zeroFormat
       : normalFormat
-    const parts = format.formatToParts(date.marker)
-    return postProcessParts(parts, date, standardOptions, extendedOptions)
+    const parts = format.formatToParts(date.instantMs)
+    return postProcessParts(parts, extendedOptions)
   }
 
   formatRangeToParts(
-    start: ZonedMarker,
-    end: ZonedMarker,
+    start: ZonedInstant,
+    end: ZonedInstant,
     context: DateFormattingContext,
   ): DateTimeRangeFormatPartWithWeek[] {
-    const { standardOptions, extendedOptions } = this
+    const { extendedOptions } = this
 
     if (this.timeZoneOnly || this.weekOnly) {
       return this.formatToParts(start, context).map((part) => {
@@ -174,14 +172,22 @@ export class NativeDateFormatter implements DateFormatter {
     const format = (zeroFormat && !start.marker.getUTCMinutes() && !end.marker.getUTCMinutes())
       ? zeroFormat
       : normalFormat
-    const parts = format.formatRangeToParts(start.marker, end.marker)
-    return postProcessRangeParts(parts, start, end, standardOptions, extendedOptions)
+    // the instants are real and ordered, so Intl's rendering is authoritative. ICU's
+    // interval output currently omits zone names and collapses equal-wall-clock
+    // endpoints — upstream limitations we deliberately do not paper over
+    const parts = format.formatRangeToParts(start.instantMs, end.instantMs)
+    return postProcessRangeParts(parts, extendedOptions)
   }
 
   private getFormats(context: DateFormattingContext): CachedFormats {
     if (this.cachedContext !== context) {
-      const { standardOptions, extendedOptions } = this
+      const { extendedOptions } = this
       const { codes } = context.locale
+      const standardOptions: Intl.DateTimeFormatOptions = {
+        ...this.standardOptions,
+        // 'local' means the system zone, which is Intl's default
+        timeZone: context.timeZone === 'local' ? undefined : context.timeZone,
+      }
       const normalFormat = new Intl.DateTimeFormat(codes, standardOptions)
       let zeroFormat: Intl.DateTimeFormat | undefined
 
@@ -202,9 +208,7 @@ export class NativeDateFormatter implements DateFormatter {
 function processPartsLoop<T extends Intl.DateTimeFormatPart>(
   parts: T[],
   extendedOptions: Partial<NativeDateFormatterOptions>,
-  getTzValue: (part: T) => string | undefined,
-): { lastLiteral: T | undefined, anyTzInjected: boolean } {
-  let anyTzInjected = false
+): void {
   let priorLiteral: T | undefined
 
   for (const part of parts) {
@@ -236,40 +240,17 @@ function processPartsLoop<T extends Intl.DateTimeFormatPart>(
       }
 
       part.value = s
-    } else if (part.type === 'timeZoneName') {
-      const tzValue = getTzValue(part)
-      if (tzValue != null) {
-        part.value = tzValue
-        anyTzInjected = true
-      }
     }
 
     priorLiteral = isLiteral ? part : undefined
   }
-
-  return { lastLiteral: priorLiteral, anyTzInjected }
 }
 
 function postProcessParts(
   parts: Intl.DateTimeFormatPart[],
-  date: ZonedMarker,
-  standardOptions: Intl.DateTimeFormatOptions,
   extendedOptions: Partial<NativeDateFormatterOptions>,
 ): DateTimeFormatPartWithWeek[] {
-  const injectableTz = standardOptions.timeZoneName === 'short'
-    ? (date.timeZoneOffset == null ? 'UTC' : formatTimeZoneOffset(date.timeZoneOffset))
-    : undefined
-
-  const { lastLiteral, anyTzInjected } = processPartsLoop(parts, extendedOptions, () => injectableTz)
-
-  if (injectableTz && !anyTzInjected) {
-    if (lastLiteral) {
-      lastLiteral.value += ' '
-    } else {
-      parts.push({ type: 'literal', value: ' ' })
-    }
-    parts.push({ type: 'timeZoneName', value: injectableTz })
-  }
+  processPartsLoop(parts, extendedOptions)
 
   if (
     extendedOptions.weekdayJustify &&
@@ -298,18 +279,9 @@ function postProcessParts(
 
 function postProcessRangeParts(
   parts: Intl.DateTimeRangeFormatPart[],
-  start: ZonedMarker,
-  end: ZonedMarker,
-  standardOptions: Intl.DateTimeFormatOptions,
   extendedOptions: Partial<NativeDateFormatterOptions>,
 ): DateTimeRangeFormatPartWithWeek[] {
-  const injectTz = standardOptions.timeZoneName === 'short'
-
-  processPartsLoop(parts, extendedOptions, (part) => {
-    if (!injectTz) return undefined
-    const offset = part.source === 'endRange' ? end.timeZoneOffset : start.timeZoneOffset
-    return offset == null ? 'UTC' : formatTimeZoneOffset(offset)
-  })
+  processPartsLoop(parts, extendedOptions)
 
   if (extendedOptions.forceCommas) {
     for (const part of parts) {

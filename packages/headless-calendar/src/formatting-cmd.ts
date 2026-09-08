@@ -4,8 +4,8 @@ import {
   DateTimeFormatPartWithWeek,
   DateTimeRangeFormatPartWithWeek,
   createVerboseFormattingArg,
+  ZonedInstant,
 } from './formatting-interface'
-import { ZonedMarker } from './zoned-marker'
 
 export class CmdDateFormatter implements DateFormatter {
   cmdStr: string
@@ -15,7 +15,7 @@ export class CmdDateFormatter implements DateFormatter {
   }
 
   formatToParts(
-    date: ZonedMarker,
+    date: ZonedInstant,
     context: DateFormattingContext,
   ): DateTimeFormatPartWithWeek[] {
     const res = context.cmdFormatter!(
@@ -31,8 +31,8 @@ export class CmdDateFormatter implements DateFormatter {
   }
 
   formatRangeToParts(
-    start: ZonedMarker,
-    end: ZonedMarker,
+    start: ZonedInstant,
+    end: ZonedInstant,
     context: DateFormattingContext,
   ): DateTimeRangeFormatPartWithWeek[] {
     const res = context.cmdFormatter!(

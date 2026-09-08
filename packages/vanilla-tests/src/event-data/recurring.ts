@@ -1,4 +1,4 @@
-import { strictModeFactor, vdomExtraRenders } from 'fullcalendar/protected-api'
+import { strictModeFactor } from 'fullcalendar/protected-api'
 import classicThemePlugin from 'fullcalendar/themes/classic' // need both
 import themeForTestsPlugin from '../lib/theme-for-tests' // "
 import timeGridPlugin from 'fullcalendar/timegrid'
@@ -106,8 +106,8 @@ describe('recurring events', () => {
     calendar.setOption('timeZone', 'America/Chicago')
     await waitTimeout()
     expect(events[0].start).toEqualDate('2023-02-07T17:00:00Z')
-    expect(timeTexts.length).toBe(2 * strictModeFactor + vdomExtraRenders)
-    expect(timeTexts[1 * strictModeFactor + vdomExtraRenders]).toBe('11:00')
+    expect(timeTexts.length).toBe(2 * strictModeFactor)
+    expect(timeTexts[1 * strictModeFactor]).toBe('11:00')
 
     calendar.next() // renders next week's event
     await waitTimeout()
@@ -116,7 +116,7 @@ describe('recurring events', () => {
     calendar.setOption('timeZone', 'America/Chicago')
     await waitTimeout()
     expect(events[0].start).toEqualDate('2023-02-07T17:00:00Z')
-    expect(timeTexts.length).toBe(4 * strictModeFactor + vdomExtraRenders)
-    expect(timeTexts[1 * strictModeFactor + vdomExtraRenders]).toBe('11:00')
+    expect(timeTexts.length).toBe(4 * strictModeFactor)
+    expect(timeTexts[1 * strictModeFactor]).toBe('11:00')
   })
 })

@@ -2,7 +2,7 @@ import { joinClassNames } from '../../util/html'
 import { BaseComponent, setRef } from '../../vdom-util'
 import { DateProfile } from '../../DateProfileGenerator'
 import { DateRange } from '@full-ui/headless-calendar'
-import { DayTableCell, DayGridRange } from '../../common/DayTableModel'
+import { DayTableCell, DayGridRange } from '../DayTableModel'
 import { EventSegUiInteractionState } from '../../component/DateComponent'
 import { Hit } from '../../interactions/hit'
 import { Scroller } from '../../scrollgrid/Scroller'
@@ -19,6 +19,7 @@ import { RowConfig } from '../header-tier'
 import classNames from '../../styles.module.css'
 import { dayMicroWidth } from './util'
 import { computeViewBorderless } from '../../util/misc'
+import { DayGridLayoutPrint } from './DayGridLayoutPrint'
 
 export interface DayGridLayoutNormalProps {
   dateProfile: DateProfile
@@ -73,9 +74,34 @@ export class DayGridLayoutNormal extends BaseComponent<DayGridLayoutNormalProps,
     const tableHeaderSticky = !props.forPrint && getTableHeaderSticky(options)
 
     const colCount = props.cellRows[0].length
-    const cellWidth = clientWidth != null  ? clientWidth / colCount : undefined
-    const cellIsMicro = cellWidth != null && cellWidth <= dayMicroWidth
-    const cellIsNarrow = cellIsMicro || (cellWidth != null && cellWidth <= options.dayNarrowWidth)
+    const measuredColWidth = clientWidth != null ? clientWidth / colCount : undefined
+    const cellIsMicro = measuredColWidth != null && measuredColWidth <= dayMicroWidth
+    const cellIsNarrow = cellIsMicro || (measuredColWidth != null && measuredColWidth <= options.dayNarrowWidth)
+
+    if (props.forPrint) {
+      return (
+        <DayGridLayoutPrint
+          dateProfile={props.dateProfile}
+          todayRange={props.todayRange}
+          cellRows={props.cellRows}
+          headerTiers={props.headerTiers}
+          showHeader={Boolean(options.dayHeaders)}
+          fgEventSegs={props.fgEventSegs}
+          bgEventSegs={props.bgEventSegs}
+          businessHourSegs={props.businessHourSegs}
+          eventSelection={props.eventSelection}
+          dayMaxEventRows={options.dayMaxEventRows}
+          borderlessX={borderlessX}
+          borderlessTop={borderlessTop}
+          borderlessBottom={borderlessBottom}
+          multiMonthColumns={0}
+          visibleWidth={totalWidth}
+          cellIsNarrow={cellIsNarrow}
+          cellIsMicro={cellIsMicro}
+          rowHeightRefMap={props.rowHeightRefMap}
+        />
+      )
+    }
 
     return (
       <>
@@ -88,7 +114,7 @@ export class DayGridLayoutNormal extends BaseComponent<DayGridLayoutNormalProps,
               borderlessBottom,
               multiMonthColumns: 0,
             }),
-            classNames.printHeader, // either flexCol or table-header-group
+            classNames.flexCol,
             tableHeaderSticky && classNames.tableHeaderSticky,
           )}>
             <div className={classNames.flexRow}>
@@ -101,7 +127,8 @@ export class DayGridLayoutNormal extends BaseComponent<DayGridLayoutNormalProps,
                 <div
                   className={joinClassNames(
                     generateClassName(options.fillerClass, { inTableHeader: true }),
-                    classNames.borderOnlyS,
+                    classNames.borderlessY,
+                    classNames.borderlessEnd,
                   )}
                   style={{ minWidth: endScrollbarWidth }}
                 />

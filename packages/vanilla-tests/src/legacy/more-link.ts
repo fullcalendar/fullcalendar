@@ -51,8 +51,13 @@ describe('dayMaxEventRows', () => {
         })
         await waitTimeout()
         let dayGridWrapper = new ViewWrapper(calendar).dayGrid
+        let eventEls = dayGridWrapper.getEventEls()
+        let visibleEventEls = filterVisibleEls(eventEls)
         let moreEls = dayGridWrapper.getMoreEls()
+
+        expect(visibleEventEls.length).toBe(2)
         expect(moreEls.length).toBe(1)
+        expect(filterVisibleEls(moreEls).length).toBe(1)
         expect(moreEls[0]).toHaveText('+2 more')
       })
 

@@ -5,7 +5,7 @@ import classicThemePlugin from 'fullcalendar/themes/classic' // need both
 import themeForTestsPlugin from '../lib/theme-for-tests' // "
 import timeGridPlugin from 'fullcalendar/timegrid'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
-import { enUsSep } from '../lib/misc'
+import { enUsSep, normalizeIntlWhitespace } from '../lib/misc'
 
 describe('luxon formatting plugin', () => {
   const PLUGINS = [ // for `new Calendar`
@@ -48,10 +48,10 @@ describe('luxon formatting plugin', () => {
       let s
 
       s = calendar.formatRange('2018-09-03', '2018-09-05', 'MMMM {d}, yyyy \'asdf\'')
-      expect(s).toEqual(`September 3${enUsSep}5, 2018 asdf`)
+      expect(normalizeIntlWhitespace(s)).toEqual(normalizeIntlWhitespace(`September 3${enUsSep}5, 2018 asdf`))
 
       s = calendar.formatRange('2018-09-03', '2018-09-05', '{d} MMMM, yyyy \'asdf\'')
-      expect(s).toEqual(`3${enUsSep}5 September, 2018 asdf`)
+      expect(normalizeIntlWhitespace(s)).toEqual(normalizeIntlWhitespace(`3${enUsSep}5 September, 2018 asdf`))
     })
 
     it('renders with same year but different month', () => {
@@ -61,10 +61,10 @@ describe('luxon formatting plugin', () => {
       let s
 
       s = calendar.formatRange('2018-09-03', '2018-10-05', '{MMMM {d}}, yyyy \'asdf\'')
-      expect(s).toEqual(`September 3${enUsSep}October 5, 2018 asdf`)
+      expect(normalizeIntlWhitespace(s)).toEqual(normalizeIntlWhitespace(`September 3${enUsSep}October 5, 2018 asdf`))
 
       s = calendar.formatRange('2018-09-03', '2018-10-05', '{{d} MMMM}, yyyy \'asdf\'')
-      expect(s).toEqual(`3 September${enUsSep}5 October, 2018 asdf`)
+      expect(normalizeIntlWhitespace(s)).toEqual(normalizeIntlWhitespace(`3 September${enUsSep}5 October, 2018 asdf`))
     })
 
     it('renders with different years', () => {
@@ -74,10 +74,14 @@ describe('luxon formatting plugin', () => {
       let s
 
       s = calendar.formatRange('2018-09-03', '2019-10-05', '{MMMM {d}}, yyyy \'asdf\'')
-      expect(s).toEqual(`September 3, 2018 asdf${enUsSep}October 5, 2019 asdf`)
+      expect(normalizeIntlWhitespace(s)).toEqual(
+        normalizeIntlWhitespace(`September 3, 2018 asdf${enUsSep}October 5, 2019 asdf`),
+      )
 
       s = calendar.formatRange('2018-09-03', '2019-10-05', '{{d} MMMM}, yyyy \'asdf\'')
-      expect(s).toEqual(`3 September, 2018 asdf${enUsSep}5 October, 2019 asdf`)
+      expect(normalizeIntlWhitespace(s)).toEqual(
+        normalizeIntlWhitespace(`3 September, 2018 asdf${enUsSep}5 October, 2019 asdf`),
+      )
     })
 
     it('renders the same if same day', () => {

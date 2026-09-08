@@ -19,12 +19,12 @@ npm install fullcalendar
 
 Pick the package for your framework:
 
-| Framework | Package |
-| --- | --- |
-| Vanilla JS | [`fullcalendar`](https://www.npmjs.com/package/fullcalendar) |
-| React | [`@fullcalendar/react`](https://www.npmjs.com/package/@fullcalendar/react) |
-| Preact | [`@fullcalendar/preact`](https://www.npmjs.com/package/@fullcalendar/preact) |
-| Vue 3 | [`@fullcalendar/vue3`](https://www.npmjs.com/package/@fullcalendar/vue3) |
-| Angular | [`@fullcalendar/angular`](https://www.npmjs.com/package/@fullcalendar/angular) |
+| Framework  | Package                                                                        |
+| ---------- | ------------------------------------------------------------------------------ |
+| Vanilla JS | [`fullcalendar`](https://www.npmjs.com/package/fullcalendar)                   |
+| React      | [`@fullcalendar/react`](https://www.npmjs.com/package/@fullcalendar/react)     |
+| Preact     | [`@fullcalendar/preact`](https://www.npmjs.com/package/@fullcalendar/preact)   |
+| Vue 3      | [`@fullcalendar/vue3`](https://www.npmjs.com/package/@fullcalendar/vue3)       |
+| Angular    | [`@fullcalendar/angular`](https://www.npmjs.com/package/@fullcalendar/angular) |
 
 For docs, examples, and premium features, visit [fullcalendar.io](https://fullcalendar.io/).

@@ -1,4 +1,5 @@
 import type { Calendar } from 'fullcalendar'
+import { filterVisibleEls } from './dom-misc'
 import { DayGridViewWrapper } from './wrappers/DayGridViewWrapper'
 import { DayGridWrapper } from './wrappers/DayGridWrapper'
 
@@ -19,6 +20,7 @@ export function directionallyTestSeg(calendar: Calendar, opts) {
   let rowTds = dayGridWrapper.getDayElsInRow(row)
 
   expect(rowTds.length).toBeGreaterThan(1)
+  expect(filterVisibleEls([el]).length).toBe(1)
 
   let leftCol = opts.firstCol
   let rightCol = opts.lastCol
