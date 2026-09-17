@@ -33,6 +33,8 @@ export {
   diffDates,
 } from './util/date.js'
 
+export { findDayOne } from './util/jalali.js'
+
 export {
   removeExact,
   isArraysEqual,
