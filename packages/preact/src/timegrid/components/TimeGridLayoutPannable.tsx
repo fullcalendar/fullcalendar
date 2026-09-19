@@ -689,6 +689,12 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
       max = Math.max(max, slatLabelInnerHeight)
     }
 
+    // 0 is a torn-down/unmeasured map (label-phase shift). Keep the last
+    // good height so computeSlatHeight does not collapse the grid (#8101).
+    if (!max) {
+      return
+    }
+
     if (this.state.slatInnerHeight !== max) {
       this.setState({ slatInnerHeight: max })
     }
@@ -706,6 +712,10 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
 
     for (const slatLableInnerWidth of slatLabelInnerWidthMap.values()) {
       max = Math.max(max, slatLableInnerWidth)
+    }
+
+    if (!max) {
+      return
     }
 
     if (this.state.axisWidth !== max) {
