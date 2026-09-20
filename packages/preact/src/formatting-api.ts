@@ -8,6 +8,7 @@ import { DateInput } from './api/structs'
 
 export interface FormatDateOptions extends NativeDateFormatterOptions {
   locale?: string
+  calendarSystem?: string
 }
 
 export interface FormatRangeOptions extends FormatDateOptions {
@@ -57,7 +58,7 @@ function buildDateEnv(settings: FormatRangeOptions) {
 
   return new DateEnv({
     timeZone: BASE_OPTION_DEFAULTS.timeZone,
-    calendarSystem: 'gregory',
+    calendarSystem: BASE_OPTION_DEFAULTS.calendarSystem,
     ...settings,
     locale,
   })

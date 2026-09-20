@@ -181,6 +181,7 @@ export const BASE_OPTION_REFINERS = {
   endParam: String,
   timeZoneParam: String,
   timeZone: String,
+  calendarSystem: String,
   locales: identity as Identity<LocaleInput[]>,
   locale: identity as Identity<LocaleSingularArg>,
   dragRevertDuration: Number,
@@ -503,6 +504,7 @@ export const BASE_OPTION_DEFAULTS = {
   endParam: 'end',
   timeZoneParam: 'timeZone',
   timeZone: 'local', // TODO: throw error if given falsy value?
+  calendarSystem: 'gregory',
   locales: [],
   locale: '', // blank values means it will compute based off locales[]
   dragRevertDuration: 500,
