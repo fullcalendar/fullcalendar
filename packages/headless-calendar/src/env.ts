@@ -3,7 +3,7 @@ import * as PlainDateTimeFns from 'temporal-polyfill/fns/PlainDateTime'
 import * as InstantFns from 'temporal-polyfill/fns/Instant'
 import {
   DateMarker, addMs,
-  diffHours, diffMinutes, diffSeconds, diffWholeWeeks, diffWholeDays,
+  diffDays, diffHours, diffMinutes, diffSeconds, diffWholeWeeks, diffWholeDays,
   startOfDay, startOfHour, startOfMinute, startOfSecond,
   weekOfYear, arrayToUtcDate, dateToUtcArray, dateToLocalArray, arrayToLocalDate, timeAsMs, isValidDate,
 } from './marker'
@@ -48,6 +48,7 @@ export interface DateMarkerMeta {
 export class DateEnv {
   timeZone: string
   calendarSystem: CalendarSystem
+  calendarSystemName: string
   locale: Locale
   weekDow: number // which day begins the week
   weekDoy: number // which day must be within the year, for computing the first week number
@@ -59,6 +60,7 @@ export class DateEnv {
   constructor(settings: DateEnvSettings) {
     this.timeZone = settings.timeZone
     this.calendarSystem = createCalendarSystem(settings.calendarSystem)
+    this.calendarSystemName = settings.calendarSystem
     this.locale = settings.locale
     this.weekDow = settings.locale.week.dow
     this.weekDoy = settings.locale.week.doy
@@ -160,19 +162,19 @@ export class DateEnv {
 
   add(marker: DateMarker, dur: Duration): DateMarker {
     let a = this.calendarSystem.markerToArray(marker)
-    a[0] += dur.years
-    a[1] += dur.months
-    a[2] += dur.days
-    a[6] += dur.milliseconds
+    a[0] += dur.years || 0
+    a[1] += dur.months || 0
+    a[2] += dur.days || 0
+    a[6] += dur.milliseconds || 0
     return this.calendarSystem.arrayToMarker(a)
   }
 
   subtract(marker: DateMarker, dur: Duration): DateMarker {
     let a = this.calendarSystem.markerToArray(marker)
-    a[0] -= dur.years
-    a[1] -= dur.months
-    a[2] -= dur.days
-    a[6] -= dur.milliseconds
+    a[0] -= dur.years || 0
+    a[1] -= dur.months || 0
+    a[2] -= dur.days || 0
+    a[6] -= dur.milliseconds || 0
     return this.calendarSystem.arrayToMarker(a)
   }
 
@@ -337,7 +339,7 @@ export class DateEnv {
     return this.calendarSystem.arrayToMarker([
       this.calendarSystem.getMarkerYear(m),
       this.calendarSystem.getMarkerMonth(m),
-      m.getUTCDate() - ((m.getUTCDay() - this.weekDow + 7) % 7),
+      this.calendarSystem.getMarkerDay(m) - ((m.getUTCDay() - this.weekDow + 7) % 7),
     ])
   }
 
@@ -347,7 +349,23 @@ export class DateEnv {
     if (this.weekNumberFunc) {
       return this.weekNumberFunc(this.toDate(marker))
     }
+    // For non-Gregorian calendar systems, compute week number based on calendar-system year
+    if (this.calendarSystemName !== 'gregory') {
+      return this.computeCalendarSystemWeekNumber(marker)
+    }
     return weekOfYear(marker, this.weekDow, this.weekDoy)
+  }
+
+  private computeCalendarSystemWeekNumber(marker: DateMarker): number {
+    // Get the start of the current calendar-system year (e.g., 1 Farvardin for Jalali)
+    let yearStart = this.startOf(marker, 'year')
+    // Get the start of the week containing the year start
+    let firstWeekStart = this.startOfWeek(yearStart)
+    // Get the start of the day for the marker
+    let dayStart = startOfDay(marker)
+    // Compute days from the first week start
+    let days = Math.round(diffDays(firstWeekStart, dayStart))
+    return Math.floor(days / 7) + 1
   }
 
   formatToParts(
