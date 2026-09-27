@@ -112,6 +112,63 @@ describe('dragging events between calendars', () => {
     })
   })
 
+  ;[
+    { slotDuration: '00:18', snapDuration: '00:18' },
+    { slotDuration: '00:36', snapDuration: '00:18' },
+    // An indivisible override falls back to slotDuration in timeGrid.
+    { slotDuration: '00:18', snapDuration: '00:07' },
+  ].forEach((slotOptions) => {
+    it(`snaps a lower grab to the receiving grid (${JSON.stringify(slotOptions)})`, (done) => {
+      let commonOptions = {
+        plugins: [classicThemePlugin, themeForTestsPlugin, interactionPlugin, timeGridPlugin],
+        initialDate: DEFAULT_DATE,
+        initialView: 'timeGridDay',
+        timeZone: 'UTC',
+        editable: true,
+        droppable: true,
+        headerToolbar: false as const,
+        allDaySlot: false,
+        height: 'auto',
+        slotMinTime: '06:00',
+        slotMaxTime: '12:00',
+      }
+      calendar0 = new Calendar(el0, {
+        ...commonOptions,
+        slotDuration: '00:30',
+        events: [{ id: 'a', title: 'Meeting', start: '2019-01-01T10:00:00', end: '2019-01-01T11:00:00' }],
+      })
+      calendar1 = new Calendar(el1, { ...commonOptions, ...slotOptions })
+      calendar0.render()
+      calendar1.render()
+
+      waitTimeout().then(() => {
+        let eventEl = new CalendarWrapper(calendar0).getEventEls()[0]
+        let eventRect = eventEl.getBoundingClientRect()
+        let sourceSlot = el0.querySelector('.fc-timegrid-slot-lane[data-time="10:30:00"]').getBoundingClientRect()
+        let destSlot = el1.querySelector('.fc-timegrid-slot-lane[data-time="10:48:00"]').getBoundingClientRect()
+
+        $(eventEl).simulate('drag', {
+          point: { left: eventRect.left + 10, top: sourceSlot.top + 2 },
+          end: { left: destSlot.left + 10, top: destSlot.top + 2 },
+          callback() {
+            expect(calendar0.getEvents().length).toBe(0)
+            let events = calendar1.getEvents()
+            expect(events.length).toBe(1)
+            if (!events.length) {
+              done.fail('No event transferred to the receiving calendar')
+              return
+            }
+            expect(events[0].id).toBe('a')
+            expect(events[0].title).toBe('Meeting')
+            expect(events[0].start).toEqualDate('2019-01-01T10:12:00Z')
+            expect(events[0].end).toEqualDate('2019-01-01T11:12:00Z')
+            done()
+          },
+        })
+      })
+    })
+  })
+
   it('works between timeGrid views', (done) => {
     calendar0 = new Calendar(el0, {
       plugins: [classicThemePlugin, themeForTestsPlugin, interactionPlugin, timeGridPlugin],
