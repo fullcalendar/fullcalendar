@@ -75,6 +75,22 @@ describe('visibleRange', () => {
       })
     })
 
+    describe('when given range only contains hidden days', () => {
+      it('does not throw', () => {
+        expect(() => {
+          initCalendar({
+            timeZone: 'UTC',
+            initialDate: '2017-06-08',
+            weekends: false,
+            visibleRange: {
+              start: '2017-06-10',
+              end: '2017-06-12',
+            },
+          })
+        }).not.toThrow()
+      })
+    })
+
     describe('when a function', () => {
       let initialDateInput = '2017-06-08T12:30:00'
 
