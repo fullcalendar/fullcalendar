@@ -54,13 +54,17 @@ export function parseRecurring(
   return null
 }
 
-export function expandRecurring(eventStore: EventStore, framingRange: DateRange, context: CalendarContext): EventStore {
+export function expandRecurring(eventStore: EventStore, framingRange: DateRange | null, context: CalendarContext): EventStore {
   let { dateEnv, pluginHooks, options } = context
   let { defs, instances } = eventStore
 
   // remove existing recurring instances
   // TODO: bad. always expand events as a second step
   instances = filterHash(instances, (instance: EventInstance) => !defs[instance.defId].recurringDef)
+
+  if (!framingRange) {
+    return { defs, instances }
+  }
 
   for (let defId in defs) {
     let def = defs[defId]

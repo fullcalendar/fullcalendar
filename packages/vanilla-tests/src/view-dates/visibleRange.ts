@@ -91,6 +91,41 @@ describe('visibleRange', () => {
         expect(calendar.view.activeStart).toEqualDate('2017-06-10')
         expect(calendar.view.activeEnd).toEqualDate('2017-06-12')
       })
+
+      it('does not throw in dayGrid view', () => {
+        let calendar = initCalendar({
+          timeZone: 'UTC',
+          initialDate: '2017-06-08',
+          initialView: 'dayGrid',
+          weekends: false,
+          visibleRange: {
+            start: '2017-06-10',
+            end: '2017-06-12',
+          },
+        })
+
+        expect(calendar.getCurrentData().dateProfile.activeRange).toBe(null)
+      })
+
+      it('does not throw with business hours or navigation', () => {
+        let calendar = initCalendar({
+          timeZone: 'UTC',
+          initialDate: '2017-06-08',
+          weekends: false,
+          businessHours: {
+            daysOfWeek: [1],
+            startTime: '09:00',
+            endTime: '17:00',
+          },
+          visibleRange: {
+            start: '2017-06-10',
+            end: '2017-06-12',
+          },
+        })
+
+        calendar.next()
+        expect(calendar.getCurrentData().dateProfile.activeRange).toBe(null)
+      })
     })
 
     describe('when a function', () => {

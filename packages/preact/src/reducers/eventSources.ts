@@ -101,7 +101,7 @@ function addSources(
     hash[source.sourceId] = source
   }
 
-  if (fetchRange) {
+  if (fetchRange || sources.some((source) => !doesSourceNeedRange(source, context))) {
     hash = fetchDirtySources(hash, fetchRange, context)
   }
 
@@ -112,7 +112,7 @@ function removeSource(eventSourceHash: EventSourceHash, sourceId: string): Event
   return filterHash(eventSourceHash, (eventSource: EventSource<any>) => eventSource.sourceId !== sourceId)
 }
 
-function fetchDirtySources(sourceHash: EventSourceHash, fetchRange: DateRange, context: CalendarContext): EventSourceHash {
+function fetchDirtySources(sourceHash: EventSourceHash, fetchRange: DateRange | null, context: CalendarContext): EventSourceHash {
   return fetchSourcesByIds(
     sourceHash,
     filterHash(sourceHash, (eventSource) => isSourceDirty(eventSource, fetchRange, context)),
@@ -122,9 +122,12 @@ function fetchDirtySources(sourceHash: EventSourceHash, fetchRange: DateRange, c
   )
 }
 
-function isSourceDirty(eventSource: EventSource<any>, fetchRange: DateRange, context: CalendarContext) {
+function isSourceDirty(eventSource: EventSource<any>, fetchRange: DateRange | null, context: CalendarContext) {
   if (!doesSourceNeedRange(eventSource, context)) {
     return !eventSource.latestFetchId
+  }
+  if (!fetchRange) {
+    return false
   }
   return !context.options.lazyFetching ||
       !eventSource.fetchRange ||
@@ -136,7 +139,7 @@ function isSourceDirty(eventSource: EventSource<any>, fetchRange: DateRange, con
 function fetchSourcesByIds(
   prevSources: EventSourceHash,
   sourceIdHash: { [sourceId: string]: any },
-  fetchRange: DateRange,
+  fetchRange: DateRange | null,
   isRefetch: boolean,
   context: CalendarContext,
 ): EventSourceHash {
@@ -145,7 +148,7 @@ function fetchSourcesByIds(
   for (let sourceId in prevSources) {
     let source = prevSources[sourceId]
 
-    if (sourceIdHash[sourceId]) {
+    if (sourceIdHash[sourceId] && (fetchRange || !doesSourceNeedRange(source, context))) {
       nextSources[sourceId] = fetchSource(source, fetchRange, isRefetch, context)
     } else {
       nextSources[sourceId] = source
@@ -155,7 +158,7 @@ function fetchSourcesByIds(
   return nextSources
 }
 
-function fetchSource(eventSource: EventSource<any>, fetchRange: DateRange, isRefetch: boolean, context: CalendarContext) {
+function fetchSource(eventSource: EventSource<any>, fetchRange: DateRange | null, isRefetch: boolean, context: CalendarContext) {
   let { options, calendarApi } = context
   let sourceDef = context.pluginHooks.eventSourceDefs[eventSource.sourceDefId]
   let fetchId = guid()
@@ -220,7 +223,7 @@ function fetchSource(eventSource: EventSource<any>, fetchRange: DateRange, isRef
   }
 }
 
-function receiveResponse(sourceHash: EventSourceHash, sourceId: string, fetchId: string, fetchRange: DateRange) {
+function receiveResponse(sourceHash: EventSourceHash, sourceId: string, fetchId: string, fetchRange: DateRange | null) {
   let eventSource: EventSource<any> = sourceHash[sourceId]
 
   if (

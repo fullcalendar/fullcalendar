@@ -34,6 +34,12 @@ let eventSourceDef: EventSourceDef<JsonFeedMeta> = {
 
   fetch(arg, successCallback, errorCallback) {
     const { meta } = arg.eventSource
+
+    if (!arg.range) {
+      successCallback({ rawEvents: [] })
+      return
+    }
+
     const requestParams = buildRequestParams(meta, arg.range, arg.context)
 
     requestJson(

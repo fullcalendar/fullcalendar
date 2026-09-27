@@ -107,9 +107,14 @@ export class TimeGridCols extends DateComponent<TimeGridColsProps> { // TODO: re
     }
   }
 
-  queryHit(isRtl: boolean, positionLeft: number, positionTop: number, elWidth: number): Hit {
+  queryHit(isRtl: boolean, positionLeft: number, positionTop: number, elWidth: number): Hit | null {
     const { dateProfile, cells, colWidth, slatHeight } = this.props
     const { dateEnv, options } = this.context
+
+    if (!cells.length) {
+      return null
+    }
+
     const { snapDuration, snapsPerSlot } = this.processSlotOptions(options.slotDuration, options.snapDuration)
 
     const colCount = cells.length
