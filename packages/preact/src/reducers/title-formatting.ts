@@ -15,7 +15,7 @@ export function buildTitle(
   if (/^(year|month)$/.test(dateProfile.currentRangeUnit)) {
     range = dateProfile.currentRange
   } else { // for day units or smaller, use the actual day range
-    range = dateProfile.activeRange
+    range = dateProfile.activeRange || dateProfile.currentRange
   }
 
   let parts: DateTimeRangeFormatPartWithWeek[]

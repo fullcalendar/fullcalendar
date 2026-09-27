@@ -76,18 +76,20 @@ describe('visibleRange', () => {
     })
 
     describe('when given range only contains hidden days', () => {
-      it('does not throw', () => {
-        expect(() => {
-          initCalendar({
-            timeZone: 'UTC',
-            initialDate: '2017-06-08',
-            weekends: false,
-            visibleRange: {
-              start: '2017-06-10',
-              end: '2017-06-12',
-            },
-          })
-        }).not.toThrow()
+      it('does not throw and has no active range', () => {
+        let calendar = initCalendar({
+          timeZone: 'UTC',
+          initialDate: '2017-06-08',
+          weekends: false,
+          visibleRange: {
+            start: '2017-06-10',
+            end: '2017-06-12',
+          },
+        })
+
+        expect(calendar.getCurrentData().dateProfile.activeRange).toBe(null)
+        expect(calendar.view.activeStart).toEqualDate('2017-06-10')
+        expect(calendar.view.activeEnd).toEqualDate('2017-06-12')
       })
     })
 

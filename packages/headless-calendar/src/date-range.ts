@@ -117,7 +117,10 @@ export function rangeContainsRange(outerRange: OpenDateRange, innerRange: OpenDa
     (outerRange.end === null || (innerRange.end !== null && innerRange.end <= outerRange.end))
 }
 
-export function rangeContainsMarker(range: OpenDateRange, date: DateMarker | number): boolean { // date can be a millisecond time
+export function rangeContainsMarker(range: OpenDateRange | null, date: DateMarker | number): boolean { // date can be a millisecond time
+  if (!range) {
+    return false
+  }
   return (range.start === null || date >= range.start) &&
     (range.end === null || date < range.end)
 }

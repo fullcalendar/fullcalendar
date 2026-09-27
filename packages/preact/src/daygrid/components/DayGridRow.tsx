@@ -137,6 +137,10 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
     const { cells, tableMode } = props
     const { options } = context
 
+    if (!cells.length) {
+      return null
+    }
+
     const weekDateMarker = props.cells[0].date
     const fgEventSegs = this.sortEventSegs(props.fgEventSegs, options.eventOrder)
     const screenFgLiquidHeight = props.dayMaxEvents === true || props.dayMaxEventRows === true

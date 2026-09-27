@@ -106,7 +106,7 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     let currentInfo
     let isRangeAllDay
     let renderRange: DateRange
-    let activeRange: DateRange
+    let activeRange: DateRange | null
     let isValid
 
     validRange = this.buildValidRange(nowDate)
@@ -118,20 +118,24 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
 
     currentInfo = this.buildCurrentRangeInfo(currentDate, direction)
     isRangeAllDay = /^(year|month|week|day)$/.test(currentInfo.unit)
+    const trimmedCurrentRange = this.trimHiddenDays(currentInfo.range)
     renderRange = this.buildRenderRange(
-      this.trimHiddenDays(currentInfo.range),
+      trimmedCurrentRange || {
+        start: currentInfo.range.start,
+        end: currentInfo.range.start,
+      },
       currentInfo.unit,
       isRangeAllDay,
     )
-    renderRange = this.trimHiddenDays(renderRange)
-    activeRange = renderRange
+    renderRange = this.trimHiddenDays(renderRange) || renderRange
+    activeRange = trimmedCurrentRange ? renderRange : null
 
-    if (!props.showNonCurrentDates) {
+    if (!props.showNonCurrentDates && activeRange) {
       activeRange = intersectRanges(activeRange, currentInfo.range)
     }
 
-    activeRange = this.adjustActiveRange(activeRange)
-    activeRange = intersectRanges(activeRange, validRange) // might return null
+    activeRange = activeRange ? this.adjustActiveRange(activeRange) : null
+    activeRange = activeRange ? intersectRanges(activeRange, validRange) : null // might return null
 
     // it's invalid if the originally requested date is not contained,
     // or if the range is completely outside of the valid range.
@@ -415,7 +419,10 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
 
   // Remove days from the beginning and end of the range that are computed as hidden.
   // If the whole range is trimmed off, returns null
-  trimHiddenDays(range: DateRange): DateRange | null {
+  trimHiddenDays(range: DateRange | null): DateRange | null {
+    if (!range) {
+      return null
+    }
     let { start, end } = range
 
     if (start) {
