@@ -11,4 +11,4 @@ Please link to a bug ticket in the description of your PR. If a ticket doesn't e
 
 ## Contributing Locale Data
 
-Please edit the source files in the `packages/core/locales/` directory.
+Please edit the source files in the `packages/core/src/locales/` directory.
