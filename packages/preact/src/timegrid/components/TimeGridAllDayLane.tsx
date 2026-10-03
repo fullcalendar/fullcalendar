@@ -54,7 +54,7 @@ export class TimeGridAllDayLane extends DateComponent<TimeGridAllDayLaneProps, T
             className={classNames.offscreen}
             attrs={{
               'aria-hidden': true,
-              inert: '',
+              inert: true,
             }}
           />
         )}

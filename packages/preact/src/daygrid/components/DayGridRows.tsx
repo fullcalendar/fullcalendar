@@ -174,7 +174,7 @@ export class DayGridRows extends DateComponent<DayGridRowsProps, DayGridRowsStat
             className={classNames.offscreen}
             attrs={{
               'aria-hidden': true,
-              inert: '',
+              inert: true,
             }}
           />
         )}
