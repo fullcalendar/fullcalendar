@@ -629,7 +629,7 @@ function buildDateEnv(
   let locale = buildLocale(explicitLocale || availableLocaleData.defaultCode, availableLocaleData.map)
 
   return new DateEnv({
-    calendarSystem: 'gregory', // TODO: make this a setting
+    calendarSystem: locale.options.calendarSystem || 'gregory',
     timeZone,
     locale,
     weekNumberCalculation,
