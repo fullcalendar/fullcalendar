@@ -37,9 +37,7 @@ export class NowTimerRunner {
   ) {}
 
   update(input: NowTimerRunnerInput): NowTimerRunnerOutput {
-    if (!this.isMounted) {
-      this.isMounted = true
-
+    if (!this.nowManager) {
       // init inputs
       this.unit = input.unit
       this.unitValue = input.unitValue
@@ -52,16 +50,6 @@ export class NowTimerRunner {
       this.nowDate = timing.nowDate
       this.nowMs = timing.nowMs
       this.todayRange = timing.todayRange
-
-      // init listeners
-      this.setTimeout(timing.waitMs)
-      this.nowManager.addResetListener(this.handleRefresh)
-
-      // fired tab becomes visible after being hidden
-      // SSR check. CalendarDataManager calls top-level sync :(
-      if (typeof document !== 'undefined') {
-        document.addEventListener('visibilitychange', this.handleVisibilityChange)
-      }
     } else if (
       input.unit !== this.unit ||
       input.unitValue !== this.unitValue ||
@@ -84,14 +72,31 @@ export class NowTimerRunner {
       this.nowMs = timing.nowMs
       this.todayRange = timing.todayRange
 
-      this.clearTimeout()
-      this.setTimeout(timing.waitMs)
+      if (this.isMounted) {
+        this.clearTimeout()
+        this.setTimeout(timing.waitMs)
+      }
     }
 
     return {
       nowDate: this.nowDate,
       nowMs: this.nowMs,
       todayRange: this.todayRange,
+    }
+  }
+
+  mount() {
+    if (!this.isMounted) {
+      this.isMounted = true
+      this.nowManager.addResetListener(this.handleRefresh)
+
+      // fired tab becomes visible after being hidden
+      // SSR check. CalendarDataManager calls top-level sync :(
+      if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', this.handleVisibilityChange)
+      }
+
+      this.handleRefresh()
     }
   }
 

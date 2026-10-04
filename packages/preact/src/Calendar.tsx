@@ -43,7 +43,8 @@ export const Calendar: FunctionComponent<CalendarProps> = forwardRef<CalendarRef
     onDataChange: handleDataChange,
   }))
 
-  useEffect(() => { // Cleanup on unmount
+  useEffect(() => {
+    calendarDataManager.mount()
     return () => {
       calendarDataManager.destroy()
     }
