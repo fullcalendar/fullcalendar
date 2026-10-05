@@ -174,7 +174,6 @@ export class DayGridRows extends DateComponent<DayGridRowsProps, DayGridRowsStat
             className={classNames.offscreen}
             attrs={{
               'aria-hidden': true,
-              inert: '',
             }}
           />
         )}
@@ -187,6 +186,9 @@ export class DayGridRows extends DateComponent<DayGridRowsProps, DayGridRowsStat
     this.disconnectMoreLinkHeight = undefined
 
     if (el) {
+      // set imperatively. React 19 treats inert as boolean, older React as string
+      el.inert = true
+
       this.disconnectMoreLinkHeight = watchHeight(el, (height) => {
         if (this._isUnmounting) return
         this.setState({ moreLinkHeight: height })
