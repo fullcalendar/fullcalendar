@@ -8,6 +8,10 @@
     ```
 - FIX: Resource TimeGrid/DayGrid, spanning header cells misaligned with body columns
 - FIX: React 19, "Received an empty string for a boolean attribute `inert`" warning with `dayMaxEvents`/`eventMaxStack`. The offscreen +more link used for measurement also wasn't made inert, so it could receive keyboard focus (#8114)
+- FIX: Resource Timeline view, with `virtualization`, leading header cells and slots missing when the timeline is wide enough to not need horizontal scrolling (#8093)
+- FIX: Timeline views, printing a timeline that's wide enough to not need horizontal scrolling clips the leading slots, as if scrolled to `scrollTime`
+- FIX: Resource Timeline view, with `virtualization`, rows blank until scrolled after removing and re-adding resources within `batchRendering`, such as for a filter
+- FIX: Resource Timeline view, with `virtualization`, first resource row hidden or clipped under the header after removing and re-adding resources, such as for a filter, while scrolled at or near the top
 - FEATURE: Resource views, render hooks receive `info.resource`, the resource of the column/lane being rendered into (#4926)
   - Event hooks: `eventContent`, `eventClass`, `eventDidMount`, etc, including the `*EventTimeClass`/`*EventTitleClass` variants and `backgroundEvent*` hooks. An event with multiple resources renders once per resource, each with its own `info.resource`. A dragged event's mirror receives the resource it's being dragged over
   - +more link hooks: `moreLinkContent`, `moreLinkClass`, `moreLinkDidMount`, etc
