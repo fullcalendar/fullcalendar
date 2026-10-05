@@ -13,7 +13,7 @@
   - +more popover hooks: the popover's events, as well as `dayHeader*` and `dayCell*` hooks where `info.inPopover`
   - Not populated in non-resource views. Compare `info.resource.id`, not the object itself, which is not guaranteed to be the same reference across columns
   - New `EventTextInfo` type, for the arg of `*EventTimeClass`/`*EventTitleClass` hooks, which now also receive `timeText`
-- TODO: @fullcalendar/mui should work with MUI 8 + 9 !!! (only 7 right now)
+- FEATURE: `@fullcalendar/mui` supports MUI v9 (in addition to v7). MUI skipped v8
 
 
 ## v7.1.0
