@@ -1,24 +1,24 @@
 
 ## v7.1.1
 
-- FIX: Resource TimeGrid/DayGrid, preserve dates with no resources when `filterResourcesWithEvents` is enabled (#8099)
-  - With `datesAboveResources`, such a date renders a single non-interactive column with no resource. Day cell/lane hooks for it receive no `info.resource`, so guard for it:
-    ```js
-    dayLaneClass: (info) => info.resource ? `lane-${info.resource.id}` : ''
-    ```
-- FIX: Resource TimeGrid/DayGrid, spanning header cells misaligned with body columns
-- FIX: React 19, "Received an empty string for a boolean attribute `inert`" warning with `dayMaxEvents`/`eventMaxStack`. The offscreen +more link used for measurement also wasn't made inert, so it could receive keyboard focus (#8114)
-- FIX: Resource Timeline view, with `virtualization`, leading header cells and slots missing when the timeline is wide enough to not need horizontal scrolling (#8093)
-- FIX: Timeline views, printing a timeline that's wide enough to not need horizontal scrolling clips the leading slots, as if scrolled to `scrollTime`
-- FIX: Resource Timeline view, with `virtualization`, rows blank until scrolled after removing and re-adding resources within `batchRendering`, such as for a filter
-- FIX: Resource Timeline view, with `virtualization`, first resource row hidden or clipped under the header after removing and re-adding resources, such as for a filter, while scrolled at or near the top
+- FEATURE: `@fullcalendar/mui` supports MUI v9 (in addition to v7). MUI skipped v8
 - FEATURE: Resource views, render hooks receive `info.resource`, the resource of the column/lane being rendered into (#4926)
   - Event hooks: `eventContent`, `eventClass`, `eventDidMount`, etc, including the `*EventTimeClass`/`*EventTitleClass` variants and `backgroundEvent*` hooks. An event with multiple resources renders once per resource, each with its own `info.resource`. A dragged event's mirror receives the resource it's being dragged over
   - +more link hooks: `moreLinkContent`, `moreLinkClass`, `moreLinkDidMount`, etc
   - +more popover hooks: the popover's events, as well as `dayHeader*` and `dayCell*` hooks where `info.inPopover`
   - Not populated in non-resource views. Compare `info.resource.id`, not the object itself, which is not guaranteed to be the same reference across columns
   - New `EventTextInfo` type, for the arg of `*EventTimeClass`/`*EventTitleClass` hooks, which now also receive `timeText`
-- FEATURE: `@fullcalendar/mui` supports MUI v9 (in addition to v7). MUI skipped v8
+- FIX: Resource TimeGrid/DayGrid, preserve dates with no resources when `filterResourcesWithEvents` is enabled (#8099)
+  - With `datesAboveResources`, such a date renders a single non-interactive column with no resource. Day cell/lane hooks for it receive no `info.resource`, so guard for it:
+    ```js
+    dayLaneClass: (info) => info.resource ? `lane-${info.resource.id}` : ''
+    ```
+- FIX: React 19, "Received an empty string for a boolean attribute `inert`" warning with `dayMaxEvents`/`eventMaxStack`. The offscreen +more link used for measurement also wasn't made inert, so it could receive keyboard focus (#8114)
+- FIX: Resource TimeGrid/DayGrid, spanning header cells sometimes misaligned with body columns by 1px
+- FIX: Resource Timeline view, with `virtualization`, leading header cells and slots missing when the timeline is wide enough to not need horizontal scrolling (#8093)
+- FIX: Resource Timeline view, with `virtualization`, rows blank until scrolled after removing and re-adding resources within `batchRendering`, such as for a filter
+- FIX: Resource Timeline view, with `virtualization`, first resource row hidden or clipped under the header after removing and re-adding resources, such as for a filter, while scrolled at or near the top
+- FIX: Timeline views, printing a timeline that's wide enough to not need horizontal scrolling clips the leading slots, as if scrolled to `scrollTime`
 
 
 ## v7.1.0
