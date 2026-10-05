@@ -1,5 +1,5 @@
 import { BaseComponent } from '../vdom-util'
-import { EventDisplayInfo, EventRenderRange, setElEventRange } from '../component-util/event-rendering'
+import { EventDisplayInfo, EventTextInfo, EventRenderRange, setElEventRange } from '../component-util/event-rendering'
 import { memoize } from '../util/memoize'
 import { EventDef } from '../structs/event-def'
 import { EventInstance } from '../structs/event-instance'
@@ -7,7 +7,7 @@ import { EventImpl } from '../api/EventImpl'
 import { ViewContext } from '../ViewContext'
 import { joinClassNames } from '../util/html'
 import { ContentContainer, generateClassName } from '../content-inject/ContentContainer'
-import { ViewOptionsRefined } from '../options'
+import { Dictionary, ViewOptionsRefined } from '../options'
 import classNames from '../styles.module.css'
 
 export interface BgEventProps {
@@ -20,6 +20,7 @@ export interface BgEventProps {
   isNarrow?: boolean
   isShort?: boolean
   isVertical: boolean
+  renderProps?: Dictionary // so can include a resource
 }
 
 export class BgEvent extends BaseComponent<BgEventProps> {
@@ -38,12 +39,15 @@ export class BgEvent extends BaseComponent<BgEventProps> {
     const eventUi = eventRange.ui
 
     const eventApi = this.buildPublicEvent(context, eventRange.def, eventRange.instance)
-    const subcontentRenderProps = { // TODO: spread into renderProps?
+    const subcontentRenderProps: EventTextInfo = {
+      ...props.renderProps, // first, so built-in props take precedence
       event: eventApi,
+      timeText: '', // never display time
       isNarrow: props.isNarrow || false,
       isShort: props.isShort || false,
     }
     const renderProps: EventDisplayInfo = {
+      ...props.renderProps, // first, so built-in props take precedence
       event: eventApi,
       view: context.viewApi,
       timeText: '', // never display time

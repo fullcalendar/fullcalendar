@@ -28,6 +28,7 @@ export interface MoreLinkContainerProps extends Partial<ElAttrsProps> {
   segs: EventRangeProps[]
   hiddenSegs: EventRangeProps[]
   dateSpanProps?: Dictionary
+  renderProps?: Dictionary // so can include a resource
   alignElRef?: RefObject<HTMLElement> // will use click-target if unspecified
   alignParentTop?: string // for popover
   forceTimed?: boolean // for popover
@@ -51,6 +52,7 @@ export interface MoreLinkTriggerProps extends Partial<ElAttrsProps> {
   isNarrow: boolean
   isMicro: boolean
   display: 'row' | 'column'
+  renderProps?: Dictionary // so can include a resource
   didMount?: (renderProps: MoreLinkInfo & { el: HTMLElement }) => void
   willUnmount?: (renderProps: MoreLinkInfo & { el: HTMLElement }) => void
 }
@@ -72,6 +74,7 @@ export class MoreLinkTrigger extends BaseComponent<MoreLinkTriggerProps> {
       props.isNarrow,
       props.isMicro,
       props.display,
+      props.renderProps,
       context,
     )
 
@@ -143,6 +146,7 @@ export class MoreLinkContainer extends BaseComponent<MoreLinkContainerProps, Mor
       props.isNarrow,
       props.isMicro,
       props.display,
+      props.renderProps,
       context,
     )
     const hint = formatWithOrdinals(options.moreLinkHint, [moreCnt], renderProps.longText)
@@ -155,6 +159,7 @@ export class MoreLinkContainer extends BaseComponent<MoreLinkContainerProps, Mor
             display={props.display}
             isNarrow={props.isNarrow}
             isMicro={props.isMicro}
+            renderProps={props.renderProps}
             elRef={this.handleLinkEl}
             className={props.className}
             style={props.style}
@@ -180,6 +185,7 @@ export class MoreLinkContainer extends BaseComponent<MoreLinkContainerProps, Mor
             dateProfile={props.dateProfile}
             todayRange={props.todayRange}
             dateSpanProps={props.dateSpanProps}
+            renderProps={props.renderProps}
             alignEl={props.alignElRef ? props.alignElRef.current : this.linkEl}
             alignParentTop={props.alignParentTop}
             forceTimed={props.forceTimed}
@@ -254,6 +260,7 @@ function buildMoreLinkRenderProps(
   isNarrow: boolean,
   isMicro: boolean,
   display: 'row' | 'column',
+  extraRenderProps: Dictionary | undefined,
   context: ViewContext,
 ): MoreLinkInfo {
   const { viewApi, options, calendarApi } = context
@@ -263,6 +270,7 @@ function buildMoreLinkRenderProps(
     : `${numericText} ${options.moreLinkText}`
 
   return {
+    ...extraRenderProps, // first, so built-in props take precedence
     num,
     numericText,
     longText,

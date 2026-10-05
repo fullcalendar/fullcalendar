@@ -271,6 +271,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
           isNarrow={props.isNarrow}
           isShort={segVertical.isShort || false}
           isLiquid
+          renderProps={props.renderProps}
           {...getEventRangeMeta(eventRange, props.todayRange, props.nowDate, props.nowMs)}
         />
       </div>
@@ -303,7 +304,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
   has already been applied to the segs it was formed from
   */
   renderHiddenGroups(hiddenGroups: TimeGridSegHiddenGroup[]) {
-    let { dateSpanProps, dateProfile, todayRange, nowDate, nowMs, eventSelection, eventDrag, eventResize, isNarrow, isMicro } = this.props
+    let { dateSpanProps, renderProps, dateProfile, todayRange, nowDate, nowMs, eventSelection, eventDrag, eventResize, isNarrow, isMicro } = this.props
 
     return (
       <>
@@ -317,6 +318,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
               isNarrow={isNarrow}
               isMicro={isMicro}
               dateSpanProps={dateSpanProps}
+              renderProps={renderProps}
               dateProfile={dateProfile}
               todayRange={todayRange}
               nowDate={nowDate}
@@ -364,6 +366,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
                   isNarrow={props.isNarrow}
                   isShort={segVertical.isShort || false}
                   isVertical={true}
+                  renderProps={props.renderProps}
                   {...getEventRangeMeta(eventRange, props.todayRange, props.nowDate, props.nowMs)}
                 /> :
                 renderFill(fillType, context.options)}
@@ -430,13 +433,14 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
 
 export function renderPlainFgSegs(
   sortedFgSegs: (TimeGridRange & EventRangeProps)[],
-  { todayRange, nowDate, nowMs, eventSelection, eventDrag, eventResize }: {
+  { todayRange, nowDate, nowMs, eventSelection, eventDrag, eventResize, renderProps }: {
     todayRange: DateRange
     nowDate: DateMarker
     nowMs?: number
     eventSelection: string
     eventDrag: EventSegUiInteractionState<TimeGridRange> | null
     eventResize: EventSegUiInteractionState<TimeGridRange> | null
+    renderProps?: Dictionary
   },
   isMirror: boolean,
 ) {
@@ -469,6 +473,7 @@ export function renderPlainFgSegs(
               isShort={false}
               isNarrow={false}
               disableResizing
+              renderProps={renderProps}
               {...getEventRangeMeta(eventRange, todayRange, nowDate, nowMs)}
             />
           </div>

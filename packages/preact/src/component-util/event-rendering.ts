@@ -20,11 +20,13 @@ import {
 import { compareByFieldSpecs, OrderSpec } from '../util/misc'
 import { computeVisibleDayRange } from '../util/date'
 import { EventImpl } from '../api/EventImpl'
+import { EventApi } from '../api/EventApi'
 import { EventUi, EventUiHash, combineEventUis } from './event-ui'
 import { mapHash } from '../util/object'
 import { ViewContext } from '../ViewContext'
 import { ViewApi } from '../api/ViewApi'
 import { createAriaKeyboardAttrs } from '../util/dom-event'
+import { Dictionary } from '../options'
 
 export interface EventRenderRange extends EventTuple {
   ui: EventUi
@@ -248,11 +250,18 @@ export interface MinimalEventProps {
   isPast: boolean
   isFuture: boolean
   isToday: boolean
+  renderProps?: Dictionary // so can include a resource
 }
 
-export interface EventDisplayInfo { // for *Content handlers
-  event: EventImpl
+export interface EventTextInfo { // for *TimeClass/*TitleClass handlers
+  event: EventApi
   timeText: string
+  isNarrow: boolean
+  isShort: boolean
+}
+
+export interface EventDisplayInfo extends EventTextInfo { // for *Content handlers
+  event: EventImpl
   color: string // TODO: add other EventUi props?
   contrastColor: string //
   isDraggable: boolean
@@ -272,8 +281,6 @@ export interface EventDisplayInfo { // for *Content handlers
   isInteractive: boolean
   view: ViewApi // specifically for the API
 
-  isNarrow: boolean
-  isShort: boolean
   level: number
   timeClass: string
   titleClass: string

@@ -16,6 +16,7 @@ export interface TimeGridMoreLinkProps {
   top: CssDimValue
   height: CssDimValue
   dateSpanProps?: Dictionary
+  renderProps?: Dictionary // so can include a resource
   dateProfile: DateProfile
   todayRange: DateRange
   nowDate: DateMarker
@@ -51,6 +52,7 @@ export class TimeGridMoreLink extends BaseComponent<TimeGridMoreLinkProps> {
           segs={props.hiddenSegs}
           hiddenSegs={props.hiddenSegs}
           dateSpanProps={props.dateSpanProps}
+          renderProps={props.renderProps}
           dateProfile={props.dateProfile}
           todayRange={props.todayRange}
           popoverContent={() => renderPlainFgSegs(props.hiddenSegs, props, /* isMirror = */ false)}

@@ -508,6 +508,8 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
   ): ReactElement {
     const { props } = this
     const isListItem = hasListItemDisplay(range, eventRange)
+    // the range's starting cell supplies extra render props
+    const cellRenderProps = props.cells[range.start]?.renderProps
 
     return (
       <StandardEvent
@@ -524,6 +526,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
         defaultDisplayEventEnd={props.cells.length === 1}
         disableResizing={isListItem}
         forcedTimeText={props.cellIsMicro ? '' : undefined}
+        renderProps={cellRenderProps}
         {...getEventRangeMeta(eventRange, props.todayRange)}
       />
     )
@@ -613,6 +616,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
               isEnd={seg.isEnd}
               isNarrow={props.cellIsNarrow}
               isVertical={false}
+              renderProps={props.cells[seg.start]?.renderProps}
               {...getEventRangeMeta(seg.eventRange, todayRange)}
             /> : (
               renderFill(fillType, context.options)

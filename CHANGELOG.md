@@ -7,6 +7,12 @@
     dayLaneClass: (info) => info.resource ? `lane-${info.resource.id}` : ''
     ```
 - FIX: Resource TimeGrid/DayGrid, spanning header cells misaligned with body columns
+- FEATURE: Resource views, render hooks receive `info.resource`, the resource of the column/lane being rendered into (#4926)
+  - Event hooks: `eventContent`, `eventClass`, `eventDidMount`, etc, including the `*EventTimeClass`/`*EventTitleClass` variants and `backgroundEvent*` hooks. An event with multiple resources renders once per resource, each with its own `info.resource`. A dragged event's mirror receives the resource it's being dragged over
+  - +more link hooks: `moreLinkContent`, `moreLinkClass`, `moreLinkDidMount`, etc
+  - +more popover hooks: the popover's events, as well as `dayHeader*` and `dayCell*` hooks where `info.inPopover`
+  - Not populated in non-resource views. Compare `info.resource.id`, not the object itself, which is not guaranteed to be the same reference across columns
+  - New `EventTextInfo` type, for the arg of `*EventTimeClass`/`*EventTitleClass` hooks, which now also receive `timeText`
 - TODO: @fullcalendar/mui should work with MUI 8 + 9 !!! (only 7 right now)
 
 

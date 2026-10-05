@@ -1,5 +1,5 @@
 import { BaseComponent, setRef } from '../vdom-util'
-import { buildEventRangeTimeText, computeEventRangeDraggable, EventDisplayInfo, EventRenderRange, getEventTagAndAttrs, setElEventRange } from '../component-util/event-rendering'
+import { buildEventRangeTimeText, computeEventRangeDraggable, EventDisplayInfo, EventTextInfo, EventRenderRange, getEventTagAndAttrs, setElEventRange } from '../component-util/event-rendering'
 import { DateFormatter, DateMarker } from '@full-ui/headless-calendar'
 import { ContentContainer, generateClassName } from '../content-inject/ContentContainer'
 import { ElRef } from '../content-inject/ContentInjector'
@@ -11,6 +11,7 @@ import { ViewContext } from '../ViewContext'
 import { joinClassNames } from '../util/html'
 import classNames from '../styles.module.css'
 import { isPropsEqualShallow } from '../util/object'
+import { Dictionary } from '../options'
 
 export interface StandardEventProps {
   elRef?: ElRef
@@ -42,6 +43,7 @@ export interface StandardEventProps {
   forcedTimeText?: string
   disableLiquid?: boolean // for inner-element
   disableZindexes?: boolean
+  renderProps?: Dictionary // so can include a resource
 }
 
 export class StandardEvent extends BaseComponent<StandardEventProps> {
@@ -75,13 +77,15 @@ export class StandardEvent extends BaseComponent<StandardEventProps> {
     const eventApi = this.buildPublicEvent(context, eventRange.def, eventRange.instance)
     const isDraggable = !props.disableDragging && computeEventRangeDraggable(eventRange, context)
     const isBlock = /row|column/.test(props.display)
-    const subcontentRenderProps = { // TODO: spread with renderProps?
+    const subcontentRenderProps: EventTextInfo = {
+      ...props.renderProps, // first, so built-in props take precedence
       event: eventApi,
       isNarrow: props.isNarrow || false,
       isShort: props.isShort || false,
       timeText,
     }
     const renderProps: EventDisplayInfo = {
+      ...props.renderProps, // first, so built-in props take precedence
       event: eventApi, // make stable. everything else atomic. FYI, eventRange unfortunately gets reconstructed a lot, but def/instance is stable
       view: context.viewApi,
       timeText: timeText,

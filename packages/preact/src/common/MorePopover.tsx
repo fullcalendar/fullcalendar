@@ -29,6 +29,7 @@ export interface MorePopoverProps {
   forceTimed?: boolean
   todayRange: DateRange
   dateSpanProps: Dictionary
+  renderProps?: Dictionary // so can include a resource
   children: ReactNode
   onClose?: () => void
 }
@@ -54,6 +55,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
     let text = joinDateTimeFormatParts(textParts)
 
     const dayHeaderRenderProps: DayHeaderInfo = {
+      ...props.renderProps, // first, so built-in props take precedence
       ...dateMeta,
       isMajor: false,
       isNarrow: false,
@@ -66,9 +68,9 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
       get weekdayText() { return findWeekdayText(textParts) },
       get dayNumberText() { return findDayNumberText(textParts) },
       view: viewApi,
-      // TODO: should know about the resource!
     }
     const dayCellRenderProps: DayCellInfo = {
+      ...props.renderProps, // first, so built-in props take precedence
       ...dateMeta,
       isMajor: false,
       isNarrow: false,
