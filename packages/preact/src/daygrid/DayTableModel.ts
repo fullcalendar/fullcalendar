@@ -18,6 +18,7 @@ export interface DayTableCell {
   date: DateMarker
   isMajor: boolean
   isDisabled: boolean
+  isInert?: boolean // structural cells that cannot be interaction targets
   renderProps?: Dictionary
   attrs?: Dictionary
   className?: string

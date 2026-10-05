@@ -241,3 +241,5 @@ export { DayGridLayout } from './daygrid/components/DayGridLayout'
 export {
   buildDayTableModel,
 } from './daygrid/components/util'
+
+export { computeTimeGridPrintMode } from './timegrid/print-mode'

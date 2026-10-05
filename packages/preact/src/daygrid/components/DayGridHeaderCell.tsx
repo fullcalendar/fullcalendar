@@ -4,6 +4,7 @@ import { setRef } from '../../vdom-util'
 import { BaseComponent } from '../../vdom-util'
 import { watchSize } from '../../component-util/resize-observer'
 import { memoize } from '../../util/memoize'
+import { COL_BORDER_WIDTH } from '../../util/dimensions'
 import type { Ref } from 'react'
 import { BaseDayHeaderData, CellDataConfig, CellRenderConfig } from '../header-tier'
 import { dayHeaderMicroFormat } from './util'
@@ -51,16 +52,49 @@ export class DayGridHeaderCell<BaseRenderProps extends { isDisabled: boolean }, 
     /*
     A liquid cell that spans multiple columns can't use the .liquid class, which gives every
     cell an equal share regardless of colSpan. Instead, grow proportionally to the columns
-    covered. Like the body cells, use a zero basis so borders remain within the distributed
-    border-box width.
+    covered, reserving space for the internal column borders swallowed by the span.
+    Include this cell's own start border because flex-basis uses border-box sizing.
     */
     const isSpanning = isLiquid && colSpan > 1
     const style = tableMode ? undefined : isSpanning ? {
       flexGrow: colSpan,
-      flexBasis: 0,
+      flexBasis: (colSpan - 1) * COL_BORDER_WIDTH + (props.borderStart ? COL_BORDER_WIDTH : 0),
       minWidth: 0,
     } : {
       width: totalColWidth,
+    }
+
+    const CellTag = tableMode ? 'th' : 'div'
+    const baseClassName = joinClassNames(
+      dataConfig.className,
+      classNames.noMargin,
+      classNames.noPadding,
+      !tableMode && classNames.flexCol,
+      classNames.borderlessTop,
+      classNames.borderlessEnd,
+      !props.borderStart && classNames.borderlessStart,
+      !(tableMode && props.borderBottom) && classNames.borderlessBottom,
+      isLiquid && !isSpanning && classNames.liquid,
+    )
+
+    // Structural gaps share cell geometry but never invoke the row's render hooks.
+    if (dataConfig.blank) {
+      return (
+        <CellTag
+          role='columnheader'
+          aria-colspan={dataConfig.colSpan}
+          colSpan={tableMode ? colSpan : undefined}
+          {...dataConfig.attrs}
+          className={joinClassNames(
+            baseClassName,
+            generateClassName(dataConfig.blank.classNameGenerator, {
+              ...dataConfig.renderProps,
+              isNarrow: props.cellIsNarrow,
+            }),
+          )}
+          style={style}
+        />
+      )
     }
 
     // HACK
@@ -127,8 +161,6 @@ export class DayGridHeaderCell<BaseRenderProps extends { isDisabled: boolean }, 
       align === 'end' ? classNames.alignEnd :
         classNames.alignStart
 
-    const CellTag = tableMode ? 'th' : 'div'
-
     return (
       <ContentContainer
         tag={CellTag}
@@ -139,16 +171,8 @@ export class DayGridHeaderCell<BaseRenderProps extends { isDisabled: boolean }, 
           ...dataConfig.attrs,
         }}
         className={joinClassNames(
-          dataConfig.className,
-          classNames.noMargin,
-          classNames.noPadding,
-          !tableMode && classNames.flexCol,
-          classNames.borderlessTop,
-          classNames.borderlessEnd,
-          !props.borderStart && classNames.borderlessStart,
-          !(tableMode && props.borderBottom) && classNames.borderlessBottom,
+          baseClassName,
           !tableMode && alignClassName,
-          isLiquid && !isSpanning && classNames.liquid,
           !isSticky && classNames.crop,
         )}
         style={style}

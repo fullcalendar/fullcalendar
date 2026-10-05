@@ -26,6 +26,7 @@ export interface CellRenderConfig<BaseRenderProps, RenderProps = BaseRenderProps
 }
 
 export interface CellDataConfig<RenderProps> {
+  blank?: { classNameGenerator: ClassNameGenerator<RenderProps> }
   key: string
   dateMarker: DateMarker
   renderProps: RenderProps

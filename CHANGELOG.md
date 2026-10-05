@@ -1,4 +1,15 @@
 
+## v7.1.1
+
+- FIX: Resource TimeGrid/DayGrid, preserve dates with no resources when `filterResourcesWithEvents` is enabled (#8099)
+  - With `datesAboveResources`, such a date renders a single non-interactive column with no resource. Day cell/lane hooks for it receive no `info.resource`, so guard for it:
+    ```js
+    dayLaneClass: (info) => info.resource ? `lane-${info.resource.id}` : ''
+    ```
+- FIX: Resource TimeGrid/DayGrid, spanning header cells misaligned with body columns
+- TODO: @fullcalendar/mui should work with MUI 8 + 9 !!! (only 7 right now)
+
+
 ## v7.1.0
 
 ### Event Rendering

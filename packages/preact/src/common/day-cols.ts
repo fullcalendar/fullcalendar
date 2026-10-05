@@ -9,6 +9,7 @@ export interface DayCol {
   range: DateRange
   isMajor: boolean
   isDisabled: boolean
+  isInert?: boolean // structural columns that cannot be interaction targets
   renderProps?: Dictionary
   attrs?: Dictionary
   className?: string
