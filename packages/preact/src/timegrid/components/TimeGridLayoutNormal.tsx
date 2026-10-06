@@ -540,6 +540,10 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
       max = Math.max(max, slatLabelInnerWidth)
     }
 
+    if (!max) {
+      return
+    }
+
     if (this.state.axisWidth !== max) {
       this.setState({ axisWidth: max })
     }
@@ -552,6 +556,12 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
 
     for (const slatLabelInnerHeight of slatLabelInnerHeightMap.values()) {
       max = Math.max(max, slatLabelInnerHeight)
+    }
+
+    // 0 is a torn-down/unmeasured map (label-phase shift). Keep the last
+    // good height so computeSlatHeight does not collapse the grid (#8101).
+    if (!max) {
+      return
     }
 
     if (this.state.slatInnerHeight !== max) {
