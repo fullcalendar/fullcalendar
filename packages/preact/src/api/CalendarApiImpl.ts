@@ -598,5 +598,5 @@ export class CalendarApiImpl implements CalendarApi {
 }
 
 function getSingleUnitText(singleUnit: string, options: CalendarOptionsRefined): string {
-  return options[singleUnit + 'TextLong'] || options[singleUnit + 'Text']
+  return options[singleUnit + 'TextLong'] || options[singleUnit + 'Text'] || ''
 }
