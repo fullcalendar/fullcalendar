@@ -16,5 +16,13 @@ export default {
   listText: 'Agenda',
   allDayText: 'Heile\ndagen',
   moreLinkText: 'til',
-  noEventsText: 'Ingen hendelser å vise',
+  noEventsText: 'Ingen hendingar å vise',
+  prevHint: 'Førre $0',
+  nextHint: 'Neste $0',
+  todayHint: 'Noverande $0',
+  viewHint: '$0 vising',
+  navLinkHint: 'Gå til $0',
+  moreLinkHint(eventCnt: number) {
+    return `Vis ${eventCnt} fleire hending${eventCnt === 1 ? '' : 'ar'}`
+  },
 } as LocaleInput
