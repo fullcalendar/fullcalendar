@@ -100,6 +100,10 @@ export class TimeGridAllDayLane extends DateComponent<TimeGridAllDayLaneProps, T
   queryHit(isRtl: boolean, positionLeft: number, positionTop: number, elWidth: number): Hit | null {
     const { props, heightRef } = this
 
+    if (!props.cells.length) {
+      return null
+    }
+
     const colCount = props.cells.length
     const { col, left, right } = computeColFromPosition(
       positionLeft,

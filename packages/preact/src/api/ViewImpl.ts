@@ -21,11 +21,13 @@ export class ViewImpl implements ViewApi {
   }
 
   get activeStart(): Date {
-    return this.dateEnv.toDate(this.getCurrentData().dateProfile.activeRange.start)
+    const { dateProfile } = this.getCurrentData()
+    return this.dateEnv.toDate((dateProfile.activeRange || dateProfile.currentRange).start)
   }
 
   get activeEnd(): Date {
-    return this.dateEnv.toDate(this.getCurrentData().dateProfile.activeRange.end)
+    const { dateProfile } = this.getCurrentData()
+    return this.dateEnv.toDate((dateProfile.activeRange || dateProfile.currentRange).end)
   }
 
   get currentStart(): Date {

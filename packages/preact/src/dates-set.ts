@@ -7,7 +7,7 @@ export type DatesSetInfo = RangeApiWithTimeZone & { view: ViewApi }
 
 export function handleDateProfile(dateProfile: DateProfile, context: CalendarData) {
   context.emitter.trigger('datesSet', {
-    ...buildRangeApiWithTimeZone(dateProfile.activeRange, context.dateEnv),
+    ...buildRangeApiWithTimeZone(dateProfile.activeRange || dateProfile.currentRange, context.dateEnv),
     view: context.viewApi,
   })
 }
