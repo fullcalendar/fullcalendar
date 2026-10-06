@@ -62,7 +62,7 @@ importers:
         specifier: ~4.3.0
         version: 4.3.6
       fullcalendar:
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../vanilla/dist
       jasmine-core:
         specifier: ~4.6.0
@@ -105,7 +105,7 @@ importers:
         specifier: workspace:*
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../core-types/dist
       bootstrap:
         specifier: ^5.3.8
@@ -118,7 +118,7 @@ importers:
   packages/core-types:
     devDependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../headless-calendar/dist
       '@fullcalendar-scripts/standard':
         specifier: workspace:*
@@ -131,10 +131,10 @@ importers:
   packages/format-luxon3:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -154,10 +154,10 @@ importers:
   packages/format-moment:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -174,10 +174,10 @@ importers:
   packages/google-calendar:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -207,10 +207,10 @@ importers:
   packages/icalendar:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -227,7 +227,7 @@ importers:
   packages/lwc-calendar:
     dependencies:
       fullcalendar:
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../vanilla/dist
     devDependencies:
       '@lwc/eslint-plugin-lwc':
@@ -252,10 +252,10 @@ importers:
   packages/preact:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -281,10 +281,10 @@ importers:
   packages/react:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -328,10 +328,10 @@ importers:
   packages/rrule:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -348,10 +348,10 @@ importers:
   packages/vanilla:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../core-types/dist
       preact:
         specifier: ^10.29.8
@@ -361,7 +361,7 @@ importers:
         specifier: workspace:*
         version: link:../../scripts
       '@fullcalendar/preact':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../preact/dist
       '@types/archiver':
         specifier: ^5.3.4
@@ -450,10 +450,10 @@ importers:
   packages/vanilla-w-react:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../core-types/dist
       react:
         specifier: ^19.2.3
@@ -466,7 +466,7 @@ importers:
         specifier: workspace:*
         version: link:../../scripts
       '@fullcalendar/react':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../react/dist
       '@types/react':
         specifier: ^19.2.9
@@ -488,10 +488,10 @@ importers:
   packages/vue3:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../core-types/dist
       preact:
         specifier: ^10.29.8
@@ -510,7 +510,7 @@ importers:
         specifier: ^2.4.6
         version: 2.4.6
       fullcalendar:
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../vanilla/dist
       globby:
         specifier: ^13.1.2
@@ -541,10 +541,10 @@ importers:
   packages/web-component:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../core-types/dist
       preact:
         specifier: ^10.29.8
@@ -554,7 +554,7 @@ importers:
         specifier: workspace:*
         version: link:../../scripts
       fullcalendar:
-        specifier: workspace:7.1.0
+        specifier: workspace:7.1.1
         version: link:../vanilla/dist
       globby:
         specifier: ^13.1.2
@@ -9370,6 +9370,9 @@ packages:
   tslib@2.6.1:
     resolution: {integrity: sha512-t0hLfiEKfMUoqhG+U1oid7Pva4bbDPHYfJNiB7BiIjRkj1pyC++4N3huJfqY6aRH6VTB0rvtzQwjM4K6qpfOig==}
 
+  tslib@2.6.3:
+    resolution: {integrity: sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==}
+
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
@@ -10237,7 +10240,7 @@ snapshots:
       '@angular-devkit/architect': 0.1602.16(chokidar@3.5.3)
       rxjs: 7.8.1
       webpack: 5.94.0(esbuild@0.18.17)
-      webpack-dev-server: 4.15.1(webpack@5.104.1)
+      webpack-dev-server: 4.15.1(webpack@5.94.0(esbuild@0.18.17))
     transitivePeerDependencies:
       - chokidar
 
@@ -11903,40 +11906,46 @@ snapshots:
       - encoding
       - supports-color
 
-  '@jsonjoy.com/base64@1.1.2(tslib@2.8.1)':
+  '@jsonjoy.com/base64@1.1.2(tslib@2.6.3)':
     dependencies:
-      tslib: 2.8.1
+      tslib: 2.6.3
 
-  '@jsonjoy.com/buffers@1.2.1(tslib@2.8.1)':
+  '@jsonjoy.com/buffers@1.2.1(tslib@2.6.3)':
     dependencies:
-      tslib: 2.8.1
+      tslib: 2.6.3
 
-  '@jsonjoy.com/codegen@1.0.0(tslib@2.8.1)':
+  '@jsonjoy.com/codegen@1.0.0(tslib@2.6.3)':
     dependencies:
-      tslib: 2.8.1
+      tslib: 2.6.3
 
   '@jsonjoy.com/json-pack@1.21.0(tslib@2.8.1)':
     dependencies:
-      '@jsonjoy.com/base64': 1.1.2(tslib@2.8.1)
-      '@jsonjoy.com/buffers': 1.2.1(tslib@2.8.1)
-      '@jsonjoy.com/codegen': 1.0.0(tslib@2.8.1)
-      '@jsonjoy.com/json-pointer': 1.0.2(tslib@2.8.1)
-      '@jsonjoy.com/util': 1.9.0(tslib@2.8.1)
+      '@jsonjoy.com/base64': 1.1.2(tslib@2.6.3)
+      '@jsonjoy.com/buffers': 1.2.1(tslib@2.6.3)
+      '@jsonjoy.com/codegen': 1.0.0(tslib@2.6.3)
+      '@jsonjoy.com/json-pointer': 1.0.2(tslib@2.6.3)
+      '@jsonjoy.com/util': 1.9.0(tslib@2.6.3)
       hyperdyperid: 1.2.0
-      thingies: 2.5.0(tslib@2.8.1)
-      tree-dump: 1.1.0(tslib@2.8.1)
+      thingies: 2.5.0(tslib@2.6.3)
+      tree-dump: 1.1.0(tslib@2.6.3)
       tslib: 2.8.1
 
-  '@jsonjoy.com/json-pointer@1.0.2(tslib@2.8.1)':
+  '@jsonjoy.com/json-pointer@1.0.2(tslib@2.6.3)':
     dependencies:
-      '@jsonjoy.com/codegen': 1.0.0(tslib@2.8.1)
-      '@jsonjoy.com/util': 1.9.0(tslib@2.8.1)
-      tslib: 2.8.1
+      '@jsonjoy.com/codegen': 1.0.0(tslib@2.6.3)
+      '@jsonjoy.com/util': 1.9.0(tslib@2.6.3)
+      tslib: 2.6.3
+
+  '@jsonjoy.com/util@1.9.0(tslib@2.6.3)':
+    dependencies:
+      '@jsonjoy.com/buffers': 1.2.1(tslib@2.6.3)
+      '@jsonjoy.com/codegen': 1.0.0(tslib@2.6.3)
+      tslib: 2.6.3
 
   '@jsonjoy.com/util@1.9.0(tslib@2.8.1)':
     dependencies:
-      '@jsonjoy.com/buffers': 1.2.1(tslib@2.8.1)
-      '@jsonjoy.com/codegen': 1.0.0(tslib@2.8.1)
+      '@jsonjoy.com/buffers': 1.2.1(tslib@2.6.3)
+      '@jsonjoy.com/codegen': 1.0.0(tslib@2.6.3)
       tslib: 2.8.1
 
   '@leichtgewicht/ip-codec@2.0.5': {}
@@ -20210,7 +20219,7 @@ snapshots:
       ansi-escapes: 5.0.0
       supports-hyperlinks: 2.3.0
 
-  terser-webpack-plugin@5.3.16(esbuild@0.18.17)(webpack@5.94.0(esbuild@0.18.17)):
+  terser-webpack-plugin@5.3.16(esbuild@0.18.17)(webpack@5.94.0):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
@@ -20265,6 +20274,10 @@ snapshots:
       - react-native-b4a
 
   text-table@0.2.0: {}
+
+  thingies@2.5.0(tslib@2.6.3):
+    dependencies:
+      tslib: 2.6.3
 
   thingies@2.5.0(tslib@2.8.1):
     dependencies:
@@ -20356,6 +20369,10 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
+  tree-dump@1.1.0(tslib@2.6.3):
+    dependencies:
+      tslib: 2.6.3
+
   tree-dump@1.1.0(tslib@2.8.1):
     dependencies:
       tslib: 2.8.1
@@ -20373,6 +20390,8 @@ snapshots:
   tslib@1.14.1: {}
 
   tslib@2.6.1: {}
+
+  tslib@2.6.3: {}
 
   tslib@2.8.1: {}
 
@@ -20769,46 +20788,6 @@ snapshots:
     optionalDependencies:
       webpack: 5.94.0(esbuild@0.18.17)
 
-  webpack-dev-server@4.15.1(webpack@5.104.1):
-    dependencies:
-      '@types/bonjour': 3.5.13
-      '@types/connect-history-api-fallback': 1.5.4
-      '@types/express': 4.17.25
-      '@types/serve-index': 1.9.4
-      '@types/serve-static': 1.15.10
-      '@types/sockjs': 0.3.36
-      '@types/ws': 8.18.1
-      ansi-html-community: 0.0.8
-      bonjour-service: 1.3.0
-      chokidar: 3.5.3
-      colorette: 2.0.20
-      compression: 1.8.1
-      connect-history-api-fallback: 2.0.0
-      default-gateway: 6.0.3
-      express: 4.22.1
-      graceful-fs: 4.2.11
-      html-entities: 2.6.0
-      http-proxy-middleware: 2.0.9(@types/express@4.17.25)
-      ipaddr.js: 2.3.0
-      launch-editor: 2.12.0
-      open: 8.4.2
-      p-retry: 4.6.2
-      rimraf: 3.0.2
-      schema-utils: 4.3.3
-      selfsigned: 2.4.1
-      serve-index: 1.9.2
-      sockjs: 0.3.24
-      spdy: 4.0.2
-      webpack-dev-middleware: 5.3.4(webpack@5.94.0(esbuild@0.18.17))
-      ws: 8.19.0
-    optionalDependencies:
-      webpack: 5.104.1
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - supports-color
-      - utf-8-validate
-
   webpack-dev-server@4.15.1(webpack@5.94.0(esbuild@0.18.17)):
     dependencies:
       '@types/bonjour': 3.5.13
@@ -20918,7 +20897,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.3.0
-      terser-webpack-plugin: 5.3.16(esbuild@0.18.17)(webpack@5.94.0(esbuild@0.18.17))
+      terser-webpack-plugin: 5.3.16(esbuild@0.18.17)(webpack@5.94.0)
       watchpack: 2.5.1
       webpack-sources: 3.3.3
     transitivePeerDependencies:
