@@ -12,3 +12,15 @@ Please link to a bug ticket in the description of your PR. If a ticket doesn't e
 ## Contributing Locale Data
 
 Please edit the source files in the `packages/core/locales/` directory.
+
+### Testing Your Localization
+
+1. Edit/create your localization file
+2. Build project `pnpm build`. This creates `/dist/fullcalendar-xxx.zip` at the root of the project
+3. Extract the zip file
+4. Copy one of the example files in `/bundle/examples`
+5. Include your built translation file in your example. For example:
+  ```
+  <script src='../../dist/fullcalendar-6.1.20/packages/core/locales/fa.global.js'></script>
+  ```
+6. Repeat 1-3 if you changed your localization file
