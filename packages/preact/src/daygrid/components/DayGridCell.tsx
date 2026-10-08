@@ -44,6 +44,7 @@ export interface DayGridCellProps {
   hiddenSegs: DayRowEventRange[] // "
   fgLiquidHeight: boolean
   fg: ReactNode
+  fgIsList?: boolean // whether fg contains list items
   eventDrag: EventSegUiInteractionState<SlicedCoordRange> | null
   eventResize: EventSegUiInteractionState<SlicedCoordRange> | null
   eventSelection: string
@@ -198,6 +199,7 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
               ref={this.handleBodyEl}
             >
               <div
+                role={props.fgIsList ? 'list' : undefined}
                 className={joinClassNames(
                   classNames.rel, // origin for this cell's foreground event wrappers
                   generateClassName(options.dayCellInnerClass, renderProps),

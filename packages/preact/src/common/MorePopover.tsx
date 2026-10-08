@@ -179,7 +179,10 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
             classNames.borderless,
           )}
         >
-          <div className={generateClassName(options.dayCellInnerClass, dayCellRenderProps)}>
+          <div
+            role='list' // children are list items
+            className={generateClassName(options.dayCellInnerClass, dayCellRenderProps)}
+          >
             {props.children}
           </div>
         </div>

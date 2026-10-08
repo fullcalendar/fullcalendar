@@ -1,4 +1,14 @@
 
+## v7.1.2
+
+- FEATURE: Accessibility, each collection of events is exposed to screen readers as a list (`role="list"`), with each event wrapped in a list item (`role="listitem"`). Screen readers can step through events one at a time with list-item navigation, rather than reading a day/lane as one block of text. Applies to DayGrid day cells, TimeGrid day columns and all-day rows, Timeline lanes (resource and non-resource), and +more popovers. Wrappers are `div`s with ARIA roles, so no list styling is inherited
+  - TimeGrid/Timeline: +more links within a column/lane are also list items, containing the button
+  - DayGrid: the +more link remains outside of the list
+  - Non-resource Timeline: the `eventsHint` label ("Events") moved from the scrollable body to the list of events
+- FIX: List view, events with a `url` lost their link semantics, and interactive events weren't list items, because the `listitem` role was applied directly to the event element. Each event is now wrapped in an unstyled list item, preserving the event element's own role
+  - Custom CSS selecting the event element as a direct child of the day's events container (ex: `.my-list-body > .fc-event`) no longer matches
+
+
 ## v7.1.1
 
 - FEATURE: `@fullcalendar/mui` supports MUI v9 (in addition to v7). MUI skipped v8

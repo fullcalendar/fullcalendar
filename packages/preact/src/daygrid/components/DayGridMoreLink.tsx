@@ -62,6 +62,7 @@ export class DayGridMoreLink extends BaseComponent<DayGridMoreLinkProps> {
               return (
                 <div
                   key={instanceId}
+                  role='listitem'
                   style={{
                     visibility: isInvisible ? 'hidden' : undefined,
                   }}

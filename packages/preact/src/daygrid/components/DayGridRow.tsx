@@ -317,6 +317,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
               col,
             )
             : null
+          const screenRenderSlices = printPlan ? null : screenColumns![col].renderSlices
           let fg: ReactElement[]
 
           if (printPlan) {
@@ -325,7 +326,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
             fg = [
               ...this.renderLevelFgSegs(
                 screenMainOffsetsByCol[col],
-                screenColumns![col].renderSlices,
+                screenRenderSlices!,
                 screenSliceCoords,
               ),
               ...this.renderMirrorFgSegs(
@@ -357,6 +358,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
               hiddenSegs={printPopover ? printPopover.hiddenSegs : screenColumns![col].hiddenSegs}
               fgLiquidHeight={printPlan ? false : screenFgLiquidHeight}
               fg={fg}
+              fgIsList={Boolean(screenRenderSlices?.length)}
               eventDrag={printPlan ? null : props.eventDrag}
               eventResize={printPlan ? null : props.eventResize}
               eventSelection={props.eventSelection}
@@ -413,6 +415,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
       nodes.push(
         <MeasuredHeightHarness
           key={`mirror:${key}`}
+          attrs={{ 'aria-hidden': true }}
           className={joinClassNames(
             classNames.abs,
             classNames.start0,
@@ -467,6 +470,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
       nodes.push(
         <MeasuredHeightHarness
           key={key}
+          attrs={{ role: 'listitem' }}
           className={joinClassNames(
             classNames.abs,
             classNames.start0,

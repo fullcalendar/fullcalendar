@@ -1,10 +1,12 @@
 import { Component, createRef, type Ref, type ReactNode } from 'react'
 import { watchHeight } from '../component-util/resize-observer'
 import { setRef } from '../vdom-util'
+import { Dictionary } from '../options'
 
 export interface MeasuredHeightHarnessProps {
   style: any // TODO
   className?: string
+  attrs?: Dictionary
   children?: ReactNode
   heightRef?: Ref<number>
 }
@@ -20,6 +22,7 @@ export class MeasuredHeightHarness extends Component<MeasuredHeightHarnessProps>
 
     return (
       <div
+        {...props.attrs}
         className={props.className}
         style={props.style}
         ref={this.rootElRef}
