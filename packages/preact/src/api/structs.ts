@@ -17,7 +17,13 @@ export type {
   DateTimeFormatPartWithWeek,
 } from '../common/WeekNumberContainer'
 export type { MoreLinkInfo } from '../common/MoreLinkContainer'
-export * from '../common/more-link-public-types'
+export type {
+  EventSegment,
+  MoreLinkAction,
+  MoreLinkSimpleAction,
+  MoreLinkInfo as MoreLinkClickInfo,
+  MoreLinkHandler,
+} from '../common/more-link-public-types'
 export type {
   SlotLaneInfo,
   SlotHeaderInfo,
