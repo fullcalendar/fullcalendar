@@ -128,7 +128,7 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
     if (dateMeta.isDisabled) {
       return (
         <CellTag
-          role='gridcell'
+          role='cell'
           aria-disabled
           className={joinClassNames(
             generateClassName(options.dayCellClass, renderProps),
@@ -151,7 +151,7 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
         className={joinClassNames(props.className, baseClassName)}
         attrs={{
           ...props.attrs,
-          role: 'gridcell',
+          role: 'cell',
           'aria-label': fullDateStr,
           ...(renderProps.isToday ? { 'aria-current': 'date' } : {}),
           'data-date': formatDayString(props.date),

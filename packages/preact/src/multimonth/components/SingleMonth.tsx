@@ -141,7 +141,7 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
         style={{ width: props.width }}
       >
         <div
-          role='grid'
+          role='table'
           aria-labelledby={this.titleId}
           data-date={props.isoDateStr}
           className={joinClassNames(

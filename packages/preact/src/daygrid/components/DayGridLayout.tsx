@@ -75,7 +75,7 @@ export class DayGridLayout extends BaseComponent<DayGridLayoutProps> {
       <ViewContainer
         viewSpec={context.viewSpec}
         attrs={{
-          role: 'grid',
+          role: 'table',
           'aria-rowcount': props.headerTiers.length + props.cellRows.length,
           'aria-colcount': props.cellRows[0].length,
           'aria-labelledby': props.labelId,

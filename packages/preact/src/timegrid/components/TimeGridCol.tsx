@@ -100,7 +100,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
     if (dateMeta.isDisabled) {
       return (
         <div
-          role='gridcell'
+          role='cell'
           aria-disabled
           className={joinClassNames(
             generateClassName(options.dayLaneClass, renderProps),
@@ -124,7 +124,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
         tag="div"
         attrs={{
           ...props.attrs,
-          role: 'gridcell',
+          role: 'cell',
           ...(dateMeta.isToday ? { 'aria-current': 'date' } : {}),
           'data-date': formatDayString(props.date),
         }}
