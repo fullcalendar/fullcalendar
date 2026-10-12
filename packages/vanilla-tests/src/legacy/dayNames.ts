@@ -3,6 +3,7 @@ import { removeLtrCharCodes, moveDayNumberLast, removeCommas } from '../lib/stri
 import { parseUtcDate } from '../lib/date-parsing'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { getVisibleText } from '../lib/wrappers/DayHeaderWrapper'
 
 describe('day names', () => {
   let sundayDate = parseUtcDate('2019-03-17')
@@ -41,7 +42,7 @@ describe('day names', () => {
             now: dayDate,
           })
           let headerWrapper = new DayGridViewWrapper(calendar).header
-          expect(headerWrapper.el.querySelector(`.${dowClassName}`)).toHaveText(dayText)
+          expect(getVisibleText(headerWrapper.el.querySelector(`.${dowClassName}`))).toBe(dayText)
         })
       })
     })
@@ -64,7 +65,7 @@ describe('day names', () => {
               now: dayDate,
             })
             let headerWrapper = new DayGridViewWrapper(calendar).header
-            expect(headerWrapper.el.querySelector(`.${dowClassName}`)).toHaveText(dayText)
+            expect(getVisibleText(headerWrapper.el.querySelector(`.${dowClassName}`))).toBe(dayText)
           })
         })
       })
