@@ -349,6 +349,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
           return (
             <div
               key={buildEventRangeKey(eventRange)}
+              aria-hidden // fills, including bg events, are decorative. hidden from screen readers
               className={classNames.fillX}
               style={{
                 top: segVertical.start,

@@ -232,6 +232,7 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
               />
             </div>
             <div
+              role='presentation' // otherwise VoiceOver finds an empty group. not aria-hidden, which would hide any content too
               className={joinClassNames(
                 classNames.rel, // puts it above bg-fills
                 DAY_GRID_CELL_CONTENT_Z_CLASS,

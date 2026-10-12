@@ -608,6 +608,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
       fillsByCol[seg.start].push(
         <div
           key={`${fillType}:${buildEventRangeKey(seg.eventRange)}:${seg.start}:${seg.end}`}
+          aria-hidden // fills, including bg events, are decorative. hidden from screen readers
           className={joinClassNames(classNames.fillY, classNames.start0, zClassName)}
           style={{
             width: this.computeSpanWidth(seg.start, seg.end),
