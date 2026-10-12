@@ -1,12 +1,17 @@
 
 ## v7.1.2
 
-- FEATURE: Accessibility, each collection of events is exposed to screen readers as a list (`role="list"`), with each event wrapped in a list item (`role="listitem"`). Screen readers can step through events one at a time with list-item navigation, rather than reading a day/lane as one block of text. Applies to DayGrid day cells, TimeGrid day columns and all-day rows, Timeline lanes (resource and non-resource), and +more popovers. Wrappers are `div`s with ARIA roles, so no list styling is inherited
-  - TimeGrid/Timeline: +more links within a column/lane are also list items, containing the button
-  - DayGrid: the +more link remains outside of the list
-  - Non-resource Timeline: the `eventsHint` label ("Events") moved from the scrollable body to the list of events
-- FIX: List view, events with a `url` lost their link semantics, and interactive events weren't list items, because the `listitem` role was applied directly to the event element. Each event is now wrapped in an unstyled list item, preserving the event element's own role
-  - Custom CSS selecting the event element as a direct child of the day's events container (ex: `.my-list-body > .fc-event`) no longer matches
+### :accessibility: Accessibility Fixes
+
+- FIX: Events in DayGrid cells, TimeGrid columns, Timeline lanes and +more popovers are enclosed in a list (`role="list"`, each event in a `role="listitem"` wrapper), so screen readers can step through them one at a time instead of reading a day or lane as one block
+- FIX: List view, events with a `url` lost their link semantics, because the `listitem` role was on the event itself. Events are now wrapped in list items
+- FIX: Day headers (without `navLinks`), TimeGrid's week-number header and "Timed" row header were read as empty and flagged by axe, because their text was only an `aria-label`. The text is now visually-hidden content
+- FIX: DayGrid day cells' `aria-label` was ignored or read as blank. The full date is now visually-hidden content, only in cells showing a day number (otherwise the column header already reads the date)
+- FIX: Column-header nav links were labeled "Go to …", which was repeated as the column name for every cell. They're now labeled with just the date (`navLinkHint` is still used for other nav links)
+- FIX: JAWS switched to forms mode when Tab landed on an event, so the arrow keys did nothing. DayGrid, TimeGrid, MultiMonth and Resource Timeline are now a `table` (cells `role="cell"`) rather than a `grid`. Resource Timeline with nested resources or row groups remains a `treegrid`
+- FIX: Screen readers announced empty "group"s within day cells. Empty wrappers are now `role="presentation"`, and background events, non-business hours and selection highlights are `aria-hidden`
+- FIX: Resource TimeGrid/DayGrid with `filterResourcesWithEvents` and `datesAboveResources`, the blank resource header was an empty `columnheader`, flagged by axe. It's now an empty `cell`
+- FIX: Hidden elements used for measurement (+more link, Resource Timeline expander and column divider) use `visibility: hidden` instead of `inert`, so none can be focused or read by screen readers
 
 
 ## v7.1.1
