@@ -81,7 +81,7 @@ export class DayGridHeaderCell<BaseRenderProps extends { isDisabled: boolean }, 
     if (dataConfig.blank) {
       return (
         <CellTag
-          role='columnheader'
+          role='cell' // is empty so can't be columnheader
           aria-colspan={dataConfig.colSpan}
           colSpan={tableMode ? colSpan : undefined}
           {...dataConfig.attrs}
@@ -189,26 +189,33 @@ export class DayGridHeaderCell<BaseRenderProps extends { isDisabled: boolean }, 
         willUnmount={renderConfig.willUnmount}
       >
         {(InnerContainer) => (
-          <div
-            ref={this.handleInnerEl}
-            className={joinClassNames(
-              classNames.flexCol,
-              classNames.noShrink,
-              classNames.whiteSpaceNoWrap,
-              tableMode && alignClassName,
-              isSticky && classNames.sticky,
+          <>
+            {dataConfig.a11yText && (
+              <div className={classNames.srOnly}>{dataConfig.a11yText}</div>
             )}
-            style={{
-              left: edgeCoord,
-              right: edgeCoord,
-            }}
-          >
-            <InnerContainer
-              tag='div'
-              attrs={dataConfig.innerAttrs}
-              className={generateClassName(renderConfig.innerClassNameGenerator, finalRenderProps)}
-            />
-          </div>
+            <div
+              // hide the whole wrapper, otherwise screen readers find an empty group
+              aria-hidden={dataConfig.a11yText ? true : undefined}
+              ref={this.handleInnerEl}
+              className={joinClassNames(
+                classNames.flexCol,
+                classNames.noShrink,
+                classNames.whiteSpaceNoWrap,
+                tableMode && alignClassName,
+                isSticky && classNames.sticky,
+              )}
+              style={{
+                left: edgeCoord,
+                right: edgeCoord,
+              }}
+            >
+              <InnerContainer
+                tag='div'
+                attrs={dataConfig.innerAttrs}
+                className={generateClassName(renderConfig.innerClassNameGenerator, finalRenderProps)}
+              />
+            </div>
+          </>
         )}
       </ContentContainer>
     )

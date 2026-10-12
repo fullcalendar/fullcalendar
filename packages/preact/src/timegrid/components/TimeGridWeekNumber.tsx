@@ -67,8 +67,7 @@ export class TimeGridWeekNumber extends BaseComponent<TimeGridWeekNumberProps> {
       <ContentContainer<WeekNumberHeaderInfo>
         tag='div'
         attrs={{
-          role: 'gridcell', // doesn't always describe other cells in row, so make generic
-          'aria-label': fullDateStr,
+          role: 'columnheader',
         }}
         className={joinClassNames(
           classNames.flexRow,
@@ -88,24 +87,36 @@ export class TimeGridWeekNumber extends BaseComponent<TimeGridWeekNumberProps> {
         willUnmount={options.weekNumberHeaderWillUnmount}
       >
         {(InnerContent) => (
-          <div
-            ref={this.innerElRef}
-            className={joinClassNames(
-              classNames.flexRow,
-              classNames.noShrink,
-              classNames.whiteSpaceNoWrap,
+          <>
+            {!hasNavLink && ( // navlink is already labeled
+              <div className={classNames.srOnly}>{fullDateStr}</div>
             )}
-          >
-            <InnerContent
-              tag='div'
-              attrs={
-                hasNavLink
-                  ? buildNavLinkAttrs(context, range.start, 'week', fullDateStr)
-                  : { 'aria-label': fullDateStr }
-              }
-              className={generateClassName(options.weekNumberHeaderInnerClass, weekNumberRenderProps)}
-            />
-          </div>
+            <div
+              // hide the whole wrapper, otherwise screen readers find an empty group
+              aria-hidden={hasNavLink ? undefined : true}
+              ref={this.innerElRef}
+              className={joinClassNames(
+                classNames.flexRow,
+                classNames.noShrink,
+                classNames.whiteSpaceNoWrap,
+              )}
+            >
+              <InnerContent
+                tag='div'
+                attrs={hasNavLink
+                  ? buildNavLinkAttrs(
+                    context,
+                    range.start,
+                    'week',
+                    fullDateStr,
+                    /* isTabbable = */ true,
+                    /* omitHint = */ true, // header label is the column's name
+                  )
+                  : undefined}
+                className={generateClassName(options.weekNumberHeaderInnerClass, weekNumberRenderProps)}
+              />
+            </div>
+          </>
         )}
       </ContentContainer>
     )

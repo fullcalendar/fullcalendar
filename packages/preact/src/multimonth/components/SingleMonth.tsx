@@ -132,7 +132,12 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
     }
     const monthStartDate = props.dateProfile.currentRange.start
     const navLinkAttrs: any = hasNavLink
-      ? buildNavLinkAttrs(context, monthStartDate, 'month', props.isoDateStr)
+      ? buildNavLinkAttrs(
+        context,
+        monthStartDate,
+        'month',
+        props.isoDateStr,
+      )
       : {}
 
     return (

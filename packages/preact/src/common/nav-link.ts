@@ -29,6 +29,9 @@ export function buildNavLinkAttrs(
   viewType = 'day',
   dateStr = buildDateStr(context, dateMarker, viewType),
   isTabbable = true,
+  // for column headers: the label becomes the column's name, read for every cell in the column, and
+  // screen readers already say "link". so it's just the date, without navLinkHint ("Go to $0")
+  omitHint = false,
 ) {
   const { dateEnv, options, calendarApi } = context
   const zonedDate = dateEnv.toDate(dateMarker)
@@ -50,7 +53,7 @@ export function buildNavLinkAttrs(
 
   return {
     'role': ('link' as any), // TODO
-    'aria-label': formatWithOrdinals(options.navLinkHint, [dateStr, zonedDate], dateStr),
+    'aria-label': omitHint ? dateStr : formatWithOrdinals(options.navLinkHint, [dateStr, zonedDate], dateStr),
     'className': joinClassNames(
       options.navLinkClass,
       classNames.cursorPointer,

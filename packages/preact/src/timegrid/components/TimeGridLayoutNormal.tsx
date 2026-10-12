@@ -352,10 +352,11 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
               >
                 <div
                   role='rowheader'
-                  aria-label={options.timedText}
                   className={classNames.contentBox}
                   style={{ width: axisWidth }}
-                />
+                >
+                  <div className={classNames.srOnly}>{options.timedText}</div>
+                </div>
                 <div
                   className={generateClassName(options.slotHeaderDividerClass, {
                     inTableHeader: false,

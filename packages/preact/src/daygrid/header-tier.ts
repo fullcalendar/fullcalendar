@@ -33,6 +33,7 @@ export interface CellDataConfig<RenderProps> {
   className?: string
   attrs?: any // TODO
   innerAttrs?: any // TODO
+  a11yText?: string // visually hidden text for screen readers. the visible content is then aria-hidden
   colSpan?: number // TODO: make required? easier for internal users
   hasNavLink?: boolean
 }
@@ -206,15 +207,22 @@ export function buildDateDataConfigs(
           dateMarker,
           renderProps,
           attrs: {
-            'aria-label': fullDateStr,
             ...(dateMeta.isToday ? { 'aria-current': 'date' } : {}), // TODO: assign undefined for nonexistent
             'data-date': formatDayString(dateMarker),
             ...extraAttrs,
           },
-          // for navlink
+          // navlink is already labeled. otherwise, a11yText read instead
           innerAttrs: hasNavLink
-            ? buildNavLinkAttrs(context, dateMarker, undefined, fullDateStr)
-            : { 'aria-hidden': true }, // label already on cell
+            ? buildNavLinkAttrs(
+              context,
+              dateMarker,
+              undefined,
+              fullDateStr,
+              /* isTabbable = */ true,
+              /* omitHint = */ true, // header label is the column's name
+            )
+            : undefined,
+          a11yText: hasNavLink ? undefined : fullDateStr,
           colSpan,
           hasNavLink,
           className,
@@ -250,14 +258,9 @@ export function buildDateDataConfigs(
           key: keyPrefix + String(dow),
           dateMarker,
           renderProps,
-          attrs: {
-            'aria-label': fullWeekDayStr,
-            ...extraAttrs,
-          },
+          attrs: extraAttrs,
           // NOT a navlink
-          innerAttrs: {
-            'aria-hidden': true, // label already on cell
-          },
+          a11yText: fullWeekDayStr,
           colSpan,
           className,
         }

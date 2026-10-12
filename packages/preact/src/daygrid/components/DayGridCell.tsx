@@ -143,6 +143,8 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
     }
 
     const fullDateStr = buildDateStr(context, props.date)
+    // only when the day number is shown: otherwise, the column header already reads the full date
+    const hasA11yDateText = props.showDayNumber && !hasNavLink
 
     return (
       <ContentContainer
@@ -152,7 +154,6 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
         attrs={{
           ...props.attrs,
           role: 'cell',
-          'aria-label': fullDateStr,
           ...(renderProps.isToday ? { 'aria-current': 'date' } : {}),
           'data-date': formatDayString(props.date),
         }}
@@ -169,6 +170,9 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
           <>
             {props.fills}
             <div
+              // otherwise VoiceOver finds an empty group when there's no day number (ex: TimeGrid all-day).
+              // children (srOnly date, day number, custom content) stay readable
+              role='presentation'
               className={joinClassNames(
                 classNames.rel, // puts it above bg-fills, which are positioned on TOP of this component :|
                 DAY_GRID_CELL_CONTENT_Z_CLASS,
@@ -176,13 +180,21 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
               )}
               // TODO: prevent margins/padding!?
             >
+              {hasA11yDateText && ( // a nav link is already labeled
+                <div className={classNames.srOnly}>{fullDateStr}</div>
+              )}
               {props.showDayNumber && (
                 <InnerContent // the dayCellTopContent
                   tag='div'
                   attrs={
                     hasNavLink
-                      ? buildNavLinkAttrs(context, props.date, undefined, fullDateStr)
-                      : { 'aria-hidden': true } // label already on cell
+                      ? buildNavLinkAttrs(
+                        context,
+                        props.date,
+                        undefined,
+                        fullDateStr,
+                      )
+                      : { 'aria-hidden': true } // screen readers read the srOnly full date above, not this day number
                   }
                   className={generateClassName(options.dayCellTopInnerClass, renderProps)}
                 />
@@ -199,7 +211,9 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
               ref={this.handleBodyEl}
             >
               <div
-                role={props.fgIsList ? 'list' : undefined}
+                // without events of its own, it's still sized (space reserved for multi-day events from
+                // earlier days), and VoiceOver would find an empty group
+                role={props.fgIsList ? 'list' : 'presentation'}
                 className={joinClassNames(
                   classNames.rel, // origin for this cell's foreground event wrappers
                   generateClassName(options.dayCellInnerClass, renderProps),

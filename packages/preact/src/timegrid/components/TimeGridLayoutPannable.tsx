@@ -430,7 +430,6 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
                 <>
                   <div // canvas
                     role='rowheader'
-                    aria-label={options.timedText}
                     className={joinClassNames(
                       classNames.flexCol,
                       classNames.grow,
@@ -440,6 +439,7 @@ export class TimeGridLayoutPannable extends BaseComponent<TimeGridLayoutPannable
                       height: forcedBodyHeight,
                     }}
                   >
+                    <div className={classNames.srOnly}>{options.timedText}</div>
                     <div // label list
                       aria-hidden
                       className={joinClassNames(

@@ -228,7 +228,13 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
         attrs={{
           ...(
             hasNavLink
-              ? buildNavLinkAttrs(context, weekDateMarker, 'week', fullWeekStr, /* isTabbable = */ false)
+              ? buildNavLinkAttrs(
+                context,
+                weekDateMarker,
+                'week',
+                fullWeekStr,
+                /* isTabbable = */ false,
+              )
               : {}
           ),
           'role': undefined, // HACK: a 'link' role can't be child of a 'row' role

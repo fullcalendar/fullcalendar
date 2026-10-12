@@ -53,7 +53,7 @@ export class TimeGridAllDayLane extends DateComponent<TimeGridAllDayLaneProps, T
             elRef={this.handleMoreLinkEl}
             className={classNames.offscreen}
             attrs={{
-              'aria-hidden': true,
+              'aria-hidden': true, // redundant with .offscreen's visibility, but marks it as a probe
             }}
           />
         )}
@@ -66,9 +66,6 @@ export class TimeGridAllDayLane extends DateComponent<TimeGridAllDayLaneProps, T
     this.disconnectMoreLinkHeight = undefined
 
     if (el) {
-      // set imperatively. React 19 treats inert as boolean, older React as string
-      el.inert = true
-
       this.disconnectMoreLinkHeight = watchHeight(el, (height) => {
         if (this._isUnmounting) return
         this.setState({ moreLinkHeight: height })
