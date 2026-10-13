@@ -4,11 +4,11 @@
 ### :accessibility: Accessibility Fixes
 
 - FIX: Events in DayGrid cells, TimeGrid columns, Timeline lanes and +more popovers are enclosed in a list (`role="list"`, each event in a `role="listitem"` wrapper), so screen readers can step through them one at a time instead of reading a day or lane as one block
-- FIX: List view, events with a `url` lost their link semantics, because the `listitem` role was on the event itself. Events are now wrapped in list items
-- FIX: Day headers (without `navLinks`), TimeGrid's week-number header and "Timed" row header were read as empty and flagged by axe, because their text was only an `aria-label`. The text is now visually-hidden content
-- FIX: DayGrid day cells' `aria-label` was ignored or read as blank. The full date is now visually-hidden content, only in cells showing a day number (otherwise the column header already reads the date)
+- FIX: List view, events with a `url` lost their link semantics, because the `listitem` role was on the event itself. Events are now wrapped in list items (#7567)
+- FIX: Day headers (without `navLinks`), TimeGrid's week-number header and "Timed" row header were read as empty and flagged by axe, because their text was only an `aria-label`. The text is now visually-hidden content (#7566, #6641)
+- FIX: DayGrid day cells' `aria-label` was ignored or read as blank. The full date is now visually-hidden content, only in cells showing a day number (otherwise the column header already reads the date) (#7566, #6637, #6641, #7502)
 - FIX: Column-header nav links were labeled "Go to …", which was repeated as the column name for every cell. They're now labeled with just the date (`navLinkHint` is still used for other nav links)
-- FIX: JAWS switched to forms mode when Tab landed on an event, so the arrow keys did nothing. DayGrid, TimeGrid, MultiMonth and Resource Timeline are now a `table` (cells `role="cell"`) rather than a `grid`. Resource Timeline with nested resources or row groups remains a `treegrid`
+- FIX: JAWS switched to forms mode when Tab landed on an event, so the arrow keys did nothing. DayGrid, TimeGrid, MultiMonth and Resource Timeline are now a `table` (cells `role="cell"`) rather than a `grid`. Resource Timeline with nested resources or row groups remains a `treegrid` (#6641)
 - FIX: Screen readers announced empty "group"s within day cells. Empty wrappers are now `role="presentation"`, and background events, non-business hours and selection highlights are `aria-hidden`
 - FIX: Resource TimeGrid/DayGrid with `filterResourcesWithEvents` and `datesAboveResources`, the blank resource header was an empty `columnheader`, flagged by axe. It's now an empty `cell`
 - FIX: Hidden elements used for measurement (+more link, Resource Timeline expander and column divider) use `visibility: hidden` instead of `inert`, so none can be focused or read by screen readers
