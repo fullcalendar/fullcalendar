@@ -265,7 +265,7 @@ export class CalendarDataManager {
       (action && (action.type === 'PREV' || action.type === 'NEXT')) ||
       !rangeContainsMarker(dateProfile.activeRange, currentDate)
     ) {
-      currentDate = dateProfile.currentRange.start
+      currentDate = dateProfile.currentDate
     }
 
     // === Compute eventSources, eventStore ===
