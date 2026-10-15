@@ -38,7 +38,10 @@ export abstract class Slicer<R, ExtraArgs extends any[] = []> {
   private sliceEventResize = memoize(this._sliceInteraction)
 
   abstract sliceRange(dateRange: DateRange, ...extraArgs: ExtraArgs): R[]
-  protected intersectDateSpan(dateSpan: DateSpan, activeRange: DateRange, ...extraArgs: ExtraArgs): DateSpan | null {
+  protected intersectDateSpan(dateSpan: DateSpan, activeRange: DateRange | null, ...extraArgs: ExtraArgs): DateSpan | null {
+    if (!activeRange) {
+      return null
+    }
     const activeDateSpanRange = intersectRanges(dateSpan.range, activeRange)
 
     if (activeDateSpanRange) {
@@ -256,8 +259,12 @@ for incorporating slotMinTime/slotMaxTime if appropriate
 TODO: should be part of DateProfile!
 TimelineDateProfile already does this btw
 */
-function computeActiveRange(dateProfile: DateProfile, isComponentAllDay: boolean): DateRange {
+function computeActiveRange(dateProfile: DateProfile, isComponentAllDay: boolean): DateRange | null {
   let range = dateProfile.activeRange
+
+  if (!range) {
+    return null
+  }
 
   if (isComponentAllDay) {
     return range

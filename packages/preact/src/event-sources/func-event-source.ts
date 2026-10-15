@@ -33,6 +33,11 @@ let eventSourceDef: EventSourceDef<EventSourceFunc> = {
     const { dateEnv } = arg.context
     const func = arg.eventSource.meta
 
+    if (!arg.range) {
+      successCallback({ rawEvents: [] })
+      return
+    }
+
     unpromisify(
       func.bind(null, buildRangeApiWithTimeZone(arg.range, dateEnv)),
       (rawEvents) => successCallback({ rawEvents }),

@@ -46,7 +46,11 @@ export interface EventRangeProps {
 /*
 Specifying nextDayThreshold signals that all-day ranges should be sliced.
 */
-export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHash, framingRange: DateRange, nextDayThreshold?: Duration) {
+export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHash, framingRange: DateRange | null, nextDayThreshold?: Duration) {
+  if (!framingRange) {
+    return { bg: [], fg: [] }
+  }
+
   let inverseBgByGroupId: { [groupId: string]: DateRange[] } = {}
   let inverseBgByDefId: { [defId: string]: DateRange[] } = {}
   let defByGroupId: { [groupId: string]: EventDef } = {}
