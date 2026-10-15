@@ -9,6 +9,7 @@
   (now warns instead. styles must be provided another way, or upgrade to v7, which distributes plain CSS files)
 - fix: crash in Salesforce LWC with Lightning Web Security when querying CSP nonce (#7439)
 - fix: in list view, clicking event with url and custom eventContent crashes instead of navigating (#6133)
+- fix: `batchRendering` missing from `CalendarApi` type, e.g. for React's `getApi()` (#7227)
 
 ## 6.1.21 (2026-06-17)
 

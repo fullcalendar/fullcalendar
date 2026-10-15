@@ -15,6 +15,7 @@ import {
 export interface CalendarApi {
   view: ViewApi
   updateSize(): void
+  batchRendering(callback: () => void): void
 
   // Options
   // -----------------------------------------------------------------------------------------------------------------
