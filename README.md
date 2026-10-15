@@ -11,21 +11,19 @@ Full-sized drag & drop calendar in JavaScript
 
 Connectors:
 
-- [React](https://github.com/fullcalendar/fullcalendar-react)
-- [Angular](https://github.com/fullcalendar/fullcalendar-angular)
-- [Vue 3](https://github.com/fullcalendar/fullcalendar-vue) |
-  [2](https://github.com/fullcalendar/fullcalendar-vue2)
-
-## Bundle
-
-The [FullCalendar Standard Bundle](bundle) is easier to install than individual plugins, though filesize will be larger. It works well with a CDN.
+- [React](https://fullcalendar.io/docs/react)
+- [Angular](https://fullcalendar.io/docs/angular)
+- [Vue](https://fullcalendar.io/docs/vue)
+- [Preact](https://fullcalendar.io/docs/preact)
+- [Web Component](https://fullcalendar.io/docs/web-component)
+- [Salesforce LWC](https://fullcalendar.io/docs/salesforce-lwc)
 
 ## Installation
 
-Install the FullCalendar vanilla-JS package:
+Install the FullCalendar vanilla-JS package and its `temporal-polyfill` peer dependency ([more info](https://fullcalendar.io/docs/temporal-polyfill)):
 
 ```sh
-npm install fullcalendar
+npm install fullcalendar temporal-polyfill
 ```
 
 ## Usage
@@ -49,7 +47,7 @@ const calendar = new Calendar(calendarEl, {
     dayGridPlugin,
     interactionPlugin
   ],
-  initialView: 'timeGridWeek',
+  initialView: 'dayGridMonth',
   editable: true,
   events: [
     { title: 'Meeting', start: new Date() }
