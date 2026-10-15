@@ -2,6 +2,8 @@
 ## unreleased
 
 - fix: event time cut off by long title with eventDisplay:'block' (#6457)
+- fix: non-string toolbar button text, like JSX, crashes rendering (#7120)
+  (now warns and falls back to the button name. use v7's `iconContent` for custom button content)
 
 ## 6.1.21 (2026-06-17)
 
