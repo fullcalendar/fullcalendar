@@ -1,6 +1,7 @@
 
 ## unreleased
 
+- FIX: Bulgarian accessibility hints for navigation, more-links, and closing popovers (#7494)
 - FEATURE: Tajik locale, available as `tg` (#8066)
 - FEATURE: Belarusian locale, available as `be` (#7839)
 - FIX: German and Austrian German list-view hint read "Terminübersichtesansicht" (#7788)
