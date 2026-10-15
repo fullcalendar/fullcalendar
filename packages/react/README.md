@@ -53,4 +53,4 @@ Themes are plugins too. `@fullcalendar/react/themes/classic`, `/monarch`, `/bree
 - [React Documentation](https://fullcalendar.io/docs/react)
 - [React Scheduler Documentation](https://fullcalendar.io/docs/react#fullcalendar-premium)
 - [React Example Project](https://github.com/fullcalendar/fullcalendar-examples/tree/main/react19)
-- [Options Reference](https://fullcalendar.io/docs#toc)
+- [Options Reference](https://fullcalendar.io/docs/all)

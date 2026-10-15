@@ -79,4 +79,4 @@ Themes are plugins too. `@fullcalendar/vue3/themes/classic`, `/monarch`, `/breez
 - [Vue Documentation](https://fullcalendar.io/docs/vue)
 - [Vue Scheduler Documentation](https://fullcalendar.io/docs/vue#fullcalendar-premium)
 - [Vue Example Project](https://github.com/fullcalendar/fullcalendar-examples/tree/main/vue3)
-- [Options Reference](https://fullcalendar.io/docs#toc)
+- [Options Reference](https://fullcalendar.io/docs/all)

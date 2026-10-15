@@ -87,7 +87,7 @@ Themes are plugins too. `@fullcalendar/angular/themes/classic`, `/monarch`, `/br
 - [Angular Documentation](https://fullcalendar.io/docs/angular)
 - [Angular Scheduler Documentation](https://fullcalendar.io/docs/angular#fullcalendar-premium)
 - [Angular Example Project](https://github.com/fullcalendar/fullcalendar-examples/tree/main/angular22)
-- [Options Reference](https://fullcalendar.io/docs#toc)
+- [Options Reference](https://fullcalendar.io/docs/all)
 
 ## History
 

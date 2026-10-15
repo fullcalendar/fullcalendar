@@ -62,4 +62,4 @@ Themes are plugins too. `@fullcalendar/web-component/themes/classic`, `/monarch`
 
 - [Web Component Documentation](https://fullcalendar.io/docs/web-component)
 - [Web Component Scheduler Documentation](https://fullcalendar.io/docs/web-component#fullcalendar-premium)
-- [Options Reference](https://fullcalendar.io/docs#toc)
+- [Options Reference](https://fullcalendar.io/docs/all)

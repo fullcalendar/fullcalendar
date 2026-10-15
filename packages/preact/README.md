@@ -53,4 +53,4 @@ Themes are plugins too. `@fullcalendar/preact/themes/classic`, `/monarch`, `/bre
 - [Preact Documentation](https://fullcalendar.io/docs/preact)
 - [Preact Scheduler Documentation](https://fullcalendar.io/docs/preact#fullcalendar-premium)
 - [Preact Example Project](https://github.com/fullcalendar/fullcalendar-examples/tree/main/preact)
-- [Options Reference](https://fullcalendar.io/docs#toc)
+- [Options Reference](https://fullcalendar.io/docs/all)
