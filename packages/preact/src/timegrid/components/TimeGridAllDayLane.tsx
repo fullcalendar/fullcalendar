@@ -79,7 +79,6 @@ export class TimeGridAllDayLane extends DateComponent<TimeGridAllDayLaneProps, T
 
   componentWillUnmount(): void {
     this._isUnmounting = true
-    this.disconnectMoreLinkHeight?.()
   }
 
   handleRootEl = (rootEl: HTMLDivElement) => {

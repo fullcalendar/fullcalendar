@@ -356,7 +356,6 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
 
     this._isUnmounting = true
     this.disconnectTitleHeight()
-    this.disconnectTableHeaderHeight?.()
 
     options.singleMonthWillUnmount?.({
       el: this.rootEl,

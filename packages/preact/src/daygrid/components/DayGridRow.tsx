@@ -638,6 +638,8 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
     }
   }
 
+  // React 18 Strict Mode replays mount lifecycles without reattaching DOM refs.
+  // Keep height observation and cleanup tied to the DOM ref.
   handleRootEl = (rootEl: HTMLElement | null) => {
     this.disconnectHeight?.()
     this.disconnectHeight = undefined
@@ -647,6 +649,8 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
       this.disconnectHeight = watchHeight(rootEl, (contentHeight) => {
         setRef(this.props.heightRef, contentHeight)
       })
+    } else {
+      setRef(this.props.heightRef, null)
     }
   }
 
@@ -665,8 +669,6 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
 
   componentWillUnmount(): void {
     this._isUnmounting = true
-    this.disconnectHeight?.()
-    setRef(this.props.heightRef, null)
   }
 
   computeFgDims(): [maxMainTop: number | undefined, minMainHeight: number | undefined] {

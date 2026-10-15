@@ -10,6 +10,7 @@ import classicThemePlugin from '../dist/themes/classic'
 import dayGridPlugin from '../dist/daygrid'
 import listPlugin from '../dist/list'
 import { anyElsIntersect } from './utils'
+import type { DateComponent } from '../dist/.tsout/protected-api'
 
 const NOW_DATE = new Date()
 const TEST_TOOLBAR_CLASS = 'test-toolbar'
@@ -125,6 +126,80 @@ it('won\'t rerender events if nothing changed', function() {
     <FullCalendar {...options} />
   )
   expect(container.querySelector(`.${TEST_EVENT_CLASS}`)).toBe(eventEl)
+})
+
+// https://github.com/fullcalendar/fullcalendar/issues/8119
+it('preserves day-grid hit detection when Strict Mode replays mount lifecycles', async () => {
+  const elements = new Set<Element>()
+  let deliver: (entries: unknown[]) => void
+  let dayGrid: DateComponent<any>
+  let rowEl: HTMLElement
+  let unmount: (() => void) | undefined
+
+  vi.resetModules()
+  vi.stubGlobal('ResizeObserver', class {
+    constructor(callback: typeof deliver) {
+      deliver = callback
+    }
+
+    observe(el: Element) {
+      elements.add(el)
+    }
+
+    unobserve(el: Element) {
+      elements.delete(el)
+    }
+  })
+
+  class TrackDayGrid {
+    component: DateComponent<any>
+    isHitComboAllowed = null
+
+    constructor(settings: { component: DateComponent<any>, el: HTMLElement }) {
+      this.component = settings.component
+      dayGrid = settings.component
+      rowEl = settings.el.querySelector('[role=row]')!
+    }
+
+    destroy() {
+    }
+  }
+
+  try {
+    // Load a fresh observer module after installing the mock for this test.
+    const { default: FullCalendar } = await import('../dist')
+    const { default: dayGridPlugin } = await import('../dist/daygrid')
+
+    unmount = render(
+      <React.StrictMode>
+        <FullCalendar
+          plugins={[dayGridPlugin as any, { name: 'track-daygrid', componentInteractions: [TrackDayGrid] }]}
+          initialView="dayGridMonth"
+          initialDate="2026-10-01"
+          dayMaxEvents={true}
+        />
+      </React.StrictMode>,
+    ).unmount
+
+    act(() => {
+      deliver(Array.from(elements, (target) => ({
+        target,
+        borderBoxSize: [{ inlineSize: 700, blockSize: 100 }],
+      })))
+    })
+
+    const firstHit = dayGrid.queryHit(false, 50, 50, 700, 600)!
+    const secondHit = dayGrid.queryHit(false, 150, 150, 700, 600)!
+    expect(firstHit.dateSpan.range.start.toISOString().slice(0, 10)).toBe('2026-09-27')
+    expect(secondHit.dateSpan.range.start.toISOString().slice(0, 10)).toBe('2026-10-05')
+    expect(dayGrid.state.moreLinkHeight).toBe(100)
+
+    unmount()
+    expect(elements.has(rowEl)).toBe(false)
+  } finally {
+    unmount?.()
+    vi.unstubAllGlobals()
+  }
 })
 
 // https://github.com/fullcalendar/fullcalendar-react/issues/185

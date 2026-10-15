@@ -212,7 +212,6 @@ export class DayGridRows extends DateComponent<DayGridRowsProps, DayGridRowsStat
 
   componentWillUnmount(): void {
     this._isUnmounting = true
-    this.disconnectMoreLinkHeight?.()
   }
 
   // Hit System
