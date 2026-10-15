@@ -1,4 +1,9 @@
 
+## unreleased
+
+- FIX: `event.setProp('resourceEditable', ...)` was ignored with a warning (#5166)
+
+
 ## v7.1.2
 
 ### :accessibility: Accessibility Fixes
