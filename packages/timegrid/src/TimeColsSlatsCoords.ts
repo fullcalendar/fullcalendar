@@ -7,6 +7,7 @@ import {
   asRoughMs,
   DateProfile,
   rangeContainsMarker,
+  addDays,
 } from '@fullcalendar/core/internal'
 
 export class TimeColsSlatsCoords {
@@ -17,18 +18,25 @@ export class TimeColsSlatsCoords {
   ) {
   }
 
+  /*
+  Tries the date's own day first. When slotMaxTime extends past midnight, or slotMinTime is negative,
+  the date might only be visible within the previous or next day's column (#6394)
+  */
   safeComputeTop(date: DateMarker) { // TODO: DRY with computeDateTop
     let { dateProfile } = this
+    let ownDayDate = startOfDay(date)
+    let dayDates = [ownDayDate, addDays(ownDayDate, -1), addDays(ownDayDate, 1)]
 
-    if (rangeContainsMarker(dateProfile.currentRange, date)) {
-      let startOfDayDate = startOfDay(date)
-      let timeMs = date.valueOf() - startOfDayDate.valueOf()
+    for (let dayDate of dayDates) {
+      if (rangeContainsMarker(dateProfile.currentRange, dayDate)) {
+        let timeMs = date.valueOf() - dayDate.valueOf()
 
-      if (
-        timeMs >= asRoughMs(dateProfile.slotMinTime) &&
-        timeMs < asRoughMs(dateProfile.slotMaxTime)
-      ) {
-        return this.computeTimeTop(createDuration(timeMs))
+        if (
+          timeMs >= asRoughMs(dateProfile.slotMinTime) &&
+          timeMs < asRoughMs(dateProfile.slotMaxTime)
+        ) {
+          return this.computeTimeTop(createDuration(timeMs))
+        }
       }
     }
 
