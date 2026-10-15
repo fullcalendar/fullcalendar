@@ -39,7 +39,14 @@ export class EventClicking extends Interaction {
       // our way to simulate a link click for elements that can't be <a> tags
       // grab before trigger fired in case trigger trashes DOM thru rerendering
       let hasUrlContainer = elementClosest(ev.target as HTMLElement, '.fc-event-forced-url')
-      let url = hasUrlContainer ? (hasUrlContainer.querySelector('a[href]') as any).href : ''
+      let url = ''
+
+      if (hasUrlContainer) {
+        let anchorEl = hasUrlContainer.querySelector('a[href]') as HTMLAnchorElement | null
+
+        // custom eventContent might not render an <a> (#6133)
+        url = anchorEl ? anchorEl.href : seg.eventRange.def.url
+      }
 
       context.emitter.trigger('eventClick', {
         el: segEl,
