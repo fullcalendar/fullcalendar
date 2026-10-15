@@ -7,6 +7,7 @@ import classNames from '../../styles.module.css'
 
 export interface TimeGridNowIndicatorArrowProps {
   nowDate: DateMarker
+  dayDate: DateMarker // the column day that nowDate is drawn within
   dateProfile: DateProfile
   totalHeight: number | undefined
 }
@@ -30,7 +31,7 @@ export function TimeGridNowIndicatorArrow(props: TimeGridNowIndicatorArrowProps)
         className={classNames.abs}
         style={{
           top: props.totalHeight != null
-            ? props.totalHeight * computeDateTopFrac(props.nowDate, props.dateProfile)
+            ? props.totalHeight * computeDateTopFrac(props.nowDate, props.dateProfile, props.dayDate)
             : undefined
         }}
         date={props.nowDate}

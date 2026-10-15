@@ -1,7 +1,7 @@
 import { joinClassNames } from '../../util/html'
 import { afterSize } from '../../component-util/resize-observer'
 import { BaseComponent, setRef } from '../../vdom-util'
-import { DateMarker, DateRange, rangeContainsMarker, startOfDay } from '@full-ui/headless-calendar'
+import { DateMarker, DateRange } from '@full-ui/headless-calendar'
 import { DateProfile } from '../../DateProfileGenerator'
 import { DayTableCell } from '../../daygrid/DayTableModel'
 import { EventRangeProps } from '../../component-util/event-rendering'
@@ -29,7 +29,7 @@ import { TimeGridNowIndicatorArrow } from "./TimeGridNowIndicatorArrow"
 import { TimeGridSlatHeader } from "./TimeGridSlatHeader"
 import { TimeGridSlatLane } from "./TimeGridSlatLane"
 import { TimeGridWeekNumber } from "./TimeGridWeekNumber"
-import { computeSlatHeight } from './util'
+import { computeSlatHeight, computeNowIndicatorDayDate } from './util'
 import { computeTimeGridPrintMode } from '../print-mode'
 import { computeViewBorderless } from '../../util/misc'
 
@@ -111,7 +111,9 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
   render() {
     const { props, state, context, slatLabelInnerWidthRefMap, slatLabelInnerHeightRefMap, headerLabelInnerWidthRefMap } = this
     const { nowDate, forPrint } = props
-    const nowTimeMs = nowDate.valueOf() - startOfDay(nowDate).valueOf()
+    const nowIndicatorDayDate = (!forPrint && context.options.nowIndicator)
+      ? computeNowIndicatorDayDate(nowDate, props.nowIndicatorSegsByCol, props.cells)
+      : undefined
     const { axisWidth, clientWidth, totalWidth } = state
     const { options } = context
     const { borderlessX, borderlessTop, borderlessBottom } = computeViewBorderless(options)
@@ -458,11 +460,10 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
                     />
                   )}
 
-                  {!forPrint && options.nowIndicator && rangeContainsMarker(props.dateProfile.currentRange, nowDate) &&
-                    nowTimeMs >= props.dateProfile.slotMinTime.milliseconds &&
-                    nowTimeMs < props.dateProfile.slotMaxTime.milliseconds && (
+                  {nowIndicatorDayDate && (
                     <TimeGridNowIndicatorArrow
                       nowDate={nowDate}
+                      dayDate={nowIndicatorDayDate}
                       dateProfile={props.dateProfile}
                       totalHeight={slatHeight != null ? slatHeight * slatCnt : undefined}
                     />

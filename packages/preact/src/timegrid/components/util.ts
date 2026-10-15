@@ -32,6 +32,35 @@ export function computeSlatHeight(
 }
 
 /*
+The day of the column that the now-indicator is drawn within. Usually now's own day, but when slotMaxTime
+extends past midnight, it might only be within the previous day's column (#6394).
+Undefined if now isn't within any column.
+*/
+export function computeNowIndicatorDayDate(
+  nowDate: DateMarker,
+  nowIndicatorSegsByCol: unknown[][],
+  cells: { date: DateMarker }[],
+): DateMarker | undefined {
+  const nowDayMs = startOfDay(nowDate).valueOf()
+  let firstDayDate: DateMarker | undefined
+
+  for (let col = 0; col < cells.length; col++) {
+    if (nowIndicatorSegsByCol[col]?.length) {
+      const { date } = cells[col]
+
+      if (date.valueOf() === nowDayMs) {
+        return date
+      }
+      if (!firstDayDate) {
+        firstDayDate = date
+      }
+    }
+  }
+
+  return firstDayDate
+}
+
+/*
 A `startOfDayDate` must be given for avoiding ambiguity over how to treat midnight.
 */
 export function computeDateTopFrac(
