@@ -398,6 +398,10 @@ export const COMPLEX_OPTION_COMPARATORS: {
   events: isMaybeArraysEqual,
   eventSources: isMaybeArraysEqual,
   ['resources' as any]: isMaybeArraysEqual,
+  // otherwise, an equal-but-new value, like from a React rerender, rebuilds the date profile (#7069)
+  validRange: isMaybeDateRangeInputsEqual,
+  visibleRange: isMaybeDateRangeInputsEqual,
+  hiddenDays: isMaybeArraysEqual,
 }
 
 export function isMaybeObjectsEqual(a, b) {
@@ -408,6 +412,26 @@ export function isMaybeObjectsEqual(a, b) {
 }
 
 function isMaybeArraysEqual(a, b) {
+  if (Array.isArray(a) && Array.isArray(b)) {
+    return isArraysEqual(a, b)
+  }
+  return a === b
+}
+
+/*
+For range inputs like { start, end }. Functions are compared by reference
+*/
+function isMaybeDateRangeInputsEqual(a, b) {
+  if (typeof a === 'object' && typeof b === 'object' && a && b) { // both non-null objects
+    return isPropsEqual(a, b, isDateInputsEqual)
+  }
+  return a === b
+}
+
+function isDateInputsEqual(a, b) {
+  if (a instanceof Date && b instanceof Date) {
+    return a.valueOf() === b.valueOf()
+  }
   if (Array.isArray(a) && Array.isArray(b)) {
     return isArraysEqual(a, b)
   }

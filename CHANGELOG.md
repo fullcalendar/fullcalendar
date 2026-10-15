@@ -11,6 +11,7 @@
 - fix: in list view, clicking event with url and custom eventContent crashes instead of navigating (#6133)
 - fix: `batchRendering` missing from `CalendarApi` type, e.g. for React's `getApi()` (#7227)
 - fix: `event.setProp('resourceEditable', ...)` ignored with a warning (#5166)
+- fix: React "Maximum update depth exceeded" when `validRange`, `visibleRange` or `hiddenDays` is a new-but-equal value each render and `datesSet` sets state (#7069)
 
 ## 6.1.21 (2026-06-17)
 

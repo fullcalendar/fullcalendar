@@ -105,7 +105,7 @@ export function hashValuesToArray(obj) { // can't use Object.values yet because 
   return a
 }
 
-export function isPropsEqual(obj0, obj1) { // TODO: merge with compareObjs
+export function isPropsEqual(obj0, obj1, valuesEqual?: (val0, val1) => boolean) { // TODO: merge with compareObjs
   if (obj0 === obj1) {
     return true
   }
@@ -120,7 +120,7 @@ export function isPropsEqual(obj0, obj1) { // TODO: merge with compareObjs
 
   for (let key in obj1) {
     if (hasOwnProperty.call(obj1, key)) {
-      if (obj0[key] !== obj1[key]) {
+      if (!(valuesEqual ? valuesEqual(obj0[key], obj1[key]) : obj0[key] === obj1[key])) {
         return false
       }
     }
