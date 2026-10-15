@@ -1,4 +1,5 @@
 import { guid } from './util/misc.js'
+import { MAJOR_VERSION_ERROR } from './util/v7.js'
 import { PluginDefInput, PluginDef, PluginHooks } from './plugin-system-struct.js'
 import { isArraysEqual } from './util/array.js'
 
@@ -6,6 +7,7 @@ import { isArraysEqual } from './util/array.js'
 
 export function createPlugin(input: PluginDefInput): PluginDef {
   return {
+    majorVersionError: MAJOR_VERSION_ERROR,
     id: guid(),
     name: input.name,
     premiumReleaseDate: input.premiumReleaseDate ? new Date(input.premiumReleaseDate): undefined,

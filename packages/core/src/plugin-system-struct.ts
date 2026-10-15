@@ -1,3 +1,4 @@
+import { MAJOR_VERSION_ERROR } from './util/v7.js'
 import { ReducerFunc } from './reducers/CalendarDataManager.js'
 import { EventDefMemberAdder } from './structs/event-parse.js'
 import { eventDefMutationApplier } from './structs/event-mutation.js'
@@ -99,6 +100,7 @@ export interface PluginHooks {
 }
 
 export interface PluginDef extends PluginHooks {
+  majorVersionError: typeof MAJOR_VERSION_ERROR
   id: string
   name: string
   deps: PluginDef[]
