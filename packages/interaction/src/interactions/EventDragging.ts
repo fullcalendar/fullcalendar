@@ -290,7 +290,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
           let transformed: ReturnType<EventDropTransformers> = {}
           for (let transformer of initialContext.getCurrentData().pluginHooks.eventDropTransformers) {
-            Object.assign(transformed, transformer(validMutation, initialContext))
+            Object.assign(transformed, transformer(validMutation, initialContext, eventDef))
           }
 
           initialContext.emitter.trigger('eventDrop', {

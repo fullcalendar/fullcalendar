@@ -13,6 +13,7 @@
 - fix: `event.setProp('resourceEditable', ...)` ignored with a warning (#5166)
 - fix: React "Maximum update depth exceeded" when `validRange`, `visibleRange` or `hiddenDays` is a new-but-equal value each render and `datesSet` sets state (#7069)
 - fix: when `slotMaxTime` is beyond 24h, now-indicator disappears after midnight in timeline views, and its arrow disappears in timegrid views (#6394)
+- fix: `eventDrop` reports `oldResource`/`newResource` when an event that isn't resource-editable is dragged over another resource, even though its resource doesn't change (#4943)
 
 ## 6.1.21 (2026-06-17)
 
