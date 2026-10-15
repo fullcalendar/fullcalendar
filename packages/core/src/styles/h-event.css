@@ -17,6 +17,7 @@ A HORIZONTAL event
   }
 
   & .fc-event-time {
+    flex-shrink: 0; // let the title get crowded out first
     max-width: 100%; // clip overflow on this element
     overflow: hidden;
   }
