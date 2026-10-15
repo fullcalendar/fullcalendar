@@ -2,6 +2,7 @@
 ## unreleased
 
 - FIX: `event.setProp('resourceEditable', ...)` was ignored with a warning (#5166)
+- FIX: React "Maximum update depth exceeded" when `validRange`, `visibleRange` or `hiddenDays` is given as a new-but-equal value each render and `datesSet` sets state (#7069)
 
 
 ## v7.1.2

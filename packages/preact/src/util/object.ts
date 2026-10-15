@@ -1,4 +1,5 @@
 import { valuesIdentical } from './misc'
+import { isArraysEqual } from './array'
 
 const { hasOwnProperty } = Object.prototype
 
@@ -125,6 +126,30 @@ export function isMaybePropsEqualShallow(props0: any, props1: any) {
 
 export function isPropsEqualShallow(props0: any, props1: any) {
   return isPropsEqualWithFunc(props0, props1, valuesIdentical)
+}
+
+/*
+For range inputs like { start, end }. Functions are compared by reference
+*/
+export function isMaybeDateRangeInputsEqual(range0: any, range1: any) {
+  if (
+    typeof range0 === 'object' &&
+    typeof range1 === 'object' &&
+    range0 && range1 // both non-null objects
+  ) {
+    return isPropsEqualWithFunc(range0, range1, isDateInputsEqual)
+  }
+  return range0 === range1
+}
+
+function isDateInputsEqual(input0: any, input1: any) {
+  if (input0 instanceof Date && input1 instanceof Date) {
+    return input0.valueOf() === input1.valueOf()
+  }
+  if (Array.isArray(input0) && Array.isArray(input1)) {
+    return isArraysEqual(input0, input1)
+  }
+  return input0 === input1
 }
 
 export function isPropsEqualWithMap(

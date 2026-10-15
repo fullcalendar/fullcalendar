@@ -62,7 +62,7 @@ import { CalendarDisplayInfo } from './calendar-root'
 import { createDuration, DateFormatter, Duration } from '@full-ui/headless-calendar'
 import { createFormatter } from './datelib/formatting'
 import { parseFieldSpecs } from './util/misc'
-import { isMaybePropsEqualShallow, isMaybePropsEqualDepth1 } from './util/object'
+import { isMaybePropsEqualShallow, isMaybePropsEqualDepth1, isMaybeDateRangeInputsEqual } from './util/object'
 import { isMaybeArraysEqual } from './util/array'
 import { ListDayInfo, ListDayEventsInfo, ListDayHeaderInfo, ListDayHeaderInnerInfo } from './list/structs'
 import { NoEventsInfo } from './list/components/ListView'
@@ -670,6 +670,10 @@ export const COMPLEX_OPTION_COMPARATORS: {
   events: isMaybeArraysEqual,
   eventSources: isMaybeArraysEqual,
   ['resources' as any]: isMaybeArraysEqual,
+  // otherwise, an equal-but-new value, like from a React rerender, rebuilds the date profile (#7069)
+  validRange: isMaybeDateRangeInputsEqual,
+  visibleRange: isMaybeDateRangeInputsEqual,
+  hiddenDays: isMaybeArraysEqual,
 }
 
 // util funcs
