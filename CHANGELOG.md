@@ -4,6 +4,10 @@
 - fix: event time cut off by long title with eventDisplay:'block' (#6457)
 - fix: non-string toolbar button text, like JSX, crashes rendering (#7120)
   (now warns and falls back to the button name. use v7's `iconContent` for custom button content)
+- fix: style injection crashes when calendar is mounted in an iframe (#7301)
+- fix: crash when inline styles are blocked by a Content Security Policy (#7353)
+  (now warns instead. styles must be provided another way, or upgrade to v7, which distributes plain CSS files)
+- fix: crash in Salesforce LWC with Lightning Web Security when querying CSP nonce (#7439)
 
 ## 6.1.21 (2026-06-17)
 

@@ -1,3 +1,4 @@
+import { V7_UPGRADE_HINT } from './util/v7.js'
 
 const styleTexts: string[] = []
 const styleEls = new Map<ParentNode, HTMLStyleElement>()
@@ -25,7 +26,11 @@ function registerStylesRoot(rootNode: ParentNode): void {
     styleEl = rootNode.querySelector('style[data-fullcalendar]')
 
     if (!styleEl) {
-      styleEl = document.createElement('style')
+      // the root might be a document other than the global one, like an iframe's (#7301)
+      const isDocument = rootNode.nodeType === 9 // DOCUMENT_NODE
+      const ownerDocument = isDocument ? rootNode as Document : (rootNode as Node).ownerDocument
+
+      styleEl = ownerDocument.createElement('style')
       styleEl.setAttribute('data-fullcalendar', '')
 
       const nonce = getNonceValue()
@@ -33,8 +38,8 @@ function registerStylesRoot(rootNode: ParentNode): void {
         styleEl.nonce = nonce
       }
 
-      const parentEl = rootNode === document ? document.head : rootNode
-      const insertBefore = rootNode === document
+      const parentEl = isDocument ? ownerDocument.head : rootNode
+      const insertBefore = isDocument
         ? parentEl.querySelector('script,link[rel=stylesheet],link[as=style],style')
         : parentEl.firstChild
 
@@ -52,8 +57,24 @@ function hydrateStylesRoot(styleEl: HTMLStyleElement): void {
   }
 }
 
+let warnedStylesBlocked = false
+
 function appendStylesTo(styleEl: HTMLStyleElement, styleText: string): void {
   const { sheet } = styleEl
+
+  // null when inline styles are blocked by a Content Security Policy (#7353)
+  if (!sheet) {
+    if (!warnedStylesBlocked) {
+      warnedStylesBlocked = true
+      console.warn(
+        'FullCalendar could not inject its styles, possibly because of a Content Security Policy. ' +
+        'v7 distributes plain CSS files instead of injecting styles. ' +
+        V7_UPGRADE_HINT,
+      )
+    }
+    return
+  }
+
   const ruleCnt = sheet.cssRules.length
 
   styleText.split('}').forEach((styleStr, i) => {
@@ -80,16 +101,21 @@ function getNonceValue() {
 TODO: discourage meta tag and instead put nonce attribute on placeholder <style> tag
 */
 function queryNonceValue() {
-  const metaWithNonce = document.querySelector('meta[name="csp-nonce"]')
+  // sandboxed environments, like Salesforce's Lightning Web Security, can throw on these queries (#7439)
+  try {
+    const metaWithNonce = document.querySelector('meta[name="csp-nonce"]')
 
-  if (metaWithNonce && metaWithNonce.hasAttribute('content')) {
-    return metaWithNonce.getAttribute('content')
-  }
+    if (metaWithNonce && metaWithNonce.hasAttribute('content')) {
+      return metaWithNonce.getAttribute('content')
+    }
 
-  const elWithNonce = document.querySelector('script[nonce]')
+    const elWithNonce = document.querySelector('script[nonce]')
 
-  if (elWithNonce) {
-    return (elWithNonce as any).nonce || ''
+    if (elWithNonce) {
+      return (elWithNonce as any).nonce || ''
+    }
+  } catch (err) {
+    // ignore
   }
 
   return ''
