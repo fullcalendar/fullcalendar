@@ -2,7 +2,7 @@
   "name": "@fullcalendar/luxon3",
   "version": "6.1.21",
   "title": "FullCalendar Luxon 3 Plugin",
-  "description": "Enhanced date formatting, conversion, and named time zone functionality with Luxon 3",
+  "description": "FullCalendar v6 only (v7 is current: use @fullcalendar/format-luxon3 instead). Enhanced date formatting, conversion, and named time zone functionality with Luxon 3",
   "keywords": [
     "luxon",
     "luxon3",

@@ -2,7 +2,7 @@
   "name": "@fullcalendar/interaction",
   "version": "6.1.21",
   "title": "FullCalendar Interaction Plugin",
-  "description": "Calendar functionality for event drag-n-drop, event resizing, date clicking, and date selecting",
+  "description": "FullCalendar v6 only (in v7, this plugin is built into each framework package, e.g. @fullcalendar/react/interaction). Calendar functionality for event drag-n-drop, event resizing, date clicking, and date selecting",
   "keywords": [
     "drag-n-drop",
     "resizing",

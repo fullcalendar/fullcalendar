@@ -2,7 +2,7 @@
   "name": "@fullcalendar/list",
   "version": "6.1.21",
   "title": "FullCalendar List View Plugin",
-  "description": "Display events on a calendar view that looks like a bulleted list",
+  "description": "FullCalendar v6 only (in v7, this plugin is built into each framework package, e.g. @fullcalendar/react/list). Display events on a calendar view that looks like a bulleted list",
   "keywords": [
     "list-view"
   ],

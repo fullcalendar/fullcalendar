@@ -2,7 +2,7 @@
   "name": "@fullcalendar/multimonth",
   "version": "6.1.21",
   "title": "FullCalendar Multi-Month Plugin",
-  "description": "Display a sequence or grid of multiple months",
+  "description": "FullCalendar v6 only (in v7, this plugin is built into each framework package, e.g. @fullcalendar/react/multimonth). Display a sequence or grid of multiple months",
   "keywords": [
     "month"
   ],

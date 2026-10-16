@@ -2,7 +2,7 @@
   "name": "@fullcalendar/moment-timezone",
   "version": "6.1.21",
   "title": "FullCalendar Moment Timezone Plugin",
-  "description": "Enhanced named time zone functionality with Moment Timezone",
+  "description": "FullCalendar v6 only (v7 is current: time zones are built in). Enhanced named time zone functionality with Moment Timezone",
   "keywords": [
     "moment",
     "moment-timezone",

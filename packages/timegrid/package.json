@@ -2,7 +2,7 @@
   "name": "@fullcalendar/timegrid",
   "version": "6.1.21",
   "title": "FullCalendar Time Grid Plugin",
-  "description": "Display events on time slots",
+  "description": "FullCalendar v6 only (in v7, this plugin is built into each framework package, e.g. @fullcalendar/react/timegrid). Display events on time slots",
   "keywords": [
     "time",
     "slots"

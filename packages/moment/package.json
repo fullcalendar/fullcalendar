@@ -2,7 +2,7 @@
   "name": "@fullcalendar/moment",
   "version": "6.1.21",
   "title": "FullCalendar Moment Plugin",
-  "description": "Enhanced date formatting and conversion with Moment",
+  "description": "FullCalendar v6 only (v7 is current: use @fullcalendar/format-moment instead). Enhanced date formatting and conversion with Moment",
   "keywords": [
     "moment"
   ],

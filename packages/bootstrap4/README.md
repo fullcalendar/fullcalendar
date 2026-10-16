@@ -1,6 +1,8 @@
 
 # FullCalendar Bootstrap 4 Plugin
 
+> **This package is for FullCalendar v6.** The current version is v7, which has no `@fullcalendar/bootstrap` package. With v7, don't install `@fullcalendar/bootstrap` or `@fullcalendar/core`, and don't downgrade to v6. For Bootstrap 5, use the v7 version of `@fullcalendar/bootstrap5`. See the [upgrade guide](https://fullcalendar.io/docs/upgrading-from-v6).
+
 [Bootstrap 4](https://getbootstrap.com/docs/4.6/getting-started/introduction/) theme for [FullCalendar](https://fullcalendar.io)
 
 > For [Bootstrap 5](https://getbootstrap.com/), use the [@fullcalendar/bootstrap5](https://github.com/fullcalendar/fullcalendar/tree/main/packages/bootstrap5) package
