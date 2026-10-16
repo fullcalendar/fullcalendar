@@ -20,6 +20,12 @@
 - fix: `eventDrop` reports `oldResource`/`newResource` when an event that isn't resource-editable is dragged over another resource, even though its resource doesn't change (#4943)
 - fix: event time cut off by long title with eventDisplay:'block' (#6457)
 
+### v7 upgrade guidance
+
+- feature: passing a v6 plugin to FullCalendar v7 now fails with a clear message naming the v7 import
+  (v6 plugins carry a `majorVersionError` property. in TypeScript, the error replaces a cryptic one about `premiumReleaseDate`)
+- docs: READMEs and npm descriptions of the v6-only packages, like `@fullcalendar/daygrid`, now say they're for v6 and name their v7 replacement
+
 ## 6.1.21 (2026-06-17)
 
 - feature: Angular 22 support (#8074)
