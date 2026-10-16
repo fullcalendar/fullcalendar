@@ -1,7 +1,8 @@
 
-## unreleased
+## 6.1.22 (2026-10-15)
 
-- fix: event time cut off by long title with eventDisplay:'block' (#6457)
+### v6-only bugfixes
+
 - fix: non-string toolbar button text, like JSX, crashes rendering (#7120)
   (now warns and falls back to the button name. use v7's `iconContent` for custom button content)
 - fix: style injection crashes when calendar is mounted in an iframe (#7301)
@@ -10,10 +11,14 @@
 - fix: crash in Salesforce LWC with Lightning Web Security when querying CSP nonce (#7439)
 - fix: in list view, clicking event with url and custom eventContent crashes instead of navigating (#6133)
 - fix: `batchRendering` missing from `CalendarApi` type, e.g. for React's `getApi()` (#7227)
+
+### Bugfixes backported from v7
+
 - fix: `event.setProp('resourceEditable', ...)` ignored with a warning (#5166)
 - fix: React "Maximum update depth exceeded" when `validRange`, `visibleRange` or `hiddenDays` is a new-but-equal value each render and `datesSet` sets state (#7069)
 - fix: when `slotMaxTime` is beyond 24h, now-indicator disappears after midnight in timeline views, and its arrow disappears in timegrid views (#6394)
 - fix: `eventDrop` reports `oldResource`/`newResource` when an event that isn't resource-editable is dragged over another resource, even though its resource doesn't change (#4943)
+- fix: event time cut off by long title with eventDisplay:'block' (#6457)
 
 ## 6.1.21 (2026-06-17)
 
