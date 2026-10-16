@@ -1,3 +1,4 @@
+import { type MoreLinkClickInfo } from 'fullcalendar'
 import classicThemePlugin from 'fullcalendar/themes/classic' // need both
 import themeForTestsPlugin from '../lib/theme-for-tests' // "
 import dayGridPlugin from 'fullcalendar/daygrid'
@@ -136,7 +137,7 @@ describe('moreLinkClick', () => {
   it('works with custom function and all the arguments are correct', async () => {
     let handled = false
     let calendar = initCalendar({
-      moreLinkClick(info) {
+      moreLinkClick(info: MoreLinkClickInfo) {
         expect(typeof info).toBe('object')
         expect(info.date).toEqualDate('2014-07-29')
         expect(info.hiddenSegs.length).toBe(2)

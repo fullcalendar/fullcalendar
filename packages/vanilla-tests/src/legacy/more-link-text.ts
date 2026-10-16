@@ -1,4 +1,5 @@
 import frLocale from 'fullcalendar/locales/fr'
+import { type MoreLinkInfo } from 'fullcalendar'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { waitTimeout } from '../lib/misc'
 
@@ -34,6 +35,20 @@ describe('moreLinkText', () => {
     await waitTimeout()
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     expect(dayGridWrapper.getMoreEl()).toHaveText('there are 2 more events!')
+  })
+
+  it('accepts the public render-hook info type', async () => {
+    let calendar = initCalendar({
+      moreLinkContent(info: MoreLinkInfo) {
+        expect(typeof info.numericText).toBe('string')
+        expect(typeof info.longText).toBe('string')
+        expect(typeof info.isNarrow).toBe('boolean')
+        return `Hidden events: ${info.num}`
+      },
+    })
+    await waitTimeout()
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    expect(dayGridWrapper.getMoreEl()).toHaveText('Hidden events: 2')
   })
 
   it('has a default value that is affected by the custom locale', async () => {
