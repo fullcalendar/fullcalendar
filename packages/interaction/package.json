@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/interaction",
-  "version": "6.1.21",
+  "version": "6.1.22",
   "title": "FullCalendar Interaction Plugin",
   "description": "FullCalendar v6 only (in v7, this plugin is built into each framework package, e.g. @fullcalendar/react/interaction). Calendar functionality for event drag-n-drop, event resizing, date clicking, and date selecting",
   "keywords": [
@@ -10,10 +10,10 @@
   ],
   "homepage": "https://fullcalendar.io/docs/editable",
   "peerDependencies": {
-    "@fullcalendar/core": "~6.1.21"
+    "@fullcalendar/core": "~6.1.22"
   },
   "devDependencies": {
-    "@fullcalendar/core": "~6.1.21",
+    "@fullcalendar/core": "~6.1.22",
     "@fullcalendar-scripts/standard": "*"
   },
   "scripts": {

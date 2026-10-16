@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/core",
-  "version": "6.1.21",
+  "version": "6.1.22",
   "title": "FullCalendar Core",
   "description": "FullCalendar v6 core package (v7 is current: install your framework's v7 package and import plugins from it, e.g. @fullcalendar/react/daygrid). FullCalendar core package for rendering a calendar",
   "dependencies": {
