@@ -62,7 +62,7 @@ importers:
         specifier: ~4.3.0
         version: 4.3.6
       fullcalendar:
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../vanilla/dist
       jasmine-core:
         specifier: ~4.6.0
@@ -105,7 +105,7 @@ importers:
         specifier: workspace:*
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../core-types/dist
       bootstrap:
         specifier: ^5.3.8
@@ -118,7 +118,7 @@ importers:
   packages/core-types:
     devDependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../headless-calendar/dist
       '@fullcalendar-scripts/standard':
         specifier: workspace:*
@@ -131,10 +131,10 @@ importers:
   packages/format-luxon3:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -154,10 +154,10 @@ importers:
   packages/format-moment:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -174,10 +174,10 @@ importers:
   packages/google-calendar:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -207,10 +207,10 @@ importers:
   packages/icalendar:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -227,7 +227,7 @@ importers:
   packages/lwc-calendar:
     dependencies:
       fullcalendar:
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../vanilla/dist
     devDependencies:
       '@lwc/eslint-plugin-lwc':
@@ -252,10 +252,10 @@ importers:
   packages/preact:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -281,10 +281,10 @@ importers:
   packages/react:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -328,10 +328,10 @@ importers:
   packages/rrule:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -348,10 +348,10 @@ importers:
   packages/vanilla:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../core-types/dist
       preact:
         specifier: ^10.29.8
@@ -361,7 +361,7 @@ importers:
         specifier: workspace:*
         version: link:../../scripts
       '@fullcalendar/preact':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../preact/dist
       '@types/archiver':
         specifier: ^5.3.4
@@ -450,10 +450,10 @@ importers:
   packages/vanilla-w-react:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../core-types/dist
       react:
         specifier: ^19.2.3
@@ -466,7 +466,7 @@ importers:
         specifier: workspace:*
         version: link:../../scripts
       '@fullcalendar/react':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../react/dist
       '@types/react':
         specifier: ^19.2.9
@@ -488,10 +488,10 @@ importers:
   packages/vue3:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../core-types/dist
       preact:
         specifier: ^10.29.8
@@ -510,7 +510,7 @@ importers:
         specifier: ^2.4.6
         version: 2.4.6
       fullcalendar:
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../vanilla/dist
       globby:
         specifier: ^13.1.2
@@ -541,10 +541,10 @@ importers:
   packages/web-component:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../core-types/dist
       preact:
         specifier: ^10.29.8
@@ -554,7 +554,7 @@ importers:
         specifier: workspace:*
         version: link:../../scripts
       fullcalendar:
-        specifier: workspace:7.1.2
+        specifier: workspace:7.1.3
         version: link:../vanilla/dist
       globby:
         specifier: ^13.1.2
