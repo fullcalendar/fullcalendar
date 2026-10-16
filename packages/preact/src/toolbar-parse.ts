@@ -142,11 +142,17 @@ function parseSection(
             )
           } else {
             buttonHint = (currentUnit: string) => { // dynamic
+              // Guard empty singleUnit (e.g. duration: { month: 12 }) so locale
+              // todayHint/prevHint/nextHint never receive undefined unitText (#8100)
+              const unitText = currentUnit
+                ? (calendarOptions[currentUnit + 'TextLong'] ||
+                    calendarOptions[currentUnit + 'Text'] ||
+                    '')
+                : ''
               return formatWithOrdinals(
                 buttonInput.hint || calendarOptions[name + 'Hint'], // todayHint/prevHint/nextHint
                 [ // ordinal arguments
-                  calendarOptions[currentUnit + 'TextLong'] ||
-                    calendarOptions[currentUnit + 'Text'],
+                  unitText,
                   currentUnit
                 ],
                 buttonText, // fallback text
