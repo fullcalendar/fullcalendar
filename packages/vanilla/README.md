@@ -9,6 +9,10 @@ FullCalendar Vanilla JS package for rendering a calendar
 npm install fullcalendar temporal-polyfill
 ```
 
+## Coming from v6?
+
+In v7, plugins like dayGrid and timeGrid are part of this package, imported from subpaths like `fullcalendar/daygrid`. The separate `@fullcalendar/core`, `@fullcalendar/daygrid`, `@fullcalendar/interaction` (etc.) packages are FullCalendar v6. Don't install them with v7, and don't downgrade to v6: uninstall them and import plugins from `fullcalendar/daygrid`. See the [upgrade guide](https://fullcalendar.io/docs/upgrading-from-v6).
+
 ## Usage
 
 First, ensure there's a DOM element for your calendar to render into:

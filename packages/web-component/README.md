@@ -9,6 +9,10 @@ FullCalendar [Web Component](https://developer.mozilla.org/en-US/docs/Web/Web_Co
 npm install @fullcalendar/web-component temporal-polyfill
 ```
 
+## Coming from v6?
+
+In v7, plugins like dayGrid and timeGrid are part of this package, imported from subpaths like `@fullcalendar/web-component/daygrid`. The separate `@fullcalendar/core`, `@fullcalendar/daygrid`, `@fullcalendar/interaction` (etc.) packages are FullCalendar v6. Don't install them with v7, and don't downgrade to v6: uninstall them and import plugins from `@fullcalendar/web-component/daygrid`. See the [upgrade guide](https://fullcalendar.io/docs/upgrading-from-v6).
+
 ## Usage
 
 Render a `FullCalendar` component with [options](https://fullcalendar.io/docs#toc), including one or more plugins:
