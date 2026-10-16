@@ -1,4 +1,4 @@
-import { V7_UPGRADE_HINT } from './util/v7.js'
+import { warnOnce } from './util/v7.js'
 
 const styleTexts: string[] = []
 const styleEls = new Map<ParentNode, HTMLStyleElement>()
@@ -57,21 +57,15 @@ function hydrateStylesRoot(styleEl: HTMLStyleElement): void {
   }
 }
 
-let warnedStylesBlocked = false
-
 function appendStylesTo(styleEl: HTMLStyleElement, styleText: string): void {
   const { sheet } = styleEl
 
   // null when inline styles are blocked by a Content Security Policy (#7353)
   if (!sheet) {
-    if (!warnedStylesBlocked) {
-      warnedStylesBlocked = true
-      console.warn(
-        'FullCalendar could not inject its styles, possibly because of a Content Security Policy. ' +
-        'v7 distributes plain CSS files instead of injecting styles. ' +
-        V7_UPGRADE_HINT,
-      )
-    }
+    warnOnce(
+      'FullCalendar could not inject its styles, possibly because of a Content Security Policy. ' +
+      'v7 distributes plain CSS files instead of injecting styles.',
+    )
     return
   }
 

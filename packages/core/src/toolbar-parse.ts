@@ -4,7 +4,7 @@ import { CalendarImpl } from './api/CalendarImpl.js'
 import { CalendarOptionsRefined, CalendarOptions } from './options.js'
 import { ToolbarInput, ToolbarModel, ToolbarWidget, CustomButtonInput } from './toolbar-struct.js'
 import { formatWithOrdinals } from './util/misc.js'
-import { V7_UPGRADE_HINT } from './util/v7.js'
+import { warnOnce } from './util/v7.js'
 
 export function parseToolbars(
   calendarOptions: CalendarOptionsRefined,
@@ -172,9 +172,6 @@ function parseSection(
   return { widgets, viewsWithButtons, hasTitle }
 }
 
-// toolbars get reparsed often (ex: inline customButtons in React), so only warn once per button
-const warnedButtonNames = new Set<string>()
-
 /*
 Guards against non-string button text, like JSX, which would otherwise crash rendering (#7120)
 */
@@ -187,14 +184,10 @@ function sanitizeButtonText(buttonText: any, buttonName: string): string | undef
     return String(buttonText)
   }
 
-  if (!warnedButtonNames.has(buttonName)) {
-    warnedButtonNames.add(buttonName)
-    console.warn(
-      `Button text must be a string (button '${buttonName}'). ` +
-      'For custom button content, v7 supports the `iconContent` setting. ' +
-      V7_UPGRADE_HINT,
-    )
-  }
+  warnOnce(
+    `Button text must be a string (button '${buttonName}'). ` +
+    'For custom button content, v7 supports the `iconContent` setting.',
+  )
 
   return buttonName
 }

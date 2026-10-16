@@ -1,5 +1,12 @@
-// appended to warnings about v6 problems that won't be fixed, but that v7 addresses
-export const V7_UPGRADE_HINT = 'Consider upgrading to FullCalendar v7: https://fullcalendar.io/docs/upgrading-from-v6'
+const warnedMessages = new Set<string>()
+
+// Warns once per message about v6 problems that v7 addresses.
+export function warnOnce(message: string): void {
+  if (!warnedMessages.has(message)) {
+    warnedMessages.add(message)
+    console.warn(message + ' Consider upgrading to FullCalendar v7: https://fullcalendar.io/docs/upgrading-from-v6')
+  }
+}
 
 // set on every v6 plugin (createPlugin). FullCalendar v7 throws it at runtime, and its PluginInput
 // type only accepts `undefined` here, so TypeScript prints it too. Keep under ~300 chars: TypeScript
