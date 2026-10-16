@@ -128,28 +128,44 @@ export class TimeGridSlatHeader extends BaseComponent<TimeGridSlatHeaderProps> {
 
   componentDidMount(): void {
     this._isUnmounting = false
-    const { props } = this
-    const innerEl = this.innerElRef.current // TODO: make dynamic with useEffect
+    this.connectInnerSize()
+  }
 
-    if (innerEl) { // could be null if !isLabeled
-      // TODO: only attach this if refs props present
-      // TODO: fire width/height independently?
-      this.disconnectInnerSize = watchSize(innerEl, (width, height) => {
-        if (this._isUnmounting) return
-        setRef(props.innerWidthRef, width)
-        setRef(props.innerHeightRef, height)
-      })
+  componentDidUpdate(prevProps: TimeGridSlatHeaderProps): void {
+    // Reused slat keys flip isLabeled when slotMinTime moves later onto a
+    // different label-interval phase. Rebind so new labels report size and
+    // unlabeled slats drop stale measurements (#8101).
+    if (prevProps.isLabeled !== this.props.isLabeled) {
+      this.disconnectInnerSizeWatcher()
+      this.connectInnerSize()
     }
   }
 
   componentWillUnmount(): void {
-    const { props } = this
-
     this._isUnmounting = true
+    this.disconnectInnerSizeWatcher()
+  }
+
+  private connectInnerSize() {
+    const innerEl = this.innerElRef.current // could be null if !isLabeled
+
+    if (innerEl) {
+      // TODO: only attach this if refs props present
+      // TODO: fire width/height independently?
+      this.disconnectInnerSize = watchSize(innerEl, (width, height) => {
+        if (this._isUnmounting) return
+        setRef(this.props.innerWidthRef, width)
+        setRef(this.props.innerHeightRef, height)
+      })
+    }
+  }
+
+  private disconnectInnerSizeWatcher() {
     if (this.disconnectInnerSize) {
       this.disconnectInnerSize()
-      setRef(props.innerWidthRef, null)
-      setRef(props.innerHeightRef, null)
+      this.disconnectInnerSize = undefined
+      setRef(this.props.innerWidthRef, null)
+      setRef(this.props.innerHeightRef, null)
     }
   }
 }
