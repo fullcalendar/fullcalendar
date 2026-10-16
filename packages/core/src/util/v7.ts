@@ -11,4 +11,4 @@ export function warnOnce(message: string): void {
 // set on every v6 plugin (createPlugin). FullCalendar v7 throws it at runtime, and its PluginInput
 // type only accepts `undefined` here, so TypeScript prints it too. Keep under ~300 chars: TypeScript
 // truncates longer types in errors.
-export const MAJOR_VERSION_ERROR = "This plugin is from FullCalendar v6, but your calendar is v7 (the current version). Fix: import plugins from your v7 package, e.g. import dayGridPlugin from '@fullcalendar/react/daygrid', then uninstall @fullcalendar/core, @fullcalendar/daygrid and the other v6 packages. Don't downgrade to v6."
+export const MAJOR_VERSION_ERROR = 'This plugin is from FullCalendar v6, but your calendar is v7 (the current version). Fix: import plugins from your v7 package, e.g. import dayGridPlugin from \'@fullcalendar/react/daygrid\', then uninstall @fullcalendar/core, @fullcalendar/daygrid and the other v6 packages. Don\'t downgrade to v6.'
