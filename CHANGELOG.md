@@ -1,24 +1,29 @@
 
-## unreleased
+## v7.1.3
 
-- FIX: Bulgarian accessibility hints for navigation, more-links, and closing popovers (#7494)
-- FEATURE: Tajik locale, available as `tg` (#8066)
-- FEATURE: Belarusian locale, available as `be` (#7839)
-- FIX: German and Austrian German list-view hint read "Terminübersichtesansicht" (#7788)
-- FIX: Czech today button said "now" instead of "today" (#7674)
-- FIX: Korean navigation, year, list-view, and more-link translations (#8037)
-- FIX: Farsi empty-calendar and more-link text, year navigation, and accessibility hints (#8033, #7546)
-- FIX: Norwegian Nynorsk empty-calendar text and accessibility hints (#8083, #6050)
+### Bugfixes
+
 - FIX: Unable to drag events in DayGrid views when using React 18 Strict Mode (#8119)
 - FIX: `event.setProp('resourceEditable', ...)` was ignored with a warning (#5166)
 - FIX: React "Maximum update depth exceeded" when `validRange`, `visibleRange` or `hiddenDays` is given as a new-but-equal value each render and `datesSet` sets state (#7069)
 - FIX: When `slotMaxTime` is beyond 24h, the now-indicator disappears after midnight in Timeline views, and its arrow disappears in TimeGrid views (#6394)
 - FIX: `eventDrop` reports `oldResource`/`newResource` when an event that isn't resource-editable is dragged over another resource, even though its resource doesn't change (#4943)
 
+### Locales
+
+- FEATURE: Tajik locale, available as `tg` (#8066)
+- FEATURE: Belarusian locale, available as `be` (#7839)
+- FIX: Bulgarian accessibility hints for navigation, more-links, and closing popovers (#7494)
+- FIX: German and Austrian German list-view hint read "Terminübersichtesansicht" (#7788)
+- FIX: Czech today button said "now" instead of "today" (#7674)
+- FIX: Korean navigation, year, list-view, and more-link translations (#8037)
+- FIX: Farsi empty-calendar and more-link text, year navigation, and accessibility hints (#8033, #7546)
+- FIX: Norwegian Nynorsk empty-calendar text and accessibility hints (#8083, #6050)
+
 
 ## v7.1.2
 
-### :accessibility: Accessibility Fixes
+### Accessibility Fixes
 
 - FIX: Events in DayGrid cells, TimeGrid columns, Timeline lanes and +more popovers are enclosed in a list (`role="list"`, each event in a `role="listitem"` wrapper), so screen readers can step through them one at a time instead of reading a day or lane as one block
 - FIX: List view, events with a `url` lost their link semantics, because the `listitem` role was on the event itself. Events are now wrapped in list items (#7567)
