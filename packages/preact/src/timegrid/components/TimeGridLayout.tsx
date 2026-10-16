@@ -86,6 +86,7 @@ export class TimeGridLayout extends BaseComponent<TimeGridLayoutProps> {
 
   // internal
   private _isUnmounting: boolean
+  private hasMounted = false
   private currentSlatCnt?: number
   private scrollState: TimeScroll = {} // updated in-place
 
@@ -199,7 +200,12 @@ export class TimeGridLayout extends BaseComponent<TimeGridLayoutProps> {
 
   componentDidMount() {
     this._isUnmounting = false
-    this.resetScroll()
+    if (!this.hasMounted) {
+      this.hasMounted = true
+      this.resetScroll()
+    } else {
+      this.applyTimeScroll()
+    }
     this.context.emitter.on('_timeScrollRequest', this.handleTimeScrollRequest)
 
     const timeScroller = this.timeScrollerRef.current

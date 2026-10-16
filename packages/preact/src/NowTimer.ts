@@ -32,6 +32,10 @@ export class NowTimer extends Component<NowTimerProps> {
     return props.children(nowDate, todayRange, nowMs)
   }
 
+  componentDidMount() {
+    this.runner.mount()
+  }
+
   componentWillUnmount() {
     this.runner.destroy()
   }

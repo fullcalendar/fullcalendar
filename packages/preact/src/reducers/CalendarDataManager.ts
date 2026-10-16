@@ -104,6 +104,10 @@ export class CalendarDataManager {
     this.nowTimer = new NowTimerRunner(this.handleNowChange)
   }
 
+  mount() {
+    this.nowTimer.mount()
+  }
+
   destroy() {
     this.nowTimer.destroy()
   }
