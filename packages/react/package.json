@@ -1,11 +1,11 @@
 {
   "name": "@fullcalendar/react",
-  "version": "7.1.2",
+  "version": "7.1.3",
   "title": "FullCalendar React",
   "description": "FullCalendar React package for rendering a calendar",
   "dependencies": {
-    "@full-ui/headless-calendar": "workspace:7.1.2",
-    "@fullcalendar/core": "workspace:7.1.2"
+    "@full-ui/headless-calendar": "workspace:7.1.3",
+    "@fullcalendar/core": "workspace:7.1.3"
   },
   "peerDependencies": {
     "react": "^17 || ^18 || ^19",

@@ -1,6 +1,6 @@
 {
   "name": "@fullcalendar/vue3",
-  "version": "7.1.2",
+  "version": "7.1.3",
   "title": "FullCalendar Vue 3 Component",
   "description": "The official Vue 3 component for FullCalendar",
   "keywords": [
@@ -18,8 +18,8 @@
     "url": "https://github.com/fullcalendar/fullcalendar-vue.git"
   },
   "dependencies": {
-    "@full-ui/headless-calendar": "workspace:7.1.2",
-    "@fullcalendar/core": "workspace:7.1.2",
+    "@full-ui/headless-calendar": "workspace:7.1.3",
+    "@fullcalendar/core": "workspace:7.1.3",
     "preact": "^10.29.8"
   },
   "peerDependencies": {
@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@fullcalendar-scripts/standard": "workspace:*",
-    "fullcalendar": "workspace:7.1.2",
+    "fullcalendar": "workspace:7.1.3",
     "@vitejs/plugin-vue": "^6.0.3",
     "@vitest/browser-playwright": "^4.0.18",
     "@vue/test-utils": "^2.4.6",
