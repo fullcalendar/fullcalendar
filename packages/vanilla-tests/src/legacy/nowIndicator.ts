@@ -48,6 +48,47 @@ describe('now indicator', () => {
     })
   })
 
+  // https://github.com/fullcalendar/fullcalendar/issues/6394
+  describe('when slotMaxTime extends past midnight', () => {
+    pushOptions({
+      nowIndicator: true,
+      initialView: 'timeGridDay',
+      initialDate: '2015-12-26',
+      slotMaxTime: '30:00',
+    })
+
+    it('renders after midnight, within the previous day', async () => {
+      let calendar = initCalendar({
+        now: '2015-12-27T02:30:00',
+      })
+      await waitTimeout()
+
+      let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+      let lineEl = timeGridWrapper.getNowIndicatorLineEl()
+      let arrowEl = timeGridWrapper.getNowIndicatorArrowEl()
+      expect(lineEl).toBeTruthy()
+      expect(arrowEl).toBeTruthy()
+
+      // slots past midnight repeat their data-time (26:30 is "02:30:00"), so locate by index.
+      // 30-minute slots from 00:00, so 26:30 is the 53rd slot
+      let expectedTop = $(timeGridWrapper.getSlotLaneEls()[53]).offset().top + 1 // + top border
+      let lineRect = getBoundingRect(lineEl)
+      let arrowRect = getBoundingRect(arrowEl)
+      expect(Math.abs((lineRect.top + lineRect.bottom) / 2 - expectedTop)).toBeLessThan(3)
+      expect(Math.abs((arrowRect.top + arrowRect.bottom) / 2 - expectedTop)).toBeLessThan(3)
+    })
+
+    it('doesn\'t render when past the extended end', async () => {
+      let calendar = initCalendar({
+        now: '2015-12-27T07:00:00',
+      })
+      await waitTimeout()
+
+      let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+      expect(timeGridWrapper.hasNowIndicator()).toBe(false)
+    })
+  })
+
   function isNowIndicatorRenderedAt(calendar, date) {
     let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
     let line = timeGridWrapper.getLine(date)

@@ -157,7 +157,7 @@ export class TimeGridLayout extends BaseComponent<TimeGridLayoutProps> {
     return (
       <ViewContainer
         attrs={{
-          role: 'grid',
+          role: 'table',
           'aria-colcount': props.cells.length,
           'aria-labelledby': props.labelId,
           'aria-label': props.labelStr,

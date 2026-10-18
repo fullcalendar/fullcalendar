@@ -35,7 +35,13 @@ export class ListDayHeaderInner extends BaseComponent<ListDayHeaderInnerProps> {
     }
 
     const navLinkAttrs = hasNavLink
-      ? buildNavLinkAttrs(this.context, props.dayDate, undefined, text, this.props.isTabbable)
+      ? buildNavLinkAttrs(
+        this.context,
+        props.dayDate,
+        undefined,
+        text,
+        /* isTabbable = */ this.props.isTabbable,
+      )
       : {}
 
     return (

@@ -100,7 +100,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
     if (dateMeta.isDisabled) {
       return (
         <div
-          role='gridcell'
+          role='cell'
           aria-disabled
           className={joinClassNames(
             generateClassName(options.dayLaneClass, renderProps),
@@ -124,7 +124,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
         tag="div"
         attrs={{
           ...props.attrs,
-          role: 'gridcell',
+          role: 'cell',
           ...(dateMeta.isToday ? { 'aria-current': 'date' } : {}),
           'data-date': formatDayString(props.date),
         }}
@@ -142,6 +142,8 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
             {this.renderFillSegs(props.bgEventSegs, 'bg-event')}
             {this.renderFillSegs(props.dateSelectionSegs, 'highlight')}
             <div
+              // events and more-links are list items
+              role={sortedFgSegs.length ? 'list' : undefined}
               className={innerClassName}
             >
               {this.renderFgSegs(
@@ -246,6 +248,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
 
     return (
       <div
+        role={isMirror ? undefined : 'listitem'}
         // we would have used classNames.fill, but multi-page spanning breaks in Firefox
         // we would have used height:100%, but multi-page spanning breaks in Safari
         className={joinClassNames(classNames.abs, classNames.flexCol)}
@@ -271,6 +274,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
           isNarrow={props.isNarrow}
           isShort={segVertical.isShort || false}
           isLiquid
+          renderProps={props.renderProps}
           {...getEventRangeMeta(eventRange, props.todayRange, props.nowDate, props.nowMs)}
         />
       </div>
@@ -303,7 +307,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
   has already been applied to the segs it was formed from
   */
   renderHiddenGroups(hiddenGroups: TimeGridSegHiddenGroup[]) {
-    let { dateSpanProps, dateProfile, todayRange, nowDate, nowMs, eventSelection, eventDrag, eventResize, isNarrow, isMicro } = this.props
+    let { dateSpanProps, renderProps, dateProfile, todayRange, nowDate, nowMs, eventSelection, eventDrag, eventResize, isNarrow, isMicro } = this.props
 
     return (
       <>
@@ -317,6 +321,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
               isNarrow={isNarrow}
               isMicro={isMicro}
               dateSpanProps={dateSpanProps}
+              renderProps={renderProps}
               dateProfile={dateProfile}
               todayRange={todayRange}
               nowDate={nowDate}
@@ -344,6 +349,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
           return (
             <div
               key={buildEventRangeKey(eventRange)}
+              aria-hidden // fills, including bg events, are decorative. hidden from screen readers
               className={classNames.fillX}
               style={{
                 top: segVertical.start,
@@ -364,6 +370,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
                   isNarrow={props.isNarrow}
                   isShort={segVertical.isShort || false}
                   isVertical={true}
+                  renderProps={props.renderProps}
                   {...getEventRangeMeta(eventRange, props.todayRange, props.nowDate, props.nowMs)}
                 /> :
                 renderFill(fillType, context.options)}
@@ -430,13 +437,14 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
 
 export function renderPlainFgSegs(
   sortedFgSegs: (TimeGridRange & EventRangeProps)[],
-  { todayRange, nowDate, nowMs, eventSelection, eventDrag, eventResize }: {
+  { todayRange, nowDate, nowMs, eventSelection, eventDrag, eventResize, renderProps }: {
     todayRange: DateRange
     nowDate: DateMarker
     nowMs?: number
     eventSelection: string
     eventDrag: EventSegUiInteractionState<TimeGridRange> | null
     eventResize: EventSegUiInteractionState<TimeGridRange> | null
+    renderProps?: Dictionary
   },
   isMirror: boolean,
 ) {
@@ -452,6 +460,7 @@ export function renderPlainFgSegs(
         return (
           <div
             key={instanceId}
+            role={isMirror ? undefined : 'listitem'}
             className={classNames.breakInsideAvoid}
             style={{ visibility: isInvisible ? 'hidden' : undefined }}
           >
@@ -469,6 +478,7 @@ export function renderPlainFgSegs(
               isShort={false}
               isNarrow={false}
               disableResizing
+              renderProps={renderProps}
               {...getEventRangeMeta(eventRange, todayRange, nowDate, nowMs)}
             />
           </div>

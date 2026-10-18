@@ -82,21 +82,23 @@ export class ListDay extends BaseComponent<ListDayProps> {
             const isLast = index === segs.length - 1
 
             return (
-              <ListEvent
-                key={key}
-                eventRange={seg.eventRange}
-                slicedStart={seg.slicedStart}
-                slicedEnd={seg.slicedEnd}
-                isStart={seg.isStart}
-                isEnd={seg.isEnd}
-                isFirst={isFirst}
-                isLast={isLast}
-                isDragging={false}
-                isResizing={false}
-                isMirror={false}
-                isSelected={false}
-                {...getEventRangeMeta(seg.eventRange, todayRange, nowDate, props.nowMs)}
-              />
+              // unstyled list item wraps the event, so the event's own role (link, button) is preserved
+              <div key={key} role='listitem' className={classNames.flexCol}>
+                <ListEvent
+                  eventRange={seg.eventRange}
+                  slicedStart={seg.slicedStart}
+                  slicedEnd={seg.slicedEnd}
+                  isStart={seg.isStart}
+                  isEnd={seg.isEnd}
+                  isFirst={isFirst}
+                  isLast={isLast}
+                  isDragging={false}
+                  isResizing={false}
+                  isMirror={false}
+                  isSelected={false}
+                  {...getEventRangeMeta(seg.eventRange, todayRange, nowDate, props.nowMs)}
+                />
+              </div>
             )
           })}
         </div>

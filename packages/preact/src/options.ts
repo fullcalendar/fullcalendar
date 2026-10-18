@@ -23,6 +23,7 @@ import {
   EventAddInfo, EventChangeInfo,
   EventClickInfo,
   EventDisplayInfo,
+  EventTextInfo,
   EventHoveringInfo,
   EventInput, EventInputTransformer,
   EventRemoveInfo,
@@ -61,7 +62,7 @@ import { CalendarDisplayInfo } from './calendar-root'
 import { createDuration, DateFormatter, Duration } from '@full-ui/headless-calendar'
 import { createFormatter } from './datelib/formatting'
 import { parseFieldSpecs } from './util/misc'
-import { isMaybePropsEqualShallow, isMaybePropsEqualDepth1 } from './util/object'
+import { isMaybePropsEqualShallow, isMaybePropsEqualDepth1, isMaybeDateRangeInputsEqual } from './util/object'
 import { isMaybeArraysEqual } from './util/array'
 import { ListDayInfo, ListDayEventsInfo, ListDayHeaderInfo, ListDayHeaderInnerInfo } from './list/structs'
 import { NoEventsInfo } from './list/components/ListView'
@@ -230,29 +231,29 @@ export const BASE_OPTION_REFINERS = {
 
   eventClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
   eventInnerClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
-  eventTimeClass: refineClassNameGenerator as Identity<ClassNameGenerator<{ event: EventApi, isNarrow: boolean, isShort: boolean }>>,
-  eventTitleClass: refineClassNameGenerator as Identity<ClassNameGenerator<{ event: EventApi, isNarrow: boolean, isShort: boolean }>>,
+  eventTimeClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventTextInfo>>,
+  eventTitleClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventTextInfo>>,
   eventBeforeClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
   eventAfterClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
   //
   listItemEventClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
   listItemEventInnerClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
-  listItemEventTimeClass: refineClassNameGenerator as Identity<ClassNameGenerator<{ event: EventApi, isNarrow: boolean, isShort: boolean }>>,
-  listItemEventTitleClass: refineClassNameGenerator as Identity<ClassNameGenerator<{ event: EventApi, isNarrow: boolean, isShort: boolean, timeText: string }>>,
+  listItemEventTimeClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventTextInfo>>,
+  listItemEventTitleClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventTextInfo>>,
   listItemEventBeforeClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
   listItemEventAfterClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
   //
   blockEventClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
   blockEventInnerClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
-  blockEventTimeClass: refineClassNameGenerator as Identity<ClassNameGenerator<{ event: EventApi, isNarrow: boolean, isShort: boolean }>>,
-  blockEventTitleClass: refineClassNameGenerator as Identity<ClassNameGenerator<{ event: EventApi, isNarrow: boolean, isShort: boolean }>>,
+  blockEventTimeClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventTextInfo>>,
+  blockEventTitleClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventTextInfo>>,
   blockEventBeforeClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
   blockEventAfterClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
   //
   rowEventClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
   rowEventInnerClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
-  rowEventTimeClass: refineClassNameGenerator as Identity<ClassNameGenerator<{ event: EventApi, isNarrow: boolean, isShort: boolean }>>,
-  rowEventTitleClass: refineClassNameGenerator as Identity<ClassNameGenerator<{ event: EventApi, isNarrow: boolean, isShort: boolean }>>,
+  rowEventTimeClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventTextInfo>>,
+  rowEventTitleClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventTextInfo>>,
   rowEventTitleSticky: Boolean,
   rowEventBeforeClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
   rowEventBeforeContent: identity as Identity<ContentGenerator<EventDisplayInfo>>,
@@ -261,8 +262,8 @@ export const BASE_OPTION_REFINERS = {
   //
   columnEventClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
   columnEventInnerClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
-  columnEventTimeClass: refineClassNameGenerator as Identity<ClassNameGenerator<{ event: EventApi, isNarrow: boolean, isShort: boolean }>>,
-  columnEventTitleClass: refineClassNameGenerator as Identity<ClassNameGenerator<{ event: EventApi, isNarrow: boolean, isShort: boolean }>>,
+  columnEventTimeClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventTextInfo>>,
+  columnEventTitleClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventTextInfo>>,
   columnEventTitleSticky: Boolean,
   columnEventBeforeClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
   columnEventAfterClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
@@ -272,7 +273,7 @@ export const BASE_OPTION_REFINERS = {
   backgroundEventWillUnmount: identity as Identity<WillUnmountHandler<EventDisplayInfo>>,
   backgroundEventContent: identity as Identity<ContentGenerator<EventDisplayInfo>>,
   backgroundEventInnerClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventDisplayInfo>>,
-  backgroundEventTitleClass: refineClassNameGenerator as Identity<ClassNameGenerator<{ event: EventApi, isNarrow: boolean, isShort: boolean }>>,
+  backgroundEventTitleClass: refineClassNameGenerator as Identity<ClassNameGenerator<EventTextInfo>>,
   backgroundEventColor: String,
 
   selectConstraint: identity as Identity<ConstraintInput>,
@@ -671,6 +672,10 @@ export const COMPLEX_OPTION_COMPARATORS: {
   events: isMaybeArraysEqual,
   eventSources: isMaybeArraysEqual,
   ['resources' as any]: isMaybeArraysEqual,
+  // otherwise, an equal-but-new value, like from a React rerender, rebuilds the date profile (#7069)
+  validRange: isMaybeDateRangeInputsEqual,
+  visibleRange: isMaybeDateRangeInputsEqual,
+  hiddenDays: isMaybeArraysEqual,
 }
 
 // util funcs

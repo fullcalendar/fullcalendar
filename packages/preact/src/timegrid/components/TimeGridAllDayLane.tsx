@@ -53,8 +53,7 @@ export class TimeGridAllDayLane extends DateComponent<TimeGridAllDayLaneProps, T
             elRef={this.handleMoreLinkEl}
             className={classNames.offscreen}
             attrs={{
-              'aria-hidden': true,
-              inert: '',
+              'aria-hidden': true, // redundant with .offscreen's visibility, but marks it as a probe
             }}
           />
         )}
@@ -80,7 +79,6 @@ export class TimeGridAllDayLane extends DateComponent<TimeGridAllDayLaneProps, T
 
   componentWillUnmount(): void {
     this._isUnmounting = true
-    this.disconnectMoreLinkHeight?.()
   }
 
   handleRootEl = (rootEl: HTMLDivElement) => {
@@ -95,7 +93,7 @@ export class TimeGridAllDayLane extends DateComponent<TimeGridAllDayLaneProps, T
     }
   }
 
-  queryHit(isRtl: boolean, positionLeft: number, positionTop: number, elWidth: number): Hit {
+  queryHit(isRtl: boolean, positionLeft: number, positionTop: number, elWidth: number): Hit | null {
     const { props, heightRef } = this
 
     const colCount = props.cells.length
@@ -107,6 +105,11 @@ export class TimeGridAllDayLane extends DateComponent<TimeGridAllDayLaneProps, T
       isRtl
     )
     const cell = props.cells[col]
+
+    if (cell.isInert) {
+      return null
+    }
+
     const cellStartDate = cell.date
     const cellEndDate = addDays(cellStartDate, 1)
 

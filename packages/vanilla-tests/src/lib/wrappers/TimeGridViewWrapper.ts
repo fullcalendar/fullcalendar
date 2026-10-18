@@ -2,7 +2,7 @@ import internalClassNames from 'fullcalendar/protected-styles'
 import { ViewWrapper } from './ViewWrapper'
 import { TimeGridWrapper } from './TimeGridWrapper'
 import { DayGridWrapper } from './DayGridWrapper'
-import { DayHeaderWrapper } from './DayHeaderWrapper'
+import { DayHeaderWrapper, getVisibleText } from './DayHeaderWrapper'
 import { findElements } from '../dom-misc'
 
 export class TimeGridViewWrapper extends ViewWrapper {
@@ -39,7 +39,7 @@ export class TimeGridViewWrapper extends ViewWrapper {
   }
 
   getHeaderWeekText() { // the title
-    return $(this.getHeaderAxisEl()).text()
+    return getVisibleText(this.getHeaderAxisEl())
   }
 
   getAllDayAxisEl() {

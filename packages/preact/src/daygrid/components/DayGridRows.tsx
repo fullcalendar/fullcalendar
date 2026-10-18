@@ -173,8 +173,7 @@ export class DayGridRows extends DateComponent<DayGridRowsProps, DayGridRowsStat
             elRef={this.handleMoreLinkEl}
             className={classNames.offscreen}
             attrs={{
-              'aria-hidden': true,
-              inert: '',
+              'aria-hidden': true, // redundant with .offscreen's visibility, but marks it as a probe
             }}
           />
         )}
@@ -213,13 +212,12 @@ export class DayGridRows extends DateComponent<DayGridRowsProps, DayGridRowsStat
 
   componentWillUnmount(): void {
     this._isUnmounting = true
-    this.disconnectMoreLinkHeight?.()
   }
 
   // Hit System
   // -----------------------------------------------------------------------------------------------
 
-  queryHit(isRtl: boolean, positionLeft: number, positionTop: number, elWidth: number): Hit {
+  queryHit(isRtl: boolean, positionLeft: number, positionTop: number, elWidth: number): Hit | null {
     const { props } = this
 
     const colCount = props.cellRows[0].length
@@ -236,6 +234,11 @@ export class DayGridRows extends DateComponent<DayGridRowsProps, DayGridRowsStat
       this.rowHeightRefMap.current,
     )
     const cell = props.cellRows[row][col]
+
+    if (cell.isInert) {
+      return null
+    }
+
     const cellStartDate = cell.date
     const cellEndDate = addDays(cellStartDate, 1)
 

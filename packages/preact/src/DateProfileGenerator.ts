@@ -395,7 +395,8 @@ export class DateProfileGenerator { // only publicly used for isHiddenDay :(
     let i
 
     if (this.props.weekends === false) {
-      hiddenDays.push(0, 6) // 0=sunday, 6=saturday
+      // copy. mutating the user's array would make it unequal to their next equal-but-new array (#7069)
+      hiddenDays = hiddenDays.concat([0, 6]) // 0=sunday, 6=saturday
     }
 
     for (i = 0; i < 7; i += 1) {

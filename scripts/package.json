@@ -5,7 +5,7 @@
   "dependencies": {
     "estree-walker": "^3.0.3",
     "magic-string": "^0.30.21",
-    "postcss-selector-parser": "^7.1.1",
+    "postcss-selector-parser": "^7.1.2",
     "rollup-plugin-iife-split": "^0.0.7"
   },
   "devDependencies": {

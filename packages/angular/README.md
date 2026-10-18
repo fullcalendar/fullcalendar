@@ -9,6 +9,10 @@ FullCalendar Angular package for rendering a calendar
 npm install @fullcalendar/angular fullcalendar temporal-polyfill
 ```
 
+## Coming from v6?
+
+In v7, plugins like dayGrid and timeGrid are part of this package, imported from subpaths like `@fullcalendar/angular/daygrid`. The separate `@fullcalendar/core`, `@fullcalendar/daygrid`, `@fullcalendar/interaction` (etc.) packages are FullCalendar v6. Don't install them with v7, and don't downgrade to v6: uninstall them and import plugins from `@fullcalendar/angular/daygrid`. See the [upgrade guide](https://fullcalendar.io/docs/upgrading-from-v6).
+
 ## Usage
 
 In one of your app's component files:
@@ -87,7 +91,7 @@ Themes are plugins too. `@fullcalendar/angular/themes/classic`, `/monarch`, `/br
 - [Angular Documentation](https://fullcalendar.io/docs/angular)
 - [Angular Scheduler Documentation](https://fullcalendar.io/docs/angular#fullcalendar-premium)
 - [Angular Example Project](https://github.com/fullcalendar/fullcalendar-examples/tree/main/angular22)
-- [Options Reference](https://fullcalendar.io/docs#toc)
+- [Options Reference](https://fullcalendar.io/docs/all)
 
 ## History
 

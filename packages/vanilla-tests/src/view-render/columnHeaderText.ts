@@ -1,6 +1,7 @@
 import { strictModeFactor } from 'fullcalendar/protected-api'
 import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { getVisibleText } from '../lib/wrappers/DayHeaderWrapper'
 
 describe('dayHeaderContent as text', () => { // TODO: rename file
   pushOptions({
@@ -21,8 +22,7 @@ describe('dayHeaderContent as text', () => { // TODO: rename file
         },
       })
       let headerWrapper = new ViewWrapper(calendar).header
-      let $firstCell = $(headerWrapper.getCellEls()[0])
-      expect($firstCell.text()).toBe('<div>Custom Sunday</div>')
+      expect(getVisibleText(headerWrapper.getCellEls()[0])).toBe('<div>Custom Sunday</div>')
     })
   })
 

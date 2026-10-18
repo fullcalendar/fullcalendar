@@ -377,9 +377,25 @@ which can't rely on dynamic height detection after print-flag activated.
   box-sizing: content-box !important;
 }
 
+/* Out of view but keeps its real size, for measurement probes. For screen-reader text, use .srOnly.
+Hidden also means not focusable, clickable, or read by screen readers */
 .offscreen {
   position: absolute !important;
   left: -10000px !important;
+  visibility: hidden !important;
+}
+
+/* Visually hidden but read by screen readers. Unlike .offscreen, never causes scroll overflow */
+.srOnly {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
 }
 
 .alignCenter {

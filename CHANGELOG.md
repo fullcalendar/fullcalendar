@@ -1,4 +1,63 @@
 
+## v7.1.3
+
+### Bugfixes
+
+- FIX: Unable to drag events in DayGrid views when using React 18 Strict Mode (#8119)
+- FIX: `event.setProp('resourceEditable', ...)` was ignored with a warning (#5166)
+- FIX: React "Maximum update depth exceeded" when `validRange`, `visibleRange` or `hiddenDays` is given as a new-but-equal value each render and `datesSet` sets state (#7069)
+- FIX: When `slotMaxTime` is beyond 24h, the now-indicator disappears after midnight in Timeline views, and its arrow disappears in TimeGrid views (#6394)
+- FIX: `eventDrop` reports `oldResource`/`newResource` when an event that isn't resource-editable is dragged over another resource, even though its resource doesn't change (#4943)
+
+### Locales
+
+- FEATURE: Tajik locale, available as `tg` (#8066)
+- FEATURE: Belarusian locale, available as `be` (#7839)
+- FIX: Bulgarian accessibility hints for navigation, more-links, and closing popovers (#7494)
+- FIX: German and Austrian German list-view hint read "Terminübersichtesansicht" (#7788)
+- FIX: Czech today button said "now" instead of "today" (#7674)
+- FIX: Korean navigation, year, list-view, and more-link translations (#8037)
+- FIX: Farsi empty-calendar and more-link text, year navigation, and accessibility hints (#8033, #7546)
+- FIX: Norwegian Nynorsk empty-calendar text and accessibility hints (#8083, #6050)
+
+
+## v7.1.2
+
+### Accessibility Fixes
+
+- FIX: Events in DayGrid cells, TimeGrid columns, Timeline lanes and +more popovers are enclosed in a list (`role="list"`, each event in a `role="listitem"` wrapper), so screen readers can step through them one at a time instead of reading a day or lane as one block
+- FIX: List view, events with a `url` lost their link semantics, because the `listitem` role was on the event itself. Events are now wrapped in list items (#7567)
+- FIX: Day headers (without `navLinks`), TimeGrid's week-number header and "Timed" row header were read as empty and flagged by axe, because their text was only an `aria-label`. The text is now visually-hidden content (#7566, #6641)
+- FIX: DayGrid day cells' `aria-label` was ignored or read as blank. The full date is now visually-hidden content, only in cells showing a day number (otherwise the column header already reads the date) (#7566, #6637, #6641, #7502)
+- FIX: Column-header nav links were labeled "Go to …", which was repeated as the column name for every cell. They're now labeled with just the date (`navLinkHint` is still used for other nav links)
+- FIX: JAWS switched to forms mode when Tab landed on an event, so the arrow keys did nothing. DayGrid, TimeGrid, MultiMonth and Resource Timeline are now a `table` (cells `role="cell"`) rather than a `grid`. Resource Timeline with nested resources or row groups remains a `treegrid` (#6641)
+- FIX: Screen readers announced empty "group"s within day cells. Empty wrappers are now `role="presentation"`, and background events, non-business hours and selection highlights are `aria-hidden`
+- FIX: Resource TimeGrid/DayGrid with `filterResourcesWithEvents` and `datesAboveResources`, the blank resource header was an empty `columnheader`, flagged by axe. It's now an empty `cell`
+- FIX: Hidden elements used for measurement (+more link, Resource Timeline expander and column divider) use `visibility: hidden` instead of `inert`, so none can be focused or read by screen readers
+
+
+## v7.1.1
+
+- FEATURE: `@fullcalendar/mui` supports MUI v9 (in addition to v7). MUI skipped v8
+- FEATURE: Resource views, render hooks receive `info.resource`, the resource of the column/lane being rendered into (#4926)
+  - Event hooks: `eventContent`, `eventClass`, `eventDidMount`, etc, including the `*EventTimeClass`/`*EventTitleClass` variants and `backgroundEvent*` hooks. An event with multiple resources renders once per resource, each with its own `info.resource`. A dragged event's mirror receives the resource it's being dragged over
+  - +more link hooks: `moreLinkContent`, `moreLinkClass`, `moreLinkDidMount`, etc
+  - +more popover hooks: the popover's events, as well as `dayHeader*` and `dayCell*` hooks where `info.inPopover`
+  - Not populated in non-resource views. Compare `info.resource.id`, not the object itself, which is not guaranteed to be the same reference across columns
+  - New `EventTextInfo` type, for the arg of `*EventTimeClass`/`*EventTitleClass` hooks, which now also receive `timeText`
+- FIX: Resource TimeGrid/DayGrid, preserve dates with no resources when `filterResourcesWithEvents` is enabled (#8099)
+  - With `datesAboveResources`, such a date renders a single non-interactive column with no resource. Day cell/lane hooks for it receive no `info.resource`, so guard for it:
+    ```js
+    dayLaneClass: (info) => info.resource ? `lane-${info.resource.id}` : ''
+    ```
+- FIX: React 19, "Received an empty string for a boolean attribute `inert`" warning with `dayMaxEvents`/`eventMaxStack`. The offscreen +more link used for measurement also wasn't made inert, so it could receive keyboard focus (#8114)
+- FIX: Resource TimeGrid/DayGrid, spanning header cells sometimes misaligned with body columns by 1px
+- FIX: Resource Timeline view, with `virtualization`, leading header cells and slots missing when the timeline is wide enough to not need horizontal scrolling (#8093)
+- FIX: Resource Timeline view, with `virtualization`, rows blank until scrolled after removing and re-adding resources within `batchRendering`, such as for a filter
+- FIX: Resource Timeline view, with `virtualization`, first resource row hidden or clipped under the header after removing and re-adding resources, such as for a filter, while scrolled at or near the top
+- FIX: Timeline views, printing a timeline that's wide enough to not need horizontal scrolling clips the leading slots, as if scrolled to `scrollTime`
+
+
 ## v7.1.0
 
 ### Event Rendering

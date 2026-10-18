@@ -228,7 +228,13 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
         attrs={{
           ...(
             hasNavLink
-              ? buildNavLinkAttrs(context, weekDateMarker, 'week', fullWeekStr, /* isTabbable = */ false)
+              ? buildNavLinkAttrs(
+                context,
+                weekDateMarker,
+                'week',
+                fullWeekStr,
+                /* isTabbable = */ false,
+              )
               : {}
           ),
           'role': undefined, // HACK: a 'link' role can't be child of a 'row' role
@@ -317,6 +323,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
               col,
             )
             : null
+          const screenRenderSlices = printPlan ? null : screenColumns![col].renderSlices
           let fg: ReactElement[]
 
           if (printPlan) {
@@ -325,7 +332,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
             fg = [
               ...this.renderLevelFgSegs(
                 screenMainOffsetsByCol[col],
-                screenColumns![col].renderSlices,
+                screenRenderSlices!,
                 screenSliceCoords,
               ),
               ...this.renderMirrorFgSegs(
@@ -357,6 +364,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
               hiddenSegs={printPopover ? printPopover.hiddenSegs : screenColumns![col].hiddenSegs}
               fgLiquidHeight={printPlan ? false : screenFgLiquidHeight}
               fg={fg}
+              fgIsList={Boolean(screenRenderSlices?.length)}
               eventDrag={printPlan ? null : props.eventDrag}
               eventResize={printPlan ? null : props.eventResize}
               eventSelection={props.eventSelection}
@@ -413,6 +421,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
       nodes.push(
         <MeasuredHeightHarness
           key={`mirror:${key}`}
+          attrs={{ 'aria-hidden': true }}
           className={joinClassNames(
             classNames.abs,
             classNames.start0,
@@ -467,6 +476,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
       nodes.push(
         <MeasuredHeightHarness
           key={key}
+          attrs={{ role: 'listitem' }}
           className={joinClassNames(
             classNames.abs,
             classNames.start0,
@@ -508,6 +518,8 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
   ): ReactElement {
     const { props } = this
     const isListItem = hasListItemDisplay(range, eventRange)
+    // the range's starting cell supplies extra render props
+    const cellRenderProps = props.cells[range.start]?.renderProps
 
     return (
       <StandardEvent
@@ -524,6 +536,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
         defaultDisplayEventEnd={props.cells.length === 1}
         disableResizing={isListItem}
         forcedTimeText={props.cellIsMicro ? '' : undefined}
+        renderProps={cellRenderProps}
         {...getEventRangeMeta(eventRange, props.todayRange)}
       />
     )
@@ -601,6 +614,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
       fillsByCol[seg.start].push(
         <div
           key={`${fillType}:${buildEventRangeKey(seg.eventRange)}:${seg.start}:${seg.end}`}
+          aria-hidden // fills, including bg events, are decorative. hidden from screen readers
           className={joinClassNames(classNames.fillY, classNames.start0, zClassName)}
           style={{
             width: this.computeSpanWidth(seg.start, seg.end),
@@ -613,6 +627,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
               isEnd={seg.isEnd}
               isNarrow={props.cellIsNarrow}
               isVertical={false}
+              renderProps={props.cells[seg.start]?.renderProps}
               {...getEventRangeMeta(seg.eventRange, todayRange)}
             /> : (
               renderFill(fillType, context.options)
@@ -623,6 +638,8 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
     }
   }
 
+  // React 18 Strict Mode replays mount lifecycles without reattaching DOM refs.
+  // Keep height observation and cleanup tied to the DOM ref.
   handleRootEl = (rootEl: HTMLElement | null) => {
     this.disconnectHeight?.()
     this.disconnectHeight = undefined
@@ -632,6 +649,8 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
       this.disconnectHeight = watchHeight(rootEl, (contentHeight) => {
         setRef(this.props.heightRef, contentHeight)
       })
+    } else {
+      setRef(this.props.heightRef, null)
     }
   }
 
@@ -650,8 +669,6 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
 
   componentWillUnmount(): void {
     this._isUnmounting = true
-    this.disconnectHeight?.()
-    setRef(this.props.heightRef, null)
   }
 
   computeFgDims(): [maxMainTop: number | undefined, minMainHeight: number | undefined] {
