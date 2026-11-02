@@ -1,4 +1,11 @@
 
+## unreleased
+
+- FIX: Resource Timeline with `virtualization`, rows were too short for stacked events when any of the row's events were scrolled out of view horizontally, so events overflowed onto the rows below. Rows now fit the events on screen, growing and shrinking during horizontal scrolling, unlike without `virtualization` (#8127)
+- FIX: Resource Timeline with `virtualization`, the scrollbar jumped back after fast vertical scrolling and fell behind the pointer during a drag (#8135)
+- FIX: Resource Timeline with `virtualization`, the calendar could rerender every frame forever when the widest slot label fell out of view at the slot width it caused
+
+
 ## v7.1.3
 
 ### Bugfixes
