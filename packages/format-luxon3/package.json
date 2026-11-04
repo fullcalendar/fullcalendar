@@ -15,13 +15,13 @@
   },
   "peerDependencies": {
     "luxon": "^3.0.0",
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "devDependencies": {
     "@fullcalendar-scripts/standard": "workspace:*",
     "@types/luxon": "^3.3.0",
     "luxon": "^3.0.0",
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "scripts": {
     "build": "standard-scripts pkg:build",

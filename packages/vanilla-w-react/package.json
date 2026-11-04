@@ -9,7 +9,7 @@
     "react-dom": "^19.2.3"
   },
   "peerDependencies": {
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "devDependencies": {
     "@fullcalendar/react": "workspace:7.1.4",
@@ -18,7 +18,7 @@
     "@types/react-dom": "^19.2.3",
     "globby": "^13.1.2",
     "handlebars": "^4.1.2",
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "scripts": {
     "build": "standard-scripts pkg:build",

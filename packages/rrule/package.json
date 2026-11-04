@@ -13,12 +13,12 @@
   },
   "peerDependencies": {
     "rrule": "^2.6.0",
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "devDependencies": {
     "@fullcalendar-scripts/standard": "workspace:*",
     "rrule": "^2.6.0",
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "scripts": {
     "build": "standard-scripts pkg:build",

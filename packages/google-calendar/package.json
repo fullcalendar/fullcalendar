@@ -12,11 +12,11 @@
     "@fullcalendar/core": "workspace:7.1.4"
   },
   "peerDependencies": {
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "devDependencies": {
     "@fullcalendar-scripts/standard": "workspace:*",
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "scripts": {
     "build": "standard-scripts pkg:build",

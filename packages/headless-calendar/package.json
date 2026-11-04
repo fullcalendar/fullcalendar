@@ -9,11 +9,11 @@
   "title": "Headless Calendar Library",
   "description": "Headless calendar library by the makers of FullCalendar",
   "peerDependencies": {
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "devDependencies": {
     "@fullcalendar-scripts/standard": "workspace:*",
-    "temporal-polyfill": "^1.0.1",
+    "temporal-polyfill": "^1.0.7",
     "typescript": "^4.8.2",
     "vitest": "^4.0.16"
   },

@@ -9,14 +9,14 @@
   },
   "peerDependencies": {
     "preact": "^10.29.0",
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "devDependencies": {
     "@fullcalendar-scripts/standard": "workspace:*",
     "globby": "^13.1.2",
     "handlebars": "^4.1.2",
     "preact": "^10.29.8",
-    "temporal-polyfill": "^1.0.1",
+    "temporal-polyfill": "^1.0.7",
     "vitest": "^4.0.16"
   },
   "scripts": {

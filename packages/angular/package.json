@@ -19,7 +19,7 @@
     "@angular/common": "16 - 22",
     "@angular/core": "16 - 22",
     "fullcalendar": "workspace:7.1.4",
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.2.16",
@@ -45,7 +45,7 @@
     "rxjs": "~7.8.0",
     "typescript": "~5.1.3",
     "zone.js": "~0.13.0",
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "publishConfig": {
     "directory": "./dist/lib",
