@@ -424,6 +424,27 @@ export function buildEventRangeKey(eventRange: EventRenderRange) {
   // inverse-background events don't have specific instances. TODO: better solution
 }
 
+/*
+Whether an event can be focused and activated. An event made non-interactive, by the
+`eventInteractive` option or its own `interactive` property, does not receive `eventClick`.
+*/
+export function isEventInteractive(def: EventDef, context: ViewContext): boolean {
+  if (def.url) {
+    return true
+  }
+
+  let { eventInteractive } = context.options
+
+  if (eventInteractive == null) {
+    eventInteractive = def.interactive
+    if (eventInteractive == null) {
+      eventInteractive = Boolean(context.emitter.hasHandlers('eventClick'))
+    }
+  }
+
+  return eventInteractive
+}
+
 export function getEventTagAndAttrs(eventRange: EventRenderRange, context: ViewContext): [
   tag: string,
   attrs: any, // TODO
@@ -436,16 +457,8 @@ export function getEventTagAndAttrs(eventRange: EventRenderRange, context: ViewC
     return ['a', { href: url }, true]
   }
 
-  let { emitter, options } = context
-  let { eventInteractive } = options
-
-  if (eventInteractive == null) {
-    eventInteractive = def.interactive
-    if (eventInteractive == null) {
-      eventInteractive = Boolean(emitter.hasHandlers('eventClick'))
-    }
-  }
-
+  let { emitter } = context
+  let eventInteractive = isEventInteractive(def, context)
   let attrs: any
 
   // mock what happens in EventClicking

@@ -1,6 +1,6 @@
 import { listenBySelector } from '../util/dom-event'
 import { EventImpl } from '../api/EventImpl'
-import { getElEventRange } from '../component-util/event-rendering'
+import { getElEventRange, isEventInteractive } from '../component-util/event-rendering'
 import { Interaction, InteractionSettings } from './interaction'
 import { ViewApi } from '../api/ViewApi'
 import classNames from '../styles.module.css'
@@ -34,6 +34,7 @@ export class EventClicking extends Interaction {
 
     if (
       eventRange && // might be the <div> surrounding the more link
+      isEventInteractive(eventRange.def, context) &&
       component.isValidSegDownEl(ev.target as HTMLElement)
     ) {
       context.emitter.trigger('eventClick', {
