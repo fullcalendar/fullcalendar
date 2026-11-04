@@ -1,10 +1,11 @@
 
 ## v7.1.4
 
-- FIX: Resource Timeline with `virtualization`, rows were too short for stacked events when any of the row's events were scrolled out of view horizontally, so events overflowed onto the rows below. Rows now fit the events on screen, growing and shrinking during horizontal scrolling, unlike without `virtualization` (#8127)
-- FIX: Resource Timeline with `virtualization`, the scrollbar jumped back after fast vertical scrolling and fell behind the pointer during a drag (#8135)
-- FIX: Resource Timeline with `virtualization`, the calendar could rerender every frame forever when the widest slot label fell out of view at the slot width it caused
-- FIX: TimeGrid's `aria-colcount` left out the time-axis column, so it was one less than the number of cells in each row (#8124), thx @ac1982
+- FIX: Resource Timeline with `virtualization`:
+  - Stacked events overflowed onto the rows below when some of the row's events were scrolled out of view. Row heights now fit the events on screen, changing during horizontal scrolling (#8127)
+  - Scrollbar jumped back after fast vertical scrolling and lagged behind the pointer during a drag (#8135)
+  - Possible repeated rerendering when the widest slot label fell out of view
+- FIX: TimeGrid's `aria-colcount` was one too low, leaving out the time-axis column (#8124), thx @ac1982
 
 
 ## v7.1.3
