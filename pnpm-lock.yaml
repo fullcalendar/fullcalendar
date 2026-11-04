@@ -62,7 +62,7 @@ importers:
         specifier: ~4.3.0
         version: 4.3.6
       fullcalendar:
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../vanilla/dist
       jasmine-core:
         specifier: ~4.6.0
@@ -89,8 +89,8 @@ importers:
         specifier: ~7.8.0
         version: 7.8.2
       temporal-polyfill:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.7
+        version: 1.0.7
       typescript:
         specifier: ~5.1.3
         version: 5.1.6
@@ -105,7 +105,7 @@ importers:
         specifier: workspace:*
         version: link:../../scripts
       '@fullcalendar/core':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../core-types/dist
       bootstrap:
         specifier: ^5.3.8
@@ -118,23 +118,23 @@ importers:
   packages/core-types:
     devDependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../headless-calendar/dist
       '@fullcalendar-scripts/standard':
         specifier: workspace:*
         version: link:../../scripts
       temporal-polyfill:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.7
+        version: 1.0.7
     publishDirectory: ./dist
 
   packages/format-luxon3:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -147,17 +147,17 @@ importers:
         specifier: ^3.0.0
         version: 3.7.2
       temporal-polyfill:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.7
+        version: 1.0.7
     publishDirectory: ./dist
 
   packages/format-moment:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -167,25 +167,25 @@ importers:
         specifier: ^2.29.1
         version: 2.30.1
       temporal-polyfill:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.7
+        version: 1.0.7
     publishDirectory: ./dist
 
   packages/google-calendar:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
         specifier: workspace:*
         version: link:../../scripts
       temporal-polyfill:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.7
+        version: 1.0.7
     publishDirectory: ./dist
 
   packages/headless-calendar:
@@ -194,8 +194,8 @@ importers:
         specifier: workspace:*
         version: link:../../scripts
       temporal-polyfill:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.7
+        version: 1.0.7
       typescript:
         specifier: ^4.8.2
         version: 4.9.5
@@ -207,10 +207,10 @@ importers:
   packages/icalendar:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -220,14 +220,14 @@ importers:
         specifier: ^2.0.0
         version: 2.2.1
       temporal-polyfill:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.7
+        version: 1.0.7
     publishDirectory: ./dist
 
   packages/lwc-calendar:
     dependencies:
       fullcalendar:
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../vanilla/dist
     devDependencies:
       '@lwc/eslint-plugin-lwc':
@@ -252,10 +252,10 @@ importers:
   packages/preact:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -271,8 +271,8 @@ importers:
         specifier: ^10.29.8
         version: 10.29.8
       temporal-polyfill:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.7
+        version: 1.0.7
       vitest:
         specifier: ^4.0.16
         version: 4.0.18(@opentelemetry/api@1.9.1)(@types/node@24.10.9)(@vitest/browser-playwright@4.0.18)(jiti@2.6.1)(jsdom@27.4.0)(less@4.5.1)(lightningcss@1.32.0)(sass@1.99.0)(stylus@0.62.0)(terser@5.46.0)(yaml@2.8.3)
@@ -281,10 +281,10 @@ importers:
   packages/react:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -315,8 +315,8 @@ importers:
         specifier: ^19.2.3
         version: 19.2.4(react@19.2.4)
       temporal-polyfill:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.7
+        version: 1.0.7
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -328,10 +328,10 @@ importers:
   packages/rrule:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../core-types/dist
     devDependencies:
       '@fullcalendar-scripts/standard':
@@ -341,17 +341,17 @@ importers:
         specifier: ^2.6.0
         version: 2.8.1
       temporal-polyfill:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.7
+        version: 1.0.7
     publishDirectory: ./dist
 
   packages/vanilla:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../core-types/dist
       preact:
         specifier: ^10.29.8
@@ -361,7 +361,7 @@ importers:
         specifier: workspace:*
         version: link:../../scripts
       '@fullcalendar/preact':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../preact/dist
       '@types/archiver':
         specifier: ^5.3.4
@@ -376,8 +376,8 @@ importers:
         specifier: ^4.1.2
         version: 4.7.8
       temporal-polyfill:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.7
+        version: 1.0.7
     publishDirectory: ./dist
 
   packages/vanilla-tests:
@@ -441,19 +441,19 @@ importers:
         specifier: ^0.7.0
         version: 0.7.0
       temporal-polyfill:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.7
+        version: 1.0.7
       temporal-utils:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.4
+        version: 1.0.4
 
   packages/vanilla-w-react:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../core-types/dist
       react:
         specifier: ^19.2.3
@@ -466,7 +466,7 @@ importers:
         specifier: workspace:*
         version: link:../../scripts
       '@fullcalendar/react':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../react/dist
       '@types/react':
         specifier: ^19.2.9
@@ -481,17 +481,17 @@ importers:
         specifier: ^4.1.2
         version: 4.7.8
       temporal-polyfill:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.7
+        version: 1.0.7
     publishDirectory: ./dist
 
   packages/vue3:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../core-types/dist
       preact:
         specifier: ^10.29.8
@@ -510,7 +510,7 @@ importers:
         specifier: ^2.4.6
         version: 2.4.6
       fullcalendar:
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../vanilla/dist
       globby:
         specifier: ^13.1.2
@@ -522,8 +522,8 @@ importers:
         specifier: ^1.58.1
         version: 1.58.1
       temporal-polyfill:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.7
+        version: 1.0.7
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -541,10 +541,10 @@ importers:
   packages/web-component:
     dependencies:
       '@full-ui/headless-calendar':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../headless-calendar/dist
       '@fullcalendar/core':
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../core-types/dist
       preact:
         specifier: ^10.29.8
@@ -554,7 +554,7 @@ importers:
         specifier: workspace:*
         version: link:../../scripts
       fullcalendar:
-        specifier: workspace:7.1.3
+        specifier: workspace:7.1.4
         version: link:../vanilla/dist
       globby:
         specifier: ^13.1.2
@@ -563,8 +563,8 @@ importers:
         specifier: ^4.1.2
         version: 4.7.8
       temporal-polyfill:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.7
+        version: 1.0.7
     publishDirectory: ./dist
 
   scripts:
@@ -9194,14 +9194,14 @@ packages:
     resolution: {integrity: sha512-tOG/7GyXpFevhXVh8jOPJrmtRpOTsYqUIkVdVooZYJS/z8WhfQUX8RJILmeuJNinGAMSu1veBr4asSHFt5/hng==}
     engines: {node: '>=18'}
 
-  temporal-polyfill@1.0.1:
-    resolution: {integrity: sha512-N2SoI9olnW7BUsU8RosDphZQl9s+WJ8O7PoJMFCr/e5/1rFkVI4GNOWaSeySG+UoP04foPYsnLWbJmbXOiShZg==}
+  temporal-polyfill@1.0.7:
+    resolution: {integrity: sha512-/qHG5yJUCFRAYrlo/4zgFsV7p+cSnGJjtpd3c3sKB3ayuIln3U0nthfKa9MoMl0nY7NAjrru5/w0BMjcAxg9MA==}
 
-  temporal-spec@1.0.0:
-    resolution: {integrity: sha512-00Ahj1e1ifaERTMOIIGpOCdOo9IEk2m6GGSMedsn9a2SIsGLdOTbmME1Htv6IM82b6VHrzSUTIVc7YHy6hdhFQ==}
+  temporal-spec@1.0.1:
+    resolution: {integrity: sha512-wxVoanmDeavXie1vu2JaQ3WIc3JZnWAOYFBsJyATaVsXsycKYUflGsyBmrRSnoCpZJpwPyr38VpgSUlQ8CbFxg==}
 
-  temporal-utils@1.0.1:
-    resolution: {integrity: sha512-HAixuesxFQIUaQk3ptX2jhfO/FsOkgVkDDMawvp6n/fkB1q6BKfs3lURw9I+pK/2e2e/q/vrLrxmeqauBoyGMQ==}
+  temporal-utils@1.0.4:
+    resolution: {integrity: sha512-4mAcgbWlaxe+gn23gk8g0iHxCVGVOhKzSCfF5HM3lfvH8BdT+/pBmH/R/E4CrIse+koUgs8ThkPzCLnui6Fi8w==}
 
   terminal-columns@1.4.1:
     resolution: {integrity: sha512-IKVL/itiMy947XWVv4IHV7a0KQXvKjj4ptbi7Ew9MPMcOLzkiQeyx3Gyvh62hKrfJ0RZc4M1nbhzjNM39Kyujw==}
@@ -20203,14 +20203,14 @@ snapshots:
       minizlib: 3.1.0
       yallist: 5.0.0
 
-  temporal-polyfill@1.0.1:
+  temporal-polyfill@1.0.7:
     dependencies:
-      temporal-spec: 1.0.0
-      temporal-utils: 1.0.1
+      temporal-spec: 1.0.1
+      temporal-utils: 1.0.4
 
-  temporal-spec@1.0.0: {}
+  temporal-spec@1.0.1: {}
 
-  temporal-utils@1.0.1: {}
+  temporal-utils@1.0.4: {}
 
   terminal-columns@1.4.1: {}
 
