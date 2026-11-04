@@ -43,6 +43,7 @@ export class TimeGridSlatHeader extends BaseComponent<TimeGridSlatHeaderProps> {
 
   // internal
   private _isUnmounting: boolean
+  private watchedInnerEl?: HTMLDivElement
   private disconnectInnerSize?: () => void
 
   render() {
@@ -128,12 +129,36 @@ export class TimeGridSlatHeader extends BaseComponent<TimeGridSlatHeaderProps> {
 
   componentDidMount(): void {
     this._isUnmounting = false
-    const { props } = this
-    const innerEl = this.innerElRef.current // TODO: make dynamic with useEffect
+    this.syncInnerSizeWatcher()
+  }
 
-    if (innerEl) { // could be null if !isLabeled
+  /*
+  The inner element only exists while the slat is labeled, and slat components are keyed by
+  time and reused when slotHeaderInterval/slotMinTime change. A slat that becomes labeled
+  after mount must start reporting its size, and one that loses its label must stop and
+  clear its refs, or the axis keeps stale (or missing) measurements.
+  */
+  componentDidUpdate(): void {
+    this.syncInnerSizeWatcher()
+  }
+
+  componentWillUnmount(): void {
+    this._isUnmounting = true
+    this.stopWatchingInnerSize()
+  }
+
+  private syncInnerSizeWatcher(): void {
+    const { props } = this
+    const innerEl = this.innerElRef.current // null if !isLabeled
+
+    if (innerEl === this.watchedInnerEl) return
+
+    this.stopWatchingInnerSize()
+
+    if (innerEl) {
       // TODO: only attach this if refs props present
       // TODO: fire width/height independently?
+      this.watchedInnerEl = innerEl
       this.disconnectInnerSize = watchSize(innerEl, (width, height) => {
         if (this._isUnmounting) return
         setRef(props.innerWidthRef, width)
@@ -142,12 +167,13 @@ export class TimeGridSlatHeader extends BaseComponent<TimeGridSlatHeaderProps> {
     }
   }
 
-  componentWillUnmount(): void {
+  private stopWatchingInnerSize(): void {
     const { props } = this
 
-    this._isUnmounting = true
     if (this.disconnectInnerSize) {
       this.disconnectInnerSize()
+      this.disconnectInnerSize = undefined
+      this.watchedInnerEl = undefined
       setRef(props.innerWidthRef, null)
       setRef(props.innerHeightRef, null)
     }
