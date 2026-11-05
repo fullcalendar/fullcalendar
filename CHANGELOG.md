@@ -1,4 +1,10 @@
 
+## unreleased
+
+- FEATURE: `calendarSystem`, the calendar system the calendar counts years, months and days in: `'gregory'` (the default), or `'jalali'` for the Persian, or Solar Hijri, calendar. A month view then runs from the first day of a Jalali month to its last, the month grid starts on the week that holds the first, and prev/next moves by one Jalali month (#1813)
+- FIX: Dates were formatted in the calendar system the locale prefers rather than the one the calendar computes in. With `locale: 'fa'`, which asks Intl for Persian dates, a Gregorian month grid labelled its cells with Jalali day numbers, so the numbers restarted in the middle of the month
+
+
 ## v7.1.3
 
 ### Bugfixes
