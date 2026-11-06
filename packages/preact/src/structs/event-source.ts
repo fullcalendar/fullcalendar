@@ -39,7 +39,7 @@ export interface EventSourceFetcherRes {
 export type EventSourceFetcher<Meta> = (
   data: {
     eventSource: EventSource<Meta>
-    range: DateRange
+    range: DateRange | null
     isRefetch: boolean
     context: CalendarContext
   },

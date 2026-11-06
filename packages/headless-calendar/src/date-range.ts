@@ -112,12 +112,19 @@ export function rangesIntersect(range0: OpenDateRange, range1: OpenDateRange): b
     (range0.start === null || range1.end === null || range0.start < range1.end)
 }
 
-export function rangeContainsRange(outerRange: OpenDateRange, innerRange: OpenDateRange): boolean {
+export function rangeContainsRange(outerRange: OpenDateRange | null, innerRange: OpenDateRange): boolean {
+  if (!outerRange) {
+    return false
+  }
+
   return (outerRange.start === null || (innerRange.start !== null && innerRange.start >= outerRange.start)) &&
     (outerRange.end === null || (innerRange.end !== null && innerRange.end <= outerRange.end))
 }
 
-export function rangeContainsMarker(range: OpenDateRange, date: DateMarker | number): boolean { // date can be a millisecond time
+export function rangeContainsMarker(range: OpenDateRange | null, date: DateMarker | number): boolean { // date can be a millisecond time
+  if (!range) {
+    return false
+  }
   return (range.start === null || date >= range.start) &&
     (range.end === null || date < range.end)
 }

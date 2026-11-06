@@ -43,6 +43,14 @@ export class DayTableModel {
     let firstDay: number
     let rowCount: number
 
+    if (!dates.length) {
+      this.rowCount = 0
+      this.colCount = 0
+      this.cellRows = []
+      this.headerDates = []
+      return
+    }
+
     if (breakOnWeeks) {
       // count columns until the day-of-week repeats
       firstDay = dates[0].getUTCDay()
