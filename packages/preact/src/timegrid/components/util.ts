@@ -11,7 +11,7 @@ export function computeSlatHeight(
   slatHeight: number | undefined,
   slatLiquid: boolean,
 ] {
-  if (!slatInnerHeight || !scrollerHeight) {
+  if (slatInnerHeight == null || !scrollerHeight) {
     return [undefined, false]
   }
 
