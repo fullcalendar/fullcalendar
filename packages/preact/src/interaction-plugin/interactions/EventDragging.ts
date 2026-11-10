@@ -457,6 +457,12 @@ function computeEventMutation(
       // Doesn't matter where on the event the drag began, mutate the event's start-date to date1
       date0 = eventInstanceStart
     }
+  } else if (!dateSpan1.allDay && hit0.context !== hit1.context) {
+    // Preserve the grab offset in whole receiving-grid snaps. A source snap
+    // may not be divisible by the receiving calendar's effective snap duration.
+    let snapDuration = dateSpan1.range.end.valueOf() - date1.valueOf()
+    let grabOffset = date0.valueOf() - eventInstanceStart.valueOf()
+    date0 = new Date(eventInstanceStart.valueOf() + Math.round(grabOffset / snapDuration) * snapDuration)
   }
 
   const { delta, instantDeltaMs } = computeHitDelta(hit0, hit1, {
