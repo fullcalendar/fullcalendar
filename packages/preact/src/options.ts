@@ -730,6 +730,12 @@ export function identity<T>(raw: T): T {
   return raw
 }
 
+/*
+`false` refines to `null`, turning the formatted text off. A nullish input stays `undefined`, for the default.
+*/
 function createFalsableFormatter(input: FormatterInput | false): DateFormatter {
-  return input === false ? null : createFormatter(input)
+  if (input === false) {
+    return null
+  }
+  return createFormatter(input) ?? undefined
 }

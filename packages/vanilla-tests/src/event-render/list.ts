@@ -364,4 +364,46 @@ describe('list view event rendering', () => {
       expect(getEventRows(calendar.el).map((row) => row.title)).toEqual(['before', 'on the day', 'later in the year'])
     })
   })
+
+  describe('day heading formats', () => {
+    const events = [{ title: 'event 1', start: '2016-08-15' }]
+
+    it('renders both headings by default', async () => {
+      const calendar = initCalendar({ ...options, events })
+      await waitForSettle()
+
+      expect(getDayHeaders(calendar.el)[0].texts).toEqual(['Monday', 'August 15, 2016'])
+    })
+
+    it('leaves out the first heading with listDayFormat: false', async () => {
+      const calendar = initCalendar({ ...options, events, listDayFormat: false })
+      await waitForSettle()
+
+      expect(getDayHeaders(calendar.el)[0].texts).toEqual(['August 15, 2016'])
+    })
+
+    it('leaves out the second heading with listDayAltFormat: false', async () => {
+      const calendar = initCalendar({ ...options, events, listDayAltFormat: false })
+      await waitForSettle()
+
+      expect(getDayHeaders(calendar.el)[0].texts).toEqual(['Monday'])
+    })
+
+    it('leaves out both headings when both are false', async () => {
+      const calendar = initCalendar({ ...options, events, listDayFormat: false, listDayAltFormat: false })
+      await waitForSettle()
+
+      expect(getDayHeaders(calendar.el)[0].texts).toEqual([])
+    })
+
+    it('restores the default heading when the option is reset to undefined', async () => {
+      const calendar = initCalendar({ ...options, events, listDayAltFormat: false })
+      await waitForSettle()
+
+      calendar.setOption('listDayAltFormat', undefined)
+      await waitForSettle()
+
+      expect(getDayHeaders(calendar.el)[0].texts).toEqual(['Monday', 'August 15, 2016'])
+    })
+  })
 })

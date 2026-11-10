@@ -8,6 +8,7 @@
 - FIX: Accessibility: prev, next, today and custom toolbar buttons had `aria-pressed="false"`, so screen readers announced them as toggle buttons. Only view buttons have it now (#8042)
 - FIX: An event at a wall-clock time skipped by a daylight-saving change (given without an offset) resolves to the time after the change, but `startStr`/`endStr` named the skipped time, an hour before `start`/`end`. Fed back into `addEvent`, the string moved the event
 - FIX: Resource Timeline with `virtualization`: scrolling to a resource added with `calendar.addResource(resource, true)` could stop a few rows short of it, when rows it scrolled past weren't measured yet. A regression in v7.1.4
+- FIX: List view: `listDayFormat: false` and `listDayAltFormat: false` didn't turn their day headings off, which rendered in the default format instead
 - TimeGrid: slot headers between labels have `data-time` too, like the labeled ones
 
 
