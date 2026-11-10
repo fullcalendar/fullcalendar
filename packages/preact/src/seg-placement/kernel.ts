@@ -173,8 +173,14 @@ export function buildPixelLimitedLayout<S extends SourceSeg>(
   const excludedWholeSlices = wholeResolution.excludedSlices.concat(domExcludedWholeSlices)
   excludedWholeSlices.sort(compareByEventOrder)
 
+  // More links always render. When one consumes the full budget or more, zero
+  // is the deepest coordinate an intersecting event may reach.
+  const moreLinkEventMax = Math.max(0, canvasHeight - moreLinkHeight)
+
   // With slicing, the level tax punches link holes while preserving event
   // remainders; otherwise measured pruning makes the smarter pixel choice.
+  // An occupant that already ends above the link band leaves room for the
+  // link below it, so it isn't taxed.
   const placement = placeExtraSlicesInLevels(
     wholeResolution.placementSliceLevels,
     excludedWholeSlices,
@@ -183,15 +189,16 @@ export function buildPixelLimitedLayout<S extends SourceSeg>(
     /* moreLinkLevelTax = */ eventSlicing ? 1 : 0,
     /* requiresSlicing = */ true,
     /* taxDeepestOccupiedLevel = */ true,
+    /* isAboveMoreLink = */ (slice) => {
+      const sliceBottom = getSliceBottom(slice, wholeResolution.sliceCoords, sliceHeights)
+      return sliceBottom !== undefined &&
+        sliceBottom <= moreLinkEventMax + GEOMETRY_TOLERANCE
+    },
   )
   const sliceResolution = resolveLevelCoords(
     placement.sliceLevels,
     sliceHeights,
   )
-
-  // More links always render. When one consumes the full budget or more, zero
-  // is the deepest coordinate an intersecting event may reach.
-  const moreLinkEventMax = Math.max(0, canvasHeight - moreLinkHeight)
 
   // Remove exact canvas and more-link overflows from the coordinated layout.
   const pixelPrunedSlices = prunePixelLimitedSliceLevels(
@@ -582,6 +589,11 @@ export function placeExtraSlicesInLevels<S extends SourceSeg>(
   requiresSlicing: boolean = false,
   /** Whether each link taxes its deepest locally occupied level. */
   taxDeepestOccupiedLevel: boolean = false,
+  /**
+   * Whether an occupant already leaves room for a link below it. When every
+   * occupant of the taxed level does, the link reserves the level below them.
+   */
+  isAboveMoreLink?: (slice: Slice<S>) => boolean,
 ): ExtraSlicePlacement<S> {
   const addedSliceSet = new Set<Slice<S>>()
 
@@ -682,6 +694,14 @@ export function placeExtraSlicesInLevels<S extends SourceSeg>(
         taxedLevelIndex--
         victims = findIntersections(sliceLevels[taxedLevelIndex], span)
       }
+    }
+
+    if (isAboveMoreLink && victims.length && victims.every(isAboveMoreLink)) {
+      insertLaterally(moreLinkReservations, {
+        ...span,
+        levelIndex: taxedLevelIndex + 1,
+      })
+      return
     }
 
     insertLaterally(moreLinkReservations, {

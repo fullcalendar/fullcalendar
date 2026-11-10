@@ -251,7 +251,7 @@ describe('pure positioning kernel', () => {
       .toEqual(['b', 'c', 'd'])
   })
 
-  it('mounts candidate partials while the deepest occupant pays the link tax', () => {
+  it('mounts candidate partials while an occupant above the link band stays visible', () => {
     const sources = segs([
       ['base', 1, 2],
       ['extra', 0, 3],
@@ -260,8 +260,8 @@ describe('pure positioning kernel', () => {
     const wholeHeights = new Map([[base.key, 10]])
 
     // extra never fit the one-level frontier, so its candidate fragments
-    // mount invisibly for measurement. Its hidden middle reserves the only
-    // occupied level for the link, consuming base by deliberate policy.
+    // mount invisibly for measurement. Its hidden middle needs a link, which
+    // fits below base (bottom 10, within 20 - 5), so base isn't taxed.
     const awaiting = buildPixelLimitedLayout(
       sources,
       false,
@@ -276,6 +276,7 @@ describe('pure positioning kernel', () => {
       'extra:0:0:slice',
       'extra:0:2:slice',
     ])
+    expect(coordOf(awaiting, 'base:1')).toBe(0)
     expect(coordOf(awaiting, 'extra:0:0:slice')).toBe(undefined)
     expect(unmeasuredKeys(awaiting, wholeHeights)).toEqual([
       'extra:0:0:slice',
@@ -283,12 +284,11 @@ describe('pure positioning kernel', () => {
     ])
     expect(awaiting.isSettled).toBe(false)
     expect(hiddenGroupsOf(awaiting)[0].hiddenSlices.map(projectSlice)).toEqual([
-      ['base', 1, 2],
       ['extra', 1, 2],
     ])
 
-    // With both fragment measurements in hand, the fragments become visible;
-    // base remains an invisible donor and a member of the link group.
+    // With both fragment measurements in hand, the fragments become visible
+    // beside base.
     const accepted = buildPixelLimitedLayout(
       sources,
       false,
@@ -304,16 +304,56 @@ describe('pure positioning kernel', () => {
     )
     expect(coordOf(accepted, 'extra:0:0:slice')).toBe(0)
     expect(coordOf(accepted, 'extra:0:2:slice')).toBe(0)
-    expect(coordOf(accepted, 'base:1')).toBe(undefined)
+    expect(coordOf(accepted, 'base:1')).toBe(0)
     expect(accepted.isSettled).toBe(true)
     expect(hiddenGroupsOf(accepted)[0].hiddenSlices.map(projectSlice)).toEqual([
-      ['base', 1, 2],
       ['extra', 1, 2],
     ])
-    expect(hiddenGroupsOf(accepted)[0].hiddenSlices[1]).toMatchObject({
+    expect(hiddenGroupsOf(accepted)[0].hiddenSlices[0]).toMatchObject({
       isStart: false,
       isEnd: false,
     })
+  })
+
+  it('still taxes an occupant that reaches into the link band', () => {
+    const sources = segs([
+      ['base', 1, 2],
+      ['extra', 0, 3],
+    ])
+    const heights = new Map([
+      ['base:1', 16],
+      ['extra:0:0:slice', 10],
+      ['extra:0:2:slice', 10],
+    ])
+
+    // base's bottom of 16 crosses the link band below 20 - 5 = 15
+    const layout = buildPixelLimitedLayout(sources, false, true, heights, 20, 1, 5)
+
+    expect(coordOf(layout, 'base:1')).toBe(undefined)
+    expect(hiddenGroupsOf(layout)[0].hiddenSlices.map(projectSlice)).toEqual([
+      ['base', 1, 2],
+      ['extra', 1, 2],
+    ])
+  })
+
+  // the numbers from a real month: a 142.3px cell, two 112px events and a 20px link
+  it('keeps the first of two events when it and the link fit', () => {
+    const sources = segs([
+      ['first', 0, 1],
+      ['second', 0, 1],
+    ])
+    const heights = new Map([
+      ['first:0', 112],
+      ['second:0', 112],
+    ])
+
+    const layout = buildPixelLimitedLayout(sources, false, true, heights, 142.3, 10, 20)
+
+    expect(coordOf(layout, 'first:0')).toBe(0)
+    expect(coordOf(layout, 'second:0')).toBe(undefined)
+    expect(hiddenGroupsOf(layout)[0].hiddenSlices.map(projectSlice)).toEqual([
+      ['second', 0, 1],
+    ])
   })
 
   it('keeps unmeasured frontier wholes as donors outside the hidden stream', () => {

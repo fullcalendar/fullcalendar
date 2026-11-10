@@ -325,6 +325,30 @@ describe('more-links in dayGrid', () => {
       expect(getMoreLinkEls(calendar.el).length).toBe(0)
     })
 
+    it('keeps an event that fits above the more-link', async () => {
+      const calendar = initCalendar({
+        ...options,
+        height: 900,
+        events: [
+          { id: 'first', start: '2014-08-13' },
+          { id: 'second', start: '2014-08-13' },
+        ],
+        eventContent: { html: '<div style="height: var(--test-event-height, 10px)"></div>' },
+      })
+      await waitForSettle()
+
+      // Size the events so one fits with the link but two don't
+      const cellEl = new DayGridModel(calendar.el).getDayCell('2014-08-13')
+      const topEl = queryPart(cellEl, 'dayCellTop')!
+      const mainHeight = cellEl.getBoundingClientRect().height - topEl.getBoundingClientRect().height
+      expect(mainHeight).toBeGreaterThan(100)
+      calendar.el.style.setProperty('--test-event-height', Math.round(mainHeight * 0.6) + 'px')
+      await waitForSettle()
+
+      expect(getVisibleEventEls(calendar.el).map(getEventIdOfEl)).toEqual(['first'])
+      expect(getMoreLinkTexts(calendar.el)).toEqual(['+1 more'])
+    })
+
     it('adjusts more-links when a liquid-height calendar grows and shrinks', async () => {
       const containerEl = appendTestElement(document.createElement('div'))
       containerEl.style.height = '800px'

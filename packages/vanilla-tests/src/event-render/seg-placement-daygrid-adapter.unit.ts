@@ -238,8 +238,9 @@ describe('DayGrid kernel pixel placement', () => {
       'wide:0': undefined,
       'wide:0:0:slice': undefined,
     })
+    // The blocker ends above the link band, so it stays visible over the link
     expect(levelItemTops(awaitingPartials, 1)).toEqual({
-      'blocker:1': undefined,
+      'blocker:1': 0,
     })
     expect(levelItemTops(awaitingPartials, 2)).toEqual({
       'wide:0:2:slice': undefined,
@@ -260,7 +261,7 @@ describe('DayGrid kernel pixel placement', () => {
       },
       moreLinkHeight: 1,
     })
-    expect(settled.columns.map((column) => column.contentHeight)).toEqual([6, 0, 6])
+    expect(settled.columns.map((column) => column.contentHeight)).toEqual([6, 5, 6])
   })
 
   it('keeps a displaced whole source mounted as the measurement donor for its partials', () => {
@@ -385,15 +386,15 @@ describe('DayGrid kernel pixel placement', () => {
     expect(levelItemTops(layout, 0)).toEqual({
       'wide:0:0:slice': undefined,
     })
-    expect(levelItemTops(layout, 1)).toEqual({ 'blocker:1': undefined })
+    expect(levelItemTops(layout, 1)).toEqual({ 'blocker:1': 0 })
     expect(levelItemTops(layout, 2)).toEqual({
       'wide:0:2:slice': undefined,
     })
-    // The hidden middle reserves the only occupied level for the link, so the
-    // blocker pays the tax while the two candidate fragments measure.
+    // The blocker ends exactly at the link band, so the link goes below it
+    // rather than taxing it, while the two candidate fragments measure.
     expect(layout.columns.map((column) => segIds(column.hiddenSegs))).toEqual([
       [],
-      ['blocker', 'wide'],
+      ['wide'],
       [],
     ])
   })
