@@ -1,6 +1,6 @@
 import { Action } from './Action'
 import { PluginHooks } from '../plugin-system-struct'
-import { DateEnv, DateMarker } from '@full-ui/headless-calendar'
+import { DateEnv, DateMarker, DateTimeRangeFormatPartWithWeek } from '@full-ui/headless-calendar'
 import { CalendarApiImpl } from '../api/CalendarApiImpl'
 import { EventSourceHash } from '../structs/event-source'
 import { ViewSpecHash, ViewSpec } from '../structs/view-spec'
@@ -66,6 +66,7 @@ type CalendarDataBase = CalendarOptionsData & CalendarCurrentViewData & Calendar
 export interface CalendarData extends CalendarDataBase {
   nowManager: CalendarNowManager
   viewTitle: string // based on current date
+  viewTitleParts: DateTimeRangeFormatPartWithWeek[]
   calendarApi: CalendarApiImpl // TODO: try to remove this
   dispatch: (action: Action) => void
   emitter: Emitter<Required<CalendarListeners>>

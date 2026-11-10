@@ -3,7 +3,7 @@ import { memoize, memoizeObjArg } from '../util/memoize'
 import { Action } from './Action'
 import { buildBuildPluginHooks } from '../plugin-system'
 import { PluginHooks } from '../plugin-system-struct'
-import { DateEnv, DateMarker } from '@full-ui/headless-calendar'
+import { DateEnv, DateMarker, joinDateTimeFormatParts } from '@full-ui/headless-calendar'
 import { CalendarApiImpl } from '../api/CalendarApiImpl'
 import { EventSourceHash } from '../structs/event-source'
 import { buildViewSpecs, ViewSpec } from '../structs/view-spec'
@@ -39,7 +39,7 @@ import { globalPlugins } from '../global-plugins'
 import { createEmptyEventStore } from '../structs/event-store'
 import { CalendarContext } from '../CalendarContext'
 import { CalendarDataManagerState, CalendarOptionsData, CalendarCurrentViewData, CalendarData } from './data-types'
-import { buildTitle } from './title-formatting'
+import { buildTitleParts } from './title-formatting'
 import { CalendarNowManager } from './CalendarNowManager'
 import { NowTimerRunner } from '../NowTimerRunner'
 import { warn } from '../util/warn'
@@ -70,7 +70,8 @@ export class CalendarDataManager {
   private buildEventUiBases = memoize(buildEventUiBases)
   private parseContextBusinessHours = memoizeObjArg(parseContextBusinessHours)
   private buildToolbarProps = memoize(buildToolbarProps)
-  private buildTitle = memoize(buildTitle)
+  private buildTitleParts = memoize(buildTitleParts)
+  private joinTitleParts = memoize(joinDateTimeFormatParts)
 
   private nowManager = new CalendarNowManager()
   private nowTimer: NowTimerRunner
@@ -328,7 +329,8 @@ export class CalendarDataManager {
     }
 
     // === Build CalendarData ===
-    let viewTitle = this.buildTitle(dateProfile, currentViewData.options, optionsData.dateEnv)
+    let viewTitleParts = this.buildTitleParts(dateProfile, currentViewData.options, optionsData.dateEnv)
+    let viewTitle = this.joinTitleParts(viewTitleParts)
 
     let toolbarProps = this.buildToolbarProps(
       currentViewData.viewSpec,
@@ -341,6 +343,7 @@ export class CalendarDataManager {
 
     let newData: CalendarData = {
       viewTitle,
+      viewTitleParts,
       nowManager: this.nowManager,
       calendarApi: config.calendarApi,
       dispatch: this.dispatch,

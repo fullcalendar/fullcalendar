@@ -113,3 +113,76 @@ describe('titleFormat', () => {
     expect(await getTitleText(calendar)).toBe(expected)
   })
 })
+
+describe('view.titleParts', () => {
+  function projectParts(calendar: { view: { titleParts: { type: string, value: string, source: string }[] } }) {
+    return calendar.view.titleParts.map((part) => [part.type, part.value, part.source])
+  }
+
+  it('holds the parts of a single-month title, all shared', async () => {
+    const calendar = initCalendar({ initialView: 'dayGridMonth', initialDate: '2025-05-12' })
+    await waitForSettle()
+
+    expect(calendar.view.title).toBe('May 2025')
+    expect(projectParts(calendar)).toEqual([
+      ['month', 'May', 'shared'],
+      ['literal', ' ', 'shared'],
+      ['year', '2025', 'shared'],
+    ])
+  })
+
+  it('marks the start and end of a range across two months', async () => {
+    const calendar = initCalendar({ initialView: 'timeGridWeek', initialDate: '2025-04-30' })
+    await waitForSettle()
+
+    expect(calendar.view.title).toBe(`Apr${enUsSep}May 2025`)
+    expect(projectParts(calendar)).toEqual([
+      ['month', 'Apr', 'startRange'],
+      ['literal', enUsSep, 'shared'],
+      ['month', 'May', 'endRange'],
+      ['literal', ' ', 'shared'],
+      ['year', '2025', 'shared'],
+    ])
+  })
+
+  it('marks the start and end of a range across two years', async () => {
+    const calendar = initCalendar({ initialView: 'timeGridWeek', initialDate: '2025-12-30' })
+    await waitForSettle()
+
+    expect(calendar.view.title).toBe(`Dec 2025${enUsSep}Jan 2026`)
+    expect(projectParts(calendar).map(([type, , source]) => [type, source])).toEqual([
+      ['month', 'startRange'],
+      ['literal', 'startRange'],
+      ['year', 'startRange'],
+      ['literal', 'shared'],
+      ['month', 'endRange'],
+      ['literal', 'endRange'],
+      ['year', 'endRange'],
+    ])
+  })
+
+  it('follows the locale', async () => {
+    const calendar = initCalendar({ initialView: 'dayGridMonth', initialDate: '2025-05-12', locale: 'ja' })
+    await waitForSettle()
+
+    expect(calendar.view.titleParts.map((part) => part.type)).toEqual(['year', 'literal', 'month', 'literal'])
+    expect(calendar.view.titleParts.map((part) => part.value).join('')).toBe(calendar.view.title)
+  })
+
+  it('is one literal part for a function titleFormat', async () => {
+    const calendar = initCalendar({ initialView: 'dayGridMonth', initialDate: '2025-05-12', titleFormat: () => 'Custom' })
+    await waitForSettle()
+
+    expect(projectParts(calendar)).toEqual([['literal', 'Custom', 'shared']])
+  })
+
+  it('updates when navigating', async () => {
+    const calendar = initCalendar({ initialView: 'dayGridMonth', initialDate: '2025-05-12' })
+    await waitForSettle()
+
+    calendar.next()
+    await waitForSettle()
+
+    expect(calendar.view.titleParts.map((part) => part.value).join('')).toBe('June 2025')
+  })
+})

@@ -1,14 +1,14 @@
 import { DateProfile } from '../DateProfileGenerator'
-import { diffWholeDays, DateRange, DateEnv, joinDateTimeFormatParts, DateTimeRangeFormatPartWithWeek } from '@full-ui/headless-calendar'
+import { diffWholeDays, DateRange, DateEnv, DateTimeRangeFormatPartWithWeek } from '@full-ui/headless-calendar'
 import { createFormatter, FormatterInput } from '../datelib/formatting'
 import { ViewOptionsRefined } from '../options'
 
-// Computes what the title at the top of the calendarApi should be for this view
-export function buildTitle(
+// Computes the parts of the title at the top of the calendarApi for this view
+export function buildTitleParts(
   dateProfile: DateProfile,
   viewOptions: ViewOptionsRefined,
   dateEnv: DateEnv,
-): string {
+): DateTimeRangeFormatPartWithWeek[] {
   let range: DateRange
 
   // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
@@ -46,7 +46,7 @@ export function buildTitle(
     }
   }
 
-  return joinDateTimeFormatParts(parts)
+  return parts
 }
 
 // Generates the format string that should be used to generate the title for the current date range.
