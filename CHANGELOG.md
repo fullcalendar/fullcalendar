@@ -9,6 +9,7 @@
 - FIX: An event at a wall-clock time skipped by a daylight-saving change (given without an offset) resolves to the time after the change, but `startStr`/`endStr` named the skipped time, an hour before `start`/`end`. Fed back into `addEvent`, the string moved the event
 - FIX: Resource Timeline with `virtualization`: scrolling to a resource added with `calendar.addResource(resource, true)` could stop a few rows short of it, when rows it scrolled past weren't measured yet. A regression in v7.1.4
 - FIX: List view: `listDayFormat: false` and `listDayAltFormat: false` didn't turn their day headings off, which rendered in the default format instead
+- FIX: TimeGrid: each slot header in the time axis was only as tall as its label, so a background, border or hover style on it (`slotHeaderClass`) covered just the top of its slot. It's now as tall as the slot, as it already was with `dayMinWidth`
 - TimeGrid: slot headers between labels have `data-time` too, like the labeled ones
 
 

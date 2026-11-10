@@ -44,6 +44,26 @@ describe('slot labels', () => {
     }
   })
 
+  // the pannable layout (dayMinWidth) is premium, and already stacks its slot headers at the slots' height
+  it.each([
+    ['by default', {}],
+    ['with expandRows', { expandRows: true, height: 2000 }],
+  ] as const)('are as tall as their slot lanes %s', async (_desc, extraOptions) => {
+    const calendar = initCalendar({ ...options, ...extraOptions })
+    await waitForSettle()
+
+    const headerEls = queryParts(calendar.el, 'slotHeader')
+    const laneEls = getSlotLaneEls(calendar.el)
+
+    expect(headerEls.length).toBe(laneEls.length)
+    expect(new Set(headerEls.map((el) => el.textContent)).size).toBeGreaterThan(1) // labeled and unlabeled
+
+    headerEls.forEach((headerEl, i) => {
+      expect(headerEl.getAttribute('data-time')).toBe(laneEls[i].getAttribute('data-time'))
+      expect(headerEl.getBoundingClientRect().height).toBeCloseTo(laneEls[i].getBoundingClientRect().height, 0)
+    })
+  })
+
   it('give the timed area a row header with hidden text', async () => {
     const calendar = initCalendar(options)
     await waitForSettle()

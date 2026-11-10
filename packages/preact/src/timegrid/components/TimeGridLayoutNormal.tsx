@@ -430,6 +430,8 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
                             innerHeightRef={slatLabelInnerHeightRefMap.createRef(slatMeta.key)}
                             borderTop={Boolean(slatI)}
                             isNarrow={cellIsNarrow}
+                            height={slatLiquidHeight ? undefined : slatHeight}
+                            liquidHeight={slatLiquidHeight}
                           />
                         </div>
                         <div
