@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import enGbLocale from 'fullcalendar/locales/en-gb'
 import { initCalendar } from '../lib/calendar'
 import { queryPart, queryParts } from '../lib/models/events'
@@ -62,6 +62,32 @@ describe('slot labels', () => {
       expect(headerEl.getAttribute('data-time')).toBe(laneEls[i].getAttribute('data-time'))
       expect(headerEl.getBoundingClientRect().height).toBeCloseTo(laneEls[i].getBoundingClientRect().height, 0)
     })
+  })
+
+  it('give slotHeaderContent the parts of their text, with empty day-level getters', async () => {
+    const slotHeaderContent = vi.fn()
+    initCalendar({ ...options, slotHeaderContent })
+    await waitForSettle()
+
+    const info = slotHeaderContent.mock.calls[0][0]
+    expect(info.text).toBe('12am')
+    expect(info.textParts.map((part) => part.value).join('')).toBe('12am')
+    expect(info.textParts.some((part) => part.type === 'hour')).toBe(true)
+    expect(info.weekdayText).toBe('')
+    expect(info.dayNumberText).toBe('')
+    expect(info.monthText).toBe('')
+  })
+
+  it('give slotHeaderContent empty day-level getters even when the format has a date', async () => {
+    const slotHeaderContent = vi.fn()
+    initCalendar({ ...options, slotHeaderFormat: { month: 'short', day: 'numeric', hour: 'numeric' }, slotHeaderContent })
+    await waitForSettle()
+
+    const info = slotHeaderContent.mock.calls[0][0]
+    expect(info.textParts.some((part) => part.type === 'month')).toBe(true)
+    expect(info.weekdayText).toBe('')
+    expect(info.dayNumberText).toBe('')
+    expect(info.monthText).toBe('')
   })
 
   it('give the timed area a row header with hidden text', async () => {

@@ -389,6 +389,16 @@ describe('list view event rendering', () => {
       expect(getDayHeaders(calendar.el)[0].texts).toEqual(['Monday'])
     })
 
+    it('gives listDayHeaderContent the month of each heading as monthText', async () => {
+      const listDayHeaderContent = vi.fn((info) => info.text)
+      initCalendar({ ...options, events, listDayHeaderContent })
+      await waitForSettle()
+
+      const infos = listDayHeaderContent.mock.calls.map(([info]) => info)
+      expect(infos.find((info) => info.level === 0).monthText).toBe('')
+      expect(infos.find((info) => info.level === 1).monthText).toBe('August')
+    })
+
     it('leaves out both headings when both are false', async () => {
       const calendar = initCalendar({ ...options, events, listDayFormat: false, listDayAltFormat: false })
       await waitForSettle()

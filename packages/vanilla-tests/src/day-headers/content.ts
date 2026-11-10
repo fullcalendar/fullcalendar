@@ -62,6 +62,22 @@ describe('dayHeaderContent', () => {
     }
   })
 
+  it('receives the month of a dated header as monthText', async () => {
+    const dayHeaderContent = vi.fn((info: DayHeaderInfo) => info.text)
+    initCalendar({
+      initialView: 'timeGridDay',
+      initialDate,
+      dayHeaderFormat: { weekday: 'short', month: 'short', day: 'numeric' },
+      dayHeaderContent,
+    })
+    await waitForSettle()
+
+    const info = dayHeaderContent.mock.calls[0][0]
+    expect(info.weekdayText).toBe('Sun')
+    expect(info.dayNumberText).toBe('11')
+    expect(info.monthText).toBe('May')
+  })
+
   // https://github.com/fullcalendar/fullcalendar/issues/7468
   describe('in a month view, where headers name only the weekday', () => {
     it.each([
@@ -87,6 +103,22 @@ describe('dayHeaderContent', () => {
       expect(queryParts(calendar.el, 'dayHeader').map(getVisibleText)).toEqual(
         ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
       )
+    })
+
+    it('gets no day number or month from its date, even when the format has them', async () => {
+      const dayHeaderContent = vi.fn((info: DayHeaderInfo) => info.text)
+      initCalendar({
+        initialView: 'dayGridMonth',
+        initialDate,
+        dayHeaderFormat: { weekday: 'short', month: 'short', day: 'numeric' },
+        dayHeaderContent,
+      })
+      await waitForSettle()
+
+      const info = dayHeaderContent.mock.calls[0][0]
+      expect(info.weekdayText).toBe('Sun')
+      expect(info.dayNumberText).toBe('')
+      expect(info.monthText).toBe('')
     })
 
     it('receives the first row\'s days, skipping hidden days', async () => {

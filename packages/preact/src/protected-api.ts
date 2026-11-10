@@ -24,6 +24,7 @@ export {
   computeViewBorderless,
 } from './util/misc'
 export { warn } from './util/warn'
+export { findWeekdayText, findDayNumberText, findMonthText } from './util/date-format'
 export { whenSettled, holdSettle, settleSetTimeout, settleClearTimeout, settleRequestAnimationFrame } from './util/settle'
 
 export {

@@ -67,6 +67,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
       textParts,
       get weekdayText() { return findWeekdayText(textParts) },
       get dayNumberText() { return findDayNumberText(textParts) },
+      get monthText() { return findMonthText(textParts) },
       view: viewApi,
     }
     const dayCellRenderProps: DayCellInfo = {
@@ -76,12 +77,13 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
       isNarrow: false,
       inPopover: true,
       hasNavLink: false,
-      get weekdayText() { return findWeekdayText(textParts) },
-      get dayNumberText() { return findDayNumberText(textParts) },
-      get monthText() { return findMonthText(textParts) },
       view: viewApi,
+      // the popover's day cell has no label of its own
       text: '',
       textParts: [],
+      weekdayText: '',
+      dayNumberText: '',
+      monthText: '',
       options: { businessHours: Boolean(options.businessHours) },
     }
 
