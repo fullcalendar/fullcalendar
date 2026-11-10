@@ -13,10 +13,13 @@ export default async function(this: ScriptContext, ...args: string[]) {
   for (const pkgDir in pkgDirToJson) {
     const pkgJson = pkgDirToJson[pkgDir]
 
+    // the test packages hold the main suites. other packages have smaller ones of their own
+    const isTestPkg = pkgJson.name?.startsWith('@fullcalendar-tests/')
+
     if (
       isAll ||
-      (isOther && !pkgJson.karmaConfig) ||
-      (!isOther && pkgJson.karmaConfig)
+      (isOther && !isTestPkg) ||
+      (!isOther && isTestPkg)
     ) {
       const subcommand = isDev ? 'test:dev' : 'test'
 

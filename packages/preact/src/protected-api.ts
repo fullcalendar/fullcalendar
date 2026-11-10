@@ -24,6 +24,7 @@ export {
   computeViewBorderless,
 } from './util/misc'
 export { warn } from './util/warn'
+export { whenSettled, holdSettle, settleSetTimeout, settleClearTimeout, settleRequestAnimationFrame } from './util/settle'
 
 export {
   computeVisibleDayRange,
@@ -136,6 +137,7 @@ export type { EventInteractionState } from './interactions/event-interaction-sta
 export {
   sortEventSegs,
   getEventRangeMeta, buildEventRangeKey,
+  getElEventRange,
   EventRangeProps,
   MinimalEventProps,
 } from './component-util/event-rendering'

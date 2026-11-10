@@ -1,4 +1,6 @@
 
+import { settleClearTimeout, settleSetTimeout } from './settle'
+
 export function debounce(fn: () => void, ms: number): [
   request: () => void,
   cancel: () => void,
@@ -10,7 +12,7 @@ export function debounce(fn: () => void, ms: number): [
   function runWithTimeout(timeout: number) {
     timeoutStarted = Date.now()
     timeoutAdded = 0
-    timeoutId = setTimeout(() => {
+    timeoutId = settleSetTimeout(() => {
       if (timeoutAdded) {
         runWithTimeout(timeoutAdded)
       } else {
@@ -30,7 +32,7 @@ export function debounce(fn: () => void, ms: number): [
 
   function cancel() {
     if (timeoutId) {
-      clearTimeout(timeoutId)
+      settleClearTimeout(timeoutId)
       timeoutId = undefined
     }
   }

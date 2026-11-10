@@ -82,6 +82,7 @@ export class TimeGridSlatHeader extends BaseComponent<TimeGridSlatHeaderProps> {
             generateClassName(options.slotHeaderClass, renderProps),
             className,
           )}
+          data-time={props.isoTimeStr}
           style={{
             height: props.height,
           }}

@@ -30,22 +30,18 @@ export default async function(this: ScriptContext, ...args: string[]) {
 export async function buildPkg(pkgDir: string, monorepoStruct: MonorepoStruct, isDev: boolean) {
   const pkgJson = monorepoStruct.pkgDirToJson[pkgDir]
   const pkgAnalysis = analyzePkg(pkgDir)
-  const { isTests } = pkgAnalysis
 
   await deleteBuiltFiles(pkgDir)
-
-  if (!isTests) {
-    await writeDistPkgJson(pkgDir, pkgJson, isDev)
-  }
+  await writeDistPkgJson(pkgDir, pkgJson, isDev)
 
   // tsc needs tsconfig.json and package.json from above
   await compileTs(pkgDir)
 
   await Promise.all([
     writeBundles(pkgDir, pkgJson, isDev),
-    !isTests && writeDistNpmIgnore(pkgDir),
-    !isTests && writeDistReadme(pkgDir), // needs dist folder
-    !isTests && writeDistLicense(pkgAnalysis), // needs dist folder
+    writeDistNpmIgnore(pkgDir),
+    writeDistReadme(pkgDir), // needs dist folder
+    writeDistLicense(pkgAnalysis), // needs dist folder
   ])
 }
 

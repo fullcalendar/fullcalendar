@@ -1,4 +1,16 @@
 
+## v7.1.5
+
+- FIX: TypeScript: `calendar.off()` required a handler, though calling it without one removes all of that name's handlers added with `calendar.on()`
+- FIX: `resource.toPlainObject()` left out the resource's `eventColor`
+- FIX: `event.getResources()` returned `null` for each resource that doesn't exist or hasn't been fetched yet. It now leaves them out (#7300)
+- FIX: Accessibility: a view button alone in its toolbar group had `role="tab"` with no tablist around it. It's now a toggle button with `aria-pressed`, like a view button grouped with other buttons
+- FIX: Accessibility: prev, next, today and custom toolbar buttons had `aria-pressed="false"`, so screen readers announced them as toggle buttons. Only view buttons have it now (#8042)
+- FIX: An event at a wall-clock time skipped by a daylight-saving change (given without an offset) resolves to the time after the change, but `startStr`/`endStr` named the skipped time, an hour before `start`/`end`. Fed back into `addEvent`, the string moved the event
+- FIX: Resource Timeline with `virtualization`: scrolling to a resource added with `calendar.addResource(resource, true)` could stop a few rows short of it, when rows it scrolled past weren't measured yet. A regression in v7.1.4
+- TimeGrid: slot headers between labels have `data-time` too, like the labeled ones
+
+
 ## v7.1.4
 
 - FIX: Resource Timeline with `virtualization`:

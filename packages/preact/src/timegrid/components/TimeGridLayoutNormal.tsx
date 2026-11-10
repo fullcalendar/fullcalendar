@@ -28,6 +28,7 @@ import { TimeGridCols } from "./TimeGridCols"
 import { TimeGridNowIndicatorArrow } from "./TimeGridNowIndicatorArrow"
 import { TimeGridSlatHeader } from "./TimeGridSlatHeader"
 import { TimeGridSlatLane } from "./TimeGridSlatLane"
+import { settleRequestAnimationFrame } from "../../util/settle"
 import { TimeGridWeekNumber } from "./TimeGridWeekNumber"
 import { computeSlatHeight, computeNowIndicatorDayDate } from './util'
 import { computeTimeGridPrintMode } from '../print-mode'
@@ -509,7 +510,7 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
     if (this._isUnmounting) return
     // Must delay the rerender because might change the width of the all-day DayGridRow events,
     // which shows a ResizeObserver loop warning
-    requestAnimationFrame(() => {
+    settleRequestAnimationFrame(() => {
       if (this._isUnmounting) return
       this.setState({ totalWidth })
     })

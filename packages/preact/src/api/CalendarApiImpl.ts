@@ -81,7 +81,7 @@ export class CalendarApiImpl implements CalendarApi {
     }
   }
 
-  off<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, handler: Required<CalendarListeners>[ListenerName]): void {
+  off<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, handler?: Required<CalendarListeners>[ListenerName]): void {
     this.currentDataManager!.emitter.off(handlerName, handler)
   }
 

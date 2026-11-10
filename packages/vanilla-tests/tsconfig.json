@@ -1,35 +1,30 @@
 {
   "extends": "@fullcalendar-scripts/standard/config/tsconfig.browser.json",
   "compilerOptions": {
-    "types": [
-      "jasmine",
-      "jasmine-jquery",
-      "jquery"
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "lib": [
+      "es2022",
+      "dom",
+      "dom.iterable"
     ],
-    "rootDir": "./src",
-    "outDir": "./dist/.tsout"
+    "types": [
+      "@vitest/browser-playwright"
+    ]
   },
   "include": [
-    "./src/**/*"
+    "./src/**/*",
+    "./*.ts"
   ],
+  // The *.unit.ts specs import library source. These resolve it to the built declarations
   "references": [
     {
-      "path": "../vanilla"
+      "path": "../headless-calendar"
     },
     {
-      "path": "../google-calendar"
-    },
-    {
-      "path": "../icalendar"
-    },
-    {
-      "path": "../format-luxon3"
-    },
-    {
-      "path": "../format-moment"
-    },
-    {
-      "path": "../rrule"
+      "path": "../preact"
     }
   ]
 }

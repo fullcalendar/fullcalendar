@@ -26,7 +26,7 @@ export interface CalendarApi {
   // -----------------------------------------------------------------------------------------------------------------
 
   on<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, handler: Required<CalendarListeners>[ListenerName]): void
-  off<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, handler: Required<CalendarListeners>[ListenerName]): void
+  off<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, handler?: Required<CalendarListeners>[ListenerName]): void // without a handler, removes all of the name's handlers
   trigger<ListenerName extends keyof CalendarListeners>(handlerName: ListenerName, ...args: Parameters<Required<CalendarListeners>[ListenerName]>): void
 
   // View

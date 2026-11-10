@@ -16,15 +16,12 @@
     "globby": "^13.1.2",
     "handlebars": "^4.1.2",
     "preact": "^10.29.8",
-    "temporal-polyfill": "^1.0.7",
-    "vitest": "^4.0.16"
+    "temporal-polyfill": "^1.0.7"
   },
   "scripts": {
     "build": "standard-scripts pkg:build",
     "clean": "standard-scripts pkg:clean",
-    "lint": "eslint .",
-    "test": "vitest run",
-    "test:dev": "vitest"
+    "lint": "eslint ."
   },
   "type": "module",
   "buildConfig": {
