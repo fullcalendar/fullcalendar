@@ -76,8 +76,10 @@ describe('rerender counts', () => {
     hooks.reset()
     calendar.next()
     await waitForSettle()
-    // the same day-of-week headers, and the event is out of view
-    expect(hooks.counts).toEqual({ dayHeaderContent: 0, dayCellTopContent: 42 * strictModeFactor, eventContent: 0 })
+    // the day-of-week headers rerender too, since their dates are days in view. The event is out of view
+    expect(hooks.counts).toEqual({
+      dayHeaderContent: 7 * strictModeFactor, dayCellTopContent: 42 * strictModeFactor, eventContent: 0,
+    })
 
     calendar.changeView('listWeek')
     await waitForSettle()

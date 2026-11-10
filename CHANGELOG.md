@@ -10,6 +10,7 @@
 - FIX: Resource Timeline with `virtualization`: scrolling to a resource added with `calendar.addResource(resource, true)` could stop a few rows short of it, when rows it scrolled past weren't measured yet. A regression in v7.1.4
 - FIX: List view: `listDayFormat: false` and `listDayAltFormat: false` didn't turn their day headings off, which rendered in the default format instead
 - FIX: TimeGrid: each slot header in the time axis was only as tall as its label, so a background, border or hover style on it (`slotHeaderClass`) covered just the top of its slot. It's now as tall as the slot, as it already was with `dayMinWidth`
+- FIX: DayGrid (month, multi-month): for day headers that name only the weekday, `dayHeaderContent` and the other day header hooks got a stand-in date from January 1970 at midnight UTC, which read as the day before west of UTC. `date` is now a day in view, at midnight in the calendar's time zone, like every other all-day date. Code that read the old date in UTC (such as `getUTCDay()`) should use `dow` instead (#7468, #5854)
 - TimeGrid: slot headers between labels have `data-time` too, like the labeled ones
 
 

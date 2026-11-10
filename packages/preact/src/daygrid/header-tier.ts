@@ -155,12 +155,6 @@ export function buildDateRenderConfig(
   }
 }
 
-const dowDates: Date[] = []
-
-for (let dow = 0; dow < 7; dow++) {
-  dowDates.push(addDays(new Date(259200000), dow)) // start with Sun, 04 Jan 1970 00:00:00 GMT)
-}
-
 /*
 For header cells: data
 */
@@ -243,7 +237,6 @@ export function buildDateDataConfigs(
         const isMajor = isMajorMod != null && !(i % isMajorMod)
         const renderProps: BaseDayHeaderData = {
           ...dateMeta,
-          date: dowDates[dow],
           isMajor,
           isSticky: false, // HACK. gets overridden
           inPopover: false,

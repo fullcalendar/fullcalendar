@@ -256,7 +256,7 @@ export class DayGridHeaderCell<BaseRenderProps extends { isDisabled: boolean }, 
     dateEnv,
   ): DayHeaderRenderProps {
     const baseText = this.buildDayHeaderText(
-      datesRepDistinctDays ? dateMarker : renderProps.date,
+      dateMarker,
       dayHeaderFormat,
       datesRepDistinctDays,
       dateEnv,
