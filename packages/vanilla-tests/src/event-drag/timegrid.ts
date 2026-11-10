@@ -190,6 +190,32 @@ describe('event dragging in timeGrid', () => {
       expect(event.startStr).toBe('2018-09-03T02:00:00Z')
       expect(event.endStr || null).toBe(expectedEnd)
     })
+
+    it('keeps the source\'s color and classes on the mirror', async () => {
+      const calendar = initCalendar({
+        ...allDayOptions,
+        events: undefined,
+        eventSources: [{
+          color: '#3472d8',
+          className: 'source-class',
+          events: [{ id: '1', start: '2018-09-03', end: '2018-09-05' }],
+        }],
+      })
+      await waitForSettle()
+
+      const timeGrid = new TimeGridModel(calendar.el)
+      const { point } = timeGrid.allDay.pointForEventOnDate('1', '2018-09-03')
+      await pointer.press(point, async () => {
+        await pointer.move(timeGrid.pointForDateTime('2018-09-03T02:00'))
+        await waitForSettle()
+
+        const mirrorEls = timeGrid.getMirrorEls()
+        expect(mirrorEls).toHaveLength(1)
+        expect(mirrorEls[0].style.getPropertyValue('--fc-event-color')).toBe('#3472d8')
+        expect(mirrorEls[0].classList.contains('source-class')).toBe(true)
+      })
+      await waitForSettle()
+    })
   })
 
   describe('from timed to all-day', () => {

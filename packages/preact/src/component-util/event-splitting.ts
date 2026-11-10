@@ -1,7 +1,7 @@
 import { EventStore, createEmptyEventStore } from '../structs/event-store'
 import { EventDef } from '../structs/event-def'
 import { EventInteractionState } from '../interactions/event-interaction-state'
-import { mapHash } from '../util/object'
+import { isMaybePropsEqualDepth1, mapHash } from '../util/object'
 import { memoize } from '../util/memoize'
 import { EventUiHash, EventUi, combineEventUis } from './event-ui'
 import { DateSpan } from '../structs/date-span'
@@ -23,6 +23,7 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
   private splitDateSelection = memoize(this._splitDateSpan)
   private splitEventStore = memoize(this._splitEventStore)
   private splitIndividualUi = memoize(this._splitIndividualUi)
+  private splitDragUi = memoize(this._splitDragUi, isMaybePropsEqualDepth1)
   private splitEventDrag = memoize(this._splitInteraction)
   private splitEventResize = memoize(this._splitInteraction)
   private eventUiBuilders = {} // TODO: typescript protection
@@ -36,6 +37,7 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
     let defKeys = this.getKeysForEventDefs(props.eventStore)
     let dateSelections = this.splitDateSelection(props.dateSelection)
     let individualUi = this.splitIndividualUi(props.eventUiBases, defKeys) // the individual *bases*
+    let dragUi = this.splitDragUi(props.eventUiBases, defKeys, props.eventDrag)
     let eventStores = this.splitEventStore(props.eventStore, defKeys)
     let eventDrags = this.splitEventDrag(props.eventDrag)
     let eventResizes = this.splitEventResize(props.eventResize)
@@ -52,7 +54,7 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
         businessHours: keyInfo.businessHours || props.businessHours,
         dateSelection: dateSelections[key] || null,
         eventStore,
-        eventUiBases: buildEventUi(props.eventUiBases[''], keyInfo.ui, individualUi[key]),
+        eventUiBases: buildEventUi(props.eventUiBases[''], keyInfo.ui, individualUi[key], dragUi[key]),
         eventDrag: eventDrags[key] || null,
         eventResize: eventResizes[key] || null,
         eventSelection: eventStore.instances[props.eventSelection] ? props.eventSelection : '',
@@ -112,12 +114,48 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
 
     for (let defId in eventUiBases) {
       if (defId) { // not the '' key
-        for (let key of defKeys[defId]) {
+        // a dragged event can have UI here without being stored here (see _splitDragUi)
+        for (let key of defKeys[defId] || []) {
           if (!splitHashes[key]) {
             splitHashes[key] = {}
           }
 
           splitHashes[key][defId] = eventUiBases[defId]
+        }
+      }
+    }
+
+    return splitHashes
+  }
+
+  /*
+  A dragged event can be previewed in a section its stored event isn't in, such as an all-day event
+  dragged into the timed area, so its individual UI (from its source) goes there too.
+  Events dragged from another calendar have no individual UI in this one.
+  */
+  private _splitDragUi(
+    eventUiBases: EventUiHash,
+    defKeys: { [defId: string]: string[] },
+    eventDrag: EventInteractionState | null,
+  ): { [key: string]: EventUiHash } {
+    let splitHashes: { [key: string]: EventUiHash } = {}
+
+    if (eventDrag) {
+      let mutatedKeysByDefId = this._getKeysForEventDefs(eventDrag.mutatedEvents)
+
+      for (let defId in mutatedKeysByDefId) {
+        let eventUi = eventUiBases[defId]
+
+        if (eventUi) {
+          for (let key of mutatedKeysByDefId[defId]) {
+            if (!defKeys[defId] || !defKeys[defId].includes(key)) {
+              if (!splitHashes[key]) {
+                splitHashes[key] = {}
+              }
+
+              splitHashes[key][defId] = eventUi
+            }
+          }
         }
       }
     }
@@ -161,7 +199,12 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
   }
 }
 
-function buildEventUiForKey(allUi: EventUi | null, eventUiForKey: EventUi | null, individualUi: EventUiHash | null) {
+function buildEventUiForKey(
+  allUi: EventUi | null,
+  eventUiForKey: EventUi | null,
+  individualUi: EventUiHash | null,
+  dragUi: EventUiHash | null,
+) {
   let baseParts = []
 
   if (allUi) {
@@ -178,6 +221,10 @@ function buildEventUiForKey(allUi: EventUi | null, eventUiForKey: EventUi | null
 
   if (individualUi) {
     Object.assign(stuff, individualUi)
+  }
+
+  if (dragUi) {
+    Object.assign(stuff, dragUi)
   }
 
   return stuff
