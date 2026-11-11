@@ -26,6 +26,7 @@
 - FIX: React: a function event source (`events: (info) => …`) under a suspended `<Suspense>` boundary warned "Can't perform a React state update on a component that hasn't mounted yet" when its fetch resolved, and the discarded render left a timer running (#8092)
 - FIX: React Strict Mode: in development, the calendar's timers stopped after Strict Mode's simulated remount, so the now indicator and today's highlight didn't update until something else re-rendered
 - TimeGrid: slot headers between labels have `data-time` too, like the labeled ones
+- FEATURE: TypeScript: every calendar option, premium ones included, has a description and a link to its docs page, shown when you hover the option in your editor (#8059)
 
 
 ## v7.1.4
