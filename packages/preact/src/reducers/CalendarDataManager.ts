@@ -20,8 +20,7 @@ import { reduceSelectedEvent } from './selected-event'
 import { reduceEventDrag } from './event-drag'
 import { reduceEventResize } from './event-resize'
 import { Emitter } from '../common/Emitter'
-import { EventUiHash, EventUi, createEventUi } from '../component-util/event-ui'
-import { EventDefHash } from '../structs/event-def'
+import { EventUiBases, EventUiHash, EventUi, createEventUi } from '../component-util/event-ui'
 import { parseToolbars } from '../toolbar-parse'
 import {
   CalendarOptionsRefined, CalendarOptions,
@@ -289,9 +288,7 @@ export class CalendarDataManager {
     // === UI computation ===
     let { eventUiSingleBase, selectionConfig } = this.buildViewUiProps(calendarContext)
     let eventUiBySource = this.buildEventUiBySource(eventSources)
-    let eventUiBases = isInit
-      ? {}
-      : this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
+    let eventUiBases = this.buildEventUiBases(eventUiSingleBase, eventUiBySource)
 
     // === Build new state ===
     let newState: CalendarDataManagerState = {
@@ -660,24 +657,8 @@ function buildEventUiBySource(eventSources: EventSourceHash): EventUiHash {
 /*
 The result of this is processed by compileEventUi
 */
-function buildEventUiBases(
-  eventDefs: EventDefHash,
-  eventUiSingleBase: EventUi,
-  eventUiBySource: EventUiHash,
-) {
-  let eventUiBases: EventUiHash = {
-    '': eventUiSingleBase, // fallback
-  }
-
-  for (let defId in eventDefs) {
-    let def = eventDefs[defId]
-
-    if (def.sourceId && eventUiBySource[def.sourceId]) {
-      eventUiBases[defId] = eventUiBySource[def.sourceId]
-    }
-  }
-
-  return eventUiBases
+function buildEventUiBases(eventUiSingleBase: EventUi, eventUiBySource: EventUiHash): EventUiBases {
+  return { base: eventUiSingleBase, bySource: eventUiBySource }
 }
 
 function buildViewUiProps(calendarContext: CalendarContext) {

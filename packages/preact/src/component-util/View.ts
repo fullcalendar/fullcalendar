@@ -1,6 +1,6 @@
 import { DateProfile } from '../DateProfileGenerator'
 import { EventStore } from '../structs/event-store'
-import { EventUiHash } from './event-ui'
+import { EventUiBases } from './event-ui'
 import { sliceEventStore, EventRenderRange } from './event-rendering'
 import { DateSpan } from '../structs/date-span'
 import { EventInteractionState } from '../interactions/event-interaction-state'
@@ -12,7 +12,7 @@ export interface ViewProps {
   dateProfile: DateProfile
   businessHours: EventStore
   eventStore: EventStore
-  eventUiBases: EventUiHash
+  eventUiBases: EventUiBases
   dateSelection: DateSpan | null
   eventSelection: string
   eventDrag: EventInteractionState | null

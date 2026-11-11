@@ -19,6 +19,7 @@
 - FIX: DayGrid with `dayMaxEvents` or `dayMaxEventRows`: the events hidden behind "+N more" in the last week could hang past the bottom of the grid, invisibly, so the month scrolled into empty space (#7581)
 - FIX: Resource Timeline: a `resourceColumnsWidth` other than a number, `px` or `%`, such as `'9.5rem'`, threw an error, so the view didn't render. It now logs a warning and uses the default, 30%. A resource column's `width` in another unit logs a warning too. That column still grows to fill the space, as it did before without a warning
 - FIX: Views without resources, such as `timeGridWeek` with resources loaded: an event added with `calendar.addEvent()` and no event source didn't get its resource's `eventColor`, `eventClass` or other event settings, which events from a source did
+- FIX: Two more drags previewed an event differently from how it's handled once dropped. An event dragged back into the calendar it came from ignored its event source's settings, such as its `allow`, until dropped. In views without resources, event data dragged in from outside with a `resourceId` didn't take its resource's color and classes until dropped
 - TimeGrid: slot headers between labels have `data-time` too, like the labeled ones
 
 

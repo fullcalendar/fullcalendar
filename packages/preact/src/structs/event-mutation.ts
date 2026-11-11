@@ -6,7 +6,7 @@ import {
   EventInstance, EventInstanceRange, EventRangeEdge, resolveEdgeInstantMs,
 } from './event-instance'
 import { computeAlignedDayRange } from '../util/date'
-import { EventUiHash, EventUi } from '../component-util/event-ui'
+import { EventUiBases, EventUi } from '../component-util/event-ui'
 import { compileEventUis } from '../component-util/event-rendering'
 import { CalendarContext } from '../CalendarContext'
 import { getDefaultEventEndEdge } from '../calendar-utils'
@@ -32,7 +32,7 @@ export interface EventMutation {
 // applies the mutation to ALL defs/instances within the event store
 export function applyMutationToEventStore(
   eventStore: EventStore,
-  eventConfigBase: EventUiHash,
+  eventConfigBase: EventUiBases,
   mutation: EventMutation,
   context: CalendarContext,
 ): EventStore {

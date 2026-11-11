@@ -6,7 +6,7 @@ import { EventSourceHash } from '../structs/event-source'
 import { ViewSpecHash, ViewSpec } from '../structs/view-spec'
 import { DateProfileGenerator, DateProfile } from '../DateProfileGenerator'
 import { Emitter } from '../common/Emitter'
-import { EventUiHash, EventUi } from '../component-util/event-ui'
+import { EventUiBases, EventUi } from '../component-util/event-ui'
 import { ViewImpl } from '../api/ViewImpl'
 import { EventStore } from '../structs/event-store'
 import { DateSpan } from '../structs/date-span'
@@ -22,7 +22,7 @@ export interface CalendarDataManagerState {
   dateProfile: DateProfile
   businessHours: EventStore
   eventSources: EventSourceHash
-  eventUiBases: EventUiHash
+  eventUiBases: EventUiBases
   eventStore: EventStore
   renderableEventStore: EventStore
   dateSelection: DateSpan | null

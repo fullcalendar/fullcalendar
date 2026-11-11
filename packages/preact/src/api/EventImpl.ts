@@ -4,7 +4,7 @@ import {
   buildRangeEdgeOutput, canonicalRangeEndMarker, EventInstance,
   getRangeInstantStartMs, getRangeInstantEndMs,
 } from '../structs/event-instance'
-import { EVENT_UI_REFINERS, EventUiHash } from '../component-util/event-ui'
+import { EVENT_UI_REFINERS, EventUiBases } from '../component-util/event-ui'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { diffDates, computeAlignedDayRange } from '../util/date'
 import {
@@ -255,8 +255,8 @@ export class EventImpl implements EventApi {
       let context = this._context
       let { eventStore } = context.getCurrentData()
       let relevantEvents = getRelevantEvents(eventStore, instance.instanceId)
-      let eventConfigBase = {
-        '': { // HACK. always allow API to mutate events
+      let eventConfigBase: EventUiBases = {
+        base: { // HACK. always allow API to mutate events
           display: '',
           startEditable: true,
           durationEditable: true,
@@ -267,7 +267,8 @@ export class EventImpl implements EventApi {
           contrastColor: '',
           className: '',
         },
-      } as EventUiHash
+        bySource: {}, // a source's editable:false mustn't block the API
+      }
 
       relevantEvents = applyMutationToEventStore(relevantEvents, eventConfigBase, mutation, context)
 

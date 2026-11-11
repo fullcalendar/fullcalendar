@@ -8,7 +8,7 @@ import type { DateMarker, DateRange } from '@full-ui/headless-calendar'
 import type { DateProfile } from '../../DateProfileGenerator'
 import type { EventRangeProps } from '../../component-util/event-rendering'
 import type { EventStore } from '../../structs/event-store'
-import type { EventUiHash } from '../../component-util/event-ui'
+import type { EventUiBases } from '../../component-util/event-ui'
 import { formatDayString } from '@full-ui/headless-calendar'
 import { generateClassName } from '../../content-inject/ContentContainer'
 import { getIsHeightAuto } from '../../scrollgrid/util'
@@ -171,7 +171,7 @@ export class ListView extends DateComponent<ViewProps> {
 
   _eventStoreToSegs(
     eventStore: EventStore,
-    eventUiBases: EventUiHash,
+    eventUiBases: EventUiBases,
     dayRanges: DateRange[],
   ): (ListSeg & EventRangeProps)[] {
     return this.eventRangesToSegs(

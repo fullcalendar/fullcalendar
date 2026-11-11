@@ -63,7 +63,7 @@ export type { EventStore } from './structs/event-store'
 export {
   mergeEventStores,
 } from './structs/event-store'
-export type { EventUiHash, EventUi } from './component-util/event-ui'
+export type { EventUiHash, EventUiBases, EventUi } from './component-util/event-ui'
 export { combineEventUis, createEventUi } from './component-util/event-ui'
 export type { SplittableProps } from './component-util/event-splitting'
 export { Splitter } from './component-util/event-splitting'

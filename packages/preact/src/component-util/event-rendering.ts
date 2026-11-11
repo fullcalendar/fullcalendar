@@ -21,7 +21,7 @@ import { compareByFieldSpecs, OrderSpec } from '../util/misc'
 import { computeVisibleDayRange } from '../util/date'
 import { EventImpl } from '../api/EventImpl'
 import { EventApi } from '../api/EventApi'
-import { EventUi, EventUiHash, combineEventUis } from './event-ui'
+import { EventUi, EventUiBases, combineEventUis } from './event-ui'
 import { mapHash } from '../util/object'
 import { ViewContext } from '../ViewContext'
 import { ViewApi } from '../api/ViewApi'
@@ -46,7 +46,7 @@ export interface EventRangeProps {
 /*
 Specifying nextDayThreshold signals that all-day ranges should be sliced.
 */
-export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHash, framingRange: DateRange, nextDayThreshold?: Duration) {
+export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiBases, framingRange: DateRange, nextDayThreshold?: Duration) {
   let inverseBgByGroupId: { [groupId: string]: DateRange[] } = {}
   let inverseBgByDefId: { [defId: string]: DateRange[] } = {}
   let defByGroupId: { [groupId: string]: EventDef } = {}
@@ -179,25 +179,33 @@ export function getElEventRange(el: HTMLElement): EventRenderRange | null {
 
 // event ui computation
 
-export function compileEventUis(eventDefs: EventDefHash, eventUiBases: EventUiHash) {
+export function compileEventUis(eventDefs: EventDefHash, eventUiBases: EventUiBases) {
   return mapHash(eventDefs, (eventDef: EventDef) => compileEventUi(eventDef, eventUiBases))
 }
 
 /*
 I wish we didn't need to deal with inheritance of all properties all together
 I wish you could resolve just eventDisplay first, then the others
-*/
-export function compileEventUi(eventDef: EventDef, eventUiBases: EventUiHash) {
-  const uis: EventUi[] = []
-  const fallbackBase = eventUiBases['']
-  const defBase = eventUiBases[eventDef.defId]
 
-  if (fallbackBase) {
-    uis.push(fallbackBase)
+Lowest to highest. A resource's UI comes in as sectionUi in resource views, below the source's, but as
+getExtraUi in views without resources, above it. The documented order puts it above the source everywhere;
+this keeps the existing behavior until a release that can change it.
+*/
+export function compileEventUi(eventDef: EventDef, eventUiBases: EventUiBases) {
+  const uis: EventUi[] = [eventUiBases.base]
+  const sourceUi = eventUiBases.bySource[eventDef.sourceId]
+  const extraUi = eventUiBases.getExtraUi?.(eventDef)
+
+  if (eventUiBases.sectionUi) {
+    uis.push(eventUiBases.sectionUi)
   }
 
-  if (defBase) {
-    uis.push(defBase)
+  if (sourceUi) {
+    uis.push(sourceUi)
+  }
+
+  if (extraUi) {
+    uis.push(extraUi)
   }
 
   uis.push(eventDef.ui)
