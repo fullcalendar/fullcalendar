@@ -169,8 +169,9 @@ export function buildPixelLimitedLayout<S extends SourceSeg>(
     }
   }
 
-  // Pending frontier wholes stay out of links until measured; beyond-frontier
-  // wholes are definite logical exclusions and hide without measurement.
+  // Pending frontier wholes stay out of links until measured. Beyond-frontier
+  // wholes join the exclusions unmeasured: placement may put them back, whole
+  // or sliced, and they mount without a coordinate until measured.
   const excludedWholeSlices = wholeResolution.excludedSlices.concat(domExcludedWholeSlices)
   excludedWholeSlices.sort(compareByEventOrder)
 
