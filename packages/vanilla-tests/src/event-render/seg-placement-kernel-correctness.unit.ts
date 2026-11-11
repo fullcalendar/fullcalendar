@@ -379,6 +379,43 @@ describe('pure positioning kernel', () => {
     expect(hiddenGroupsOf(layout)).toEqual([])
   })
 
+  // extra is beyond a one-level frontier but fits whole into the gap that the
+  // still-unmeasured frontier whole leaves. It must stay mounted while it's
+  // measured and pruned, and leave only once pending's measurement claims the gap.
+  it.each([false, true])('returns an unmeasured beyond-frontier whole and keeps it mounted until the gap closes (eventSlicing: %s)', (eventSlicing) => {
+    const sources = segs([
+      ['pending', 0, 1],
+      ['neighbor', 1, 2],
+      ['extra', 0, 1],
+    ])
+    function layOut(heights: Map<string, number>) {
+      return buildPixelLimitedLayout(sources, false, eventSlicing, heights, 20, 1, 5)
+    }
+
+    const unmeasured = new Map([['neighbor:1', 10]])
+    const placed = layOut(unmeasured)
+    expect(placed.renderSlices.map(getSliceKey)).toContain('extra:0')
+    expect(coordOf(placed, 'extra:0')).toBe(undefined)
+    expect(unmeasuredKeys(placed, unmeasured)).toEqual(['pending:0', 'extra:0'])
+    expect(placed.isSettled).toBe(false)
+
+    // Measured too tall for the canvas, extra is pruned but stays mounted
+    const tooTall = new Map([['neighbor:1', 10], ['extra:0', 30]])
+    const pruned = layOut(tooTall)
+    expect(pruned.renderSlices.map(getSliceKey)).toContain('extra:0')
+    expect(coordOf(pruned, 'extra:0')).toBe(undefined)
+    expect(projectSlices(pruned.hiddenSlices)).toEqual([['extra', 0, 1]])
+    expect(pruned.isSettled).toBe(false)
+
+    // Once pending is measured, it takes the gap, and extra unmounts
+    const allMeasured = new Map([['pending:0', 10], ['neighbor:1', 10], ['extra:0', 30]])
+    const settled = layOut(allMeasured)
+    expect(settled.renderSlices.map(getSliceKey)).toEqual(['pending:0', 'neighbor:1'])
+    expect(coordOf(settled, 'pending:0')).toBe(0)
+    expect(projectSlices(settled.hiddenSlices)).toEqual([['extra', 0, 1]])
+    expect(settled.isSettled).toBe(true)
+  })
+
   it('merges hull groups per source event in event order', () => {
     const [first, second, bridge] = convertSegsToWholeSlices(segs([
       ['first', 0, 1],

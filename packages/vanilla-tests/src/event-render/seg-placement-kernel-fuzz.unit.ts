@@ -166,7 +166,55 @@ describe('pure positioning kernel fuzzing', () => {
       }
     }
   })
+
+  // Measurements exist only for mounted slices: each frame measures what the
+  // previous layout mounted and forgets what it unmounted. From any starting
+  // measurements, the mounted set must stop changing within a few frames.
+  it('settles across frames as mounted slices are measured and unmounted ones forgotten', () => {
+    for (let seed = 1; seed <= 1000; seed++) {
+      const sources = buildScenario(seed)
+      const random = createRandom(seed * 48_271)
+      const allHeights = buildAllSliceHeights(sources, random)
+      const maxPixels = 12 + random() * 30
+      const moreLinkHeight = 3 + random() * 6
+      const frontier = 1 + seed % 5
+      const strict = seed % 2 === 0
+      const slicing = seed % 3 !== 0
+      const label = JSON.stringify({ seed, maxPixels, moreLinkHeight, frontier, strict, slicing })
+      let heights = new Map([...allHeights].filter(() => random() < 0.5))
+      let isFixedPoint = false
+
+      for (let frame = 0; frame < MAX_SETTLING_FRAMES && !isFixedPoint; frame++) {
+        const layout = buildPixelLimitedLayout(
+          sources,
+          strict,
+          slicing,
+          heights,
+          maxPixels,
+          frontier,
+          moreLinkHeight,
+        )
+        auditRenderSet(layout, heights, label)
+
+        const nextHeights = new Map<string, number>()
+        for (const slice of layout.renderSlices) {
+          const key = getSliceKey(slice)
+          const height = allHeights.get(key)
+          invariant(height !== undefined, `mounted slice ${key} has no test height`, label)
+          nextHeights.set(key, height!)
+        }
+
+        isFixedPoint = nextHeights.size === heights.size &&
+          [...nextHeights.keys()].every((key) => heights.has(key))
+        heights = nextHeights
+      }
+
+      invariant(isFixedPoint, `mounted slices still changing after ${MAX_SETTLING_FRAMES} frames`, label)
+    }
+  })
 })
+
+const MAX_SETTLING_FRAMES = 8
 
 function buildScenario(seed: number): TestSeg[] {
   const random = createRandom(seed)
