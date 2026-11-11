@@ -9,6 +9,7 @@ import {
   getMoreLinkEls,
   getVisibleEventEls,
 } from '../lib/models/event-content'
+import { getVerticalScroller } from '../lib/models/slots'
 import { waitForSettle } from '../lib/settle'
 
 function getMoreLinkTexts(root: HTMLElement): string[] {
@@ -347,6 +348,21 @@ describe('more-links in dayGrid', () => {
 
       expect(getVisibleEventEls(calendar.el).map(getEventIdOfEl)).toEqual(['first'])
       expect(getMoreLinkTexts(calendar.el)).toEqual(['+1 more'])
+    })
+
+    // https://github.com/fullcalendar/fullcalendar/issues/7581
+    it('doesn\'t let hidden events in the last row make the grid scroll', async () => {
+      const calendar = initCalendar({
+        ...options,
+        height: 500,
+        events: Array.from({ length: 6 }, () => ({ start: '2014-09-02' })), // in the last row
+        eventContent: { html: '<div style="height: 40px"></div>' },
+      })
+      await waitForSettle()
+
+      expect(getMoreLinkEls(calendar.el).length).toBe(1)
+      const scrollerEl = getVerticalScroller(queryParts(calendar.el, 'dayRow')[0])
+      expect(scrollerEl.scrollHeight).toBeLessThanOrEqual(scrollerEl.clientHeight)
     })
 
     it('adjusts more-links when a liquid-height calendar grows and shrinks', async () => {
