@@ -17,6 +17,7 @@
 - FEATURE: `view.titleParts`: the title's `Intl` range parts (`type`, `value` and `source`, which is `startRange`, `endRange` or `shared`), so a custom toolbar can style parts of the title apart, such as a lighter year, and stay right for ranges and in every locale. The `DateTimeRangeFormatPartWithWeek` type describes each part
 - FIX: Skeleton CSS: some structural rules, including the z-index ones that set the stacking order, weren't `!important`. Without cascade layers, an app's CSS could override them, though not in a Tailwind app. They're all `!important` now, so the stacking order is the same in every setup, and a `z-*` class on an element from a hook, such as `tableHeaderClass`, has no effect
 - FIX: DayGrid with `dayMaxEvents` or `dayMaxEventRows`: the events hidden behind "+N more" in the last week could hang past the bottom of the grid, invisibly, so the month scrolled into empty space (#7581)
+- FIX: Resource Timeline: a `resourceColumnsWidth` other than a number, `px` or `%`, such as `'9.5rem'`, threw an error, so the view didn't render. It now logs a warning and uses the default, 30%. A resource column's `width` in another unit logs a warning too. That column still grows to fill the space, as it did before without a warning
 - TimeGrid: slot headers between labels have `data-time` too, like the labeled ones
 
 
