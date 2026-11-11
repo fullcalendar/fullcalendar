@@ -8,7 +8,7 @@ import {
   buildDayGridPixelPlacements,
   buildDayGridSegSources,
   computeDayGridDomCandidateMaxLevels,
-  computeDayGridMoreLinkLevelTax,
+  computeDayGridMoreLinkTakesLevel,
   estimateLevelCapacity,
   resolveDayGridPlacementMode,
 } from '../../../preact/src/daygrid/seg-placement-adapter'
@@ -68,10 +68,10 @@ describe('DayGrid screen mode routing', () => {
   })
 
   it('charges a logical level for a more link only under dayMaxEventRows', () => {
-    expect(computeDayGridMoreLinkLevelTax('unlimited')).toBe(0)
-    expect(computeDayGridMoreLinkLevelTax('maxEvents')).toBe(0)
-    expect(computeDayGridMoreLinkLevelTax('maxEventRows')).toBe(1)
-    expect(computeDayGridMoreLinkLevelTax('auto')).toBe(0)
+    expect(computeDayGridMoreLinkTakesLevel('unlimited')).toBe(false)
+    expect(computeDayGridMoreLinkTakesLevel('maxEvents')).toBe(false)
+    expect(computeDayGridMoreLinkTakesLevel('maxEventRows')).toBe(true)
+    expect(computeDayGridMoreLinkTakesLevel('auto')).toBe(false)
   })
 })
 
@@ -425,7 +425,7 @@ function layoutLevelRow(
       dayMaxEventRows,
       Infinity,
     ),
-    computeDayGridMoreLinkLevelTax(mode),
+    computeDayGridMoreLinkTakesLevel(mode),
     config.orderStrict ?? false,
     config.eventSlicing ?? true,
     columnCount,

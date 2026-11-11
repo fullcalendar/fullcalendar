@@ -8,6 +8,7 @@ import {
   buildSegLevels,
   convertSegLevelsToWholeSlices,
   convertSegsToWholeSlices,
+  findFinalLevel,
   getSliceKey,
   groupLaterallyIntersecting,
   placeExtraSlicesInLevels,
@@ -67,7 +68,6 @@ describe('pure positioning kernel', () => {
       convertSegsToWholeSlices([extra]),
       false,
       false,
-      0,
     )
     expect(projectSlices(unsliced.sliceLevels.flat())).toEqual([
       ['base', 1, 2],
@@ -81,7 +81,6 @@ describe('pure positioning kernel', () => {
       convertSegsToWholeSlices([extra]),
       false,
       true,
-      0,
     )
     expect(projectSlices(sliced.sliceLevels.flat())).toEqual([
       ['extra', 0, 1],
@@ -105,7 +104,6 @@ describe('pure positioning kernel', () => {
       convertSegsToWholeSlices([extra]),
       false,
       false,
-      0,
     )
     expect(projectSlices(untaxed.sliceLevels.flat())).toEqual([['base', 0, 1]])
     expect(projectSlices(hiddenGroupsOf(untaxed)[0].hiddenSlices)).toEqual([
@@ -117,7 +115,7 @@ describe('pure positioning kernel', () => {
       convertSegsToWholeSlices([extra]),
       false,
       false,
-      1,
+      findFinalLevel,
     )
     expect(taxed.sliceLevels.flat()).toEqual([])
     expect(hiddenGroupsOf(taxed)[0]).toMatchObject({ start: 0, end: 1 })
@@ -434,7 +432,7 @@ describe('pure positioning kernel', () => {
       convertSegsToWholeSlices([extra]),
       false,
       false,
-      1,
+      findFinalLevel,
     )
     expect(hiddenGroupsOf(placement)[0]).toMatchObject({ start: 0, end: 3 })
     expect(hiddenGroupsOf(placement)[0].hiddenSlices.map((slice) => slice.sourceSeg.id))
@@ -470,7 +468,6 @@ describe('pure positioning kernel', () => {
       convertSegsToWholeSlices([late]),
       false,
       false,
-      0,
     )
     expect(projectSlices(loose.sliceLevels[0])).toEqual([
       ['late', 0, 2],
@@ -486,7 +483,6 @@ describe('pure positioning kernel', () => {
       convertSegsToWholeSlices([late]),
       true,
       false,
-      0,
     )
     expect(projectSlices(strict.sliceLevels[0])).toEqual([
       ['unrelated', 2, 3],

@@ -96,7 +96,8 @@ export function buildLevelLimitedLayout<S extends SourceSeg>(
   eventOrderStrict: boolean,
   eventSlicing: boolean,
   maxLevels: number,
-  moreLinkLevelTax: number,
+  /** Whether a more-link takes the final level, like an event row. */
+  moreLinkTakesLevel: boolean,
   sliceHeights: ReadonlyMap<string, number>,
 ): SliceLayout<S> {
   const { segLevels, excludedSegs } = buildSegLevels(
@@ -109,7 +110,7 @@ export function buildLevelLimitedLayout<S extends SourceSeg>(
     convertSegsToWholeSlices(excludedSegs),
     eventOrderStrict,
     eventSlicing,
-    moreLinkLevelTax,
+    moreLinkTakesLevel ? findFinalLevel : undefined,
   )
   const resolution = resolveLevelCoords(
     placement.sliceLevels,
@@ -177,22 +178,39 @@ export function buildPixelLimitedLayout<S extends SourceSeg>(
   // is the deepest coordinate an intersecting event may reach.
   const moreLinkEventMax = Math.max(0, canvasHeight - moreLinkHeight)
 
-  // With slicing, the level tax punches link holes while preserving event
-  // remainders; otherwise measured pruning makes the smarter pixel choice.
-  // An occupant that already ends above the link band leaves room for the
-  // link below it, so it isn't taxed.
+  // A link sits below the last level with an event over its span, and takes
+  // that level unless all those events already end above the link band. An
+  // event without a whole-pass coordinate counts as reaching into the band.
+  function findMoreLinkLevel(
+    span: LateralSpan,
+    levels: readonly (readonly Slice<S>[])[],
+  ): number {
+    for (let levelIndex = levels.length - 1; levelIndex >= 0; levelIndex--) {
+      const occupants = findIntersections(levels[levelIndex], span)
+
+      if (occupants.length) {
+        return occupants.every(isAboveMoreLink) ? levelIndex + 1 : levelIndex
+      }
+    }
+    return 0
+  }
+
+  function isAboveMoreLink(slice: Slice<S>): boolean {
+    const sliceBottom = getSliceBottom(slice, wholeResolution.sliceCoords, sliceHeights)
+    return sliceBottom !== undefined &&
+      sliceBottom <= moreLinkEventMax + GEOMETRY_TOLERANCE
+  }
+
   const placement = placeExtraSlicesInLevels(
     wholeResolution.placementSliceLevels,
     excludedWholeSlices,
     eventOrderStrict,
     eventSlicing,
-    /* moreLinkLevelTax = */ eventSlicing ? 1 : 0,
-    /* taxDeepestOccupiedLevel = */ true,
-    /* isAboveMoreLink = */ (slice) => {
-      const sliceBottom = getSliceBottom(slice, wholeResolution.sliceCoords, sliceHeights)
-      return sliceBottom !== undefined &&
-        sliceBottom <= moreLinkEventMax + GEOMETRY_TOLERANCE
-    },
+    // Without slicing, links take no levels here, since pruning decides better
+    // after placement. Events that overflow are pruned then, judged by final
+    // coordinates, rather than displaced now by whole-pass coordinates that
+    // placement goes on to change.
+    eventSlicing ? findMoreLinkLevel : undefined,
   )
   const sliceResolution = resolveLevelCoords(
     placement.sliceLevels,
@@ -567,10 +585,28 @@ type PlacementWork<S extends SourceSeg> =
   | { type: 'moreLink', span: LateralSpan }
 
 /**
+ * The level a more-link over `span` takes. The link displaces every event over
+ * its span at that level or a higher-numbered one, and keeps extras out of
+ * those levels over its span.
+ */
+export type FindMoreLinkLevel<S extends SourceSeg> = (
+  span: LateralSpan,
+  levels: readonly (readonly Slice<S>[])[],
+) => number
+
+/** A link takes the final level, like an event row. */
+export function findFinalLevel<S extends SourceSeg>(
+  _span: LateralSpan,
+  levels: readonly (readonly Slice<S>[])[],
+): number {
+  return levels.length - 1
+}
+
+/**
  * Fires event-ordered extras into a fixed set of logical levels. Repacking may
  * reuse gaps in the received levels but never creates additional levels.
- * By default, a more-link tax reserves the globally final level. Pixel flows
- * can instead reserve the deepest occupied level local to each link span.
+ * With `findMoreLinkLevel`, each new stretch of more-link coverage takes the
+ * level it returns; without it, links take no level.
  *
  * PRECONDITION: `extraSlices` is sorted by event order.
  *
@@ -582,14 +618,7 @@ export function placeExtraSlicesInLevels<S extends SourceSeg>(
   extraSlices: readonly Slice<S>[],
   eventOrderStrict: boolean,
   eventSlicing: boolean,
-  moreLinkLevelTax: number,
-  /** Whether each link taxes its deepest locally occupied level. */
-  taxDeepestOccupiedLevel: boolean = false,
-  /**
-   * Whether an occupant already leaves room for a link below it. When every
-   * occupant of the taxed level does, the link reserves the level below them.
-   */
-  isAboveMoreLink?: (slice: Slice<S>) => boolean,
+  findMoreLinkLevel?: FindMoreLinkLevel<S>,
 ): ExtraSlicePlacement<S> {
   // Hidden membership remains flat for whole-layout operations. More-link
   // groups duplicate that membership locally while also recording which
@@ -658,7 +687,7 @@ export function placeExtraSlicesInLevels<S extends SourceSeg>(
     // several disjoint runs.
     const newMoreLinkSpans = addHiddenSliceToGroups(moreLinkGroups, slice)
 
-    if (moreLinkLevelTax) {
+    if (findMoreLinkLevel) {
       for (let i = newMoreLinkSpans.length - 1; i >= 0; i--) {
         work.push({ type: 'moreLink', span: newMoreLinkSpans[i] })
       }
@@ -666,47 +695,32 @@ export function placeExtraSlicesInLevels<S extends SourceSeg>(
   }
 
   /**
-   * Reserves one logical level over fresh accumulator coverage. The ordinary
-   * flow taxes the final level; span-local mode taxes the deepest level with
-   * an intersecting occupant, ignoring unrelated deeper territory.
+   * Reserves the link's level over fresh accumulator coverage, displacing
+   * every event over the span at that level or a higher-numbered one.
    */
   function fireMoreLink(span: LateralSpan): void {
     if (!sliceLevels.length) {
       return
     }
 
-    let taxedLevelIndex = sliceLevels.length - 1
-    let victims = findIntersections(sliceLevels[taxedLevelIndex], span)
-
-    if (taxDeepestOccupiedLevel) {
-      while (!victims.length && taxedLevelIndex > 0) {
-        taxedLevelIndex--
-        victims = findIntersections(sliceLevels[taxedLevelIndex], span)
-      }
-    }
-
-    if (isAboveMoreLink && victims.length && victims.every(isAboveMoreLink)) {
-      insertLaterally(moreLinkReservations, {
-        ...span,
-        levelIndex: taxedLevelIndex + 1,
-      })
-      return
-    }
-
+    const reservedLevelIndex = findMoreLinkLevel!(span, sliceLevels)
     insertLaterally(moreLinkReservations, {
       ...span,
-      levelIndex: taxedLevelIndex,
+      levelIndex: reservedLevelIndex,
     })
-    const taxedLevel = sliceLevels[taxedLevelIndex]
 
-    for (const victim of victims) {
-      taxedLevel.splice(taxedLevel.indexOf(victim), 1)
+    for (let levelIndex = reservedLevelIndex; levelIndex < sliceLevels.length; levelIndex++) {
+      const level = sliceLevels[levelIndex]
 
-      if (eventSlicing) {
-        hide(intersectSlice(victim, span)!)
-        pushFire(subtractSpansFromSlice(victim, [span]))
-      } else {
-        hide(victim)
+      for (const victim of findIntersections(level, span)) {
+        level.splice(level.indexOf(victim), 1)
+
+        if (eventSlicing) {
+          hide(intersectSlice(victim, span)!)
+          pushFire(subtractSpansFromSlice(victim, [span]))
+        } else {
+          hide(victim)
+        }
       }
     }
   }

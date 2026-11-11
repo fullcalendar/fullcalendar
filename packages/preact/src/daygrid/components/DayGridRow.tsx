@@ -39,7 +39,7 @@ import {
   buildDayGridLevelPlacements,
   buildDayGridPixelPlacements,
   computeDayGridDomCandidateMaxLevels,
-  computeDayGridMoreLinkLevelTax,
+  computeDayGridMoreLinkTakesLevel,
   estimateLevelCapacity,
   resolveDayGridPlacementMode,
 } from '../seg-placement-adapter'
@@ -183,7 +183,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
             props.dayMaxEventRows,
             Infinity,
           ),
-          computeDayGridMoreLinkLevelTax(placementMode),
+          computeDayGridMoreLinkTakesLevel(placementMode),
           options.eventOrderStrict,
           options.eventSlicing,
           cells.length,

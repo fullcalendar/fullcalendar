@@ -8,6 +8,7 @@ import {
   buildSegLevels,
   convertSegLevelsToWholeSlices,
   convertSegsToWholeSlices,
+  findFinalLevel,
   getSliceKey,
   groupLaterallyIntersecting,
   isPartialSlice,
@@ -23,7 +24,7 @@ describe('pure positioning kernel fuzzing', () => {
       const maxLevels = 1 + seed % 3
       const strict = seed % 2 === 0
       const slicing = seed % 3 !== 0
-      const tax = seed % 2
+      const tax = seed % 2 === 1
       const built = buildSegLevels(sources, strict, maxLevels)
       invariant(
         built.excludedSegs.every((seg, i) =>
@@ -39,7 +40,7 @@ describe('pure positioning kernel fuzzing', () => {
         convertSegsToWholeSlices(built.excludedSegs),
         strict,
         slicing,
-        tax,
+        tax ? findFinalLevel : undefined,
       )
       const label = JSON.stringify({ seed, maxLevels, strict, slicing, tax })
       const hiddenGroups = groupLaterallyIntersecting(placement.hiddenSlices)

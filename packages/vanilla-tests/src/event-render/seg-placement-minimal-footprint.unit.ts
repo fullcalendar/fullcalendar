@@ -200,7 +200,7 @@ function layoutLevelRow(
   return buildDayGridLevelPlacements(
     eventOrderedSegs,
     dayMaxEvents ?? dayMaxEventRows ?? Infinity,
-    dayMaxEvents == null && dayMaxEventRows != null ? 1 : 0,
+    dayMaxEvents == null && dayMaxEventRows != null,
     false,
     true,
     columnCount,
