@@ -458,7 +458,7 @@ function getSliceBottom<S extends SourceSeg>(
  * Returns the slices whose coordinates this pass removed, with no ordering
  * guarantee.
  */
-export function prunePixelLimitedSliceLevels<S extends SourceSeg>(
+function prunePixelLimitedSliceLevels<S extends SourceSeg>(
   sliceLevels: readonly (readonly Slice<S>[])[],
   initialHiddenSlices: readonly Slice<S>[],
   sliceCoords: Map<string, number>,

@@ -41,7 +41,7 @@ export function planPrintDomCandidates<S extends SourceSeg>(
     convertSegsToWholeSlices(excludedSegs),
     eventOrderStrict,
     eventSlicing,
-    0,
+    /* moreLinkLevelTax = */ 0,
   )
 
   return {
