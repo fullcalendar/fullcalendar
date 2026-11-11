@@ -5,6 +5,7 @@ declare module 'vitest/browser' {
     mouseMove: (x: number, y: number, steps?: number) => Promise<void>
     mouseDown: () => Promise<void>
     mouseUp: () => Promise<void>
+    mouseWheel: (deltaX: number, deltaY: number) => Promise<void>
     touch: (type: 'touchStart' | 'touchMove' | 'touchEnd', x?: number, y?: number) => Promise<void>
   }
 }
@@ -41,6 +42,12 @@ export const pointer = {
   async click(point: Point): Promise<void> {
     await this.down(point)
     await this.up()
+  },
+
+  // a wheel scroll of whatever is under `point`. FullCalendar treats it as the user's scroll
+  async wheel(point: Point, deltaY: number, deltaX = 0): Promise<void> {
+    await commands.mouseMove(point.x, point.y)
+    await commands.mouseWheel(deltaX, deltaY)
   },
 
   /*

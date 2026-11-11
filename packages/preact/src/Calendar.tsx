@@ -5,6 +5,8 @@ import React, {
   forwardRef,
   useState,
   useEffect,
+  useLayoutEffect,
+  useRef,
   useImperativeHandle,
 } from 'react'
 import { flushSync } from 'react-dom'
@@ -31,10 +33,19 @@ export const Calendar: FunctionComponent<CalendarProps> = forwardRef<CalendarRef
 
   const [_revision, setRevision] = useState('')
 
+  // Data changes from async work (fetches, timers) re-render only while mounted. A render React
+  // discards (a suspended Suspense boundary) never mounts, and updating it would warn (#8092).
+  // Changes made while not mounted, before the first mount or while hidden in <Activity>, are
+  // caught up on mount. Paired with this render's handleDataChange, which the manager keeps
+  const isMountedRef = useRef(false)
+  const renderedDataRef = useRef<CalendarData | null>(null)
+
   function handleDataChange(_data: CalendarData, actions: Action[]) {
-    (needsSyncRender(actions) ? flushSync : runNormal)(() => {
-      setRevision(guid())
-    })
+    if (isMountedRef.current) {
+      (needsSyncRender(actions) ? flushSync : runNormal)(() => {
+        setRevision(guid())
+      })
+    }
   }
 
   const [calendarApi] = useState(() => new CalendarApiImpl())
@@ -43,8 +54,20 @@ export const Calendar: FunctionComponent<CalendarProps> = forwardRef<CalendarRef
     onDataChange: handleDataChange,
   }))
 
-  useEffect(() => { // Cleanup on unmount
+  // Mount and unmount. Runs again for remounts (Strict Mode, a shown <Activity>). Layout timing, so
+  // catching up renders before paint
+  useIsomorphicLayoutEffect(() => {
+    isMountedRef.current = true
+    calendarDataManager.mount() // the timer starts only now (#8112)
+
+    // a change since the data this commit rendered, made while not mounted. A change already in
+    // the rendered data, such as one picked up by the render that shows an <Activity>, needs nothing
+    if (calendarDataManager.getCurrentData() !== renderedDataRef.current) {
+      setRevision(guid()) // not flushSync, which React forbids during a commit
+    }
+
     return () => {
+      isMountedRef.current = false
       calendarDataManager.destroy()
     }
   }, [])
@@ -54,6 +77,7 @@ export const Calendar: FunctionComponent<CalendarProps> = forwardRef<CalendarRef
   }), [])
 
   const data = calendarDataManager.update(props)
+  renderedDataRef.current = data
 
   return (
     <CalendarMediaRoot emitter={data.emitter}>
@@ -96,6 +120,9 @@ function needsSyncRender(actions: Action[]): boolean {
 function runNormal(f: () => void) {
   f()
 }
+
+// useLayoutEffect warns during server rendering in React 18 and earlier
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 let warnedStableId = false
 

@@ -53,6 +53,8 @@ export class DayGridLayout extends BaseComponent<DayGridLayoutProps> {
   // internal
   private _isUnmounting: boolean
   private scrollDate: DateMarker | null = null
+  private scrollY: number | null = null // where the user scrolled to, once scrollDate is cleared
+  private scrollDateProfile?: DateProfile // the date profile the scroll state is for
 
   render() {
     const { props, context } = this
@@ -107,12 +109,26 @@ export class DayGridLayout extends BaseComponent<DayGridLayoutProps> {
   componentDidMount() {
     this._isUnmounting = false
     if (!this.props.forPrint) {
-      this.resetScroll()
+      // A React <Activity> shown again mounts the same instance again (#8112). Keep its scroll,
+      // unless the dates changed while hidden, which would have reset it
+      if (
+        !this.scrollDateProfile ||
+        (this.props.dateProfile !== this.scrollDateProfile && this.context.options.scrollTimeReset)
+      ) {
+        this.resetScroll()
+      } else if (this.scrollDate) {
+        this.updateScrollY()
+      } else if (this.scrollY != null) {
+        this.scrollerRef.current?.scrollTo({ y: this.scrollY })
+      }
+      this.scrollDateProfile = this.props.dateProfile
       this.scrollerRef.current?.addScrollEndListener(this.handleScrollEnd)
     }
   }
 
   componentDidUpdate(prevProps: DayGridLayoutProps) {
+    this.scrollDateProfile = this.props.dateProfile
+
     if (prevProps.forPrint && !this.props.forPrint) {
       this.scrollerRef.current?.addScrollEndListener(this.handleScrollEnd)
       this.resetScroll()
@@ -164,6 +180,7 @@ export class DayGridLayout extends BaseComponent<DayGridLayoutProps> {
   handleScrollEnd = (isDevice: boolean) => {
     if (isDevice) {
       this.scrollDate = null
+      this.scrollY = this.scrollerRef.current?.y ?? null
     }
   }
 }

@@ -21,6 +21,10 @@
 - FIX: Views without resources, such as `timeGridWeek` with resources loaded: an event added with `calendar.addEvent()` and no event source didn't get its resource's `eventColor`, `eventClass` or other event settings, which events from a source did
 - FIX: Two more drags previewed an event differently from how it's handled once dropped. An event dragged back into the calendar it came from ignored its event source's settings, such as its `allow`, until dropped. In views without resources, event data dragged in from outside with a `resourceId` didn't take its resource's color and classes until dropped
 - FIX: DayGrid with `dayMaxEvents: true` or `dayMaxEventRows: true`: an event that didn't fit at first could only come back cut into pieces around other events, and with `eventSlicing: false` it couldn't come back at all. It can now come back whole too, so some days show events they used to hide behind "+N more". Rarely, a day shows a later event where it used to show part of an earlier one
+- FIX: React: a calendar hidden by `<Activity>` (React 19.2+, which Next.js uses to keep recent pages alive) restarted its timers when re-rendered while hidden. Once removed, those timers kept running forever and kept the whole calendar in memory (#8112)
+- FIX: React: TimeGrid and DayGrid views shown again by `<Activity>` jumped back to `scrollTime` or today's row, losing where the user had scrolled (#8112)
+- FIX: React: a function event source (`events: (info) => …`) under a suspended `<Suspense>` boundary warned "Can't perform a React state update on a component that hasn't mounted yet" when its fetch resolved, and the discarded render left a timer running (#8092)
+- FIX: React Strict Mode: in development, the calendar's timers stopped after Strict Mode's simulated remount, so the now indicator and today's highlight didn't update until something else re-rendered
 - TimeGrid: slot headers between labels have `data-time` too, like the labeled ones
 
 

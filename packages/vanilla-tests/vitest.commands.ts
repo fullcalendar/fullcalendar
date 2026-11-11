@@ -57,6 +57,11 @@ export const mouseUp: BrowserCommand<[]> = async (ctx) => {
   await (ctx as any).page.mouse.up()
 }
 
+// scrolls whatever is under the mouse, as a real wheel would
+export const mouseWheel: BrowserCommand<[deltaX: number, deltaY: number]> = async (ctx, deltaX, deltaY) => {
+  await (ctx as any).page.mouse.wheel(deltaX, deltaY)
+}
+
 // Touch, through the Chrome DevTools Protocol. Playwright's touchscreen can only tap.
 
 const cdpSessions = new Map<string, Promise<any>>()

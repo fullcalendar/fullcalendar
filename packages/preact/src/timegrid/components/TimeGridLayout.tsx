@@ -88,6 +88,7 @@ export class TimeGridLayout extends BaseComponent<TimeGridLayoutProps> {
   private _isUnmounting: boolean
   private currentSlatCnt?: number
   private scrollState: TimeScroll = {} // updated in-place
+  private scrollDateProfile?: DateProfile // the date profile scrollState is for
 
   render() {
     const { props, context } = this
@@ -199,7 +200,18 @@ export class TimeGridLayout extends BaseComponent<TimeGridLayoutProps> {
 
   componentDidMount() {
     this._isUnmounting = false
-    this.resetScroll()
+
+    // A React <Activity> shown again mounts the same instance again (#8112). Keep its scroll, unless
+    // the dates changed while hidden, which would have reset it
+    if (
+      !this.scrollDateProfile ||
+      (this.props.dateProfile !== this.scrollDateProfile && this.context.options.scrollTimeReset)
+    ) {
+      this.resetScroll()
+    } else {
+      this.applyTimeScroll()
+    }
+    this.scrollDateProfile = this.props.dateProfile
     this.context.emitter.on('_timeScrollRequest', this.handleTimeScrollRequest)
 
     const timeScroller = this.timeScrollerRef.current
@@ -209,6 +221,8 @@ export class TimeGridLayout extends BaseComponent<TimeGridLayoutProps> {
   }
 
   componentDidUpdate(prevProps: TimeGridLayoutProps) {
+    this.scrollDateProfile = this.props.dateProfile
+
     if (prevProps.dateProfile !== this.props.dateProfile && this.context.options.scrollTimeReset) {
       this.resetScroll()
     } else if (prevProps.forPrint && !this.props.forPrint) {

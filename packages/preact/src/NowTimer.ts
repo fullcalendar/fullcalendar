@@ -32,8 +32,13 @@ export class NowTimer extends Component<NowTimerProps> {
     return props.children(nowDate, todayRange, nowMs)
   }
 
+  // the timer runs only while mounted, so Strict Mode and <Activity> remounts start it again
+  componentDidMount() {
+    this.runner.start()
+  }
+
   componentWillUnmount() {
-    this.runner.destroy()
+    this.runner.stop()
   }
 
   private handleChange = () => {

@@ -30,16 +30,20 @@ export class NowTimerRunner {
 
   // internal
   private timeoutId: any
-  private isMounted = false
+  private nextChangeMs: number // when the outputs are next due to change, as epoch ms
+  private isStarted = false
 
   constructor(
     private handleChange: () => void,
   ) {}
 
+  /*
+  Computes the outputs. Called during render, so it never arms the timer or adds listeners itself:
+  a render that never mounts (a discarded Suspense render) or that runs while hidden in a React
+  <Activity> would leave them with nothing to clean them up (#8112, #8092). start() does that.
+  */
   update(input: NowTimerRunnerInput): NowTimerRunnerOutput {
-    if (!this.isMounted) {
-      this.isMounted = true
-
+    if (!this.nowManager) {
       // init inputs
       this.unit = input.unit
       this.unitValue = input.unitValue
@@ -52,16 +56,7 @@ export class NowTimerRunner {
       this.nowDate = timing.nowDate
       this.nowMs = timing.nowMs
       this.todayRange = timing.todayRange
-
-      // init listeners
-      this.setTimeout(timing.waitMs)
-      this.nowManager.addResetListener(this.handleRefresh)
-
-      // fired tab becomes visible after being hidden
-      // SSR check. CalendarDataManager calls top-level sync :(
-      if (typeof document !== 'undefined') {
-        document.addEventListener('visibilitychange', this.handleVisibilityChange)
-      }
+      this.nextChangeMs = timing.nextChangeMs
     } else if (
       input.unit !== this.unit ||
       input.unitValue !== this.unitValue ||
@@ -83,9 +78,12 @@ export class NowTimerRunner {
       this.nowDate = timing.nowDate
       this.nowMs = timing.nowMs
       this.todayRange = timing.todayRange
+      this.nextChangeMs = timing.nextChangeMs
 
-      this.clearTimeout()
-      this.setTimeout(timing.waitMs)
+      if (this.isStarted) {
+        this.clearTimeout()
+        this.setTimeout(timing.waitMs)
+      }
     }
 
     return {
@@ -95,13 +93,40 @@ export class NowTimerRunner {
     }
   }
 
-  destroy() {
-    if (this.isMounted) {
-      this.isMounted = false
+  /*
+  Arms the timer and adds the listeners. Call on mount, after the first update(). Idempotent, and
+  callable again after stop(), for remounts (React Strict Mode, a shown <Activity>).
+  Refreshes the outputs only if their change came due while stopped, so mounting alone never
+  causes a re-render. Otherwise waits out the remainder.
+  */
+  start() {
+    if (!this.isStarted && this.nowManager) {
+      this.isStarted = true
+      this.nowManager.addResetListener(this.handleRefresh)
+
+      // fired tab becomes visible after being hidden
+      // SSR check. the vanilla Calendar starts in its constructor
+      if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', this.handleVisibilityChange)
+      }
+
+      const remainingMs = this.nextChangeMs - this.nowManager.getEpochMs()
+
+      if (remainingMs > 0) {
+        this.setTimeout(remainingMs)
+      } else {
+        this.handleRefresh()
+      }
+    }
+  }
+
+  stop() {
+    if (this.isStarted) {
+      this.isStarted = false
       this.clearTimeout()
       this.nowManager.removeResetListener(this.handleRefresh)
 
-      // SSR check. CalendarDataManager calls top-level sync :(
+      // SSR check. the vanilla Calendar starts in its constructor
       if (typeof document !== 'undefined') {
         document.removeEventListener('visibilitychange', this.handleVisibilityChange)
       }
@@ -145,6 +170,7 @@ export class NowTimerRunner {
       nowMs,
       todayRange: buildDayRange(nowDate),
       waitMs,
+      nextChangeMs: unroundedNowMs + waitMs,
     }
   }
 
@@ -158,6 +184,7 @@ export class NowTimerRunner {
       this.nowDate = timing.nowDate
       this.nowMs = timing.nowMs
       this.todayRange = timing.todayRange
+      this.nextChangeMs = timing.nextChangeMs
       this.handleChange()
       this.setTimeout(timing.waitMs)
     }, waitMs)
@@ -171,6 +198,7 @@ export class NowTimerRunner {
 
   private handleRefresh = () => {
     let timing = this.computeTiming()
+    this.nextChangeMs = timing.nextChangeMs
 
     if (
       timing.nowDate.valueOf() !== this.nowDate.valueOf() ||

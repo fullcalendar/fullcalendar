@@ -47,6 +47,7 @@ export class Calendar extends CalendarApiImpl {
       onDataChange: this.handleDataChange,
     })
     this.currentData = this.dataManager.update(optionOverrides)
+    this.dataManager.mount() // the timer that keeps today current always started here
   }
 
   private handleDataChange = (data: CalendarData, actions: Action[]) => {
@@ -116,6 +117,8 @@ export class Calendar extends CalendarApiImpl {
 
   render() {
     let wasRendering = this.isRendering
+
+    this.dataManager.mount() // again, when rendering after destroy(). idempotent
 
     if (!wasRendering) {
       this.isRendering = true

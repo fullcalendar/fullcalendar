@@ -104,8 +104,16 @@ export class CalendarDataManager {
     this.nowTimer = new NowTimerRunner(this.handleNowChange)
   }
 
+  /*
+  Starts the timer that keeps today current. Call after the first update(), when the calendar mounts.
+  Idempotent, and callable again after destroy(), for remounts (React Strict Mode, a shown <Activity>)
+  */
+  mount() {
+    this.nowTimer.start()
+  }
+
   destroy() {
-    this.nowTimer.destroy()
+    this.nowTimer.stop()
   }
 
   /*
