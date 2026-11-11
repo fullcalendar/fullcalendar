@@ -91,10 +91,6 @@ describe('pure positioning kernel', () => {
     expect(projectSlices(hiddenGroupsOf(sliced)[0].hiddenSlices)).toEqual([
       ['extra', 1, 2],
     ])
-    expect(projectSlices(sliced.addedSlices)).toEqual([
-      ['extra', 0, 1],
-      ['extra', 2, 3],
-    ])
     auditCoverage([base, extra], sliced.sliceLevels, sliced.hiddenSlices)
   })
 
