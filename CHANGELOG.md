@@ -15,6 +15,7 @@
 - FIX: DayGrid with `dayMaxEvents: true` or `dayMaxEventRows: true`: a day could hide an event behind "+N more" even when that event and the link both fit, such as showing "+2 more" alone where the first event had room above the link
 - FEATURE: `slotHeaderContent` and the other slot header hooks get their text's parts as `textParts`, and the `weekdayText`, `dayNumberText` and `monthText` getters that day cells already have. The time grid's axis has no day-level text, so its getters are empty strings. `dayHeaderContent` and `listDayHeaderContent` get `monthText` too
 - FEATURE: `view.titleParts`: the title's `Intl` range parts (`type`, `value` and `source`, which is `startRange`, `endRange` or `shared`), so a custom toolbar can style parts of the title apart, such as a lighter year, and stay right for ranges and in every locale. The `DateTimeRangeFormatPartWithWeek` type describes each part
+- FIX: Skeleton CSS: some structural rules, including the z-index ones that set the stacking order, weren't `!important`. Without cascade layers, an app's CSS could override them, though not in a Tailwind app. They're all `!important` now, so the stacking order is the same in every setup, and a `z-*` class on an element from a hook, such as `tableHeaderClass`, has no effect
 - TimeGrid: slot headers between labels have `data-time` too, like the labeled ones
 
 
