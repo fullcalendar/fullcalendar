@@ -1,6 +1,7 @@
 
 ## v7.1.5
 
+- FIX: Bootstrap, MUI and Shadcn: "+N more" popovers appeared behind dialogs
 - FIX: TypeScript: `calendar.off()` required a handler, though calling it without one removes all of that name's handlers added with `calendar.on()`
 - FIX: `resource.toPlainObject()` left out the resource's `eventColor`
 - FIX: `event.getResources()` returned `null` for each resource that doesn't exist or hasn't been fetched yet. It now leaves them out (#7300)
