@@ -21,8 +21,13 @@ export class ListDayHeader extends BaseComponent<ListDayHeaderProps> {
     let { dayDate, dateMeta } = this.props
     let stickyHeaderDates = !this.props.forPrint
 
-    const listDayFormat = options.listDayFormat ?? createDefaultListDayFormat(viewSpec)
-    const listDayAltFormat = options.listDayAltFormat ?? createDefaultListDaySideFormat(viewSpec)
+    // `false` is refined to `null`, which turns the heading off, so only a missing option gets the default
+    const listDayFormat = options.listDayFormat === undefined
+      ? createDefaultListDayFormat(viewSpec)
+      : options.listDayFormat
+    const listDayAltFormat = options.listDayAltFormat === undefined
+      ? createDefaultListDaySideFormat(viewSpec)
+      : options.listDayAltFormat
 
     let renderProps: ListDayHeaderInfo = {
       ...dateMeta,

@@ -16,6 +16,7 @@ import { buildDayTableRenderRange } from '../../daygrid/TableDateProfileGenerato
 import { createRef } from 'react'
 import { Ruler } from '../../scrollgrid/Ruler'
 import { SingleMonth } from './SingleMonth'
+import { settleSetTimeout } from '../../util/settle'
 
 interface MultiMonthViewState {
   innerWidth?: number
@@ -143,7 +144,7 @@ export class MultiMonthView extends DateComponent<ViewProps, MultiMonthViewState
     // this.applyScroll() // definitely not ready yet b/c doesn't have state.innerWidth
 
     // workaround for off-by-a-few-pixels on first time when multiMonthMaxColumns=1, not sure why
-    setTimeout(() => {
+    settleSetTimeout(() => {
       this.applyScroll()
     }, 0)
   }

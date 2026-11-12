@@ -97,6 +97,7 @@ export class AutoScroller {
 
   requestAnimation(now: number) {
     this.msSinceRequest = now
+    // not tracked by util/settle: it runs for as long as the pointer stays near an edge
     requestAnimationFrame(this.animate)
   }
 

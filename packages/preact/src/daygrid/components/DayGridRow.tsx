@@ -39,7 +39,7 @@ import {
   buildDayGridLevelPlacements,
   buildDayGridPixelPlacements,
   computeDayGridDomCandidateMaxLevels,
-  computeDayGridMoreLinkLevelTax,
+  computeDayGridMoreLinkTakesLevel,
   estimateLevelCapacity,
   resolveDayGridPlacementMode,
 } from '../seg-placement-adapter'
@@ -183,7 +183,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
             props.dayMaxEventRows,
             Infinity,
           ),
-          computeDayGridMoreLinkLevelTax(placementMode),
+          computeDayGridMoreLinkTakesLevel(placementMode),
           options.eventOrderStrict,
           options.eventSlicing,
           cells.length,
@@ -485,6 +485,9 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
           style={{
             visibility: isInvisible ? 'hidden' : undefined,
             top,
+            // HACK: a slice with no top is hidden but stays mounted so its height can be measured. Pinning its bottom
+            // to the cell's keeps its box from hanging past the last row, which made the grid scroll (#7581)
+            bottom: top == null ? 0 : undefined,
             width: this.computeSpanWidth(slice.start, slice.end),
           }}
           heightRef={this.sliceHeightRefMap.createRef(key)}

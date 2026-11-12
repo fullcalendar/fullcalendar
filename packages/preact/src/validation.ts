@@ -88,7 +88,7 @@ function isInteractionPropsValid(state: SplittableProps, context: CalendarContex
     subjectDefs,
     interaction.isEvent ?
       state.eventUiBases :
-      { '': currentState.selectionConfig }, // if not a real event, validate as a selection
+      { base: currentState.selectionConfig, bySource: {} }, // if not a real event, validate as a selection, without the section's UI
   )
 
   if (filterConfig) {

@@ -48,7 +48,7 @@ export type { ButtonState, NavButtonState, ButtonStateMap } from '../structs/but
 export type { FormatterInput } from '../datelib/formatting'
 export type { LocaleSingularArg, LocaleInput } from '../datelib/locale'
 
-export type { DateInput, WeekNumberCalculation } from '@full-ui/headless-calendar'
+export type { DateInput, WeekNumberCalculation, DateTimeRangeFormatPartWithWeek } from '@full-ui/headless-calendar'
 export type { DurationInput, Duration } from '@full-ui/headless-calendar'
 export type { DateRangeInput } from '@full-ui/headless-calendar'
 

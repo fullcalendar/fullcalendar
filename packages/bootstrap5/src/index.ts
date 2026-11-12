@@ -325,7 +325,7 @@ export default {
     /* Popover
     --------------------------------------------------------------------------------------------- */
 
-    popoverClass: "popover m-1 bg-body text-body min-w-55 root-reset",
+    popoverClass: "popover [--fc-popover-z:var(--bs-popover-zindex)] m-1 bg-body text-body min-w-55 root-reset",
     popoverCloseClass: `group absolute top-3 end-2 ${outlineWidthFocusClass} ${primaryOutlineColorClass} button-reset bi bi-x-lg`,
 
     /* Lane

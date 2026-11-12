@@ -47,7 +47,10 @@ export function getScrollerSyncerClass(pluginHooks: {
   const ScrollerSyncer = pluginHooks.scrollerSyncerClass
 
   if (!ScrollerSyncer) {
-    throw new RangeError('Must import @fullcalendar/scrollgrid')
+    throw new RangeError(
+      'dayMinWidth requires the scrollgrid plugin, from your scheduler package, '
+      + 'such as @fullcalendar/react-scheduler/scrollgrid',
+    )
   }
 
   return ScrollerSyncer

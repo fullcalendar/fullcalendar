@@ -10,14 +10,11 @@
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^12.0.0",
-    "@rollup/plugin-inject": "^5.0.5",
-    "@rollup/plugin-json": "^4.0.3",
     "@rollup/plugin-node-resolve": "^14.0.1",
     "@rollup/plugin-replace": "^5.0.1",
     "@tsconfig/node24": "^24.0.3",
     "@types/cross-spawn": "^6.0.2",
     "@types/js-yaml": "^4.0.5",
-    "@types/karma": "^6.3.3",
     "@types/node": "^16.11.7",
     "@types/semver": "^7.3.12",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
@@ -26,7 +23,6 @@
     "chalk": "^5.0.1",
     "chokidar": "^2.1.5",
     "cleye": "^1.2.1",
-    "components-jqueryui": "^1.12.1",
     "cross-spawn": "^7.0.3",
     "cssnano": "^7.1.2",
     "esbuild": "^0.15.7",
@@ -34,15 +30,7 @@
     "eslint-plugin-react": "^7.31.10",
     "globby": "^13.1.2",
     "handlebars": "^4.1.2",
-    "jasmine-jquery": "^2.1.1",
-    "jquery": "^3.4.0",
-    "jquery-simulate": "^1.0.2",
     "js-yaml": "^4.1.0",
-    "karma": "^6.3.2",
-    "karma-chrome-launcher": "^3.1.0",
-    "karma-jasmine": "^4.0.1",
-    "karma-sourcemap-loader": "^0.3.8",
-    "karma-verbose-reporter": "0.0.6",
     "postcss": "^8.4.20",
     "rollup": "^2.79.0",
     "rollup-plugin-dts": "^3.0.2",
@@ -57,7 +45,8 @@
   "bin": {
     "standard-scripts": "./bin/standard-scripts.ts",
     "ss": "./bin/standard-scripts.ts",
-    "eslint": "./node_modules/eslint/bin/eslint.js"
+    "eslint": "./node_modules/eslint/bin/eslint.js",
+    "tsc": "./node_modules/typescript/bin/tsc"
   },
   "scripts": {
     "check": "tsc -b",

@@ -3,14 +3,14 @@ import { EventDef } from '../structs/event-def'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { mapHash } from '../util/object'
 import { memoize } from '../util/memoize'
-import { EventUiHash, EventUi, combineEventUis } from './event-ui'
+import { EventUiBases, EventUi, combineEventUis } from './event-ui'
 import { DateSpan } from '../structs/date-span'
 
 export interface SplittableProps {
   businessHours: EventStore | null // is this really allowed to be null?
   dateSelection: DateSpan | null
   eventStore: EventStore
-  eventUiBases: EventUiHash
+  eventUiBases: EventUiBases
   eventDrag: EventInteractionState | null
   eventResize: EventInteractionState | null
   eventSelection: string
@@ -22,7 +22,6 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
   private getKeysForEventDefs = memoize(this._getKeysForEventDefs)
   private splitDateSelection = memoize(this._splitDateSpan)
   private splitEventStore = memoize(this._splitEventStore)
-  private splitIndividualUi = memoize(this._splitIndividualUi)
   private splitEventDrag = memoize(this._splitInteraction)
   private splitEventResize = memoize(this._splitInteraction)
   private eventUiBuilders = {} // TODO: typescript protection
@@ -35,13 +34,12 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
     let keyInfos = this.getKeyInfo(props)
     let defKeys = this.getKeysForEventDefs(props.eventStore)
     let dateSelections = this.splitDateSelection(props.dateSelection)
-    let individualUi = this.splitIndividualUi(props.eventUiBases, defKeys) // the individual *bases*
     let eventStores = this.splitEventStore(props.eventStore, defKeys)
     let eventDrags = this.splitEventDrag(props.eventDrag)
     let eventResizes = this.splitEventResize(props.eventResize)
     let splitProps: { [key: string]: SplittableProps } = {}
 
-    this.eventUiBuilders = mapHash(keyInfos, (info, key) => this.eventUiBuilders[key] || memoize(buildEventUiForKey))
+    this.eventUiBuilders = mapHash(keyInfos, (info, key) => this.eventUiBuilders[key] || memoize(buildSectionEventUiBases))
 
     for (let key in keyInfos) {
       let keyInfo = keyInfos[key]
@@ -52,7 +50,7 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
         businessHours: keyInfo.businessHours || props.businessHours,
         dateSelection: dateSelections[key] || null,
         eventStore,
-        eventUiBases: buildEventUi(props.eventUiBases[''], keyInfo.ui, individualUi[key]),
+        eventUiBases: buildEventUi(props.eventUiBases, keyInfo.ui),
         eventDrag: eventDrags[key] || null,
         eventResize: eventResizes[key] || null,
         eventSelection: eventStore.instances[props.eventSelection] ? props.eventSelection : '',
@@ -107,24 +105,6 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
     return splitStores
   }
 
-  private _splitIndividualUi(eventUiBases: EventUiHash, defKeys): { [key: string]: EventUiHash } {
-    let splitHashes: { [key: string]: EventUiHash } = {}
-
-    for (let defId in eventUiBases) {
-      if (defId) { // not the '' key
-        for (let key of defKeys[defId]) {
-          if (!splitHashes[key]) {
-            splitHashes[key] = {}
-          }
-
-          splitHashes[key][defId] = eventUiBases[defId]
-        }
-      }
-    }
-
-    return splitHashes
-  }
-
   private _splitInteraction(interaction: EventInteractionState | null): { [key: string]: EventInteractionState } {
     let splitStates: { [key: string]: EventInteractionState } = {}
 
@@ -161,24 +141,19 @@ export abstract class Splitter<PropsType extends SplittableProps = SplittablePro
   }
 }
 
-function buildEventUiForKey(allUi: EventUi | null, eventUiForKey: EventUi | null, individualUi: EventUiHash | null) {
-  let baseParts = []
-
-  if (allUi) {
-    baseParts.push(allUi)
+/*
+A section's bases are its parent's, plus the section's own UI, such as a resource's. Splitters can nest,
+like a resource time grid's resources and its all-day and timed areas, so the section UIs combine.
+*/
+function buildSectionEventUiBases(eventUiBases: EventUiBases, sectionUi: EventUi | undefined): EventUiBases {
+  if (!sectionUi) {
+    return eventUiBases
   }
 
-  if (eventUiForKey) {
-    baseParts.push(eventUiForKey)
+  return {
+    ...eventUiBases,
+    sectionUi: eventUiBases.sectionUi
+      ? combineEventUis([eventUiBases.sectionUi, sectionUi])
+      : sectionUi,
   }
-
-  let stuff = {
-    '': combineEventUis(baseParts),
-  }
-
-  if (individualUi) {
-    Object.assign(stuff, individualUi)
-  }
-
-  return stuff
 }

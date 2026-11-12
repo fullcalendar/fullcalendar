@@ -1,4 +1,4 @@
-import { DateEnv } from '@full-ui/headless-calendar'
+import { DateEnv, DateTimeRangeFormatPartWithWeek } from '@full-ui/headless-calendar'
 import { CalendarData } from '../reducers/data-types'
 import { CalendarApi } from './CalendarApi'
 import { ViewApi } from './ViewApi'
@@ -18,6 +18,10 @@ export class ViewImpl implements ViewApi {
 
   get title(): string {
     return this.getCurrentData().viewTitle
+  }
+
+  get titleParts(): DateTimeRangeFormatPartWithWeek[] {
+    return this.getCurrentData().viewTitleParts
   }
 
   get activeStart(): Date {

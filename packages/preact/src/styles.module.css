@@ -4,12 +4,56 @@
   --fc-popover-z: 4;
 }
 
+/* Z-index */
+/* ------------------------------------------------------------------------------------------------- */
+
+/*
+The stacking order is FullCalendar's, so these are !important, like the rest of this file. They come
+before the sticky and popover rules, which win on an element that has both.
+*/
+
+.z0 {
+  z-index: 0 !important;
+}
+
+.z1 {
+  z-index: 1 !important;
+}
+
+.z2 {
+  z-index: 2 !important;
+}
+
+.z3 {
+  z-index: 3 !important;
+}
+
+.z4 {
+  z-index: 4 !important;
+}
+
+.z5 {
+  z-index: 5 !important;
+}
+
+.z1000 {
+  z-index: 1000 !important;
+}
+
+.z9999 {
+  z-index: 9999 !important;
+}
+
+.focusZ2:focus-visible {
+  z-index: 2 !important;
+}
+
 .popoverZ {
   z-index: var(--fc-popover-z) !important;
 }
 
 .isolate {
-  isolation: isolate;
+  isolation: isolate !important;
 }
 
 /*
@@ -127,19 +171,15 @@ This will prevent all ancestors from customizing their box size unless they use 
 
 /* QUESTION: why not use -left -right instead of negative margins/padding for ALL? */
 .hitXSkinny {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -5px;
-  right: -5px;
+  position: absolute !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: -5px !important;
+  right: -5px !important;
 }
 
 .selectNone {
-  user-select: none;
-}
-
-.invisible {
-  visibility: hidden;
+  user-select: none !important;
 }
 
 /* Border Utils */
@@ -238,8 +278,8 @@ TODO: use liquidX/Y elsewhere because frees up min other dimension; less collisi
 .printTable > tbody > tr > th,
 .printTable > tbody > tr > td {
   vertical-align: top !important;
-  font-weight: inherit;
-  text-align: inherit;
+  font-weight: inherit !important;
+  text-align: inherit !important;
 }
 
 /* Table Utils */
@@ -280,7 +320,7 @@ TODO: use liquidX/Y elsewhere because frees up min other dimension; less collisi
 /* ------------------------------------------------------------------------------------------------- */
 
 .overflowAnchorNone {
-  overflow-anchor: none;
+  overflow-anchor: none !important;
 }
 
 .pointerEventsNone {
@@ -441,45 +481,6 @@ Hidden also means not focusable, clickable, or read by screen readers */
 
 .flowRoot {
   display: flow-root !important;
-}
-
-/* Z-index */
-/* ------------------------------------------------------------------------------------------------- */
-
-.z0 {
-  z-index: 0;
-}
-
-.z1 {
-  z-index: 1;
-}
-
-.z2 {
-  z-index: 2;
-}
-
-.z3 {
-  z-index: 3;
-}
-
-.z4 {
-  z-index: 4;
-}
-
-.z5 {
-  z-index: 5;
-}
-
-.z1000 {
-  z-index: 1000;
-}
-
-.z9999 {
-  z-index: 9999;
-}
-
-.focusZ2:focus-visible {
-  z-index: 2;
 }
 
 /* INTERNAL MARKER -- used to mark an element for internal significance */

@@ -2,7 +2,6 @@ import { basename } from 'path'
 import { watch } from 'chokidar'
 import { rollup, watch as rollupWatch, type RollupOptions, type OutputOptions, type RollupWatchOptions } from 'rollup'
 import { buildPkgBundleStruct, type PkgBundleStruct } from './utils/bundle-struct.ts'
-import { analyzePkg } from '../utils/pkg-analysis.ts'
 import { buildModuleOptions, buildGlobalOptions, buildDtsOptions } from './utils/rollup-presets.ts'
 import { arrayify, continuousAsync } from '../utils/lang.ts'
 import { type ScriptContext } from '../utils/script-runner.ts'
@@ -33,24 +32,20 @@ export async function writeBundles(
   isDev: boolean,
 ): Promise<void> {
   const pkgBundleStruct = await buildPkgBundleStruct(pkgDir, pkgJson)
-  const { isTests } = analyzePkg(pkgBundleStruct.pkgDir)
-  const moduleEnabled = !isTests
-  const dtsEnabled = !isDev && !isTests
 
   const optionsObjs = [
-    moduleEnabled &&
-      buildModuleOptions(
-        pkgBundleStruct,
-        isDev,
-        /* sourcemaps = */ isDev || isTests || Boolean(process.env.SOURCEMAPS),
-      ),
+    buildModuleOptions(
+      pkgBundleStruct,
+      isDev,
+      /* sourcemaps = */ isDev || Boolean(process.env.SOURCEMAPS),
+    ),
     pkgBundleStruct.globalConfig &&
       await buildGlobalOptions(
         pkgBundleStruct,
         isDev,
-        /* sourcemaps = */ isDev || isTests || Boolean(process.env.SOURCEMAPS),
+        /* sourcemaps = */ isDev || Boolean(process.env.SOURCEMAPS),
       ),
-    dtsEnabled && buildDtsOptions(pkgBundleStruct, isDev)
+    !isDev && buildDtsOptions(pkgBundleStruct, isDev)
   ].filter(Boolean) as RollupOptions[]
 
   await Promise.all(
@@ -73,24 +68,20 @@ export async function watchBundles(
   return continuousAsync(async (rerun: any) => {
     const pkgName = pkgJson.name
     const pkgBundleStruct = await buildPkgBundleStruct(pkgDir, pkgJson)
-    const { isTests } = analyzePkg(pkgBundleStruct.pkgDir)
-    const moduleEnabled = !isTests
-    const dtsEnabled = !isDev && !isTests
 
     const optionsObjs = [
-      moduleEnabled &&
-        buildModuleOptions(
-          pkgBundleStruct,
-          isDev,
-          /* sourcemaps = */ isDev || isTests,
-        ),
+      buildModuleOptions(
+        pkgBundleStruct,
+        isDev,
+        /* sourcemaps = */ isDev,
+      ),
       pkgBundleStruct.globalConfig &&
         await buildGlobalOptions(
           pkgBundleStruct,
           isDev,
-          /* sourcemaps = */ isDev || isTests,
+          /* sourcemaps = */ isDev,
         ),
-      dtsEnabled && buildDtsOptions(pkgBundleStruct, isDev),
+      !isDev && buildDtsOptions(pkgBundleStruct, isDev),
     ].filter(Boolean) as RollupWatchOptions[]
 
     if (!optionsObjs.length) {

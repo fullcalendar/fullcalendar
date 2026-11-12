@@ -1,12 +1,10 @@
 import commonjsPluginLib from '@rollup/plugin-commonjs'
-import jsonPluginLib from '@rollup/plugin-json'
 import nodeResolvePlugin from '@rollup/plugin-node-resolve'
 import replacePluginLib from '@rollup/plugin-replace'
-import injectPluginLib from '@rollup/plugin-inject'
 import { readFileSync } from 'fs'
 import { readFile } from 'fs/promises'
 import handlebars from 'handlebars'
-import { dirname, join as joinPaths, resolve as resolvePath } from 'path'
+import { dirname, join as joinPaths } from 'path'
 import { fileURLToPath } from 'url'
 import { type OutputOptions, type Plugin, type RollupOptions } from 'rollup'
 import dtsPlugin from 'rollup-plugin-dts'
@@ -43,10 +41,8 @@ import {
 } from './rollup-plugins.ts'
 
 const commonjsPlugin = cjsInterop(commonjsPluginLib)
-const jsonPlugin = cjsInterop(jsonPluginLib)
 const postcssPlugin = cjsInterop(postcssPluginLib)
 const replacePlugin = cjsInterop(replacePluginLib)
-const injectPlugin = cjsInterop(injectPluginLib)
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const debugDir = joinPaths(__dirname, 'debug')
@@ -81,8 +77,6 @@ export async function buildGlobalOptions(
   isDev: boolean,
   sourcemaps: boolean,
 ): Promise<RollupOptions> {
-  const pkgAnalysis = analyzePkg(pkgBundleStruct.pkgDir)
-
   return {
     input: buildGlobalInput(pkgBundleStruct),
     plugins: await buildGlobalPlugins(
@@ -96,8 +90,6 @@ export async function buildGlobalOptions(
         console.error(`${pkgBundleStruct.pkgDir}(iife): ${warning}`)
       }
     },
-    // Workaround for rollup being aggressive about tree-shacking
-    treeshake: !pkgAnalysis.isTests,
   }
 }
 
@@ -211,21 +203,14 @@ async function buildGlobalOutputOptions(
   pkgBundleStruct: PkgBundleStruct,
   sourcemapOutput: boolean,
 ): Promise<OutputOptions> {
-  const { pkgDir } = pkgBundleStruct
-  const { isTests } = analyzePkg(pkgDir)
-
   return {
-    format: isTests
-      ? 'iife' // for tests, which HACKILY don't use iifeSplitPlugin
-      : 'esm', // for iifeSplitPlugin. also for DEBUGGING as ESM
+    format: 'esm', // for iifeSplitPlugin. also for DEBUGGING as ESM
     dir: joinPaths(pkgBundleStruct.pkgDir, 'dist'),
     entryFileNames: '[name].js',
     // chunkFileNames: 'global-chunks/[name]-[hash]' + esmExtension, // for DEBUGGING as ESM
     globals: pkgBundleStruct.globalConfig?.externalGlobals || {}, // comment for DEBUGGING as ESM
     sourcemap: sourcemapOutput,
-    banner: isTests
-      ? undefined
-      : await buildBanner(pkgBundleStruct),
+    banner: await buildBanner(pkgBundleStruct),
 
     // ...the iifeSplitPlugin plugin fills in the rest...
 
@@ -296,37 +281,15 @@ async function buildGlobalPlugins(
   sourcemaps: boolean,
 ): Promise<Plugin[]> {
   const { pkgDir, entryStructMap } = pkgBundleStruct
-  const { isPublicMui, isTests } = analyzePkg(pkgDir)
-
-  // HACK. path to other package
-  const jasmineUtilsFile = resolvePath(
-    joinPaths(__dirname, '../../../../packages/vanilla-tests/dist/.tsout/lib/global-utils.js'),
-  )
+  const { isPublicMui } = analyzePkg(pkgDir)
 
   return [
-    isTests &&
-      injectPlugin({
-        // NOTE: keel in sync with standard/packages/vanilla-tests/src/lib/global-utils.ts
-        spyOnCalendarCallback: [jasmineUtilsFile, 'spyOnCalendarCallback'],
-        pushOptions: [jasmineUtilsFile, 'pushOptions'],
-        createCalendarElement: [jasmineUtilsFile, 'createCalendarElement'],
-        initCalendar: [jasmineUtilsFile, 'initCalendar'],
-        getCurrentOptions: [jasmineUtilsFile, 'getCurrentOptions'],
-        describeOptions: [jasmineUtilsFile, 'describeOptions'],
-        describeValues: [jasmineUtilsFile, 'describeValues'],
-        describeTimeZones: [jasmineUtilsFile, 'describeTimeZones'],
-        describeTimeZone: [jasmineUtilsFile, 'describeTimeZone'],
-        oneCall: [jasmineUtilsFile, 'oneCall'],
-        spyOnMethod: [jasmineUtilsFile, 'spyOnMethod'],
-        spyCall: [jasmineUtilsFile, 'spyCall'],
-      }),
     remapImportsPlugin({
       mappings: pkgBundleStruct.importRemaps || {},
     }),
-    !isTests && // HACK around recent plugin bug
-      iifeSplitPlugin(
-        buildGlobalSplitOptions(pkgBundleStruct),
-      ),
+    iifeSplitPlugin(
+      buildGlobalSplitOptions(pkgBundleStruct),
+    ),
     rerootAssetsPlugin(pkgDir),
     externalizePkgsPlugin({
       pkgNames: computeGlobalExternalPkgs(pkgBundleStruct),
@@ -383,13 +346,7 @@ function buildJsPlugins(
   isDev: boolean,
   cssExtract: string,
 ): Plugin[] {
-  const pkgAnalysis = analyzePkg(pkgBundleStruct.pkgDir)
-
-  if (pkgAnalysis.isTests) {
-    return buildTestJsPlugins()
-  } else {
-    return buildNormalJsPlugins(pkgBundleStruct, isDev, cssExtract)
-  }
+  return buildNormalJsPlugins(pkgBundleStruct, isDev, cssExtract)
 }
 
 function buildNormalJsPlugins(
@@ -433,30 +390,6 @@ function buildNormalJsPlugins(
       },
     }),
   ].filter(Boolean) as Plugin[]
-}
-
-function buildTestJsPlugins(): Plugin[] {
-  return [
-    nodeResolvePlugin({ // determines index.js and .js/cjs/mjs
-      browser: true, // for xhr-mock (use non-node shims that it wants to)
-      preferBuiltins: false, // for xhr-mock (use 'url' npm package)
-      ignoreSideEffectsForRoot: true,
-    }),
-    commonjsPlugin(), // for moment and moment-timezone
-    jsonPlugin(), // for moment-timezone
-    cssPlugin({
-      // have JS store and attach CSS
-      // BUG: in JS, the CSS string gets written twice for some reason
-      extract: false,
-      inject: true,
-    }),
-    replacePlugin({
-      preventAssignment: true,
-      values: {
-        'process.env.NODE_ENV': JSON.stringify('development'),
-      },
-    }),
-  ]
 }
 
 function buildGlobalSplitOptions(pkgBundleStruct: PkgBundleStruct): IifeSplitOptions {

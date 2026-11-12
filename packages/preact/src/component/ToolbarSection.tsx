@@ -53,6 +53,10 @@ export class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
       }
     }
 
+    // two or more view buttons form a tablist. a tab must be in one, so a lone view button is a
+    // toggle button instead, like a view button grouped with other buttons
+    let isTablist = isOnlyButtons && isOnlyView && widgetGroup.length > 1
+
     for (let widget of widgetGroup) {
       let { name, customElement, buttonHint } = widget
 
@@ -118,9 +122,11 @@ export class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
               type: 'button',
               disabled: isDisabled,
               ...(
-                (isOnlyButtons && isOnlyView)
+                isTablist
                   ? { 'role': 'tab', 'aria-selected': isSelected }
-                  : { 'aria-pressed': isSelected }
+                  : widget.isView
+                    ? { 'aria-pressed': isSelected }
+                    : {} // not a toggle: prev, next, today and custom buttons
               ),
               'aria-label': typeof buttonHint === 'function'
                 ? buttonHint(props.navUnit)
@@ -155,8 +161,8 @@ export class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
 
     if (children.length > 1) {
       return createElement('div', {
-        role: (isOnlyButtons && isOnlyView) ? 'tablist' : undefined,
-        'aria-label': (isOnlyButtons && isOnlyView) ? options.viewChangeHint : undefined,
+        role: isTablist ? 'tablist' : undefined,
+        'aria-label': isTablist ? options.viewChangeHint : undefined,
         className: joinClassNames(
           generateClassName(options.buttonGroupClass, { hasSelection: isOnlyView }),
           classNames.isolate,
