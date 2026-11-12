@@ -75,7 +75,14 @@ function compareRanges(range0: DateRange, range1: DateRange) {
   return range0.start.valueOf() - range1.start.valueOf() // earlier ranges go first
 }
 
-export function intersectRanges(range0: OpenDateRange, range1: OpenDateRange): OpenDateRange {
+export function intersectRanges(range0: OpenDateRange | null, range1: OpenDateRange | null): OpenDateRange | null {
+  // A date profile's activeRange is typed as DateRange | null when the
+  // visible period does not intersect validRange (e.g. later months of a
+  // multiMonthYear view whose validRange ends mid-year).
+  if (!range0 || !range1) {
+    return null
+  }
+
   let { start, end } = range0
   let newRange = null
 

@@ -155,4 +155,26 @@ describe('multimonth view', () => {
     expect(calendar.view.currentStart).toEqualDate('2023-01-01')
     expect(calendar.view.currentEnd).toEqualDate('2024-01-01')
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/8134
+  it('does not throw when next navigates into a partial year that has events', () => {
+    const calendar = initCalendar({
+      initialDate: '2026-06-01',
+      initialView: 'multiMonthYear',
+      validRange: {
+        start: '2022-04-07',
+        end: '2027-07-30',
+      },
+      events: [
+        { title: 'Past', start: '2022-05-01' },
+      ],
+    })
+
+    expect(() => {
+      calendar.next()
+    }).not.toThrow()
+
+    expect(calendar.view.currentStart).toEqualDate('2027-01-01')
+    expect(calendar.view.currentEnd).toEqualDate('2028-01-01')
+  })
 })

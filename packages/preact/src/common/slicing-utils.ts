@@ -256,10 +256,10 @@ for incorporating slotMinTime/slotMaxTime if appropriate
 TODO: should be part of DateProfile!
 TimelineDateProfile already does this btw
 */
-function computeActiveRange(dateProfile: DateProfile, isComponentAllDay: boolean): DateRange {
+function computeActiveRange(dateProfile: DateProfile, isComponentAllDay: boolean): DateRange | null {
   let range = dateProfile.activeRange
 
-  if (isComponentAllDay) {
+  if (!range || isComponentAllDay) {
     return range
   }
 
