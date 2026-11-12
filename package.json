@@ -38,10 +38,5 @@
   },
   "engines": {
     "pnpm": ">=10.15.0"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "jasmine-jquery@2.1.1": "scripts/patches/jasmine-jquery@2.1.1.patch"
-    }
   }
 }
