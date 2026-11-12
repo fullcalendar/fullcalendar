@@ -1,33 +1,57 @@
 
 ## v7.1.5
 
-- FIX: Bootstrap, MUI and Shadcn: "+N more" popovers appeared behind dialogs
-- FIX: TypeScript: `calendar.off()` required a handler, though calling it without one removes all of that name's handlers added with `calendar.on()`
-- FIX: `resource.toPlainObject()` left out the resource's `eventColor`
-- FIX: `event.getResources()` returned `null` for each resource that doesn't exist or hasn't been fetched yet. It now leaves them out (#7300)
-- FIX: Accessibility: a view button alone in its toolbar group had `role="tab"` with no tablist around it. It's now a toggle button with `aria-pressed`, like a view button grouped with other buttons
-- FIX: Accessibility: prev, next, today and custom toolbar buttons had `aria-pressed="false"`, so screen readers announced them as toggle buttons. Only view buttons have it now (#8042)
-- FIX: An event at a wall-clock time skipped by a daylight-saving change (given without an offset) resolves to the time after the change, but `startStr`/`endStr` named the skipped time, an hour before `start`/`end`. Fed back into `addEvent`, the string moved the event
-- FIX: Resource Timeline with `virtualization`: scrolling to a resource added with `calendar.addResource(resource, true)` could stop a few rows short of it, when rows it scrolled past weren't measured yet. A regression in v7.1.4
-- FIX: List view: `listDayFormat: false` and `listDayAltFormat: false` didn't turn their day headings off, which rendered in the default format instead
-- FIX: TimeGrid: each slot header in the time axis was only as tall as its label, so a background, border or hover style on it (`slotHeaderClass`) covered just the top of its slot. It's now as tall as the slot, as it already was with `dayMinWidth`
-- FIX: DayGrid (month, multi-month): for day headers that name only the weekday, `dayHeaderContent` and the other day header hooks got a stand-in date from January 1970 at midnight UTC, which read as the day before west of UTC. `date` is now a day in view, at midnight in the calendar's time zone, like every other all-day date. Code that read the old date in UTC (such as `getUTCDay()`) should use `dow` instead (#7468, #5854)
-- FIX: TimeGrid: an all-day event dragged into the timed area lost its event source's color and classes while previewed there. The same happened to an event dragged to another resource in resource views, where its source's `constraint`, `overlap` and `allow` were also ignored, so it could be dropped where they forbid
-- FIX: DayGrid with `dayMaxEvents: true` or `dayMaxEventRows: true`: a day could hide an event behind "+N more" even when that event and the link both fit, such as showing "+2 more" alone where the first event had room above the link
-- FEATURE: `slotHeaderContent` and the other slot header hooks get their text's parts as `textParts`, and the `weekdayText`, `dayNumberText` and `monthText` getters that day cells already have. The time grid's axis has no day-level text, so its getters are empty strings. `dayHeaderContent` and `listDayHeaderContent` get `monthText` too
-- FEATURE: `view.titleParts`: the title's `Intl` range parts (`type`, `value` and `source`, which is `startRange`, `endRange` or `shared`), so a custom toolbar can style parts of the title apart, such as a lighter year, and stay right for ranges and in every locale. The `DateTimeRangeFormatPartWithWeek` type describes each part
-- FIX: Skeleton CSS: some structural rules, including the z-index ones that set the stacking order, weren't `!important`. Without cascade layers, an app's CSS could override them, though not in a Tailwind app. They're all `!important` now, so the stacking order is the same in every setup, and a `z-*` class on an element from a hook, such as `tableHeaderClass`, has no effect
-- FIX: DayGrid with `dayMaxEvents` or `dayMaxEventRows`: the events hidden behind "+N more" in the last week could hang past the bottom of the grid, invisibly, so the month scrolled into empty space (#7581)
-- FIX: Resource Timeline: a `resourceColumnsWidth` other than a number, `px` or `%`, such as `'9.5rem'`, threw an error, so the view didn't render. It now logs a warning and uses the default, 30%. A resource column's `width` in another unit logs a warning too. That column still grows to fill the space, as it did before without a warning
-- FIX: Views without resources, such as `timeGridWeek` with resources loaded: an event added with `calendar.addEvent()` and no event source didn't get its resource's `eventColor`, `eventClass` or other event settings, which events from a source did
-- FIX: Two more drags previewed an event differently from how it's handled once dropped. An event dragged back into the calendar it came from ignored its event source's settings, such as its `allow`, until dropped. In views without resources, event data dragged in from outside with a `resourceId` didn't take its resource's color and classes until dropped
-- FIX: DayGrid with `dayMaxEvents: true` or `dayMaxEventRows: true`: an event that didn't fit at first could only come back cut into pieces around other events, and with `eventSlicing: false` it couldn't come back at all. It can now come back whole too, so some days show events they used to hide behind "+N more". Rarely, a day shows a later event where it used to show part of an earlier one
-- FIX: React: a calendar hidden by `<Activity>` (React 19.2+, which Next.js uses to keep recent pages alive) restarted its timers when re-rendered while hidden. Once removed, those timers kept running forever and kept the whole calendar in memory (#8112)
-- FIX: React: TimeGrid and DayGrid views shown again by `<Activity>` jumped back to `scrollTime` or today's row, losing where the user had scrolled (#8112)
-- FIX: React: a function event source (`events: (info) => …`) under a suspended `<Suspense>` boundary warned "Can't perform a React state update on a component that hasn't mounted yet" when its fetch resolved, and the discarded render left a timer running (#8092)
-- FIX: React Strict Mode: in development, the calendar's timers stopped after Strict Mode's simulated remount, so the now indicator and today's highlight didn't update until something else re-rendered
+### React
+
+- FIX: `<Activity>` (React 19.2+, which Next.js uses to keep recent pages alive) (#8112):
+  - A hidden calendar restarted its timers when re-rendered. Once removed, those timers kept running and kept the whole calendar in memory
+  - TimeGrid and DayGrid views shown again jumped back to `scrollTime` or today's row, losing the user's scroll position
+- FIX: A function event source (`events: (info) => …`) under a suspended `<Suspense>` boundary warned "Can't perform a React state update on a component that hasn't mounted yet" when its fetch resolved, and left a timer running (#8092)
+- FIX: Strict Mode, in development: the now indicator and today's highlight stopped updating after Strict Mode's simulated remount
+
+### Event Rendering
+
+- FIX: DayGrid with `dayMaxEvents` or `dayMaxEventRows`:
+  - Events hidden behind "+N more" in the last week could hang invisibly past the bottom of the grid, so the month scrolled into empty space (#7581)
+  - When `true`, a day could hide an event behind "+N more" even when the event and the link both fit, such as showing "+2 more" alone where the first event had room
+  - When `true`, an event that didn't fit at first could only come back cut into pieces around other events, or not at all with `eventSlicing: false`. It can now come back whole, so some days show events they used to hide. Rarely, a day shows a later event where it used to show part of an earlier one
+
+### Headers and Titles
+
+- FIX: DayGrid (month, multi-month): day headers that name only the weekday gave `dayHeaderContent` and the other day header hooks a January 1970 date at midnight UTC, which read as the day before west of UTC. `date` is now a day in view, at midnight in the calendar's time zone. Code that read it in UTC (such as `getUTCDay()`) should use `dow` instead (#7468, #5854)
+- FIX: TimeGrid: slot headers in the time axis were only as tall as their labels, so a background, border or hover style from `slotHeaderClass` covered just the top of the slot
+- FIX: List view: `listDayFormat: false` and `listDayAltFormat: false` rendered their day headings in the default format instead of turning them off
+- FEATURE: `view.titleParts`: the title's `Intl` range parts (`type`, `value`, and `source` of `startRange`, `endRange` or `shared`), so a custom toolbar can style parts of the title, such as a lighter year, in every locale and for ranges. Typed as `DateTimeRangeFormatPartWithWeek`
+- FEATURE: `slotHeaderContent` and the other slot header hooks get `textParts` and the `weekdayText`, `dayNumberText` and `monthText` getters that day cells have (empty strings in the time grid's axis). `dayHeaderContent` and `listDayHeaderContent` get `monthText` too
 - TimeGrid: slot headers between labels have `data-time` too, like the labeled ones
-- FEATURE: TypeScript: every calendar option, premium ones included, has a description and a link to its docs page, shown when you hover the option in your editor (#8059)
+
+### Event Settings
+
+- FIX: Dragging an event previewed it differently from how it's handled once dropped:
+  - To another resource: its source's `constraint`, `overlap` and `allow` were ignored, so it could be dropped where they forbid, and the preview lost its source's colors and classes
+  - An all-day event into TimeGrid's timed area: the preview lost its source's colors and classes
+  - Back into the calendar it came from: its source's settings, such as `allow`, were ignored until dropped
+  - In from outside with a `resourceId`, in views without resources: it didn't take its resource's colors and classes until dropped
+- FIX: Views without resources, such as `timeGridWeek` with resources loaded: an event added with `calendar.addEvent()` and no event source didn't get its resource's `eventColor`, `eventClass` or other event settings
+
+### Resource Views
+
+- FIX: `event.getResources()` returned `null` for each resource that doesn't exist or hasn't been fetched yet. It now leaves them out (#7300)
+- FIX: Resource Timeline: a `resourceColumnsWidth` other than a number, `px` or `%`, such as `'9.5rem'`, threw an error, so the view didn't render. It now warns and uses the default, 30%. A resource column's `width` in another unit warns too, and the column still grows to fill the space
+- FIX: Resource Timeline with `virtualization`: scrolling to a resource added with `calendar.addResource(resource, true)` could stop a few rows short of it. A regression in v7.1.4
+- FIX: `resource.toPlainObject()` left out the resource's `eventColor`
+
+### Accessibility
+
+- FIX: Prev, next, today and custom toolbar buttons had `aria-pressed="false"`, so screen readers announced them as toggle buttons. Only view buttons have it now (#8042)
+- FIX: A view button alone in its toolbar group had `role="tab"` with no tablist around it. It's now a toggle button with `aria-pressed`, like grouped view buttons
+
+### Misc
+
+- FIX: Skeleton CSS: some structural rules, including the z-index ones that set the stacking order, weren't `!important`, so without cascade layers an app's CSS could override them (though not in a Tailwind app). All are now, so the stacking order is the same in every setup, and a `z-*` class on an element from a hook, such as `tableHeaderClass`, has no effect
+- FIX: An event at a wall-clock time skipped by a daylight-saving change (given without an offset) resolves to the time after the change, but `startStr`/`endStr` named the skipped time, an hour before `start`/`end`. Fed back into `addEvent`, the string moved the event
+- FIX: TypeScript: `calendar.off()` required a handler, though calling it without one removes all of that name's handlers added with `calendar.on()`
+- INTERNAL: every calendar option has a description and a link to its docs page in the source code, for AI agents and other tools that read it
 - INTERNAL: a new, faster test suite on Vitest, replacing Karma
 
 
