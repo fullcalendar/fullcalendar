@@ -338,7 +338,7 @@ function listenerDestroyed() {
 }
 
 function onWindowTouchMove(ev: UIEvent) {
-  if (isWindowTouchMoveCancelled) {
+  if (isWindowTouchMoveCancelled && ev.cancelable) {
     ev.preventDefault()
   }
 }
