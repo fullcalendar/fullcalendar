@@ -227,5 +227,6 @@ export function isHitsEqual(hit0: Hit | null, hit1: Hit | null): boolean {
     return false
   }
 
-  return isDateSpansEqual(hit0!.dateSpan, hit1!.dateSpan)
+  return hit0!.componentId === hit1!.componentId &&
+    isDateSpansEqual(hit0!.dateSpan, hit1!.dateSpan)
 }
