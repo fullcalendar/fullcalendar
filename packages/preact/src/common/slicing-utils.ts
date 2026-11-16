@@ -1,6 +1,6 @@
 import { DateRange, intersectRanges, Duration, DateMarker, addMs, addDays } from '@full-ui/headless-calendar'
 import { EventStore } from '../structs/event-store'
-import { EventUiHash } from '../component-util/event-ui'
+import { EMPTY_EVENT_UI_BASES, EventUiBases } from '../component-util/event-ui'
 import { sliceEventStore, EventRenderRange, EventRangeProps } from '../component-util/event-rendering'
 import { DateProfile } from '../DateProfileGenerator'
 import { EventSegUiInteractionState } from '../component/DateComponent' // TODO: rename EventSegUiInteractionState, move here
@@ -17,7 +17,7 @@ export interface SliceableProps {
   eventDrag: EventInteractionState | null
   eventResize: EventInteractionState | null
   eventSelection: string
-  eventUiBases: EventUiHash
+  eventUiBases: EventUiBases
 }
 
 export interface SlicedProps<R> {
@@ -94,7 +94,7 @@ export abstract class Slicer<R, ExtraArgs extends any[] = []> {
       { range: { start: date, end: addMs(date, 1) }, allDay: false }, // add 1 ms, protect against null range
       dateProfile,
       nextDayThreshold,
-      {},
+      EMPTY_EVENT_UI_BASES,
       context,
       ...extraArgs,
     )
@@ -117,7 +117,7 @@ export abstract class Slicer<R, ExtraArgs extends any[] = []> {
         computeActiveRange(dateProfile, Boolean(nextDayThreshold)),
         context,
       ),
-      {},
+      EMPTY_EVENT_UI_BASES,
       dateProfile,
       nextDayThreshold,
       ...extraArgs,
@@ -126,7 +126,7 @@ export abstract class Slicer<R, ExtraArgs extends any[] = []> {
 
   private _sliceEventStore(
     eventStore: EventStore,
-    eventUiBases: EventUiHash,
+    eventUiBases: EventUiBases,
     dateProfile: DateProfile,
     nextDayThreshold: Duration | null,
     ...extraArgs: ExtraArgs
@@ -152,7 +152,7 @@ export abstract class Slicer<R, ExtraArgs extends any[] = []> {
 
   private _sliceInteraction(
     interaction: EventInteractionState,
-    eventUiBases: EventUiHash,
+    eventUiBases: EventUiBases,
     dateProfile: DateProfile,
     nextDayThreshold: Duration | null,
     ...extraArgs: ExtraArgs
@@ -179,7 +179,7 @@ export abstract class Slicer<R, ExtraArgs extends any[] = []> {
     dateSpan: DateSpan,
     dateProfile: DateProfile,
     nextDayThreshold: Duration | null,
-    eventUiBases: EventUiHash,
+    eventUiBases: EventUiBases,
     context: CalendarContext,
     ...extraArgs: ExtraArgs
   ): (R & EventRangeProps)[] {

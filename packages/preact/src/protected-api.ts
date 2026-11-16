@@ -24,6 +24,8 @@ export {
   computeViewBorderless,
 } from './util/misc'
 export { warn } from './util/warn'
+export { findWeekdayText, findDayNumberText, findMonthText } from './util/date-format'
+export { whenSettled, holdSettle, settleSetTimeout, settleClearTimeout, settleRequestAnimationFrame } from './util/settle'
 
 export {
   computeVisibleDayRange,
@@ -61,7 +63,7 @@ export type { EventStore } from './structs/event-store'
 export {
   mergeEventStores,
 } from './structs/event-store'
-export type { EventUiHash, EventUi } from './component-util/event-ui'
+export type { EventUiHash, EventUiBases, EventUi } from './component-util/event-ui'
 export { combineEventUis, createEventUi } from './component-util/event-ui'
 export type { SplittableProps } from './component-util/event-splitting'
 export { Splitter } from './component-util/event-splitting'
@@ -136,6 +138,7 @@ export type { EventInteractionState } from './interactions/event-interaction-sta
 export {
   sortEventSegs,
   getEventRangeMeta, buildEventRangeKey,
+  getElEventRange,
   EventRangeProps,
   MinimalEventProps,
 } from './component-util/event-rendering'

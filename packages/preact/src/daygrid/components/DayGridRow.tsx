@@ -39,7 +39,7 @@ import {
   buildDayGridLevelPlacements,
   buildDayGridPixelPlacements,
   computeDayGridDomCandidateMaxLevels,
-  computeDayGridMoreLinkLevelTax,
+  computeDayGridMoreLinkTakesLevel,
   estimateLevelCapacity,
   resolveDayGridPlacementMode,
 } from '../seg-placement-adapter'
@@ -183,7 +183,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
             props.dayMaxEventRows,
             Infinity,
           ),
-          computeDayGridMoreLinkLevelTax(placementMode),
+          computeDayGridMoreLinkTakesLevel(placementMode),
           options.eventOrderStrict,
           options.eventSlicing,
           cells.length,
@@ -228,7 +228,13 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
         attrs={{
           ...(
             hasNavLink
-              ? buildNavLinkAttrs(context, weekDateMarker, 'week', fullWeekStr, /* isTabbable = */ false)
+              ? buildNavLinkAttrs(
+                context,
+                weekDateMarker,
+                'week',
+                fullWeekStr,
+                /* isTabbable = */ false,
+              )
               : {}
           ),
           'role': undefined, // HACK: a 'link' role can't be child of a 'row' role
@@ -317,6 +323,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
               col,
             )
             : null
+          const screenRenderSlices = printPlan ? null : screenColumns![col].renderSlices
           let fg: ReactElement[]
 
           if (printPlan) {
@@ -325,7 +332,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
             fg = [
               ...this.renderLevelFgSegs(
                 screenMainOffsetsByCol[col],
-                screenColumns![col].renderSlices,
+                screenRenderSlices!,
                 screenSliceCoords,
               ),
               ...this.renderMirrorFgSegs(
@@ -357,6 +364,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
               hiddenSegs={printPopover ? printPopover.hiddenSegs : screenColumns![col].hiddenSegs}
               fgLiquidHeight={printPlan ? false : screenFgLiquidHeight}
               fg={fg}
+              fgIsList={Boolean(screenRenderSlices?.length)}
               eventDrag={printPlan ? null : props.eventDrag}
               eventResize={printPlan ? null : props.eventResize}
               eventSelection={props.eventSelection}
@@ -413,6 +421,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
       nodes.push(
         <MeasuredHeightHarness
           key={`mirror:${key}`}
+          attrs={{ 'aria-hidden': true }}
           className={joinClassNames(
             classNames.abs,
             classNames.start0,
@@ -467,6 +476,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
       nodes.push(
         <MeasuredHeightHarness
           key={key}
+          attrs={{ role: 'listitem' }}
           className={joinClassNames(
             classNames.abs,
             classNames.start0,
@@ -475,6 +485,9 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
           style={{
             visibility: isInvisible ? 'hidden' : undefined,
             top,
+            // HACK: a slice with no top is hidden but stays mounted so its height can be measured. Pinning its bottom
+            // to the cell's keeps its box from hanging past the last row, which made the grid scroll (#7581)
+            bottom: top == null ? 0 : undefined,
             width: this.computeSpanWidth(slice.start, slice.end),
           }}
           heightRef={this.sliceHeightRefMap.createRef(key)}
@@ -604,6 +617,7 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
       fillsByCol[seg.start].push(
         <div
           key={`${fillType}:${buildEventRangeKey(seg.eventRange)}:${seg.start}:${seg.end}`}
+          aria-hidden // fills, including bg events, are decorative. hidden from screen readers
           className={joinClassNames(classNames.fillY, classNames.start0, zClassName)}
           style={{
             width: this.computeSpanWidth(seg.start, seg.end),
@@ -627,6 +641,8 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
     }
   }
 
+  // React 18 Strict Mode replays mount lifecycles without reattaching DOM refs.
+  // Keep height observation and cleanup tied to the DOM ref.
   handleRootEl = (rootEl: HTMLElement | null) => {
     this.disconnectHeight?.()
     this.disconnectHeight = undefined
@@ -636,6 +652,8 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
       this.disconnectHeight = watchHeight(rootEl, (contentHeight) => {
         setRef(this.props.heightRef, contentHeight)
       })
+    } else {
+      setRef(this.props.heightRef, null)
     }
   }
 
@@ -654,8 +672,6 @@ export class DayGridRow extends BaseComponent<DayGridRowProps> {
 
   componentWillUnmount(): void {
     this._isUnmounting = true
-    this.disconnectHeight?.()
-    setRef(this.props.heightRef, null)
   }
 
   computeFgDims(): [maxMainTop: number | undefined, minMainHeight: number | undefined] {

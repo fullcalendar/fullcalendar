@@ -10,7 +10,7 @@ import { BaseDayHeaderData, CellDataConfig, CellRenderConfig } from '../header-t
 import { dayHeaderMicroFormat } from './util'
 import classNames from '../../styles.module.css'
 import { DateFormatter, DateMarker, DateTimeFormatPartWithWeek, joinDateTimeFormatParts } from '@full-ui/headless-calendar'
-import { findDayNumberText, findWeekdayText } from '../../util/date-format'
+import { findDayNumberText, findMonthText, findWeekdayText } from '../../util/date-format'
 
 export interface DayGridHeaderCellProps<BaseRenderProps, RenderProps> {
   renderConfig: CellRenderConfig<BaseRenderProps, RenderProps>
@@ -81,7 +81,7 @@ export class DayGridHeaderCell<BaseRenderProps extends { isDisabled: boolean }, 
     if (dataConfig.blank) {
       return (
         <CellTag
-          role='columnheader'
+          role='cell' // is empty so can't be columnheader
           aria-colspan={dataConfig.colSpan}
           colSpan={tableMode ? colSpan : undefined}
           {...dataConfig.attrs}
@@ -189,26 +189,33 @@ export class DayGridHeaderCell<BaseRenderProps extends { isDisabled: boolean }, 
         willUnmount={renderConfig.willUnmount}
       >
         {(InnerContainer) => (
-          <div
-            ref={this.handleInnerEl}
-            className={joinClassNames(
-              classNames.flexCol,
-              classNames.noShrink,
-              classNames.whiteSpaceNoWrap,
-              tableMode && alignClassName,
-              isSticky && classNames.sticky,
+          <>
+            {dataConfig.a11yText && (
+              <div className={classNames.srOnly}>{dataConfig.a11yText}</div>
             )}
-            style={{
-              left: edgeCoord,
-              right: edgeCoord,
-            }}
-          >
-            <InnerContainer
-              tag='div'
-              attrs={dataConfig.innerAttrs}
-              className={generateClassName(renderConfig.innerClassNameGenerator, finalRenderProps)}
-            />
-          </div>
+            <div
+              // hide the whole wrapper, otherwise screen readers find an empty group
+              aria-hidden={dataConfig.a11yText ? true : undefined}
+              ref={this.handleInnerEl}
+              className={joinClassNames(
+                classNames.flexCol,
+                classNames.noShrink,
+                classNames.whiteSpaceNoWrap,
+                tableMode && alignClassName,
+                isSticky && classNames.sticky,
+              )}
+              style={{
+                left: edgeCoord,
+                right: edgeCoord,
+              }}
+            >
+              <InnerContainer
+                tag='div'
+                attrs={dataConfig.innerAttrs}
+                className={generateClassName(renderConfig.innerClassNameGenerator, finalRenderProps)}
+              />
+            </div>
+          </>
         )}
       </ContentContainer>
     )
@@ -249,7 +256,7 @@ export class DayGridHeaderCell<BaseRenderProps extends { isDisabled: boolean }, 
     dateEnv,
   ): DayHeaderRenderProps {
     const baseText = this.buildDayHeaderText(
-      datesRepDistinctDays ? dateMarker : renderProps.date,
+      dateMarker,
       dayHeaderFormat,
       datesRepDistinctDays,
       dateEnv,
@@ -267,6 +274,7 @@ export class DayGridHeaderCell<BaseRenderProps extends { isDisabled: boolean }, 
       textParts: textData.textParts,
       weekdayText: cellIsMicro ? textData.text : baseText.weekdayText,
       dayNumberText: baseText.dayNumberText,
+      monthText: baseText.monthText,
     }
   }
 }
@@ -276,14 +284,19 @@ interface DayHeaderRenderProps extends BaseDayHeaderData {
   textParts: DateTimeFormatPartWithWeek[]
   weekdayText: string
   dayNumberText: string
+  monthText: string
   isNarrow: boolean
   level: number
 }
 
+/*
+`isDated` is false for headers that name only a weekday, whose date is just the first row's day of that
+weekday, so its day number and month don't describe the column.
+*/
 function buildDayHeaderText(
   date: DateMarker,
   formatter: DateFormatter,
-  includeDayNumber: boolean,
+  isDated: boolean,
   dateEnv,
 ) {
   const textParts = dateEnv.formatToParts(date, formatter)
@@ -292,6 +305,7 @@ function buildDayHeaderText(
     text: joinDateTimeFormatParts(textParts),
     textParts,
     weekdayText: findWeekdayText(textParts),
-    dayNumberText: includeDayNumber ? findDayNumberText(textParts) : '',
+    dayNumberText: isDated ? findDayNumberText(textParts) : '',
+    monthText: isDated ? findMonthText(textParts) : '',
   }
 }

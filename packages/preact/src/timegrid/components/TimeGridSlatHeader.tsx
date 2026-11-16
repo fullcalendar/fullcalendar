@@ -82,6 +82,7 @@ export class TimeGridSlatHeader extends BaseComponent<TimeGridSlatHeaderProps> {
             generateClassName(options.slotHeaderClass, renderProps),
             className,
           )}
+          data-time={props.isoTimeStr}
           style={{
             height: props.height,
           }}
@@ -163,12 +164,19 @@ function createRenderProps(
   headerFormat: DateFormatter,
   context: ViewContext,
 ): SlotHeaderInfo {
+  const textParts = context.dateEnv.formatToParts(date, headerFormat)
+
   return {
     // this is a time-specific slot. not day-specific, so don't do today/nowRange
     ...getDateMeta(date, context.dateEnv),
 
     level: 0, // axis level (for when multiple axes)
-    text: joinDateTimeFormatParts(context.dateEnv.formatToParts(date, headerFormat)),
+    text: joinDateTimeFormatParts(textParts),
+    textParts,
+    // the axis's date is a stand-in for its times, so it has no day-level text
+    weekdayText: '',
+    dayNumberText: '',
+    monthText: '',
     time: time,
     isMajor: false,
     isMinor,

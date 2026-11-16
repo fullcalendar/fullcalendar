@@ -1,5 +1,6 @@
 import { flushSync } from 'react-dom'
 import { isDimsEqual } from './rendering-misc'
+import { markSettleActivity, settleRequestAnimationFrame } from '../util/settle'
 
 const nativeBorderBoxEnabled = true
 
@@ -31,7 +32,7 @@ export function afterSize(callback: () => void) {
   // happens for watchers that die and report `null` as dimension
   if (!isHandling && !isStalling) {
     isStalling = true
-    requestAnimationFrame(() => {
+    settleRequestAnimationFrame(() => {
       isStalling = false
       flushAfterSize()
     })
@@ -95,6 +96,7 @@ export function flushSyncWithSizeBatching(callback: () => void): void {
 // thus doesn't need !isHandling check like checkConfigMap
 const globalResizeObserver = typeof ResizeObserver !== 'undefined' && new ResizeObserver((entries) => {
   isHandling = true
+  markSettleActivity()
 
   // // debug
   // console.log('RESIZE-OBSERVER', entries.map((entry) => entry.target))

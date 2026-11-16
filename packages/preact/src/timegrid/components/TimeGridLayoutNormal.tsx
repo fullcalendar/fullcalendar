@@ -1,7 +1,7 @@
 import { joinClassNames } from '../../util/html'
 import { afterSize } from '../../component-util/resize-observer'
 import { BaseComponent, setRef } from '../../vdom-util'
-import { DateMarker, DateRange, rangeContainsMarker, startOfDay } from '@full-ui/headless-calendar'
+import { DateMarker, DateRange } from '@full-ui/headless-calendar'
 import { DateProfile } from '../../DateProfileGenerator'
 import { DayTableCell } from '../../daygrid/DayTableModel'
 import { EventRangeProps } from '../../component-util/event-rendering'
@@ -28,8 +28,9 @@ import { TimeGridCols } from "./TimeGridCols"
 import { TimeGridNowIndicatorArrow } from "./TimeGridNowIndicatorArrow"
 import { TimeGridSlatHeader } from "./TimeGridSlatHeader"
 import { TimeGridSlatLane } from "./TimeGridSlatLane"
+import { settleRequestAnimationFrame } from "../../util/settle"
 import { TimeGridWeekNumber } from "./TimeGridWeekNumber"
-import { computeSlatHeight } from './util'
+import { computeSlatHeight, computeNowIndicatorDayDate } from './util'
 import { computeTimeGridPrintMode } from '../print-mode'
 import { computeViewBorderless } from '../../util/misc'
 
@@ -111,7 +112,9 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
   render() {
     const { props, state, context, slatLabelInnerWidthRefMap, slatLabelInnerHeightRefMap, headerLabelInnerWidthRefMap } = this
     const { nowDate, forPrint } = props
-    const nowTimeMs = nowDate.valueOf() - startOfDay(nowDate).valueOf()
+    const nowIndicatorDayDate = (!forPrint && context.options.nowIndicator)
+      ? computeNowIndicatorDayDate(nowDate, props.nowIndicatorSegsByCol, props.cells)
+      : undefined
     const { axisWidth, clientWidth, totalWidth } = state
     const { options } = context
     const { borderlessX, borderlessTop, borderlessBottom } = computeViewBorderless(options)
@@ -352,10 +355,11 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
               >
                 <div
                   role='rowheader'
-                  aria-label={options.timedText}
                   className={classNames.contentBox}
                   style={{ width: axisWidth }}
-                />
+                >
+                  <div className={classNames.srOnly}>{options.timedText}</div>
+                </div>
                 <div
                   className={generateClassName(options.slotHeaderDividerClass, {
                     inTableHeader: false,
@@ -426,6 +430,8 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
                             innerHeightRef={slatLabelInnerHeightRefMap.createRef(slatMeta.key)}
                             borderTop={Boolean(slatI)}
                             isNarrow={cellIsNarrow}
+                            height={slatLiquidHeight ? undefined : slatHeight}
+                            liquidHeight={slatLiquidHeight}
                           />
                         </div>
                         <div
@@ -457,11 +463,10 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
                     />
                   )}
 
-                  {!forPrint && options.nowIndicator && rangeContainsMarker(props.dateProfile.currentRange, nowDate) &&
-                    nowTimeMs >= props.dateProfile.slotMinTime.milliseconds &&
-                    nowTimeMs < props.dateProfile.slotMaxTime.milliseconds && (
+                  {nowIndicatorDayDate && (
                     <TimeGridNowIndicatorArrow
                       nowDate={nowDate}
+                      dayDate={nowIndicatorDayDate}
                       dateProfile={props.dateProfile}
                       totalHeight={slatHeight != null ? slatHeight * slatCnt : undefined}
                     />
@@ -507,7 +512,7 @@ export class TimeGridLayoutNormal extends BaseComponent<TimeGridLayoutNormalProp
     if (this._isUnmounting) return
     // Must delay the rerender because might change the width of the all-day DayGridRow events,
     // which shows a ResizeObserver loop warning
-    requestAnimationFrame(() => {
+    settleRequestAnimationFrame(() => {
       if (this._isUnmounting) return
       this.setState({ totalWidth })
     })

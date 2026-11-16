@@ -1,24 +1,24 @@
 {
   "private": true,
   "name": "fullcalendar-w-react",
-  "version": "7.1.1",
+  "version": "7.1.5",
   "dependencies": {
-    "@full-ui/headless-calendar": "workspace:7.1.1",
-    "@fullcalendar/core": "workspace:7.1.1",
+    "@full-ui/headless-calendar": "workspace:7.1.5",
+    "@fullcalendar/core": "workspace:7.1.5",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
   "peerDependencies": {
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "devDependencies": {
-    "@fullcalendar/react": "workspace:7.1.1",
+    "@fullcalendar/react": "workspace:7.1.5",
     "@fullcalendar-scripts/standard": "workspace:*",
     "@types/react": "^19.2.9",
     "@types/react-dom": "^19.2.3",
     "globby": "^13.1.2",
     "handlebars": "^4.1.2",
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "scripts": {
     "build": "standard-scripts pkg:build",

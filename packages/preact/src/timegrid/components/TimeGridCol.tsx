@@ -100,7 +100,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
     if (dateMeta.isDisabled) {
       return (
         <div
-          role='gridcell'
+          role='cell'
           aria-disabled
           className={joinClassNames(
             generateClassName(options.dayLaneClass, renderProps),
@@ -124,7 +124,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
         tag="div"
         attrs={{
           ...props.attrs,
-          role: 'gridcell',
+          role: 'cell',
           ...(dateMeta.isToday ? { 'aria-current': 'date' } : {}),
           'data-date': formatDayString(props.date),
         }}
@@ -142,6 +142,8 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
             {this.renderFillSegs(props.bgEventSegs, 'bg-event')}
             {this.renderFillSegs(props.dateSelectionSegs, 'highlight')}
             <div
+              // events and more-links are list items
+              role={sortedFgSegs.length ? 'list' : undefined}
               className={innerClassName}
             >
               {this.renderFgSegs(
@@ -246,6 +248,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
 
     return (
       <div
+        role={isMirror ? undefined : 'listitem'}
         // we would have used classNames.fill, but multi-page spanning breaks in Firefox
         // we would have used height:100%, but multi-page spanning breaks in Safari
         className={joinClassNames(classNames.abs, classNames.flexCol)}
@@ -346,6 +349,7 @@ export class TimeGridCol extends BaseComponent<TimeGridColProps> {
           return (
             <div
               key={buildEventRangeKey(eventRange)}
+              aria-hidden // fills, including bg events, are decorative. hidden from screen readers
               className={classNames.fillX}
               style={{
                 top: segVertical.start,
@@ -456,6 +460,7 @@ export function renderPlainFgSegs(
         return (
           <div
             key={instanceId}
+            role={isMirror ? undefined : 'listitem'}
             className={classNames.breakInsideAvoid}
             style={{ visibility: isInvisible ? 'hidden' : undefined }}
           >

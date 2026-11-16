@@ -34,6 +34,7 @@ export class TimeGridMoreLink extends BaseComponent<TimeGridMoreLinkProps> {
 
     return (
       <div // the "harness"
+        role='listitem'
         className={joinClassNames(
           classNames.abs,
           classNames.flexCol,

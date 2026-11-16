@@ -8,7 +8,7 @@ export interface TimeGridAxisEmptyProps {
 export function TimeGridAxisEmpty(props: TimeGridAxisEmptyProps) {
   return (
     <div
-      role='gridcell' // is empty so can't be rowheader/columnheader
+      role='cell' // is empty so can't be rowheader/columnheader
       className={props.isLiquid ? classNames.liquid : classNames.contentBox}
       style={{ width: props.width }}
     />

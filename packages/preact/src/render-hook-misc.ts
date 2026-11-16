@@ -11,6 +11,10 @@ export interface SlotHeaderInfo extends SlotLaneInfo {
   level: number
   isTime: boolean
   text: string
+  textParts: DateTimeFormatPartWithWeek[]
+  weekdayText: string
+  dayNumberText: string
+  monthText: string
   isNarrow: boolean
   hasNavLink: boolean
   isFirst: boolean
@@ -31,6 +35,7 @@ export interface DayHeaderInfo extends DateMeta {
   textParts: DateTimeFormatPartWithWeek[]
   weekdayText: string
   dayNumberText: string
+  monthText: string
   view: ViewApi
   [otherProp: string]: any
 }

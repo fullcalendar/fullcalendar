@@ -1,6 +1,11 @@
 import { identity, Identity, RawOptionsFromRefiners, RefinedOptionsFromRefiners } from "@fullcalendar/core/protected-api"
 
 export const OPTION_REFINERS = {
+  /**
+   * The Google Calendar API key used to fetch event sources that have a `googleCalendarId`. An
+   * individual event source can override it with its own `googleCalendarApiKey`.
+   * @see https://fullcalendar.io/docs/google-calendar
+   */
   googleCalendarApiKey: String,
 }
 

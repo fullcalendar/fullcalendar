@@ -9,6 +9,10 @@ FullCalendar Vue package for rendering a calendar
 npm install @fullcalendar/vue3 temporal-polyfill
 ```
 
+## Coming from v6?
+
+In v7, plugins like dayGrid and timeGrid are part of this package, imported from subpaths like `@fullcalendar/vue3/daygrid`. The separate `@fullcalendar/core`, `@fullcalendar/daygrid`, `@fullcalendar/interaction` (etc.) packages are FullCalendar v6. Don't install them with v7, and don't downgrade to v6: uninstall them and import plugins from `@fullcalendar/vue3/daygrid`. See the [upgrade guide](https://fullcalendar.io/docs/upgrading-from-v6).
+
 ## Usage
 
 Render a `FullCalendar` component with [options](https://fullcalendar.io/docs#toc), including one or more plugins:
@@ -79,4 +83,4 @@ Themes are plugins too. `@fullcalendar/vue3/themes/classic`, `/monarch`, `/breez
 - [Vue Documentation](https://fullcalendar.io/docs/vue)
 - [Vue Scheduler Documentation](https://fullcalendar.io/docs/vue#fullcalendar-premium)
 - [Vue Example Project](https://github.com/fullcalendar/fullcalendar-examples/tree/main/vue3)
-- [Options Reference](https://fullcalendar.io/docs#toc)
+- [Options Reference](https://fullcalendar.io/docs/all)

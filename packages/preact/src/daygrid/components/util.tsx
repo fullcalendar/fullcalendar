@@ -139,7 +139,7 @@ export function getRowEl(rootEl: HTMLElement, row: number): HTMLElement {
 }
 
 export function getCellEl(rowEl: HTMLElement, col: number): HTMLElement {
-  return rowEl.querySelectorAll('[role=gridcell]')[col] as HTMLElement
+  return rowEl.querySelectorAll('[role=cell]')[col] as HTMLElement
 }
 
 // Header Formatting

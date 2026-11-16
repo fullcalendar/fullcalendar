@@ -132,7 +132,12 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
     }
     const monthStartDate = props.dateProfile.currentRange.start
     const navLinkAttrs: any = hasNavLink
-      ? buildNavLinkAttrs(context, monthStartDate, 'month', props.isoDateStr)
+      ? buildNavLinkAttrs(
+        context,
+        monthStartDate,
+        'month',
+        props.isoDateStr,
+      )
       : {}
 
     return (
@@ -141,7 +146,7 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
         style={{ width: props.width }}
       >
         <div
-          role='grid'
+          role='table'
           aria-labelledby={this.titleId}
           data-date={props.isoDateStr}
           className={joinClassNames(
@@ -351,7 +356,6 @@ export class SingleMonth extends DateComponent<SingleMonthProps, SingleMonthStat
 
     this._isUnmounting = true
     this.disconnectTitleHeight()
-    this.disconnectTableHeaderHeight?.()
 
     options.singleMonthWillUnmount?.({
       el: this.rootEl,

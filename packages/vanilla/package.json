@@ -1,24 +1,24 @@
 {
   "name": "fullcalendar",
-  "version": "7.1.1",
+  "version": "7.1.5",
   "title": "FullCalendar (Vanilla JS)",
   "description": "FullCalendar Vanilla JS package for rendering a calendar",
   "dependencies": {
-    "@full-ui/headless-calendar": "workspace:7.1.1",
-    "@fullcalendar/core": "workspace:7.1.1",
+    "@full-ui/headless-calendar": "workspace:7.1.5",
+    "@fullcalendar/core": "workspace:7.1.5",
     "preact": "^10.29.8"
   },
   "peerDependencies": {
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "devDependencies": {
     "@types/archiver": "^5.3.4",
-    "@fullcalendar/preact": "workspace:7.1.1",
+    "@fullcalendar/preact": "workspace:7.1.5",
     "@fullcalendar-scripts/standard": "workspace:*",
     "archiver": "^7.0.1",
     "globby": "^13.1.2",
     "handlebars": "^4.1.2",
-    "temporal-polyfill": "^1.0.1"
+    "temporal-polyfill": "^1.0.7"
   },
   "scripts": {
     "archive": "node ./scripts/archive.ts",

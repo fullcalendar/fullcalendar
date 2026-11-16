@@ -3,7 +3,7 @@ import { memoize, memoizeObjArg } from '../util/memoize'
 import { Action } from './Action'
 import { buildBuildPluginHooks } from '../plugin-system'
 import { PluginHooks } from '../plugin-system-struct'
-import { DateEnv, DateMarker } from '@full-ui/headless-calendar'
+import { DateEnv, DateMarker, joinDateTimeFormatParts } from '@full-ui/headless-calendar'
 import { CalendarApiImpl } from '../api/CalendarApiImpl'
 import { EventSourceHash } from '../structs/event-source'
 import { buildViewSpecs, ViewSpec } from '../structs/view-spec'
@@ -20,8 +20,7 @@ import { reduceSelectedEvent } from './selected-event'
 import { reduceEventDrag } from './event-drag'
 import { reduceEventResize } from './event-resize'
 import { Emitter } from '../common/Emitter'
-import { EventUiHash, EventUi, createEventUi } from '../component-util/event-ui'
-import { EventDefHash } from '../structs/event-def'
+import { EventUiBases, EventUiHash, EventUi, createEventUi } from '../component-util/event-ui'
 import { parseToolbars } from '../toolbar-parse'
 import {
   CalendarOptionsRefined, CalendarOptions,
@@ -39,7 +38,7 @@ import { globalPlugins } from '../global-plugins'
 import { createEmptyEventStore } from '../structs/event-store'
 import { CalendarContext } from '../CalendarContext'
 import { CalendarDataManagerState, CalendarOptionsData, CalendarCurrentViewData, CalendarData } from './data-types'
-import { buildTitle } from './title-formatting'
+import { buildTitleParts } from './title-formatting'
 import { CalendarNowManager } from './CalendarNowManager'
 import { NowTimerRunner } from '../NowTimerRunner'
 import { warn } from '../util/warn'
@@ -70,7 +69,8 @@ export class CalendarDataManager {
   private buildEventUiBases = memoize(buildEventUiBases)
   private parseContextBusinessHours = memoizeObjArg(parseContextBusinessHours)
   private buildToolbarProps = memoize(buildToolbarProps)
-  private buildTitle = memoize(buildTitle)
+  private buildTitleParts = memoize(buildTitleParts)
+  private joinTitleParts = memoize(joinDateTimeFormatParts)
 
   private nowManager = new CalendarNowManager()
   private nowTimer: NowTimerRunner
@@ -104,8 +104,16 @@ export class CalendarDataManager {
     this.nowTimer = new NowTimerRunner(this.handleNowChange)
   }
 
+  /*
+  Starts the timer that keeps today current. Call after the first update(), when the calendar mounts.
+  Idempotent, and callable again after destroy(), for remounts (React Strict Mode, a shown <Activity>)
+  */
+  mount() {
+    this.nowTimer.start()
+  }
+
   destroy() {
-    this.nowTimer.destroy()
+    this.nowTimer.stop()
   }
 
   /*
@@ -288,9 +296,7 @@ export class CalendarDataManager {
     // === UI computation ===
     let { eventUiSingleBase, selectionConfig } = this.buildViewUiProps(calendarContext)
     let eventUiBySource = this.buildEventUiBySource(eventSources)
-    let eventUiBases = isInit
-      ? {}
-      : this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
+    let eventUiBases = this.buildEventUiBases(eventUiSingleBase, eventUiBySource)
 
     // === Build new state ===
     let newState: CalendarDataManagerState = {
@@ -328,7 +334,8 @@ export class CalendarDataManager {
     }
 
     // === Build CalendarData ===
-    let viewTitle = this.buildTitle(dateProfile, currentViewData.options, optionsData.dateEnv)
+    let viewTitleParts = this.buildTitleParts(dateProfile, currentViewData.options, optionsData.dateEnv)
+    let viewTitle = this.joinTitleParts(viewTitleParts)
 
     let toolbarProps = this.buildToolbarProps(
       currentViewData.viewSpec,
@@ -341,6 +348,7 @@ export class CalendarDataManager {
 
     let newData: CalendarData = {
       viewTitle,
+      viewTitleParts,
       nowManager: this.nowManager,
       calendarApi: config.calendarApi,
       dispatch: this.dispatch,
@@ -657,24 +665,8 @@ function buildEventUiBySource(eventSources: EventSourceHash): EventUiHash {
 /*
 The result of this is processed by compileEventUi
 */
-function buildEventUiBases(
-  eventDefs: EventDefHash,
-  eventUiSingleBase: EventUi,
-  eventUiBySource: EventUiHash,
-) {
-  let eventUiBases: EventUiHash = {
-    '': eventUiSingleBase, // fallback
-  }
-
-  for (let defId in eventDefs) {
-    let def = eventDefs[defId]
-
-    if (def.sourceId && eventUiBySource[def.sourceId]) {
-      eventUiBases[defId] = eventUiBySource[def.sourceId]
-    }
-  }
-
-  return eventUiBases
+function buildEventUiBases(eventUiSingleBase: EventUi, eventUiBySource: EventUiHash): EventUiBases {
+  return { base: eventUiSingleBase, bySource: eventUiBySource }
 }
 
 function buildViewUiProps(calendarContext: CalendarContext) {

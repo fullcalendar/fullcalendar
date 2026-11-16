@@ -81,7 +81,7 @@ export function buildDayGridSegSources(
 export function buildDayGridLevelPlacements(
   eventOrderedSegs: readonly DayGridEventSeg[],
   maxLevels: number,
-  moreLinkLevelTax: number,
+  moreLinkTakesLevel: boolean,
   orderStrict: boolean,
   eventSlicing: boolean,
   columnCount: number,
@@ -93,7 +93,7 @@ export function buildDayGridLevelPlacements(
     orderStrict,
     eventSlicing,
     maxLevels,
-    moreLinkLevelTax,
+    moreLinkTakesLevel,
     sliceHeights,
   )
   return buildDayGridPlacementLayout(
@@ -221,12 +221,9 @@ export function computeDayGridDomCandidateMaxLevels(
   }
 }
 
-/**
- * Logical levels an active more link charges its column. Only `dayMaxEventRows`
- * counts the link as one of its rows.
- */
-export function computeDayGridMoreLinkLevelTax(mode: DayGridPlacementMode): number {
-  return mode === 'maxEventRows' ? 1 : 0
+/** Whether a more link takes a level. Only `dayMaxEventRows` counts it as a row. */
+export function computeDayGridMoreLinkTakesLevel(mode: DayGridPlacementMode): boolean {
+  return mode === 'maxEventRows'
 }
 
 function buildDayGridPlacementLayout(

@@ -1,12 +1,12 @@
 import { Action } from './Action'
 import { PluginHooks } from '../plugin-system-struct'
-import { DateEnv, DateMarker } from '@full-ui/headless-calendar'
+import { DateEnv, DateMarker, DateTimeRangeFormatPartWithWeek } from '@full-ui/headless-calendar'
 import { CalendarApiImpl } from '../api/CalendarApiImpl'
 import { EventSourceHash } from '../structs/event-source'
 import { ViewSpecHash, ViewSpec } from '../structs/view-spec'
 import { DateProfileGenerator, DateProfile } from '../DateProfileGenerator'
 import { Emitter } from '../common/Emitter'
-import { EventUiHash, EventUi } from '../component-util/event-ui'
+import { EventUiBases, EventUi } from '../component-util/event-ui'
 import { ViewImpl } from '../api/ViewImpl'
 import { EventStore } from '../structs/event-store'
 import { DateSpan } from '../structs/date-span'
@@ -22,7 +22,7 @@ export interface CalendarDataManagerState {
   dateProfile: DateProfile
   businessHours: EventStore
   eventSources: EventSourceHash
-  eventUiBases: EventUiHash
+  eventUiBases: EventUiBases
   eventStore: EventStore
   renderableEventStore: EventStore
   dateSelection: DateSpan | null
@@ -66,6 +66,7 @@ type CalendarDataBase = CalendarOptionsData & CalendarCurrentViewData & Calendar
 export interface CalendarData extends CalendarDataBase {
   nowManager: CalendarNowManager
   viewTitle: string // based on current date
+  viewTitleParts: DateTimeRangeFormatPartWithWeek[]
   calendarApi: CalendarApiImpl // TODO: try to remove this
   dispatch: (action: Action) => void
   emitter: Emitter<Required<CalendarListeners>>

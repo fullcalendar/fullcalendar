@@ -5,7 +5,7 @@ import {
 } from './event-instance'
 import { parseEventDef, refineEventDef } from './event-parse'
 import { EventRenderRange, compileEventUi } from '../component-util/event-rendering'
-import { EventUiHash } from '../component-util/event-ui'
+import { EventUiBases } from '../component-util/event-ui'
 import { CalendarContext } from '../CalendarContext'
 import { refineProps, identity, Identity } from '../options'
 
@@ -228,7 +228,7 @@ export function getDateSpanInstantEndMs(dateSpan: DateSpan, dateEnv: DateEnv): n
   return resolveEdgeInstantMs(dateSpan.range.end, dateSpan.instantEndMs, dateEnv)
 }
 
-export function fabricateEventRange(dateSpan: DateSpan, eventUiBases: EventUiHash, context: CalendarContext): EventRenderRange {
+export function fabricateEventRange(dateSpan: DateSpan, eventUiBases: EventUiBases, context: CalendarContext): EventRenderRange {
   let res = refineEventDef({ editable: false }, context)
   let def = parseEventDef(
     res.refined,

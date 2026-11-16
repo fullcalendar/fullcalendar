@@ -1,153 +1,94 @@
-import { Calendar } from 'fullcalendar'
-import classicThemePlugin from 'fullcalendar/themes/classic' // need both
-import themeForTestsPlugin from '../lib/theme-for-tests' // "
-import interactionPlugin from 'fullcalendar/interaction'
-import dayGridPlugin from 'fullcalendar/daygrid'
-import timeGridPlugin from 'fullcalendar/timegrid'
-import { getRectCenter } from '../lib/geom'
-import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
-import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
-import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
-import { waitTimeout } from '../lib/misc'
+import { describe, expect, it, vi } from 'vitest'
+import { DropInfo, EventLeaveInfo, EventReceiveInfo } from 'fullcalendar'
+import { createCalendarElement, initCalendar } from '../lib/calendar'
+import { DayGridModel } from '../lib/models/day-grid'
+import { TimeGridModel } from '../lib/models/time-grid'
+import { waitForSettle } from '../lib/settle'
 
 describe('dragging events between calendars', () => {
-  let DEFAULT_DATE = '2019-01-01'
-  let el0
-  let el1
-  let calendar0
-  let calendar1
-
-  beforeEach(() => {
-    el0 = document.createElement('div')
-    el1 = document.createElement('div')
-
-    el0.style.width = el1.style.width = '50%'
-    el0.style.cssFloat = el1.style.cssFloat = 'left'
-
-    document.body.appendChild(el0)
-    document.body.appendChild(el1)
-  })
-
-  afterEach(() => {
-    if (calendar0) {
-      calendar0.destroy()
+  function createSideBySideEls(): [HTMLElement, HTMLElement] {
+    const els = [createCalendarElement(), createCalendarElement()] as [HTMLElement, HTMLElement]
+    for (const el of els) {
+      el.style.width = '50%'
+      el.style.cssFloat = 'left'
     }
+    return els
+  }
 
-    if (calendar1) {
-      calendar1.destroy()
-    }
+  const options = {
+    initialDate: '2019-01-01',
+    editable: true,
+    dragScroll: false,
+  }
 
-    document.body.removeChild(el0)
-    document.body.removeChild(el1)
+  it('fires eventLeave, drop, then eventReceive, and moves the event', async () => {
+    const calls: string[] = []
+    const eventLeave = vi.fn((_info: EventLeaveInfo) => { calls.push('eventLeave') })
+    const drop = vi.fn((_info: DropInfo) => { calls.push('drop') })
+    const eventReceive = vi.fn((_info: EventReceiveInfo) => { calls.push('eventReceive') })
+    const eventAllow = vi.fn(() => true)
+    const [el0, el1] = createSideBySideEls()
+    const calendar0 = initCalendar({
+      ...options,
+      initialView: 'dayGridMonth',
+      events: [{ id: 'a', start: '2019-01-01' }],
+      eventLeave,
+    }, el0)
+    const calendar1 = initCalendar({
+      ...options,
+      initialView: 'dayGridMonth',
+      droppable: true,
+      drop,
+      eventAllow,
+      eventReceive,
+    }, el1)
+    await waitForSettle()
+
+    const dayGrid0 = new DayGridModel(calendar0.el)
+    const dayGrid1 = new DayGridModel(calendar1.el)
+    const eventEl = dayGrid0.getEventEls('a')[0]
+    await dayGrid0.dragEvent('a', '2019-01-01', () => dayGrid1.pointForDate('2019-01-05'))
+
+    expect(calls).toEqual(['eventLeave', 'drop', 'eventReceive'])
+    expect(eventAllow).toHaveBeenCalled()
+
+    const leaveInfo = eventLeave.mock.calls[0][0]
+    expect(leaveInfo.draggedEl).toBe(eventEl)
+    expect(leaveInfo.event.id).toBe('a')
+
+    const dropInfo = drop.mock.calls[0][0]
+    expect(dropInfo.draggedEl).toBe(eventEl)
+    expect(dropInfo.dateStr).toBe('2019-01-05')
+    expect(dropInfo.allDay).toBe(true)
+
+    const receiveInfo = eventReceive.mock.calls[0][0]
+    expect(receiveInfo.draggedEl).toBe(eventEl)
+    expect(receiveInfo.event.startStr).toBe('2019-01-05')
+
+    expect(calendar0.getEventById('a')).toBeNull()
+    expect(calendar1.getEventById('a')!.startStr).toBe('2019-01-05')
   })
 
-  it('fires all triggers', (done) => {
-    let triggerNames = []
-    let eventAllowCalled = false
-    let eventEl
-
-    calendar0 = new Calendar(el0, {
-      plugins: [classicThemePlugin, themeForTestsPlugin, interactionPlugin, dayGridPlugin],
-      timeZone: 'UTC',
-      initialDate: DEFAULT_DATE,
-      initialView: 'dayGridMonth',
-      editable: true,
-      events: [
-        { start: '2019-01-01', id: 'a' },
-      ],
-      eventLeave(info) {
-        triggerNames.push('eventLeave')
-        expect(info.draggedEl).toBe(eventEl)
-        expect(info.event.id).toBe('a')
-        expect(typeof info.revert).toBe('function')
-        expect(Array.isArray(info.relatedEvents)).toBe(true)
-      },
-    })
-
-    calendar1 = new Calendar(el1, {
-      plugins: [classicThemePlugin, themeForTestsPlugin, interactionPlugin, dayGridPlugin],
-      timeZone: 'UTC',
-      initialDate: DEFAULT_DATE,
-      initialView: 'dayGridMonth',
-      editable: true,
-      droppable: true,
-      drop(info) {
-        triggerNames.push('drop')
-        expect(info.draggedEl).toBe(eventEl)
-        expect(info.date).toEqualDate('2019-01-05')
-        expect(info.dateStr).toBe('2019-01-05')
-        expect(info.allDay).toBe(true)
-      },
-      eventAllow() {
-        eventAllowCalled = true
-        return true
-      },
-      eventReceive(info) {
-        triggerNames.push('eventReceive')
-        expect(info.draggedEl).toBe(eventEl)
-        expect(info.event.start).toEqualDate('2019-01-05')
-        expect(typeof info.revert).toBe('function')
-        expect(Array.isArray(info.relatedEvents)).toBe(true)
-      },
-    })
-
-    calendar0.render()
-    calendar1.render()
-    waitTimeout().then(() => {
-      let dayGridWrapper0 = new DayGridViewWrapper(calendar0).dayGrid
-      let dayGridWrapper1 = new DayGridViewWrapper(calendar1).dayGrid
-
-      eventEl = dayGridWrapper0.getEventEls()[0]
-      let dayEl = dayGridWrapper1.getDayEls('2019-01-05')[0]
-      let point1 = getRectCenter(dayEl.getBoundingClientRect())
-
-      $(eventEl).simulate('drag', {
-        end: point1,
-        callback() {
-          expect(triggerNames).toEqual(['eventLeave', 'drop', 'eventReceive'])
-          expect(eventAllowCalled).toBe(true)
-          done()
-        },
-      })
-    })
-  })
-
-  it('works between timeGrid views', (done) => {
-    calendar0 = new Calendar(el0, {
-      plugins: [classicThemePlugin, themeForTestsPlugin, interactionPlugin, timeGridPlugin],
-      scrollTime: '00:00',
-      timeZone: 'UTC',
-      initialDate: DEFAULT_DATE,
+  it('moves an event between timeGrid views', async () => {
+    const [el0, el1] = createSideBySideEls()
+    const calendar0 = initCalendar({
+      ...options,
       initialView: 'timeGridDay',
-      editable: true,
-      events: [
-        { start: '2019-01-01T00:00:00', id: 'a' },
-      ],
-    })
-
-    calendar1 = new Calendar(el1, {
-      plugins: [classicThemePlugin, themeForTestsPlugin, interactionPlugin, timeGridPlugin],
       scrollTime: '00:00',
-      timeZone: 'UTC',
-      initialDate: DEFAULT_DATE,
+      events: [{ id: 'a', start: '2019-01-01T00:00:00' }],
+    }, el0)
+    const calendar1 = initCalendar({
+      ...options,
       initialView: 'timeGridDay',
-      editable: true,
+      scrollTime: '00:00',
       droppable: true,
-      eventReceive(info) {
-        done()
-      },
-    })
+    }, el1)
+    await waitForSettle()
 
-    calendar0.render()
-    calendar1.render()
-    waitTimeout().then(() => {
-      let eventEl = new CalendarWrapper(calendar0).getEventEls()[0] // of the source calendar
-      let destViewWrapper = new TimeGridViewWrapper(calendar1)
-      let point1 = getRectCenter(destViewWrapper.getScrollerEl().getBoundingClientRect())
+    const timeGrid1 = new TimeGridModel(calendar1.el)
+    await new TimeGridModel(calendar0.el).dragEvent('a', '2019-01-01T00:00', () => timeGrid1.pointForDateTime('2019-01-01T05:00'))
 
-      $(eventEl).simulate('drag', {
-        end: point1,
-      })
-    })
+    expect(calendar0.getEventById('a')).toBeNull()
+    expect(calendar1.getEventById('a')!.startStr).toBe('2019-01-01T05:00:00Z')
   })
 })

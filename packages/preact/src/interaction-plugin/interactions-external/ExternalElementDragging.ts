@@ -103,6 +103,10 @@ export class ExternalElementDragging {
     this.displayDrag(receivingContext, interaction)
 
     // show mirror if no already-rendered mirror element OR if we are shutting down the mirror (?)
+    // The "mirror" here is the dragged element itself (ElementMirror), or for ThirdPartyDraggable, the
+    // third-party library's moving element (mirrorSelector). It's hidden only while the calendar
+    // renders its own mirror of the event in its place (timeGrid, timeline). Views that just highlight
+    // the drop's dates (dayGrid) leave it visible, so the user still sees what they're dragging.
     // TODO: wish we could somehow wait for dispatch to guarantee render
     dragging.setMirrorIsVisible(
       isFinal ||

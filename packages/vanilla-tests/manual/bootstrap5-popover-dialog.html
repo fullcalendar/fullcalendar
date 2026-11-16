@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<title>Bootstrap popover inside a modal</title>
+<link rel='stylesheet' href='../../bootstrap5/node_modules/bootstrap/dist/css/bootstrap.min.css' />
+<link rel='stylesheet' href='../../bootstrap5/node_modules/bootstrap-icons/font/bootstrap-icons.css' />
+<link rel='stylesheet' href='../../vanilla/dist/skeleton.css' />
+<link rel='stylesheet' href='../../bootstrap5/dist/theme.css' />
+<script src='../../vanilla/dist/all/global.js'></script>
+<script src='../../bootstrap5/dist/global.js'></script>
+<script src='../../bootstrap5/node_modules/bootstrap/dist/js/bootstrap.bundle.js'></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const modalEl = document.getElementById('calendar-modal');
+    modalEl.addEventListener('shown.bs.modal', function() {
+      const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+        initialDate: '2025-03-14',
+        initialView: 'dayGridMonth',
+        height: 550,
+        dayMaxEvents: 1,
+        events: Array.from({ length: 8 }, (_, i) => ({
+          title: `Event ${i}`, start: '2025-03-14'
+        }))
+      });
+      calendar.render();
+    }, { once: true });
+    new bootstrap.Modal(modalEl).show();
+  });
+</script>
+</head>
+<body>
+<div class='modal' id='calendar-modal' tabindex='-1' aria-labelledby='calendar-title'>
+  <div class='modal-dialog modal-xl'>
+    <div class='modal-content'>
+      <div class='modal-header'><h1 class='modal-title fs-5' id='calendar-title'>Calendar inside Bootstrap modal</h1></div>
+      <div class='modal-body'><div id='calendar'></div></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

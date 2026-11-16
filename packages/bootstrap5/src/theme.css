@@ -499,6 +499,10 @@
   background-color: var(--fc-event-color)
 }
 
+.\[--fc-popover-z\:var\(--bs-popover-zindex\)\] {
+  --fc-popover-z: var(--bs-popover-zindex)
+}
+
 @media not print {
   @supports (color:color-mix(in lab, red, red)) {
     .not-print\:bg-\[color-mix\(in_oklab\,var\(--fc-event-color\)_20\%\,transparent\)\] {

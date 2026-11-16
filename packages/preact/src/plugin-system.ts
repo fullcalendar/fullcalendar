@@ -88,6 +88,9 @@ function buildPluginHooks(pluginDefs: PluginInput[], globalDefs: PluginInput[]):
       if (!name) {
         throw new Error('Plugin must specify a name')
       }
+      if (unrefinedDef.majorVersionError) { // a plugin from an older major version, which can't work here
+        throw new Error(unrefinedDef.majorVersionError)
+      }
 
       if (!pluginsByName[name]) {
         const def = pluginsByName[name] = refinePluginDef(unrefinedDef)

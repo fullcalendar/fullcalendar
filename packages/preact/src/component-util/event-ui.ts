@@ -4,6 +4,7 @@ import { joinClassNames } from '../util/html'
 import { CalendarContext } from '../CalendarContext'
 import { identity, Identity } from '../options'
 import { refineClassName } from '../common/render-hook'
+import type { EventDef } from '../structs/event-def'
 
 // TODO: better called "EventSettings" or "EventConfig"
 // TODO: move this file into structs
@@ -56,7 +57,20 @@ export interface EventUi {
   className: string
 }
 
-export type EventUiHash = { [defId: string]: EventUi }
+export type EventUiHash = { [id: string]: EventUi }
+
+/*
+The layers an event's UI is compiled from, below the event's own (see compileEventUi).
+A view's sections share one, except for what a section adds as sectionUi.
+*/
+export interface EventUiBases {
+  base: EventUi // calendar-wide, from options
+  bySource: EventUiHash // by sourceId. An event without a source has no entry
+  sectionUi?: EventUi // what the Splitter adds for a section, such as a resource's UI in a resource view
+  // A plugin's per-event layer, added by a view-props transformer. Never put in calendar state, which
+  // validation reads, or it would apply alongside the sectionUi that validation's own splitting adds
+  getExtraUi?: (eventDef: EventDef) => EventUi | undefined
+}
 
 export function createEventUi(refined: EventUiRefined, context: CalendarContext): EventUi {
   let constraint = normalizeConstraint(refined.constraint, context)
@@ -92,3 +106,5 @@ function combineTwoEventUis(item0: EventUi, item1: EventUi): EventUi { // hash1 
     className: joinClassNames(item0.className, item1.className),
   }
 }
+
+export const EMPTY_EVENT_UI_BASES: EventUiBases = { base: EMPTY_EVENT_UI, bySource: {} }

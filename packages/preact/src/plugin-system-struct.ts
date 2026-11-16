@@ -23,6 +23,10 @@ import { ScrollerSyncerClass } from './scrollgrid/ScrollerSyncerInterface'
 // TODO: easier way to add new hooks? need to update a million things
 
 export interface PluginInput {
+  // Set only by plugins from an older major version (v6's createPlugin), as a string literal type
+  // naming the fix. It can't match `undefined`, so TypeScript prints the message. Keep it first:
+  // TypeScript reports the first mismatched property.
+  majorVersionError?: undefined
   name: string
   premiumReleaseDate?: string
   deps?: PluginInput[]

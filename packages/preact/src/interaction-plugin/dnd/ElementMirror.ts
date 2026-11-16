@@ -1,6 +1,7 @@
 import classNames from '../../styles.module.css'
 import { applyStyle } from '../../util/dom-manip'
 import { whenTransitionDone } from '../../util/dom-event'
+import { holdSettle, settleSetTimeout } from '../../util/settle'
 import type { Rect } from '../../util/geom'
 
 /*
@@ -8,6 +9,9 @@ An effect in which an element follows the movement of a pointer across the scree
 The moving element is a clone of some other element.
 Must call start + handleMove + stop.
 */
+// ms past the revert's duration to wait for its transition to end, before no longer holding settle
+const REVERT_SETTLE_SLACK = 1000
+
 export class ElementMirror {
   isVisible: boolean = false // must be explicitly enabled
   origScreenX?: number
@@ -22,6 +26,7 @@ export class ElementMirror {
   parentNode: HTMLElement = document.body // HIGHLY SUGGESTED to set this to sidestep ShadowDOM issues
   zIndex: number = 9999
   revertDuration: number = 0
+  private releaseRevertSettle: () => void = () => {}
   colorScheme: string = ''
 
   start(sourceEl: HTMLElement, pageX: number, pageY: number) {
@@ -80,7 +85,7 @@ export class ElementMirror {
     ) {
       this.doRevertAnimation(done, this.revertDuration)
     } else {
-      setTimeout(done, 0)
+      settleSetTimeout(done, 0)
     }
   }
 
@@ -97,13 +102,28 @@ export class ElementMirror {
       top: finalSourceElRect.top,
     })
 
+    // Tests wait for the revert. If the transition never ends (the mirror is removed first, or CSS
+    // suppresses it), stop holding settle after a while, so one drag can't block it for good
+    const releaseSettle = holdSettle() // safe to call more than once
+    const fallbackId = setTimeout(releaseSettle, revertDuration + REVERT_SETTLE_SLACK)
+    this.releaseRevertSettle = () => {
+      clearTimeout(fallbackId)
+      releaseSettle()
+    }
+
     whenTransitionDone(mirrorEl, () => {
       mirrorEl.style.transition = ''
-      callback()
+      try {
+        callback()
+      } finally {
+        this.releaseRevertSettle()
+      }
     })
   }
 
   cleanup() {
+    this.releaseRevertSettle()
+
     if (this.mirrorEl) {
       this.mirrorEl.remove()
       this.mirrorEl = null

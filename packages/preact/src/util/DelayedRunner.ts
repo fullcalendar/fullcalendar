@@ -1,3 +1,5 @@
+import { settleClearTimeout, settleSetTimeout } from './settle'
+
 export class DelayedRunner {
   private isRunning = false
   private isDirty = false
@@ -6,6 +8,7 @@ export class DelayedRunner {
 
   constructor(
     private drainedOption?: () => void,
+    private isSettleUntracked = false, // for long delays that tests shouldn't wait on. see util/settle
   ) {
   }
 
@@ -18,10 +21,10 @@ export class DelayedRunner {
       if (delay == null) {
         this.tryDrain()
       } else {
-        this.timeoutId = setTimeout( // NOT OPTIMAL! TODO: look at debounce
-          this.tryDrain.bind(this),
-          delay,
-        ) as unknown as number
+        const drain = this.tryDrain.bind(this)
+        this.timeoutId = this.isSettleUntracked
+          ? setTimeout(drain, delay) as unknown as number // NOT OPTIMAL! TODO: look at debounce
+          : settleSetTimeout(drain, delay)
       }
     }
   }
@@ -78,7 +81,11 @@ export class DelayedRunner {
 
   private clearTimeout() {
     if (this.timeoutId) {
-      clearTimeout(this.timeoutId)
+      if (this.isSettleUntracked) {
+        clearTimeout(this.timeoutId)
+      } else {
+        settleClearTimeout(this.timeoutId)
+      }
       this.timeoutId = 0
     }
   }

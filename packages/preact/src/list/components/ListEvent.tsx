@@ -25,9 +25,6 @@ export class ListEvent extends BaseComponent<ListEventProps> {
     return (
       <StandardEvent
         {...props}
-        attrs={{
-          role: 'listitem',
-        }}
         forcedTimeText={forcedTimeText}
         defaultTimeFormat={DEFAULT_TIME_FORMAT}
         disableDragging
