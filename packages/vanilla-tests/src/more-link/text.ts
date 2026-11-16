@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { type MoreLinkInfo } from 'fullcalendar'
 import frLocale from 'fullcalendar/locales/fr'
 import { initCalendar } from '../lib/calendar'
 import { getMoreLinkEls } from '../lib/models/event-content'
@@ -31,5 +32,20 @@ describe('moreLinkText', () => {
 
     expect(getMoreLinkEls(calendar.el).map((el) => el.textContent)).toEqual(['there are 2 more events!'])
     expect(moreLinkText).toHaveBeenCalledWith(2) // (also called for hidden measuring links)
+  })
+
+  it('accepts the public render-hook info type', async () => {
+    const calendar = initCalendar({
+      ...options,
+      moreLinkContent(info: MoreLinkInfo) {
+        expect(typeof info.numericText).toBe('string')
+        expect(typeof info.longText).toBe('string')
+        expect(typeof info.isNarrow).toBe('boolean')
+        return `Hidden events: ${info.num}`
+      },
+    })
+    await waitForSettle()
+
+    expect(getMoreLinkEls(calendar.el).map((el) => el.textContent)).toEqual(['Hidden events: 2'])
   })
 })

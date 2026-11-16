@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { Calendar, CalendarOptions } from 'fullcalendar'
+import { Calendar, CalendarOptions, type MoreLinkClickInfo } from 'fullcalendar'
 import { initCalendar } from '../lib/calendar'
 import { isForceReact } from '../lib/env'
 import { queryPart } from '../lib/models/events'
@@ -54,7 +54,7 @@ describe('moreLinkClick', () => {
   })
 
   it('calls a function with info about the day and its events', async () => {
-    const moreLinkClick = vi.fn()
+    const moreLinkClick = vi.fn<(info: MoreLinkClickInfo) => void>()
     const calendar = initCalendar({ ...options, moreLinkClick })
     await waitForSettle()
 
