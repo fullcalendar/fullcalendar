@@ -576,7 +576,8 @@ export const BASE_OPTION_REFINERS = {
 
   /**
    * The calendar system used to compute years, months and days: `'gregory'` (the default),
-   * or `'jalali'` for the Persian, or Solar Hijri, calendar.
+   * or `'jalali'` for the Persian, or Solar Hijri, calendar, which is also accepted as
+   * `'persian'`.
    * @see https://fullcalendar.io/docs/calendarSystem
    */
   calendarSystem: String,

@@ -350,7 +350,7 @@ export class DateEnv {
     if (this.weekNumberFunc) {
       return this.weekNumberFunc(this.toDate(marker))
     }
-    return weekOfYear(marker, this.weekDow, this.weekDoy)
+    return weekOfYear(marker, this.weekDow, this.weekDoy, this.calendarSystem)
   }
 
   formatToParts(

@@ -83,11 +83,15 @@ With `calendarSystem: 'jalali'`:
 - The prev and next buttons move by one Jalali month, and the today button goes to the
   Jalali month that holds today.
 - The title, the day numbers and the other date texts are formatted in the Jalali calendar.
+- Week numbers count inside the Jalali year, so week 1 is the week that holds the first of
+  Farvardin.
 
 The option only changes which calendar the dates are counted in. The text, and which day
 starts the week, still come from `locale`, and the right-to-left layout still comes from
 `direction`. A Persian calendar therefore normally sets `calendarSystem: 'jalali'` together
 with the `fa` locale.
+
+The system answers to `'persian'` as well, which is the name Intl and CLDR give it.
 
 Event dates are not affected. They are given to the calendar, and read back from it, as
 ordinary dates.

@@ -104,4 +104,6 @@ class JalaliCalendarSystem implements CalendarSystem {
   }
 }
 
+// 'persian' is what Intl and CLDR call it, 'jalali' is what most people call it
 registerCalendarSystem('jalali', JalaliCalendarSystem)
+registerCalendarSystem('persian', JalaliCalendarSystem)

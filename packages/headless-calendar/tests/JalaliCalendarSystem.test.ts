@@ -211,4 +211,48 @@ describe('jalali calendar system', () => {
     expect(format('gregory', faLocale)).toContain('۲۰۲۶')
     expect(format('jalali', faLocale)).toContain('۱۴۰۵')
   })
+
+  it('counts week numbers inside the jalali year', () => {
+    const env = makeEnv('jalali')
+
+    // 1 Farvardin 1405 is itself a Saturday, so it opens the first week of the year
+    expect(env.computeWeekNumber(utcDay('2026-03-21'))).toBe(1)
+    expect(env.computeWeekNumber(utcDay('2026-03-27'))).toBe(1)
+    expect(env.computeWeekNumber(utcDay('2026-03-28'))).toBe(2)
+
+    // 1 Mehr, the seventh month, comes after six months of 31 days
+    expect(env.computeWeekNumber(utcDay('2026-09-23'))).toBe(27)
+
+    // 22 Esfand, in the last full week of 1405
+    expect(env.computeWeekNumber(utcDay('2027-03-13'))).toBe(52)
+
+    // 29 Esfand is the last day of 1405, but its week already belongs to 1406,
+    // the same way the end of december can fall in the first iso week of the next year
+    expect(env.computeWeekNumber(utcDay('2027-03-20'))).toBe(1)
+    expect(env.getYear(utcDay('2027-03-20'))).toBe(1405)
+  })
+
+  it('leaves gregorian week numbers alone', () => {
+    const env = new DateEnv({
+      timeZone: 'UTC',
+      calendarSystem: 'gregory',
+      locale: faLocale,
+      weekNumberCalculation: 'ISO',
+    })
+
+    expect(env.computeWeekNumber(utcDay('2026-01-01'))).toBe(1)
+    expect(env.computeWeekNumber(utcDay('2026-06-15'))).toBe(25)
+    expect(env.computeWeekNumber(utcDay('2026-12-28'))).toBe(53)
+  })
+
+  it('answers to the name intl uses as well', () => {
+    const jalali = makeEnv('jalali')
+    const persian = makeEnv('persian')
+    const marker = utcDay('2026-10-23')
+
+    expect(persian.getYear(marker)).toBe(jalali.getYear(marker))
+    expect(persian.getMonth(marker)).toBe(jalali.getMonth(marker))
+    expect(persian.startOfMonth(marker).valueOf()).toBe(jalali.startOfMonth(marker).valueOf())
+    expect(persian.computeWeekNumber(marker)).toBe(jalali.computeWeekNumber(marker))
+  })
 })
