@@ -575,6 +575,14 @@ export const BASE_OPTION_REFINERS = {
   timeZone: String,
 
   /**
+   * The calendar system used to compute years, months and days: `'gregory'` (the default),
+   * or `'jalali'` for the Persian, or Solar Hijri, calendar, which is also accepted as
+   * `'persian'`.
+   * @see https://fullcalendar.io/docs/calendarSystem
+   */
+  calendarSystem: String,
+
+  /**
    * Locale definitions to make available to the calendar, such as imported locale files. The active
    * one is chosen with `locale`.
    * @see https://fullcalendar.io/docs/locale
@@ -2161,6 +2169,7 @@ export const BASE_OPTION_DEFAULTS = {
   endParam: 'end',
   timeZoneParam: 'timeZone',
   timeZone: 'local', // TODO: throw error if given falsy value?
+  calendarSystem: 'gregory',
   locales: [],
   locale: '', // blank values means it will compute based off locales[]
   dragRevertDuration: 500,

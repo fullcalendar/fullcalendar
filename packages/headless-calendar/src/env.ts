@@ -334,10 +334,13 @@ export class DateEnv {
   }
 
   startOfWeek(m: DateMarker): DateMarker {
-    return this.calendarSystem.arrayToMarker([
-      this.calendarSystem.getMarkerYear(m),
-      this.calendarSystem.getMarkerMonth(m),
-      m.getUTCDate() - ((m.getUTCDay() - this.weekDow + 7) % 7),
+    let { calendarSystem } = this
+    let daysIntoWeek = (m.getUTCDay() - this.weekDow + 7) % 7
+
+    return calendarSystem.arrayToMarker([
+      calendarSystem.getMarkerYear(m),
+      calendarSystem.getMarkerMonth(m),
+      calendarSystem.getMarkerDay(m) - daysIntoWeek,
     ])
   }
 
@@ -347,7 +350,7 @@ export class DateEnv {
     if (this.weekNumberFunc) {
       return this.weekNumberFunc(this.toDate(marker))
     }
-    return weekOfYear(marker, this.weekDow, this.weekDoy)
+    return weekOfYear(marker, this.weekDow, this.weekDoy, this.calendarSystem)
   }
 
   formatToParts(

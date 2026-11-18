@@ -409,6 +409,7 @@ export class CalendarDataManager {
 
     let dateEnv = this.buildDateEnv(
       refinedOptions.timeZone,
+      refinedOptions.calendarSystem,
       refinedOptions.locale,
       refinedOptions.weekNumberCalculation,
       refinedOptions.firstDay,
@@ -626,6 +627,7 @@ export class CalendarDataManager {
 
 function buildDateEnv(
   timeZone: string,
+  calendarSystem: string,
   explicitLocale: LocaleSingularArg,
   weekNumberCalculation,
   firstDay: number | undefined,
@@ -637,7 +639,7 @@ function buildDateEnv(
   let locale = buildLocale(explicitLocale || availableLocaleData.defaultCode, availableLocaleData.map)
 
   return new DateEnv({
-    calendarSystem: 'gregory', // TODO: make this a setting
+    calendarSystem,
     timeZone,
     locale,
     weekNumberCalculation,

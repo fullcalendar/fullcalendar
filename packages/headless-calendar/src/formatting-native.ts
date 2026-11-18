@@ -184,6 +184,8 @@ export class NativeDateFormatter implements DateFormatter {
       const { extendedOptions } = this
       const { codes } = context.locale
       const standardOptions: Intl.DateTimeFormatOptions = {
+        // first, so a formatter that names its own `calendar` still wins
+        calendar: context.calendarSystem.intlCalendar,
         ...this.standardOptions,
         // 'local' means the system zone, which is Intl's default
         timeZone: context.timeZone === 'local' ? undefined : context.timeZone,

@@ -63,7 +63,7 @@ export {
 
 export type { LocaleCodeArg, Locale } from './locale'
 
-export type { DateMarker } from './marker'
+export type { DateMarker, WeekCalendarSystem } from './marker'
 export {
   addWeeks,
   addDays,

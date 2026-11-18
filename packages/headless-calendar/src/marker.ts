@@ -118,15 +118,42 @@ export function startOfSecond(m: DateMarker) {
 
 // Week Computation
 
-export function weekOfYear(marker, dow, doy) {
-  let y = marker.getUTCFullYear()
-  let w = weekOfGivenYear(marker, y, dow, doy)
+/*
+The part of a calendar system that the week math needs. It is kept narrow so this file does
+not have to import calendar-system.ts, which already imports from here.
+*/
+export interface WeekCalendarSystem {
+  getMarkerYear(marker: DateMarker): number
+  arrayToMarker(arr: number[]): DateMarker
+}
+
+const gregorianWeekCalendarSystem: WeekCalendarSystem = {
+  getMarkerYear(marker) {
+    return marker.getUTCFullYear()
+  },
+  arrayToMarker(arr) {
+    return arrayToUtcDate(arr)
+  },
+}
+
+/*
+The week of the year the marker falls in, counted inside the year of the given calendar
+system. Left on the gregorian one when nothing is passed, which is what it always did.
+*/
+export function weekOfYear(
+  marker,
+  dow,
+  doy,
+  calendarSystem: WeekCalendarSystem = gregorianWeekCalendarSystem,
+) {
+  let y = calendarSystem.getMarkerYear(marker)
+  let w = weekOfGivenYear(marker, y, dow, doy, calendarSystem)
 
   if (w < 1) {
-    return weekOfGivenYear(marker, y - 1, dow, doy)
+    return weekOfGivenYear(marker, y - 1, dow, doy, calendarSystem)
   }
 
-  let nextW = weekOfGivenYear(marker, y + 1, dow, doy)
+  let nextW = weekOfGivenYear(marker, y + 1, dow, doy, calendarSystem)
   if (nextW >= 1) {
     return Math.min(w, nextW)
   }
@@ -134,8 +161,12 @@ export function weekOfYear(marker, dow, doy) {
   return w
 }
 
-function weekOfGivenYear(marker, year, dow, doy) {
-  let firstWeekStart = arrayToUtcDate([year, 0, 1 + firstWeekOffset(year, dow, doy)])
+function weekOfGivenYear(marker, year, dow, doy, calendarSystem: WeekCalendarSystem) {
+  let firstWeekStart = calendarSystem.arrayToMarker([
+    year,
+    0,
+    1 + firstWeekOffset(year, dow, doy, calendarSystem),
+  ])
   let dayStart = startOfDay(marker)
   let days = Math.round(diffDays(firstWeekStart, dayStart))
 
@@ -143,12 +174,13 @@ function weekOfGivenYear(marker, year, dow, doy) {
 }
 
 // start-of-first-week - start-of-year
-function firstWeekOffset(year, dow, doy) {
-  // first-week day -- which january is always in the first week (4 for iso, 1 for other)
+function firstWeekOffset(year, dow, doy, calendarSystem: WeekCalendarSystem) {
+  // first-week day -- which day of the first month is always in the first week
+  // (4 for iso, 1 for other)
   let fwd = 7 + dow - doy
 
   // first-week day local weekday -- which local weekday is fwd
-  let fwdlw = (7 + arrayToUtcDate([year, 0, fwd]).getUTCDay() - dow) % 7
+  let fwdlw = (7 + calendarSystem.arrayToMarker([year, 0, fwd]).getUTCDay() - dow) % 7
 
   return -fwdlw + fwd - 1
 }
