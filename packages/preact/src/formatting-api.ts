@@ -60,5 +60,7 @@ function buildDateEnv(settings: FormatRangeOptions) {
     calendarSystem: 'gregory',
     ...settings,
     locale,
+    weekTextLong: locale.options.weekTextLong,
+    weekTextShort: locale.options.weekTextShort,
   })
 }
