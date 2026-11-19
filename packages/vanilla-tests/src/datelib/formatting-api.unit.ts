@@ -1,11 +1,22 @@
 import { describe, expect, it } from 'vitest'
-import { formatDate, formatRange } from '../../../preact/src/formatting-api'
+import { formatDate, formatRange, type FormatDateOptions } from '../../../preact/src/formatting-api'
 import { enUsSep } from '../lib/intl'
 
 /*
 The standalone formatDate/formatRange utilities, which work without a calendar.
 */
+const weekFormats: [NonNullable<FormatDateOptions['week']>, string][] = [
+  ['long', 'Week 1'],
+  ['short', 'W 1'],
+  ['narrow', 'W1'],
+  ['numeric', '1'],
+]
+
 describe('formatDate', () => {
+  it.each(weekFormats)('formats a week number with week: %s', (week, expected) => {
+    expect(formatDate('2021-01-03', { week })).toBe(expected)
+  })
+
   it('formats a date without an offset', () => {
     const str = formatDate('2018-09-04', {
       month: 'long',
@@ -29,6 +40,10 @@ describe('formatDate', () => {
 })
 
 describe('formatRange', () => {
+  it.each(weekFormats)('formats a week number with week: %s', (week, expected) => {
+    expect(formatRange('2021-01-03', '2021-01-09', { week })).toBe(expected)
+  })
+
   it('formats dates without an offset', () => {
     const str = formatRange('2018-09-04', '2018-10-04', {
       month: 'long',
