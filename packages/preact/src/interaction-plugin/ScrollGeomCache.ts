@@ -7,7 +7,7 @@ in addition the "client rectangle" of the element.. the area within the scrollba
 
 The cache can be in one of two modes:
 - doesListening:false - ignores when the container is scrolled by someone else
-- doesListening:true - watch for scrolling and update the cache
+- doesListening:true - watch for scrolling, and read the scroll position live
 */
 export abstract class ScrollGeomCache extends ScrollController {
   clientRect: Rect
@@ -56,11 +56,11 @@ export abstract class ScrollGeomCache extends ScrollController {
   }
 
   getScrollTop() {
-    return this.scrollTop
+    return this.doesListening ? this.scrollController.getScrollTop() : this.scrollTop
   }
 
   getScrollLeft() {
-    return this.scrollLeft
+    return this.doesListening ? this.scrollController.getScrollLeft() : this.scrollLeft
   }
 
   setScrollTop(top: number) {

@@ -6,7 +6,6 @@ import { ElementScrollGeomCache } from './ElementScrollGeomCache'
 /*
 When this class is instantiated, it records the offset of an element (relative to the document topleft),
 and continues to monitor scrolling, updating the cached coordinates if it needs to.
-Does not access the DOM after instantiation, so highly performant.
 
 Also keeps track of all scrolling/overflow:hidden containers that are parents of the given element
 and an determine if a given point is inside the combined clipping rectangle.
