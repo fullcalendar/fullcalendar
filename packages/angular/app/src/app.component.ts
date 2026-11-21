@@ -51,10 +51,13 @@ export class AppComponent implements OnInit {
   }
 
   updateHeader() {
-    this.calendarOptions!.headerToolbar = {
-      left: 'prev,next myCustomButton',
-      center: 'title',
-      right: ''
+    this.calendarOptions = {
+      ...this.calendarOptions!,
+      headerToolbar: {
+        left: 'prev,next myCustomButton',
+        center: 'title',
+        right: ''
+      }
     };
   }
 
@@ -62,11 +65,14 @@ export class AppComponent implements OnInit {
     const nowDate = new Date();
     const yearMonth = nowDate.getUTCFullYear() + '-' + (nowDate.getUTCMonth() + 1);
 
-    this.calendarOptions!.events = [{
-      title: 'Updated Event',
-      start: yearMonth + '-08',
-      end: yearMonth + '-10'
-    }];
+    this.calendarOptions = {
+      ...this.calendarOptions!,
+      events: [{
+        title: 'Updated Event',
+        start: yearMonth + '-08',
+        end: yearMonth + '-10'
+      }]
+    };
   }
 
 }
