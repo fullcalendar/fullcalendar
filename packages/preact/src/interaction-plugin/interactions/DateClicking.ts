@@ -35,6 +35,8 @@ export class DateClicking extends Interaction {
   }
 
   destroy() {
+    // Drag teardown can finish a pending press after the component has unmounted.
+    this.hitDragging.emitter.off('dragend', this.handleDragEnd)
     this.dragging.destroy()
   }
 

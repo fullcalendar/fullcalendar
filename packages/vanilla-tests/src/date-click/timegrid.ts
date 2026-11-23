@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { initCalendar } from '../lib/calendar'
 import { TimeGridModel } from '../lib/models/time-grid'
+import { pointer } from '../lib/pointer'
 import { waitForSettle } from '../lib/settle'
 
 describe('dateClick in timeGrid', () => {
@@ -39,6 +40,20 @@ describe('dateClick in timeGrid', () => {
     const info = dateClick.mock.calls[0][0]
     expect(info.dateStr).toBe(dateTime + ':00Z')
     expect(info.allDay).toBe(false)
+  })
+
+  it('does not report a click when destroyed during a slot press', async () => {
+    const dateClick = vi.fn()
+    const calendar = initCalendar({ ...options, dateClick })
+    await waitForSettle()
+
+    const point = new TimeGridModel(calendar.el).pointForDateTime('2014-05-28T09:00')
+    await pointer.press(point, async () => {
+      calendar.destroy()
+      await waitForSettle()
+    })
+
+    expect(dateClick).not.toHaveBeenCalled()
   })
 
   it('reports a timed click in RTL', async () => {
