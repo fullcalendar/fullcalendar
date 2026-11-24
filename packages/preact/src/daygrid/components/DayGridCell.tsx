@@ -4,7 +4,7 @@ import { joinClassNames } from '../../util/html'
 import { DateMarker, DateRange, DateEnv, addMs, DateFormatter, formatDayString } from '@full-ui/headless-calendar'
 import { joinDateTimeFormatParts } from '@full-ui/headless-calendar'
 import { DateComponent, EventSegUiInteractionState } from '../../component/DateComponent'
-import { DateProfile } from '../../DateProfileGenerator'
+import { DateProfile, DateProfileGenerator } from '../../DateProfileGenerator'
 import { Dictionary } from '../../options'
 import { setRef } from '../../vdom-util'
 import { SlicedCoordRange } from '../../coord-range'
@@ -84,7 +84,12 @@ export class DayGridCell extends DateComponent<DayGridCellProps> {
 
     // TODO: memoize this
     const isMonthStart = props.showDayNumber &&
-      shouldDisplayMonthStart(props.date, props.dateProfile.currentRange, dateEnv)
+      shouldDisplayMonthStart(
+        props.date,
+        props.dateProfile.currentRange,
+        dateEnv,
+        context.dateProfileGenerator,
+      )
 
     const dateMeta = this.getDateMeta(
       props.date,
@@ -334,7 +339,12 @@ function renderTopInner(props: DayCellInfo): ReactNode {
   return props.text || <>&nbsp;</> // TODO: DRY?
 }
 
-function shouldDisplayMonthStart(date: DateMarker, currentRange: DateRange, dateEnv: DateEnv): boolean {
+function shouldDisplayMonthStart(
+  date: DateMarker,
+  currentRange: DateRange,
+  dateEnv: DateEnv,
+  dateProfileGenerator: DateProfileGenerator,
+): boolean {
   const { start: currentStart, end: currentEnd } = currentRange
   const currentEndIncl = addMs(currentEnd, -1)
   const currentFirstYear = dateEnv.getYear(currentStart)
@@ -342,13 +352,23 @@ function shouldDisplayMonthStart(date: DateMarker, currentRange: DateRange, date
   const currentLastYear = dateEnv.getYear(currentEndIncl)
   const currentLastMonth = dateEnv.getMonth(currentEndIncl)
 
-  // spans more than one month?
-  return !(currentFirstYear === currentLastYear && currentFirstMonth === currentLastMonth) &&
-    Boolean(
-      // first date in current view?
-      date.valueOf() === currentStart.valueOf() ||
-      // a month-start that's within the current range?
-      (dateEnv.getDay(date) === 1 && date.valueOf() < currentEnd.valueOf()),
+  if (currentFirstYear === currentLastYear && currentFirstMonth === currentLastMonth) {
+    return false
+  }
+
+  // Preserve existing labels, including month starts in padding dates.
+  if (
+    date.valueOf() === currentStart.valueOf() ||
+    (dateEnv.getDay(date) === 1 && date.valueOf() < currentEnd.valueOf())
+  ) {
+    return true
+  }
+
+  // Only move labels past hidden days within the current range.
+  return date.valueOf() >= currentStart.valueOf() && date.valueOf() < currentEnd.valueOf() &&
+    (
+      date.valueOf() === dateProfileGenerator.skipHiddenDays(currentStart).valueOf() ||
+      date.valueOf() === dateProfileGenerator.skipHiddenDays(dateEnv.startOf(date, 'month')).valueOf()
     )
 }
 
