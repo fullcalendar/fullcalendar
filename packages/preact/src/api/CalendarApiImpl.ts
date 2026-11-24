@@ -564,7 +564,7 @@ export class CalendarApiImpl implements CalendarApi {
       } as NavButtonState,
 
       nextYear: {
-        text: options.prevYearText,
+        text: options.nextYearText,
         hint: formatWithOrdinals(options.nextHint, [options.yearText, 'year'], options.nextYearText),
         isDisabled: false,
       } as NavButtonState,

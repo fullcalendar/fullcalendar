@@ -100,4 +100,19 @@ describe('toolbar button state', () => {
       expect(await isButtonEnabled({ ...monthOptions, ...extraOptions }, 'today')).toBe(isEnabled)
     })
   })
+
+  describe('year buttons', () => {
+    it('reports each button\'s own text', async () => {
+      const calendar = initCalendar({
+        headerToolbar: { left: 'prevYear,nextYear' },
+        prevYearText: 'Back a year',
+        nextYearText: 'Forward a year',
+      })
+      await waitForSettle()
+
+      const { prevYear, nextYear } = calendar.getButtonState()
+      expect(prevYear.text).toBe('Back a year')
+      expect(nextYear.text).toBe('Forward a year')
+    })
+  })
 })
