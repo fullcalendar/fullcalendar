@@ -3,6 +3,7 @@ import { initCalendar } from '../lib/calendar'
 import { DayGridModel } from '../lib/models/day-grid'
 import { ToolbarModel } from '../lib/models/toolbar'
 import { enUsSep } from '../lib/intl'
+import { queryParts } from '../lib/models/events'
 import { waitForSettle } from '../lib/settle'
 import { getActiveRange, getCurrentRange } from '../lib/view-dates'
 
@@ -25,6 +26,32 @@ describe('initialDate and getDate', () => {
 })
 
 describe('gotoDate', () => {
+  // https://github.com/fullcalendar/fullcalendar/issues/7725
+  it.each([
+    ['+010000-01-15T00:00:00.000Z', '+010000'],
+    ['+020241-01-15T00:00:00.000Z', '+020241'],
+    ['-010000-01-15T00:00:00.000Z', '-010000'],
+  ])('keeps multiMonthYear usable after navigating to the native Date %s', async (iso, year) => {
+    const calendar = initCalendar({ initialView: 'multiMonthYear', initialDate: '2024-01-01' })
+    await waitForSettle()
+    const date = new Date(iso)
+
+    calendar.gotoDate(date)
+    await waitForSettle()
+
+    expect(calendar.getDate().toISOString()).toBe(iso)
+    expect(date.toISOString()).toBe(iso)
+    expect(queryParts(calendar.el, 'singleMonth').map((el) => el.getAttribute('data-date'))).toEqual([
+      `${year}-01`, `${year}-02`, `${year}-03`, `${year}-04`, `${year}-05`, `${year}-06`,
+      `${year}-07`, `${year}-08`, `${year}-09`, `${year}-10`, `${year}-11`, `${year}-12`,
+    ])
+
+    calendar.gotoDate('2024-01-01')
+    await waitForSettle()
+    expect(calendar.getDate().toISOString()).toBe('2024-01-01T00:00:00.000Z')
+    expect(queryParts(calendar.el, 'singleMonth')).toHaveLength(12)
+  })
+
   it.each([
     ['dayGridMonth', '2015-04-01', ['2015-03-29', '2015-05-10'], 'April 2015'],
     ['dayGridWeek', '2015-04-01', ['2015-03-29', '2015-04-05'], `Mar${enUsSep}Apr 2015`],
