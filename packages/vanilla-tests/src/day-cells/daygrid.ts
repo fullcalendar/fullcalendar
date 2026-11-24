@@ -144,6 +144,142 @@ describe('dayGrid day cells', () => {
       ])
     })
 
+    // https://github.com/fullcalendar/fullcalendar/issues/8137
+    it('labels the first visible day of each month when weekends are hidden', async () => {
+      const calendar = initCalendar({
+        initialView: 'dayGrid',
+        initialDate: '2026-10-01',
+        duration: { months: 3 },
+        weekends: false,
+      })
+      await waitForSettle()
+
+      expect(getMonthStartLabels(calendar.el)).toEqual([
+        ['2026-10-01', 'October 1'],
+        ['2026-11-02', 'November 2'],
+        ['2026-12-01', 'December 1'],
+      ])
+    })
+
+    it.each([0, 1, 2, 3, 4, 5, 6])('labels months when weekday %i is hidden', async (hiddenDay) => {
+      const calendar = initCalendar({
+        initialView: 'dayGrid',
+        initialDate: '2023-01-01',
+        duration: { years: 1 },
+        hiddenDays: [hiddenDay],
+        monthStartFormat: { month: 'long', day: 'numeric' },
+      })
+      await waitForSettle()
+
+      const formatter = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', timeZone: 'UTC' })
+      const expected: [string, string][] = []
+      for (let month = 0; month < 12; month++) {
+        const date = new Date(Date.UTC(2023, month, 1))
+        if (date.getUTCDay() === hiddenDay) {
+          date.setUTCDate(2)
+        }
+        expected.push([date.toISOString().slice(0, 10), formatter.format(date)])
+      }
+      expect(getMonthStartLabels(calendar.el)).toEqual(expected)
+    })
+
+    it('labels months across a year boundary with only one visible weekday', async () => {
+      const calendar = initCalendar({
+        initialView: 'dayGrid',
+        initialDate: '2022-12-01',
+        duration: { months: 3 },
+        hiddenDays: [0, 1, 2, 3, 4, 6],
+        monthStartFormat: { year: 'numeric', month: 'short', day: 'numeric' },
+      })
+      await waitForSettle()
+
+      expect(getMonthStartLabels(calendar.el)).toEqual([
+        ['2022-12-02', 'Dec 2, 2022'],
+        ['2023-01-06', 'Jan 6, 2023'],
+        ['2023-02-03', 'Feb 3, 2023'],
+      ])
+    })
+
+    it('labels the first visible date of a partial month', async () => {
+      const calendar = initCalendar({
+        initialView: 'dayGrid',
+        initialDate: '2023-01-28',
+        visibleRange: { start: '2023-01-28', end: '2023-02-11' },
+        weekends: false,
+      })
+      await waitForSettle()
+
+      expect(getMonthStartLabels(calendar.el)).toEqual([
+        ['2023-01-30', 'January 30'],
+        ['2023-02-01', 'February 1'],
+      ])
+    })
+
+    it('does not move month labels into leading padding days', async () => {
+      for (const weekends of [true, false]) {
+        const calendar = initCalendar({
+          initialView: 'dayGrid',
+          initialDate: '2026-11-04',
+          duration: { months: 1 },
+          dateAlignment: 'day',
+          weekends,
+        })
+        await waitForSettle()
+
+        expect(getMonthStartLabels(calendar.el)).toEqual([
+          ...(weekends ? [['2026-11-01', 'November 1']] : []),
+          ['2026-11-04', 'November 4'],
+          ['2026-12-01', 'December 1'],
+        ])
+        if (!weekends) {
+          expect(getDayNumberText(new DayGridModel(calendar.el), '2026-11-02')).toBe('2')
+        }
+      }
+    })
+
+    it('updates month labels when hidden weekdays change', async () => {
+      const calendar = initCalendar({
+        initialView: 'dayGrid',
+        initialDate: '2026-10-01',
+        duration: { months: 3 },
+      })
+      await waitForSettle()
+      expect(getMonthStartLabels(calendar.el)).toEqual([
+        ['2026-10-01', 'October 1'],
+        ['2026-11-01', 'November 1'],
+        ['2026-12-01', 'December 1'],
+      ])
+
+      calendar.setOption('weekends', false)
+      await waitForSettle()
+      expect(getMonthStartLabels(calendar.el)).toEqual([
+        ['2026-10-01', 'October 1'],
+        ['2026-11-02', 'November 2'],
+        ['2026-12-01', 'December 1'],
+      ])
+
+      calendar.setOption('weekends', true)
+      await waitForSettle()
+      expect(getMonthStartLabels(calendar.el)).toEqual([
+        ['2026-10-01', 'October 1'],
+        ['2026-11-01', 'November 1'],
+        ['2026-12-01', 'December 1'],
+      ])
+    })
+
+    it.each([true, false])('does not label months in a single-month view with weekends=%s', async (weekends) => {
+      const calendar = initCalendar({
+        initialView: 'dayGridMonth',
+        initialDate: '2026-11-01',
+        weekends,
+      })
+      await waitForSettle()
+
+      expect(getMonthStartLabels(calendar.el)).toEqual([])
+      expect(getDayNumberText(new DayGridModel(calendar.el), weekends ? '2026-11-01' : '2026-11-02'))
+        .toBe(weekends ? '1' : '2')
+    })
+
     it.each([
       [6, false],
       [7, true],
