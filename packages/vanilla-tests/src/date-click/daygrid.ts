@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { initCalendar } from '../lib/calendar'
+import { createCalendarElement, initCalendar } from '../lib/calendar'
 import { DayGridModel } from '../lib/models/day-grid'
 import { queryPart } from '../lib/models/events'
 import { getRectCenter, pointer } from '../lib/pointer'
@@ -29,6 +29,23 @@ describe('dateClick in dayGrid', () => {
     expect(info.dayEl).toBe(new DayGridModel(calendar.el).getDayCell('2014-05-07'))
     expect(info.jsEvent).toBeInstanceOf(MouseEvent)
     expect(info.view.type).toBe('dayGridMonth')
+  })
+
+  it.each([
+    { transform: 'scale(0.8)' },
+    { transform: 'scale(1.5)' },
+    { zoom: '1.5' },
+  ])('reports the last row date in a scaled calendar (%j)', async (style) => {
+    const dateClick = vi.fn()
+    const container = createCalendarElement()
+    container.style.transformOrigin = 'top left'
+    Object.assign(container.style, style)
+    const calendar = initCalendar({ ...options, height: 380, dateClick }, container)
+    await waitForSettle()
+
+    await new DayGridModel(calendar.el).clickDate('2014-06-03')
+    expect(dateClick).toHaveBeenCalledOnce()
+    expect(dateClick.mock.calls[0][0].dateStr).toBe('2014-06-03')
   })
 
   it('reports the clicked day in RTL', async () => {

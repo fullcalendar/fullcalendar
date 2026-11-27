@@ -178,7 +178,14 @@ export class HitDragging {
           positionLeft >= 0 && positionLeft < width &&
           positionTop >= 0 && positionTop < height
         ) {
-          let hit = component.queryHit(offsetTracker.isRtl, positionLeft, positionTop, width, height)
+          let { scaleX, scaleY } = offsetTracker
+          let hit = component.queryHit(
+            offsetTracker.isRtl,
+            positionLeft / scaleX,
+            positionTop / scaleY,
+            width / scaleX,
+            height / scaleY,
+          )
           if (
             hit && (
               // make sure the hit is within activeRange, meaning it's not a dead cell
@@ -203,10 +210,10 @@ export class HitDragging {
             hit.context = component.context
 
             // TODO: better way to re-orient rectangle
-            hit.rect.left += originLeft
-            hit.rect.right += originLeft
-            hit.rect.top += originTop
-            hit.rect.bottom += originTop
+            hit.rect.left = originLeft + hit.rect.left * scaleX
+            hit.rect.right = originLeft + hit.rect.right * scaleX
+            hit.rect.top = originTop + hit.rect.top * scaleY
+            hit.rect.bottom = originTop + hit.rect.bottom * scaleY
 
             bestHit = hit
           }
