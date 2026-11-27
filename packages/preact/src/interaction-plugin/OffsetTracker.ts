@@ -14,10 +14,14 @@ and an determine if a given point is inside the combined clipping rectangle.
 export class OffsetTracker { // ElementOffsetTracker
   scrollCaches: ElementScrollGeomCache[]
   origRect: Rect
+  scaleX: number
+  scaleY: number
   isRtl: boolean
 
   constructor(public el: HTMLElement) {
     this.origRect = computeRect(el)
+    this.scaleX = computeScale(this.origRect.right - this.origRect.left, el.offsetWidth)
+    this.scaleY = computeScale(this.origRect.bottom - this.origRect.top, el.offsetHeight)
     this.isRtl = computeElIsRtl(el)
 
     // will work fine for divs that have overflow:hidden
@@ -74,4 +78,9 @@ function isIgnoredClipping(node: EventTarget) {
   let tagName = (node as HTMLElement).tagName
 
   return tagName === 'HTML' || tagName === 'BODY'
+}
+
+// offsetWidth and offsetHeight round fractional layout sizes to the nearest pixel.
+function computeScale(visualSize: number, layoutSize: number) {
+  return layoutSize && Math.round(visualSize) !== layoutSize ? visualSize / layoutSize : 1
 }
