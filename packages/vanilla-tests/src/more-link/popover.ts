@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { CalendarOptions, EventInput, EventSourceFuncInfo } from 'fullcalendar'
 import frLocale from 'fullcalendar/locales/fr'
 import { strictModeFactor } from 'fullcalendar/protected-api'
-import { initCalendar } from '../lib/calendar'
+import { createCalendarElement, initCalendar } from '../lib/calendar'
 import { DayGridModel } from '../lib/models/day-grid'
 import { getEventEls, queryPart } from '../lib/models/events'
 import { getBgEventEls, getEventTitles, getVisibleEventEls } from '../lib/models/event-content'
@@ -249,6 +249,27 @@ describe('more-link popover', () => {
   })
 
   describe('closing', () => {
+    it.each(['shadow root', 'document'])('keeps inside clicks and closes on an outside click in the %s', async (target) => {
+      const shadow = createCalendarElement().attachShadow({ mode: 'closed' })
+      const container = shadow.appendChild(document.createElement('div'))
+      const calendar = initCalendar({ ...options, dayMaxEventRows: 1 }, container)
+      await waitForSettle()
+
+      const cell = new DayGridModel(calendar.el).getDayCell('2014-07-29')
+      queryPart(cell, 'moreLink')!.click()
+      await waitForSettle()
+      const popover = queryPart(shadow, 'popover')!
+      expect(popover).not.toBeNull()
+      queryPart(popover, 'dayHeaderInner')!.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, composed: true }))
+      await waitForSettle()
+      expect(queryPart(shadow, 'popover')).toBe(popover)
+
+      const outside = target === 'shadow root' ? cell : document.body
+      outside.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, composed: true }))
+      await waitForSettle()
+      expect(queryPart(shadow, 'popover')).toBeNull()
+    })
+
     it('stays open when clicking inside it', async () => {
       const calendar = initCalendar(options)
       await waitForSettle()
