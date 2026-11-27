@@ -13,7 +13,7 @@ import { DayCellInfo, DayHeaderInfo } from '../api/structs'
 import classNames from '../styles.module.css'
 import { ROW_BORDER_WIDTH } from '../util/dimensions'
 import { joinClassNames } from '../util/html'
-import { applyStyle, computeElIsRtl, getAppendableRoot, getEventTargetViaRoot } from '../util/dom-manip'
+import { applyStyle, computeElIsRtl, getAppendableRoot } from '../util/dom-manip'
 import { createAriaClickAttrs } from '../util/dom-event'
 import { computeClippedClientRect } from '../util/dom-geom'
 import { findDayNumberText, findMonthText, findWeekdayText } from '../util/date-format'
@@ -42,6 +42,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
 
   // ref
   private rootEl: HTMLElement
+  private insideMouseDowns = new WeakSet<MouseEvent>()
   private closeRef = createRef<HTMLDivElement>()
   private focusStartRef = createRef<HTMLDivElement>()
   private focusEndRef = createRef<HTMLDivElement>()
@@ -243,6 +244,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
   }
 
   componentDidMount() {
+    this.rootEl.addEventListener('mousedown', this.handleInsideMouseDown)
     document.addEventListener('mousedown', this.handleDocumentMouseDown)
     document.addEventListener('keydown', this.handleDocumentKeyDown)
 
@@ -254,6 +256,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
   }
 
   componentWillUnmount() {
+    this.rootEl.removeEventListener('mousedown', this.handleInsideMouseDown)
     document.removeEventListener('mousedown', this.handleDocumentMouseDown)
     document.removeEventListener('keydown', this.handleDocumentKeyDown)
 
@@ -261,11 +264,13 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
     this.focusEndRef.current.removeEventListener('focus', this.handleClose)
   }
 
-  // Triggered when the user clicks *anywhere* in the document, for the autoHide feature
-  handleDocumentMouseDown = (ev) => {
-    // only hide the popover if the click happened outside the popover
-    const target = getEventTargetViaRoot(ev) as HTMLElement
-    if (!this.rootEl.contains(target)) {
+  // Record the event before a closed shadow root hides its target from document.
+  handleInsideMouseDown = (ev: MouseEvent) => {
+    this.insideMouseDowns.add(ev)
+  }
+
+  handleDocumentMouseDown = (ev: MouseEvent) => {
+    if (!this.insideMouseDowns.delete(ev)) {
       this.handleClose()
     }
   }
